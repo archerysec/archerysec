@@ -1,0 +1,83 @@
+{% extends 'header.html' %}
+{% block body %}
+<div id="sidebar">
+    <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
+    <ul>
+        <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
+        <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span class="label label-important">2</span></a>
+      <ul>
+        <li ><a href="/webscanners/">Domain</a></li>
+        <li ><a href="/networkscanners/ip_scan/">IP</a></li>
+      </ul>
+    </li>
+        <li ><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
+    </ul>
+</div>
+<div id="content">
+    <!--breadcrumbs-->
+    <div id="content-header">
+        <div id="breadcrumb"><a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
+            Home</a></div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span6 offset3">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                        <h5>ZAP Setting</h5>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="widget-content">
+                                <div>
+                                    <label>Zap API Key</label>
+                                    <div class="form-group">
+                                        <pre>{{ apikey }}</pre>
+                                    </div>
+                                    <label>Zap Path</label>
+                                    <div class="form-group">
+                                        <pre>{{ zapath }}</pre>
+                                    </div>
+                                    <label>Zap Port</label>
+                                    <div class="form-group">
+                                        <pre>{{ zap_port }}</pre>
+                                    </div>
+                                    <a class="btn btn-primary" href="/setting_edit" role="button">Edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                        <h5>OpenVas Setting</h5>
+                    </div>
+                    <div class="card">{% for data in openvas_set %}
+                        <div class="card-body">
+                            <div class="widget-content">
+                                <div>
+                                    <label>Host</label>
+                                    <div class="form-group">
+                                        <pre>{{ data.scan_host }}</pre>
+                                    </div>
+                                    <label>User</label>
+                                    <div class="form-group">
+                                        <pre>{{ data.openvas_user }}</pre>
+                                    </div>
+                                    <label>Password</label>
+                                    <div class="form-group">
+                                        <input disabled value="{{ data.openvas_password }}" type="password">
+                                    </div>
+                                    <a class="btn btn-primary" href="/networkscanners/openvas_setting" role="button">Edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

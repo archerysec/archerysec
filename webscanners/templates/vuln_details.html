@@ -1,0 +1,89 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<div id="sidebar">
+    <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
+    <ul>
+        <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
+        <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span class="label label-important">2</span></a>
+      <ul>
+        <li ><a href="/webscanners/">Domain</a></li>
+        <li ><a href="/networkscanners/ip_scan/">IP</a></li>
+      </ul>
+    </li>
+        <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
+    </ul>
+</div>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Tables</a></div>
+        <h1>Tables</h1>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Data table</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th>Vulnerability</th>
+                                <th>URL</th>
+                                <th>Risk</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in zap_all_vul %}
+                            <tr data-target="#">
+                                <td><a href="#" data-toggle="modal" data-target="#{{data.scan_id}}">{{data.name}}</a>
+                                </td>
+                                <td>{{data.url}}</td>
+                                <td>{{data.risk}}</td>
+                                <td>
+                                </td>
+                            </tr>
+                            <div class="modal fade bs-example-modal-lg" id="{{data.scan_id}}" tabindex="-1"
+                                 role="dialog"
+                                 aria-labelledby="myLargeModalLabel">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Vulnerability Details</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <strong> Vulnerability Name: </strong>{{ data.name }}<br><br>
+                                            <strong> Severity: </strong> {{ data.risk }}<br><br>
+                                            <strong> URL : </strong>{{data.url}} <br><br>
+                                            <strong> Descriptoin : </strong><br>
+                                            {{data.description}}<br><br>
+                                            <strong> method : </strong>{{data.solution}}<br><br>
+                                            <strong> Parameter : </strong>{{data.param}}<br><br>
+                                            <strong> sourceid :</strong>{{data.sourceid}}<br><br>
+                                            <strong> attack : </strong>{{data.attack}}<br><br>
+                                            <strong> reference : </strong>{{data.reference}}<br><br>
+                                            <strong> Solution : </strong>{{data.solution}}<br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

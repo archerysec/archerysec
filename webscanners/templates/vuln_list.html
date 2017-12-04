@@ -1,0 +1,113 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+<div id="sidebar">
+    <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
+    <ul>
+        <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
+        <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span class="label label-important">2</span></a>
+      <ul>
+        <li ><a href="/webscanners/">Domain</a></li>
+        <li ><a href="/networkscanners/ip_scan/">IP</a></li>
+      </ul>
+    </li>
+        <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
+    </ul>
+</div>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Tables</a></div>
+        <h1>Tables</h1>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Data table</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table center-aligned-table">
+                            <thead>
+                            <tr class="text-primary">
+                                <th>Scan ID</th>
+                                <th>URL</th>
+                                <th>Vulnerability</th>
+                                <th>Scan Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for datas in all_scans %}
+                            <tr class=" ">
+                                <td>{{ datas.scan_scanid }}</td>
+                                <td>{{ datas.scan_url }}</td>
+
+                                <td><a href="/zapscanner/scan_result/?scan_id={{ datas.scan_scanid }}">{{
+                                    datas.scan_scanid }}</a></td>
+                                <td>
+                                    <label class="progress">
+                                        <div class="progress-bar progress-bar-striped bg-info"
+                                             role="progressbar" style="width: {{scans_status}}%"
+                                             aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+                                            {{scans_status}}%
+                                        </div>
+                                    </label>
+                                </td>
+
+                                <div class="col-sm-6 col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <td>
+                                            <form id="scan_pause{{ datas.scan_scanid }}" class="forms-sample">
+                                                {% csrf_token %}
+                                                <input type="hidden"
+                                                       id="target_scan_pause{{ datas.scan_scanid }}"
+                                                       name="scan_pause"
+                                                       value="{{ datas.scan_scanid }}"/>
+                                                <button id="scan2{{ datas.scan_scanid }}"
+                                                        class="fa fa-pause btn btn-primary btn-sm"></button>
+                                            </form>
+                                            <form id="scan_resume{{ datas.scan_scanid }}" class="forms-sample">
+                                                {% csrf_token %}
+                                                <input type="hidden"
+                                                       id="target_scan_resume{{ datas.scan_scanid }}"
+                                                       name="scan_resume"
+                                                       value="{{ datas.scan_scanid }}"/>
+                                                <button id="scan1{{ datas.scan_scanid }}" style="display: none;"
+                                                        class="fa fa-play btn btn-primary btn-sm"></button>
+                                            </form>
+                                            <br>
+
+                                            <form class="forms-sample" method="POST"
+                                                  action="/zapscanner/">
+
+                                                {% csrf_token %}
+                                                <input type="hidden" name="scan_stop"
+                                                       value="{{ datas.scan_scanid }}"/>
+                                                <button type="submit"
+                                                        class="fa fa-stop btn btn-danger btn-sm"></button>
+
+                                            </form>
+                                            <br>
+                                            <form action="/zapscanner/" method="post" class="forms-sample">
+
+                                                {% csrf_token %}
+                                                <input type="hidden" name="scan_item_id" value="{{datas.id}}"/>
+                                                <button type="submit"
+                                                        class="fa fa-times btn btn-danger btn-sm"></button>
+                                            </form>
+                                    </div>
+                                </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

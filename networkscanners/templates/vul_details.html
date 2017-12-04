@@ -1,0 +1,98 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+
+<div id="sidebar">
+    <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
+    <ul>
+        <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
+        <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span class="label label-important">2</span></a>
+      <ul>
+        <li ><a href="/webscanners/">Domain</a></li>
+        <li ><a href="/networkscanners/ip_scan/">IP</a></li>
+      </ul>
+    </li>
+        <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
+    </ul>
+</div>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Tables</a></div>
+        <h1>Tables</h1>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="row-fluid">
+            <div class="span9 offset1">
+
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Data table</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Vulnerability</th>
+                                <th>Criticality</th>
+                                <th>Severity</th>
+                                <th>Host</th>
+                                <th>Location</th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+
+                            </tfoot>
+                            <tbody>{% for data in all_vuln %}
+                            <tr data-target="#">
+                                <td>{{data.vul_id}}</td>
+                                <td><a href="#" data-toggle="modal" data-target="#{{data.id}}">{{data.name}}</a></td>
+                                <td>{{data.threat}}</td>
+                                <td>{{data.severity}}</td>
+                                <td>{{data.host}}</td>
+                                <td>{{data.port}}</td>
+                            </tr>
+                            <div class="modal fade bs-example-modal-lg" id="{{data.id}}" tabindex="-1" role="dialog"
+                                 aria-labelledby="myLargeModalLabel">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Vulnerability Details</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <strong> Vulnerability Name: </strong>{{ data.name }}<br><br>
+                                            <strong> Severity: </strong> {{ data.severity }}<br><br>
+                                            <strong> Host : </strong>{{data.host}} <br><br>
+                                            <strong> Port : </strong>{{data.port}}<br><br>
+                                            <strong> Summary : </strong><br>
+                                            {{data.description}}<br><br>
+                                            <strong>Tags : </strong><br>{{data.tags}}<br><br>
+                                            <strong> Creation Time : </strong>{{data.creation_time}}<br><br>
+                                            <strong> Modification Time : </strong>{{data.modification_time}}<br><br>
+                                            <strong> Threat :</strong>{{data.threat}}<br><br>
+                                            <strong> Type : </strong><br><br>{{data.banner}}<br><br>
+                                            <strong>Family : </strong><br><br>{{data.family}}<br><br>
+                                            <strong>Base Score : </strong>{{data.cvss_base}}<br><br>
+                                            <strong>CVE : </strong>{{data.cve}}<br><br>
+                                            <strong>xref : </strong><br><br>{{data.xref}}<br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

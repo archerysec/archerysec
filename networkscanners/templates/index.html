@@ -1,0 +1,82 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+<div id="sidebar">
+    <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
+    <ul>
+        <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
+                class="label label-important">2</span></a>
+            <ul>
+                <li><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan/">IP</a></li>
+            </ul>
+        </li>
+        <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li class="active"><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
+    </ul>
+</div>
+<script>
+ <!--function autoRefresh_div()-->
+ <!--{-->
+      <!--$("#result").load("/networkscanner/ip_scan_table");// a function which will load data from other file after x seconds-->
+  <!--}-->
+  <!--setInterval('autoRefresh_div()', 5000);-->
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">IP Scan List</a></div>
+        <h1>Scans</h1>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>IP Scan List</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th>IP</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>High</th>
+                                <th>Medium</th>
+                                <th>Low</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in all_ip %}
+                            <tr data-target="#">
+                                <td>{{data.scan_ip}}</td>
+                                <td>
+                                    <div class="progress progress-info">
+                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}}</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-important">{{data.high_total}}</span></td>
+                                <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
+                                <td><span class="badge badge-info">{{data.low_total}}</span></td>
+                                <td>
+                                    <!--<a href="#" class="badge badge-primary">Re-Test</a>-->
+                                    <a href="vul_details/?scan_id={{data.scan_id}}" class="badge badge-success">View</a>
+                                    <a href="#" class="badge badge-warning">Stop</a>
+                                    <a href="scan_del/?scan_scanid={{data.scan_id}}" class="badge badge-danger">
+                                        Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
