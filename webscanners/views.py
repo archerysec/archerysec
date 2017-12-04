@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response, HttpResponse
 from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results
-from networkscanners.models import openvas_db
+from networkscanners.models import openvas_info
 from django.db.models import Q
 import os
 import json
@@ -214,7 +214,7 @@ def vuln_details(request):
 
 
 def setting(request):
-    openvas_set = openvas_db.objects.all()
+    openvas_set = openvas_info.objects.all()
 
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
@@ -222,7 +222,7 @@ def setting(request):
         zapath = data['zap_path']
         zap_port = data['zap_port']
 
-    return render(request, 'setting.html', {'apikey': apikey, 'zapath': zapath, 'zap_port': zap_port, 'openvas_set': openvas_set})
+    return render(request, 'setting.html', {'apikey': apikey, 'zapath': zapath, 'zap_port': zap_port,'openvas_set': openvas_set})
 
 
 def zap_set_update(request):

@@ -2,8 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django_cryptography.fields import encrypt
-
+from fernet_fields import EncryptedTextField
 
 class ov_scan_result_db(models.Model):
     scan_id = models.TextField(blank=True)
@@ -48,7 +47,7 @@ class scan_save_db(models.Model):
     low_total = models.TextField(blank=True)
 
 
-class openvas_db(models.Model):
-    scan_host = models.TextField(blank=True)
-    openvas_user = models.TextField(blank=True)
-    openvas_password = encrypt(models.CharField(max_length=500))
+class openvas_info(models.Model):
+    openvas_host = EncryptedTextField()
+    openvas_user = EncryptedTextField()
+    openvas_password = EncryptedTextField()

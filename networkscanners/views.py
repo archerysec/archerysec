@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response
 from openvas_lib import VulnscanManager, VulnscanException
-from networkscanners.models import scan_save_db, ov_scan_result_db, openvas_db
+from networkscanners.models import scan_save_db, ov_scan_result_db, openvas_info
 import time
 from django.db.models import Q
 
@@ -11,12 +11,12 @@ from django.db.models import Q
 # user = ""
 # password = ""
 
-openvas = openvas_db.objects.all()
-
-for dat in openvas:
-    scan_host = str(dat.scan_host)
-    user = str(dat.openvas_user)
-    password = str(dat.openvas_password)
+# openvas = open_vas_db.objects.all()
+#
+# for dat in openvas:
+#     scan_host = str(dat.scan_host)
+#     user = str(dat.openvas_user)
+#     password = str(dat.openvas_password)
 
 status = "0"
 name = ""
@@ -288,10 +288,10 @@ def openvas_details(request):
         openvas_user = request.POST.get("openvas_user")
         openvas_password = request.POST.get("openvas_password")
 
-        delete_all = openvas_db.objects.all()
+        delete_all = openvas_info.objects.all()
         delete_all.delete()
-
-        dump_all = openvas_db(scan_host=scan_host, openvas_user=openvas_user, openvas_password=openvas_password)
+        #
+        dump_all = openvas_info(openvas_host=scan_host, openvas_user=openvas_user, openvas_password=openvas_password)
         dump_all.save()
 
     return render(request, 'setting_form.html', )
