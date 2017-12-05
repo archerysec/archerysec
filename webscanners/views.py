@@ -244,7 +244,7 @@ def zap_set_update(request):
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
         data['zap_api_key'] = apikey
-        data['zap_path'] = zapath
+        data['zap_path'] = str(zapath)
         data['zap_port'] = port
         f.seek(0)
         json.dump(data, f, indent=4)
