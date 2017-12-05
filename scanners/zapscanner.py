@@ -8,7 +8,7 @@ import sys
 
 
 def start_zap():
-    api_key_path = os.getcwd() + '../' + 'apidata.json'
+    api_key_path = os.getcwd() + '/../' + 'apidata.json'
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
         zap_path = data['zap_path']
@@ -31,7 +31,7 @@ def start_zap():
 
 
 def stop_zap():
-    api_key_path = os.getcwd() + '../' + 'apidata.json'
+    api_key_path = os.getcwd() + '/../' + 'apidata.json'
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
         apikey = data['zap_api_key']
