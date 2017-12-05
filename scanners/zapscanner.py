@@ -8,7 +8,7 @@ import sys
 
 
 def start_zap():
-    api_key_path = os.getcwd() + '/../' + 'apidata.json'
+    api_key_path = os.getcwd() + '/' + 'apidata.json'
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
         zap_path = str(data['zap_path'])
@@ -22,7 +22,7 @@ def start_zap():
     executable_path = os.path.join(zap_path, executable)
     zap_command = [executable_path, '-daemon', '-port', zap_port]
 
-    log_path = os.path.join(zap_path, 'zap.log')
+    log_path = os.getcwd() + '/' + 'zap.log'
 
     with open(log_path, 'w+') as log_file:
         subprocess.Popen(zap_command, cwd=zap_path, stdout=log_file, stderr=subprocess.STDOUT)
@@ -31,7 +31,7 @@ def start_zap():
 
 
 def stop_zap():
-    api_key_path = os.getcwd() + '/../' + 'apidata.json'
+    api_key_path = os.getcwd() + '/' + 'apidata.json'
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
         apikey = data['zap_api_key']
