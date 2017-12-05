@@ -11,7 +11,7 @@ def start_zap():
     api_key_path = os.getcwd() + '/../' + 'apidata.json'
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
-        zap_path = data['zap_path']
+        zap_path = str(data['zap_path'])
         zap_port = data['zap_port']
 
     if platform.system() == 'Windows' or platform.system().startswith('CYGWIN'):
