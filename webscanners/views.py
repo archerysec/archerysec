@@ -67,8 +67,7 @@ def index(request):
         apikey = data['zap_api_key']
         zapath = data['zap_path']
 
-    zap = ZAPv2(apikey=apikey, proxies={'http': 'http://127.0.0.1:'+'zap_port', 'https': 'http://127.0.0.1:'+'zap_port'})
-
+    zap = ZAPv2(apikey=apikey, proxies={'http': 'http://127.0.0.1:8090', 'https': 'http://127.0.0.1:8090'})
     all_urls = zap_spider_db.objects.all()
     all_scans = zap_scans_db.objects.all()
     all_spider_results = zap_spider_results.objects.all()
