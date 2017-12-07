@@ -35,8 +35,9 @@ def stop_zap():
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
         apikey = data['zap_api_key']
+        zap_port = data['zap_port']
     zap = ZAPv2(apikey=apikey,
-                proxies={'http': 'http://127.0.0.1:'+'zap_port', 'https': 'http://127.0.0.1:'+'zap_port'})
+                proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1:8090' + ':' + zap_port})
     p = zap.core.shutdown()
     print p
 
