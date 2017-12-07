@@ -32,6 +32,7 @@
 
                 }
             });
+       this.reset();
        }
        else if ($('[name="optradio2"]').is(':checked')){
            $.ajax({
@@ -67,7 +68,6 @@
                 }
             });
     });
-
 </script>
 
 <script>
@@ -107,7 +107,7 @@ function myFunction() {
                                     <label>URL :</label>
                                         <input type="url" name="url" id="url"
                                                value="{{ url }}">
-                                    <input type="submit" onclick="window.location.reload()" class="btn btn-primary" value="Launch">
+                                    <input type="submit" class="btn btn-primary" value="Launch">
                                 </div>
                             </form>
                         </div>
