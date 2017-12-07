@@ -19,6 +19,7 @@
 
  $(document).on('submit', '#start_scan', function(e){
         e.preventDefault();
+        document.getElementById("start_scan").reset();
         if ($('[name="optradio2"]').is(':checked')){
             $.ajax({
                 type:'POST',
@@ -81,14 +82,10 @@
                             <form id="start_scan" class="form-horizontal">
                                 {% csrf_token %}
                                 <div class="control-group">
-                                    <label class="control-label">IP :</label>
-                                    <div class="controls">
+                                    <label>IP :</label>
                                         <input type="text" name="url" id="url" class="form-control"
                                                value="{{ url }}">
-                                        <button type="submit" class="btn btn-primary"
-                                                onClick="window.location.reload()">Lanuch
-                                        </button>
-                                    </div>
+                                        <input type="submit" onclick="window.location.reload()" class="btn btn-primary" value="Launch">
                                 </div>
                             </form>
                         </div>
