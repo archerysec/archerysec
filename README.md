@@ -5,7 +5,7 @@ Archerysecurity
 Web and Network scanner (In Development)
 
 <p align="center">
-  <img width="460" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
+  <img width="100" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
 
 # Installation
