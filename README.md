@@ -4,7 +4,7 @@ Archerysecurity
 ## archerysecurity - a security tool
 Web and Network scanner (In Development)
 
-![alt text](https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png)
+<img src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png" alt="alt text" width="40" height="100">
 
 # Installation
 git clone https://github.com/anandtiwarics/archerysecurity.git
