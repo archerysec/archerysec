@@ -1,7 +1,7 @@
 Archerysecurity
 =================
 
-##archerysecurity - a security tool
+## archerysecurity - a security tool
 Web and Network scanner (In Development)
 
 [![solarized dualmode](https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png)](#features)
