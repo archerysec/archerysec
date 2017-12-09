@@ -8,21 +8,23 @@ Web and Network scanner (In Development)
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
 
-# Installation
-<code>
-$ git clone https://github.com/anandtiwarics/archerysecurity.git
+# Installation #
 
-$ pip install -r requirements.txt
+<pre>
 
-$ python manage.py collectstatic
+    $ git clone https://github.com/anandtiwarics/archerysecurity.git
 
-$ python manage.py makemigrations networkscanners
+    $ pip install -r requirements.txt
 
-$ python manage.py makemigrations webscanners
+    $ python manage.py collectstatic
 
-$ python manage.py migrate
+    $ python manage.py makemigrations networkscanners
 
-$ python manage.py createsuperuser
+    $ python manage.py makemigrations webscanners
 
-$ python manage.py runserver
-</code>
+    $ python manage.py migrate
+
+    $ python manage.py createsuperuser
+
+    $ python manage.py runserver
+</pre>
