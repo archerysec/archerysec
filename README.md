@@ -2,11 +2,19 @@ Archerysecurity
 =================
 
 ## archerysecurity - a security tool
-Web and Network scanner (In Development)
+Vulnerability Assessment Tool (In Development)
 
 <p align="center">
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
+
+#Overview of the tool:
+* Perform Web and Network vulnerability Scanning using opensource tools.
+* Perform authenticated web scanning.
+* Perform scanning using selenium.
+
+#Note
+Currently project is in developement phase and still lot of work going on.
 
 # Installation #
 
@@ -20,3 +28,11 @@ $ python manage.py migrate
 $ python manage.py createsuperuser
 $ python manage.py runserver
 </pre>
+
+# Road Map
+* REST API implementation.
+* API vulnerability scanning.
+* Perform Reconnaissance before scanning.
+* Concurrent Scans
+* CI/CD implementation.
+* Easy to installing
