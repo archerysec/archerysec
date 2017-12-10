@@ -9,12 +9,19 @@ Vulnerability Assessment Tool (In Development)
 </p>
 
 # Overview of the tool:
+* Vulnerability Assessment Web Application Tool.
 * Perform Web and Network vulnerability Scanning using opensource tools.
 * Perform authenticated web scanning.
 * Perform scanning using selenium.
 
-# Note
+## Note
 Currently project is in developement phase and still lot of work going on.
+
+## Requirement
+
+* Python 2.7
+* OpenVas 8
+* OWASP ZAP 2.7.0
 
 # Installation #
 
