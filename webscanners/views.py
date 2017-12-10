@@ -23,6 +23,7 @@ spider_status = "0"
 scans_status = "0"
 spider_alert = ""
 target_url = ""
+driver = ""
 
 
 # Login View
@@ -68,7 +69,8 @@ def index(request):
         zapath = data['zap_path']
         zap_port = data['zap_port']
 
-    zap = ZAPv2(apikey=apikey, proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
+    zap = ZAPv2(apikey=apikey,
+                proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
     all_urls = zap_spider_db.objects.all()
     all_scans = zap_scans_db.objects.all()
     all_spider_results = zap_spider_results.objects.all()
@@ -81,6 +83,9 @@ def index(request):
         print abc
 
         time.sleep(10)
+
+        script_enable = zap.script.enable(apikey=apikey, scriptname='cookie_replace')
+        print "Script Enabled from ZAP", script_enable
 
         scanid = zap.spider.scan(target_url)
 
@@ -223,7 +228,8 @@ def setting(request):
         zapath = data['zap_path']
         zap_port = data['zap_port']
 
-    return render(request, 'setting.html', {'apikey': apikey, 'zapath': zapath, 'zap_port': zap_port,'openvas_set': openvas_set})
+    return render(request, 'setting.html',
+                  {'apikey': apikey, 'zapath': zapath, 'zap_port': zap_port, 'openvas_set': openvas_set})
 
 
 def zap_set_update(request):
@@ -267,6 +273,8 @@ def del_scan(request):
 
         item = zap_scans_db.objects.filter(Q(scan_scanid=item_id)).order_by('scan_scanid')
         item.delete()
+        item_results = zap_scan_results_db.objects.filter(Q(scan_id=item_id)).order_by('scan_id')
+        item_results.delete()
 
     return render_to_response('scan_list.html', {'all_scans': all_scans})
 
@@ -275,18 +283,34 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 
+def slem(driver, url):
+    driver.get(url)
+
+
+def save_cookie(driver):
+    all_cookies = driver.get_cookies()
+
+    f = open('cookies.txt', 'w+')
+
+    for cookie in all_cookies:
+        cookie_value = cookie['name'] + '=' + cookie['value'] + ';'
+        print cookie_value
+        f.write(cookie_value)
+    driver.close()
+    return HttpResponse(status=201)
+
+
 def sel_login(request):
-    driver = webdriver.Firefox()
+    action_vul = request.POST.get("action")
+    url_da = request.POST.get("url_login")
+    print action_vul
+    print url_da
+    if action_vul == "open_page":
+        global driver
+        driver = webdriver.Firefox()
+        slem(driver, url_da)
 
-    driver.get('http://demo.testfire.net')
+    elif action_vul == "save_cookie":
+        save_cookie(driver)
 
-    if request.GET['save']:
-        if 'save' == 'yes':
-            driver.close()
-
-    return render(request, 'webscanner.html')
-    # return HttpResponse(status=201)
-
-#
-# def save_sl_login(driver):
-#     driver.close()
+    return render(request, 'webscanner.html', )

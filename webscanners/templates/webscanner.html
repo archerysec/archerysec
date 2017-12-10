@@ -53,27 +53,47 @@
        alert("Please Select scanner")
        }
     });
-    $(document).on('submit', '#login_record', function(e){
-        e.preventDefault();
-            $.ajax({
-                type:'POST',
-                url:'/webscanners/sel_login/',
-                data:{
-
-                   url_login:$('#url_login').val(),
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-
-                }
-            });
-    });
 </script>
 
 <script>
 function myFunction() {
     document.getElementById("start_scan").reset();
 }
+
+$(document).on('submit', '#open_login', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'/webscanners/sel_login/',
+                data:{
+                   url_login:$('input[name=url_login]').val(),
+                   action:$('input[name=action]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
+$(document).on('submit', '#save_cookies', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'/webscanners/sel_login/',
+                data:{
+                   url_login:$('input[name=url_login]').val(),
+                   action:$('input[name=action2]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
 </script>
 
 <script type="text/javascript">
@@ -82,6 +102,7 @@ function myFunction() {
       $("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds
   }
  setInterval('autoRefresh_div()', 5000);
+
 
 
 </script>
@@ -105,8 +126,8 @@ function myFunction() {
                                 {% csrf_token %}
                                 <div class="control-group">
                                     <label>URL :</label>
-                                        <input type="url" name="url" id="url"
-                                               value="{{ url }}">
+                                    <input type="url" name="url" id="url"
+                                           value="{{ url }}">
                                     <input type="submit" class="btn btn-primary" value="Launch">
                                 </div>
                             </form>
@@ -130,9 +151,9 @@ function myFunction() {
                         <!--</label>-->
                         <!--</div>-->
                         <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                            <!--<label>-->
-                                <!--<input name="optradio2" type="checkbox"><span>Datasploit</span>-->
-                            <!--</label>-->
+                        <!--<label>-->
+                        <!--<input name="optradio2" type="checkbox"><span>Datasploit</span>-->
+                        <!--</label>-->
                         <!--</div>-->
                         <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
                         <!--<label>-->
@@ -140,46 +161,67 @@ function myFunction() {
                         <!--</label>-->
                         <!--</div>-->
                         <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                            <!--<label>-->
-                                <!--<input name="optradio3" type="checkbox"><span>Nmap</span>-->
-                            <!--</label>-->
+                        <!--<label>-->
+                        <!--<input name="optradio3" type="checkbox"><span>Nmap</span>-->
+                        <!--</label>-->
                         <!--</div>-->
                         <!--Advance html-->
-                        <!--<div class="fr">-->
-                            <!--<a data-toggle="modal" href="#advance" class="btn btn-success btn-mini">Advance</a>-->
-                            <!--<div class="modal fade bs-example-modal-lg" id="advance" tabindex="-1"-->
-                                 <!--role="dialog"-->
-                                 <!--aria-labelledby="myLargeModalLabel">-->
-                                <!--<div class="modal-dialog modal-lg" role="document">-->
-                                    <!--<div class="modal-content">-->
-                                        <!--<div class="modal-header">-->
-                                            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span-->
-                                                    <!--aria-hidden="true">&times;</span></button>-->
-                                            <!--<h4 class="modal-title" id="myModalLabel">Advance</h4>-->
-                                        <!--</div>-->
-                                        <!--<div class="modal-body">-->
-                                            <!--<div class="center">-->
-                                                <!--<form class="form-horizontal">-->
-                                                    <!--{% csrf_token %}-->
-                                                    <!--<div class="control-group">-->
-                                                        <!--<label class="control-label">URL :</label>-->
-                                                        <!--<div class="controls">-->
-                                                            <!--<input type="text" name="url_login"-->
-                                                                   <!--value="{{ url }}">-->
-                                                        <!--</div>-->
+                        <div class="fr">
+                            <a data-toggle="modal" href="#advance" class="btn btn-success btn-mini">Advance</a>
+                            <div class="modal fade bs-example-modal-lg" id="advance" tabindex="-1"
+                                 role="dialog"
+                                 aria-labelledby="myLargeModalLabel">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Advance</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="center">
+                                                <form id="open_login" class="form-horizontal">
+                                                    {% csrf_token %}
+                                                    <div class="control-group">
+                                                        <label class="control-label">URL :</label>
+                                                        <div class="controls">
+                                                            <input type="text" name="url_login"
+                                                                   value="{{ url_login }}">
+                                                            <input type="hidden" name="action"
+                                                                   value="open_page">
+                                                            <input type="submit" class="btn btn-primary" value="Login">
+                                                        </div>
                                                         <!--<div>-->
-                                                            <!--<div class="fr"><a href="#" class="btn btn-primary btn-mini">Login</a>-->
-                                                                <!--<a href="#" class="btn btn-success btn-mini">Save</a>-->
-                                                            <!--</div>-->
+                                                        <!--<div class="fr"><a href="#" class="btn btn-primary btn-mini">Login</a>-->
+                                                        <!--<a href="#" class="btn btn-success btn-mini">Save</a>-->
                                                         <!--</div>-->
-                                                    <!--</div>-->
-                                                <!--</form>-->
-                                            <!--</div>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
+                                                        <!--</div>-->
+                                                    </div>
+                                                </form>
+                                                <form id="save_cookies" class="form-horizontal">
+                                                    {% csrf_token %}
+                                                    <div class="control-group">
+                                                        <label class="control-label"></label>
+                                                        <div class="controls">
+                                                            <input type="hidden" name="url_login"
+                                                                   value="">
+                                                            <input type="hidden" name="action2"
+                                                                   value="save_cookie">
+                                                            <input type="submit" class="btn btn-success" value="Save">
+                                                        </div>
+                                                        <!--<div>-->
+                                                        <!--<div class="fr"><a href="#" class="btn btn-primary btn-mini">Login</a>-->
+                                                        <!--<a href="#" class="btn btn-success btn-mini">Save</a>-->
+                                                        <!--</div>-->
+                                                        <!--</div>-->
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                     <div id="result" class="widget-box">

@@ -19,6 +19,5 @@ urlpatterns = [
     url(r'^zap_vul_details', views.vuln_details, name='zap_vul_details'),
     url(r'^dashboard', views.dashboard, name='dashboard'),
     url(r'^sel_login', views.sel_login, name='sel'),
-    # url(r'sel_save', views.sel.save_sl_login, name='asdas'),
-
+    url(r'save_cookie', views.save_cookie, name='save_cookie'),
 ]
