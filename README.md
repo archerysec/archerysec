@@ -8,12 +8,12 @@ Vulnerability Assessment Tool (In Development)
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
 
-#Overview of the tool:
+# Overview of the tool:
 * Perform Web and Network vulnerability Scanning using opensource tools.
 * Perform authenticated web scanning.
 * Perform scanning using selenium.
 
-#Note
+# Note
 Currently project is in developement phase and still lot of work going on.
 
 # Installation #
