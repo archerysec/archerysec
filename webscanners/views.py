@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response, HttpResponse
-from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results
+from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db
 from networkscanners.models import openvas_info
 from django.db.models import Q
 import os
@@ -24,6 +24,8 @@ scans_status = "0"
 spider_alert = ""
 target_url = ""
 driver = ""
+new_uri = ""
+cookies = ""
 
 
 # Login View
@@ -71,6 +73,7 @@ def index(request):
 
     zap = ZAPv2(apikey=apikey,
                 proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
+
     all_urls = zap_spider_db.objects.all()
     all_scans = zap_scans_db.objects.all()
     all_spider_results = zap_spider_results.objects.all()
@@ -84,9 +87,18 @@ def index(request):
 
         time.sleep(10)
 
-        script_enable = zap.script.enable(apikey=apikey, scriptname='cookie_replace')
-        print "Script Enabled from ZAP", script_enable
+        all_cookie = cookie_db.objects.filter(url=target_url)
+        for da in all_cookie:
+            global cookies
+            cookies = da.cookie
+        remove_cookie = zap.replacer.remove_rule(target_url)
+        print "Remove Cookie :", remove_cookie
+        cookie_add = zap.replacer.add_rule(apikey=apikey, description=target_url, enabled="true",
+                                           matchtype='REQ_HEADER', matchregex="false", replacement=cookies,
+                                           matchstring="Cookie", initiators="")
 
+        print "Cookies Added :", cookie_add
+        zap.ajaxSpider.scan(target_url)
         scanid = zap.spider.scan(target_url)
 
         save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid)
@@ -284,6 +296,8 @@ def dashboard(request):
 
 
 def slem(driver, url):
+    global new_uri
+    new_uri = url
     driver.get(url)
 
 
@@ -296,7 +310,10 @@ def save_cookie(driver):
         cookie_value = cookie['name'] + '=' + cookie['value'] + ';'
         print cookie_value
         f.write(cookie_value)
+    f.close()
+
     driver.close()
+
     return HttpResponse(status=201)
 
 
@@ -312,5 +329,19 @@ def sel_login(request):
 
     elif action_vul == "save_cookie":
         save_cookie(driver)
+        read_f = open('cookies.txt', 'r')
+
+        chk_url = cookie_db.objects.filter(url=new_uri)
+        for da in chk_url:
+            print "check url:", da.url
+            if da.url == new_uri:
+                chk_url.delete()
+
+        print "url from cookie : ", new_uri
+
+        for cookie_data in read_f:
+            print "Cookies from text :", cookie_data
+            cookie_save = cookie_db(url=new_uri, cookie=cookie_data)
+            cookie_save.save()
 
     return render(request, 'webscanner.html', )

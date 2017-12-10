@@ -48,3 +48,9 @@ class zap_scan_results_db(models.Model):
     alert = models.TextField(blank=True)
     ids = models.TextField(blank=True)
     description = models.TextField(blank=True)
+
+
+class cookie_db(models.Model):
+    url = models.TextField(blank=True)
+    cookie = models.TextField(blank=True)
+
