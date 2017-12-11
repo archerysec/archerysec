@@ -94,6 +94,22 @@ $(document).on('submit', '#save_cookies', function(e){
         this.reset();
     });
 
+$(document).on('submit', '#exclude_url', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'/webscanners/exclude_url/',
+                data:{
+                   exclude_url:$('input[name=exclude_url]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
 </script>
 
 <script type="text/javascript">
@@ -216,6 +232,22 @@ $(document).on('submit', '#save_cookies', function(e){
                                                         <!--</div>-->
                                                     </div>
                                                 </form>
+                                                <form id="exclude_url" class="form-horizontal">
+                                                    {% csrf_token %}
+                                                    <div class="control-group">
+                                                        <label class="control-label">Exclude URL :</label>
+                                                        <div class="controls">
+                                                            <input type="text" name="exclude_url"
+                                                                   value="{{ exclude_url }}">
+                                                            <input type="submit" class="btn btn-primary" value="Exclude">
+                                                        </div>
+                                                        <!--<div>-->
+                                                        <!--<div class="fr"><a href="#" class="btn btn-primary btn-mini">Login</a>-->
+                                                        <!--<a href="#" class="btn btn-success btn-mini">Save</a>-->
+                                                        <!--</div>-->
+                                                        <!--</div>-->
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -224,7 +256,29 @@ $(document).on('submit', '#save_cookies', function(e){
                         </div>
 
                     </div>
+                    <div class="center">
+                                <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                                    <h5>Excluded URL's</h5>
+                                </div>
+                                <div class="widget-content nopadding">
+                                    <table class="table table-bordered data-table">
+                                        <thead>
+                                        <tr>
+                                            <th>URL</th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr data-target="#">{% for data in all_excluded_url %}
+                                            <td>{{data.exclude_url}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                     <div id="result" class="widget-box">
+
                         <div class="widget-content">
                             <div class="center">
                                 <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
@@ -263,6 +317,6 @@ $(document).on('submit', '#save_cookies', function(e){
             </div>
         </div>
     </div>
-
+</div>
 
     {% endblock %}

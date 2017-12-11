@@ -54,3 +54,6 @@ class cookie_db(models.Model):
     url = models.TextField(blank=True)
     cookie = models.TextField(blank=True)
 
+
+class excluded_db(models.Model):
+    exclude_url = models.TextField(blank=True)

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response, HttpResponse
-from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db
+from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db, excluded_db
 from networkscanners.models import openvas_info
 from django.db.models import Q
 import os
@@ -26,6 +26,7 @@ target_url = ""
 driver = ""
 new_uri = ""
 cookies = ""
+excluded_url = ""
 
 
 # Login View
@@ -77,6 +78,7 @@ def index(request):
     all_urls = zap_spider_db.objects.all()
     all_scans = zap_scans_db.objects.all()
     all_spider_results = zap_spider_results.objects.all()
+    all_excluded_url = excluded_db.objects.all()
 
     if request.POST.get("url"):
         global target_url
@@ -86,6 +88,17 @@ def index(request):
         print abc
 
         time.sleep(10)
+
+        all_excluded = excluded_db.objects.filter(Q(exclude_url__icontains=target_url))
+        
+        for data in all_excluded:
+            global excluded_url
+            excluded_url = data.exclude_url
+
+        print "Exclude url ", excluded_url
+        url_exclude = zap.spider.exclude_from_scan(regex=excluded_url)
+
+        print "URL Excluded:", url_exclude
 
         all_cookie = cookie_db.objects.filter(url=target_url)
         for da in all_cookie:
@@ -210,7 +223,8 @@ def index(request):
 
     return render(request, 'webscanner.html',
                   {'all_urls': all_urls, 'spider_status': spider_status, 'scans_status': scans_status,
-                   'all_scans': all_scans, 'all_spider_results': all_spider_results, 'spider_alert': spider_alert})
+                   'all_scans': all_scans, 'all_spider_results': all_spider_results, 'spider_alert': spider_alert,
+                   'all_excluded_url': all_excluded_url})
 
 
 def scan_list(request):
@@ -345,3 +359,12 @@ def sel_login(request):
             cookie_save.save()
 
     return render(request, 'webscanner.html', )
+
+
+def exclude_url(request):
+    exclud = request.POST.get("exclude_url")
+
+    exclude_save = excluded_db(exclude_url=exclud)
+    exclude_save.save()
+
+    return render(request, 'webscanner.html',)
