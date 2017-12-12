@@ -4,13 +4,15 @@
     <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
     <ul>
         <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
-        <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span class="label label-important">2</span></a>
-      <ul>
-        <li ><a href="/webscanners/">Domain</a></li>
-        <li ><a href="/networkscanners/ip_scan/">IP</a></li>
-      </ul>
-    </li>
-        <li class="active"><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
+                class="label label-important">2</span></a>
+            <ul>
+                <li><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan/">IP</a></li>
+            </ul>
+        </li>
+        <li class="active"><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a>
+        </li>
         <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
     </ul>
 </div>
@@ -20,6 +22,7 @@
       <!--$("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds-->
   <!--}-->
   <!--setInterval('autoRefresh_div()', 5000);-->
+
 
 
 
@@ -57,7 +60,7 @@
                             <tr data-target="#">
                                 <!--<td>{{data.id}}</td>-->
                                 <td>{{data.scan_url}}</td>
-                                <td>
+                                <td width="30%">
                                     <div class="progress progress-info">
                                         <div class="bar" style="width: {{data.vul_status}}%">{{data.vul_status}}</div>
                                     </div>
@@ -67,12 +70,25 @@
                                 <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
                                 <td><span class="badge badge-info">{{data.low_vul}}</span></td>
                                 <td>
-                                    <!--<a href="#" class="badge badge-primary">Re-Test</a>-->
-                                    <a href="/zap_vul_details/?scan_id={{data.scan_scanid}}"
-                                       class="badge badge-success">View</a>
-                                    <a href="#" class="badge badge-warning">Stop</a>
-                                    <a href="/del_scan/?scan_scanid={{data.scan_scanid}}" class="badge badge-danger">
-                                        Delete</a>
+                                    <!--&lt;!&ndash;<a href="#" class="badge badge-primary">Re-Test</a>&ndash;&gt;-->
+                                    <!--<a href="/zap_vul_details/?scan_id={{data.scan_scanid}}"-->
+                                    <!--class="badge badge-success">View</a>-->
+                                    <!--<a href="#" class="badge badge-warning">Stop</a>-->
+                                    <!--<a href="/del_scan/?scan_scanid={{data.scan_scanid}}" class="badge badge-danger">-->
+                                    <!--Delete</a>-->
+                                    <div class="btn-group">
+                                        <a class="btn btn-primary" href="/zap_vul_details/?scan_id={{data.scan_scanid}}"><i class="icon-tasks icon-white"></i>
+                                            </a>
+                                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
+                                                class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/zap_vul_details/?scan_id={{data.scan_scanid}}"><i class="icon-pencil"></i> View </a></li>
+                                            <li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i class="icon-trash"></i> Delete</a></li>
+                                            <!--<li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>-->
+                                            <!--<li class="divider"></li>-->
+                                            <!--<li><a href="#"><i class="i"></i> Make admin</a></li>-->
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}

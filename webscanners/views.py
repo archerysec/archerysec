@@ -90,7 +90,7 @@ def index(request):
         time.sleep(10)
 
         all_excluded = excluded_db.objects.filter(Q(exclude_url__icontains=target_url))
-        
+
         for data in all_excluded:
             global excluded_url
             excluded_url = data.exclude_url
@@ -174,6 +174,7 @@ def index(request):
         # print all_vuln
 
         for vuln in all_vuln:
+            vuln_id = uuid.uuid4()
             confidence = vuln['confidence']
             wascid = vuln['wascid']
             cweid = vuln['cweid']
@@ -193,15 +194,14 @@ def index(request):
             alert = vuln['alert']
             ids = vuln['id']
             description = vuln['description']
-            vuln_id = uuid.uuid4()
 
-            dump_all = zap_scan_results_db(vuln_id=vuln_id, scan_id=un_scanid, confidence=(confidence), wascid=(wascid),
-                                           cweid=(cweid),
-                                           risk=(risk), reference=(reference), url=(url), name=(name),
-                                           solution=(solution),
-                                           param=(param), evidence=(evidence), sourceid=(sourceid), pluginId=(pluginId),
-                                           other=(other), attack=(attack), messageId=(messageId), method=(method),
-                                           alert=(alert), id=(ids), description=(description))
+            dump_all = zap_scan_results_db(vuln_id=vuln_id, scan_id=un_scanid, confidence=confidence, wascid=wascid,
+                                           cweid=cweid,
+                                           risk=risk, reference=reference, url=url, name=name,
+                                           solution=solution,
+                                           param=param, evidence=evidence, sourceid=sourceid, pluginId=pluginId,
+                                           other=other, attack=attack, messageId=messageId, method=method,
+                                           alert=alert, id=ids, description=description)
             dump_all.save()
 
         time.sleep(5)
@@ -368,3 +368,9 @@ def exclude_url(request):
     exclude_save.save()
 
     return render(request, 'webscanner.html',)
+
+
+def edit_vuln(request):
+    vuln_id = request.POST.get('vuln_id')
+
+    return render(request, 'vuln_details.html')
