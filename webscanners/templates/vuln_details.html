@@ -1,6 +1,7 @@
 {% extends 'tablehead.html' %}
 {% block body %}
 
+
 <div id="sidebar">
     <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
     <ul>
@@ -38,7 +39,8 @@
                                 <th>Vulnerability</th>
                                 <th>URL</th>
                                 <th>Risk</th>
-                                <th>Action</th>
+                                <th></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>{% for data in zap_all_vul %}
@@ -52,9 +54,17 @@
                                             data-target="#{{data.vuln_id}}1"
                                             data-original-title="Edit"><i
                                             class="icon-pencil"></i></a>
-                                        <a class="btn btn-danger" href="#"
-                                           data-original-title="Delete"><i
-                                                class="icon-remove"></i></a></div>
+                                        </div>
+
+                                </td>
+                                <td>
+                                    <div>
+                                        <form action="/webscanners/del_vuln/" method="POST" class="form-horizontal">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                            <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             <div class="modal fade bs-example-modal-lg" id="{{data.vuln_id}}" tabindex="-1"
@@ -88,68 +98,80 @@
                             <!-- Modal -->
                             <div id="{{data.vuln_id}}1" class="modal hide fade" tabindex="-1" role="dialog"
                                  aria-labelledby="myModalLabel" aria-hidden="true">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
-                                    </button>
-                                    <h3 id="myModalLabel">Vulnerability</h3>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="container">
+                                <form class="form-vertical" action="/webscanners/edit_vuln/" method="POST">
+                                    {% csrf_token %}
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                                        </button>
+                                        <h3>Vulnerability</h3>
+                                    </div>
+
+                                    <div class="modal-body">
+
                                         <h2>Edit Vulnerability</h2>
                                         <p>Vulnerability Name : {{ data.name }}</p>
-                                        <form>
-                                            <div class="form-group">
-                                                <label>Name:</label>
-                                                <textarea class="form-control" rows="1"
-                                                >{{ data.name }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Severity:</label>
-                                                <textarea class="form-control" rows="1"
-                                                >{{ data.risk }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>URL:</label>
-                                                <textarea class="form-control" rows="1"
-                                                >{{ data.url }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Descriptoin:</label>
-                                                <textarea class="form-control" rows="5" cols="100">{{ data.description }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Solution:</label>
-                                                <textarea class="form-control" rows="5" cols="100"
-                                                >{{ data.solution }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Parameter:</label>
-                                                <textarea class="form-control" rows="1"
-                                                >{{ data.param }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>sourceid:</label>
-                                                <textarea class="form-control" rows="1"
-                                                >{{ data.sourceid }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>attack:</label>
-                                                <textarea class="form-control" rows="1"
-                                                >{{ data.attack }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>reference:</label>
-                                                <textarea class="form-control" rows="1"
-                                                >{{ data.reference }}</textarea>
-                                            </div>
 
-                                        </form>
+
+                                        <input name="vuln_id" value="{{data.vuln_id}}" type="hidden">
+                                        <div class="form-group">
+                                            <label>Name:</label>
+                                            <textarea class="form-control" rows="1" name="name"
+                                            >{{ data.name }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Severity:</label>
+                                            <textarea class="form-control" rows="1" name="risk"
+                                            >{{ data.risk }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>URL:</label>
+                                            <textarea class="form-control" rows="1" style="min-width: 70%"
+                                                      name="url"
+                                            >{{ data.url }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Descriptoin:</label>
+                                            <textarea class="form-control" rows="8" name="description"
+                                                      style="min-width: 100%">{{ data.description }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Solution:</label>
+                                            <textarea class="form-control" rows="8" name="solution"
+                                                      style="min-width: 100%">{{ data.solution }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Parameter:</label>
+                                            <textarea class="form-control" name="param" rows="1"
+                                            >{{ data.param }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>sourceid:</label>
+                                            <textarea class="form-control" rows="1" name="sourceid"
+                                            >{{ data.sourceid }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>attack:</label>
+                                            <textarea class="form-control" rows="1" name="attack"
+                                            >{{ data.attack }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>reference:</label>
+                                            <textarea class="form-control" rows="5" style="min-width: 70%"
+                                                      name="reference"
+                                            >{{ data.reference }}</textarea>
+                                        </div>
+
+
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                                    <button class="btn btn-primary">Save changes</button>
-                                </div>
+                                    <div class="modal-footer">
+                                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close
+                                        </button>
+                                        <button class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="{{data.vuln_id}}off">
+
                             </div>
                             {% endfor %}
                             </tbody>
@@ -162,9 +184,3 @@
 </div>
 
 {% endblock %}
-
-
-<!-- Button trigger modal -->
-<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm">
-    Launch Normal Form
-</button>

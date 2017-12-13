@@ -242,7 +242,7 @@ def vuln_details(request):
 
     zap_all_vul = zap_scan_results_db.objects.filter(Q(scan_id=scan_vul)).order_by('scan_id')
 
-    return render_to_response('vuln_details.html', {'zap_all_vul': zap_all_vul})
+    return render(request, 'vuln_details.html', {'zap_all_vul': zap_all_vul})
 
 
 def setting(request):
@@ -367,10 +367,39 @@ def exclude_url(request):
     exclude_save = excluded_db(exclude_url=exclud)
     exclude_save.save()
 
-    return render(request, 'webscanner.html',)
+    return render(request, 'webscanner.html', )
 
 
 def edit_vuln(request):
-    vuln_id = request.POST.get('vuln_id')
+    all_vuln = zap_scan_results_db.objects.all()
+    if request.method == 'POST':
+        vuln_id = request.POST.get("vuln_id")
+        print vuln_id
+        name = request.POST.get("name")
+        risk = request.POST.get("risk")
+        url = request.POST.get("url")
+        description = request.POST.get("description")
+        solution = request.POST.get("solution")
+        param = request.POST.get("param")
+        sourceid = request.POST.get("sourceid")
+        attack = request.POST.get("attack")
+        reference = request.POST.get("reference")
 
-    return render(request, 'vuln_details.html')
+        print "edit_vul :", name
+
+        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, risk=risk, url=url, description=description,
+                                                               solution=solution, param=param,
+                                                               sourceid=sourceid, attack=attack, reference=reference)
+
+        return HttpResponseRedirect("/webscanners/scans_list/")
+
+
+
+def del_vuln(request):
+
+    if request.method == 'POST':
+        vuln_id = request.POST.get("del_vuln")
+
+        delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
+        delete_vuln.delete()
+        return HttpResponseRedirect("/webscanners/scans_list/")

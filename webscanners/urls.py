@@ -21,4 +21,6 @@ urlpatterns = [
     url(r'^sel_login', views.sel_login, name='sel'),
     url(r'save_cookie', views.save_cookie, name='save_cookie'),
     url(r'exclude_url', views.exclude_url, name='exclude_url'),
+    url(r'^edit_vuln', views.edit_vuln, name='edit_vuln'),
+    url(r'^del_vuln', views.del_vuln, name='del_vuln'),
 ]
