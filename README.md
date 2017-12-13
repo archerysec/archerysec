@@ -1,8 +1,10 @@
 Archerysecurity
 =================
+Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to scan and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scans for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium based spider. The developers can also utilize the tool for implementation of CI/CD into their environment.
 
 ## archerysecurity - a security tool
 Vulnerability Assessment Tool (In Development)
+
 
 <p align="center">
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
@@ -13,6 +15,8 @@ Vulnerability Assessment Tool (In Development)
 * Perform Web and Network vulnerability Scanning using opensource tools.
 * Perform authenticated web scanning.
 * Perform scanning using selenium.
+* Manage scans and vulnerabilities.
+* Add and remove vulnerabilities.
 
 ## Note
 Currently project is in developement phase and still lot of work going on.
