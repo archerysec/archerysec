@@ -399,7 +399,17 @@ def del_vuln(request):
 
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln")
-
+        un_scanid = request.POST.get("scan_id")
         delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
         delete_vuln.delete()
+
+        zap_all_vul = zap_scan_results_db.objects.filter(Q(scan_id=un_scanid)).order_by('scan_id')
+        total_vul = len(zap_all_vul)
+        total_high = len(zap_all_vul.filter(risk="High"))
+        total_medium = len(zap_all_vul.filter(risk="Medium"))
+        total_low = len(zap_all_vul.filter(risk="Low"))
+
+        zap_scans_db.objects.filter(scan_scanid=un_scanid).update(total_vul=total_vul, high_vul=total_high,
+                                                                  medium_vul=total_medium, low_vul=total_low)
+
         return HttpResponseRedirect("/webscanners/scans_list/")

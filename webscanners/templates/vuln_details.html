@@ -62,6 +62,7 @@
                                         <form action="/webscanners/del_vuln/" method="POST" class="form-horizontal">
                                             {% csrf_token %}
                                             <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                             <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                         </form>
                                     </div>

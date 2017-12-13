@@ -22,6 +22,7 @@ Currently project is in developement phase and still lot of work going on.
 * Python 2.7
 * OpenVas 8
 * OWASP ZAP 2.7.0
+* Selenium Python (Firefox Webdriver)
 
 # Installation #
 
