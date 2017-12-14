@@ -79,6 +79,7 @@ def index(request):
     all_scans = zap_scans_db.objects.all()
     all_spider_results = zap_spider_results.objects.all()
     all_excluded_url = excluded_db.objects.all()
+    all_cookies = cookie_db.objects.all()
 
     if request.POST.get("url"):
         global target_url
@@ -227,7 +228,7 @@ def index(request):
     return render(request, 'webscanner.html',
                   {'all_urls': all_urls, 'spider_status': spider_status, 'scans_status': scans_status,
                    'all_scans': all_scans, 'all_spider_results': all_spider_results, 'spider_alert': spider_alert,
-                   'all_excluded_url': all_excluded_url})
+                   'all_excluded_url': all_excluded_url, 'all_cookies': all_cookies})
 
 
 def scan_list(request):
@@ -360,6 +361,8 @@ def sel_login(request):
             print "Cookies from text :", cookie_data
             cookie_save = cookie_db(url=new_uri, cookie=cookie_data)
             cookie_save.save()
+
+        messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
     return render(request, 'webscanner.html', )
 
