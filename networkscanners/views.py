@@ -6,19 +6,17 @@ from openvas_lib import VulnscanManager, VulnscanException
 from networkscanners.models import scan_save_db, ov_scan_result_db, openvas_info
 import time
 from django.db.models import Q
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 
-# scan_host = ""
-# user = ""
-# password = ""
+openvas = openvas_info.objects.all()
 
-# openvas = open_vas_db.objects.all()
-#
-# for dat in openvas:
-#     scan_host = str(dat.scan_host)
-#     user = str(dat.openvas_user)
-#     password = str(dat.openvas_password)
+for dat in openvas:
+    scan_host = str(dat.openvas_host)
+    user = str(dat.openvas_user)
+    password = str(dat.openvas_password)
 
-status = "0"
+status = ""
 name = ""
 creation_time = ""
 modification_time = ""
@@ -36,7 +34,6 @@ bid = ""
 xref = ""
 tags = ""
 banner = ""
-
 
 
 def index(request):
@@ -59,7 +56,7 @@ def scan_vul_details(request):
     else:
         scan_id = ''
 
-    all_vuln = ov_scan_result_db.objects.filter(Q(scan_id=scan_id)).order_by('scan_id')
+    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('scan_id')
 
     # all_vul_data = ov_scan_result_db.objects.all()
 
@@ -68,11 +65,12 @@ def scan_vul_details(request):
 
 def launch_scan(request):
     all_ip = scan_save_db.objects.all()
+
     scanner = VulnscanManager(scan_host, user, password)
     time.sleep(5)
     if request.method == 'POST':
         all_ip = scan_save_db.objects.all()
-        scan_ip = request.POST.get('url')
+        scan_ip = request.POST.get('ip')
         profile = None
         if profile is None:
             profile = "Full and fast"
@@ -282,7 +280,6 @@ def ip_scan_table(request):
 
 
 def openvas_details(request):
-
     if request.method == 'POST':
         scan_host = request.POST.get("scan_host")
         openvas_user = request.POST.get("openvas_user")
@@ -298,5 +295,62 @@ def openvas_details(request):
 
 
 def openvas_setting(request):
+    return render(request, 'setting_form.html', )
 
-    return render(request, 'setting_form.html',)
+
+def del_vuln(request):
+    if request.method == 'POST':
+        vuln_id = request.POST.get("del_vuln")
+        un_scanid = request.POST.get("scan_id")
+        delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
+        delete_vuln.delete()
+
+        ov_all_vul = ov_scan_result_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
+        total_vul = len(ov_all_vul)
+        total_high = len(ov_all_vul.filter(threat="High"))
+        total_medium = len(ov_all_vul.filter(threat="Medium"))
+        total_low = len(ov_all_vul.filter(threat="Low"))
+
+        scan_save_db.objects.filter(scan_id=un_scanid).update(total_vul=total_vul, high_total=total_high,
+                                                              medium_total=total_medium, low_total=total_low)
+        messages.success(request, "Deleted vulnerability")
+
+        return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % un_scanid)
+
+
+def edit_vuln(request):
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        vul_id = request.POST.get("vuln_id")
+
+        name = request.POST.get("name")
+        creation_time = request.POST.get("creation_time")
+        modification_time = request.POST.get("modification_time")
+        host = request.POST.get("host")
+        port = request.POST.get("port")
+        threat = request.POST.get("threat")
+        severity = request.POST.get("severity")
+        description = request.POST.get("description")
+        family = request.POST.get("family")
+        cvss_base = request.POST.get("cvss_base")
+        cve = request.POST.get("cve")
+        # bid = request.POST.get("bid")
+        xref = request.POST.get("xref")
+        tags = request.POST.get("tags")
+        banner = request.POST.get("banner")
+
+        print "edit_vul :", name
+
+        ov_scan_result_db.objects.filter(vul_id=vul_id).update(name=name,
+                                                                 creation_time=creation_time,
+                                                                 modification_time=modification_time,
+                                                                 host=host, port=port,
+                                                                 threat=threat,
+                                                                 severity=severity,
+                                                                 description=description, family=family,
+                                                                 cvss_base=cvss_base, cve=cve,
+                                                                 xref=xref, tags=tags, banner=banner)
+
+        messages.success(request, "Vulnerability Edited")
+
+        return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % scan_id)

@@ -12,4 +12,6 @@ urlpatterns = [
     url(r'^ip_table', views.ip_scan_table, name='ip_scan_table'),
     url(r'^openvas_setting', views.openvas_setting, name='openvas_setting'),
     url(r'^openvas_details', views.openvas_details, name='openvas_details'),
+    url(r'^del_vuln', views.del_vuln, name='del_vuln'),
+    url(r'^edit_vuln', views.edit_vuln, name='edit_vuln'),
 ]

@@ -19,23 +19,22 @@
 
  $(document).on('submit', '#start_scan', function(e){
         e.preventDefault();
-        document.getElementById("start_scan").reset();
-        if ($('[name="optradio2"]').is(':checked')){
+        if ($('[name="optradio1"]').is(':checked')){
             $.ajax({
                 type:'POST',
-                url:'/webscanners/',
+                url:'/networkscanners/launch_scan/',
                 data:{
 
-                   url:$('#url').val(),
+                   ip:$('#ip').val(),
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                 },
                 sucess:function(){
 
                 }
             });
-        this.reset();
+       this.reset();
        }
-       else if ($('[name="optradio1"]').is(':checked')){
+       else if ($('[name="optradio2"]').is(':checked')){
            $.ajax({
                     type:'POST',
                     url:'/networkscanners/launch_scan/',
@@ -84,9 +83,9 @@
                                 {% csrf_token %}
                                 <div class="control-group">
                                     <label>IP :</label>
-                                        <input type="text" name="url" id="url" class="form-control"
-                                               value="{{ url }}">
-                                        <input type="submit" onclick="window.location.reload()" class="btn btn-primary" value="Launch">
+                                        <input type="text" name="ip" id="ip"
+                                           value="{{ ip }}">
+                                        <input type="submit"  class="btn btn-primary" value="Launch">
                                 </div>
                             </form>
                         </div>
@@ -98,26 +97,6 @@
                                     <input name="optradio1" type="checkbox"><span>OpenVas</span>
                                 </label>
                             </div>
-                            <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                                <!--<label>-->
-                                    <!--<input name="optradio2" type="checkbox"><span>SSL Scan</span>-->
-                                <!--</label>-->
-                            <!--</div>-->
-                            <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                                <!--<label>-->
-                                    <!--<input name="optradio3" type="checkbox"><span>Nmap</span>-->
-                                <!--</label>-->
-                            <!--</div>-->
-                            <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                                <!--<label>-->
-                                    <!--<input name="optradio3" type="checkbox"><span>Nikto</span>-->
-                                <!--</label>-->
-                            <!--</div>-->
-                            <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                                <!--<label>-->
-                                    <!--<input name="optradio3" type="checkbox"><span>Datasploit</span>-->
-                                <!--</label>-->
-                            <!--</div>-->
                         </div>
                     </div>
                 </div>

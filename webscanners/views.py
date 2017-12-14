@@ -403,7 +403,6 @@ def edit_vuln(request):
         return HttpResponseRedirect("/zap_vul_details/?scan_id=%s" % scan_id)
 
 
-
 def del_vuln(request):
 
     if request.method == 'POST':
@@ -412,7 +411,7 @@ def del_vuln(request):
         delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
         delete_vuln.delete()
 
-        zap_all_vul = zap_scan_results_db.objects.filter(Q(scan_id=un_scanid)).order_by('scan_id')
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
         total_vul = len(zap_all_vul)
         total_high = len(zap_all_vul.filter(risk="High"))
         total_medium = len(zap_all_vul.filter(risk="Medium"))
@@ -422,5 +421,4 @@ def del_vuln(request):
                                                                   medium_vul=total_medium, low_vul=total_low)
         messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/webscanners/scans_list/")
-    return render(request, 'scan_list.html')
+        return HttpResponseRedirect("/zap_vul_details/?scan_id=%s" % un_scanid)
