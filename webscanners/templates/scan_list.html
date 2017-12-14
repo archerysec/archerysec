@@ -31,22 +31,22 @@
                 href="#" class="current">Domain Scan List</a></div>
 
         <h1>Scans</h1>
+    </div>
+
+    <div class="container-fluid">
+        <hr>
         <div class="span3 offset6">
     {% if messages %}
 
     {% for message in messages %}
     <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
                                                     href="#">×</a>
-        <h8 class="alert-heading">{{ message }}</h8>
+        <p class="alert-heading">{{ message }}</p>
     </div>
     {% endfor %}
 
     {% endif %}
     </div>
-    </div>
-
-    <div class="container-fluid">
-        <hr>
         <div class="row-fluid">
             <div class="span9 offset1">
                 <div class="widget-box">

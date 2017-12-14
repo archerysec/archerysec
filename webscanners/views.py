@@ -380,6 +380,7 @@ def edit_vuln(request):
     all_vuln = zap_scan_results_db.objects.all()
     if request.method == 'POST':
         vuln_id = request.POST.get("vuln_id")
+        scan_id = request.POST.get("scan_id")
         print vuln_id
         name = request.POST.get("name")
         risk = request.POST.get("risk")
@@ -397,7 +398,9 @@ def edit_vuln(request):
                                                                solution=solution, param=param,
                                                                sourceid=sourceid, attack=attack, reference=reference)
 
-        return HttpResponseRedirect("/webscanners/scans_list/")
+        messages.success(request, "Vulnerability Edited")
+
+        return HttpResponseRedirect("/zap_vul_details/?scan_id=%s" % scan_id)
 
 
 
