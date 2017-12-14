@@ -23,17 +23,28 @@
   <!--}-->
   <!--setInterval('autoRefresh_div()', 5000);-->
 
-
-
-
 </script>
 
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
                 href="#" class="current">Domain Scan List</a></div>
+
         <h1>Scans</h1>
+        <div class="span3 offset6">
+    {% if messages %}
+
+    {% for message in messages %}
+    <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                    href="#">×</a>
+        <h8 class="alert-heading">{{ message }}</h8>
     </div>
+    {% endfor %}
+
+    {% endif %}
+    </div>
+    </div>
+
     <div class="container-fluid">
         <hr>
         <div class="row-fluid">
@@ -41,6 +52,7 @@
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Domain Scan List</h5>
+
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-bordered data-table">
@@ -77,16 +89,17 @@
                                     <!--<a href="/del_scan/?scan_scanid={{data.scan_scanid}}" class="badge badge-danger">-->
                                     <!--Delete</a>-->
                                     <div class="btn-group">
-                                        <a class="btn btn-primary" href="/zap_vul_details/?scan_id={{data.scan_scanid}}"><i class="icon-tasks icon-white"></i>
-                                            </a>
+                                        <a class="btn btn-primary"
+                                           href="/zap_vul_details/?scan_id={{data.scan_scanid}}"><i
+                                                class="icon-tasks icon-white"></i>
+                                        </a>
                                         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
                                                 class="caret"></span></a>
                                         <ul class="dropdown-menu">
-                                            <li><a href="/zap_vul_details/?scan_id={{data.scan_scanid}}"><i class="icon-pencil"></i> View </a></li>
-                                            <li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i class="icon-trash"></i> Delete</a></li>
-                                            <!--<li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>-->
-                                            <!--<li class="divider"></li>-->
-                                            <!--<li><a href="#"><i class="i"></i> Make admin</a></li>-->
+                                            <li><a href="/zap_vul_details/?scan_id={{data.scan_scanid}}"><i
+                                                    class="icon-pencil"></i> View </a></li>
+                                            <li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i
+                                                    class="icon-trash"></i> Delete</a></li>
                                         </ul>
                                     </div>
                                 </td>

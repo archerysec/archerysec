@@ -8,7 +8,6 @@ import os
 import json
 from zapv2 import ZAPv2
 import time
-from django.contrib import messages
 from scanners import zapscanner
 from stronghold.decorators import public
 from django.contrib import auth
@@ -16,6 +15,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
 import uuid
 from selenium import webdriver
+from django.contrib import messages
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -86,6 +86,9 @@ def index(request):
         print target_url
         abc = zapscanner.start_zap()
         print abc
+
+        messages.success(request, "ZAP Started")
+        messages.add_message(request, messages.SUCCESS, 'ZAP Started')
 
         time.sleep(10)
 
@@ -297,9 +300,9 @@ def del_scan(request):
     if request.method == 'GET':
         item_id = request.GET['scan_scanid']
 
-        item = zap_scans_db.objects.filter(Q(scan_scanid=item_id)).order_by('scan_scanid')
+        item = zap_scans_db.objects.filter(scan_scanid=item_id)
         item.delete()
-        item_results = zap_scan_results_db.objects.filter(Q(scan_id=item_id)).order_by('scan_id')
+        item_results = zap_scan_results_db.objects.filter(scan_id=item_id)
         item_results.delete()
 
     return render_to_response('scan_list.html', {'all_scans': all_scans})
@@ -411,5 +414,7 @@ def del_vuln(request):
 
         zap_scans_db.objects.filter(scan_scanid=un_scanid).update(total_vul=total_vul, high_vul=total_high,
                                                                   medium_vul=total_medium, low_vul=total_low)
+        messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/webscanners/scans_list/")
+    return render(request, 'scan_list.html')

@@ -119,18 +119,29 @@ $(document).on('submit', '#exclude_url', function(e){
   }
  setInterval('autoRefresh_div()', 5000);
 
-
-
 </script>
 
 <div id="content">
+
     <!--breadcrumbs-->
     <div id="content-header">
         <div id="breadcrumb"><a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
             Home</a></div>
     </div>
-    <div class="container-fluid">
-        <div class="row-fluid">
+    <div class="row-fluid">
+        <div class="span3 offset1">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <h2 class="alert-heading">{{ message }}</h2>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+        </div>
+        <div class="container-fluid">
             <div class="span6 offset3">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
@@ -156,32 +167,6 @@ $(document).on('submit', '#exclude_url', function(e){
                                 <input name="optradio1" type="checkbox"><span>Zap Scanner</span>
                             </label>
                         </div>
-                        <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                        <!--<label>-->
-                        <!--<input name="optradio2" type="checkbox"><span>SSL Scan</span>-->
-                        <!--</label>-->
-                        <!--</div>-->
-                        <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                        <!--<label>-->
-                        <!--<input name="optradio2" type="checkbox"><span>Nikto</span>-->
-                        <!--</label>-->
-                        <!--</div>-->
-                        <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                        <!--<label>-->
-                        <!--<input name="optradio2" type="checkbox"><span>Datasploit</span>-->
-                        <!--</label>-->
-                        <!--</div>-->
-                        <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                        <!--<label>-->
-                        <!--<input name="optradio2" type="checkbox"><span>Wordpress</span>-->
-                        <!--</label>-->
-                        <!--</div>-->
-                        <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                        <!--<label>-->
-                        <!--<input name="optradio3" type="checkbox"><span>Nmap</span>-->
-                        <!--</label>-->
-                        <!--</div>-->
-                        <!--Advance html-->
                         <div class="fr">
                             <a data-toggle="modal" href="#advance" class="btn btn-success btn-mini">Advance</a>
                             <div class="modal fade bs-example-modal-lg" id="advance" tabindex="-1"
@@ -225,11 +210,7 @@ $(document).on('submit', '#exclude_url', function(e){
                                                                    value="save_cookie">
                                                             <input type="submit" class="btn btn-success" value="Save">
                                                         </div>
-                                                        <!--<div>-->
-                                                        <!--<div class="fr"><a href="#" class="btn btn-primary btn-mini">Login</a>-->
-                                                        <!--<a href="#" class="btn btn-success btn-mini">Save</a>-->
-                                                        <!--</div>-->
-                                                        <!--</div>-->
+
                                                     </div>
                                                 </form>
                                                 <form id="exclude_url" class="form-horizontal">
@@ -239,13 +220,10 @@ $(document).on('submit', '#exclude_url', function(e){
                                                         <div class="controls">
                                                             <input type="text" name="exclude_url"
                                                                    value="{{ exclude_url }}">
-                                                            <input type="submit" class="btn btn-primary" value="Exclude">
+                                                            <input type="submit" class="btn btn-primary"
+                                                                   value="Exclude">
                                                         </div>
-                                                        <!--<div>-->
-                                                        <!--<div class="fr"><a href="#" class="btn btn-primary btn-mini">Login</a>-->
-                                                        <!--<a href="#" class="btn btn-success btn-mini">Save</a>-->
-                                                        <!--</div>-->
-                                                        <!--</div>-->
+
                                                     </div>
                                                 </form>
                                             </div>
@@ -257,26 +235,26 @@ $(document).on('submit', '#exclude_url', function(e){
 
                     </div>
                     <div class="center">
-                                <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                                    <h5>Excluded URL's</h5>
-                                </div>
-                                <div class="widget-content nopadding">
-                                    <table class="table table-bordered data-table">
-                                        <thead>
-                                        <tr>
-                                            <th>URL</th>
+                        <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                            <h5>Excluded URL's</h5>
+                        </div>
+                        <div class="widget-content nopadding">
+                            <table class="table table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    <th>URL</th>
 
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr data-target="#">{% for data in all_excluded_url %}
-                                            <td>{{data.exclude_url}}</td>
-                                        </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr data-target="#">{% for data in all_excluded_url %}
+                                    <td>{{data.exclude_url}}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <div id="result" class="widget-box">
 
                         <div class="widget-content">
@@ -319,4 +297,4 @@ $(document).on('submit', '#exclude_url', function(e){
     </div>
 </div>
 
-    {% endblock %}
+{% endblock %}
