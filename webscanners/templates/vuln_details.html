@@ -92,6 +92,7 @@
                                         <div class="modal-body">
                                             <strong> Vulnerability Name: </strong>{{ data.name }}<br><br>
                                             <strong> Severity: </strong> {{ data.risk }}<br><br>
+                                            <strong> Message ID: </strong> {{ data.messageId }}<br><br>
                                             <strong> URL : </strong>{{data.url}} <br><br>
                                             <strong> Descriptoin : </strong><br>
                                             {{data.description}}<br><br>
@@ -101,6 +102,10 @@
                                             <strong> attack : </strong>{{data.attack}}<br><br>
                                             <strong> reference : </strong>{{data.reference}}<br><br>
                                             <strong> Solution : </strong>{{data.solution}}<br><br>
+                                            <strong> Request & response :</strong>
+                                            <br>
+                                            <hr>
+                                            <pre>{{ data.req_res }}</pre>
                                         </div>
                                     </div>
                                 </div>

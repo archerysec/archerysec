@@ -210,7 +210,7 @@ def index(request):
 
         time.sleep(5)
 
-        zap_all_vul = zap_scan_results_db.objects.filter(Q(scan_id=un_scanid)).order_by('scan_id')
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
         total_vul = len(zap_all_vul)
         total_high = len(zap_all_vul.filter(risk="High"))
         total_medium = len(zap_all_vul.filter(risk="Medium"))
@@ -222,6 +222,13 @@ def index(request):
         spider_alert = "Scan Completed"
 
         time.sleep(5)
+
+        for msg in zap_all_vul:
+            # vul_id = msg.vuln_id
+            msg_id = msg.messageId
+
+            request_response = zap.core.message(id=msg_id)
+            zap_scan_results_db.objects.filter(messageId=msg_id).update(req_res=request_response)
 
         # vuln_num = zap.core.number_of_alerts(target_url)
 
