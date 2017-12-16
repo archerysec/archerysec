@@ -10,6 +10,10 @@ Vulnerability Assessment Tool (In Development)
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
 
+# Demo
+(https://github.com/anandtiwarics/archerysecurity/blob/master/Photos/archery_demo.gif)
+
+
 # Overview of the tool:
 * Vulnerability Assessment Web Application Tool.
 * Perform Web and Network vulnerability Scanning using opensource tools.
@@ -48,23 +52,3 @@ $ python manage.py runserver
 * Concurrent Scans
 * CI/CD implementation.
 * Easy to installing
-
-# Screenshots
-
-Domain Scan
-
-<p align="center">
-  <img  src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/Photos/domain_Scan.png">
-</p>
-
-Scan List
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/Photos/scan_list.png">
-</p>
-
-Vulnerabilities List
-
-<p align="center">
-  <img  src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/Photos/vuln_list.png">
-</p>
