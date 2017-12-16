@@ -11,7 +11,7 @@ Vulnerability Assessment Tool (In Development)
 </p>
 
 # Demo
-(https://github.com/anandtiwarics/archerysecurity/blob/master/Photos/archery_demo.gif)
+![Demo](https://github.com/anandtiwarics/archerysecurity/blob/master/Photos/archery_demo.gif)
 
 
 # Overview of the tool:
