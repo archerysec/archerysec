@@ -36,6 +36,7 @@ Currently project is in developement phase and still lot of work going on.
 
 <pre>
 $ git clone https://github.com/anandtiwarics/archerysecurity.git
+$ cd /archerysecurity
 $ pip install -r requirements.txt
 $ python manage.py collectstatic
 $ python manage.py makemigrations networkscanners
@@ -49,6 +50,8 @@ $ python manage.py runserver
 * REST API implementation.
 * API vulnerability scanning.
 * Perform Reconnaissance before scanning.
-* Concurrent Scans
+* Concurrent Scans.
 * CI/CD implementation.
-* Easy to installing
+* Easy to installing.
+* Vulnerability POC picture.
+* Cloud Security scanning.
