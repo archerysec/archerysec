@@ -136,7 +136,7 @@ def index(request):
         total_spider = len(spider_res_out)
         save_spider_results = zap_spider_results(spider_id=(scanid), spider_urls=(data_out))
         save_spider_results.save()
-        del_temp = zap_spider_db.objects.filter(Q(spider_scanid__icontains=scanid)).order_by('spider_scanid')
+        del_temp = zap_spider_db.objects.filter(spider_scanid__icontains=scanid).order_by('spider_scanid')
         del_temp.delete()
         save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid, urls_num=total_spider)
         save_all.save()
@@ -251,7 +251,7 @@ def vuln_details(request):
     else:
         scan_vul = ''
 
-    zap_all_vul = zap_scan_results_db.objects.filter(Q(scan_id=scan_vul)).order_by('scan_id')
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul).order_by('scan_id')
 
     return render(request, 'vuln_details.html', {'zap_all_vul': zap_all_vul})
 
