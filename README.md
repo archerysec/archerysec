@@ -1,8 +1,8 @@
-Archerysecurity
+Archerysec
 =================
 Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to scan and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scans for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium based spider. The developers can also utilize the tool for implementation of CI/CD into their environment.
 
-## archerysecurity - a security tool
+## archerysec - a security tool
 Vulnerability Assessment Tool (In Development)
 
 
@@ -28,7 +28,7 @@ Currently project is in developement phase and still lot of work going on.
 ## Requirement
 
 * Python 2.7
-* OpenVas 8 
+* OpenVas 8
 * OWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)
 * Selenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)
 
