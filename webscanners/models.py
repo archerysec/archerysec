@@ -50,6 +50,18 @@ class zap_scan_results_db(models.Model):
     description = models.TextField(blank=True)
     req_res = models.TextField(blank=True)
 
+    note = models.TextField(blank=True)
+    rtt = models.TextField(blank=True)
+    tags = models.TextField(blank=True)
+    timestamp = models.TextField(blank=True)
+    responseHeader = models.TextField(blank=True)
+    requestBody = models.TextField(blank=True)
+    responseBody = models.TextField(blank=True)
+    requestHeader = models.TextField(blank=True)
+    cookieParams = models.TextField(blank=True)
+    res_type = models.TextField(blank=True)
+    res_id = models.TextField(blank=True)
+
 
 class cookie_db(models.Model):
     url = models.TextField(blank=True)

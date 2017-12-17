@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'archerysecurity',
+    'rest_framework',
     'webscanners',
     'networkscanners',
     'django.contrib.admin',
@@ -138,3 +139,10 @@ STRONGHOLD_PUBLIC_URLS = (
 LOGIN_URL = '/login/'
 
 LOGIN_REDIRECT_URL = '/user/accounts/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ],
+    'PAGE_SIZE': 10
+}
