@@ -1,9 +1,10 @@
 Archerysec
 =================
-Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to scan and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scans for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium based spider. The developers can also utilize the tool for implementation of CI/CD into their environment.
+Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scaning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.
 
-## archerysec - a security tool
-Vulnerability Assessment Tool (In Development)
+
+## archerysec -
+Open Source Vulnerability Assessment and Management (In Development)
 
 
 <p align="center">
@@ -15,12 +16,13 @@ Vulnerability Assessment Tool (In Development)
 
 
 # Overview of the tool:
-* Vulnerability Assessment Web Application Tool.
 * Perform Web and Network vulnerability Scanning using opensource tools.
+* Correlates and Collaborate all raw scans data, show them in a consolidated manner.
 * Perform authenticated web scanning.
-* Perform scanning using selenium.
-* Manage scans and vulnerabilities.
-* Add and remove vulnerabilities.
+* Perform web application scanning using selenium.
+* Vulnerability Managment.
+* Enable REST API's for developers to perform scaning and Vulnerability Managment.
+* Useful for DevOps teams for Vulnerability Managment.
 
 ## Note
 Currently project is in developement phase and still lot of work going on.
@@ -47,11 +49,11 @@ $ python manage.py runserver
 </pre>
 
 # Road Map
-* REST API implementation.
-* API vulnerability scanning.
+
+* API Automated vulnerability scanning.
 * Perform Reconnaissance before scanning.
 * Concurrent Scans.
-* CI/CD implementation.
-* Easy to installing.
-* Vulnerability POC picture.
+* Vulnerability POC pictures.
 * Cloud Security scanning.
+* Dashboards
+* Easy to installing.
