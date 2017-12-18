@@ -290,6 +290,7 @@ def openvas_details(request):
         #
         dump_all = openvas_info(openvas_host=scan_host, openvas_user=openvas_user, openvas_password=openvas_password)
         dump_all.save()
+        messages.add_message(request, messages.SUCCESS, 'OpenVAS Setting Updated ')
 
     return render(request, 'setting_form.html', )
 

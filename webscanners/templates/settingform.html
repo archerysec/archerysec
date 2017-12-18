@@ -4,13 +4,14 @@
     <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
     <ul>
         <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
-        <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span class="label label-important">2</span></a>
-      <ul>
-        <li ><a href="/webscanners/">Domain</a></li>
-        <li ><a href="/networkscanners/ip_scan/">IP</a></li>
-      </ul>
-    </li>
-        <li ><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
+                class="label label-important">2</span></a>
+            <ul>
+                <li><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan/">IP</a></li>
+            </ul>
+        </li>
+        <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
         <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
     </ul>
 </div>
@@ -22,6 +23,18 @@
     </div>
     <div class="container-fluid">
         <hr>
+        <div class="span3 offset6">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <p class="alert-heading">{{ message }}</p>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+        </div>
         <div class="row-fluid">
             <div class="span6">
                 <div class="widget-box">

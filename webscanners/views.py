@@ -269,6 +269,11 @@ def setting(request):
                   {'apikey': apikey, 'zapath': zapath, 'zap_port': zap_port, 'openvas_set': openvas_set})
 
 
+def zap_setting(request):
+
+    return render(request, 'settingform.html')
+
+
 def zap_set_update(request):
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
@@ -293,6 +298,8 @@ def zap_set_update(request):
         f.seek(0)
         json.dump(data, f, indent=4)
         f.truncate()
+
+    messages.add_message(request, messages.SUCCESS, 'ZAP Setting Updated ')
 
     return render(request, 'settingform.html', )
 

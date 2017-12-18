@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^vuln_list/', views.scan_list, name='vuln_list'),
     url(r'^vuln_details/', views.vuln_details, name='vuln_details'),
     url(r'^setting/', views.setting, name='setting'),
+    url(r'^zapsetting/', views.zap_setting, name='zap_setting'),
     url(r'^setting_edit/', views.zap_set_update, name='setting_edit'),
     url(r'^scans_list', views.scan_list, name='setting'),
     url(r'^scans_table', views.scan_table, name='scans_table'),
