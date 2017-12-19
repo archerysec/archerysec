@@ -1,0 +1,54 @@
+{
+    "docs": [
+        {
+            "location": "/", 
+            "text": "Archerysec\n\n\nArchery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scaning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.\n\n\narcherysec -\n\n\nOpen Source Vulnerability Assessment and Management (In Development)\n\n\n\n  \n\n\n\n\n\nDemo\n\n\n\n\nOverview of the tool:\n\n\n\n\nPerform Web and Network vulnerability Scanning using opensource tools.\n\n\nCorrelates and Collaborate all raw scans data, show them in a consolidated manner.\n\n\nPerform authenticated web scanning.\n\n\nPerform web application scanning using selenium.\n\n\nVulnerability Managment.\n\n\nEnable REST API's for developers to perform scaning and Vulnerability Managment.\n\n\nUseful for DevOps teams for Vulnerability Managment.\n\n\n\n\nNote\n\n\nCurrently project is in developement phase and still lot of work going on.\n\n\nRequirement\n\n\n\n\nPython 2.7\n\n\nOpenVas 8\n\n\nOWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)\n\n\nSelenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)\n\n\n\n\nInstallation\n\n\n\n$ git clone https://github.com/anandtiwarics/archerysecurity.git\n$ cd /archerysecurity\n$ pip install -r requirements.txt\n$ python manage.py collectstatic\n$ python manage.py makemigrations networkscanners\n$ python manage.py makemigrations webscanners\n$ python manage.py migrate\n$ python manage.py createsuperuser\n$ python manage.py runserver\n\n\n\n\nSetup Setting\n\n\nZap Setting\n\n\n\n\nGo to Setting Page\n\n\nEdit ZAP setting or navigate URL : http://host:port/setting_edit/\n\n\nFill all required information and click on save.\n\n\n\n\nOpenVAS Setting\n\n\n\n\nGo to setting Page\n\n\nEdit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting\n\n\nFill all required information and click on save.\n\n\n\n\nRoad Map\n\n\n\n\nAPI Automated vulnerability scanning.\n\n\nPerform Reconnaissance before scanning.\n\n\nConcurrent Scans.\n\n\nVulnerability POC pictures.\n\n\nCloud Security scanning.\n\n\nDashboards\n\n\nEasy to installing.", 
+            "title": "Overview"
+        }, 
+        {
+            "location": "/#archerysec", 
+            "text": "Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scaning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.", 
+            "title": "Archerysec"
+        }, 
+        {
+            "location": "/#archerysec-", 
+            "text": "Open Source Vulnerability Assessment and Management (In Development)", 
+            "title": "archerysec -"
+        }, 
+        {
+            "location": "/#demo", 
+            "text": "", 
+            "title": "Demo"
+        }, 
+        {
+            "location": "/#overview-of-the-tool", 
+            "text": "Perform Web and Network vulnerability Scanning using opensource tools.  Correlates and Collaborate all raw scans data, show them in a consolidated manner.  Perform authenticated web scanning.  Perform web application scanning using selenium.  Vulnerability Managment.  Enable REST API's for developers to perform scaning and Vulnerability Managment.  Useful for DevOps teams for Vulnerability Managment.", 
+            "title": "Overview of the tool:"
+        }, 
+        {
+            "location": "/#note", 
+            "text": "Currently project is in developement phase and still lot of work going on.", 
+            "title": "Note"
+        }, 
+        {
+            "location": "/#requirement", 
+            "text": "Python 2.7  OpenVas 8  OWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)  Selenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)", 
+            "title": "Requirement"
+        }, 
+        {
+            "location": "/#installation", 
+            "text": "$ git clone https://github.com/anandtiwarics/archerysecurity.git\n$ cd /archerysecurity\n$ pip install -r requirements.txt\n$ python manage.py collectstatic\n$ python manage.py makemigrations networkscanners\n$ python manage.py makemigrations webscanners\n$ python manage.py migrate\n$ python manage.py createsuperuser\n$ python manage.py runserver", 
+            "title": "Installation"
+        }, 
+        {
+            "location": "/#setup-setting", 
+            "text": "Zap Setting   Go to Setting Page  Edit ZAP setting or navigate URL : http://host:port/setting_edit/  Fill all required information and click on save.   OpenVAS Setting   Go to setting Page  Edit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting  Fill all required information and click on save.", 
+            "title": "Setup Setting"
+        }, 
+        {
+            "location": "/#road-map", 
+            "text": "API Automated vulnerability scanning.  Perform Reconnaissance before scanning.  Concurrent Scans.  Vulnerability POC pictures.  Cloud Security scanning.  Dashboards  Easy to installing.", 
+            "title": "Road Map"
+        }
+    ]
+}
