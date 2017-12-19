@@ -1,2 +1,7 @@
 
 *.pyc
+.idea/archerysecurity.iml
+webscanners/migrations/0001_initial.py
+site/
+.idea/
+migrations
