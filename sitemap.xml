@@ -3,7 +3,7 @@
 
     
     <url>
-     <loc>https://anandtiwarics.github.io/archerysec/</loc>
+     <loc>/</loc>
      <lastmod>2017-12-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -11,7 +11,7 @@
 
     
     <url>
-     <loc>https://anandtiwarics.github.io/archerysec/install/</loc>
+     <loc>/install/</loc>
      <lastmod>2017-12-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -19,7 +19,7 @@
 
     
     <url>
-     <loc>https://anandtiwarics.github.io/archerysec/setupGuide/</loc>
+     <loc>/setupGuide/</loc>
      <lastmod>2017-12-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -27,7 +27,7 @@
 
     
     <url>
-     <loc>https://anandtiwarics.github.io/archerysec/Usage/</loc>
+     <loc>/Usage/</loc>
      <lastmod>2017-12-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -35,7 +35,7 @@
 
     
     <url>
-     <loc>https://anandtiwarics.github.io/archerysec/contributors/</loc>
+     <loc>/contributors/</loc>
      <lastmod>2017-12-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -43,7 +43,7 @@
 
     
     <url>
-     <loc>https://anandtiwarics.github.io/archerysec/roadmap/</loc>
+     <loc>/roadmap/</loc>
      <lastmod>2017-12-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
