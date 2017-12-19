@@ -1,0 +1,8 @@
+site_name: Archery
+theme: material
+pages:
+- 'Overview': 'index.md'
+#- 'Setting up the Environment': 'setupGuide.md'
+#- Usage: 'Usage.md'
+#- Contributors: 'contributors.md'
+#- Roadmap: 'roadmap.md'
