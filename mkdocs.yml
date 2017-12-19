@@ -7,3 +7,18 @@ pages:
 - Usage: 'Usage.md'
 - Contributors: 'contributors.md'
 - Roadmap: 'roadmap.md'
+
+# Options
+extra:
+  feature:
+    tabs: true
+  palette:
+    primary: indigo
+    accent: indigo
+  social:
+    - type: github-alt
+      link: https://github.com/anandtiwarics/archerysec
+    - type: twitter
+      link: https://twitter.com/archerysec
+    - type: facebook
+      link: https://twitter.com/archerysec
