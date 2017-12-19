@@ -16,6 +16,7 @@ from django.http import HttpResponseRedirect
 import uuid
 from selenium import webdriver
 from django.contrib import messages
+import ast
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -27,6 +28,18 @@ driver = ""
 new_uri = ""
 cookies = ""
 excluded_url = ""
+
+note = ""
+rtt = ""
+tags = ""
+timestamp = ""
+responseHeader = ""
+requestBody = ""
+responseBody = ""
+requestHeader = ""
+cookieParams = ""
+res_type = ""
+res_id = ""
 
 
 # Login View
@@ -224,13 +237,58 @@ def index(request):
         time.sleep(5)
 
         for msg in zap_all_vul:
-            # vul_id = msg.vuln_id
             msg_id = msg.messageId
-
             request_response = zap.core.message(id=msg_id)
-            zap_scan_results_db.objects.filter(messageId=msg_id).update(req_res=request_response)
+            ja_son = json.dumps(request_response)
+            ss = ast.literal_eval(ja_son)
+            for key, value in ss.viewitems():
+                global note
+                if key == "note":
+                    note = value
+                global rtt
+                if key == "rtt":
+                    rtt = value
+                global tags
+                if key == "tags":
+                    tags = value
+                global timestamp
+                if key == "timestamp":
+                    timestamp = value
+                global responseHeader
+                if key == "responseHeader":
+                    responseHeader = value
+                global requestBody
+                if key == "requestBody":
+                    requestBody = value
+                global responseBody
+                if key == "responseBody":
+                    responseBody = value
+                global requestHeader
+                if key == "requestHeader":
+                    requestHeader = value
+                global cookieParams
+                if key == "cookieParams":
+                    cookieParams = value
+                global res_type
+                if key == "type":
+                    res_type = value
+                global res_id
+                if key == "id":
+                    res_id = value
 
-        # vuln_num = zap.core.number_of_alerts(target_url)
+            zap_scan_results_db.objects.filter(messageId=msg_id).update(note=note, rtt=rtt, tags=tags,
+                                                                        timestamp=timestamp,
+                                                                        responseHeader=responseHeader,
+                                                                        requestBody=requestBody,
+                                                                        responseBody=responseBody,
+                                                                        requestHeader=requestHeader,
+                                                                        cookieParams=cookieParams,
+                                                                        res_type=res_type,
+                                                                        res_id=res_id)
+            print msg_id
+            print res_id
+
+            # vuln_num = zap.core.number_of_alerts(target_url)
 
     return render(request, 'webscanner.html',
                   {'all_urls': all_urls, 'spider_status': spider_status, 'scans_status': scans_status,
@@ -270,7 +328,6 @@ def setting(request):
 
 
 def zap_setting(request):
-
     return render(request, 'settingform.html')
 
 
@@ -408,9 +465,11 @@ def edit_vuln(request):
 
         print "edit_vul :", name
 
-        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, risk=risk, url=url, description=description,
-                                                               solution=solution, param=param,
-                                                               sourceid=sourceid, attack=attack, reference=reference)
+        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, risk=risk, url=url,
+                                                                   description=description,
+                                                                   solution=solution, param=param,
+                                                                   sourceid=sourceid, attack=attack,
+                                                                   reference=reference)
 
         messages.success(request, "Vulnerability Edited")
 
@@ -418,7 +477,6 @@ def edit_vuln(request):
 
 
 def del_vuln(request):
-
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln")
         un_scanid = request.POST.get("scan_id")

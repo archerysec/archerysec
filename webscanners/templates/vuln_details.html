@@ -103,9 +103,13 @@
                                             <strong> reference : </strong>{{data.reference}}<br><br>
                                             <strong> Solution : </strong>{{data.solution}}<br><br>
                                             <strong> Request & response :</strong>
-                                            <br>
                                             <hr>
-                                            <pre>{{ data.req_res }}</pre>
+                                            <div class="span4 offset1">
+                                            <pre>{{ data.requestHeader }} <br> {{ data.requestBody }}</pre>
+                                            </div>
+                                            <div class="span4 offset1">
+                                            <pre>{{ data.responseHeader }}</pre>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
