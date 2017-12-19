@@ -1,4 +1,0 @@
-site_name: Archery
-theme: material
-pages:
-- 'Overview': 'index.md'
