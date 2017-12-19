@@ -5,3 +5,12 @@ webscanners/migrations/0001_initial.py
 site/
 .idea/
 migrations
+apidata.json
+cookies.txt
+db.sqlite3
+geckodriver.log
+networkscanners/migrations/0001_initial.py
+networkscanners/migrations/0001_initial.py
+scanners/zap.log
+webscanners/migrations/0001_initial.py
+apidata.json

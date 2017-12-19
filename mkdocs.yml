@@ -22,3 +22,13 @@ extra:
       link: https://twitter.com/archerysec
     - type: facebook
       link: https://twitter.com/archerysec
+
+# Project information
+site_name: ArcherySec
+site_description: All about ArcherySec.
+site_author: Anand Tiwari
+site_url: https://anandtiwarics.github.io/archerysec
+
+# Repository
+repo_name: anandtiwarics/archerysec
+repo_url: https://github.com/anandtiwarics/archerysec
