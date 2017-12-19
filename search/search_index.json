@@ -47,42 +47,47 @@
         }, 
         {
             "location": "/setupGuide/", 
-            "text": "Setup Setting\n\n\nZap Setting\n\n\n\n\nGo to Setting Page\n\n\nEdit ZAP setting or navigate URL : http://host:port/setting_edit/\n\n\nFill all required information and click on save.\n\n\n\n\nOpenVAS Setting\n\n\n\n\nGo to setting Page\n\n\nEdit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting\n\n\nFill all required information and click on save.", 
+            "text": "Setup Settings\n\n\nZap Setting\n\n\n\n\nGo to Setting Page\n\n\nEdit ZAP setting or navigate URL : http://host:port/setting_edit/\n\n\nFill all required information and click on save.\n\n\n\n\nOpenVAS Setting\n\n\n\n\nGo to setting Page\n\n\nEdit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting\n\n\nFill all required information and click on save.", 
             "title": "Setting up the Environment"
         }, 
         {
-            "location": "/setupGuide/#setup-setting", 
-            "text": "Zap Setting   Go to Setting Page  Edit ZAP setting or navigate URL : http://host:port/setting_edit/  Fill all required information and click on save.   OpenVAS Setting   Go to setting Page  Edit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting  Fill all required information and click on save.", 
-            "title": "Setup Setting"
-        }, 
-        {
-            "location": "/Usage/", 
-            "text": "Usage", 
-            "title": "Usage"
-        }, 
-        {
-            "location": "/Usage/#usage", 
+            "location": "/setupGuide/#setup-settings", 
             "text": "", 
-            "title": "Usage"
+            "title": "Setup Settings"
+        }, 
+        {
+            "location": "/setupGuide/#zap-setting", 
+            "text": "Go to Setting Page  Edit ZAP setting or navigate URL : http://host:port/setting_edit/  Fill all required information and click on save.", 
+            "title": "Zap Setting"
+        }, 
+        {
+            "location": "/setupGuide/#openvas-setting", 
+            "text": "Go to setting Page  Edit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting  Fill all required information and click on save.", 
+            "title": "OpenVAS Setting"
         }, 
         {
             "location": "/contributors/", 
-            "text": "Contributors", 
+            "text": "Developers are welcome who want to willingly contribute to any enhancements in the tool.\n\n\nMost active and Core Developer\n\n\nAnand Tiwari (\n@anandtiwarics\n)\n\n\nYou can contact him, in case of any query related to tool.\n\n\nHelping hands\n\n\n\n\nShubham Mittal (\n@upgoingstar\n)\n\n\nSudhanshu Chauhan (\n@upgoingstar\n)", 
             "title": "Contributors"
         }, 
         {
-            "location": "/contributors/#contributors", 
-            "text": "", 
-            "title": "Contributors"
+            "location": "/contributors/#most-active-and-core-developer", 
+            "text": "Anand Tiwari ( @anandtiwarics )  You can contact him, in case of any query related to tool.", 
+            "title": "Most active and Core Developer"
+        }, 
+        {
+            "location": "/contributors/#helping-hands", 
+            "text": "Shubham Mittal ( @upgoingstar )  Sudhanshu Chauhan ( @upgoingstar )", 
+            "title": "Helping hands"
         }, 
         {
             "location": "/roadmap/", 
-            "text": "Road Map\n\n\n\n\nAPI Automated vulnerability scanning.\n\n\nPerform Reconnaissance before scanning.\n\n\nConcurrent Scans.\n\n\nVulnerability POC pictures.\n\n\nCloud Security scanning.\n\n\nDashboards\n\n\nEasy to installing.", 
+            "text": "Road Map\n\n\nDevelopers are welcome who want to willingly contribute to any enhancements in the tool.\n\n\n\n\nAPI Automated vulnerability scanning.\n\n\nPerform Reconnaissance before scanning.\n\n\nConcurrent Scans.\n\n\nVulnerability POC pictures.\n\n\nCloud Security scanning.\n\n\nDashboards\n\n\nEasy to installing.", 
             "title": "Roadmap"
         }, 
         {
             "location": "/roadmap/#road-map", 
-            "text": "API Automated vulnerability scanning.  Perform Reconnaissance before scanning.  Concurrent Scans.  Vulnerability POC pictures.  Cloud Security scanning.  Dashboards  Easy to installing.", 
+            "text": "Developers are welcome who want to willingly contribute to any enhancements in the tool.   API Automated vulnerability scanning.  Perform Reconnaissance before scanning.  Concurrent Scans.  Vulnerability POC pictures.  Cloud Security scanning.  Dashboards  Easy to installing.", 
             "title": "Road Map"
         }
     ]
