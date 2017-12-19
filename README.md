@@ -11,15 +11,15 @@ Open Source Vulnerability Assessment and Management (In Development)
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
 
-## Documentation
+### Documentation
 
 > [https://anandtiwarics.github.io/archerysec/](https://anandtiwarics.github.io/archerysec/)
 
-# Demo
+## Demo
 ![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery_demo.gif)
 
 
-# Overview of the tool:
+## Overview of the tool:
 * Perform Web and Network vulnerability Scanning using opensource tools.
 * Correlates and Collaborate all raw scans data, show them in a consolidated manner.
 * Perform authenticated web scanning.
@@ -38,10 +38,10 @@ Currently project is in developement phase and still lot of work going on.
 * OWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)
 * Selenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)
 
-# Installation #
+## Installation
 
 <pre>
-$ git clone https://github.com/anandtiwarics/archerysecurity.git
+$ git clone https://github.com/anandtiwarics/archerysec.git
 $ cd /archerysecurity
 $ pip install -r requirements.txt
 $ python manage.py collectstatic
@@ -52,7 +52,7 @@ $ python manage.py createsuperuser
 $ python manage.py runserver
 </pre>
 
-# Setup Setting
+## Setup Setting
 
 Zap Setting
 
@@ -67,7 +67,7 @@ OpenVAS Setting
 3. Fill all required information and click on save.
 
 
-# Road Map
+### Road Map
 
 * API Automated vulnerability scanning.
 * Perform Reconnaissance before scanning.
@@ -76,3 +76,12 @@ OpenVAS Setting
 * Cloud Security scanning.
 * Dashboards
 * Easy to installing.
+
+### Lead Developer
+
+Anand Tiwari -  https://github.com/anandtiwarics
+
+### Social Media
+* [Official Website](https://anandtiwarics.github.io/archerysec/)
+* [Twitter](https://twitter.com/archerysec)
+* [Facebook](https://facebook.com/archerysec)

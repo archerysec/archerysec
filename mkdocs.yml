@@ -2,7 +2,7 @@ site_name: Archery
 theme: material
 pages:
 - 'Overview': 'index.md'
-- 'Installation': 'install.md'
+- 'Getting started': 'install.md'
 - 'Setting up the Environment': 'setupGuide.md'
 - Usage: 'Usage.md'
 - Contributors: 'contributors.md'
@@ -24,7 +24,7 @@ extra:
       link: https://twitter.com/archerysec
 
 # Project information
-site_name: ArcherySec
+site_name: Archery
 site_description: All about ArcherySec.
 site_author: Anand Tiwari
 site_url: https://anandtiwarics.github.io/archerysec
