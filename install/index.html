@@ -38,7 +38,7 @@
     
     
       
-        <title>Installation - ArcherySec</title>
+        <title>Getting started - Archery</title>
       
     
     
@@ -77,7 +77,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="https://anandtiwarics.github.io/archerysec" title="ArcherySec" class="md-header-nav__button md-logo">
+        <a href="https://anandtiwarics.github.io/archerysec" title="Archery" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -91,10 +91,10 @@
           
             
               <span class="md-header-nav__topic">
-                ArcherySec
+                Archery
               </span>
               <span class="md-header-nav__topic">
-                Installation
+                Getting started
               </span>
             
           
@@ -176,7 +176,7 @@
         <i class="md-icon"></i>
       
     </span>
-    ArcherySec
+    Archery
   </label>
   
     <div class="md-nav__source">
@@ -229,9 +229,43 @@
       
     
     
-    <a href="./" title="Installation" class="md-nav__link md-nav__link--active">
-      Installation
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Getting started
+      </label>
+    
+    <a href="./" title="Getting started" class="md-nav__link md-nav__link--active">
+      Getting started
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" title="Installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-archery" title="Installing Archery" class="md-nav__link">
+    Installing Archery
+  </a>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -301,6 +335,27 @@
     
   
   
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" title="Installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-archery" title="Installing Archery" class="md-nav__link">
+    Installing Archery
+  </a>
+  
+</li>
+      
+      
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -314,19 +369,53 @@
                   <a href="https://github.com/anandtiwarics/archerysec/edit/master/docs/install.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="installation">Installation</h1>
-<p>=================</p>
-<pre>
-$ git clone https://github.com/anandtiwarics/archerysecurity.git
-$ cd /archerysecurity
-$ pip install -r requirements.txt
-$ python manage.py collectstatic
-$ python manage.py makemigrations networkscanners
-$ python manage.py makemigrations webscanners
-$ python manage.py migrate
-$ python manage.py createsuperuser
-$ python manage.py runserver
-</pre>
+                <h1 id="getting-started">Getting started</h1>
+<h2 id="installation">Installation</h2>
+<h2 id="installing-archery">Installing Archery</h2>
+<p>Before installing Archery, you need to make sure you have Python and <code>pip</code>
+– the Python package manager – up and running. You can verify if you're already
+good to go with the following commands:</p>
+<pre><code class="sh">python --version
+# Python 2.7.13
+pip --version
+# pip 9.0.1
+</code></pre>
+
+<p>Now clone Archery tool from github</p>
+<pre><code class="sh">git clone https://github.com/anandtiwarics/archerysec.git
+</code></pre>
+
+<p>Move to directory archerysec</p>
+<pre><code class="sh">cd /archerysecurity
+</code></pre>
+
+<p>Install requirements</p>
+<pre><code class="sh">pip install -r requirements.txt
+</code></pre>
+
+<p>Load static files</p>
+<pre><code class="sh">python manage.py collectstatic
+</code></pre>
+
+<p>Makemigrations of all networkscanners app models</p>
+<pre><code class="sh">python manage.py makemigrations networkscanners
+</code></pre>
+
+<p>Makemigrations of all webscanners app models</p>
+<pre><code class="sh">python manage.py makemigrations webscanners
+</code></pre>
+
+<p>Migrate all data</p>
+<pre><code class="sh">python manage.py migrate
+</code></pre>
+
+<p>Now you need to create application Credentials</p>
+<pre><code class="sh">python manage.py createsuperuser
+</code></pre>
+
+<p>Let's run the application</p>
+<pre><code class="sh">python manage.py runserver
+</code></pre>
                 
                   
                 
