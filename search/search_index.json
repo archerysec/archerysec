@@ -82,12 +82,12 @@
         }, 
         {
             "location": "/roadmap/", 
-            "text": "Road Map\n\n\nDevelopers are welcome who want to willingly contribute to any enhancements in the tool.\n\n\n\n\nAPI Automated vulnerability scanning.\n\n\nPerform Reconnaissance before scanning.\n\n\nConcurrent Scans.\n\n\nVulnerability POC pictures.\n\n\nCloud Security scanning.\n\n\nDashboards\n\n\nEasy to installing.", 
+            "text": "Road Map\n\n\nThe tool is in a development phase and below features will be implemented.\n\n\n\n\nAPI Automated vulnerability scanning.\n\n\nPerform Reconnaissance before scanning.\n\n\nConcurrent Scans.\n\n\nVulnerability POC pictures.\n\n\nCloud Security scanning.\n\n\nDashboards\n\n\nEasy to installing.", 
             "title": "Roadmap"
         }, 
         {
             "location": "/roadmap/#road-map", 
-            "text": "Developers are welcome who want to willingly contribute to any enhancements in the tool.   API Automated vulnerability scanning.  Perform Reconnaissance before scanning.  Concurrent Scans.  Vulnerability POC pictures.  Cloud Security scanning.  Dashboards  Easy to installing.", 
+            "text": "The tool is in a development phase and below features will be implemented.   API Automated vulnerability scanning.  Perform Reconnaissance before scanning.  Concurrent Scans.  Vulnerability POC pictures.  Cloud Security scanning.  Dashboards  Easy to installing.", 
             "title": "Road Map"
         }
     ]
