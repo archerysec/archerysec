@@ -27,20 +27,20 @@
       
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
-      <link rel="shortcut icon" href="./assets/images/favicon.png">
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.2.5">
     
     
       
-        <title>Archery</title>
+        <title>Setting up the Environment - Archery</title>
       
     
     
-      <link rel="stylesheet" href="./assets/stylesheets/application.bcabdff3.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.bcabdff3.css">
       
     
     
-      <script src="./assets/javascripts/modernizr.1aa3b519.js"></script>
+      <script src="../assets/javascripts/modernizr.1aa3b519.js"></script>
     
     
       
@@ -69,7 +69,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="." title="Archery" class="md-header-nav__button md-logo">
+        <a href=".." title="Archery" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -86,7 +86,7 @@
                 Archery
               </span>
               <span class="md-header-nav__topic">
-                Overview
+                Setting up the Environment
               </span>
             
           
@@ -153,6 +153,30 @@
       
       
 
+
+  <li class="md-nav__item">
+    <a href=".." title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../install/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
   
 
 
@@ -163,34 +187,10 @@
       
     
     
-    <a href="." title="Overview" class="md-nav__link md-nav__link--active">
-      Overview
-    </a>
-    
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="install/" title="Installation" class="md-nav__link">
-      Installation
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="setupGuide/" title="Setting up the Environment" class="md-nav__link">
+    <a href="./" title="Setting up the Environment" class="md-nav__link md-nav__link--active">
       Setting up the Environment
     </a>
+    
   </li>
 
     
@@ -200,7 +200,7 @@
 
 
   <li class="md-nav__item">
-    <a href="Usage/" title="Usage" class="md-nav__link">
+    <a href="../Usage/" title="Usage" class="md-nav__link">
       Usage
     </a>
   </li>
@@ -212,7 +212,7 @@
 
 
   <li class="md-nav__item">
-    <a href="contributors/" title="Contributors" class="md-nav__link">
+    <a href="../contributors/" title="Contributors" class="md-nav__link">
       Contributors
     </a>
   </li>
@@ -224,7 +224,7 @@
 
 
   <li class="md-nav__item">
-    <a href="roadmap/" title="Roadmap" class="md-nav__link">
+    <a href="../roadmap/" title="Roadmap" class="md-nav__link">
       Roadmap
     </a>
   </li>
@@ -258,27 +258,19 @@
               
                 
                 
-                <h1 id="archerysec">Archerysec</h1>
-<p>Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scaning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.</p>
-<h1 id="overview-of-the-tool">Overview of the tool:</h1>
-<ul>
-<li>Perform Web and Network vulnerability Scanning using opensource tools.</li>
-<li>Correlates and Collaborate all raw scans data, show them in a consolidated manner.</li>
-<li>Perform authenticated web scanning.</li>
-<li>Perform web application scanning using selenium.</li>
-<li>Vulnerability Managment.</li>
-<li>Enable REST API's for developers to perform scaning and Vulnerability Managment.</li>
-<li>Useful for DevOps teams for Vulnerability Managment.</li>
-</ul>
-<h2 id="note">Note</h2>
-<p>Currently project is in developement phase and still lot of work going on.</p>
-<h2 id="requirement">Requirement</h2>
-<ul>
-<li>Python 2.7</li>
-<li>OpenVas 8</li>
-<li>OWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)</li>
-<li>Selenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)</li>
-</ul>
+                <h1 id="setup-setting">Setup Setting</h1>
+<p>Zap Setting</p>
+<ol>
+<li>Go to Setting Page</li>
+<li>Edit ZAP setting or navigate URL : http://host:port/setting_edit/</li>
+<li>Fill all required information and click on save.</li>
+</ol>
+<p>OpenVAS Setting</p>
+<ol>
+<li>Go to setting Page</li>
+<li>Edit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting</li>
+<li>Fill all required information and click on save.</li>
+</ol>
                 
                   
                 
@@ -297,14 +289,28 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
+          <a href="../install/" title="Installation" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Installation
+              </span>
+            </div>
+          </a>
         
-          <a href="install/" title="Installation" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+        
+          <a href="../Usage/" title="Usage" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Installation
+                Usage
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
@@ -334,9 +340,9 @@
       
     </div>
     
-      <script src="./assets/javascripts/application.6cdc17f0.js"></script>
+      <script src="../assets/javascripts/application.6cdc17f0.js"></script>
       
-      <script>app.initialize({version:"0.17.2",url:{base:"."}})</script>
+      <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
       
     
     
