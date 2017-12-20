@@ -13,7 +13,7 @@ extra:
   feature:
     tabs: true
   palette:
-    primary: indigo
+    primary: deep purple
     accent: indigo
   social:
     - type: github-alt
