@@ -45,9 +45,3 @@ class scan_save_db(models.Model):
     high_total = models.TextField(blank=True)
     medium_total = models.TextField(blank=True)
     low_total = models.TextField(blank=True)
-
-
-class openvas_info(models.Model):
-    openvas_host = EncryptedTextField()
-    openvas_user = EncryptedTextField()
-    openvas_password = EncryptedTextField()

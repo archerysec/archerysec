@@ -1,5 +1,8 @@
 {
-    "zap_port": "", 
-    "zap_path": "", 
-    "zap_api_key": ""
+    "open_vas_pass": "InBhc3N3b3JkIg:1eRtIt:tDY8YS5kXzae6Q-DKr4DYMkovu0", 
+    "open_vas_ip": "Im9wZW4gdmFzIGhvc3Qi:1eRtIt:QfoFctTg-SD17JQlENi6GbrFtVk", 
+    "open_vas_user": "InVzZXJpZCI:1eRtIt:Lf0lLTOOtsBSro9KuA1st5-eTNU", 
+    "zap_port": "zap port", 
+    "zap_path": "zap path", 
+    "zap_api_key": "InphcCBhcGkga2V5Ig:1eRtIV:vLy8VGcI_i8SuWrxgpFLmFUOUd8"
 }

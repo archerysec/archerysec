@@ -3,18 +3,16 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response
 from openvas_lib import VulnscanManager, VulnscanException
-from networkscanners.models import scan_save_db, ov_scan_result_db, openvas_info
+from networkscanners.models import scan_save_db, ov_scan_result_db
 import time
 from django.db.models import Q
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+import os
+import json
+from django.core import signing
 
-openvas = openvas_info.objects.all()
-
-for dat in openvas:
-    scan_host = str(dat.openvas_host)
-    user = str(dat.openvas_user)
-    password = str(dat.openvas_password)
+openvas_data = os.getcwd() + '/' + 'apidata.json'
 
 status = ""
 name = ""
@@ -58,15 +56,22 @@ def scan_vul_details(request):
 
     all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('scan_id')
 
-    # all_vul_data = ov_scan_result_db.objects.all()
-
     return render(request, 'vul_details.html', {'all_vuln': all_vuln})
 
 
 def launch_scan(request):
     all_ip = scan_save_db.objects.all()
+    with open(openvas_data, 'r+') as f:
+        data = json.load(f)
+        ov_user = data['open_vas_user']
+        ov_pass = data['open_vas_pass']
+        ov_ip = data['open_vas_ip']
 
-    scanner = VulnscanManager(scan_host, user, password)
+        lod_ov_user = signing.loads(ov_user)
+        lod_ov_pass = signing.loads(ov_pass)
+        lod_ov_ip = signing.loads(ov_ip)
+
+    scanner = VulnscanManager(str(lod_ov_ip), str(lod_ov_user), str(lod_ov_pass))
     time.sleep(5)
     if request.method == 'POST':
         all_ip = scan_save_db.objects.all()
@@ -280,17 +285,38 @@ def ip_scan_table(request):
 
 
 def openvas_details(request):
+    with open(openvas_data, 'r+') as f:
+        data = json.load(f)
+        ov_user = data['open_vas_user']
+        ov_pass = data['open_vas_pass']
+        ov_ip = data['open_vas_ip']
+
+        lod_ov_user = signing.loads(ov_user)
+        lod_ov_pass = signing.loads(ov_pass)
+        lod_ov_ip = signing.loads(ov_ip)
+
     if request.method == 'POST':
         scan_host = request.POST.get("scan_host")
         openvas_user = request.POST.get("openvas_user")
         openvas_password = request.POST.get("openvas_password")
+    else:
+        scan_host = lod_ov_user
+        openvas_user = lod_ov_pass
+        openvas_password = lod_ov_ip
 
-        delete_all = openvas_info.objects.all()
-        delete_all.delete()
-        #
-        dump_all = openvas_info(openvas_host=scan_host, openvas_user=openvas_user, openvas_password=openvas_password)
-        dump_all.save()
-        messages.add_message(request, messages.SUCCESS, 'OpenVAS Setting Updated ')
+    with open(openvas_data, 'r+') as f:
+        sig_ov_user = signing.dumps(openvas_user)
+        sig_ov_pass = signing.dumps(openvas_password)
+        sig_ov_ip = signing.dumps(scan_host)
+        data = json.load(f)
+        data['open_vas_user'] = sig_ov_user
+        data['open_vas_pass'] = sig_ov_pass
+        data['open_vas_ip'] = sig_ov_ip
+        f.seek(0)
+        json.dump(data, f, indent=4)
+        f.truncate()
+
+    messages.add_message(request, messages.SUCCESS, 'ZAP Setting Updated ')
 
     return render(request, 'setting_form.html', )
 
@@ -343,14 +369,14 @@ def edit_vuln(request):
         print "edit_vul :", name
 
         ov_scan_result_db.objects.filter(vul_id=vul_id).update(name=name,
-                                                                 creation_time=creation_time,
-                                                                 modification_time=modification_time,
-                                                                 host=host, port=port,
-                                                                 threat=threat,
-                                                                 severity=severity,
-                                                                 description=description, family=family,
-                                                                 cvss_base=cvss_base, cve=cve,
-                                                                 xref=xref, tags=tags, banner=banner)
+                                                               creation_time=creation_time,
+                                                               modification_time=modification_time,
+                                                               host=host, port=port,
+                                                               threat=threat,
+                                                               severity=severity,
+                                                               description=description, family=family,
+                                                               cvss_base=cvss_base, cve=cve,
+                                                               xref=xref, tags=tags, banner=banner)
 
         messages.success(request, "Vulnerability Edited")
 

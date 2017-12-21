@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response, HttpResponse
 from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db, excluded_db
-from networkscanners.models import openvas_info
+# from networkscanners.models import openvas_info
 from django.db.models import Q
 import os
 import json
@@ -17,6 +17,7 @@ import uuid
 from selenium import webdriver
 from django.contrib import messages
 import ast
+from django.core import signing
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -81,7 +82,8 @@ def invalid_login():
 def index(request):
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
-        apikey = data['zap_api_key']
+        lod_apikey = data['zap_api_key']
+        apikey = signing.loads(lod_apikey)
         zapath = data['zap_path']
         zap_port = data['zap_port']
 
@@ -315,16 +317,27 @@ def vuln_details(request):
 
 
 def setting(request):
-    openvas_set = openvas_info.objects.all()
+    # openvas_set = openvas_info.objects.all()
 
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
         apikey = data['zap_api_key']
+
+        ov_user = data['open_vas_user']
+        ov_pass = data['open_vas_pass']
+        ov_ip = data['open_vas_ip']
+
+        lod_ov_user = signing.loads(ov_user)
+        lod_ov_pass = signing.loads(ov_pass)
+        lod_ov_ip = signing.loads(ov_ip)
+
+
+        lod_apikey = signing.loads(apikey)
         zapath = data['zap_path']
         zap_port = data['zap_port']
 
     return render(request, 'setting.html',
-                  {'apikey': apikey, 'zapath': zapath, 'zap_port': zap_port, 'openvas_set': openvas_set})
+                  {'apikey': lod_apikey, 'zapath': zapath, 'zap_port': zap_port, 'lod_ov_user': lod_ov_user, 'lod_ov_pass': lod_ov_pass, 'lod_ov_ip': lod_ov_ip})
 
 
 def zap_setting(request):
@@ -335,6 +348,7 @@ def zap_set_update(request):
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
         apikey = data['zap_api_key']
+        lod_apikey = signing.loads(apikey)
         zapath = data['zap_path']
         zap_port = data['zap_port']
 
@@ -343,13 +357,14 @@ def zap_set_update(request):
         zapath = request.POST.get("zappath")
         port = request.POST.get("port")
     else:
-        apikey = apikey
+        apikey = lod_apikey
         zapath = zapath
         port = zap_port
 
     with open(api_key_path, 'r+') as f:
+        sig_apikey = signing.dumps(apikey)
         data = json.load(f)
-        data['zap_api_key'] = apikey
+        data['zap_api_key'] = sig_apikey
         data['zap_path'] = str(zapath)
         data['zap_port'] = port
         f.seek(0)
