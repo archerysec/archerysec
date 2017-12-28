@@ -80,12 +80,15 @@ def invalid_login():
 
 
 def index(request):
-    with open(api_key_path, 'r+') as f:
-        data = json.load(f)
-        lod_apikey = data['zap_api_key']
-        apikey = signing.loads(lod_apikey)
-        zapath = data['zap_path']
-        zap_port = data['zap_port']
+    try:
+        with open(api_key_path, 'r+') as f:
+            data = json.load(f)
+            lod_apikey = data['zap_api_key']
+            apikey = signing.loads(lod_apikey)
+            zapath = data['zap_path']
+            zap_port = data['zap_port']
+    except Exception as e:
+        print e
 
     zap = ZAPv2(apikey=apikey,
                 proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
@@ -100,8 +103,13 @@ def index(request):
         global target_url
         target_url = request.POST.get('url')
         print target_url
-        abc = zapscanner.start_zap()
-        print abc
+        try:
+            abc = zapscanner.start_zap()
+            print abc
+        except Exception as e:
+            messages.error(request, "Please Setup ZAP configuration in ZAP setting page")
+            print e
+            return HttpResponseRedirect("/webscanners/scans_list/")
 
         messages.success(request, "ZAP Started")
         messages.add_message(request, messages.SUCCESS, 'ZAP Started')
@@ -135,13 +143,15 @@ def index(request):
 
         save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid)
         save_all.save()
-
-        while (int(zap.spider.status(scanid)) < 100):
-            # print 'Spider progress %:' + zap.spider.status(scanid)
-            global spider_status
-            spider_status = zap.spider.status(scanid)
-            print "Spider progress", spider_status
-            time.sleep(5)
+        try:
+            while (int(zap.spider.status(scanid)) < 100):
+                # print 'Spider progress %:' + zap.spider.status(scanid)
+                global spider_status
+                spider_status = zap.spider.status(scanid)
+                print "Spider progress", spider_status
+                time.sleep(5)
+        except Exception as e:
+            print e
 
         spider_status = "100"
 
@@ -175,13 +185,15 @@ def index(request):
         except Exception as e:
             print e
         # zap_scans_db.objects.filter(pk=some_value).update(field1='some value')
-
-        while (int(zap.ascan.status(scan_scanid)) < 100):
-            print 'Scan progress from zap_scan_lauch function  %: ' + zap.ascan.status(scan_scanid)
-            global scans_status
-            scans_status = zap.ascan.status(scan_scanid)
-            zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
-            time.sleep(5)
+        try:
+            while (int(zap.ascan.status(scan_scanid)) < 100):
+                print 'Scan progress from zap_scan_lauch function  %: ' + zap.ascan.status(scan_scanid)
+                global scans_status
+                scans_status = zap.ascan.status(scan_scanid)
+                zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
+                time.sleep(5)
+        except Exception as e:
+            print e
 
         # Save Vulnerability in database
         scans_status = "100"
@@ -313,7 +325,7 @@ def vuln_details(request):
 
     zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul).order_by('scan_id')
 
-    return render(request, 'vuln_details.html', {'zap_all_vul': zap_all_vul})
+    return render(request, 'vuln_details.html', {'zap_all_vul': zap_all_vul, 'scan_vul': scan_vul})
 
 
 def setting(request):
@@ -331,13 +343,13 @@ def setting(request):
         lod_ov_pass = signing.loads(ov_pass)
         lod_ov_ip = signing.loads(ov_ip)
 
-
         lod_apikey = signing.loads(apikey)
         zapath = data['zap_path']
         zap_port = data['zap_port']
 
     return render(request, 'setting.html',
-                  {'apikey': lod_apikey, 'zapath': zapath, 'zap_port': zap_port, 'lod_ov_user': lod_ov_user, 'lod_ov_pass': lod_ov_pass, 'lod_ov_ip': lod_ov_ip})
+                  {'apikey': lod_apikey, 'zapath': zapath, 'zap_port': zap_port, 'lod_ov_user': lod_ov_user,
+                   'lod_ov_pass': lod_ov_pass, 'lod_ov_ip': lod_ov_ip})
 
 
 def zap_setting(request):
@@ -391,8 +403,12 @@ def del_scan(request):
         item.delete()
         item_results = zap_scan_results_db.objects.filter(scan_id=item_id)
         item_results.delete()
+        # messages.success(request, "Deleted Scan")
+        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+        return HttpResponseRedirect(reversed('scan_list.html'))
 
-    return render_to_response('scan_list.html', {'all_scans': all_scans})
+
+        # return render_to_response('scan_list.html', {'all_scans': all_scans})
 
 
 def dashboard(request):
@@ -430,6 +446,7 @@ def sel_login(request):
         global driver
         driver = webdriver.Firefox()
         slem(driver, url_da)
+        messages.add_message(request, messages.SUCCESS, 'Opening Website')
 
     elif action_vul == "save_cookie":
         save_cookie(driver)
@@ -450,7 +467,7 @@ def sel_login(request):
 
         messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
-    return render(request, 'webscanner.html', )
+    return HttpResponseRedirect(reversed('webscanner.html'))
 
 
 def exclude_url(request):
@@ -463,7 +480,7 @@ def exclude_url(request):
 
 
 def edit_vuln(request):
-    all_vuln = zap_scan_results_db.objects.all()
+    # all_vuln = zap_scan_results_db.objects.all()
     if request.method == 'POST':
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
@@ -486,9 +503,22 @@ def edit_vuln(request):
                                                                    sourceid=sourceid, attack=attack,
                                                                    reference=reference)
 
-        messages.success(request, "Vulnerability Edited")
+        # messages.success(request, "Vulnerability Edited")
+        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
 
         return HttpResponseRedirect("/zap_vul_details/?scan_id=%s" % scan_id)
+        # return HttpResponseRedirect(
+        #     reversed('vuln_details.html')
+        # )
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+
+    else:
+        id_vul = ''
+
+    edit_vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+
+    return render(request, 'edit_vuln_data.html', {'edit_vul_dat': edit_vul_dat})
 
 
 def del_vuln(request):
@@ -509,3 +539,70 @@ def del_vuln(request):
         messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/zap_vul_details/?scan_id=%s" % un_scanid)
+        # return HttpResponseRedirect(
+        #     reversed('vuln_details.html')
+        # )
+
+
+def vuln_check(request):
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+
+    else:
+        id_vul = ''
+
+    vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+
+    return render(request, 'vuln_data.html', {'vul_dat': vul_dat})
+
+
+def edit_vuln_check(request):
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+
+    else:
+        id_vul = ''
+
+    edit_vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+
+    return render(request, 'edit_vuln_data.html', {'edit_vul_dat': edit_vul_dat})
+
+
+def add_vuln(request):
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+
+    else:
+        scan_id = ''
+
+    if request.method == 'POST':
+        vuln_id = uuid.uuid4()
+        scan_id = request.POST.get("scan_id")
+        vuln_name = request.POST.get("vuln_name")
+        risk = request.POST.get("risk")
+        url = request.POST.get("url")
+        param = request.POST.get("param")
+        sourceid = request.POST.get("sourceid")
+        attack = request.POST.get("attack")
+        ref = request.POST.get("ref")
+        description = request.POST.get("description")
+        solution = request.POST.get("solution")
+
+        req_header = request.POST.get("req_header")
+        res_header = request.POST.get("res_header")
+
+        save_vuln = zap_scan_results_db(scan_id=scan_id, risk=risk, url=url, param=param, sourceid=sourceid,
+                                        attack=attack, vuln_id=vuln_id, name=vuln_name, description=description,
+                                        reference=ref,
+                                        solution=solution,
+                                        requestHeader=req_header, responseHeader=res_header)
+        save_vuln.save()
+
+        messages.success(request, "Vulnerability Added")
+        return HttpResponseRedirect("/zap_vul_details/?scan_id=%s" % scan_id)
+
+    return render(request, 'add_vuln.html', {'scan_id': scan_id})
+
+
+def create_vuln(request):
+    return render(request, 'add_vuln.html')

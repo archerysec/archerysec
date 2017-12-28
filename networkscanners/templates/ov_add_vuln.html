@@ -1,0 +1,125 @@
+{% extends 'header.html' %}
+{% block body %}
+
+<div id="sidebar">
+    <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
+    <ul>
+        <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
+                class="label label-important">2</span></a>
+            <ul>
+                <li class="active"><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan">IP</a></li>
+            </ul>
+        </li>
+        <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
+    </ul>
+</div>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> </a>
+            <a
+                    href="#" class="current"></a></div>
+        <h1></h1>
+    </div>
+    <div class="container-fluid">
+            <form class="form-vertical" action="/networkscanners/add_vuln/" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input name="scan_id" value="{{scan_id}}" type="hidden">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <textarea class="form-control" rows="1" name="name"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Severity:</label>
+                        <textarea class="form-control" rows="1" name="severity"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Host:</label>
+                        <textarea class="form-control" rows="1" style="min-width: 70%"
+                                  name="host"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Port:</label>
+                        <textarea class="form-control" rows="8" name="port"
+                                  style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Summary:</label>
+                        <textarea class="form-control" rows="8" name="description"
+                                  style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags:</label>
+                        <textarea class="form-control" name="tags" rows="1"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Creation Time :</label>
+                        <textarea class="form-control" rows="1" name="creation_time"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Modification Time:</label>
+                        <textarea class="form-control" rows="1" name="modification_time"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Threat:</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="threat"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Type:</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="banner"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Family:</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="family"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Base Score :</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="cvss_base"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>CVE :</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="cve"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>xref :</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="xref"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>bid :</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="bid"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close
+                    </button>
+                    <button class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -14,4 +14,6 @@ urlpatterns = [
     url(r'^openvas_details', views.openvas_details, name='openvas_details'),
     url(r'^del_vuln', views.del_vuln, name='del_vuln'),
     url(r'^edit_vuln', views.edit_vuln, name='edit_vuln'),
+    url(r'^vuln_check', views.vuln_check, name='vuln_check'),
+    url(r'^add_vuln', views.add_vuln, name='add_vuln'),
 ]

@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 import os
 import json
 from django.core import signing
+import uuid
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -54,9 +55,9 @@ def scan_vul_details(request):
     else:
         scan_id = ''
 
-    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('vul_id')
 
-    return render(request, 'vul_details.html', {'all_vuln': all_vuln})
+    return render(request, 'vul_details.html', {'all_vuln': all_vuln, 'scan_id': scan_id})
 
 
 def launch_scan(request):
@@ -107,7 +108,7 @@ def launch_scan(request):
                 print e
 
             try:
-                openvas_vul = ov_scan_result_db.objects.filter(Q(scan_id=scan_id)).order_by('scan_id')
+                openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('scan_id')
                 total_vul = len(openvas_vul)
                 total_high = len(openvas_vul.filter(threat="High"))
                 total_medium = len(openvas_vul.filter(threat="Medium"))
@@ -266,7 +267,7 @@ def scan_del(request):
     if request.method == 'GET':
         scanid = request.GET['scan_scanid']
 
-        scans = scan_save_db.objects.filter(Q(scan_id=scanid)).order_by('scan_id')
+        scans = scan_save_db.objects.filter(scan_id=scanid).order_by('scan_id')
         scans.delete()
 
     return render_to_response('index.html', {'all_ip': all_ip})
@@ -381,3 +382,69 @@ def edit_vuln(request):
         messages.success(request, "Vulnerability Edited")
 
         return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % scan_id)
+
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+
+    else:
+        id_vul = ''
+
+    edit_vul_dat = ov_scan_result_db.objects.filter(vul_id=id_vul).order_by('vul_id')
+
+    return render(request, 'ov_edit_vuln_data.html', {'edit_vul_dat': edit_vul_dat})
+
+
+def vuln_check(request):
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+
+    else:
+        id_vul = ''
+
+    vul_dat = ov_scan_result_db.objects.filter(vul_id=id_vul).order_by('vul_id')
+
+    return render(request, 'ov_vuln_data.html', {'vul_dat': vul_dat})
+
+
+def add_vuln(request):
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+    else:
+        scan_id = ''
+
+    print "scan_id :----------", scan_id
+
+    if request.method == 'POST':
+        vuln_id = uuid.uuid4()
+        scan_id = request.POST.get("scan_id")
+        name = request.POST.get("name")
+        creation_time = request.POST.get("creation_time")
+        modification_time = request.POST.get("modification_time")
+        host = request.POST.get("host")
+        port = request.POST.get("port")
+        threat = request.POST.get("threat")
+        severity = request.POST.get("severity")
+        description = request.POST.get("description")
+        family = request.POST.get("family")
+        cvss_base = request.POST.get("cvss_base")
+        cve = request.POST.get("cve")
+        # bid = request.POST.get("bid")
+        xref = request.POST.get("xref")
+        tags = request.POST.get("tags")
+        banner = request.POST.get("banner")
+
+        save_vuln = ov_scan_result_db(name=name, vul_id=vuln_id, scan_id=scan_id,
+                                      creation_time=creation_time,
+                                      modification_time=modification_time,
+                                      host=host, port=port,
+                                      threat=threat,
+                                      severity=severity,
+                                      description=description, family=family,
+                                      cvss_base=cvss_base, cve=cve,
+                                      xref=xref, tags=tags, banner=banner)
+        save_vuln.save()
+
+        messages.success(request, "Vulnerability Added")
+        return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % scan_id)
+
+    return render(request, 'ov_add_vuln.html', {'scan_id': scan_id})

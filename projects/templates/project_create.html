@@ -1,0 +1,108 @@
+{% extends 'header.html' %}
+{% block body %}
+
+
+<div id="sidebar" xmlns="http://www.w3.org/1999/html">
+    <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
+    <ul>
+        <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
+                class="label label-important">2</span></a>
+            <ul>
+                <li><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan/">IP</a></li>
+            </ul>
+        </li>
+        <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
+    </ul>
+</div>
+
+<div id="content">
+    <!--breadcrumbs-->
+    <div id="content-header">
+        <div id="breadcrumb"><a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
+            Home</a></div>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="span3 offset6">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <p class="alert-heading">{{ message }}</p>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+        </div>
+        <div class="row-fluid">
+            <div class="span5 offset3">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                        <h5>Create Project</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <form class="form-horizontal" method="POST" action="/projects/create/">{% csrf_token %}
+                            <div class="control-group">
+                                <label class="control-label">Project Name :</label>
+                                <div class="controls">
+                                    <input type="text" name="projectname" value="{{ projectname }}" class="span11"
+                                           placeholder="Project Name"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Target :</label>
+                                <div class="controls">
+                                    <input type="text" name="url" value="{{ url }}" class="span11"
+                                           placeholder="target"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Project Start Date :</label>
+                                <div class="controls">
+                                    <input type="date" name="projectstart" value="{{ projectstart }}" class="span11"
+                                           placeholder="Project Start Date"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Project End date :</label>
+                                <div class="controls">
+                                    <input type="date" name="projectend" value="{{ projectend }}" class="span11"
+                                           placeholder="Project End date"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Project Owner :</label>
+                                <div class="controls">
+                                    <input type="text" name="projectowner" value="{{ projectowner }}" class="span11"
+                                           placeholder="Project Owner"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Pentester :</label>
+                                <div class="controls">
+                                    <input type="text" name="pentester" value="{{ pentester }}" class="span11"
+                                           placeholder="Pentester"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Project Summary :</label>
+                                <div class="controls">
+                                    <textarea type="" name="projectsummary" value="{{ projectsummary }}" class="span11" placeholder="Project Summary"/></textarea>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

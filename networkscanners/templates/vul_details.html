@@ -6,12 +6,13 @@
     <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
     <ul>
         <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
-        <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span class="label label-important">2</span></a>
-      <ul>
-        <li ><a href="/webscanners/">Domain</a></li>
-        <li ><a href="/networkscanners/ip_scan/">IP</a></li>
-      </ul>
-    </li>
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
+                class="label label-important">2</span></a>
+            <ul>
+                <li><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan/">IP</a></li>
+            </ul>
+        </li>
         <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
         <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
     </ul>
@@ -26,22 +27,26 @@
     <div class="container-fluid">
         <hr>
         <div class="span3 offset6">
-    {% if messages %}
+            {% if messages %}
 
-    {% for message in messages %}
-    <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                    href="#">×</a>
-        <p class="alert-heading">{{ message }}</p>
-    </div>
-    {% endfor %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <p class="alert-heading">{{ message }}</p>
+            </div>
+            {% endfor %}
 
-    {% endif %}
-    </div>
+            {% endif %}
+        </div>
         <div class="row-fluid">
             <div class="span9 offset1">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Network Vulnerabilities</h5>
+                        <div class="buttons"><a data-toggle="modal" href="/networkscanners/add_vuln/?scan_id={{ scan_id }}"
+                                                class="btn btn-primary btn-mini"><i
+                                class="icon-plus icon-white"></i> Add new Vulnerability</a>
+                        </div>
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-bordered data-table">
@@ -63,14 +68,15 @@
                             <tbody>{% for data in all_vuln %}
                             <tr data-target="#">
                                 <td>{{data.vul_id}}</td>
-                                <td width="40%"><a href="#" data-toggle="modal" data-target="#{{data.vul_id}}">{{data.name}}</a></td>
+                                <td width="40%"><a href="/networkscanners/vuln_check/?vuln_id={{data.vul_id}}">{{data.name}}</a>
+                                </td>
                                 <td>{{data.threat}}</td>
                                 <td>{{data.severity}}</td>
                                 <td>{{data.host}}</td>
                                 <td>{{data.port}}</td>
                                 <td>
-                                    <div><a href="#" data-toggle="modal" class="btn btn-primary"
-                                            data-target="#{{data.vul_id}}1"
+                                    <div><a href="/networkscanners/edit_vuln/?vuln_id={{data.vul_id}}"
+                                            class="btn btn-primary"
                                             data-original-title="Edit"><i
                                             class="icon-pencil"></i></a>
                                     </div>
@@ -86,140 +92,6 @@
                                     </div>
                                 </td>
                             </tr>
-                            <div class="modal fade bs-example-modal-lg" id="{{data.vul_id}}" tabindex="-1" role="dialog"
-                                 aria-labelledby="myLargeModalLabel">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                                    aria-hidden="true">&times;</span></button>
-                                            <h4 class="modal-title" id="myModalLabel">Vulnerability Details</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <strong> Vulnerability Name: </strong>{{ data.name }}<br><br>
-                                            <strong> Severity: </strong> {{ data.severity }}<br><br>
-                                            <strong> Host : </strong>{{data.host}} <br><br>
-                                            <strong> Port : </strong>{{data.port}}<br><br>
-                                            <strong> Summary : </strong><br>
-                                            {{data.description}}<br><br>
-                                            <strong>Tags : </strong><br>{{data.tags}}<br><br>
-                                            <strong> Creation Time : </strong>{{data.creation_time}}<br><br>
-                                            <strong> Modification Time : </strong>{{data.modification_time}}<br><br>
-                                            <strong> Threat :</strong>{{data.threat}}<br><br>
-                                            <strong> Type : </strong><br><br>{{data.banner}}<br><br>
-                                            <strong>Family : </strong><br><br>{{data.family}}<br><br>
-                                            <strong>Base Score : </strong>{{data.cvss_base}}<br><br>
-                                            <strong>CVE : </strong>{{data.cve}}<br><br>
-                                            <strong>xref : </strong><br><br>{{data.xref}}<br><br>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="{{data.vul_id}}1" class="modal hide fade" tabindex="-1" role="dialog"
-                                 aria-labelledby="myModalLabel" aria-hidden="true">
-                                <form class="form-vertical" action="/networkscanners/edit_vuln/" method="POST">
-                                    {% csrf_token %}
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
-                                        </button>
-                                        <h3>Vulnerability</h3>
-                                    </div>
-                                    <div class="modal-body">
-                                        <h2>Edit Vulnerability</h2>
-                                        <p>Vulnerability Name : {{ data.name }}</p>
-                                        <input name="vuln_id" value="{{data.vul_id}}" type="hidden">
-                                        <input name="scan_id" value="{{data.scan_id}}" type="hidden">
-                                        <div class="form-group">
-                                            <label>Name:</label>
-                                            <textarea class="form-control" rows="1" name="name"
-                                            >{{ data.name }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Severity:</label>
-                                            <textarea class="form-control" rows="1" name="severity"
-                                            >{{ data.severity }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Host:</label>
-                                            <textarea class="form-control" rows="1" style="min-width: 70%"
-                                                      name="host"
-                                            >{{ data.host }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Port:</label>
-                                            <textarea class="form-control" rows="8" name="port"
-                                                      style="min-width: 100%">{{ data.port }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Summary:</label>
-                                            <textarea class="form-control" rows="8" name="description"
-                                                      style="min-width: 100%">{{ data.description }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Tags:</label>
-                                            <textarea class="form-control" name="tags" rows="1"
-                                            >{{ data.tags }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Creation Time :</label>
-                                            <textarea class="form-control" rows="1" name="creation_time"
-                                            >{{ data.creation_time }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Modification Time:</label>
-                                            <textarea class="form-control" rows="1" name="modification_time"
-                                            >{{ data.modification_time }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Threat:</label>
-                                            <textarea class="form-control" rows="5" style="min-width: 70%"
-                                                      name="threat"
-                                            >{{ data.threat }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Type:</label>
-                                            <textarea class="form-control" rows="5" style="min-width: 70%"
-                                                      name="banner"
-                                            >{{ data.banner }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Family:</label>
-                                            <textarea class="form-control" rows="5" style="min-width: 70%"
-                                                      name="family"
-                                            >{{ data.family }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Base Score :</label>
-                                            <textarea class="form-control" rows="5" style="min-width: 70%"
-                                                      name="cvss_base"
-                                            >{{ data.cvss_base }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>CVE :</label>
-                                            <textarea class="form-control" rows="5" style="min-width: 70%"
-                                                      name="cve"
-                                            >{{ data.cve }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>xref :</label>
-                                            <textarea class="form-control" rows="5" style="min-width: 70%"
-                                                      name="xref"
-                                            >{{ data.xref }}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>bid :</label>
-                                            <textarea class="form-control" rows="5" style="min-width: 70%"
-                                                      name="bid"
-                                            >{{ data.bid }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close
-                                        </button>
-                                        <button class="btn btn-primary">Save changes</button>
-                                    </div>
-                                </form>
-                            </div>
                             {% endfor %}
                             </tbody>
                         </table>

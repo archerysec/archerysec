@@ -281,8 +281,7 @@ $(document).on('submit', '#exclude_url', function(e){
                                     </thead>
                                     <tbody>
                                     <tr data-target="#">{% for data in all_scans %}
-                                        <td><a href="/" data-toggle="modal"
-                                               data-target="#{{data.scan_id}}">{{data.scan_url}}</a>
+                                        <td><a href="/webscanners/scans_list/" >{{data.scan_url}}</a>
                                         </td>
                                         <td width="50%">
                                             <div class="progress progress-info">

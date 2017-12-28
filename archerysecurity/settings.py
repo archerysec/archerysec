@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'archerysecurity',
     'rest_framework',
     'webscanners',
+    'projects',
     'networkscanners',
     'django.contrib.admin',
     'stronghold',

@@ -24,4 +24,9 @@ urlpatterns = [
     url(r'exclude_url', views.exclude_url, name='exclude_url'),
     url(r'^edit_vuln', views.edit_vuln, name='edit_vuln'),
     url(r'^del_vuln', views.del_vuln, name='del_vuln'),
+    url(r'^vuln_dat', views.vuln_check, name='vuln_dat'),
+    url(r'^edit_vuln_dat', views.edit_vuln_check, name='edit_vuln_dat'),
+    url(r'^add_vuln', views.add_vuln, name='add_vuln'),
+    url(r'^create_vuln', views.create_vuln, name='create_vuln'),
+
 ]
