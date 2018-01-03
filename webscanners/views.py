@@ -166,8 +166,7 @@ def index(request):
         save_spider_results.save()
         del_temp = zap_spider_db.objects.filter(spider_scanid__icontains=scanid).order_by('spider_scanid')
         del_temp.delete()
-        save_all = zap_spider_db(project_id=project_id, spider_url=target_url, spider_scanid=scanid,
-                                 urls_num=total_spider)
+        save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid, urls_num=total_spider)
         save_all.save()
 
         print 'Spider Completed------'
@@ -184,7 +183,7 @@ def index(request):
         un_scanid = uuid.uuid4()
         print "updated scanid :", un_scanid
         try:
-            save_all_scan = zap_scans_db(scan_url=(target_url), scan_scanid=(un_scanid))
+            save_all_scan = zap_scans_db(project_id=project_id, scan_url=target_url, scan_scanid=un_scanid)
             save_all_scan.save()
         except Exception as e:
             print e
