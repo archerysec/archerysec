@@ -19,6 +19,7 @@ class zap_scans_db(models.Model):
     high_vul = models.TextField(blank=True)
     medium_vul = models.TextField(blank=True)
     low_vul = models.TextField(blank=True)
+    project_id = models.TextField(blank=True)
 
 
 class zap_spider_results(models.Model):
@@ -49,6 +50,7 @@ class zap_scan_results_db(models.Model):
     ids = models.TextField(blank=True)
     description = models.TextField(blank=True)
     req_res = models.TextField(blank=True)
+    project_id = models.TextField(blank=True)
 
     note = models.TextField(blank=True)
     rtt = models.TextField(blank=True)

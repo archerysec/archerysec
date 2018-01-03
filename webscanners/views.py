@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response, HttpResponse
 from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db, excluded_db
-# from networkscanners.models import openvas_info
 from django.db.models import Q
 import os
 import json
@@ -18,6 +17,7 @@ from selenium import webdriver
 from django.contrib import messages
 import ast
 from django.core import signing
+from projects.models import project_db
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -99,9 +99,12 @@ def index(request):
     all_excluded_url = excluded_db.objects.all()
     all_cookies = cookie_db.objects.all()
 
+    all_scans_db = project_db.objects.all()
+
     if request.POST.get("url"):
         global target_url
         target_url = request.POST.get('url')
+        project_id = request.POST.get('project_id')
         print target_url
         try:
             abc = zapscanner.start_zap()
@@ -163,7 +166,8 @@ def index(request):
         save_spider_results.save()
         del_temp = zap_spider_db.objects.filter(spider_scanid__icontains=scanid).order_by('spider_scanid')
         del_temp.delete()
-        save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid, urls_num=total_spider)
+        save_all = zap_spider_db(project_id=project_id, spider_url=target_url, spider_scanid=scanid,
+                                 urls_num=total_spider)
         save_all.save()
 
         print 'Spider Completed------'
@@ -226,7 +230,8 @@ def index(request):
             ids = vuln['id']
             description = vuln['description']
 
-            dump_all = zap_scan_results_db(vuln_id=vuln_id, scan_id=un_scanid, confidence=confidence, wascid=wascid,
+            dump_all = zap_scan_results_db(vuln_id=vuln_id, scan_id=un_scanid, project_id=project_id,
+                                           confidence=confidence, wascid=wascid,
                                            cweid=cweid,
                                            risk=risk, reference=reference, url=url, name=name,
                                            solution=solution,
@@ -307,7 +312,7 @@ def index(request):
     return render(request, 'webscanner.html',
                   {'all_urls': all_urls, 'spider_status': spider_status, 'scans_status': scans_status,
                    'all_scans': all_scans, 'all_spider_results': all_spider_results, 'spider_alert': spider_alert,
-                   'all_excluded_url': all_excluded_url, 'all_cookies': all_cookies})
+                   'all_excluded_url': all_excluded_url, 'all_cookies': all_cookies, 'all_scans_db': all_scans_db})
 
 
 def scan_list(request):
@@ -599,6 +604,14 @@ def add_vuln(request):
         save_vuln.save()
 
         messages.success(request, "Vulnerability Added")
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+        total_vul = len(zap_all_vul)
+        total_high = len(zap_all_vul.filter(risk="High"))
+        total_medium = len(zap_all_vul.filter(risk="Medium"))
+        total_low = len(zap_all_vul.filter(risk="Low"))
+
+        zap_scans_db.objects.filter(scan_scanid=scan_id).update(total_vul=total_vul, high_vul=total_high,
+                                                                medium_vul=total_medium, low_vul=total_low)
         return HttpResponseRedirect("/zap_vul_details/?scan_id=%s" % scan_id)
 
     return render(request, 'add_vuln.html', {'scan_id': scan_id})

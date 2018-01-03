@@ -44,11 +44,12 @@
             <!--</div>-->
             <!--</div>-->
         </div>
-        <div class="span9 offset3">
+        <div class="span12 offset2">
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                     <h5>Project List</h5>
-                    <div class="buttons"><a data-toggle="modal" href="/projects/create_form/" class="btn btn-primary btn-mini"><i
+                    <div class="buttons"><a data-toggle="modal" href="/projects/create_form/"
+                                            class="btn btn-primary btn-mini"><i
                             class="icon-plus icon-white"></i> Add new Project</a>
                     </div>
                 </div>
@@ -67,12 +68,17 @@
                         </thead>
                         <tbody>{% for data in all_projects %}
                         <tr data-target="#">
-                            <td>{{data.project_name}}</td>
+                            <td><a href="projects_view/?proj_id={{data.project_id}}">{{data.project_name}}</a></td>
                             <td>{{data.project_start}}</td>
                             <td>{{data.project_end}}</td>
                             <td>{{data.project_owner}}</td>
                             <td>Completed</td>
-                            <td>Delete</td>
+                            <td>
+                                <form action="/projects/" method="POST">
+                                    <input type="hidden" name="proj_id" value="{{data.project_id}}"/>{% csrf_token %}
+                                    <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                </form>
+                            </td>
                         </tr>
                         {% endfor %}
                         </tbody>

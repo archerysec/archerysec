@@ -1,9 +1,15 @@
 {% extends 'header.html' %}
 {% block body %}
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+
 <div id="sidebar">
-    <!--<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>-->
     <ul>
-        <!--<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>-->
         <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
                 class="label label-important">2</span></a>
             <ul>
@@ -26,6 +32,7 @@
                 data:{
 
                    url:$('#url').val(),
+                   project_id:$('#project_id').val(),
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                 },
                 sucess:function(){
@@ -53,6 +60,33 @@
        alert("Please Select scanner")
        }
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <script>
@@ -110,6 +144,33 @@ $(document).on('submit', '#exclude_url', function(e){
         this.reset();
     });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <script type="text/javascript">
@@ -118,6 +179,33 @@ $(document).on('submit', '#exclude_url', function(e){
       $("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds
   }
  setInterval('autoRefresh_div()', 5000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <div id="content">
@@ -141,118 +229,128 @@ $(document).on('submit', '#exclude_url', function(e){
             {% endif %}
         </div>
         <div class="container-fluid">
-            <div class="span6 offset3">
+            <div class="span12">
                 <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>Scan Launch</h5>
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Scan Launch:</h5>
                     </div>
-                    <div class="widget-content">
-                        <div class="center">
-                            <form id="start_scan" class="form-horizontal">
-                                {% csrf_token %}
-                                <div class="control-group">
-                                    <label>URL :</label>
+                    <form id="start_scan" class="form-horizontal">{% csrf_token %}
+                        <div class="row-fluid">
+                            <div class="span2">
+                                <label class="control-label"> URL :</label>
+                            </div>
+                            <div class="span4">
+                                <div class="controls">
                                     <input type="url" name="url" id="url"
                                            value="{{ url }}">
-                                    <input type="submit" class="btn btn-primary" value="Launch">
+                                    <input onclick="location.href = '/projects/projects_view/?proj_id=93a102fe-0d16-465b-b487-f331af1bfb9b'" type="submit" class="btn btn-primary" value="Launch">
+                                </div>
+                            </div>
+                            <div class="span2 offset2">
+                                <label class="control-label"> Select Project : </label>
+                            </div>
+                            <div class="offset3">
+                                <select id="project_id" name="project_id" class="selectpicker"
+                                        data-live-search="true">
+                                    {% for data in all_scans_db %}
+                                    <option value="{{data.project_id}}">{{data.project_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Cookie Store:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <div class="widget-box">
+                            <!--<div class="center">-->
+                            <form id="open_login" class="form-horizontal">
+                                {% csrf_token %}
+                                <div class="control-group">
+                                    <label class="control-label">URL :</label>
+                                    <div class="controls">
+                                        <input type="text" name="url_login"
+                                               value="{{ url_login }}">
+                                        <input type="hidden" name="action"
+                                               value="open_page">
+                                        <input type="submit" class="btn btn-primary"
+                                               value="Login">
+                                    </div>
                                 </div>
                             </form>
+                            <form id="save_cookies" class="form-horizontal">
+                                {% csrf_token %}
+                                <div class="controls">
+                                    <input type="hidden" name="url_login"
+                                           value="{{ url_login }}">
+                                    <input type="hidden" name="action2"
+                                           value="save_cookie">
+                                    <input type="submit" class="btn btn-success"
+                                           value="Save">
+                                </div>
+                                <div class=" offset3">
+
+                                    <h5>Cookies</h5>
+
+                                    {% for cookie in all_cookies %}
+                                    {{cookie.cookie}}
+                                    {% endfor %}
+                                </div>
+
+
+                            </form>
                         </div>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Scanners:</h5>
+                    </div>
+                    <div class="widget-content">
                         <p>Select Scanner</p>
                         <p>The following scanners are available :</p>
-
                         <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                             <label>
                                 <input name="optradio1" type="checkbox"><span>Zap Scanner</span>
                             </label>
                         </div>
-                        <div class="fr">
-                            <a data-toggle="modal" href="#advance" class="btn btn-success btn-mini">Advance</a>
-                            <div class="modal fade bs-example-modal-lg" id="advance" tabindex="-1"
-                                 role="dialog"
-                                 aria-labelledby="myLargeModalLabel">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                                    aria-hidden="true">&times;</span></button>
-                                            <h4 class="modal-title" id="myModalLabel">Advance</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="span5">
-                                                    <div class="widget-box">
-                                                        <!--<div class="center">-->
-                                                        <form id="open_login" class="form-horizontal">
-                                                            {% csrf_token %}
-                                                            <div class="control-group">
-                                                                <label class="control-label">URL :</label>
-                                                                <div class="controls">
-                                                                    <input type="text" name="url_login"
-                                                                           value="{{ url_login }}">
-                                                                    <input type="hidden" name="action"
-                                                                           value="open_page">
-                                                                    <input type="submit" class="btn btn-primary"
-                                                                           value="Login">
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                        <form id="save_cookies" class="form-horizontal">
-                                                            {% csrf_token %}
-                                                            <div class="control-group">
-                                                                <label class="control-label"></label>
-                                                                <div class="controls">
-                                                                    <input type="hidden" name="url_login"
-                                                                           value="{{ url_login }}">
-                                                                    <input type="hidden" name="action2"
-                                                                           value="save_cookie">
-                                                                    <input type="submit" class="btn btn-success"
-                                                                           value="Save">
-                                                                </div>
-
-                                                            </div>
-                                                        </form>
-                                                        <form id="exclude_url" class="form-horizontal">
-                                                            {% csrf_token %}
-                                                            <div class="control-group">
-                                                                <label class="control-label">Exclude URL :</label>
-                                                                <div class="controls">
-                                                                    <input type="text" name="exclude_url"
-                                                                           value="{{ exclude_url }}">
-                                                                    <input type="submit" class="btn btn-primary"
-                                                                           value="Exclude">
-                                                                </div>
-
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                <div class="span5 offset2">
-
-                                                    <h5>Cookies</h5>
-
-                                                        {% for cookie in all_cookies %}
-                                                        {{cookie.cookie}}
-                                                        {% endfor %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
-                <div class="center">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Exclude URL's:</h5>
+                        <div class="buttons"><a data-toggle="modal" href="/projects/create_form/"
+                                                class="btn btn-primary btn-mini"><i
+                                class="icon-plus icon-white"></i> Exclude URL</a>
+                        </div>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <form id="exclude_url" class="form-horizontal">
+                            {% csrf_token %}
+                            <div class="control-group">
+                                <label class="control-label">Exclude URL :</label>
+                                <div class="controls">
+                                    <input type="text" name="exclude_url"
+                                           value="{{ exclude_url }}">
+                                    <input type="submit" class="btn btn-primary"
+                                           value="Exclude">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
                         <h5>Excluded URL's</h5>
                     </div>
-                    <div class="widget-content nopadding">
+                    <div class="widget-content">
                         <table class="table table-bordered data-table">
                             <thead>
                             <tr>
                                 <th>URL</th>
-
                             </tr>
                             </thead>
                             <tbody>
@@ -264,45 +362,9 @@ $(document).on('submit', '#exclude_url', function(e){
                         </table>
                     </div>
                 </div>
-                <div id="result" class="widget-box">
-
-                    <div class="widget-content">
-                        <div class="center">
-                            <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                                <h5>Scan Status</h5>
-                            </div>
-                            <div class="widget-content nopadding">
-                                <table class="table table-bordered data-table">
-                                    <thead>
-                                    <tr>
-                                        <th>URL</th>
-                                        <th>Status</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr data-target="#">{% for data in all_scans %}
-                                        <td><a href="/webscanners/scans_list/" >{{data.scan_url}}</a>
-                                        </td>
-                                        <td width="50%">
-                                            <div class="progress progress-info">
-                                                <div class="bar" style="width: {{data.vul_status}}%">
-                                                    {{data.vul_status}}
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 {% endblock %}

@@ -117,6 +117,16 @@
                         >{{ data.responseBody }}</pre>
                     </div>
                 </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Response Body:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        <!--<iframe src="{{data.url}}" height="900" width="1200"></iframe>-->
+                        <iframe src="data:text/html;charset=utf-8,{{data.responseBody}}" height="900" width="1200"/></iframe>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

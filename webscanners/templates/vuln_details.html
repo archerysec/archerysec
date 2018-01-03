@@ -54,6 +54,7 @@
                         <table class="table table-bordered data-table table-fixed" width="100%">
                             <thead>
                             <tr>
+                                <th>Project ID</th>
                                 <th>Vulnerability</th>
                                 <th>URL</th>
                                 <th>Risk</th>
@@ -63,6 +64,7 @@
                             </thead>
                             <tbody>{% for data in zap_all_vul %}
                             <tr data-target="#">
+                                <td>{{data.project_id}}</td>
                                 <td><a href="/vuln_dat/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                 </td>
                                 <td width="50%">{{data.url}}</td>
