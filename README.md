@@ -47,10 +47,13 @@ $ pip install -r requirements.txt
 $ python manage.py collectstatic
 $ python manage.py makemigrations networkscanners
 $ python manage.py makemigrations webscanners
+$ python manage.py makemigrations projects
 $ python manage.py migrate
 $ python manage.py createsuperuser
 $ python manage.py runserver
 </pre>
+
+Note: Make sure these steps (except createsuperuser) should be perform after every git pull.
 
 ## Setup Setting
 
