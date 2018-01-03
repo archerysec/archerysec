@@ -1,18 +1,18 @@
 # Archery
 
-Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scaning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.
+Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.
 
 ## Overview of the tool:
 * Perform Web and Network vulnerability Scanning using opensource tools.
 * Correlates and Collaborate all raw scans data, show them in a consolidated manner.
 * Perform authenticated web scanning.
 * Perform web application scanning using selenium.
-* Vulnerability Managment.
-* Enable REST API's for developers to perform scaning and Vulnerability Managment.
-* Useful for DevOps teams for Vulnerability Managment.
+* Vulnerability Management.
+* Enable REST API's for developers to perform scanning and Vulnerability Management.
+* Useful for DevOps teams for Vulnerability Management.
 
 ## Note
-Currently project is in developement phase and still lot of work going on.
+Currently project is in development phase and still lot of work going on.
 
 ## Requirement
 
