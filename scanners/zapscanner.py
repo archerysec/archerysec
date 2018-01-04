@@ -22,10 +22,10 @@ def start_zap():
     executable_path = os.path.join(zap_path, executable)
     zap_command = [executable_path, '-daemon', '-port', zap_port]
 
-    # log_path = os.getcwd() + '/' + 'zap.log'
+    log_path = os.getcwd() + '/' + 'zap.log'
 
-    # with open(log_path, 'w+') as log_file:
-    subprocess.Popen(zap_command, cwd=zap_path, stdout=open(os.devnull, 'w'), stderr=subprocess.STDOUT)
+    with open(log_path, 'w+') as log_file:
+        subprocess.Popen(zap_command, cwd=zap_path, stdout=log_file, stderr=subprocess.STDOUT)
 
     print "zap started"
 
@@ -40,7 +40,6 @@ def stop_zap():
                 proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
     p = zap.core.shutdown()
     print p
-
 
 if __name__ == "__main__":
     try:
