@@ -6,6 +6,7 @@ from django.contrib import messages
 import uuid
 from projects.models import project_db, project_scan_db
 from webscanners import views
+from webscanners.models import zap_scans_db
 
 
 # Create your views here.
@@ -69,7 +70,7 @@ def projects_view(request):
         return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
 
     project_dat = project_db.objects.filter(project_id=project_id)
-    scan_dat = project_scan_db.objects.filter(project_id=project_id)
+    scan_dat = zap_scans_db.objects.filter(project_id=project_id)
 
     return render(request, 'project_view.html',
                   {'project_dat': project_dat, 'scan_dat': scan_dat, 'project_id': project_id})
@@ -96,29 +97,4 @@ def add_scan(request):
         return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
 
     return render(request, 'project_view.html')
-
-#
-# def del_scan(request):
-#     if request.method == 'GET':
-#         project_id = request.GET['proj_id']
-#
-#     else:
-#         project_id = ''
-#     if request.method == 'POST':
-#         scan_ids = request.POST.get("scan_id")
-#         print scan_ids
-#
-#         del_scans = project_scan_db.objects.filter(id=scan_ids)
-#         del_scans.delete()
-#         messages.success(request, "Deleted scan")
-#         return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
-#         # return HttpResponseRedirect(reversed('project_view.html'))
-#     return render(request, 'projects.html')
-
-
-def launch_scan(request):
-    if request.method == 'GET':
-        scan = views.index(request)
-        print "Scan Completed", scan
-    return render(request, 'projects.html')
 

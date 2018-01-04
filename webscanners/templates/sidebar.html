@@ -18,68 +18,23 @@
 </head>
 <body>
 
-<!--Header-part-->
-<div id="header">
-    <img src="/static/archery.png" style="max-width:150px; margin-top: 20px;">
-</div>
-<!--close-Header-part-->
-
-
-<!--top-Header-menu-->
-<div id="user-nav" class="navbar navbar-inverse">
-    <ul class="nav">
-        <!--<li class="dropdown" id="profile-messages"><a title="" href="#" data-toggle="dropdown"-->
-                                                      <!--data-target="#profile-messages" class="dropdown-toggle"><i-->
-                <!--class="icon icon-user"></i> <span class="text">Welcome User</span><b class="caret"></b></a>-->
-            <ul class="dropdown-menu">
-                <li><a href="#"><i class="icon-user"></i> My Profile</a></li>
-                <li class="divider"></li>
-                <li><a href="#"><i class="icon-check"></i> My Tasks</a></li>
-                <li class="divider"></li>
-                <li><a href="/logout/"><i class="icon-key"></i> Log Out</a></li>
+<div id="sidebar">
+    <ul>
+        <li><a href="/projects/"><i class="icon icon-th"></i> <span>Projects</span></a></li>
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
+                class="label label-important">2</span></a>
+            <ul>
+                <li class="active"><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan">IP</a></li>
             </ul>
-        <!--</li>-->
-        <li class=""><a title="" href="/setting/"><i class="icon icon-cog"></i> <span class="text">Settings</span></a></li>
-        <li class=""><a title="" href="/logout/"><i class="icon icon-share-alt"></i> <span class="text">Logout</span></a>
         </li>
-        <!--<li><a href="/projects/">Projects</a></li>-->
+        <li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>
+        <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
     </ul>
-    <!--<ul class="nav">-->
-        <!---->
-    <!--</ul>-->
 </div>
-<!--close-top-Header-menu-->
-<!--start-top-serch-->
-<div id="search">
-    <input type="text" placeholder="Search here..."/>
-    <button type="submit" class="tip-bottom" title="Search"><i class="icon-search icon-white"></i></button>
-</div>
-<!--close-top-serch-->
-<!--sidebar-menu-->
+{% block body %}
 
-<!--sidebar-menu-->
-
-<!--main-container-part-->
-{% extends 'sidebar.html' %}
-    {% block body %}
-
-    {% endblock %}
-    <!--breadcrumbs-->
-
-    <!--End-breadcrumbs-->
-
-    <!--Action boxes-->
-
-<!--end-main-container-part-->
-
-<!--Footer-part-->
-
-<div class="row-fluid">
-    <div id="footer" class="span12">  <a href=""></a>
-    </div>
-</div>
-
-<!--end-Footer-part-->
+{% endblock %}
 
 <script src="/static/js/excanvas.min.js"></script>
 <script src="/static/js/jquery.min.js"></script>
@@ -127,6 +82,3 @@ function resetMenu() {
 }
 
 </script>
-</body>
-</html>
-
