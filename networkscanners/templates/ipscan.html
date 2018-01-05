@@ -1,19 +1,19 @@
 {% extends 'header.html' %}
 {% block body %}
 <!--<div id="sidebar">-->
-    <!--&lt;!&ndash;<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>&ndash;&gt;-->
-    <!--<ul>-->
-        <!--&lt;!&ndash;<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>&ndash;&gt;-->
-        <!--<li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span-->
-                <!--class="label label-important">2</span></a>-->
-            <!--<ul>-->
-                <!--<li><a href="/webscanners/">Domain</a></li>-->
-                <!--<li class="active"><a href="/networkscanners/ip_scan/">IP</a></li>-->
-            <!--</ul>-->
-        <!--</li>-->
-        <!--<li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>-->
-        <!--<li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>-->
-    <!--</ul>-->
+<!--&lt;!&ndash;<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>&ndash;&gt;-->
+<!--<ul>-->
+<!--&lt;!&ndash;<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>&ndash;&gt;-->
+<!--<li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span-->
+<!--class="label label-important">2</span></a>-->
+<!--<ul>-->
+<!--<li><a href="/webscanners/">Domain</a></li>-->
+<!--<li class="active"><a href="/networkscanners/ip_scan/">IP</a></li>-->
+<!--</ul>-->
+<!--</li>-->
+<!--<li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>-->
+<!--<li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>-->
+<!--</ul>-->
 <!--</div>-->
 <script type="text/javascript">
 
@@ -26,6 +26,7 @@
                 data:{
 
                    ip:$('#ip').val(),
+                   project_id:$('#project_id').val(),
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                 },
                 sucess:function(){
@@ -54,6 +55,10 @@
        }
     });
 
+
+
+
+
 </script>
 
 <script type="text/javascript">
@@ -62,6 +67,10 @@
       $("#result").load("/networkscanners/ip_table/");// a function which will load data from other file after x seconds
   }
  setInterval('autoRefresh_div()', 5000);
+
+
+
+
 </script>
 
 <div id="content">
@@ -77,19 +86,27 @@
                     <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
                         <h5>Scan Launch</h5>
                     </div>
-                    <div class="widget-content">
-                        <div class="center">
-                            <form id="start_scan" class="form-horizontal">
-                                {% csrf_token %}
-                                <div class="control-group">
-                                    <label>IP :</label>
-                                        <input type="text" name="ip" id="ip"
-                                           value="{{ ip }}">
-                                        <input type="submit"  class="btn btn-primary" value="Launch">
-                                </div>
-                            </form>
-                        </div>
-                        <div class="container">
+                    <div class="row-fluid">
+                        <form id="start_scan" class="form-horizontal">{% csrf_token %}
+                            <div class="controls">
+                                <input type="text" name="ip" id="ip"
+                                       value="{{ ip }}" placeholder="Enter IP">
+
+                            </div>
+                            <div class="controls">
+                                <select id="project_id" name="project_id" class="selectpicker"
+                                        data-live-search="true">
+                                    {% for data in all_proj %}
+                                    <option value="{{data.project_id}}">{{data.project_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="controls">
+                                <input type="submit" class="btn btn-primary" value="Launch">
+                            </div>
+                        </form>
+
+                        <div class="controls">
                             <p>Select Scanner</p>
                             <p>The following scanners are available :</p>
                             <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">

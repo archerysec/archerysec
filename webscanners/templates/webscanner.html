@@ -76,6 +76,9 @@
 
 
 
+
+
+
 </script>
 
 <script>
@@ -163,6 +166,9 @@ $(document).on('submit', '#exclude_url', function(e){
 
 
 
+
+
+
 </script>
 
 <script type="text/javascript">
@@ -171,6 +177,9 @@ $(document).on('submit', '#exclude_url', function(e){
       $("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds
   }
  setInterval('autoRefresh_div()', 5000);
+
+
+
 
 
 
@@ -229,18 +238,16 @@ $(document).on('submit', '#exclude_url', function(e){
                     </div>
                     <div class="row-fluid">
                         <form id="start_scan" class="form-horizontal">{% csrf_token %}
-                            <div class="span4">
-                                <label class="control-label">
-                                    <bold> URL :</bold>
-                                </label>
-                                <div class="controls">
-                                    <input type="url" name="url" id="url"
-                                           value="{{ url }}">
-                                    <input onclick="location.href = '/webscanners/scans_list/'"
-                                           type="submit" class="btn btn-primary" value="Launch">
-                                </div>
+
+                            <label class="control-label">
+                                <bold> URL :</bold>
+                            </label>
+                            <div class="controls">
+                                <input type="url" name="url" id="url"
+                                       value="{{ url }}">
                             </div>
-                            <div class="span4">
+
+                            <div>
                                 <label class="control-label">
                                     <bold>Project :</bold>
                                 </label>
@@ -252,6 +259,10 @@ $(document).on('submit', '#exclude_url', function(e){
                                         {% endfor %}
                                     </select>
                                 </div>
+                            </div>
+                            <div class="controls">
+                                <input onclick="location.href = '/webscanners/scans_list/'"
+                                       type="submit" class="btn btn-primary" value="Launch">
                             </div>
                         </form>
                     </div>

@@ -12,6 +12,7 @@ import os
 import json
 from django.core import signing
 import uuid
+from projects.models import project_db
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -77,13 +78,14 @@ def launch_scan(request):
     if request.method == 'POST':
         all_ip = scan_save_db.objects.all()
         scan_ip = request.POST.get('ip')
+        project_id = request.POST.get('project_id')
         profile = None
         if profile is None:
             profile = "Full and fast"
         else:
             profile = request.POST.get('scan_profile')
         scan_id, target_id = scanner.launch_scan(target=str(scan_ip), profile=str(profile))
-        save_all = scan_save_db(scan_id=str(scan_id), scan_ip=str(scan_ip), target_id=str(target_id))
+        save_all = scan_save_db(scan_id=str(scan_id), project_id=str(project_id), scan_ip=str(scan_ip), target_id=str(target_id))
         save_all.save()
 
         while int(scanner.get_progress(str(scan_id))) < 100.0:
@@ -275,8 +277,9 @@ def scan_del(request):
 
 def ip_scan(request):
     all_scans = scan_save_db.objects.all()
+    all_proj = project_db.objects.all()
 
-    return render(request, 'ipscan.html', {'all_scans': all_scans})
+    return render(request, 'ipscan.html', {'all_scans': all_scans, 'all_proj': all_proj})
 
 
 def ip_scan_table(request):

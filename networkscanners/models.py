@@ -45,3 +45,4 @@ class scan_save_db(models.Model):
     high_total = models.TextField(blank=True)
     medium_total = models.TextField(blank=True)
     low_total = models.TextField(blank=True)
+    project_id = models.TextField(blank=True)

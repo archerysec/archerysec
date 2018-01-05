@@ -80,16 +80,11 @@
 
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
-                        <h5>Scan List</h5>
+                        <h5>Web Scan List</h5>
                         <div class="buttons"><a data-toggle="modal"
                                                 href="/webscanners/"
                                                 class="btn btn-primary btn-mini"><i
                                 class="icon-plus icon-white"></i> Add Web Scan</a>
-                        </div>
-                        <div class="buttons"><a data-toggle="modal"
-                                                href="/networkscanners/ip_scan/"
-                                                class="btn btn-primary btn-mini"><i
-                                class="icon-plus icon-white"></i> Add Network Scan</a>
                         </div>
                     </div>
                     <div class="widget-content nopadding">
@@ -135,6 +130,63 @@
                                                     class="icon-trash"></i> Delete</a></li>
                                         </ul>
                                     </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
+                        <h5>Network Scan List</h5>
+                        <div class="buttons"><a data-toggle="modal"
+                                                href="/networkscanners/ip_scan/"
+                                                class="btn btn-primary btn-mini"><i
+                                class="icon-plus icon-white"></i> Add Network Scan</a>
+                        </div>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th>IP</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>High</th>
+                                <th>Medium</th>
+                                <th>Low</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in network_dat %}
+                            <tr data-target="#">
+                                <td>{{data.scan_ip}}</td>
+                                <td>
+                                    <div class="progress progress-info">
+                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}}</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-important">{{data.high_total}}</span></td>
+                                <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
+                                <td><span class="badge badge-info">{{data.low_total}}</span></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a class="btn btn-primary"
+                                           href="/networkscanners/vul_details/?scan_id={{data.scan_id}}"><i
+                                                class="icon-tasks icon-white"></i>
+                                        </a>
+                                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
+                                                class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}"><i
+                                                    class="icon-pencil"></i> View </a></li>
+                                            <li><a href="/networkscanners/scan_del/?scan_scanid={{data.scan_id}}"><i
+                                                    class="icon-trash"></i> Delete</a></li>
+                                        </ul>
+                                    </div>
+
                                 </td>
                             </tr>
                             {% endfor %}

@@ -7,9 +7,7 @@ import uuid
 from projects.models import project_db, project_scan_db
 from webscanners import views
 from webscanners.models import zap_scans_db
-
-
-# Create your views here.
+from networkscanners.models import scan_save_db
 
 
 def create_form(request):
@@ -27,7 +25,7 @@ def create(request):
 
         save_project = project_db(project_name=project_name, project_id=project_id,
                                   project_start=project_date, project_end=project_end,
-                                  project_owner=project_owner, project_disc=project_disc,)
+                                  project_owner=project_owner, project_disc=project_disc, )
         save_project.save()
 
         messages.success(request, "Project Created")
@@ -71,9 +69,11 @@ def projects_view(request):
 
     project_dat = project_db.objects.filter(project_id=project_id)
     scan_dat = zap_scans_db.objects.filter(project_id=project_id)
+    network_dat = scan_save_db.objects.filter(project_id=project_id)
 
     return render(request, 'project_view.html',
-                  {'project_dat': project_dat, 'scan_dat': scan_dat, 'project_id': project_id})
+                  {'project_dat': project_dat, 'scan_dat': scan_dat, 'project_id': project_id,
+                   'network_dat': network_dat})
 
 
 def add_scan_v(request):
@@ -97,4 +97,3 @@ def add_scan(request):
         return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
 
     return render(request, 'project_view.html')
-
