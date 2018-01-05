@@ -109,6 +109,7 @@ def index(request):
         try:
             abc = zapscanner.start_zap()
             print abc
+            messages.success(request, "ZAP Started")
         except Exception as e:
             messages.error(request, "Please Setup ZAP configuration in ZAP setting page")
             print e
@@ -407,12 +408,8 @@ def del_scan(request):
         item.delete()
         item_results = zap_scan_results_db.objects.filter(scan_id=item_id)
         item_results.delete()
-        # messages.success(request, "Deleted Scan")
         messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect(reversed('scan_list.html'))
-
-
-        # return render_to_response('scan_list.html', {'all_scans': all_scans})
+        return HttpResponseRedirect('/webscanners/scans_list/')
 
 
 def dashboard(request):
