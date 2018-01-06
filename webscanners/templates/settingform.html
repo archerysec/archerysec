@@ -1,20 +1,6 @@
 {% extends 'header.html' %}
 {% block body %}
-<!--<div id="sidebar">-->
-    <!--&lt;!&ndash;<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>&ndash;&gt;-->
-    <!--<ul>-->
-        <!--&lt;!&ndash;<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>&ndash;&gt;-->
-        <!--<li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span-->
-                <!--class="label label-important">2</span></a>-->
-            <!--<ul>-->
-                <!--<li><a href="/webscanners/">Domain</a></li>-->
-                <!--<li><a href="/networkscanners/ip_scan/">IP</a></li>-->
-            <!--</ul>-->
-        <!--</li>-->
-        <!--<li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>-->
-        <!--<li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>-->
-    <!--</ul>-->
-<!--</div>-->
+
 <div id="content">
     <!--breadcrumbs-->
     <div id="content-header">
@@ -42,7 +28,7 @@
                         <h5>ZAP Settings</h5>
                     </div>
                     <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/setting_edit/">{% csrf_token %}
+                        <form class="form-horizontal" method="POST" action="/webscanners/setting_edit/">{% csrf_token %}
                             <div class="control-group">
                                 <label class="control-label">Zap API Key :</label>
                                 <div class="controls">

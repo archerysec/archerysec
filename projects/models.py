@@ -12,6 +12,7 @@ class project_db(models.Model):
     project_end = models.TextField(blank=True)
     project_owner = models.TextField(blank=True)
     project_disc = models.TextField(blank=True)
+    project_status = models.TextField(blank=True)
 
 
 class project_scan_db(models.Model):

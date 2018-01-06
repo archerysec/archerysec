@@ -1,19 +1,6 @@
 {% extends 'tablehead.html' %}
 {% block body %}
-<!--<div id="sidebar">-->
-    <!--&lt;!&ndash;<a href="/dashboard/" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>&ndash;&gt;-->
-    <!--<ul>-->
-        <!--&lt;!&ndash;<li><a href="/dashboard/"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>&ndash;&gt;-->
-        <!--<li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span class="label label-important">2</span></a>-->
-      <!--<ul>-->
-        <!--<li ><a href="/webscanners/">Domain</a></li>-->
-        <!--<li ><a href="/networkscanners/ip_scan/">IP</a></li>-->
-      <!--</ul>-->
-    <!--</li>-->
-        <!--<li><a href="/webscanners/scans_list/"><i class="icon icon-inbox"></i> <span>Web Scans</span></a></li>-->
-        <!--<li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>-->
-    <!--</ul>-->
-<!--</div>-->
+
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
@@ -44,7 +31,7 @@
                                 <td>{{ datas.scan_scanid }}</td>
                                 <td>{{ datas.scan_url }}</td>
 
-                                <td><a href="/zapscanner/scan_result/?scan_id={{ datas.scan_scanid }}">{{
+                                <td><a href="/webscanners/zapscanner/scan_result/?scan_id={{ datas.scan_scanid }}">{{
                                     datas.scan_scanid }}</a></td>
                                 <td>
                                     <label class="progress">
@@ -80,7 +67,7 @@
                                             <br>
 
                                             <form class="forms-sample" method="POST"
-                                                  action="/zapscanner/">
+                                                  action="/webscanners/zapscanner/">
 
                                                 {% csrf_token %}
                                                 <input type="hidden" name="scan_stop"
@@ -90,7 +77,7 @@
 
                                             </form>
                                             <br>
-                                            <form action="/zapscanner/" method="post" class="forms-sample">
+                                            <form action="/webscanners/zapscanner/" method="post" class="forms-sample">
 
                                                 {% csrf_token %}
                                                 <input type="hidden" name="scan_item_id" value="{{datas.id}}"/>

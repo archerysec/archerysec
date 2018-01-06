@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(
-    name='Archery',
+    name='ArcherySec',
     version='0.1',
     author='Anand Tiwari',
     description="Tool for managing and scanning vulnerability",

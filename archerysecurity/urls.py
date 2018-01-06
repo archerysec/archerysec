@@ -17,10 +17,10 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^', include('webscanners.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^webscanners/', include('webscanners.urls')),
+    url(r'^', include('projects.urls')),
     url(r'^networkscanners/', include('networkscanners.urls')),
-    url(r'^projects/', include('projects.urls')),
+    # url(r'^projects/', include('projects.urls')),
     url(r'^api/', include('archeryapi.urls')),
 ]
