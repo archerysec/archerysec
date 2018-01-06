@@ -46,12 +46,13 @@
                         <h5>Details</h5>
                     </div>
                     <div class="widget-content">
-                        <div class="span4"><strong>Project Name :</strong> <span class="label label-info">{{data.project_name}} </span><br><br>
+                        <div class="span4"><strong>Project Name :</strong> <span class="label label-info">{{data.project_name}} </span>
                         </div>
 
-                        <div class="span4"><strong>Project Start :</strong>{{data.project_start}} <br><br></div>
-                        <div class="span4"><strong>Project End :</strong>{{data.project_end}} <br><br></div>
-                        <strong>Project Owner :</strong>{{data.project_owner}} <br><br>
+                        <div class="span4"><strong>Project Start :</strong>{{data.project_start}}</div>
+                        <div class="span4"><strong>Project End :</strong>{{data.project_end}} </div>
+                        <div class="span4"><strong>Project Status :</strong>{{data.project_status}} </div>
+                        <div><strong>Project Owner :</strong>{{data.project_owner}} <br><br></div>
                     </div>
                 </div>
                 <div class="widget-box">
@@ -60,6 +61,37 @@
                     </div>
                     <div class="widget-content">
                         {{data.project_disc}}
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Project Status</h5>
+                    </div>
+                    <div>
+                        <div class="widget-content">
+                            <label class="control-label">
+                                <bold>Status :</bold>
+                            </label>
+                            <form action="/projects/projects_view/?proj_id={{data.project_id}}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="project_id" value="{{ project_id }}">
+                                <div class="span2">
+                                    <select id="project_status" name="project_status" class="selectpicker"
+                                            data-live-search="true">
+                                        <option value="Pre-Qualification">Pre-Qualification</option>
+                                        <option value="Scanning">Scanning</option>
+                                        <option value="Manual Verification">Manual Verification</option>
+                                        <option value="Reporting">Reporting</option>
+                                        <option value="Review">Review</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+                                <div class="">
+                                    <input onclick="location.href = '/webscanners/scans_list/'"
+                                           type="submit" class="btn btn-info" value="Save">
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 

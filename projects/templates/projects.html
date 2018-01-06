@@ -58,7 +58,7 @@
                             <td>{{data.project_start}}</td>
                             <td>{{data.project_end}}</td>
                             <td>{{data.project_owner}}</td>
-                            <td>Completed</td>
+                            <td>{{data.project_status}}</td>
                             <td>
                                 <form action="/projects/" method="POST">
                                     <input type="hidden" name="proj_id" value="{{data.project_id}}"/>{% csrf_token %}

@@ -57,15 +57,22 @@ def projects_view(request):
 
     print "pROJECT ID ", project_id
 
-    if request.method == 'POST':
+    if request.POST.get("scan_id"):
         project_id = request.GET['proj_id']
         scan_ids = request.POST.get("scan_id")
+
         print scan_ids
 
         del_scans = project_scan_db.objects.filter(id=scan_ids)
         del_scans.delete()
         messages.success(request, "Deleted scan")
         return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
+
+    if request.POST.get("project_status"):
+        project_status = request.POST.get("project_status")
+        project_id = request.POST.get("project_id")
+
+        project_db.objects.filter(project_id=project_id).update(project_status=project_status)
 
     project_dat = project_db.objects.filter(project_id=project_id)
     scan_dat = zap_scans_db.objects.filter(project_id=project_id)

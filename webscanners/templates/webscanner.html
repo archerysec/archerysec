@@ -139,14 +139,14 @@ $(document).on('submit', '#exclude_url', function(e){
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
                         <h5>Scan Launch:</h5>
                     </div>
-                    <div class="row-fluid">
+                    <div class="widget-content nopadding">
                         <form id="start_scan" class="form-horizontal">{% csrf_token %}
 
                             <label class="control-label">
                                 <bold> URL :</bold>
                             </label>
                             <div class="controls">
-                                <input type="url" name="url" id="url"
+                                <input class="span4" type="url" name="url" id="url"
                                        value="{{ url }}">
                             </div>
 
@@ -208,7 +208,7 @@ $(document).on('submit', '#exclude_url', function(e){
                             <form id="save_cookies" class="form-horizontal">
                                 {% csrf_token %}
                                 <div class="controls">
-                                    <input type="hidden" name="url_login"
+                                    <input class="span4" type="hidden" name="url_login"
                                            value="{{ url_login }}">
                                     <input type="hidden" name="action2"
                                            value="save_cookie">
