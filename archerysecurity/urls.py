@@ -21,6 +21,6 @@ urlpatterns = [
     url(r'^webscanners/', include('webscanners.urls')),
     url(r'^', include('projects.urls')),
     url(r'^networkscanners/', include('networkscanners.urls')),
-    # url(r'^projects/', include('projects.urls')),
+    url(r'^', include('webscanners.urls')),
     url(r'^api/', include('archeryapi.urls')),
 ]
