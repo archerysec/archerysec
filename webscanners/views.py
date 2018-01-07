@@ -42,6 +42,7 @@ cookieParams = ""
 res_type = ""
 res_id = ""
 
+alert = ""
 
 # Login View
 @public
