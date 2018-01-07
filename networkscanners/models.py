@@ -26,6 +26,7 @@ class ov_scan_result_db(models.Model):
     field = models.TextField(blank=True)
     filtered = models.TextField(blank=True)
     page = models.TextField(blank=True)
+    vuln_color = models.TextField(blank=True)
 
     family = models.TextField(blank=True)
     cvss_base = models.TextField(blank=True)

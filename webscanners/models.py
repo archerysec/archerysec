@@ -51,6 +51,7 @@ class zap_scan_results_db(models.Model):
     description = models.TextField(blank=True)
     req_res = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
+    vuln_color = models.TextField(blank=True)
 
     note = models.TextField(blank=True)
     rtt = models.TextField(blank=True)

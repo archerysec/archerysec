@@ -51,7 +51,7 @@
                                 <td><a href="/webscanners/vuln_dat/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                 </td>
                                 <td width="50%">{{data.url}}</td>
-                                <td>{{data.risk}}</td>
+                                <td><span class="badge badge-{{data.vuln_color}}">{{data.risk}}</span></td>
                                 <td>
                                     <div><a href="/webscanners/edit_vuln_dat/?vuln_id={{data.vuln_id}}" class="btn btn-primary"
                                             data-original-title="Edit"><i

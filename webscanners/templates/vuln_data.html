@@ -36,7 +36,7 @@
                         <span class="label label-info">{{ data.name }}</span>
 
                         <strong> </strong><br><br>
-                        <strong> Severity: </strong> {{ data.risk }}<br><br>
+                        <strong> Severity: </strong> <span class="badge badge-{{data.vuln_color}}"> {{ data.risk }}</span><br><br>
                         <strong> Method : </strong>{{data.method}}<br><br>
                         <strong> Vulnerable URL : </strong><code><a href="{{data.url}}">{{data.url}}</a> </code><br><br>
                         <strong> Parameter : </strong>{{data.param}}<br><br>

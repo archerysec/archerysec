@@ -12,74 +12,84 @@
     <div class="container-fluid">
         <div class="row-fluid">
 
-                <form class="form-vertical" action="/webscanners/add_vuln/" method="POST">
-                    {% csrf_token %}
-                    <div>
-                        <input name="scan_id" value="{{scan_id}}" type="hidden">
-                        <div class="form-group">
-                            <label>Name:</label>
-                            <textarea class="form-control" rows="1" name="vuln_name"
-                            ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Severity:</label>
-                            <textarea class="form-control" rows="1" name="risk"
-                            ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>URL:</label>
-                            <textarea class="form-control" rows="1" style="min-width: 70%"
-                                      name="url"
-                            ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Descriptoin:</label>
-                            <textarea class="form-control" rows="8" name="description"
-                                      style="min-width: 100%"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Solution:</label>
-                            <textarea class="form-control" rows="8" name="solution"
-                                      style="min-width: 100%"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Request Header:</label>
-                            <textarea class="form-control" name="req_header" rows="8" style="min-width: 30%"
-                            ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Response Header:</label>
-                            <textarea class="form-control" name="res_header" rows="8" style="min-width: 30%"
-                            ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Parameter:</label>
-                            <textarea class="form-control" name="param" rows="1"
-                            ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>sourceid:</label>
-                            <textarea class="form-control" rows="1" name="sourceid"
-                            ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>attack:</label>
-                            <textarea class="form-control" rows="1" name="attack"
-                            ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>reference:</label>
-                            <textarea class="form-control" rows="5" style="min-width: 70%"
-                                      name="ref"
-                            ></textarea>
-                        </div>
+            <form class="form-vertical" action="/webscanners/add_vuln/" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input name="scan_id" value="{{scan_id}}" type="hidden">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <textarea class="form-control" rows="1" name="vuln_name"
+                        ></textarea>
                     </div>
-                    <div class="modal-footer">
-                        <a class="btn btn-primary" aria-hidden="true" href="/webscanners/zap_vul_details/?scan_id={{scan_id}}">Close
-                        </a>
-                        <button class="btn btn-success">Save changes</button>
+                    <div class="form-group">
+                        <label>Severity:</label>
+                        <textarea class="form-control" rows="1" name="risk"
+                        ></textarea>
                     </div>
-                </form>
+                    <div class="form-group">
+                        <label>Severity Colour :</label>
+                        <select id="vuln_color" name="vuln_color" class="selectpicker"
+                                data-live-search="true">
+                            <option value="important">High</option>
+                            <option value="warning">Medium</option>
+                            <option value="info">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>URL:</label>
+                        <textarea class="form-control" rows="1" style="min-width: 70%"
+                                  name="url"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Descriptoin:</label>
+                        <textarea class="form-control" rows="8" name="description"
+                                  style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Solution:</label>
+                        <textarea class="form-control" rows="8" name="solution"
+                                  style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Request Header:</label>
+                        <textarea class="form-control" name="req_header" rows="8" style="min-width: 30%"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Response Header:</label>
+                        <textarea class="form-control" name="res_header" rows="8" style="min-width: 30%"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Parameter:</label>
+                        <textarea class="form-control" name="param" rows="1"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>sourceid:</label>
+                        <textarea class="form-control" rows="1" name="sourceid"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>attack:</label>
+                        <textarea class="form-control" rows="1" name="attack"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>reference:</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="ref"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-primary" aria-hidden="true"
+                       href="/webscanners/zap_vul_details/?scan_id={{scan_id}}">Close
+                    </a>
+                    <button class="btn btn-success">Save changes</button>
+                </div>
+            </form>
 
         </div>
     </div>

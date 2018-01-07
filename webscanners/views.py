@@ -29,7 +29,7 @@ driver = ""
 new_uri = ""
 cookies = ""
 excluded_url = ""
-
+vul_col = ""
 note = ""
 rtt = ""
 tags = ""
@@ -230,7 +230,17 @@ def index(request):
             ids = vuln['id']
             description = vuln['description']
 
-            dump_all = zap_scan_results_db(vuln_id=vuln_id, scan_id=un_scanid, project_id=project_id,
+            global vul_col
+
+            if risk == 'High':
+                vul_col = "important"
+            elif risk == 'Medium':
+                vul_col = "warning"
+            elif risk == 'Low':
+                vul_col = "info"
+
+            dump_all = zap_scan_results_db(vuln_id=vuln_id, vuln_color=vul_col, scan_id=un_scanid,
+                                           project_id=project_id,
                                            confidence=confidence, wascid=wascid,
                                            cweid=cweid,
                                            risk=risk, reference=reference, url=url, name=name,
@@ -495,10 +505,11 @@ def edit_vuln(request):
         sourceid = request.POST.get("sourceid")
         attack = request.POST.get("attack")
         reference = request.POST.get("reference")
+        vuln_col = request.POST.get("vuln_color")
 
         print "edit_vul :", name
 
-        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, risk=risk, url=url,
+        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, vuln_color=vuln_col, risk=risk, url=url,
                                                                    description=description,
                                                                    solution=solution, param=param,
                                                                    sourceid=sourceid, attack=attack,
@@ -591,8 +602,10 @@ def add_vuln(request):
 
         req_header = request.POST.get("req_header")
         res_header = request.POST.get("res_header")
+        vuln_col = request.POST.get("vuln_color")
 
-        save_vuln = zap_scan_results_db(scan_id=scan_id, risk=risk, url=url, param=param, sourceid=sourceid,
+        save_vuln = zap_scan_results_db(scan_id=scan_id, vuln_color=vuln_col, risk=risk, url=url, param=param,
+                                        sourceid=sourceid,
                                         attack=attack, vuln_id=vuln_id, name=vuln_name, description=description,
                                         reference=ref,
                                         solution=solution,
