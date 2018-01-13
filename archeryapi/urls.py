@@ -16,7 +16,7 @@ router = routers.DefaultRouter()
 urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION, public=True, )),
-    url(r'^api', include('rest_framework_docs.urls')),
+    # url(r'^api', include('rest_framework_docs.urls')),
     url(r'webscan/', views.WebScan.as_view()),
     url(r'networkscan/', views.NetworkScan.as_view()),
     url(r'project/', views.Project.as_view()),
