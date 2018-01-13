@@ -23,3 +23,4 @@ six==1.11.0
 urllib3==1.22
 coreapi==2.3.3
 coreapi-cli==1.0.6
+djangorestframework==3.7.7
