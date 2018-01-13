@@ -45,7 +45,7 @@ def index(request):
 def scan_status(request):
     if request.method == 'POST':
         all_ip = scan_save_db.objects.all()
-        scan_ip = request.POST.get('scan_id')
+        scan_ip = request.POST.get('scan_id', )
 
     return render(request, 'index.html')
 
@@ -63,6 +63,19 @@ def scan_vul_details(request):
 
 def launch_scan(request):
     all_ip = scan_save_db.objects.all()
+
+    if request.method == 'POST':
+        all_ip = scan_save_db.objects.all()
+        scan_ip = request.POST.get('ip', )
+        project_id = request.POST.get('project_id', )
+        sel_profile = request.POST.get('scan_profile', )
+        Scan_Launch(scan_ip, project_id, sel_profile)
+
+    return render_to_response('vul_details.html', {'all_ip': all_ip})
+
+
+def Scan_Launch(scan_ip, project_id, sel_profile):
+
     with open(openvas_data, 'r+') as f:
         data = json.load(f)
         ov_user = data['open_vas_user']
@@ -75,60 +88,55 @@ def launch_scan(request):
 
     scanner = VulnscanManager(str(lod_ov_ip), str(lod_ov_user), str(lod_ov_pass))
     time.sleep(5)
-    if request.method == 'POST':
-        all_ip = scan_save_db.objects.all()
-        scan_ip = request.POST.get('ip')
-        project_id = request.POST.get('project_id')
-        profile = None
-        if profile is None:
-            profile = "Full and fast"
-        else:
-            profile = request.POST.get('scan_profile')
-        scan_id, target_id = scanner.launch_scan(target=str(scan_ip), profile=str(profile))
-        save_all = scan_save_db(scan_id=str(scan_id), project_id=str(project_id), scan_ip=str(scan_ip), target_id=str(target_id))
-        save_all.save()
+    profile = None
+    if profile is None:
+        profile = "Full and fast"
+    else:
+        profile = sel_profile
+    scan_id, target_id = scanner.launch_scan(target=str(scan_ip), profile=str(profile))
+    save_all = scan_save_db(scan_id=str(scan_id), project_id=str(project_id), scan_ip=str(scan_ip),
+                            target_id=str(target_id))
+    save_all.save()
 
-        while int(scanner.get_progress(str(scan_id))) < 100.0:
-            print 'Scan progress %: ' + str(scanner.get_progress(str(scan_id)))
-            status = str(scanner.get_progress(str(scan_id)))
-            scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
-            time.sleep(5)
-
-        global status
-        status = "100"
+    while int(scanner.get_progress(str(scan_id))) < 100.0:
+        print 'Scan progress %: ' + str(scanner.get_progress(str(scan_id)))
+        status = str(scanner.get_progress(str(scan_id)))
         scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+        time.sleep(5)
 
-        if profile == "Discovery":
-            print "returning....."
+    global status
+    status = "100"
+    scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
 
-        else:
-            time.sleep(10)
-            try:
-                openvas_results = scanner.get_raw_xml(str(scan_id))
-                vul_an_id(scan_id, openvas_results)
-            except Exception as e:
-                print e
+    if profile == "Discovery":
+        print "returning....."
 
-            try:
-                openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('scan_id')
-                total_vul = len(openvas_vul)
-                total_high = len(openvas_vul.filter(threat="High"))
-                total_medium = len(openvas_vul.filter(threat="Medium"))
-                total_low = len(openvas_vul.filter(threat="Low"))
+    else:
+        time.sleep(10)
+        try:
+            openvas_results = scanner.get_raw_xml(str(scan_id))
+            vul_an_id(scan_id, openvas_results)
+        except Exception as e:
+            print e
 
-                scan_save_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul, high_total=total_high,
-                                                                    medium_total=total_medium, low_total=total_low)
-            except Exception as e:
-                print e
+        try:
+            openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+            total_vul = len(openvas_vul)
+            total_high = len(openvas_vul.filter(threat="High"))
+            total_medium = len(openvas_vul.filter(threat="Medium"))
+            total_low = len(openvas_vul.filter(threat="Low"))
 
-            try:
-                for vul_id in ov_scan_result_db.objects.values_list('vul_id', flat=True).distinct():
-                    ov_scan_result_db.objects.filter(
-                        pk=ov_scan_result_db.objects.filter(vul_id=vul_id).values_list('id', flat=True)[1:]).delete()
-            except Exception as e:
-                print e
+            scan_save_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul, high_total=total_high,
+                                                                medium_total=total_medium, low_total=total_low)
+        except Exception as e:
+            print e
 
-    return render_to_response('vul_details.html', {'all_ip': all_ip})
+        try:
+            for vul_id in ov_scan_result_db.objects.values_list('vul_id', flat=True).distinct():
+                ov_scan_result_db.objects.filter(
+                    pk=ov_scan_result_db.objects.filter(vul_id=vul_id).values_list('id', flat=True)[1:]).delete()
+        except Exception as e:
+            print e
 
 
 def vul_an_id(scan_id, openvas_results):
@@ -300,9 +308,9 @@ def openvas_details(request):
         lod_ov_ip = signing.loads(ov_ip)
 
     if request.method == 'POST':
-        scan_host = request.POST.get("scan_host")
-        openvas_user = request.POST.get("openvas_user")
-        openvas_password = request.POST.get("openvas_password")
+        scan_host = request.POST.get("scan_host", )
+        openvas_user = request.POST.get("openvas_user", )
+        openvas_password = request.POST.get("openvas_password", )
     else:
         scan_host = lod_ov_user
         openvas_user = lod_ov_pass
@@ -331,8 +339,8 @@ def openvas_setting(request):
 
 def del_vuln(request):
     if request.method == 'POST':
-        vuln_id = request.POST.get("del_vuln")
-        un_scanid = request.POST.get("scan_id")
+        vuln_id = request.POST.get("del_vuln", )
+        un_scanid = request.POST.get("scan_id", )
         delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
         delete_vuln.delete()
 
@@ -351,24 +359,24 @@ def del_vuln(request):
 
 def edit_vuln(request):
     if request.method == 'POST':
-        scan_id = request.POST.get("scan_id")
-        vul_id = request.POST.get("vuln_id")
+        scan_id = request.POST.get("scan_id", )
+        vul_id = request.POST.get("vuln_id", )
 
-        name = request.POST.get("name")
-        creation_time = request.POST.get("creation_time")
-        modification_time = request.POST.get("modification_time")
-        host = request.POST.get("host")
-        port = request.POST.get("port")
-        threat = request.POST.get("threat")
-        severity = request.POST.get("severity")
-        description = request.POST.get("description")
-        family = request.POST.get("family")
-        cvss_base = request.POST.get("cvss_base")
-        cve = request.POST.get("cve")
+        name = request.POST.get("name", )
+        creation_time = request.POST.get("creation_time", )
+        modification_time = request.POST.get("modification_time", )
+        host = request.POST.get("host", )
+        port = request.POST.get("port", )
+        threat = request.POST.get("threat", )
+        severity = request.POST.get("severity", )
+        description = request.POST.get("description", )
+        family = request.POST.get("family", )
+        cvss_base = request.POST.get("cvss_base", )
+        cve = request.POST.get("cve", )
         # bid = request.POST.get("bid")
-        xref = request.POST.get("xref")
-        tags = request.POST.get("tags")
-        banner = request.POST.get("banner")
+        xref = request.POST.get("xref", )
+        tags = request.POST.get("tags", )
+        banner = request.POST.get("banner", )
 
         print "edit_vul :", name
 
@@ -419,22 +427,22 @@ def add_vuln(request):
 
     if request.method == 'POST':
         vuln_id = uuid.uuid4()
-        scan_id = request.POST.get("scan_id")
-        name = request.POST.get("name")
-        creation_time = request.POST.get("creation_time")
-        modification_time = request.POST.get("modification_time")
-        host = request.POST.get("host")
-        port = request.POST.get("port")
-        threat = request.POST.get("threat")
-        severity = request.POST.get("severity")
-        description = request.POST.get("description")
-        family = request.POST.get("family")
-        cvss_base = request.POST.get("cvss_base")
-        cve = request.POST.get("cve")
+        scan_id = request.POST.get("scan_id", )
+        name = request.POST.get("name", )
+        creation_time = request.POST.get("creation_time", )
+        modification_time = request.POST.get("modification_time", )
+        host = request.POST.get("host", )
+        port = request.POST.get("port", )
+        threat = request.POST.get("threat", )
+        severity = request.POST.get("severity", )
+        description = request.POST.get("description", )
+        family = request.POST.get("family", )
+        cvss_base = request.POST.get("cvss_base", )
+        cve = request.POST.get("cve", )
         # bid = request.POST.get("bid")
-        xref = request.POST.get("xref")
-        tags = request.POST.get("tags")
-        banner = request.POST.get("banner")
+        xref = request.POST.get("xref", )
+        tags = request.POST.get("tags", )
+        banner = request.POST.get("banner", )
 
         save_vuln = ov_scan_result_db(name=name, vul_id=vuln_id, scan_id=scan_id,
                                       creation_time=creation_time,

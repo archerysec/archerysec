@@ -44,6 +44,7 @@ res_id = ""
 
 alert = ""
 
+
 # Login View
 @public
 @csrf_protect
@@ -55,8 +56,8 @@ def login(request):
 
 @public
 def auth_view(request):
-    username = request.POST.get('username', '')
-    password = request.POST.get('password', '')
+    username = request.POST.get('username', '', )
+    password = request.POST.get('password', '', )
     user = auth.authenticate(username=username, password=password)
 
     if user is not None:
@@ -80,7 +81,7 @@ def invalid_login():
     return render_to_response('invalid_login.html')
 
 
-def index(request):
+def launch_web_scan(target_url, project_id):
     try:
         with open(api_key_path, 'r+') as f:
             data = json.load(f)
@@ -94,6 +95,214 @@ def index(request):
     zap = ZAPv2(apikey=apikey,
                 proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
 
+    print target_url
+    try:
+        abc = zapscanner.start_zap()
+        print abc
+
+    except Exception as e:
+        print e
+        return HttpResponseRedirect("/webscanners/scans_list/")
+
+    time.sleep(10)
+
+    all_excluded = excluded_db.objects.filter(Q(exclude_url__icontains=target_url))
+
+    for data in all_excluded:
+        global excluded_url
+        excluded_url = data.exclude_url
+
+    print "Exclude url ", excluded_url
+    url_exclude = zap.spider.exclude_from_scan(regex=excluded_url)
+
+    print "URL Excluded:", url_exclude
+
+    all_cookie = cookie_db.objects.filter(url=target_url)
+    for da in all_cookie:
+        global cookies
+        cookies = da.cookie
+    remove_cookie = zap.replacer.remove_rule(target_url)
+    print "Remove Cookie :", remove_cookie
+    cookie_add = zap.replacer.add_rule(apikey=apikey, description=target_url, enabled="true",
+                                       matchtype='REQ_HEADER', matchregex="false", replacement=cookies,
+                                       matchstring="Cookie", initiators="")
+
+    print "Cookies Added :", cookie_add
+    zap.ajaxSpider.scan(target_url)
+    scanid = zap.spider.scan(target_url)
+
+    save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid)
+    save_all.save()
+    try:
+        while (int(zap.spider.status(scanid)) < 100):
+            # print 'Spider progress %:' + zap.spider.status(scanid)
+            global spider_status
+            spider_status = zap.spider.status(scanid)
+            print "Spider progress", spider_status
+            time.sleep(5)
+    except Exception as e:
+        print e
+
+    spider_status = "100"
+
+    spider_res_out = zap.spider.results(scanid)
+    data_out = ("\n".join(map(str, spider_res_out)))
+    print data_out
+    total_spider = len(spider_res_out)
+    # save_spider_results = zap_spider_results(spider_id=(scanid), spider_urls=(data_out))
+    # save_spider_results.save()
+    # del_temp = zap_spider_db.objects.filter(spider_scanid__icontains=scanid).order_by('spider_scanid')
+    # del_temp.delete()
+    # save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid, urls_num=total_spider)
+    # save_all.save()
+
+    print 'Spider Completed------'
+    print 'Target :', target_url
+    global spider_alert
+    spider_alert = "Spider Completed"
+
+    time.sleep(5)
+
+    print 'Scanning Target %s' % target_url
+    scan_scanid = zap.ascan.scan(target_url)
+    un_scanid = uuid.uuid4()
+    print "updated scanid :", un_scanid
+    try:
+        save_all_scan = zap_scans_db(project_id=project_id, scan_url=target_url, scan_scanid=un_scanid)
+        save_all_scan.save()
+    except Exception as e:
+        print e
+    # zap_scans_db.objects.filter(pk=some_value).update(field1='some value')
+    try:
+        while (int(zap.ascan.status(scan_scanid)) < 100):
+            print 'Scan progress from zap_scan_lauch function  %: ' + zap.ascan.status(scan_scanid)
+            global scans_status
+            scans_status = zap.ascan.status(scan_scanid)
+            zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
+            time.sleep(5)
+    except Exception as e:
+        print e
+
+    # Save Vulnerability in database
+    scans_status = "100"
+    zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
+    print target_url
+    time.sleep(5)
+
+    all_vuln = zap.core.alerts(target_url)
+    # print all_vuln
+
+    for vuln in all_vuln:
+        vuln_id = uuid.uuid4()
+        confidence = vuln['confidence']
+        wascid = vuln['wascid']
+        cweid = vuln['cweid']
+        risk = vuln['risk']
+        reference = vuln['reference']
+        url = vuln['url']
+        name = vuln['name']
+        solution = vuln['solution']
+        param = vuln['param']
+        evidence = vuln['evidence']
+        sourceid = vuln['sourceid']
+        pluginId = vuln['pluginId']
+        other = vuln['other']
+        attack = vuln['attack']
+        messageId = vuln['messageId']
+        method = vuln['method']
+        alert = vuln['alert']
+        ids = vuln['id']
+        description = vuln['description']
+
+        global vul_col
+
+        if risk == 'High':
+            vul_col = "important"
+        elif risk == 'Medium':
+            vul_col = "warning"
+        elif risk == 'Low':
+            vul_col = "info"
+
+        dump_all = zap_scan_results_db(vuln_id=vuln_id, vuln_color=vul_col, scan_id=un_scanid,
+                                       project_id=project_id,
+                                       confidence=confidence, wascid=wascid,
+                                       cweid=cweid,
+                                       risk=risk, reference=reference, url=url, name=name,
+                                       solution=solution,
+                                       param=param, evidence=evidence, sourceid=sourceid, pluginId=pluginId,
+                                       other=other, attack=attack, messageId=messageId, method=method,
+                                       alert=alert, id=ids, description=description)
+        dump_all.save()
+
+    time.sleep(5)
+
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
+    total_vul = len(zap_all_vul)
+    total_high = len(zap_all_vul.filter(risk="High"))
+    total_medium = len(zap_all_vul.filter(risk="Medium"))
+    total_low = len(zap_all_vul.filter(risk="Low"))
+
+    zap_scans_db.objects.filter(scan_scanid=un_scanid).update(total_vul=total_vul, high_vul=total_high,
+                                                              medium_vul=total_medium, low_vul=total_low)
+
+    spider_alert = "Scan Completed"
+
+    time.sleep(5)
+
+    for msg in zap_all_vul:
+        msg_id = msg.messageId
+        request_response = zap.core.message(id=msg_id)
+        ja_son = json.dumps(request_response)
+        ss = ast.literal_eval(ja_son)
+        for key, value in ss.viewitems():
+            global note
+            if key == "note":
+                note = value
+            global rtt
+            if key == "rtt":
+                rtt = value
+            global tags
+            if key == "tags":
+                tags = value
+            global timestamp
+            if key == "timestamp":
+                timestamp = value
+            global responseHeader
+            if key == "responseHeader":
+                responseHeader = value
+            global requestBody
+            if key == "requestBody":
+                requestBody = value
+            global responseBody
+            if key == "responseBody":
+                responseBody = value
+            global requestHeader
+            if key == "requestHeader":
+                requestHeader = value
+            global cookieParams
+            if key == "cookieParams":
+                cookieParams = value
+            global res_type
+            if key == "type":
+                res_type = value
+            global res_id
+            if key == "id":
+                res_id = value
+
+        zap_scan_results_db.objects.filter(messageId=msg_id).update(note=note, rtt=rtt, tags=tags,
+                                                                    timestamp=timestamp,
+                                                                    responseHeader=responseHeader,
+                                                                    requestBody=requestBody,
+                                                                    responseBody=responseBody,
+                                                                    requestHeader=requestHeader,
+                                                                    cookieParams=cookieParams,
+                                                                    res_type=res_type,
+                                                                    res_id=res_id)
+        print msg_id
+        print res_id
+
+
+def index(request):
     all_urls = zap_spider_db.objects.all()
     all_scans = zap_scans_db.objects.all()
     all_spider_results = zap_spider_results.objects.all()
@@ -102,223 +311,10 @@ def index(request):
 
     all_scans_db = project_db.objects.all()
 
-    if request.POST.get("url"):
-        global target_url
-        target_url = request.POST.get('url')
-        project_id = request.POST.get('project_id')
-        print target_url
-        try:
-            abc = zapscanner.start_zap()
-            print abc
-            messages.success(request, "ZAP Started")
-        except Exception as e:
-            messages.error(request, "Please Setup ZAP configuration in ZAP setting page")
-            print e
-            return HttpResponseRedirect("/webscanners/scans_list/")
-
-        messages.success(request, "ZAP Started")
-        messages.add_message(request, messages.SUCCESS, 'ZAP Started')
-
-        time.sleep(10)
-
-        all_excluded = excluded_db.objects.filter(Q(exclude_url__icontains=target_url))
-
-        for data in all_excluded:
-            global excluded_url
-            excluded_url = data.exclude_url
-
-        print "Exclude url ", excluded_url
-        url_exclude = zap.spider.exclude_from_scan(regex=excluded_url)
-
-        print "URL Excluded:", url_exclude
-
-        all_cookie = cookie_db.objects.filter(url=target_url)
-        for da in all_cookie:
-            global cookies
-            cookies = da.cookie
-        remove_cookie = zap.replacer.remove_rule(target_url)
-        print "Remove Cookie :", remove_cookie
-        cookie_add = zap.replacer.add_rule(apikey=apikey, description=target_url, enabled="true",
-                                           matchtype='REQ_HEADER', matchregex="false", replacement=cookies,
-                                           matchstring="Cookie", initiators="")
-
-        print "Cookies Added :", cookie_add
-        zap.ajaxSpider.scan(target_url)
-        scanid = zap.spider.scan(target_url)
-
-        save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid)
-        save_all.save()
-        try:
-            while (int(zap.spider.status(scanid)) < 100):
-                # print 'Spider progress %:' + zap.spider.status(scanid)
-                global spider_status
-                spider_status = zap.spider.status(scanid)
-                print "Spider progress", spider_status
-                time.sleep(5)
-        except Exception as e:
-            print e
-
-        spider_status = "100"
-
-        spider_res_out = zap.spider.results(scanid)
-        data_out = ("\n".join(map(str, spider_res_out)))
-        print data_out
-        total_spider = len(spider_res_out)
-        save_spider_results = zap_spider_results(spider_id=(scanid), spider_urls=(data_out))
-        save_spider_results.save()
-        del_temp = zap_spider_db.objects.filter(spider_scanid__icontains=scanid).order_by('spider_scanid')
-        del_temp.delete()
-        save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid, urls_num=total_spider)
-        save_all.save()
-
-        print 'Spider Completed------'
-        print 'Target :', target_url
-        global spider_alert
-        spider_alert = "Spider Completed"
-
-        messages.add_message(request, messages.SUCCESS, 'Spider Completed ')
-
-        time.sleep(5)
-
-        print 'Scanning Target %s' % target_url
-        scan_scanid = zap.ascan.scan(target_url)
-        un_scanid = uuid.uuid4()
-        print "updated scanid :", un_scanid
-        try:
-            save_all_scan = zap_scans_db(project_id=project_id, scan_url=target_url, scan_scanid=un_scanid)
-            save_all_scan.save()
-        except Exception as e:
-            print e
-        # zap_scans_db.objects.filter(pk=some_value).update(field1='some value')
-        try:
-            while (int(zap.ascan.status(scan_scanid)) < 100):
-                print 'Scan progress from zap_scan_lauch function  %: ' + zap.ascan.status(scan_scanid)
-                global scans_status
-                scans_status = zap.ascan.status(scan_scanid)
-                zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
-                time.sleep(5)
-        except Exception as e:
-            print e
-
-        # Save Vulnerability in database
-        scans_status = "100"
-        zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
-        print target_url
-        time.sleep(5)
-
-        all_vuln = zap.core.alerts(target_url)
-        # print all_vuln
-
-        for vuln in all_vuln:
-            vuln_id = uuid.uuid4()
-            confidence = vuln['confidence']
-            wascid = vuln['wascid']
-            cweid = vuln['cweid']
-            risk = vuln['risk']
-            reference = vuln['reference']
-            url = vuln['url']
-            name = vuln['name']
-            solution = vuln['solution']
-            param = vuln['param']
-            evidence = vuln['evidence']
-            sourceid = vuln['sourceid']
-            pluginId = vuln['pluginId']
-            other = vuln['other']
-            attack = vuln['attack']
-            messageId = vuln['messageId']
-            method = vuln['method']
-            alert = vuln['alert']
-            ids = vuln['id']
-            description = vuln['description']
-
-            global vul_col
-
-            if risk == 'High':
-                vul_col = "important"
-            elif risk == 'Medium':
-                vul_col = "warning"
-            elif risk == 'Low':
-                vul_col = "info"
-
-            dump_all = zap_scan_results_db(vuln_id=vuln_id, vuln_color=vul_col, scan_id=un_scanid,
-                                           project_id=project_id,
-                                           confidence=confidence, wascid=wascid,
-                                           cweid=cweid,
-                                           risk=risk, reference=reference, url=url, name=name,
-                                           solution=solution,
-                                           param=param, evidence=evidence, sourceid=sourceid, pluginId=pluginId,
-                                           other=other, attack=attack, messageId=messageId, method=method,
-                                           alert=alert, id=ids, description=description)
-            dump_all.save()
-
-        time.sleep(5)
-
-        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
-        total_vul = len(zap_all_vul)
-        total_high = len(zap_all_vul.filter(risk="High"))
-        total_medium = len(zap_all_vul.filter(risk="Medium"))
-        total_low = len(zap_all_vul.filter(risk="Low"))
-
-        zap_scans_db.objects.filter(scan_scanid=un_scanid).update(total_vul=total_vul, high_vul=total_high,
-                                                                  medium_vul=total_medium, low_vul=total_low)
-
-        spider_alert = "Scan Completed"
-
-        time.sleep(5)
-
-        for msg in zap_all_vul:
-            msg_id = msg.messageId
-            request_response = zap.core.message(id=msg_id)
-            ja_son = json.dumps(request_response)
-            ss = ast.literal_eval(ja_son)
-            for key, value in ss.viewitems():
-                global note
-                if key == "note":
-                    note = value
-                global rtt
-                if key == "rtt":
-                    rtt = value
-                global tags
-                if key == "tags":
-                    tags = value
-                global timestamp
-                if key == "timestamp":
-                    timestamp = value
-                global responseHeader
-                if key == "responseHeader":
-                    responseHeader = value
-                global requestBody
-                if key == "requestBody":
-                    requestBody = value
-                global responseBody
-                if key == "responseBody":
-                    responseBody = value
-                global requestHeader
-                if key == "requestHeader":
-                    requestHeader = value
-                global cookieParams
-                if key == "cookieParams":
-                    cookieParams = value
-                global res_type
-                if key == "type":
-                    res_type = value
-                global res_id
-                if key == "id":
-                    res_id = value
-
-            zap_scan_results_db.objects.filter(messageId=msg_id).update(note=note, rtt=rtt, tags=tags,
-                                                                        timestamp=timestamp,
-                                                                        responseHeader=responseHeader,
-                                                                        requestBody=requestBody,
-                                                                        responseBody=responseBody,
-                                                                        requestHeader=requestHeader,
-                                                                        cookieParams=cookieParams,
-                                                                        res_type=res_type,
-                                                                        res_id=res_id)
-            print msg_id
-            print res_id
-
-            # vuln_num = zap.core.number_of_alerts(target_url)
+    if request.POST.get("url", ):
+        target_url = request.POST.get('url', )
+        project_id = request.POST.get('project_id', )
+        launch_web_scan(target_url, project_id)
 
     return render(request, 'webscanner.html',
                   {'all_urls': all_urls, 'spider_status': spider_status, 'scans_status': scans_status,
@@ -381,9 +377,9 @@ def zap_set_update(request):
         zap_port = data['zap_port']
 
     if request.method == 'POST':
-        apikey = request.POST.get("apikey")
-        zapath = request.POST.get("zappath")
-        port = request.POST.get("port")
+        apikey = request.POST.get("apikey", )
+        zapath = request.POST.get("zappath", )
+        port = request.POST.get("port", )
     else:
         apikey = lod_apikey
         zapath = zapath
@@ -430,7 +426,7 @@ def dashboard(request):
 def slem(driver, url):
     global new_uri
     new_uri = url
-    driver.get(url)
+    driver.get(url, )
 
 
 def save_cookie(driver):
@@ -450,8 +446,8 @@ def save_cookie(driver):
 
 
 def sel_login(request):
-    action_vul = request.POST.get("action")
-    url_da = request.POST.get("url_login")
+    action_vul = request.POST.get("action", )
+    url_da = request.POST.get("url_login", )
     print action_vul
     print url_da
     if action_vul == "open_page":
@@ -483,7 +479,7 @@ def sel_login(request):
 
 
 def exclude_url(request):
-    exclud = request.POST.get("exclude_url")
+    exclud = request.POST.get("exclude_url", )
 
     exclude_save = excluded_db(exclude_url=exclud)
     exclude_save.save()
@@ -494,19 +490,19 @@ def exclude_url(request):
 def edit_vuln(request):
     # all_vuln = zap_scan_results_db.objects.all()
     if request.method == 'POST':
-        vuln_id = request.POST.get("vuln_id")
-        scan_id = request.POST.get("scan_id")
+        vuln_id = request.POST.get("vuln_id", )
+        scan_id = request.POST.get("scan_id", )
         print vuln_id
-        name = request.POST.get("name")
-        risk = request.POST.get("risk")
-        url = request.POST.get("url")
-        description = request.POST.get("description")
-        solution = request.POST.get("solution")
-        param = request.POST.get("param")
-        sourceid = request.POST.get("sourceid")
-        attack = request.POST.get("attack")
-        reference = request.POST.get("reference")
-        vuln_col = request.POST.get("vuln_color")
+        name = request.POST.get("name", )
+        risk = request.POST.get("risk", )
+        url = request.POST.get("url", )
+        description = request.POST.get("description", )
+        solution = request.POST.get("solution", )
+        param = request.POST.get("param", )
+        sourceid = request.POST.get("sourceid", )
+        attack = request.POST.get("attack", )
+        reference = request.POST.get("reference", )
+        vuln_col = request.POST.get("vuln_color", )
 
         print "edit_vul :", name
 
@@ -536,8 +532,8 @@ def edit_vuln(request):
 
 def del_vuln(request):
     if request.method == 'POST':
-        vuln_id = request.POST.get("del_vuln")
-        un_scanid = request.POST.get("scan_id")
+        vuln_id = request.POST.get("del_vuln", )
+        un_scanid = request.POST.get("scan_id", )
         delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
         delete_vuln.delete()
 
@@ -590,20 +586,20 @@ def add_vuln(request):
 
     if request.method == 'POST':
         vuln_id = uuid.uuid4()
-        scan_id = request.POST.get("scan_id")
-        vuln_name = request.POST.get("vuln_name")
-        risk = request.POST.get("risk")
-        url = request.POST.get("url")
-        param = request.POST.get("param")
-        sourceid = request.POST.get("sourceid")
-        attack = request.POST.get("attack")
-        ref = request.POST.get("ref")
-        description = request.POST.get("description")
-        solution = request.POST.get("solution")
+        scan_id = request.POST.get("scan_id", )
+        vuln_name = request.POST.get("vuln_name", )
+        risk = request.POST.get("risk", )
+        url = request.POST.get("url", )
+        param = request.POST.get("param", )
+        sourceid = request.POST.get("sourceid", )
+        attack = request.POST.get("attack", )
+        ref = request.POST.get("ref", )
+        description = request.POST.get("description", )
+        solution = request.POST.get("solution", )
 
-        req_header = request.POST.get("req_header")
-        res_header = request.POST.get("res_header")
-        vuln_col = request.POST.get("vuln_color")
+        req_header = request.POST.get("req_header", )
+        res_header = request.POST.get("res_header", )
+        vuln_col = request.POST.get("vuln_color", )
 
         save_vuln = zap_scan_results_db(scan_id=scan_id, vuln_color=vuln_col, risk=risk, url=url, param=param,
                                         sourceid=sourceid,

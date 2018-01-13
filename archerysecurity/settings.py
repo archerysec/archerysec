@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',
+    'drf_openapi',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +137,8 @@ MESSAGE_TAGS = {
 STRONGHOLD_PUBLIC_URLS = (
     r'^/admin.*?$',  # Don't touch the admin pages
     r'^/accounts/login/$',  # Avoid redirect loop
+    r'^/api.*?$',
+    r'^/o.*?$',
 )
 
 LOGIN_URL = '/login/'
@@ -142,7 +146,13 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/user/accounts/'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
-    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning'
 }

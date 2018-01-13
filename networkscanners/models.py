@@ -47,3 +47,5 @@ class scan_save_db(models.Model):
     medium_total = models.TextField(blank=True)
     low_total = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)

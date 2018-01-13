@@ -5,7 +5,7 @@ from projects.models import project_db
 from django.contrib import messages
 import uuid
 from projects.models import project_db, project_scan_db
-from webscanners import views
+from webscanners import web_views
 from webscanners.models import zap_scans_db
 from networkscanners.models import scan_save_db
 
@@ -17,11 +17,11 @@ def create_form(request):
 def create(request):
     if request.method == 'POST':
         project_id = uuid.uuid4()
-        project_name = request.POST.get("projectname")
-        project_date = request.POST.get("projectstart")
-        project_end = request.POST.get("projectend")
-        project_owner = request.POST.get("projectowner")
-        project_disc = request.POST.get("project_disc")
+        project_name = request.POST.get("projectname", )
+        project_date = request.POST.get("projectstart", )
+        project_end = request.POST.get("projectend", )
+        project_owner = request.POST.get("projectowner", )
+        project_disc = request.POST.get("project_disc", )
 
         save_project = project_db(project_name=project_name, project_id=project_id,
                                   project_start=project_date, project_end=project_end,
@@ -39,7 +39,7 @@ def projects(request):
     all_projects = project_db.objects.all()
 
     if request.method == 'POST':
-        proj_id = request.POST.get("proj_id")
+        proj_id = request.POST.get("proj_id", )
         del_proj = project_db.objects.filter(project_id=proj_id)
         del_proj.delete()
         messages.success(request, "Deleted Project")
@@ -57,9 +57,9 @@ def projects_view(request):
 
     print "pROJECT ID ", project_id
 
-    if request.POST.get("scan_id"):
+    if request.POST.get("scan_id", ):
         project_id = request.GET['proj_id']
-        scan_ids = request.POST.get("scan_id")
+        scan_ids = request.POST.get("scan_id", )
 
         print scan_ids
 
@@ -68,9 +68,9 @@ def projects_view(request):
         messages.success(request, "Deleted scan")
         return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
 
-    if request.POST.get("project_status"):
-        project_status = request.POST.get("project_status")
-        project_id = request.POST.get("project_id")
+    if request.POST.get("project_status", ):
+        project_status = request.POST.get("project_status", )
+        project_id = request.POST.get("project_id", )
 
         project_db.objects.filter(project_id=project_id).update(project_status=project_status)
 
@@ -95,9 +95,9 @@ def add_scan_v(request):
 
 def add_scan(request):
     if request.method == 'POST':
-        scan_type = request.POST.get("scan_type")
-        project_id = request.POST.get("project_id")
-        scan_target = request.POST.get("scan_target")
+        scan_type = request.POST.get("scan_type", )
+        project_id = request.POST.get("project_id", )
+        scan_target = request.POST.get("scan_target", )
         save_scan = project_scan_db(scan_type=scan_type, project_url=scan_target, project_id=project_id)
         save_scan.save()
         messages.success(request, "Scan Added")
