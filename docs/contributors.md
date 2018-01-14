@@ -9,5 +9,5 @@ You can contact him, in case of any query related to tool.
 ##### Helping hands
 
 * Shubham Mittal ([@upgoingstar](https://twitter.com/upgoingstar))
-* Sudhanshu Chauhan ([@upgoingstar](https://twitter.com/sudhanshu_c))
+* Sudhanshu Chauhan ([@sudhanshu_c](https://twitter.com/sudhanshu_c))
 
