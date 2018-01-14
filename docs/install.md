@@ -19,13 +19,13 @@ pip --version
 Now clone Archery tool from github
 
 ``` sh
-git clone https://github.com/anandtiwarics/archerysec.git
+git clone https://github.com/archerysec/archerysec.git
 ```
 
 Move to directory archerysec
 
 ``` sh
-cd /archerysecurity
+cd /archerysec
 ```
 
 Install requirements
@@ -45,6 +45,11 @@ python manage.py makemigrations networkscanners
 Makemigrations of all webscanners app models
 ``` sh
 python manage.py makemigrations webscanners
+```
+
+Makemigrations of all projects app models
+```sh
+python manage.py makemigrations projects
 ```
 
 Migrate all data

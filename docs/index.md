@@ -12,7 +12,7 @@ Archery is an opensource vulnerability assessment and management tool which help
 * Useful for DevOps teams for Vulnerability Management.
 
 ## Note
-Currently project is in development phase and still lot of work going on.
+**Currently project is in development phase and still lot of work going on**.
 
 ## Requirement
 
