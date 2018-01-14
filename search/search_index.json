@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Archery\n\n\nArchery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.\n\n\nOverview of the tool:\n\n\n\n\nPerform Web and Network vulnerability Scanning using opensource tools.\n\n\nCorrelates and Collaborate all raw scans data, show them in a consolidated manner.\n\n\nPerform authenticated web scanning.\n\n\nPerform web application scanning using selenium.\n\n\nVulnerability Management.\n\n\nEnable REST API's for developers to perform scanning and Vulnerability Management.\n\n\nUseful for DevOps teams for Vulnerability Management.\n\n\n\n\nNote\n\n\nCurrently project is in development phase and still lot of work going on.\n\n\nRequirement\n\n\n\n\nPython 2.7\n\n\nOpenVas 8\n\n\nOWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)\n\n\nSelenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)", 
+            "text": "Archery\n\n\nArchery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.\n\n\nOverview of the tool:\n\n\n\n\nPerform Web and Network vulnerability Scanning using opensource tools.\n\n\nCorrelates and Collaborate all raw scans data, show them in a consolidated manner.\n\n\nPerform authenticated web scanning.\n\n\nPerform web application scanning using selenium.\n\n\nVulnerability Management.\n\n\nEnable REST API's for developers to perform scanning and Vulnerability Management.\n\n\nUseful for DevOps teams for Vulnerability Management.\n\n\n\n\nNote\n\n\nCurrently project is in development phase and still lot of work going on\n.\n\n\nRequirement\n\n\n\n\nPython 2.7\n\n\nOpenVas 8\n\n\nOWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)\n\n\nSelenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)", 
             "title": "Overview"
         }, 
         {
@@ -17,7 +17,7 @@
         }, 
         {
             "location": "/#note", 
-            "text": "Currently project is in development phase and still lot of work going on.", 
+            "text": "Currently project is in development phase and still lot of work going on .", 
             "title": "Note"
         }, 
         {
@@ -27,7 +27,7 @@
         }, 
         {
             "location": "/install/", 
-            "text": "Getting started\n\n\nInstallation\n\n\nInstalling Archery\n\n\nBefore installing Archery, you need to make sure you have Python and \npip\n\n\u2013 the Python package manager \u2013 up and running. You can verify if you're already\ngood to go with the following commands:\n\n\npython --version\n# Python 2.7.13\npip --version\n# pip 9.0.1\n\n\n\n\nNow clone Archery tool from github\n\n\ngit clone https://github.com/anandtiwarics/archerysec.git\n\n\n\n\nMove to directory archerysec\n\n\ncd /archerysecurity\n\n\n\n\nInstall requirements\n\n\npip install -r requirements.txt\n\n\n\n\nLoad static files\n\n\npython manage.py collectstatic\n\n\n\n\nMakemigrations of all networkscanners app models\n\n\npython manage.py makemigrations networkscanners\n\n\n\n\nMakemigrations of all webscanners app models\n\n\npython manage.py makemigrations webscanners\n\n\n\n\nMigrate all data\n\n\npython manage.py migrate\n\n\n\n\nNow you need to create application Credentials\n\n\npython manage.py createsuperuser\n\n\n\n\nLet's run the application\n\n\npython manage.py runserver", 
+            "text": "Getting started\n\n\nInstallation\n\n\nInstalling Archery\n\n\nBefore installing Archery, you need to make sure you have Python and \npip\n\n\u2013 the Python package manager \u2013 up and running. You can verify if you're already\ngood to go with the following commands:\n\n\npython --version\n# Python 2.7.13\npip --version\n# pip 9.0.1\n\n\n\n\nNow clone Archery tool from github\n\n\ngit clone https://github.com/archerysec/archerysec.git\n\n\n\n\nMove to directory archerysec\n\n\ncd /archerysec\n\n\n\n\nInstall requirements\n\n\npip install -r requirements.txt\n\n\n\n\nLoad static files\n\n\npython manage.py collectstatic\n\n\n\n\nMakemigrations of all networkscanners app models\n\n\npython manage.py makemigrations networkscanners\n\n\n\n\nMakemigrations of all webscanners app models\n\n\npython manage.py makemigrations webscanners\n\n\n\n\nMakemigrations of all projects app models\n\n\npython manage.py makemigrations projects\n\n\n\n\nMigrate all data\n\n\npython manage.py migrate\n\n\n\n\nNow you need to create application Credentials\n\n\npython manage.py createsuperuser\n\n\n\n\nLet's run the application\n\n\npython manage.py runserver", 
             "title": "Getting started"
         }, 
         {
@@ -42,7 +42,7 @@
         }, 
         {
             "location": "/install/#installing-archery", 
-            "text": "Before installing Archery, you need to make sure you have Python and  pip \n\u2013 the Python package manager \u2013 up and running. You can verify if you're already\ngood to go with the following commands:  python --version\n# Python 2.7.13\npip --version\n# pip 9.0.1  Now clone Archery tool from github  git clone https://github.com/anandtiwarics/archerysec.git  Move to directory archerysec  cd /archerysecurity  Install requirements  pip install -r requirements.txt  Load static files  python manage.py collectstatic  Makemigrations of all networkscanners app models  python manage.py makemigrations networkscanners  Makemigrations of all webscanners app models  python manage.py makemigrations webscanners  Migrate all data  python manage.py migrate  Now you need to create application Credentials  python manage.py createsuperuser  Let's run the application  python manage.py runserver", 
+            "text": "Before installing Archery, you need to make sure you have Python and  pip \n\u2013 the Python package manager \u2013 up and running. You can verify if you're already\ngood to go with the following commands:  python --version\n# Python 2.7.13\npip --version\n# pip 9.0.1  Now clone Archery tool from github  git clone https://github.com/archerysec/archerysec.git  Move to directory archerysec  cd /archerysec  Install requirements  pip install -r requirements.txt  Load static files  python manage.py collectstatic  Makemigrations of all networkscanners app models  python manage.py makemigrations networkscanners  Makemigrations of all webscanners app models  python manage.py makemigrations webscanners  Makemigrations of all projects app models  python manage.py makemigrations projects  Migrate all data  python manage.py migrate  Now you need to create application Credentials  python manage.py createsuperuser  Let's run the application  python manage.py runserver", 
             "title": "Installing Archery"
         }, 
         {
@@ -64,6 +64,26 @@
             "location": "/setupGuide/#openvas-setting", 
             "text": "Go to setting Page  Edit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting  Fill all required information and click on save.", 
             "title": "OpenVAS Setting"
+        }, 
+        {
+            "location": "/developers/", 
+            "text": "Archery API \nfor Developers\n\n\nArchery API Documentation\n\n\n\n\nArchery tool API built for designers and developers. It helps developers to use in their integration and automation environment. Archery tool API has the ability to manage scans and vulnerability using API endpoint. We're trying to solve the problem facing by developers in DevOpsSec operations.\nThe Archery API uses HTTP methods and a RESTful endpoint structure. For more details please read \nArchery API documentation\n\n\nNote\n\n\nCurrently project is in development phase and still lot of work going on. If you facing issue please log into ticket our\n \nGithub repo\n.", 
+            "title": "Developers"
+        }, 
+        {
+            "location": "/developers/#archery-api-for-developers", 
+            "text": "", 
+            "title": "Archery API for Developers"
+        }, 
+        {
+            "location": "/developers/#archery-api-documentation", 
+            "text": "Archery tool API built for designers and developers. It helps developers to use in their integration and automation environment. Archery tool API has the ability to manage scans and vulnerability using API endpoint. We're trying to solve the problem facing by developers in DevOpsSec operations.\nThe Archery API uses HTTP methods and a RESTful endpoint structure. For more details please read  Archery API documentation", 
+            "title": "Archery API Documentation"
+        }, 
+        {
+            "location": "/developers/#note", 
+            "text": "Currently project is in development phase and still lot of work going on. If you facing issue please log into ticket our   Github repo .", 
+            "title": "Note"
         }, 
         {
             "location": "/contributors/", 

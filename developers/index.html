@@ -13,7 +13,7 @@
         <meta name="description" content="All about ArcherySec.">
       
       
-        <link rel="canonical" href="https://github.com/archerysec/archerysec/setupGuide/">
+        <link rel="canonical" href="https://github.com/archerysec/archerysec/developers/">
       
       
         <meta name="author" content="Anand Tiwari">
@@ -38,7 +38,7 @@
     
     
       
-        <title>Setting up the Environment - Archery</title>
+        <title>Developers - Archery</title>
       
     
     
@@ -94,7 +94,7 @@
                 Archery
               </span>
               <span class="md-header-nav__topic">
-                Setting up the Environment
+                Developers
               </span>
             
           
@@ -231,6 +231,18 @@
       
       
 
+
+  <li class="md-nav__item">
+    <a href="../setupGuide/" title="Setting up the Environment" class="md-nav__link">
+      Setting up the Environment
+    </a>
+  </li>
+
+    
+      
+      
+      
+
   
 
 
@@ -238,47 +250,38 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
+      
+    
     
       <label class="md-nav__link md-nav__link--active" for="toc">
-        Setting up the Environment
+        Developers
       </label>
     
-    <a href="./" title="Setting up the Environment" class="md-nav__link md-nav__link--active">
-      Setting up the Environment
+    <a href="./" title="Developers" class="md-nav__link md-nav__link--active">
+      Developers
     </a>
     
       
 <nav class="md-nav md-nav--secondary">
   
   
+    
+  
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#setup-settings" title="Setup Settings" class="md-nav__link">
-    Setup Settings
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#zap-setting" title="Zap Setting" class="md-nav__link">
-    Zap Setting
+  <a href="#archery-api-documentation" title="Archery API Documentation" class="md-nav__link">
+    Archery API Documentation
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#openvas-setting" title="OpenVAS Setting" class="md-nav__link">
-    OpenVAS Setting
+      
+        <li class="md-nav__item">
+  <a href="#note" title="Note" class="md-nav__link">
+    Note
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -288,18 +291,6 @@
   
 </nav>
     
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../developers/" title="Developers" class="md-nav__link">
-      Developers
-    </a>
   </li>
 
     
@@ -341,34 +332,23 @@
 <nav class="md-nav md-nav--secondary">
   
   
+    
+  
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#setup-settings" title="Setup Settings" class="md-nav__link">
-    Setup Settings
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#zap-setting" title="Zap Setting" class="md-nav__link">
-    Zap Setting
+  <a href="#archery-api-documentation" title="Archery API Documentation" class="md-nav__link">
+    Archery API Documentation
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#openvas-setting" title="OpenVAS Setting" class="md-nav__link">
-    OpenVAS Setting
+      
+        <li class="md-nav__item">
+  <a href="#note" title="Note" class="md-nav__link">
+    Note
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -386,24 +366,16 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/archerysec/archerysec/edit/master/docs/setupGuide.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/archerysec/archerysec/edit/master/docs/developers.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Setting up the Environment</h1>
-                
-                <h2 id="setup-settings">Setup Settings</h2>
-<h3 id="zap-setting">Zap Setting</h3>
-<ol>
-<li>Go to Setting Page</li>
-<li>Edit ZAP setting or navigate URL : http://host:port/setting_edit/</li>
-<li>Fill all required information and click on save.</li>
-</ol>
-<h3 id="openvas-setting">OpenVAS Setting</h3>
-<ol>
-<li>Go to setting Page</li>
-<li>Edit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting</li>
-<li>Fill all required information and click on save.</li>
-</ol>
+                <h1 id="archery-api-for-developers">Archery API <small>for Developers</small></h1>
+<h2 id="archery-api-documentation">Archery API Documentation</h2>
+<p><a href="https://archerysec.github.io/archerysecapi/"><img alt="Archery API" src="https://raw.githubusercontent.com/anandtiwarics/photoVideos/master/Photos/archery_api_doc.png" /></a></p>
+<p>Archery tool API built for designers and developers. It helps developers to use in their integration and automation environment. Archery tool API has the ability to manage scans and vulnerability using API endpoint. We're trying to solve the problem facing by developers in DevOpsSec operations.
+The Archery API uses HTTP methods and a RESTful endpoint structure. For more details please read <a href="https://archerysec.github.io/archerysecapi/">Archery API documentation</a></p>
+<h2 id="note">Note</h2>
+<p><strong>Currently project is in development phase and still lot of work going on. If you facing issue please log into ticket our</strong> <a href="https://github.com/archerysec/archerysec">Github repo</a>.</p>
                 
                   
                 
@@ -422,7 +394,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../install/" title="Getting started" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../setupGuide/" title="Setting up the Environment" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -431,19 +403,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Getting started
+                Setting up the Environment
               </span>
             </div>
           </a>
         
         
-          <a href="../developers/" title="Developers" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../contributors/" title="Contributors" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Developers
+                Contributors
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
