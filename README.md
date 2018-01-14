@@ -13,7 +13,7 @@ Open Source Vulnerability Assessment and Management (In Development)
 
 ### Documentation
 
-> [https://archerysec.github.io/archerysec/](https://anandtiwarics.github.io/archerysec/)
+> [https://archerysec.github.io/archerysec/](https://archerysec.github.io/archerysec/)
 
 ## Demo
 ![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery_demo.gif)
