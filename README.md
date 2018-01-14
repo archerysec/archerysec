@@ -13,7 +13,7 @@ Open Source Vulnerability Assessment and Management (In Development)
 
 ### Documentation
 
-> [https://anandtiwarics.github.io/archerysec/](https://anandtiwarics.github.io/archerysec/)
+> [https://archerysec.github.io/archerysec/](https://anandtiwarics.github.io/archerysec/)
 
 ## Demo
 ![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery_demo.gif)
@@ -41,7 +41,7 @@ Currently project is in developement phase and still lot of work going on.
 ## Installation
 
 <pre>
-$ git clone https://github.com/anandtiwarics/archerysec.git
+$ git clone https://github.com/archerysec/archerysec.git
 $ cd /archerysec
 $ pip install -r requirements.txt
 $ python manage.py collectstatic
@@ -85,6 +85,6 @@ OpenVAS Setting
 Anand Tiwari -  https://github.com/anandtiwarics
 
 ### Social Media
-* [Official Website](https://anandtiwarics.github.io/archerysec/)
+* [Official Website](https://archerysec.github.io/archerysec/)
 * [Twitter](https://twitter.com/archerysec)
 * [Facebook](https://facebook.com/archerysec)
