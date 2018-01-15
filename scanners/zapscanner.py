@@ -5,6 +5,7 @@ import subprocess
 from zapv2 import ZAPv2
 import json
 import sys
+from django.core import signing
 
 
 def start_zap():
@@ -13,6 +14,8 @@ def start_zap():
         data = json.load(f)
         zap_path = data['zap_path']
         zap_port = data['zap_port']
+        lod_apikey = data['zap_api_key']
+        apikey = signing.loads(lod_apikey)
 
     if platform.system() == 'Windows' or platform.system().startswith('CYGWIN'):
         executable = 'zap.bat'
@@ -20,7 +23,8 @@ def start_zap():
         executable = 'zap.sh'
 
     executable_path = os.path.join(zap_path, executable)
-    zap_command = [executable_path, '-daemon', '-port', zap_port]
+    zap_command = [executable_path, '-daemon', '-config', 'api.disablekey=false', '-config', 'api.key=' + apikey,
+                   '-port', zap_port]
 
     log_path = os.getcwd() + '/' + 'zap.log'
 
@@ -34,12 +38,14 @@ def stop_zap():
     api_key_path = os.getcwd() + '/' + 'apidata.json'
     with open(api_key_path, 'r+') as f:
         data = json.load(f)
-        apikey = data['zap_api_key']
         zap_port = data['zap_port']
+        lod_apikey = data['zap_api_key']
+        apikey = signing.loads(lod_apikey)
     zap = ZAPv2(apikey=apikey,
                 proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
     p = zap.core.shutdown()
     print p
+
 
 if __name__ == "__main__":
     try:
