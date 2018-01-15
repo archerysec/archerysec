@@ -66,6 +66,16 @@
             "title": "OpenVAS Setting"
         }, 
         {
+            "location": "/kaliGuide/", 
+            "text": "Complete guide \nfor Kali\n\n\nArchery tool fully supported in Kali linux and you can easily install \n Configure. Follow the below video guide.", 
+            "title": "Install in Kali"
+        }, 
+        {
+            "location": "/kaliGuide/#complete-guide-for-kali", 
+            "text": "Archery tool fully supported in Kali linux and you can easily install   Configure. Follow the below video guide.", 
+            "title": "Complete guide for Kali"
+        }, 
+        {
             "location": "/developers/", 
             "text": "Archery API \nfor Developers\n\n\nArchery API Documentation\n\n\n\n\nArchery tool API built for designers and developers. It helps developers to use in their integration and automation environment. Archery tool API has the ability to manage scans and vulnerability using API endpoint. We're trying to solve the problem facing by developers in DevOpsSec operations.\nThe Archery API uses HTTP methods and a RESTful endpoint structure. For more details please read \nArchery API documentation\n\n\nNote\n\n\nCurrently project is in development phase and still lot of work going on. If you facing issue please log into ticket our\n \nGithub repo\n.", 
             "title": "Developers"
