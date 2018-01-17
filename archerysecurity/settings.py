@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'webscanners',
     'projects',
+    'APIScan',
     'networkscanners',
     'django.contrib.admin',
     'stronghold',

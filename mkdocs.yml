@@ -4,6 +4,7 @@ pages:
 - 'Overview': 'index.md'
 - 'Getting started': 'install.md'
 - 'Setting up the Environment': 'setupGuide.md'
+- 'Install in Kali': 'kaliGuide.md'
 - 'Developers': 'developers.md'
 - Contributors: 'contributors.md'
 - Roadmap: 'roadmap.md'

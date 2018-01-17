@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^networkscanners/', include('networkscanners.urls')),
     url(r'^', include('webscanners.urls')),
     url(r'^api/', include('archeryapi.urls')),
+    url(r'^scanapi/', include('APIScan.urls')),
 
     # API authentication
     url(r'^api-token-auth/', obtain_jwt_token),
