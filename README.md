@@ -45,7 +45,7 @@ Currently project is in developement phase and still lot of work going on.
 
 <pre>
 $ git clone https://github.com/archerysec/archerysec.git
-$ cd /archerysec
+$ cd archerysec
 $ pip install -r requirements.txt
 $ python manage.py collectstatic
 $ python manage.py makemigrations networkscanners
