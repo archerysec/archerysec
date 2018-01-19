@@ -20,15 +20,13 @@ class zap_scans_db(models.Model):
     medium_vul = models.TextField(blank=True)
     low_vul = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, blank=True)
-    date_modified = models.DateTimeField(auto_now=True, blank=True)
+
 
 
 class zap_spider_results(models.Model):
     spider_id = models.TextField(blank=True)
     spider_urls = models.TextField(blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, blank=True)
-    date_modified = models.DateTimeField(auto_now=True, blank=True)
+
 
 
 class zap_scan_results_db(models.Model):
@@ -68,18 +66,13 @@ class zap_scan_results_db(models.Model):
     cookieParams = models.TextField(blank=True)
     res_type = models.TextField(blank=True)
     res_id = models.TextField(blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, blank=True)
-    date_modified = models.DateTimeField(auto_now=True, blank=True)
+
 
 
 class cookie_db(models.Model):
     url = models.TextField(blank=True)
     cookie = models.TextField(blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, blank=True)
-    date_modified = models.DateTimeField(auto_now=True, blank=True)
 
 
 class excluded_db(models.Model):
     exclude_url = models.TextField(blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, blank=True)
-    date_modified = models.DateTimeField(auto_now=True, blank=True)

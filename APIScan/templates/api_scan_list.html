@@ -65,7 +65,74 @@
                                         <input type="hidden" name="method" value="{{data.method}}">
                                         <input type="hidden" name="project_id" value="{{data.project_id}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <input type="hidden" name="auth_token_key" value="{{data.auth_token_key}}">
                                         <button class="btn btn-primary"><i class="icon-ok-sign"></i></button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <div><a href="/scanapi/api_scan_edit/?scan_id={{data.scan_id}}"
+                                            class="btn btn-primary"
+                                            data-original-title="Edit"><i
+                                            class="icon-pencil"></i></a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form action="/scanapi/del_scan/" method="POST" class="form-horizontal">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="del_scan" value="Yes">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>API Scan List</h5>
+                        <div class="buttons"><a data-toggle="modal" href="/scanapi/create/"
+                                                class="btn btn-primary btn-mini"><i
+                                class="icon-plus icon-white"></i> Add new URL</a>
+                        </div>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th>API Target</th>
+                                <th>Auth URL</th>
+                                <th>Methods</th>
+                                <th>Auth Key</th>
+                                <th>Extra Header</th>
+                                <th>Extra Body</th>
+                                <th>Scan</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in all_api_url_scan %}
+                            <tr data-target="#">
+                                <td>{{ data.scan_url }}</td>
+                                <td>{{ data.auth_url }}</td>
+                                <td>{{ data.method }}</td>
+                                <td>{{ data.auth_token_key}}</td>
+                                <td>{{ data.req_header }}</td>
+                                <td>{{ data.req_body }}</td>
+                                <td>
+                                    <form action="/scanapi/api_scan_url/" method="POST" class="form-horizontal">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="auth_val" value="{{data.auth_url}}">
+                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}">
+                                        <input type="hidden" name="req_header" value="{{data.req_header}}">
+                                        <input type="hidden" name="req_body" value="{{data.req_body}}">
+                                        <input type="hidden" name="project_id" value="{{data.project_id}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <input type="hidden" name="auth_token_key" value="{{data.auth_token_key}}">
+                                        <button class="btn btn-primary"><i class="icon-play-circle"></i></button>
                                     </form>
                                 </td>
                                 <td>
@@ -96,8 +163,8 @@
                 <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                     <h5>API Key List</h5>
                     <!--<div class="buttons"><a data-toggle="modal" href="/scanapi/create/"-->
-                                            <!--class="btn btn-primary btn-mini"><i-->
-                            <!--class="icon-plus icon-white"></i> Add new Scan</a>-->
+                    <!--class="btn btn-primary btn-mini"><i-->
+                    <!--class="icon-plus icon-white"></i> Add new Scan</a>-->
                     <!--</div>-->
                 </div>
                 <div class="widget-content nopadding">
