@@ -300,6 +300,7 @@ def launch_web_scan(target_url, project_id):
                                                                     res_id=res_id)
         print msg_id
         print res_id
+        return HttpResponseRedirect('/webscanners/scans_list/')
 
 
 def index(request):

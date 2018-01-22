@@ -5,7 +5,7 @@
     <div id="content-header">
         <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
                 href="#" class="current">IP Scan List</a></div>
-        <h1>Scans</h1>
+        <h1>REST API Scans</h1>
     </div>
     <div class="container-fluid">
         <hr>
@@ -26,11 +26,13 @@
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>API Scan List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/scanapi/create/"
+                        <div class="buttons"><a data-toggle="modal"
+                                                href="/scanapi/add_scan/?new_scan=No&scan_id={{ api_scan_id }}"
                                                 class="btn btn-primary btn-mini"><i
                                 class="icon-plus icon-white"></i> Add new Scan</a>
                         </div>
                     </div>
+
                     <div class="widget-content nopadding">
                         <table class="table table-bordered data-table">
                             <thead>
@@ -70,7 +72,7 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <div><a href="/scanapi/api_scan_edit/?scan_id={{data.scan_id}}"
+                                    <div><a href="/scanapi/api_scan_edit/?new_scan=No&scan_id={{data.scan_id}}&scan_url={{data.scan_url}}"
                                             class="btn btn-primary"
                                             data-original-title="Edit"><i
                                             class="icon-pencil"></i></a>
@@ -80,7 +82,9 @@
                                     <form action="/scanapi/del_scan/" method="POST" class="form-horizontal">
                                         {% csrf_token %}
                                         <input type="hidden" name="del_scan" value="Yes">
+                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <input type="hidden" name="auth_url" value="{{data.auth_url}}">
                                         <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                     </form>
                                 </td>
@@ -94,7 +98,8 @@
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>API Scan List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/scanapi/create/"
+                        <div class="buttons"><a data-toggle="modal"
+                                                href="/scanapi/add_scan/?new_scan=No&scan_id={{ api_scan_id }}"
                                                 class="btn btn-primary btn-mini"><i
                                 class="icon-plus icon-white"></i> Add new URL</a>
                         </div>
@@ -136,7 +141,7 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <div><a href="/scanapi/api_scan_edit/?scan_id={{data.scan_id}}"
+                                    <div><a href="/scanapi/api_scan_edit/?new_scan=No&scan_id={{data.scan_id}}&scan_url={{data.scan_url}}"
                                             class="btn btn-primary"
                                             data-original-title="Edit"><i
                                             class="icon-pencil"></i></a>
@@ -146,6 +151,7 @@
                                     <form action="/scanapi/del_scan/" method="POST" class="form-horizontal">
                                         {% csrf_token %}
                                         <input type="hidden" name="del_scan" value="Yes">
+                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                     </form>
