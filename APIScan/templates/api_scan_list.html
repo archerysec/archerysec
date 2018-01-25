@@ -41,6 +41,7 @@
                                 <th>Auth URL</th>
                                 <th>Methods</th>
                                 <th>Auth Key</th>
+                                <th>Extra Auth Key</th>
                                 <th>Extra Header</th>
                                 <th>Extra Body</th>
                                 <th>Authenticate</th>
@@ -53,7 +54,8 @@
                                 <td>{{ data.scan_url }}</td>
                                 <td>{{ data.auth_url }}</td>
                                 <td>{{ data.method }}</td>
-                                <td>{{ data.auth_token_key}}</td>
+                                <td>{{ data.auth_token_key }}</td>
+                                <td>{{ data.extra_vaule_auth }}</td>
                                 <td>{{ data.req_header }}</td>
                                 <td>{{ data.req_body }}</td>
                                 <td>
@@ -68,14 +70,16 @@
                                         <input type="hidden" name="project_id" value="{{data.project_id}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <input type="hidden" name="auth_token_key" value="{{data.auth_token_key}}">
+                                        <input type="hidden" name="extra_auth_value" value="{{data.extra_vaule_auth}}">
                                         <button class="btn btn-primary"><i class="icon-ok-sign"></i></button>
                                     </form>
                                 </td>
                                 <td>
-                                    <div><a href="/scanapi/api_scan_edit/?new_scan=No&scan_id={{data.scan_id}}&scan_url={{data.scan_url}}"
-                                            class="btn btn-primary"
-                                            data-original-title="Edit"><i
-                                            class="icon-pencil"></i></a>
+                                    <div>
+                                        <a href="/scanapi/api_scan_edit/?new_scan=No&scan_id={{data.scan_id}}&scan_url={{data.scan_url}}"
+                                           class="btn btn-primary"
+                                           data-original-title="Edit"><i
+                                                class="icon-pencil"></i></a>
                                     </div>
                                 </td>
                                 <td>
@@ -141,10 +145,11 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <div><a href="/scanapi/api_scan_edit/?new_scan=No&scan_id={{data.scan_id}}&scan_url={{data.scan_url}}"
-                                            class="btn btn-primary"
-                                            data-original-title="Edit"><i
-                                            class="icon-pencil"></i></a>
+                                    <div>
+                                        <a href="/scanapi/api_scan_edit/?new_scan=No&scan_id={{data.scan_id}}&scan_url={{data.scan_url}}"
+                                           class="btn btn-primary"
+                                           data-original-title="Edit"><i
+                                                class="icon-pencil"></i></a>
                                     </div>
                                 </td>
                                 <td>

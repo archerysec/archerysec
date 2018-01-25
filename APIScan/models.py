@@ -14,6 +14,7 @@ class APIScan_db(models.Model):
     method = models.CharField(blank=True, max_length=20)
     auth_url = models.CharField(blank=True, max_length=10)
     auth_token_key = models.TextField(blank=True)
+    extra_vaule_auth = models.TextField(blank=True)
 
 
 class APIScan_url_db(models.Model):
@@ -25,6 +26,7 @@ class APIScan_url_db(models.Model):
     method = models.CharField(blank=True, max_length=20)
     auth_url = models.CharField(blank=True, max_length=10)
     auth_token_key = models.TextField(blank=True)
+    extra_vaule_auth = models.TextField(blank=True)
 
 
 class api_token_db(models.Model):

@@ -65,6 +65,7 @@ def add_api_scan(request):
             auth_url = request.POST.get("auth_url")
             scan_id = uuid.uuid4()
             auth_header = request.POST.get("auth_header")
+
             dump_data = APIScan_db(project_id=project_id, scan_url=scan_target, scan_id=scan_id, req_header=req_header,
                                    req_body=req_body, method=method, auth_url=auth_url, auth_token_key=auth_header)
             dump_data.save()
@@ -80,7 +81,9 @@ def add_api_scan(request):
         method = request.POST.get("method")
         auth_url = request.POST.get("auth_url")
         auth_header = request.POST.get("auth_header")
+        extra_val_in_auth = request.POST.get("extra_auth_value")
         dump_data = APIScan_url_db(project_id=project_id, scan_url=scan_target, scan_id=scan_id, req_header=req_header,
+                                   extra_vaule_auth=extra_val_in_auth,
                                    req_body=req_body, method=method, auth_url=auth_url, auth_token_key=auth_header)
         dump_data.save()
         return HttpResponseRedirect('/scanapi/scanapi/?scan_id=%s' % scan_id)
@@ -210,6 +213,7 @@ def authenticate(request):
             project_id = request.POST.get("project_id")
             scan_id = request.POST.get("scan_id")
             auth_token_key = request.POST.get("auth_token_key")
+            extra_val_in_auth = request.POST.get("extra_auth_value")
 
             print scan_url
             p = json.loads(json.dumps(req_header))
@@ -222,7 +226,7 @@ def authenticate(request):
             data = json.loads(r.text)
             for key, value in data.viewitems():
                 keyl = data[key]
-                api_token = "JWT" + " " + keyl
+                api_token = extra_val_in_auth + " " + keyl
                 print api_token
 
                 try:
