@@ -22,11 +22,9 @@ class zap_scans_db(models.Model):
     project_id = models.TextField(blank=True)
 
 
-
 class zap_spider_results(models.Model):
     spider_id = models.TextField(blank=True)
     spider_urls = models.TextField(blank=True)
-
 
 
 class zap_scan_results_db(models.Model):
@@ -66,7 +64,6 @@ class zap_scan_results_db(models.Model):
     cookieParams = models.TextField(blank=True)
     res_type = models.TextField(blank=True)
     res_id = models.TextField(blank=True)
-
 
 
 class cookie_db(models.Model):

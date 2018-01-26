@@ -236,7 +236,7 @@ def launch_web_scan(target_url, project_id):
 
     time.sleep(5)
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).values('name', 'risk', 'vul_col').distinct()
     total_vul = len(zap_all_vul)
     total_high = len(zap_all_vul.filter(risk="High"))
     total_medium = len(zap_all_vul.filter(risk="Medium"))
@@ -329,14 +329,27 @@ def scan_list(request):
     return render(request, 'scan_list.html', {'all_scans': all_scans})
 
 
+def list_web_vuln(request):
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+    else:
+        scan_id = None
+
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color', 'scan_id').distinct()
+
+    return render(request, 'list_web_vuln.html', {'zap_all_vul': zap_all_vul})
+
+
 def vuln_details(request):
     if request.method == 'GET':
         scan_vul = request.GET['scan_id']
+        scan_name = request.GET['scan_name']
 
     else:
-        scan_vul = ''
+        scan_vul = None
+        scan_name = None
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul).order_by('scan_id')
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul, name=scan_name).order_by('name')
 
     return render(request, 'vuln_details.html', {'zap_all_vul': zap_all_vul, 'scan_vul': scan_vul})
 

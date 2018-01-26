@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^loggedin/$', web_views.loggedin, name='loggedin'),
     url(r'^$', web_views.index, name='index'),
     url(r'^vuln_list/', web_views.scan_list, name='vuln_list'),
+    url(r'^web_vuln_list/', web_views.list_web_vuln, name='web_vuln'),
     url(r'^vuln_details/', web_views.vuln_details, name='vuln_details'),
     url(r'^setting/', web_views.setting, name='setting'),
     url(r'^zapsetting/', web_views.zap_setting, name='zap_setting'),
