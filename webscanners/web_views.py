@@ -236,7 +236,8 @@ def launch_web_scan(target_url, project_id):
 
     time.sleep(5)
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).values('name', 'risk', 'vul_col').distinct()
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).values('name', 'risk', 'vuln_color').distinct()
+
     total_vul = len(zap_all_vul)
     total_high = len(zap_all_vul.filter(risk="High"))
     total_medium = len(zap_all_vul.filter(risk="Medium"))
@@ -247,13 +248,20 @@ def launch_web_scan(target_url, project_id):
 
     spider_alert = "Scan Completed"
 
-    time.sleep(5)
+    time.sleep(10)
 
-    for msg in zap_all_vul:
-        msg_id = msg.messageId
+    print un_scanid
+
+    zap_web_all = zap_scan_results_db.objects.filter(scan_id=un_scanid)
+    print zap_web_all
+    for m in zap_web_all:
+        print "444444444", m.messageId
+        msg_id = m.messageId
+        print msg_id
         request_response = zap.core.message(id=msg_id)
         ja_son = json.dumps(request_response)
         ss = ast.literal_eval(ja_son)
+
         for key, value in ss.viewitems():
             global note
             if key == "note":
@@ -298,9 +306,11 @@ def launch_web_scan(target_url, project_id):
                                                                     cookieParams=cookieParams,
                                                                     res_type=res_type,
                                                                     res_id=res_id)
-        print msg_id
-        print res_id
-        return HttpResponseRedirect('/webscanners/scans_list/')
+
+
+
+    zapscanner.stop_zap()
+    return HttpResponseRedirect('/webscanners/scans_list/')
 
 
 def index(request):
@@ -335,7 +345,8 @@ def list_web_vuln(request):
     else:
         scan_id = None
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color', 'scan_id').distinct()
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color',
+                                                                             'scan_id').distinct()
 
     return render(request, 'list_web_vuln.html', {'zap_all_vul': zap_all_vul})
 
@@ -421,13 +432,13 @@ def scan_table(request):
 
 
 def del_scan(request):
-    all_scans = zap_scans_db.objects.all()
-    if request.method == 'GET':
-        item_id = request.GET['scan_scanid']
+    if request.method == 'POST':
+        item_id = request.POST.get("scan_scanid")
+        scan_url = request.POST.get("scan_url")
 
-        item = zap_scans_db.objects.filter(scan_scanid=item_id)
+        item = zap_scans_db.objects.filter(scan_scanid=item_id, scan_url=scan_url)
         item.delete()
-        item_results = zap_scan_results_db.objects.filter(scan_id=item_id)
+        item_results = zap_scan_results_db.objects.filter(scan_id=item_id, url=scan_url)
         item_results.delete()
         messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
         return HttpResponseRedirect('/webscanners/scans_list/')
@@ -456,7 +467,7 @@ def save_cookie(driver):
 
     driver.close()
 
-    return HttpResponse(status=201)
+    return HttpResponseRedirect('/webscanners/')
 
 
 def sel_login(request):
@@ -468,7 +479,6 @@ def sel_login(request):
         global driver
         driver = webdriver.Firefox()
         slem(driver, url_da)
-        messages.add_message(request, messages.SUCCESS, 'Opening Website')
 
     elif action_vul == "save_cookie":
         save_cookie(driver)
@@ -489,7 +499,7 @@ def sel_login(request):
 
         messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
-    return HttpResponseRedirect(reversed('webscanner.html'))
+    return HttpResponseRedirect('/webscanners/')
 
 
 def exclude_url(request):
