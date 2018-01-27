@@ -307,8 +307,6 @@ def launch_web_scan(target_url, project_id):
                                                                     res_type=res_type,
                                                                     res_id=res_id)
 
-
-
     zapscanner.stop_zap()
     return HttpResponseRedirect('/webscanners/scans_list/')
 
@@ -329,13 +327,12 @@ def index(request):
 
 
 def web_scan(request):
-    if request.POST.get("url",):
+    if request.POST.get("url", ):
         target_url = request.POST.get('url', )
-        project_id = request.POST.get('project_id',)
+        project_id = request.POST.get('project_id', )
         launch_web_scan(target_url, project_id)
 
     return render(request, 'scan_list.html')
-
 
 
 def scan_list(request):
@@ -566,8 +563,8 @@ def del_vuln(request):
         un_scanid = request.POST.get("scan_id", )
         delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
         delete_vuln.delete()
-
-        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).values('name', 'risk',
+                                                                                   'vuln_color').distinct()
         total_vul = len(zap_all_vul)
         total_high = len(zap_all_vul.filter(risk="High"))
         total_medium = len(zap_all_vul.filter(risk="Medium"))
@@ -640,7 +637,8 @@ def add_vuln(request):
         save_vuln.save()
 
         messages.success(request, "Vulnerability Added")
-        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk',
+                                                                                 'vuln_color').distinct()
         total_vul = len(zap_all_vul)
         total_high = len(zap_all_vul.filter(risk="High"))
         total_medium = len(zap_all_vul.filter(risk="Medium"))
