@@ -322,15 +322,20 @@ def index(request):
 
     all_scans_db = project_db.objects.all()
 
-    if request.POST.get("url", ):
-        target_url = request.POST.get('url', )
-        project_id = request.POST.get('project_id', )
-        launch_web_scan(target_url, project_id)
-
     return render(request, 'webscanner.html',
                   {'all_urls': all_urls, 'spider_status': spider_status, 'scans_status': scans_status,
                    'all_scans': all_scans, 'all_spider_results': all_spider_results, 'spider_alert': spider_alert,
                    'all_excluded_url': all_excluded_url, 'all_cookies': all_cookies, 'all_scans_db': all_scans_db})
+
+
+def web_scan(request):
+    if request.POST.get("url",):
+        target_url = request.POST.get('url', )
+        project_id = request.POST.get('project_id',)
+        launch_web_scan(target_url, project_id)
+
+    return render(request, 'scan_list.html')
+
 
 
 def scan_list(request):

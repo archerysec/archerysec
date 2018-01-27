@@ -14,7 +14,7 @@
         if ($('[name="optradio1"]').is(':checked')){
             $.ajax({
                 type:'POST',
-                url:'/webscanners/',
+                url:'/webscanners/scan_launch',
                 data:{
 
                    url:$('#url').val(),

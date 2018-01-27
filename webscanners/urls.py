@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^logout/$', web_views.logout, name='logout'),
     url(r'^loggedin/$', web_views.loggedin, name='loggedin'),
     url(r'^$', web_views.index, name='index'),
+    url(r'^scan_launch$', web_views.web_scan, name='web_scan'),
     url(r'^vuln_list/', web_views.scan_list, name='vuln_list'),
     url(r'^web_vuln_list/', web_views.list_web_vuln, name='web_vuln'),
     url(r'^vuln_details/', web_views.vuln_details, name='vuln_details'),
