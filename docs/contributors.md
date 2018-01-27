@@ -1,4 +1,9 @@
-Developers are welcome who want to willingly contribute to any enhancements in the tool.
+All code contributions are greatly appreciated. First off, clone the  [Git repository](https://github.com/archerysec/archerysec), read the user's manual carefully, go through the code yourself.
+
+Bug reports are welcome! Please report all bugs on the [issue tracker](https://github.com/archerysec/archerysec/issues). Our preferred method of patch submission is via a Git pull request.
+
+Many people have contributed in different ways to the Archery development. You can be the next!
+
 
 ##### Most active and Core Developer
 
