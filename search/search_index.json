@@ -2,18 +2,23 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Archery\n\n\nArchery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.\n\n\nOverview of the tool:\n\n\n\n\nPerform Web and Network vulnerability Scanning using opensource tools.\n\n\nCorrelates and Collaborate all raw scans data, show them in a consolidated manner.\n\n\nPerform authenticated web scanning.\n\n\nPerform web application scanning using selenium.\n\n\nVulnerability Management.\n\n\nEnable REST API's for developers to perform scanning and Vulnerability Management.\n\n\nUseful for DevOps teams for Vulnerability Management.\n\n\n\n\nNote\n\n\nCurrently project is in development phase and still lot of work going on\n.\n\n\nRequirement\n\n\n\n\nPython 2.7\n\n\nOpenVas 8\n\n\nOWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)\n\n\nSelenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)", 
+            "text": "Archery\n\n\nIntroduction\n\n\nArchery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.\n\n\nProblems Solved:\n\n\n\n\nPerform Web and Network vulnerability Scanning using opensource tools.\n\n\nCorrelates and Collaborate all raw scans data, show them in a consolidated manner.\n\n\nPerform authenticated web scanning.\n\n\nPerform web application scanning using selenium.\n\n\nVulnerability Management.\n\n\nEnable REST API's for developers to perform scanning and Vulnerability Management.\n\n\nUseful for DevOps teams for Vulnerability Management.\n\n\n\n\nNote\n\n\nCurrently project is in development phase and still lot of work going on\n.\n\n\nRequirements\n\n\n\n\nPython 2.7\n\n\nOpenVas 8\n\n\nOWASP ZAP 2.7.0\n\n\nSelenium Python Firefox Webdriver", 
             "title": "Overview"
         }, 
         {
             "location": "/#archery", 
-            "text": "Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.", 
+            "text": "", 
             "title": "Archery"
         }, 
         {
-            "location": "/#overview-of-the-tool", 
+            "location": "/#introduction", 
+            "text": "Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.", 
+            "title": "Introduction"
+        }, 
+        {
+            "location": "/#problems-solved", 
             "text": "Perform Web and Network vulnerability Scanning using opensource tools.  Correlates and Collaborate all raw scans data, show them in a consolidated manner.  Perform authenticated web scanning.  Perform web application scanning using selenium.  Vulnerability Management.  Enable REST API's for developers to perform scanning and Vulnerability Management.  Useful for DevOps teams for Vulnerability Management.", 
-            "title": "Overview of the tool:"
+            "title": "Problems Solved:"
         }, 
         {
             "location": "/#note", 
@@ -21,9 +26,9 @@
             "title": "Note"
         }, 
         {
-            "location": "/#requirement", 
-            "text": "Python 2.7  OpenVas 8  OWASP ZAP 2.7.0 (https://github.com/zaproxy/zaproxy/wiki/Downloads)  Selenium Python (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)", 
-            "title": "Requirement"
+            "location": "/#requirements", 
+            "text": "Python 2.7  OpenVas 8  OWASP ZAP 2.7.0  Selenium Python Firefox Webdriver", 
+            "title": "Requirements"
         }, 
         {
             "location": "/install/", 
@@ -97,7 +102,7 @@
         }, 
         {
             "location": "/contributors/", 
-            "text": "Developers are welcome who want to willingly contribute to any enhancements in the tool.\n\n\nMost active and Core Developer\n\n\n\n\nAnand Tiwari (\n@anandtiwarics\n)\n\n\n\n\nYou can contact him, in case of any query related to tool.\n\n\nHelping hands\n\n\n\n\nShubham Mittal (\n@upgoingstar\n)\n\n\nSudhanshu Chauhan (\n@sudhanshu_c\n)", 
+            "text": "All code contributions are greatly appreciated. First off, clone the  \nGit repository\n, read the user's manual carefully, go through the code yourself.\n\n\nBug reports are welcome! Please report all bugs on the \nissue tracker\n. Our preferred method of patch submission is via a Git pull request.\n\n\nMany people have contributed in different ways to the Archery development. You can be the next!\n\n\nMost active and Core Developer\n\n\n\n\nAnand Tiwari (\n@anandtiwarics\n)\n\n\n\n\nYou can contact him, in case of any query related to tool.\n\n\nHelping hands\n\n\n\n\nShubham Mittal (\n@upgoingstar\n)\n\n\nSudhanshu Chauhan (\n@sudhanshu_c\n)", 
             "title": "Contributors"
         }, 
         {
