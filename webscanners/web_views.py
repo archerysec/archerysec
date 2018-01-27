@@ -353,7 +353,7 @@ def list_web_vuln(request):
     zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color',
                                                                              'scan_id').distinct()
 
-    return render(request, 'list_web_vuln.html', {'zap_all_vul': zap_all_vul})
+    return render(request, 'list_web_vuln.html', {'zap_all_vul': zap_all_vul, 'scan_id': scan_id})
 
 
 def vuln_details(request):
@@ -544,7 +544,8 @@ def edit_vuln(request):
         # messages.success(request, "Vulnerability Edited")
         messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
 
-        return HttpResponseRedirect("/webscanners/zap_vul_details/?scan_id=%s" % scan_id)
+        return HttpResponseRedirect("/webscanners/vuln_dat/?vuln_id=%s" % vuln_id)
+
         # return HttpResponseRedirect(
         #     reversed('vuln_details.html')
         # )
@@ -576,7 +577,7 @@ def del_vuln(request):
                                                                   medium_vul=total_medium, low_vul=total_low)
         messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/webscanners/zap_vul_details/?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect("/webscanners/web_vuln_list/?scan_id=%s" % un_scanid)
         # return HttpResponseRedirect(
         #     reversed('vuln_details.html')
         # )
@@ -647,7 +648,7 @@ def add_vuln(request):
 
         zap_scans_db.objects.filter(scan_scanid=scan_id).update(total_vul=total_vul, high_vul=total_high,
                                                                 medium_vul=total_medium, low_vul=total_low)
-        return HttpResponseRedirect("/webscanners/zap_vul_details/?scan_id=%s" % scan_id)
+        return HttpResponseRedirect("/webscanners/web_vuln_list/?scan_id=%s" % scan_id)
 
     return render(request, 'add_vuln.html', {'scan_id': scan_id})
 
