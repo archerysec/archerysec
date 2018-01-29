@@ -20,6 +20,7 @@ from django.http import HttpResponseRedirect
 import uuid
 from django.core import signing
 from projects.models import project_db
+import datetime
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -130,22 +131,24 @@ def del_api_scan(request):
     if request.POST.get("del_scan"):
         del_scan = request.POST.get("del_scan")
         scan_id = request.POST.get("scan_id")
+        scan_uuid = request.POST.get("scan_uuid")
         auth_url = request.POST.get("auth_url")
         if del_scan == 'Yes':
             scan_url = request.POST.get("scan_url")
             if auth_url == 'Yes':
-                url_scan = APIScan_url_db.objects.filter(scan_url=scan_url, auth_url='Yes')
+                url_scan = APIScan_url_db.objects.filter(id=scan_id, scan_url=scan_url, auth_url='Yes')
                 url_scan.delete()
             else:
-                url_del = APIScan_url_db.objects.filter(scan_url=scan_url, auth_url='No')
+                url_del = APIScan_url_db.objects.filter(id=scan_id, scan_url=scan_url, auth_url='No')
                 url_del.delete()
-    return HttpResponseRedirect('/scanapi/scanapi/?scan_id=%s' % scan_id)
+    return HttpResponseRedirect('/scanapi/scanapi/?scan_id=%s' % scan_uuid)
 
 
 def del_scans(request):
     if request.POST.get("scan_id"):
         scan_id = request.POST.get("scan_id")
-        item = APIScan_db.objects.filter(scan_id=scan_id)
+        scan_uuid = request.POST.get("scan_uuid")
+        item = APIScan_db.objects.filter(scan_id=scan_uuid, id=scan_id)
         item.delete()
         return HttpResponseRedirect('/scanapi/api_scans/')
     else:
@@ -155,48 +158,55 @@ def del_scans(request):
 def edit_scan(request):
     if request.method == 'GET':
         api_scan_id = request.GET['scan_id']
+        scan_uuid = request.GET['scan_uuid']
         new_scan = request.GET['new_scan']
         scan_url = request.GET['scan_url']
     else:
-        api_scan_id = ''
-        new_scan = ''
-        scan_url = ''
+        api_scan_id = None
+        new_scan = None
+        scan_url = None
+        scan_uuid = None
 
     if new_scan == 'Yes':
-        all_scan = APIScan_db.objects.filter(scan_id=api_scan_id, scan_url=scan_url)
+        all_scan = APIScan_db.objects.filter(id=api_scan_id, scan_id=scan_uuid, scan_url=scan_url)
     else:
-        all_scan = APIScan_url_db.objects.filter(scan_id=api_scan_id, scan_url=scan_url)
-    scan_id = request.POST.get("scan_id")
-    auth_url = request.POST.get("auth_url")
-    print new_scan
-    if request.POST.get("scan_id"):
+        all_scan = APIScan_url_db.objects.filter(id=api_scan_id, scan_id=scan_uuid, scan_url=scan_url)
+
+    if request.POST.get("new_scan"):
         new_scans = request.POST.get("new_scan")
+        print new_scans
         if new_scans == 'Yes':
-            scan_id = request.POST.get("scan_id")
+            scan_uuid = request.POST.get("scan_uuid")
             new_scan_url = request.POST.get("scan_url")
             req_header = request.POST.get("req_header")
             req_body = request.POST.get("req_body")
             method = request.POST.get("method")
             auth_header = request.POST.get("auth_header")
-            APIScan_db.objects.filter(scan_id=scan_id, scan_url=scan_url).update(scan_id=scan_id, scan_url=new_scan_url,
-                                                                                 req_header=req_header,
-                                                                                 req_body=req_body, method=method,
-                                                                                 auth_token_key=auth_header)
+            APIScan_db.objects.filter(scan_id=scan_uuid).update(scan_url=new_scan_url,
+                                                                req_header=req_header,
+                                                                req_body=req_body,
+                                                                method=method,
+                                                                auth_token_key=auth_header)
 
             return HttpResponseRedirect('/scanapi/')
         else:
             scan_id = request.POST.get("scan_id")
+            scan_uuid = request.POST.get("scan_uuid")
             new_scan_url = request.POST.get("scan_url")
+            scan_url = request.POST.get("old_url")
+            print new_scan_url
+            print scan_url
             req_header = request.POST.get("req_header")
             req_body = request.POST.get("req_body")
             method = request.POST.get("method")
             auth_header = request.POST.get("auth_header")
-            APIScan_url_db.objects.filter(scan_id=scan_id, scan_url=scan_url).update(scan_id=scan_id,
-                                                                                     scan_url=new_scan_url,
-                                                                                     req_header=req_header,
-                                                                                     req_body=req_body, method=method,
-                                                                                     auth_token_key=auth_header)
-            return HttpResponseRedirect('/scanapi/scanapi/?scan_id=%s' % scan_id)
+            APIScan_url_db.objects.filter(id=scan_id, scan_id=scan_uuid, scan_url=scan_url).update(
+                scan_url=new_scan_url,
+                req_header=req_header,
+                req_body=req_body,
+                method=method,
+                auth_token_key=auth_header)
+            return HttpResponseRedirect('/scanapi/scanapi/?scan_id=%s' % scan_uuid)
 
     return render(request, 'edit_scan.html', {'all_scan': all_scan, 'new_scan': new_scan})
 

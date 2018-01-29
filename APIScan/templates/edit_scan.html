@@ -3,18 +3,20 @@
 
 <div id="content">
     <div id="content-header">
-        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> {{ data.name }}</a>
+        <div id="breadcrumb"><a href="/scanapi/" title="API Scans" class="tip-bottom"><i class="icon-home"></i> {{ data.name }}</a>
             <a
                     href="#" class="current"></a></div>
         <h1></h1>
     </div>
-    <div class="container-fluid">{% for data in all_scan %}
-        <form class="form-vertical" action="/scanapi/api_scan_edit/" method="POST">
+    <div class="container-fluid">
+        <form class="form-vertical" action="/scanapi/api_scan_edit/" method="POST">{% for data in all_scan %}
             {% csrf_token %}
             <div>
                 <!--<input name="scan_id" value="{{data.scan_id}}" type="hidden">-->
-                <input name="scan_id" value="{{data.scan_id}}" type="hidden">
+                <input name="scan_id" value="{{data.id}}" type="hidden">
+                 <input name="scan_uuid" value="{{data.scan_id}}" type="hidden">
                 <input name="new_scan" value="{{new_scan}}" type="hidden">
+                <input name="old_url" value="{{data.scan_url}}" type="hidden">
                 <div class="form-group">
                     <label>scan_url:</label>
                     <textarea class="form-control" rows="1" name="scan_url"
