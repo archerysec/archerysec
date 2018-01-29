@@ -116,6 +116,7 @@
                                 <th>Medium</th>
                                 <th>Low</th>
                                 <th>Action</th>
+                                <th></th>
 
                             </tr>
                             </thead>
@@ -143,10 +144,18 @@
                                         <ul class="dropdown-menu">
                                             <li><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}"><i
                                                     class="icon-pencil"></i> View </a></li>
-                                            <li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i
-                                                    class="icon-trash"></i> Delete</a></li>
+
                                         </ul>
                                     </div>
+                                </td>
+                                 <td>
+                                    <form action="/webscanners/del_scan/" method="post" class="forms-sample">
+
+                                        {% csrf_token %}
+                                        <input type="hidden" name="scan_scanid" value="{{data.scan_scanid}}"/>
+                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
+                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                             {% endfor %}
