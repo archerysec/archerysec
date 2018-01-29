@@ -23,14 +23,16 @@
 
         ]);
 
-        var piechart_options = {title:'Vulnerability Pie chart for {{ data.scan_url }}',
+        var piechart_options = {title:'Vulnerability Pie chart for {{ data.scan_ip }}',
                        width:700,
                        height:600,
-                       colors: ['#bd3f3b', '#ff7800', '#1b7ec7',],};
+                       colors: ['#bd3f3b', '#ff7800', '#1b7ec7',],
+                       is3D:true
+                       };
         var piechart = new google.visualization.PieChart(document.getElementById('piechart_div_net'));
         piechart.draw(data, piechart_options);
 
-        var barchart_options = {title:'Vulnerability Bar chart for {{ data.scan_url }}',
+        var barchart_options = {title:'Vulnerability Bar chart for {{ data.scan_ip }}',
                        width:700,
                        height:600,
                        legend: 'none',
