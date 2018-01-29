@@ -13,6 +13,7 @@ class project_db(models.Model):
     project_owner = models.TextField(blank=True)
     project_disc = models.TextField(blank=True)
     project_status = models.TextField(blank=True)
+    date_time = models.DateTimeField(null=True)
 
 
 class project_scan_db(models.Model):
@@ -20,3 +21,4 @@ class project_scan_db(models.Model):
     project_ip = models.TextField(blank=True)
     scan_type = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
+    date_time = models.DateTimeField(null=True)

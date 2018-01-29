@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^del_scan', web_views.del_scan, name='del_scan'),
     url(r'^zap_vul_details', web_views.vuln_details, name='zap_vul_details'),
     url(r'^dashboard', web_views.dashboard, name='dashboard'),
+    url(r'^net_dashboard', web_views.dashboard_network, name='net_dashboard'),
     url(r'^sel_login', web_views.sel_login, name='sel'),
     url(r'save_cookie', web_views.save_cookie, name='save_cookie'),
     url(r'exclude_url', web_views.exclude_url, name='exclude_url'),

@@ -1,10 +1,11 @@
 from django.conf.urls import url
 from . import views
+from webscanners.web_views import dashboard
 
 app_name = 'projects'
 
 urlpatterns = [
-    url(r'^$', views.projects, name='home'),
+    url(r'^$', dashboard, name='home'),
     url(r'^projects/create/$', views.create, name='create'),
     url(r'^projects/create_form/$', views.create_form, name='create'),
     url(r'^projects/$', views.projects, name='projects'),

@@ -32,6 +32,7 @@
                             <thead>
                             <tr>
                                 <th>IP</th>
+                                <th>Date Time</th>
                                 <th>Status</th>
                                 <th>Total</th>
                                 <th>High</th>
@@ -43,6 +44,7 @@
                             <tbody>{% for data in all_ip %}
                             <tr data-target="#">
                                 <td>{{data.scan_ip}}</td>
+                                <td>{{data.date_time}}</td>
                                 <td>
                                     <div class="progress progress-info">
                                         <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}}</div>

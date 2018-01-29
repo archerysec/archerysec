@@ -20,6 +20,7 @@ class zap_scans_db(models.Model):
     medium_vul = models.TextField(blank=True)
     low_vul = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
+    date_time = models.DateTimeField(null=True)
 
 
 class zap_spider_results(models.Model):
@@ -64,6 +65,7 @@ class zap_scan_results_db(models.Model):
     cookieParams = models.TextField(blank=True)
     res_type = models.TextField(blank=True)
     res_id = models.TextField(blank=True)
+    date_time = models.DateTimeField(null=True)
 
 
 class cookie_db(models.Model):

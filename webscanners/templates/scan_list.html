@@ -37,6 +37,7 @@
                                 <!--<th>Project ID</th>-->
                                 <th>URL</th>
                                 <th>Status</th>
+                                <th>Date Time</th>
                                 <th>Total Vulnerability</th>
                                 <th>High</th>
                                 <th>Medium</th>
@@ -56,6 +57,7 @@
                                         <div class="bar" style="width: {{data.vul_status}}%">{{data.vul_status}}</div>
                                     </div>
                                 </td>
+                                <td>{{data.date_time}}</td>
                                 <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                                 <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                                 <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>

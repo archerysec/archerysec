@@ -36,7 +36,7 @@ class WebScan(generics.ListCreateAPIView):
 
             if not target_url:
                 return Response({"error": "No name passed"})
-            return Response({"message": "Scan Started"})
+            return Response({"message": "Scan Completed"})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

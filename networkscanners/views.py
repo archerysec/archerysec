@@ -13,6 +13,7 @@ import json
 from django.core import signing
 import uuid
 from projects.models import project_db
+import datetime
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -94,8 +95,9 @@ def Scan_Launch(scan_ip, project_id, sel_profile):
     else:
         profile = sel_profile
     scan_id, target_id = scanner.launch_scan(target=str(scan_ip), profile=str(profile))
+    date_time = datetime.datetime.now()
     save_all = scan_save_db(scan_id=str(scan_id), project_id=str(project_id), scan_ip=str(scan_ip),
-                            target_id=str(target_id))
+                            target_id=str(target_id), date_time=date_time)
     save_all.save()
 
     while int(scanner.get_progress(str(scan_id))) < 100.0:
@@ -259,13 +261,15 @@ def sav_vul_da(vul_id, openvas_results, scan_id):
                                 else:
                                     banner = rr.text
 
+                    date_time = datetime.datetime.now()
+
                     save_all = ov_scan_result_db(scan_id=scan_id, vul_id=vul_id, name=name,
                                                  creation_time=creation_time, modification_time=modification_time,
                                                  host=host, port=port,
                                                  threat=threat,
                                                  severity=severity,
                                                  description=description, family=family, cvss_base=cvss_base, cve=cve,
-                                                 bid=bid, xref=xref, tags=tags, banner=banner)
+                                                 bid=bid, xref=xref, tags=tags, banner=banner, date_time=date_time)
                     save_all.save()
     except Exception as e:
         print e

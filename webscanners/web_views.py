@@ -18,6 +18,8 @@ from django.contrib import messages
 import ast
 from django.core import signing
 from projects.models import project_db
+import datetime
+from networkscanners.models import scan_save_db
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -43,6 +45,9 @@ res_type = ""
 res_id = ""
 
 alert = ""
+project_id = None
+target_url = None
+scan_ip = None
 
 
 # Login View
@@ -167,8 +172,10 @@ def launch_web_scan(target_url, project_id):
     scan_scanid = zap.ascan.scan(target_url)
     un_scanid = uuid.uuid4()
     print "updated scanid :", un_scanid
+    date_time = datetime.datetime.now()
     try:
-        save_all_scan = zap_scans_db(project_id=project_id, scan_url=target_url, scan_scanid=un_scanid)
+        save_all_scan = zap_scans_db(project_id=project_id, scan_url=target_url, scan_scanid=un_scanid,
+                                     date_time=date_time)
         save_all_scan.save()
     except Exception as e:
         print e
@@ -223,6 +230,8 @@ def launch_web_scan(target_url, project_id):
         elif risk == 'Low':
             vul_col = "info"
 
+        date_time = datetime.datetime.now()
+
         dump_all = zap_scan_results_db(vuln_id=vuln_id, vuln_color=vul_col, scan_id=un_scanid,
                                        project_id=project_id,
                                        confidence=confidence, wascid=wascid,
@@ -231,7 +240,7 @@ def launch_web_scan(target_url, project_id):
                                        solution=solution,
                                        param=param, evidence=evidence, sourceid=sourceid, pluginId=pluginId,
                                        other=other, attack=attack, messageId=messageId, method=method,
-                                       alert=alert, id=ids, description=description)
+                                       alert=alert, id=ids, description=description, date_time=date_time)
         dump_all.save()
 
     time.sleep(5)
@@ -255,9 +264,9 @@ def launch_web_scan(target_url, project_id):
     zap_web_all = zap_scan_results_db.objects.filter(scan_id=un_scanid)
     print zap_web_all
     for m in zap_web_all:
-        print "444444444", m.messageId
+        # print "444444444", m.messageId
         msg_id = m.messageId
-        print msg_id
+        # print msg_id
         request_response = zap.core.message(id=msg_id)
         ja_son = json.dumps(request_response)
         ss = ast.literal_eval(ja_son)
@@ -447,7 +456,43 @@ def del_scan(request):
 
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    global project_id, target_url, scan_ip
+    all_data = project_db.objects.all()
+
+    if request.method == 'POST':
+        if request.POST.get("project_id"):
+            project_id = request.POST.get("project_id")
+        elif request.POST.get("target_url"):
+            target_url = request.POST.get("target_url")
+        elif request.POST.get("scan_ip"):
+            scan_ip = request.POST.get("scan_ip")
+
+    all_scan_url = zap_scans_db.objects.filter(project_id=project_id)
+    all_url_vuln = zap_scans_db.objects.filter(project_id=project_id, scan_url=target_url)
+    all_ip = scan_save_db.objects.filter(project_id=project_id)
+    all_ip_vul = scan_save_db.objects.filter(project_id=project_id, scan_ip=scan_ip)
+
+    return render(request, 'web_dashboard.html',
+                  {'all_data': all_data, 'all_scan_url': all_scan_url, 'all_url_vuln': all_url_vuln, 'all_ip': all_ip,
+                   'all_ip_vul': all_ip_vul})
+
+
+def dashboard_network(request):
+    global project_id, target_url, scan_ip
+    all_data = project_db.objects.all()
+
+    if request.method == 'POST':
+        if request.POST.get("project_id"):
+            project_id = request.POST.get("project_id")
+        elif request.POST.get("scan_ip"):
+            scan_ip = request.POST.get("scan_ip")
+
+    all_ip = scan_save_db.objects.filter(project_id=project_id)
+    all_ip_vul = scan_save_db.objects.filter(project_id=project_id, scan_ip=scan_ip)
+
+    return render(request, 'network_dashboard.html',
+                  {'all_data': all_data, 'all_ip': all_ip,
+                   'all_ip_vul': all_ip_vul})
 
 
 def slem(driver, url):

@@ -45,6 +45,7 @@
                         <tr>
                             <!--<th>ID</th>-->
                             <th>Project</th>
+                            <th>Date Time</th>
                             <th>Project Start Date</th>
                             <th>Project End Date</th>
                             <th>Project Owner</th>
@@ -55,6 +56,7 @@
                         <tbody>{% for data in all_projects %}
                         <tr data-target="#">
                             <td><a href="projects_view/?proj_id={{data.project_id}}">{{data.project_name}}</a></td>
+                            <td>{{data.date_time}}</td>
                             <td>{{data.project_start}}</td>
                             <td>{{data.project_end}}</td>
                             <td>{{data.project_owner}}</td>

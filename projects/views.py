@@ -8,7 +8,7 @@ from projects.models import project_db, project_scan_db
 from webscanners import web_views
 from webscanners.models import zap_scans_db
 from networkscanners.models import scan_save_db
-
+import datetime
 
 def create_form(request):
     return render(request, 'project_create.html')
@@ -22,10 +22,11 @@ def create(request):
         project_end = request.POST.get("projectend", )
         project_owner = request.POST.get("projectowner", )
         project_disc = request.POST.get("project_disc", )
+        date_time = datetime.datetime.now()
 
         save_project = project_db(project_name=project_name, project_id=project_id,
                                   project_start=project_date, project_end=project_end,
-                                  project_owner=project_owner, project_disc=project_disc, )
+                                  project_owner=project_owner, project_disc=project_disc, date_time=date_time)
         save_project.save()
 
         messages.success(request, "Project Created")
