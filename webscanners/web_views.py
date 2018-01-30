@@ -97,37 +97,49 @@ def launch_web_scan(target_url, project_id):
     except Exception as e:
         print e
 
+    # Define settings to ZAP Proxy
     zap = ZAPv2(apikey=apikey,
                 proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
 
-    print target_url
+    """
+        Zap scan start
+    """
     try:
-        abc = zapscanner.start_zap()
-        print abc
+        # ZAP launch function
+        zap_scan = zapscanner.start_zap()
+        print "ZAP Started :", zap_scan
 
     except Exception as e:
         print e
         return HttpResponseRedirect("/webscanners/scans_list/")
 
-    time.sleep(10)
+    time.sleep(15)
+
+    # Get Excluded URL from excluded_db models
 
     all_excluded = excluded_db.objects.filter(Q(exclude_url__icontains=target_url))
 
     for data in all_excluded:
         global excluded_url
         excluded_url = data.exclude_url
+        print "excluded url ", excluded_url
 
-    print "Exclude url ", excluded_url
+    print "Excluded url ", excluded_url
+
+    # Excluding URL from scans in zap API
     url_exclude = zap.spider.exclude_from_scan(regex=excluded_url)
 
     print "URL Excluded:", url_exclude
 
-    all_cookie = cookie_db.objects.filter(url=target_url)
+    all_cookie = cookie_db.objects.filter(Q(url__icontains=target_url))
     for da in all_cookie:
         global cookies
         cookies = da.cookie
+        print da.url
+        print "Cookies from database:", cookies
     remove_cookie = zap.replacer.remove_rule(target_url)
     print "Remove Cookie :", remove_cookie
+    # Adding cookies value
     cookie_add = zap.replacer.add_rule(apikey=apikey, description=target_url, enabled="true",
                                        matchtype='REQ_HEADER', matchregex="false", replacement=cookies,
                                        matchstring="Cookie", initiators="")
@@ -154,12 +166,6 @@ def launch_web_scan(target_url, project_id):
     data_out = ("\n".join(map(str, spider_res_out)))
     print data_out
     total_spider = len(spider_res_out)
-    # save_spider_results = zap_spider_results(spider_id=(scanid), spider_urls=(data_out))
-    # save_spider_results.save()
-    # del_temp = zap_spider_db.objects.filter(spider_scanid__icontains=scanid).order_by('spider_scanid')
-    # del_temp.delete()
-    # save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid, urls_num=total_spider)
-    # save_all.save()
 
     print 'Spider Completed------'
     print 'Target :', target_url
@@ -169,6 +175,7 @@ def launch_web_scan(target_url, project_id):
     time.sleep(5)
 
     print 'Scanning Target %s' % target_url
+    # Launch scan
     scan_scanid = zap.ascan.scan(target_url)
     un_scanid = uuid.uuid4()
     print "updated scanid :", un_scanid
@@ -195,7 +202,6 @@ def launch_web_scan(target_url, project_id):
     zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
     print target_url
     time.sleep(5)
-
     all_vuln = zap.core.alerts(target_url)
     # print all_vuln
 
@@ -229,8 +235,10 @@ def launch_web_scan(target_url, project_id):
             vul_col = "warning"
         elif risk == 'Low':
             vul_col = "info"
+        else:
+            vul_col = "info"
 
-        date_time = datetime.datetime.now()
+        # date_time = datetime.datetime.now()
 
         dump_all = zap_scan_results_db(vuln_id=vuln_id, vuln_color=vul_col, scan_id=un_scanid,
                                        project_id=project_id,
@@ -240,7 +248,7 @@ def launch_web_scan(target_url, project_id):
                                        solution=solution,
                                        param=param, evidence=evidence, sourceid=sourceid, pluginId=pluginId,
                                        other=other, attack=attack, messageId=messageId, method=method,
-                                       alert=alert, id=ids, description=description, date_time=date_time)
+                                       alert=alert, id=ids, description=description)
         dump_all.save()
 
     time.sleep(5)
@@ -262,11 +270,8 @@ def launch_web_scan(target_url, project_id):
     print un_scanid
 
     zap_web_all = zap_scan_results_db.objects.filter(scan_id=un_scanid)
-    print zap_web_all
     for m in zap_web_all:
-        # print "444444444", m.messageId
         msg_id = m.messageId
-        # print msg_id
         request_response = zap.core.message(id=msg_id)
         ja_son = json.dumps(request_response)
         ss = ast.literal_eval(ja_son)
@@ -317,6 +322,7 @@ def launch_web_scan(target_url, project_id):
                                                                     res_id=res_id)
 
     zapscanner.stop_zap()
+
     return HttpResponseRedirect('/webscanners/scans_list/')
 
 
@@ -339,7 +345,18 @@ def web_scan(request):
     if request.POST.get("url", ):
         target_url = request.POST.get('url', )
         project_id = request.POST.get('project_id', )
-        launch_web_scan(target_url, project_id)
+
+        while (int(scans_status) < 100):
+            try:
+                launch_web_scan(target_url, project_id)
+            except Exception as e:
+                print e
+        print "scan_status :-----------%s" % scans_status
+        if scans_status == '100':
+            global scans_status
+            scans_status = "0"
+        else:
+            return scans_status
 
     return render(request, 'scan_list.html')
 
@@ -503,6 +520,7 @@ def slem(driver, url):
 
 def save_cookie(driver):
     all_cookies = driver.get_cookies()
+    print all_cookies
 
     f = open('cookies.txt', 'w+')
 
@@ -531,11 +549,14 @@ def sel_login(request):
         save_cookie(driver)
         read_f = open('cookies.txt', 'r')
 
-        chk_url = cookie_db.objects.filter(url=new_uri)
-        for da in chk_url:
-            print "check url:", da.url
-            if da.url == new_uri:
-                chk_url.delete()
+        # chk_url = cookie_db.objects.filter(url=new_uri)
+        # for da in chk_url:
+        #     print "check url:", da.url
+        #     if da.url == new_uri:
+        #         chk_url.delete()
+        #         print "check url delete"
+        del_all_cookie = cookie_db.objects.all()
+        del_all_cookie.delete()
 
         print "url from cookie : ", new_uri
 
@@ -620,9 +641,6 @@ def del_vuln(request):
         messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/webscanners/web_vuln_list/?scan_id=%s" % un_scanid)
-        # return HttpResponseRedirect(
-        #     reversed('vuln_details.html')
-        # )
 
 
 def vuln_check(request):
