@@ -1,0 +1,232 @@
+{% extends "easy_pdf/base.html" %}
+
+{% block layout_style %}
+<style type="text/css">
+        @page {
+            size: {{ pagesize|default:"A4" }};
+            margin-left: 1 cm;
+            margin-right: 1 cm;
+            margin-top: 2.5cm;
+            margin-bottom: 2cm;
+            @frame header {
+                -pdf-frame-content: page-header;
+                margin-top: 1.3cm;
+                margin-right: 2mm;
+                margin-bottom: 1cm;
+                margin-left: 1.2cm;
+            }
+        }
+
+
+
+</style>
+{% endblock %}
+
+{% block extra_style %}
+
+<style type="text/css">
+        html {
+            font-family: "Helvetica", "sans-serif";
+            color: #333333;
+        }
+        p {
+            margin: 0 0 6px 0;
+            font-size: 11pt;
+        }
+        pre {
+        white-space: pre-wrap;       /* Since CSS 2.1 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+
+        table {
+            line-height: 140%;
+            margin-bottom: 20px;
+        }
+            table.bordered {
+                border-top: 0.1pt solid #999999;
+                border-bottom: 0.1pt solid #999999;
+            }
+            tr, td, th { border: 1px solid #ddd }
+
+            th {
+                font-size: 10pt;
+                border-bottom: 0.1pt solid #999999;
+                padding: 3px 0;
+                line-height: 1;
+                font-weight: bold;
+            }
+            td {
+
+                font-size: 10pt;
+                vertical-align: top;
+                padding: 3px 1;
+                word-wrap: break-word;
+            }
+
+            td:last-child { padding-bottom: 0; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .bottom-10 { margin-bottom: 10px; }
+        .bottom-20 { margin-bottom: 20px; }
+        .header { color: #7f7f7f; }
+        .header p { font-size: 13px; line-height: 1.5em; }
+        .header-link { font-weight: bold; text-decoration: none; color: #4F81BD; font-size: 14px; }
+        .logo { margin-bottom: 20px; margin-left: -25px; }
+        .logo img { zoom: 60%; }
+        .recipient { margin-left: 7cm; }
+        .main h1 {
+            margin: 18px 0 18px 0;
+            font-size: 250%;
+            font-weight: normal;
+            color: #4F81BD;
+        }
+        .main h2 {
+            margin: 18px 0 6px 0;
+            font-size: 180%;
+            font-weight: normal;
+            }
+        .main h3 {
+            margin: 18px 0 6px 0;
+            font-size: 450%;
+            font-weight: normal;
+            color: #4F81BD;
+            }
+        .badge-High { color: #ff0303;}
+        .badge-Medium { color: #f89406;}
+        .badge-Low { color: #3a87ad;}
+        .badge-Informational { color: #97aeb9;}
+
+        .info { border: 1px solid #4F81BD; padding: 10px; margin-top: 50px; margin-bottom: 50px; }
+        .info a { color: #4F81BD; text-decoration: none; }
+        .break { page-break-after:always }
+
+
+
+
+
+
+</style>
+{% endblock %}
+
+{% block page_header %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<div id="content">
+    <div class="main" style="margin-left:auto;margin-top:75mm;margin-right:auto;page-break-after:always">
+        <h3>Archery Web Scan Report </h3>
+        <h1>Target: {{ scan_url }} </h1>
+
+    </div>
+    <div class="main">
+        <p>Vulnerability Summary :</p>
+
+        <table class="break">
+            <thead>
+            <tr>
+                <th>Vulnerability Name</th>
+                <th>Severity</th>
+                <th>URL</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>{% for data in vuln_scan %}
+                <td>{{ data.name }}</td>
+                <td><span class="badge-{{ data.risk }}">{{ data.risk }}</span></td>
+                <td>{{ data.url }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% for data in vuln_scan %}
+        <div class="break">
+            <p>Vulnerability Details :</p>
+
+            <table>
+
+                <tbody>
+                <tr>
+                    <td width="30%">
+                        <p>Vulnerability Name:
+
+                        </p>
+
+                    </td>
+                    <td width="70%">{{ data.name}}</td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <p>Method: </p>
+                    </td>
+                    <td>
+                        {{ data.method}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Vulnerable URL: </p>
+                    </td>
+                    <td>
+                        {{ data.url}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Parameter: </p>
+                    </td>
+                    <td>
+                        {{ data.param}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Description: </p>
+                    </td>
+                    <td>
+                        {{ data.description}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Solution: </p>
+                    </td>
+                    <td>
+                        {{ data.solution}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Request Header: </p>
+                    </td>
+                    <td>
+                        <pre>{{ data.requestHeader}}</pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Response Header: </p>
+                    </td>
+                    <td>
+                        <pre>{{ data.responseHeader}}</pre>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

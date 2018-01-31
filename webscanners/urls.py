@@ -31,6 +31,6 @@ urlpatterns = [
     url(r'^edit_vuln_dat', web_views.edit_vuln_check, name='edit_vuln_dat'),
     url(r'^add_vuln', web_views.add_vuln, name='add_vuln'),
     url(r'^create_vuln', web_views.create_vuln, name='create_vuln'),
-    # url(r'scan/', web_views.index, name='scanapi')
+    url(r'^get_scan_pdf', web_views.scan_pdf_gen)
 
 ]

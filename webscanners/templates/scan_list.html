@@ -44,6 +44,7 @@
                                 <th>Low</th>
                                 <th>Action</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>{% for data in all_scans %}
@@ -62,6 +63,16 @@
                                 <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                                 <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
                                 <td><span class="badge badge-info">{{data.low_vul}}</span></td>
+                                <td>
+                                     <form action="/webscanners/get_scan_pdf/" method="post" class="forms-sample">
+
+                                        {% csrf_token %}
+                                        <input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>
+                                         <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
+
+                                        <button class="btn btn-success"><i class="icon-file"></i></button>
+                                    </form>
+                                </td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn btn-primary"

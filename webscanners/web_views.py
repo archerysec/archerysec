@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response, HttpResponse
+from django.views.generic import DetailView
+
 from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db, excluded_db
 from django.db.models import Q
 import os
@@ -20,6 +22,9 @@ from django.core import signing
 from projects.models import project_db
 import datetime
 from networkscanners.models import scan_save_db
+from django.conf import settings
+from easy_pdf.views import PDFTemplateView, render_to_pdf_response, PDFTemplateResponseMixin
+from easy_pdf.rendering import render_to_pdf
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -716,3 +721,16 @@ def add_vuln(request):
 
 def create_vuln(request):
     return render(request, 'add_vuln.html')
+
+
+def scan_pdf_gen(request):
+    all_scan = zap_scans_db.objects.all()
+
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        scan_url = request.POST.get("scan_url")
+        vuln_scan = zap_scan_results_db.objects.filter(scan_id=scan_id)
+
+        return render_to_pdf_response(request, template=str('pdf_generate.html'), download_filename=None,
+                                      content_type='application/pdf',
+                                      context={'all_scan': all_scan, 'vuln_scan': vuln_scan, 'scan_url': scan_url})
