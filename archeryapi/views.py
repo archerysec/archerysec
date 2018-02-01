@@ -1,12 +1,12 @@
 from rest_framework.response import Response
-from webscanners.models import zap_scans_db
-from networkscanners.models import scan_save_db
+from webscanners.models import zap_scans_db, zap_scan_results_db
+from networkscanners.models import scan_save_db, ov_scan_result_db
 from projects.models import project_db
-from webscanners.serializers import WebScanSerializer
+from webscanners.serializers import WebScanSerializer, WebScanResultSerializer
 from rest_framework import status
 from webscanners import web_views
 from networkscanners import views
-from networkscanners.serializers import NetworkScanSerializer
+from networkscanners.serializers import NetworkScanSerializer, NetworkScanResultSerializer
 from rest_framework import generics
 import uuid
 from projects.serializers import ProjectDataSerializers
@@ -111,3 +111,36 @@ class Project(generics.CreateAPIView):
                 return Response({"error": "No name passed"})
             return Response({"message": "Project Created"})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WebScanResult(generics.ListCreateAPIView):
+    queryset = zap_scan_results_db.objects.all()
+    serializer_class = WebScanResultSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = WebScanResultSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id',)
+            # project_id = request.data.get('project_id',)
+            all_scans = zap_scan_results_db.objects.filter(scan_id=scan_id)
+            serialized_scans = WebScanResultSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class NetworkScanResult(generics.ListCreateAPIView):
+    queryset = ov_scan_result_db.objects.all()
+    serializer_class = NetworkScanResultSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = NetworkScanResultSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id',)
+            all_scans = ov_scan_result_db.objects.filter(scan_id=scan_id)
+            serialized_scans = NetworkScanResultSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)

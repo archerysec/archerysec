@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import zap_scans_db
 
+
 class WebScanSerializer(serializers.Serializer):
     scan_url = serializers.URLField(required=True, help_text=("Proper domain should be provided"))
     project_id = serializers.UUIDField(required=True, help_text=("Project ID should be provided"))
@@ -13,3 +14,43 @@ class WebScanSerializer(serializers.Serializer):
     low_vul = serializers.CharField(read_only=True)
     date_created = serializers.DateTimeField(read_only=True)
     date_modified = serializers.DateTimeField(read_only=True)
+
+
+class WebScanResultSerializer(serializers.Serializer):
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    project_id = serializers.UUIDField(read_only=True)
+    url = serializers.URLField(read_only=True)
+
+    vuln_id = serializers.CharField(read_only=True)
+    confidence = serializers.CharField(read_only=True)
+    wascid = serializers.CharField(read_only=True)
+    cweid = serializers.CharField(read_only=True)
+    risk = serializers.CharField(read_only=True)
+    reference = serializers.CharField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    solution = serializers.CharField(read_only=True)
+    param = serializers.CharField(read_only=True)
+    evidence = serializers.CharField(read_only=True)
+    sourceid = serializers.CharField(read_only=True)
+    pluginId = serializers.CharField(read_only=True)
+    other = serializers.CharField(read_only=True)
+    attack = serializers.CharField(read_only=True)
+    messageId = serializers.CharField(read_only=True)
+    method = serializers.CharField(read_only=True)
+    alert = serializers.CharField(read_only=True)
+    ids = serializers.CharField(read_only=True)
+    description = serializers.CharField(read_only=True)
+    req_res = serializers.CharField(read_only=True)
+
+    note = serializers.CharField(read_only=True)
+    rtt = serializers.CharField(read_only=True)
+    tags = serializers.CharField(read_only=True)
+    timestamp = serializers.CharField(read_only=True)
+    responseHeader = serializers.CharField(read_only=True)
+    requestBody = serializers.CharField(read_only=True)
+    responseBody = serializers.CharField(read_only=True)
+    requestHeader = serializers.CharField(read_only=True)
+    cookieParams = serializers.CharField(read_only=True)
+    res_type = serializers.CharField(read_only=True)
+    res_id = serializers.CharField(read_only=True)
+    date_time = serializers.CharField(read_only=True)

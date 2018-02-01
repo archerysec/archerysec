@@ -6,6 +6,7 @@ from fernet_fields import EncryptedTextField
 
 class ov_scan_result_db(models.Model):
     scan_id = models.TextField(blank=True)
+    project_id = models.UUIDField(null=True)
     vul_id = models.TextField(blank=True)
     name = models.TextField(blank=True)
     owner = models.TextField(blank=True)
