@@ -23,8 +23,8 @@ from projects.models import project_db
 import datetime
 from networkscanners.models import scan_save_db
 from django.conf import settings
-from easy_pdf.views import PDFTemplateView, render_to_pdf_response, PDFTemplateResponseMixin
-from easy_pdf.rendering import render_to_pdf
+from easy_pdf.views import PDFTemplateView, render_to_pdf_response
+
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -730,7 +730,10 @@ def scan_pdf_gen(request):
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
         vuln_scan = zap_scan_results_db.objects.filter(scan_id=scan_id)
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color',
+                                                                                 'scan_id', ).distinct()
 
         return render_to_pdf_response(request, template=str('pdf_generate.html'), download_filename=None,
                                       content_type='application/pdf',
-                                      context={'all_scan': all_scan, 'vuln_scan': vuln_scan, 'scan_url': scan_url})
+                                      context={'all_scan': all_scan, 'vuln_scan': vuln_scan, 'scan_url': scan_url,
+                                               'zap_all_vul': zap_all_vul})
