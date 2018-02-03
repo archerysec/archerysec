@@ -253,7 +253,7 @@ def launch_web_scan(target_url, project_id):
                                        solution=solution,
                                        param=param, evidence=evidence, sourceid=sourceid, pluginId=pluginId,
                                        other=other, attack=attack, messageId=messageId, method=method,
-                                       alert=alert, id=ids, description=description)
+                                       alert=alert, ids=ids, description=description)
         dump_all.save()
 
     time.sleep(5)
