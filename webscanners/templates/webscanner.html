@@ -30,11 +30,11 @@
        else if ($('[name="optradio2"]').is(':checked')){
            $.ajax({
                     type:'POST',
-                    url:'/networkscanners/launch_scan/',
+                    url:'/webscanners/burp_launch_scan/',
                     data:{
 
                        url:$('#url').val(),
-
+                       project_id:$('#project_id').val(),
                        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                     },
                     sucess:function(){
@@ -180,6 +180,11 @@ $(document).on('submit', '#exclude_url', function(e){
                         <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                             <label>
                                 <input name="optradio1" type="checkbox"><span>Zap Scanner</span>
+                            </label>
+                        </div>
+                        <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
+                            <label>
+                                <input name="optradio2" type="checkbox"><span>Burp Scanner</span>
                             </label>
                         </div>
                     </div>

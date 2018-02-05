@@ -75,3 +75,40 @@ class cookie_db(models.Model):
 
 class excluded_db(models.Model):
     exclude_url = models.TextField(blank=True)
+
+
+class burp_scan_db(models.Model):
+    url = models.URLField(blank=True)
+    scan_id = models.UUIDField(blank=True)
+    scan_date = models.TextField(blank=True)
+    scan_status = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    total_vul = models.TextField(blank=True)
+    high_vul = models.TextField(blank=True)
+    medium_vul = models.TextField(blank=True)
+    low_vul = models.TextField(blank=True)
+
+
+class burp_scan_result_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    project_id = models.TextField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+
+    serialNumber = models.TextField(blank=True)
+    types = models.TextField(blank=True)
+    name = models.TextField(blank=True)
+    host = models.TextField(blank=True)
+    path = models.TextField(blank=True)
+    location = models.TextField(blank=True)
+    severity = models.TextField(blank=True)
+    severity_color = models.TextField(blank=True)
+    confidence = models.TextField(blank=True)
+    issueBackground = models.TextField(blank=True)
+    remediationBackground = models.TextField(blank=True)
+    references = models.TextField(blank=True)
+    vulnerabilityClassifications = models.TextField(blank=True)
+    issueDetail = models.TextField(blank=True)
+    requestresponse = models.TextField(blank=True)
+    scan_request = models.TextField(blank=True)
+    scan_response = models.TextField(blank=True)
+    method = models.TextField(blank=True)

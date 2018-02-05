@@ -1,0 +1,112 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Domain Scan List</a></div>
+
+        <h1>Burp Scans Result</h1>
+    </div>
+
+    <div class="container-fluid">
+        <hr>
+        <div class="span3 offset6">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <p class="alert-heading">{{ message }}</p>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+        </div>
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Domain Scan List</h5>
+
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <!--<th>Project ID</th>-->
+                                <th>URL</th>
+                                <th>Status</th>
+                                <th>Date Time</th>
+                                <th>Total Vulnerability</th>
+                                <th>High</th>
+                                <th>Medium</th>
+                                <th>Low</th>
+                                <th>Action</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in all_burp_scan %}
+                            <tr data-target="#">
+                                <!--<td>{{data.project_id}}</td>-->
+                                <td>
+                                    <a href="/webscanners/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                </td>
+                                <td width="30%">
+                                    <div class="progress progress-info">
+                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}}</div>
+                                    </div>
+                                </td>
+                                <td>{{data.date_time}}</td>
+                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-important">{{data.high_vul}}</span></td>
+                                <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
+                                <td><span class="badge badge-info">{{data.low_vul}}</span></td>
+                                <td>
+                                     <form action="/webscanners/get_scan_pdf/" method="post" class="forms-sample">
+
+                                        {% csrf_token %}
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                         <input type="hidden" name="scan_url" value="{{data.url}}"/>
+
+                                        <button class="btn btn-success"><i class="icon-file"></i></button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a class="btn btn-primary"
+                                           href="/webscanners/burp_vuln_list?scan_id={{data.scan_id}}"><i
+                                                class="icon-tasks icon-white"></i>
+                                        </a>
+                                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
+                                                class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/webscanners/burp_vuln_list?scan_id={{data.scan_id}}"><i
+                                                    class="icon-pencil"></i> View </a></li>
+                                            <li>
+
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form action="/webscanners/del_scan/" method="post" class="forms-sample">
+
+                                        {% csrf_token %}
+                                        <input type="hidden" name="scan_scanid" value="{{data.scan_id}}"/>
+                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
+                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -31,6 +31,15 @@ urlpatterns = [
     url(r'^edit_vuln_dat', web_views.edit_vuln_check, name='edit_vuln_dat'),
     url(r'^add_vuln', web_views.add_vuln, name='add_vuln'),
     url(r'^create_vuln', web_views.create_vuln, name='create_vuln'),
-    url(r'^get_scan_pdf', web_views.scan_pdf_gen)
+    url(r'^get_scan_pdf', web_views.scan_pdf_gen),
+
+    # Burp Setting from path
+    url(r'^burp_setting', web_views.burp_setting, name='burp_setting'),
+    # Burp scans
+    url(r'^burp_launch_scan', web_views.burp_scan, name='burp_scan_launch'),
+    url(r'^burp_scan_list', web_views.burp_scan_list, name='burp_scan_list'),
+    url(r'^burp_vuln_list', web_views.burp_list_vuln, name='burp_vuln_list'),
+    url(r'^burp_vuln_data', web_views.burp_vuln_data, name='burp_vuln_data'),
+    url(r'^burp_vuln_out', web_views.burp_vuln_out, name='burp_vuln_out'),
 
 ]

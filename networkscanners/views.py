@@ -332,7 +332,7 @@ def openvas_details(request):
         json.dump(data, f, indent=4)
         f.truncate()
 
-    messages.add_message(request, messages.SUCCESS, 'ZAP Setting Updated ')
+    messages.add_message(request, messages.SUCCESS, 'Openvas Setting Updated ')
 
     return render(request, 'setting_form.html', )
 
