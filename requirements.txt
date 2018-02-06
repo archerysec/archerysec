@@ -25,3 +25,4 @@ coreapi-cli==1.0.6
 djangorestframework==3.7.7
 django-easy-pdf==0.1.1
 WeasyPrint==0.42
+PyBurprestapi==0.1
