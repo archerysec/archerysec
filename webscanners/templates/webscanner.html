@@ -25,9 +25,12 @@
 
                 }
             });
-       this.reset();
+
        }
-       else if ($('[name="optradio2"]').is(':checked')){
+       else{
+       alert("Please Select scanner")
+       }
+       if ($('[name="optradio2"]').is(':checked')){
            $.ajax({
                     type:'POST',
                     url:'/webscanners/burp_launch_scan/',
@@ -46,6 +49,7 @@
        alert("Please Select scanner")
        }
     });
+
 
 </script>
 
@@ -104,6 +108,7 @@ $(document).on('submit', '#exclude_url', function(e){
         this.reset();
     });
 
+
 </script>
 
 <script type="text/javascript">
@@ -112,6 +117,7 @@ $(document).on('submit', '#exclude_url', function(e){
       $("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds
   }
  setInterval('autoRefresh_div()', 5000);
+
 
 </script>
 
@@ -164,8 +170,7 @@ $(document).on('submit', '#exclude_url', function(e){
                                 </div>
                             </div>
                             <div class="controls">
-                                <input onclick="location.href = '/webscanners/scans_list/'"
-                                       type="submit" class="btn btn-primary" value="Launch">
+                                <input type="submit" class="btn btn-primary" value="Launch">
                             </div>
                         </form>
                     </div>

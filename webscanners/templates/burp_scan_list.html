@@ -28,7 +28,10 @@
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Domain Scan List</h5>
-
+                        <div class="buttons"><a data-toggle="modal" href="/webscanners/xml_upload"
+                                                class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
+                            XML</a>
+                        </div>
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-bordered data-table">
@@ -64,11 +67,11 @@
                                 <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
                                 <td><span class="badge badge-info">{{data.low_vul}}</span></td>
                                 <td>
-                                     <form action="/webscanners/get_scan_pdf/" method="post" class="forms-sample">
+                                    <form action="/webscanners/get_scan_pdf/" method="post" class="forms-sample">
 
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
-                                         <input type="hidden" name="scan_url" value="{{data.url}}"/>
+                                        <input type="hidden" name="scan_url" value="{{data.url}}"/>
 
                                         <button class="btn btn-success"><i class="icon-file"></i></button>
                                     </form>
@@ -91,11 +94,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <form action="/webscanners/del_scan/" method="post" class="forms-sample">
+                                    <form action="/webscanners/del_burp_scan/" method="post" class="forms-sample">
 
                                         {% csrf_token %}
-                                        <input type="hidden" name="scan_scanid" value="{{data.scan_id}}"/>
-                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                        <input type="hidden" name="scan_url" value="{{data.url}}"/>
                                         <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                     </form>
                                 </td>

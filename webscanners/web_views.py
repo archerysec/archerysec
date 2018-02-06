@@ -24,10 +24,14 @@ import datetime
 from networkscanners.models import scan_save_db
 from django.conf import settings
 from easy_pdf.views import PDFTemplateView, render_to_pdf_response
-from burp_scan import scan_lauch
+
 from PyBurprestapi import burpscanner
 import xml.etree.ElementTree as ET
 import base64
+from projects.models import project_db
+
+from burp_scan import burp_scans
+from itertools import chain
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -76,6 +80,10 @@ vuln_id = ""
 methods = ""
 dec_res = ""
 dec_req = ""
+decd_req = ""
+scanner = ""
+all_scan_url = ""
+all_url_vuln = ""
 
 
 # Login View
@@ -505,7 +513,7 @@ def del_scan(request):
 
 
 def dashboard(request):
-    global project_id, target_url, scan_ip
+    global project_id, target_url, scan_ip, scanner, all_scan_url, all_url_vuln
     all_data = project_db.objects.all()
 
     if request.method == 'POST':
@@ -516,8 +524,15 @@ def dashboard(request):
         elif request.POST.get("scan_ip"):
             scan_ip = request.POST.get("scan_ip")
 
-    all_scan_url = zap_scans_db.objects.filter(project_id=project_id)
-    all_url_vuln = zap_scans_db.objects.filter(project_id=project_id, scan_url=target_url)
+        zap_scan_url = zap_scans_db.objects.filter(project_id=project_id)
+        zap_url_vuln = zap_scans_db.objects.filter(project_id=project_id, scan_url=target_url)
+
+        burp_scan_url = burp_scan_db.objects.filter(project_id=project_id)
+        burp_url_vuln = burp_scan_db.objects.filter(project_id=project_id, url=target_url)
+
+        all_scan_url = chain(zap_scan_url, burp_scan_url)
+        all_url_vuln = chain(zap_url_vuln, burp_url_vuln)
+
     all_ip = scan_save_db.objects.filter(project_id=project_id)
     all_ip_vul = scan_save_db.objects.filter(project_id=project_id, scan_ip=scan_ip)
 
@@ -790,7 +805,7 @@ def burp_setting(request):
     return render(request, 'burp_setting_form.html')
 
 
-def burp_scan(request):
+def burp_scan_launch(request):
     global vuln_id, burp_status
 
     if request.POST.get("url", ):
@@ -801,12 +816,12 @@ def burp_scan(request):
         scan_dump = burp_scan_db(scan_id=scan_id, project_id=project_id, url=target_url)
         scan_dump.save()
         try:
-            scan_lauch(project_id, target_url, scan_id)
+            do_scan = burp_scans(project_id, target_url, scan_id)
+            do_scan.scan_lauch()
         except Exception as e:
             print e
 
     return render(request, 'scan_list.html')
-
 
 
 def burp_scan_list(request):
@@ -827,6 +842,9 @@ def burp_list_vuln(request):
     return render(request, 'burp_list_vuln.html', {'burp_all_vul': burp_all_vul, 'scan_id': scan_id})
 
 
+requestz = ""
+
+
 def burp_vuln_data(request):
     if request.method == 'GET':
         # scan_id = request.GET['scan_id']
@@ -839,7 +857,13 @@ def burp_vuln_data(request):
 
     vuln_data = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
 
-    return render(request, 'burp_vuln_data.html', {'vuln_data': vuln_data})
+    # for dat in vuln_data:
+    #     global requestz
+    #     requestz = dat.scan_request
+    #     print request
+    # decd_req = base64.b64decode(requestz)
+
+    return render(request, 'burp_vuln_data.html', {'vuln_data': vuln_data, })
 
 
 def burp_vuln_out(request):
@@ -853,3 +877,103 @@ def burp_vuln_out(request):
     vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id, name=name)
 
     return render(request, 'burp_vuln_out.html', {'vuln_data': vuln_data})
+
+
+def del_burp_scan(request):
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        scan_url = request.POST.get("scan_url")
+
+        item = burp_scan_db.objects.filter(scan_id=scan_id, url=scan_url)
+        item.delete()
+        item_results = burp_scan_result_db.objects.filter(scan_id=scan_id)
+        item_results.delete()
+        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+        return HttpResponseRedirect('/webscanners/burp_scan_list/')
+
+
+def edit_burp_vuln(request):
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+
+    else:
+        id_vul = ''
+
+    edit_vul_dat = burp_scan_result_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+
+    if request.method == 'POST':
+        vuln_id = request.POST.get("vuln_id", )
+        scan_id = request.POST.get("scan_id", )
+        name = request.POST.get("name", )
+        severity = request.POST.get("severity", )
+        host = request.POST.get("host", )
+        path = request.POST.get("path", )
+        issuedetail = request.POST.get("issuedetail")
+        description = request.POST.get("description", )
+        solution = request.POST.get("solution", )
+        location = request.POST.get("location", )
+        vulnerabilityClassifications = request.POST.get("reference", )
+
+        global vul_col
+
+        if severity == 'High':
+            vul_col = "important"
+        elif severity == 'Medium':
+            vul_col = "warning"
+        elif severity == 'Low':
+            vul_col = "info"
+        else:
+            vul_col = "info"
+
+        print "edit_vul :", name
+
+        burp_scan_result_db.objects.filter(vuln_id=vuln_id).update(name=name,
+                                                                   severity_color=vul_col, severity=severity,
+                                                                   host=host, path=path, location=location,
+                                                                   issueDetail=issuedetail,
+                                                                   issueBackground=description,
+                                                                   remediationBackground=solution,
+                                                                   vulnerabilityClassifications=vulnerabilityClassifications, )
+
+        # messages.success(request, "Vulnerability Edited")
+        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
+
+        return HttpResponseRedirect("/webscanners/burp_vuln_data/?vuln_id=%s" % vuln_id)
+
+    return render(request, 'edit_burp_vuln.html', {'edit_vul_dat': edit_vul_dat})
+
+
+def xml_upload(request):
+    all_project = project_db.objects.all()
+
+    if request.method == "POST":
+        project_id = request.POST.get("project_id")
+        scanner = request.POST.get("scanner")
+        xml_file = request.FILES['xmlfile']
+        scan_url = request.POST.get("scan_url")
+        scan_id = uuid.uuid4()
+        date_time = datetime.datetime.now()
+        scan_status = "100"
+        if scanner == "zap_scan":
+            scan_dump = zap_scans_db(scan_url=scan_url, scan_scanid=scan_id, date_time=date_time,
+                                     project_id=project_id,
+                                     scan_status=scan_status)
+            scan_dump.save()
+            # zap scan XML parser
+            print scanner
+        elif scanner == "burp_scan":
+            print scanner
+            print xml_file
+            print scan_url
+            scan_dump = burp_scan_db(url=scan_url, scan_id=scan_id, scan_date=date_time, project_id=project_id,
+                                     scan_status=scan_status)
+            scan_dump.save()
+            # Burp scan XML parser
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            do_xml_data = burp_scans(project_id, target_url, scan_id)
+            do_xml_data.burp_scan_data(root_xml)
+            print "Save scan Data"
+            return HttpResponseRedirect("/webscanners/burp_scan_list")
+
+    return render(request, 'upload_xml.html', {'all_project': all_project})

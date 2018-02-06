@@ -45,7 +45,25 @@
       }
       {% endfor %}
 
+$(document).ready(function(){
+    var $cat = $('select[name=project_id]'),
+        $items = $('select[name=target_url]');
 
+    $cat.change(function(){
+        var $this = $(this).find(':selected'),
+            rel = $this.attr('rel'),
+            $set = $items.find('option.' + rel);
+
+        if ($set.size() < 0) {
+            $items.hide();
+            return;
+        }
+
+        $items.show().find('option').hide();
+
+        $set.show().first().prop('selected', true);
+    });
+});
 </script>
 
 
@@ -71,7 +89,7 @@
                                 </label>
 
                                 <div class="controls">
-                                    <select id="project_id" name="project_id" class="selectpicker"
+                                    <select id="cat" name="project_id" class="selectpicker"
                                             data-live-search="true">
                                         {% for data in all_data %}
                                         <option value="{{data.project_id}}">{{data.project_name}}</option>
@@ -80,15 +98,16 @@
                                     <input type="submit" class="btn btn-primary" value="Submit">
                                 </div>
                             </form>
+
                             <form class="form-horizontal" method="POST" action="/dashboard/">{% csrf_token %}
                                 <label class="control-label">
                                     <bold>Select Target :</bold>
                                 </label>
                                 <div class="controls">
-                                    <select id="target" name="target_url" class="selectpicker"
+                                    <select id="items" name="target_url" class="selectpicker"
                                             data-live-search="true">
                                         {% for data in all_scan_url %}
-                                        <option value="{{data.scan_url}}">{{data.scan_url}}</option>
+                                        <option value="{{data.scan_url}}{{data.url}}">{{data.scan_url}}{{data.url}}</option>
                                         {% endfor %}
                                     </select>
                                     <input type="submit" class="btn btn-primary" value="Submit">

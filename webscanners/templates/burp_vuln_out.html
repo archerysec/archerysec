@@ -26,11 +26,11 @@
             <div class="span9 offset1">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                        <h5>Vulnerability List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/add_vuln/?scan_id={{ scan_vul }}"
-                                                class="btn btn-primary btn-mini"><i
-                                class="icon-plus icon-white"></i> Add new Vulnerability</a>
-                        </div>
+                        <!--<h5>Vulnerability List</h5>-->
+                        <!--<div class="buttons"><a data-toggle="modal" href="/add_vuln/?scan_id={{ scan_vul }}"-->
+                                                <!--class="btn btn-primary btn-mini"><i-->
+                                <!--class="icon-plus icon-white"></i> Add new Vulnerability</a>-->
+                        <!--</div>-->
                     </div>
 
                     <div class="widget-content nopadding">
@@ -53,7 +53,7 @@
                                 <td width="50%">{{data.url}}</td>
                                 <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span></td>
                                 <td>
-                                    <div><a href="/webscanners/edit_vuln_dat/?vuln_id={{data.vuln_id}}" class="btn btn-primary"
+                                    <div><a href="/webscanners/edit_burp_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"
                                             data-original-title="Edit"><i
                                             class="icon-pencil"></i></a>
                                     </div>

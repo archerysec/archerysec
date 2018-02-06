@@ -1,0 +1,95 @@
+{% extends 'header.html' %}
+{% block body %}
+
+<div id="content">{% for data in edit_vul_dat %}
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> {{ data.name }}</a>
+            <a
+                    href="#" class="current">{{ data.name }}</a></div>
+        <h1>{{ data.name }}</h1>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+            <form class="form-vertical" action="/webscanners/edit_burp_vuln/" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input name="vuln_id" value="{{data.vuln_id}}" type="hidden">
+                    <input name="scan_id" value="{{data.scan_id}}" type="hidden">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <textarea class="form-control" rows="1" name="name"
+                        >{{ data.name }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Severity :</label>
+                        <select id="risk" name="severity" class="selectpicker"
+                                data-live-search="true">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                            <option value="Informational">Informational</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>URL:</label>
+                        <textarea class="form-control" rows="1" style="min-width: 70%"
+                                  name="host"
+                        >{{ data.host }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Path:</label>
+                        <textarea class="form-control" rows="1" style="min-width: 70%"
+                                  name="path"
+                        >{{ data.path }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Location:</label>
+                        <textarea class="form-control" rows="1" style="min-width: 70%"
+                                  name="location"
+                        >{{ data.location }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Issue Detail:</label>
+                        <textarea class="form-control" rows="1" style="min-width: 70%"
+                                  name="issuedetail">
+                            {{ data.issueDetail }}
+                        </textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descriptoin:</label>
+                        <textarea class="form-control" rows="8" name="description"
+                                  style="min-width: 100%">{{ data.issueBackground }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Solution:</label>
+                        <textarea class="form-control" rows="8" name="solution"
+                                  style="min-width: 100%">{{ data.remediationBackground }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Parameter:</label>
+                        <textarea class="form-control" name="param" rows="1"
+                        >{{ data.location }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>reference:</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="reference"
+                        >{{ data.vulnerabilityClassifications }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close
+                    </button>
+                    <button class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+{% endblock %}

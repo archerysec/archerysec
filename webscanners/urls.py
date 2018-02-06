@@ -36,10 +36,13 @@ urlpatterns = [
     # Burp Setting from path
     url(r'^burp_setting', web_views.burp_setting, name='burp_setting'),
     # Burp scans
-    url(r'^burp_launch_scan', web_views.burp_scan, name='burp_scan_launch'),
+    url(r'^burp_launch_scan', web_views.burp_scan_launch, name='burp_scan_launch'),
     url(r'^burp_scan_list', web_views.burp_scan_list, name='burp_scan_list'),
     url(r'^burp_vuln_list', web_views.burp_list_vuln, name='burp_vuln_list'),
     url(r'^burp_vuln_data', web_views.burp_vuln_data, name='burp_vuln_data'),
     url(r'^burp_vuln_out', web_views.burp_vuln_out, name='burp_vuln_out'),
+    url(r'^del_burp_scan', web_views.del_burp_scan, name='del_burp_scan'),
+    url(r'^edit_burp_vuln', web_views.edit_burp_vuln, name='edit_burp_vuln',),
+    url(r'^xml_upload', web_views.xml_upload, name='xml_upload',),
 
 ]
