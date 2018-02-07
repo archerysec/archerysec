@@ -2,8 +2,9 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response, HttpResponse
 
-from .models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db, excluded_db, \
-    burp_scan_db, burp_scan_result_db
+from webscanners.models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db, \
+    excluded_db, \
+    burp_scan_db, burp_scan_result_db, email_config_db
 from django.db.models import Q
 import os
 import json
@@ -452,9 +453,18 @@ def setting(request):
         burp_path = data['burp_path']
         burp_port = data['burp_port']
 
+        email_subject = data['email_subject']
+        email_from = data['from_email']
+        to_email = data['to_email']
+
     return render(request, 'setting.html',
-                  {'apikey': lod_apikey, 'zapath': zapath, 'zap_port': zap_port, 'lod_ov_user': lod_ov_user,
-                   'lod_ov_pass': lod_ov_pass, 'lod_ov_ip': lod_ov_ip, 'burp_path': burp_path, 'burp_port': burp_port})
+                  {'apikey': lod_apikey, 'zapath': zapath, 'zap_port': zap_port,
+                   'lod_ov_user': lod_ov_user,
+                   'lod_ov_pass': lod_ov_pass,
+                   'lod_ov_ip': lod_ov_ip, 'burp_path': burp_path,
+                   'burp_port': burp_port,
+                   'email_subject': email_subject,
+                   'email_from': email_from, 'to_email': to_email})
 
 
 def zap_setting(request):
@@ -491,6 +501,34 @@ def zap_set_update(request):
     messages.add_message(request, messages.SUCCESS, 'ZAP Setting Updated ')
 
     return render(request, 'settingform.html', )
+
+
+def email_setting(request):
+    with open(api_key_path, 'r+') as f:
+        data = json.load(f)
+        email_subject = data['email_subject']
+        email_from = data['from_email']
+        to_email = data['to_email']
+
+    if request.method == 'POST':
+        subject = request.POST.get("email_subject")
+        from_email = request.POST.get("from_email")
+        email_to = request.POST.get("to_email")
+    else:
+        subject = email_subject
+        from_email = email_from
+        email_to = to_email
+
+    with open(api_key_path, 'r+') as f:
+        data = json.load(f)
+        data['email_subject'] = subject
+        data['from_email'] = from_email
+        data['to_email'] = email_to
+        f.seek(0)
+        json.dump(data, f, indent=4)
+        f.truncate()
+
+    return render(request, 'email_setting_form.html')
 
 
 def scan_table(request):
@@ -537,7 +575,8 @@ def dashboard(request):
     all_ip_vul = scan_save_db.objects.filter(project_id=project_id, scan_ip=scan_ip)
 
     return render(request, 'web_dashboard.html',
-                  {'all_data': all_data, 'all_scan_url': all_scan_url, 'all_url_vuln': all_url_vuln, 'all_ip': all_ip,
+                  {'all_data': all_data, 'all_scan_url': all_scan_url, 'all_url_vuln': all_url_vuln,
+                   'all_ip': all_ip,
                    'all_ip_vul': all_ip_vul})
 
 
@@ -645,7 +684,8 @@ def edit_vuln(request):
 
         print "edit_vul :", name
 
-        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, vuln_color=vuln_col, risk=risk, url=url,
+        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, vuln_color=vuln_col, risk=risk,
+                                                                   url=url,
                                                                    description=description,
                                                                    solution=solution, param=param,
                                                                    sourceid=sourceid, attack=attack,
@@ -856,12 +896,6 @@ def burp_vuln_data(request):
     print vuln_id
 
     vuln_data = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
-
-    # for dat in vuln_data:
-    #     global requestz
-    #     requestz = dat.scan_request
-    #     print request
-    # decd_req = base64.b64decode(requestz)
 
     return render(request, 'burp_vuln_data.html', {'vuln_data': vuln_data, })
 

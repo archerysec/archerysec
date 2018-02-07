@@ -1,10 +1,13 @@
 {
+    "to_email": "toemail@co.c", 
     "open_vas_pass": "IlBhc3N3b3JkIg:1eijxk:dnmdDh-NmDVxxBVpGohYmFCF0Uk", 
     "burp_path": "Burp REST build jar Path", 
-    "open_vas_user": "IlVzZXIi:1eijxk:EQV2HNCUM4hvWL0TvSDdz-wh2JM", 
     "open_vas_ip": "Ik9wZW5WYXMgSG9zdCI:1eijxk:eRUibLk8Iid5-XYYyG2jSNOrpWY", 
-    "zap_port": "Zap Path ", 
+    "from_email": "fromemail@co.c", 
+    "open_vas_user": "IlVzZXIi:1eijxk:EQV2HNCUM4hvWL0TvSDdz-wh2JM", 
+    "email_subject": "Email Subject", 
+    "zap_port": "PORT", 
     "burp_port": "Burp Port", 
     "zap_path": "Zap Path", 
-    "zap_api_key": "IlphcCBBUEkgS2V5ICI:1eijwh:CMifILX6P_Omi6PF8OPJ17245Jc"
+    "zap_api_key": "IkFQSSBLZXki:1ejMDD:5F6sZzGTGFxRBQ4V4EOKXk1nW_o"
 }

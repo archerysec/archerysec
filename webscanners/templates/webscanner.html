@@ -27,9 +27,7 @@
             });
 
        }
-       else{
-       alert("Please Select scanner")
-       }
+
        if ($('[name="optradio2"]').is(':checked')){
            $.ajax({
                     type:'POST',
@@ -45,9 +43,7 @@
                     }
            });
        }
-       else{
-       alert("Please Select scanner")
-       }
+
     });
 
 
@@ -260,7 +256,7 @@ $(document).on('submit', '#exclude_url', function(e){
                                            value="{{ exclude_url }}">
                                     <input type="submit" class="btn btn-primary"
                                            value="Exclude">
-                                </div>
+                                </div> <p>Note : Exclude logout url for authenticated dynamic web scanning.</p>
                             </div>
                         </form>
                     </div>

@@ -9,6 +9,8 @@ from webscanners import web_views
 from webscanners.models import zap_scans_db
 from networkscanners.models import scan_save_db
 import datetime
+from webscanners.models import burp_scan_db
+from itertools import chain
 
 def create_form(request):
     return render(request, 'project_create.html')
@@ -76,7 +78,9 @@ def projects_view(request):
         project_db.objects.filter(project_id=project_id).update(project_status=project_status)
 
     project_dat = project_db.objects.filter(project_id=project_id)
-    scan_dat = zap_scans_db.objects.filter(project_id=project_id)
+    burp = burp_scan_db.objects.filter(project_id=project_id)
+    zap = zap_scans_db.objects.filter(project_id=project_id)
+    scan_dat = chain(burp, zap)
     network_dat = scan_save_db.objects.filter(project_id=project_id)
 
     return render(request, 'project_view.html',

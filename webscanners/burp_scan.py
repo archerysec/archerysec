@@ -7,7 +7,8 @@ import base64
 from webscanners.models import burp_scan_db, burp_scan_result_db
 import uuid
 from django.shortcuts import HttpResponse
-
+# from django.core.mail import send_mail
+import email_notification
 project_id = None
 target_url = None
 scan_ip = None
@@ -201,13 +202,13 @@ class burp_scans(object):
                         if req == "request":
                             global dec_req
                             reqst = d.text
-                            dec_req =  base64.b64decode(reqst) #reqst
+                            dec_req = base64.b64decode(reqst)  # reqst
 
                         if req == "response":
                             global dec_res
                             res_dat = d.text
                             # print res_dat
-                            dec_res = base64.b64decode(res_dat) #res_dat
+                            dec_res = base64.b64decode(res_dat)  # res_dat
 
                         for key, items in met.iteritems():
                             global methods
@@ -251,5 +252,10 @@ class burp_scans(object):
 
         burp_scan_db.objects.filter(scan_id=self.scan_id).update(total_vul=total_vul, high_vul=total_high,
                                                                  medium_vul=total_medium, low_vul=total_low)
+
+        try:
+            email_notification.email_notify()
+        except Exception as e:
+            print e
 
         HttpResponse(status=201)
