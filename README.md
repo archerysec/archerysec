@@ -34,13 +34,13 @@ Currently project is in development phase and still lot of work going on.
 
 * Python 2.7
 * OpenVas 8
-* [OWASP ZAP 2.7.0] (https://github.com/zaproxy/zaproxy/wiki/Downloads)
-* [Selenium Python] (Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)
+* [OWASP ZAP 2.7.0](https://github.com/zaproxy/zaproxy/wiki/Downloads)
+* [Selenium Python](Firefox Webdriver) (https://github.com/mozilla/geckodriver/releases)
 
 ## Burp Scanner
 Follow the instruction in order to enable Burp REST API. You can manage and trigger scans using Archery once REST API enabled.
 
-* [Burp REST API] (https://github.com/vmware/burp-rest-api)
+* [Burp REST API](https://github.com/vmware/burp-rest-api)
 
 ## Installation
 
