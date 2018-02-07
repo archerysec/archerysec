@@ -47,6 +47,7 @@
     });
 
 
+
 </script>
 
 <script>
@@ -105,6 +106,7 @@ $(document).on('submit', '#exclude_url', function(e){
     });
 
 
+
 </script>
 
 <script type="text/javascript">
@@ -113,6 +115,7 @@ $(document).on('submit', '#exclude_url', function(e){
       $("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds
   }
  setInterval('autoRefresh_div()', 5000);
+
 
 
 </script>
@@ -166,7 +169,8 @@ $(document).on('submit', '#exclude_url', function(e){
                                 </div>
                             </div>
                             <div class="controls">
-                                <input type="submit" class="btn btn-primary" value="Launch">
+                                <input onclick="location.href = '/webscanners/scans_list/'" type="submit"
+                                       class="btn btn-primary" value="Launch">
                             </div>
                         </form>
                     </div>
@@ -256,7 +260,8 @@ $(document).on('submit', '#exclude_url', function(e){
                                            value="{{ exclude_url }}">
                                     <input type="submit" class="btn btn-primary"
                                            value="Exclude">
-                                </div> <p>Note : Exclude logout url for authenticated dynamic web scanning.</p>
+                                </div>
+                                <p>Note : Exclude logout url for authenticated dynamic web scanning.</p>
                             </div>
                         </form>
                     </div>

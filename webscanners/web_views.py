@@ -25,14 +25,12 @@ import datetime
 from networkscanners.models import scan_save_db
 from django.conf import settings
 from easy_pdf.views import PDFTemplateView, render_to_pdf_response
-
-from PyBurprestapi import burpscanner
 import xml.etree.ElementTree as ET
-import base64
 from projects.models import project_db
 
 from burp_scan import burp_scans
 from itertools import chain
+import email_notification
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -359,8 +357,12 @@ def launch_web_scan(target_url, project_id):
                                                                     res_id=res_id)
 
     zapscanner.stop_zap()
+    try:
+        email_notification.email_notify()
+    except Exception as e:
+        print e
 
-    return HttpResponseRedirect('/webscanners/scans_list/')
+    return HttpResponse(status=201)
 
 
 def index(request):
@@ -395,6 +397,7 @@ def web_scan(request):
             scans_status = "0"
         else:
             return scans_status
+        return HttpResponse(status=201)
 
     return render(request, 'scan_list.html')
 
