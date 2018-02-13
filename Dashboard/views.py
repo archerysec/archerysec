@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from chartit import DataPool, Chart
 
 from webscanners.models import zap_scans_db, burp_scan_db
 from networkscanners.models import scan_save_db
@@ -11,58 +10,6 @@ from django.db.models import Sum
 
 # Create your views here.
 chart = []
-
-
-def zap_vuln_chart(request):
-    if request.method == 'POST':
-        scan_id = request.POST.get("scan_id")
-        project_id = request.POST.get("project_id")
-
-        zapvulndata = \
-            DataPool(
-                series=
-                [{'options': {
-                    'source': burp_scan_db.objects.filter(scan_id=scan_id, project_id=project_id)
-                },
-                    'terms': [
-                        'url',
-                        'low_vul',
-                        'medium_vul',
-                        'high_vul'
-                    ]
-                }]
-            )
-
-        # Step 2: Create the Chart object
-        global chart
-        chart = Chart(
-            datasource=zapvulndata,
-            series_options=
-            [{'options': {
-                'type': 'column',
-                'options3d': {'enabled': True, 'alpha': 45, 'beta': 0},
-                'stacking': False,
-                # 'stack': 0,
-
-            },
-                'terms': {
-                    'url': ['low_vul', 'high_vul', 'medium_vul'],
-                }
-            }],
-            chart_options={
-                'title': {
-                    'text': 'ZAP Scan Vulnerability statics'},
-                'xAxis': {
-                    'title': {
-                        'text': 'Vulnerability data'
-                    }
-                },
-                'colors': ['#1b7ec7', '#ff7800', '#bd3f3b'],
-            },
-
-        )
-
-    return render(request, 'webdashboard.html', {'chart_data': chart})
 
 
 def dash_call(request):
