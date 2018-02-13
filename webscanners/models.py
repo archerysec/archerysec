@@ -15,11 +15,11 @@ class zap_scans_db(models.Model):
     scan_scanid = models.TextField(blank=True)
     vul_num = models.TextField(blank=True)
     vul_status = models.TextField(blank=True)
-    total_vul = models.TextField(blank=True)
-    high_vul = models.TextField(blank=True)
-    medium_vul = models.TextField(blank=True)
-    low_vul = models.TextField(blank=True)
-    project_id = models.TextField(blank=True)
+    total_vul = models.IntegerField(blank=True, null=True)
+    high_vul = models.IntegerField(blank=True, null=True)
+    medium_vul = models.IntegerField(blank=True, null=True)
+    low_vul = models.IntegerField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True)
     date_time = models.DateTimeField(null=True)
 
 
@@ -83,10 +83,10 @@ class burp_scan_db(models.Model):
     scan_date = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
     project_id = models.UUIDField(blank=True)
-    total_vul = models.TextField(blank=True)
-    high_vul = models.TextField(blank=True)
-    medium_vul = models.TextField(blank=True)
-    low_vul = models.TextField(blank=True)
+    total_vul = models.IntegerField(blank=True, null=True)
+    high_vul = models.IntegerField(blank=True, null=True)
+    medium_vul = models.IntegerField(blank=True, null=True)
+    low_vul = models.IntegerField(blank=True, null=True)
 
 
 class burp_scan_result_db(models.Model):
@@ -120,11 +120,11 @@ class web_scan_db(models.Model):
     scan_date = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
     project_id = models.UUIDField(blank=True)
-    total_vul = models.TextField(blank=True)
-    high_vul = models.TextField(blank=True)
-    medium_vul = models.TextField(blank=True)
-    low_vul = models.TextField(blank=True)
-    info_vuln = models.TextField(blank=True)
+    total_vul = models.IntegerField(blank=True)
+    high_vul = models.IntegerField(blank=True)
+    medium_vul = models.IntegerField(blank=True)
+    low_vul = models.IntegerField(blank=True)
+    info_vuln = models.IntegerField(blank=True)
     scanner = models.TextField(blank=True)
 
 

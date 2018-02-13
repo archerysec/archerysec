@@ -1,0 +1,145 @@
+{% extends 'dashboard_header.html' %}
+{% block body %}
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    // Load Charts and the corechart and barchart packages.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Draw the pie chart and bar chart when Charts is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+        data.addRows([
+          ['High', {{all_network_high}}],
+          ['Medium', {{all_network_medium}}],
+          ['Low', {{all_network_low}}],
+        ]);
+
+        var piechart_options = {title:'Pie Chart: How Much Pizza I Ate Last Night',
+                       width:800,
+                       height:400};
+        var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
+        piechart.draw(data, piechart_options);
+
+        var barchart_options = {title:'Barchart: How Much Pizza I Ate Last Night',
+                       width:800,
+                       height:400,
+                       legend: 'none'};
+        var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
+        barchart.draw(data, barchart_options);
+      }
+
+
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Web Scans Dashboard</a></div>
+        <h1>Web Scans Dashboard</h1>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                {% include "dash_bar.html" %}
+                <div class="row-fluid">
+                    <div class="widget-box">
+                        <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
+                            <h5>Web Scan Analytics</h5>
+                        </div>
+                        <div class="widget-content">
+                            <div class="row-fluid">
+                                <div class="span9">
+                                    <div class="row-fluid">
+                                        <div class="span12">
+                                            <div class="widget-box">
+                                                <div class="widget-title"><span class="icon"><i
+                                                        class="icon-th"></i></span>
+                                                    <h5>Web Scan List</h5>
+
+                                                </div>
+                                                <div class="widget-content nopadding">
+                                                    <table class="table table-bordered data-table">
+                                                        <thead>
+                                                        <tr>
+                                                            <!--<th>Project ID</th>-->
+                                                            <th>URL</th>
+                                                            <th>Date Time</th>
+                                                            <th>Total Vulnerability</th>
+                                                            <th>High</th>
+                                                            <th>Medium</th>
+                                                            <th>Low</th>
+
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>{% for data in all_network_data %}
+                                                        <tr data-target="#">
+                                                            <!--<td>{{data.project_id}}</td>-->
+                                                            <td>
+                                                                <a href="/net_dash_data/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                                                            </td>
+                                                            <td>{{data.date_time}}</td>
+                                                            <td><span
+                                                                    class="badge badge-inverse">{{data.total_vul}}</span>
+                                                            </td>
+                                                            <td><span
+                                                                    class="badge badge-important">{{data.high_total}}</span>
+                                                            </td>
+                                                            <td><span
+                                                                    class="badge badge-warning">{{data.medium_total}}</span>
+                                                            </td>
+                                                            <td><span class="badge badge-info">{{data.low_total}}</span>
+                                                            </td>
+
+                                                        </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="span3">
+                                    <ul class="site-stats">
+                                        <li class="bg_lh"><i class="icon-user"></i> <strong>{{total_network}}</strong>
+                                            <small>Total Vulnerability</small>
+                                        </li>
+                                        <li class="bg_lh"><i class="icon-plus"></i> <strong>{{all_network_high}}</strong>
+                                            <small>High Vulnerability</small>
+                                        </li>
+                                        <li class="bg_lh"><i class="icon-shopping-cart"></i> <strong>{{all_network_medium}}</strong>
+                                            <small>Medium Vulnerability</small>
+                                        </li>
+                                        <li class="bg_lh"><i class="icon-tag"></i> <strong>{{all_network_low}}</strong>
+                                            <small>Low Vulnerability</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <table class="columns">
+                                <tr>
+                                    <td>
+                                        <div id="piechart_div" style="border: 1px solid #ccc"></div>
+                                    </td>
+                                    <td>
+                                        <div id="barchart_div" style="border: 1px solid #ccc"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

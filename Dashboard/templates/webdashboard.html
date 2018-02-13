@@ -1,0 +1,35 @@
+{% extends 'header.html' %}
+{% load chartit %}
+{{ chart_data|load_charts:"chart_1" }}
+{% block body %}
+
+<script type="text/javascript" src="/static/js/google_chart.js"></script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Web Scans Dashboard</a></div>
+        <h1>Web Scans Dashboard</h1>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="row-fluid">
+                    <div id='container'> </div>
+                    <div class="widget-box">
+                        <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                            <h5>Web Scans</h5>
+                        </div>
+
+                        <div class="widget-content">
+                            <div id="chart_1">{{ chart_data|load_charts:"chart_1" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

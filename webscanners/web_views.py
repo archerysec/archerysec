@@ -31,58 +31,59 @@ from projects.models import project_db
 from burp_scan import burp_scans
 from itertools import chain
 import email_notification
+import zap_xml_parser
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
 spider_status = "0"
 scans_status = "0"
-spider_alert = ""
-target_url = ""
-driver = ""
-new_uri = ""
-cookies = ""
-excluded_url = ""
-vul_col = ""
-note = ""
-rtt = ""
-tags = ""
-timestamp = ""
-responseHeader = ""
-requestBody = ""
-responseBody = ""
-requestHeader = ""
-cookieParams = ""
-res_type = ""
-res_id = ""
+spider_alert = []
+target_url = []
+driver = []
+new_uri = []
+cookies = []
+excluded_url = []
+vul_col = []
+note = []
+rtt = []
+tags = []
+timestamp = []
+responseHeader = []
+requestBody = []
+responseBody = []
+requestHeader = []
+cookieParams = []
+res_type = []
+res_id = []
 
-alert = ""
+alert = []
 project_id = None
 target_url = None
 scan_ip = None
 burp_status = 0
 
-serialNumber = ""
-types = ""
-name = ""
-host = ""
-path = ""
-location = ""
-severity = ""
-confidence = ""
-issueBackground = ""
-remediationBackground = ""
-references = ""
-vulnerabilityClassifications = ""
-issueDetail = ""
-requestresponse = ""
-vuln_id = ""
-methods = ""
-dec_res = ""
-dec_req = ""
-decd_req = ""
-scanner = ""
-all_scan_url = ""
-all_url_vuln = ""
+serialNumber = []
+types = []
+name = []
+host = []
+path = []
+location = []
+severity = []
+confidence = []
+issueBackground = []
+remediationBackground = []
+references = []
+vulnerabilityClassifications = []
+issueDetail = []
+requestresponse = []
+vuln_id = []
+methods = []
+dec_res = []
+dec_req = []
+decd_req = []
+scanner = []
+all_scan_url = []
+all_url_vuln = []
 
 
 # Login View
@@ -141,30 +142,33 @@ def launch_web_scan(target_url, project_id):
     """
     try:
         # ZAP launch function
-        zap_scan = zapscanner.start_zap()
-        print "ZAP Started :", zap_scan
+        zapscanner.start_zap()
 
     except Exception as e:
         print e
-        return HttpResponseRedirect("/webscanners/scans_list/")
+        print "ZAP Failed.............."
+        print "ZAP Restarting"
 
     time.sleep(15)
 
     # Get Excluded URL from excluded_db models
+    try:
+        all_excluded = excluded_db.objects.filter(Q(exclude_url__icontains=target_url))
 
-    all_excluded = excluded_db.objects.filter(Q(exclude_url__icontains=target_url))
+        for data in all_excluded:
+            global excluded_url
+            excluded_url = data.exclude_url
+            print "excluded url ", excluded_url
 
-    for data in all_excluded:
-        global excluded_url
-        excluded_url = data.exclude_url
-        print "excluded url ", excluded_url
+        print "Excluded url ", excluded_url
 
-    print "Excluded url ", excluded_url
+        # Excluding URL from scans in zap API
+        url_exclude = zap.spider.exclude_from_scan(regex=excluded_url)
 
-    # Excluding URL from scans in zap API
-    url_exclude = zap.spider.exclude_from_scan(regex=excluded_url)
-
-    print "URL Excluded:", url_exclude
+        print "URL Excluded:", url_exclude
+    except Exception as e:
+        print "ZAP Failed.............."
+        print "ZAP Restarting"
 
     all_cookie = cookie_db.objects.filter(Q(url__icontains=target_url))
     for da in all_cookie:
@@ -172,22 +176,32 @@ def launch_web_scan(target_url, project_id):
         cookies = da.cookie
         print da.url
         print "Cookies from database:", cookies
-    remove_cookie = zap.replacer.remove_rule(target_url)
+    try:
+        remove_cookie = zap.replacer.remove_rule(target_url)
+    except Exception as e:
+        print e
     print "Remove Cookie :", remove_cookie
     # Adding cookies value
-    cookie_add = zap.replacer.add_rule(apikey=apikey, description=target_url, enabled="true",
-                                       matchtype='REQ_HEADER', matchregex="false", replacement=cookies,
-                                       matchstring="Cookie", initiators="")
+    try:
+        cookie_add = zap.replacer.add_rule(apikey=apikey, description=target_url, enabled="true",
+                                           matchtype='REQ_HEADER', matchregex="false", replacement=cookies,
+                                           matchstring="Cookie", initiators="")
 
-    print "Cookies Added :", cookie_add
+        print "Cookies Added :", cookie_add
+    except Exception as e:
+        print e
+
     zap.ajaxSpider.scan(target_url)
-    scanid = zap.spider.scan(target_url)
+    try:
 
-    save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid)
-    save_all.save()
+        scanid = zap.spider.scan(target_url)
+        save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid)
+        save_all.save()
+    except Exception as e:
+        print e
+
     try:
         while (int(zap.spider.status(scanid)) < 100):
-            # print 'Spider progress %:' + zap.spider.status(scanid)
             global spider_status
             spider_status = zap.spider.status(scanid)
             print "Spider progress", spider_status
@@ -200,7 +214,6 @@ def launch_web_scan(target_url, project_id):
     spider_res_out = zap.spider.results(scanid)
     data_out = ("\n".join(map(str, spider_res_out)))
     print data_out
-    total_spider = len(spider_res_out)
 
     print 'Spider Completed------'
     print 'Target :', target_url
@@ -210,10 +223,16 @@ def launch_web_scan(target_url, project_id):
     time.sleep(5)
 
     print 'Scanning Target %s' % target_url
-    # Launch scan
-    scan_scanid = zap.ascan.scan(target_url)
+
+    """
+        ZAP Scan trigger on target_url
+    """
+    try:
+        scan_scanid = zap.ascan.scan(target_url)
+    except Exception as e:
+        print e
+
     un_scanid = uuid.uuid4()
-    print "updated scanid :", un_scanid
     date_time = datetime.datetime.now()
     try:
         save_all_scan = zap_scans_db(project_id=project_id, scan_url=target_url, scan_scanid=un_scanid,
@@ -221,10 +240,10 @@ def launch_web_scan(target_url, project_id):
         save_all_scan.save()
     except Exception as e:
         print e
-    # zap_scans_db.objects.filter(pk=some_value).update(field1='some value')
+
     try:
         while (int(zap.ascan.status(scan_scanid)) < 100):
-            print 'Scan progress from zap_scan_lauch function  %: ' + zap.ascan.status(scan_scanid)
+            print 'ZAP Scan Status  %: ' + zap.ascan.status(scan_scanid)
             global scans_status
             scans_status = zap.ascan.status(scan_scanid)
             zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
@@ -238,7 +257,6 @@ def launch_web_scan(target_url, project_id):
     print target_url
     time.sleep(5)
     all_vuln = zap.core.alerts(target_url)
-    # print all_vuln
 
     for vuln in all_vuln:
         vuln_id = uuid.uuid4()
@@ -390,7 +408,7 @@ def web_scan(request):
             try:
                 launch_web_scan(target_url, project_id)
             except Exception as e:
-                print e
+                print "---------------------------------"
         print "scan_status :-----------%s" % scans_status
         if scans_status == '100':
 
@@ -994,10 +1012,11 @@ def xml_upload(request):
         if scanner == "zap_scan":
             scan_dump = zap_scans_db(scan_url=scan_url, scan_scanid=scan_id, date_time=date_time,
                                      project_id=project_id,
-                                     scan_status=scan_status)
+                                     vul_status=scan_status)
             scan_dump.save()
-            # zap scan XML parser
-            print scanner
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            zap_xml_parser.xml_parser(project_id=project_id, scan_id=scan_id, root=root_xml)
         elif scanner == "burp_scan":
             print scanner
             print xml_file

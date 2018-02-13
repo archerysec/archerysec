@@ -5,29 +5,48 @@ import uuid
 spider_status = "0"
 scans_status = "0"
 spider_alert = ""
-target_url = ""
-driver = ""
-new_uri = ""
-cookies = ""
-excluded_url = ""
-vul_col = ""
-note = ""
-rtt = ""
-tags = ""
-timestamp = ""
-responseHeader = ""
-requestBody = ""
-responseBody = ""
-requestHeader = ""
-cookieParams = ""
-res_type = ""
-res_id = ""
+target_url = []
+driver = []
+new_uri = []
+cookies = []
+excluded_url = []
+vul_col = []
+note = []
+rtt = []
+tags = []
+timestamp = []
+responseHeader = []
+requestBody = []
+responseBody = []
+requestHeader = []
+cookieParams = []
+res_type = []
+res_id = []
+url = []
+name = []
+solution = []
+instance = []
+sourceid = []
+pluginid = []
+alert = []
+desc = []
+riskcode = []
+confidence = []
+wascid = []
+risk = []
+reference = []
 
 
-def xml_parser(xml_file, project_id, scan_id):
-    global vul_col, confidence, wascid, risk, reference
-    root = ET.fromstring(xml_file)
+
+def xml_parser(root, project_id, scan_id):
+    global vul_col, confidence, wascid, risk, reference, url, name, solution, instance, sourceid, pluginid \
+        , alert, desc
+
     for zap in root:
+        host = zap.attrib
+        for key, items in host.iteritems():
+            if key == "host":
+                url = items
         for site in zap:
             for alerts in site:
                 for alertsitem in alerts:
@@ -42,18 +61,10 @@ def xml_parser(xml_file, project_id, scan_id):
                         riskcode = alertsitem.text
                     if alertsitem.tag == "confidence":
                         confidence = alertsitem.text
-                    if alertsitem.tag == "riskdesc":
-                        riskdesc = alertsitem.text
                     if alertsitem.tag == "desc":
                         desc = alertsitem.text
-                    if alertsitem.tag == "instances":
-                        instances = alertsitem.text
-                    if alertsitem.tag == "count":
-                        count = alertsitem.text
                     if alertsitem.tag == "solution":
                         solution = alertsitem.text
-                    if alertsitem.tag == "otherinfo":
-                        otherinfo = alertsitem.text
                     if alertsitem.tag == "reference":
                         reference = alertsitem.text
                     if alertsitem.tag == "wascid":
@@ -86,7 +97,6 @@ def xml_parser(xml_file, project_id, scan_id):
                                                     solution=solution,
                                                     param=instance, sourceid=sourceid,
                                                     pluginId=pluginid,
-                                                    other=otherinfo,
                                                     alert=alert, description=desc)
                     dump_data.save()
 
@@ -98,4 +108,4 @@ def xml_parser(xml_file, project_id, scan_id):
     total_low = len(zap_all_vul.filter(risk="Low"))
 
     zap_scans_db.objects.filter(scan_scanid=scan_id).update(total_vul=total_vul, high_vul=total_high,
-                                                              medium_vul=total_medium, low_vul=total_low)
+                                                            medium_vul=total_medium, low_vul=total_low)
