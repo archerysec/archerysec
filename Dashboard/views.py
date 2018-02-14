@@ -20,30 +20,51 @@ def dash_call(request):
     all_openvas_scan = scan_save_db.objects.aggregate(Sum('total_vul'))
 
     for key, value in all_zap_scan.iteritems():
-        all_zap = value
+        if value is None:
+            all_zap = '0'
+        else:
+            all_zap = value
+
     for key, value in all_burp_scan.iteritems():
-        all_burp = value
+        if value is None:
+            all_burp = '0'
+        else:
+            all_burp = value
+
     for key, value in all_openvas_scan.iteritems():
-        all_openvas = value
+        if value is None:
+            all_openvas = '0'
+        else:
+            all_openvas = value
 
-    all_vuln = all_zap + all_burp + all_openvas
-
+    all_vuln = int(all_zap) + int(all_burp) + int(all_openvas)
     total_network = all_openvas
-    total_web = all_zap + all_burp
+    total_web = int(all_zap) + int(all_burp)
 
     all_zap_high = zap_scans_db.objects.aggregate(Sum('high_vul'))
     all_burp_high = burp_scan_db.objects.aggregate(Sum('high_vul'))
     all_openvas_high = scan_save_db.objects.aggregate(Sum('high_total'))
 
     for key, value in all_zap_high.iteritems():
-        zap_high = value
-    for key, value in all_burp_high.iteritems():
-        burp_high = value
-    for key, value in all_openvas_high.iteritems():
-        openvas_high = value
+        if value is None:
+            zap_high = '0'
+        else:
+            zap_high = value
 
-    all_high = zap_high + burp_high + openvas_high
-    all_web_high = zap_high + burp_high
+    for key, value in all_burp_high.iteritems():
+        if value is None:
+            burp_high = '0'
+        else:
+            burp_high = value
+
+    for key, value in all_openvas_high.iteritems():
+        if value is None:
+            openvas_high = '0'
+        else:
+            openvas_high = value
+
+    all_high = int(zap_high) + int(burp_high) + int(openvas_high)
+    all_web_high = int(zap_high) + int(burp_high)
     all_network_high = openvas_high
 
     all_zap_medium = zap_scans_db.objects.aggregate(Sum('medium_vul'))
@@ -51,14 +72,25 @@ def dash_call(request):
     all_openvas_medium = scan_save_db.objects.aggregate(Sum('medium_total'))
 
     for key, value in all_zap_medium.iteritems():
-        zap_medium = value
-    for key, value in all_burp_medium.iteritems():
-        burp_medium = value
-    for key, value in all_openvas_medium.iteritems():
-        openvas_medium = value
+        if value is None:
+            zap_medium = '0'
+        else:
+            zap_medium = value
 
-    all_medium = zap_medium + burp_medium + openvas_medium
-    all_web_medium = zap_medium + burp_medium
+    for key, value in all_burp_medium.iteritems():
+        if value is None:
+            burp_medium = '0'
+        else:
+            burp_medium = value
+
+    for key, value in all_openvas_medium.iteritems():
+        if value is None:
+            openvas_medium = '0'
+        else:
+            openvas_medium = value
+
+    all_medium = int(zap_medium) + int(burp_medium) + int(openvas_medium)
+    all_web_medium = int(zap_medium) + int(burp_medium)
     all_network_medium = openvas_medium
 
     all_zap_low = zap_scans_db.objects.aggregate(Sum('low_vul'))
@@ -66,14 +98,25 @@ def dash_call(request):
     all_openvas_low = scan_save_db.objects.aggregate(Sum('low_total'))
 
     for key, value in all_zap_low.iteritems():
-        zap_low = value
-    for key, value in all_burp_low.iteritems():
-        burp_low = value
-    for key, value in all_openvas_low.iteritems():
-        openvas_low = value
+        if value is None:
+            zap_low = '0'
+        else:
+            zap_low = value
 
-    all_low = zap_low + burp_low + openvas_low
-    all_web_low = zap_low + burp_low
+    for key, value in all_burp_low.iteritems():
+        if value is None:
+            burp_low = '0'
+        else:
+            burp_low = value
+
+    for key, value in all_openvas_low.iteritems():
+        if value is None:
+            openvas_low = '0'
+        else:
+            openvas_low = value
+
+    all_low = int(zap_low) + int(burp_low) + int(openvas_low)
+    all_web_low = int(zap_low) + int(burp_low)
     all_network_low = openvas_low
 
     return render(request, 'dashboard.html',
@@ -120,11 +163,11 @@ def proj_data(request):
         else:
             all_openvas = value
 
-    all_vuln = all_zap + all_burp + all_openvas
+    all_vuln = int(all_zap) + int(all_burp) + int(all_openvas)
 
     total_network = all_openvas
 
-    total_web = all_zap + all_burp
+    total_web = int(all_zap) + int(all_burp)
 
     all_zap_high = zap_scans_db.objects.filter(project_id=project_id).aggregate(Sum('high_vul'))
     all_burp_high = burp_scan_db.objects.filter(project_id=project_id).aggregate(Sum('high_vul'))
@@ -146,8 +189,8 @@ def proj_data(request):
         else:
             openvas_high = value
 
-    all_high = zap_high + burp_high + openvas_high
-    all_web_high = zap_high + burp_high
+    all_high = int(zap_high) + int(burp_high) + int(openvas_high)
+    all_web_high = int(zap_high) + int(burp_high)
     all_network_high = openvas_high
 
     all_zap_medium = zap_scans_db.objects.filter(project_id=project_id).aggregate(Sum('medium_vul'))
@@ -170,8 +213,8 @@ def proj_data(request):
         else:
             openvas_medium = value
 
-    all_medium = zap_medium + burp_medium + openvas_medium
-    all_web_medium = zap_medium + burp_medium
+    all_medium = int(zap_medium) + int(burp_medium) + int(openvas_medium)
+    all_web_medium = int(zap_medium) + int(burp_medium)
     all_network_medium = openvas_medium
 
     all_zap_low = zap_scans_db.objects.filter(project_id=project_id).aggregate(Sum('low_vul'))
@@ -194,8 +237,8 @@ def proj_data(request):
         else:
             openvas_low = value
 
-    all_low = zap_low + burp_low + openvas_low
-    all_web_low = zap_low + burp_low
+    all_low = int(zap_low) + int(burp_low) + int(openvas_low)
+    all_web_low = int(zap_low) + int(burp_low)
     all_network_low = openvas_low
 
     return render(request, 'project_dashboard.html', {'all_vuln': all_vuln, 'total_web': total_web,
@@ -250,7 +293,6 @@ def web_dash_data(request):
     all_vuln = int(all_zap) + int(all_burp)
 
     total_web = all_vuln
-    print total_web
 
     all_zap_high = zap_scans_db.objects.filter(scan_scanid=scan_id).aggregate(Sum('high_vul'))
     all_burp_high = burp_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('high_vul'))
