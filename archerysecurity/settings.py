@@ -143,7 +143,7 @@ STRONGHOLD_PUBLIC_URLS = (
     r'^/o.*?$',
 )
 
-LOGIN_URL = '/webscanners/login/'
+LOGIN_URL = '/login/'
 
 LOGIN_REDIRECT_URL = '/user/accounts/'
 

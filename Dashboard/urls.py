@@ -1,9 +1,16 @@
 from django.conf.urls import url
 from Dashboard import views
+from webscanners import web_views
 
 app_name = 'Dashboard'
 
 urlpatterns = [
+
+    url(r'^login/$', web_views.login, name='login'),
+    url(r'^auth/$', web_views.auth_view, name='auth'),
+    url(r'^logout/$', web_views.logout, name='logout'),
+    url(r'^loggedin/$', web_views.loggedin, name='loggedin'),
+
     url(r'^$', views.dash_call, name='zap_vuln_chart'),
     url(r'^dashboard/$', views.dash_call, name='dashboard'),
     url(r'^project_dashboard/$', views.project_dashboard, name='project_dashboard'),
