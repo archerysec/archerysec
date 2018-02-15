@@ -903,8 +903,9 @@ def burp_scan_launch(request):
         target_url = request.POST.get('url', )
         project_id = request.POST.get('project_id', )
         scan_id = uuid.uuid4()
+        date_time = datetime.datetime.now()
 
-        scan_dump = burp_scan_db(scan_id=scan_id, project_id=project_id, url=target_url)
+        scan_dump = burp_scan_db(scan_id=scan_id, project_id=project_id, url=target_url, date_time=date_time)
         scan_dump.save()
         try:
             do_scan = burp_scans(project_id, target_url, scan_id)
@@ -1037,9 +1038,9 @@ def xml_upload(request):
         xml_file = request.FILES['xmlfile']
         scan_url = request.POST.get("scan_url")
         scan_id = uuid.uuid4()
-        date_time = datetime.datetime.now()
         scan_status = "100"
         if scanner == "zap_scan":
+            date_time = datetime.datetime.now()
             scan_dump = zap_scans_db(scan_url=scan_url, scan_scanid=scan_id, date_time=date_time,
                                      project_id=project_id,
                                      vul_status=scan_status)
@@ -1051,7 +1052,8 @@ def xml_upload(request):
             print scanner
             print xml_file
             print scan_url
-            scan_dump = burp_scan_db(url=scan_url, scan_id=scan_id, scan_date=date_time, project_id=project_id,
+            date_time = datetime.datetime.now()
+            scan_dump = burp_scan_db(url=scan_url, scan_id=scan_id, date_time=date_time, project_id=project_id,
                                      scan_status=scan_status)
             scan_dump.save()
             # Burp scan XML parser

@@ -87,6 +87,7 @@ class burp_scan_db(models.Model):
     high_vul = models.IntegerField(blank=True, null=True)
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
 
 
 class burp_scan_result_db(models.Model):
