@@ -404,12 +404,13 @@ def web_scan(request):
         target_url = request.POST.get('url', )
         project_id = request.POST.get('project_id', )
 
-        while (int(scans_status) < 100):
-            try:
-                launch_web_scan(target_url, project_id)
-            except Exception as e:
-                print "---------------------------------"
-        print "scan_status :-----------%s" % scans_status
+        # while (int(scans_status) < 100):
+        #     try:
+        #
+        #     except Exception as e:
+        #         print "---------------------------------"
+        # print "scan_status :-----------%s" % scans_status
+        launch_web_scan(target_url, project_id)
         if scans_status == '100':
 
             scans_status = "0"
@@ -778,13 +779,16 @@ def edit_vuln_check(request):
 def add_vuln(request):
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
+        scanners = request.GET['scanner']
 
     else:
         scan_id = ''
+        scanners = ''
 
     if request.method == 'POST':
         vuln_id = uuid.uuid4()
         scan_id = request.POST.get("scan_id", )
+        scanners = request.POST.get("scanners", )
         vuln_name = request.POST.get("vuln_name", )
         risk = request.POST.get("risk", )
         url = request.POST.get("url", )
@@ -799,27 +803,53 @@ def add_vuln(request):
         res_header = request.POST.get("res_header", )
         vuln_col = request.POST.get("vuln_color", )
 
-        save_vuln = zap_scan_results_db(scan_id=scan_id, vuln_color=vuln_col, risk=risk, url=url, param=param,
-                                        sourceid=sourceid,
-                                        attack=attack, vuln_id=vuln_id, name=vuln_name, description=description,
-                                        reference=ref,
-                                        solution=solution,
-                                        requestHeader=req_header, responseHeader=res_header)
-        save_vuln.save()
+        print scanners
 
-        messages.success(request, "Vulnerability Added")
-        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk',
-                                                                                 'vuln_color').distinct()
-        total_vul = len(zap_all_vul)
-        total_high = len(zap_all_vul.filter(risk="High"))
-        total_medium = len(zap_all_vul.filter(risk="Medium"))
-        total_low = len(zap_all_vul.filter(risk="Low"))
+        if scanners == 'zap':
+            save_vuln = zap_scan_results_db(scan_id=scan_id, vuln_color=vuln_col, risk=risk, url=url, param=param,
+                                            sourceid=sourceid,
+                                            attack=attack, vuln_id=vuln_id, name=vuln_name,
+                                            description=description,
+                                            reference=ref,
+                                            solution=solution,
+                                            requestHeader=req_header, responseHeader=res_header)
+            save_vuln.save()
 
-        zap_scans_db.objects.filter(scan_scanid=scan_id).update(total_vul=total_vul, high_vul=total_high,
+            messages.success(request, "Vulnerability Added")
+            zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk',
+                                                                                     'vuln_color').distinct()
+            total_vul = len(zap_all_vul)
+            total_high = len(zap_all_vul.filter(risk="High"))
+            total_medium = len(zap_all_vul.filter(risk="Medium"))
+            total_low = len(zap_all_vul.filter(risk="Low"))
+
+            zap_scans_db.objects.filter(scan_scanid=scan_id).update(total_vul=total_vul, high_vul=total_high,
+                                                                    medium_vul=total_medium, low_vul=total_low)
+            return HttpResponseRedirect("/webscanners/web_vuln_list/?scan_id=%s" % scan_id)
+
+        elif scanners == 'burp':
+            save_burp_vuln = burp_scan_result_db(scan_id=scan_id, severity_color=vuln_col, severity=risk,
+                                                 host=url, location=param,
+                                                 vuln_id=vuln_id, name=vuln_name,
+                                                 issueBackground=description,
+                                                 references=ref,
+                                                 remediationBackground=solution,
+                                                 scan_request=req_header, scan_response=res_header)
+            save_burp_vuln.save()
+
+            burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id)
+
+            total_vul = len(burp_all_vul)
+            total_high = len(burp_all_vul.filter(severity="High"))
+            total_medium = len(burp_all_vul.filter(severity="Medium"))
+            total_low = len(burp_all_vul.filter(severity="Low"))
+
+            burp_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul, high_vul=total_high,
                                                                 medium_vul=total_medium, low_vul=total_low)
-        return HttpResponseRedirect("/webscanners/web_vuln_list/?scan_id=%s" % scan_id)
 
-    return render(request, 'add_vuln.html', {'scan_id': scan_id})
+            return HttpResponseRedirect("/webscanners/burp_vuln_list?scan_id=%s" % scan_id)
+
+    return render(request, 'add_vuln.html', {'scan_id': scan_id, 'scanners': scanners})
 
 
 def create_vuln(request):

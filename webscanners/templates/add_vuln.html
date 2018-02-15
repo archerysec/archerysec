@@ -16,6 +16,7 @@
                 {% csrf_token %}
                 <div>
                     <input name="scan_id" value="{{scan_id}}" type="hidden">
+                    <input name="scanners" value="{{scanners}}" type="hidden">
                     <div class="form-group">
                         <label>Name:</label>
                         <textarea class="form-control" rows="1" name="vuln_name"
@@ -84,9 +85,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a class="btn btn-primary" aria-hidden="true"
-                       href="/webscanners/web_vuln_list/?scan_id={{scan_id}}">Close
-                    </a>
+                    <!--<a class="btn btn-primary" aria-hidden="true"-->
+                       <!--href="/webscanners/web_vuln_list/?scan_id={{scan_id}}">Close-->
+                    <!--</a>-->
                     <button class="btn btn-success">Save changes</button>
                 </div>
             </form>
