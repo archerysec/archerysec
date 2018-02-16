@@ -560,38 +560,43 @@ def scan_table(request):
 
 
 def del_scan(request):
-    if request.method == 'POST':
-        item_id = request.POST.get("scan_scanid")
-        scan_url = request.POST.get("scan_url")
+    try:
+        if request.method == 'POST':
+            item_id = request.POST.get("scan_scanid")
+            scan_url = request.POST.get("scan_url")
 
-        item = zap_scans_db.objects.filter(scan_scanid=item_id, scan_url=scan_url)
-        item.delete()
-        item_results = zap_scan_results_db.objects.filter(scan_id=item_id, url=scan_url)
-        item_results.delete()
-        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/webscanners/scans_list/')
+            item = zap_scans_db.objects.filter(scan_scanid=item_id, scan_url=scan_url)
+            item.delete()
+            item_results = zap_scan_results_db.objects.filter(scan_id=item_id, url=scan_url)
+            item_results.delete()
+            messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+            return HttpResponseRedirect('/webscanners/scans_list/')
+    except Exception as e:
+        print "Eroor Got !!!"
 
 
 def dashboard(request):
     global project_id, target_url, scan_ip, scanner, all_scan_url, all_url_vuln
     all_data = project_db.objects.all()
+    try:
+        if request.method == 'POST':
+            if request.POST.get("project_id"):
+                project_id = request.POST.get("project_id")
+            elif request.POST.get("target_url"):
+                target_url = request.POST.get("target_url")
+            elif request.POST.get("scan_ip"):
+                scan_ip = request.POST.get("scan_ip")
 
-    if request.method == 'POST':
-        if request.POST.get("project_id"):
-            project_id = request.POST.get("project_id")
-        elif request.POST.get("target_url"):
-            target_url = request.POST.get("target_url")
-        elif request.POST.get("scan_ip"):
-            scan_ip = request.POST.get("scan_ip")
+            zap_scan_url = zap_scans_db.objects.filter(project_id=project_id)
+            zap_url_vuln = zap_scans_db.objects.filter(project_id=project_id, scan_url=target_url)
 
-        zap_scan_url = zap_scans_db.objects.filter(project_id=project_id)
-        zap_url_vuln = zap_scans_db.objects.filter(project_id=project_id, scan_url=target_url)
+            burp_scan_url = burp_scan_db.objects.filter(project_id=project_id)
+            burp_url_vuln = burp_scan_db.objects.filter(project_id=project_id, url=target_url)
 
-        burp_scan_url = burp_scan_db.objects.filter(project_id=project_id)
-        burp_url_vuln = burp_scan_db.objects.filter(project_id=project_id, url=target_url)
-
-        all_scan_url = chain(zap_scan_url, burp_scan_url)
-        all_url_vuln = chain(zap_url_vuln, burp_url_vuln)
+            all_scan_url = chain(zap_scan_url, burp_scan_url)
+            all_url_vuln = chain(zap_url_vuln, burp_url_vuln)
+    except Exception as e:
+        print "Error Got !!!!"
 
     all_ip = scan_save_db.objects.filter(project_id=project_id)
     all_ip_vul = scan_save_db.objects.filter(project_id=project_id, scan_ip=scan_ip)
@@ -623,7 +628,10 @@ def dashboard_network(request):
 def slem(driver, url):
     global new_uri
     new_uri = url
-    driver.get(url, )
+    try:
+        driver.get(url,)
+    except Exception as e:
+        print "Error Got !!!"
 
 
 def save_cookie(driver):

@@ -240,9 +240,9 @@ def vuln_static_dashboard(request):
     all_low = int(zap_low) + int(burp_low) + int(openvas_low)
     all_web_low = int(zap_low) + int(burp_low)
     all_network_low = openvas_low
-
-    if request.method == "POST":
-        dash_year = request.POST.get("year")
+    try:
+        if request.method == "POST":
+            dash_year = request.POST.get("year")
         high_list = []
         for m in range(1, 13):
             high_zap = zap_scans_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
@@ -322,10 +322,11 @@ def vuln_static_dashboard(request):
                     openvas_low = value
             global data
             all_low_stat = int(zap_low) + int(burp_low) + int(openvas_low)
-            print 'low-all', all_low_stat
 
             data = {m: {'h': all_high_stat, 'm': all_medium_stat, 'l': all_low_stat}}
             high_list.append(data)
+    except Exception as e:
+        print "Error got !!!"
 
     return render(request, 'dashboard.html',
                   {'high_data': high_list,
@@ -496,9 +497,6 @@ def web_dash_data(request):
             all_burp = '0'
         else:
             all_burp = value
-
-    print "burp", all_zap
-    print "burp", all_burp
 
     all_vuln = int(all_zap) + int(all_burp)
 

@@ -105,58 +105,31 @@
                         </div>
                     </div>
                     <div class="widget-content nopadding">
-                        <table class="table table-bordered table-striped">
+                        <table class="table table-bordered data-table">
                             <thead>
                             <tr>
-
                                 <th>URL</th>
                                 <th>Status</th>
-                                <th>Total Vulnerability</th>
+                                <th>Total</th>
                                 <th>High</th>
                                 <th>Medium</th>
                                 <th>Low</th>
-                                <th>Action</th>
-                                <th></th>
 
                             </tr>
                             </thead>
                             <tbody>{% for data in scan_dat %}
                             <tr data-target="#">
-
                                 <td>{{data.scan_url}}{{data.url}}</td>
                                 <td width="30%">
                                     <div class="progress progress-info">
-                                        <div class="bar" style="width: {{data.vul_status}}{{data.scan_status}}%">{{data.vul_status}}{{data.scan_status}}</div>
+                                        <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">{{data.scan_status}}{{data.vul_status}}</div>
                                     </div>
                                 </td>
                                 <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                                 <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                                 <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
                                 <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn btn-primary"
-                                           href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}"><i
-                                                class="icon-tasks icon-white"></i>
-                                        </a>
-                                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
-                                                class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}"><i
-                                                    class="icon-pencil"></i> View </a></li>
 
-                                        </ul>
-                                    </div>
-                                </td>
-                                 <td>
-                                    <form action="/webscanners/del_scan/" method="post" class="forms-sample">
-
-                                        {% csrf_token %}
-                                        <input type="hidden" name="scan_scanid" value="{{data.scan_scanid}}"/>
-                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
-                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                                    </form>
-                                </td>
                             </tr>
                             {% endfor %}
                             </tbody>
