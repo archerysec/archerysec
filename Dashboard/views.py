@@ -7,9 +7,12 @@ from projects.models import project_db
 from django.shortcuts import render, render_to_response, HttpResponse
 from itertools import chain
 from django.db.models import Sum
+import ast
 
 # Create your views here.
 chart = []
+all_high_stat = ""
+data = ""
 
 
 def dash_call(request):
@@ -121,6 +124,213 @@ def dash_call(request):
 
     return render(request, 'dashboard.html',
                   {'all_project': all_project, 'all_vuln': all_vuln, 'total_web': total_web,
+                   'total_network': total_network, 'all_high': all_high, 'all_medium': all_medium, 'all_low': all_low,
+                   'all_web_high': all_web_high, 'all_web_medium': all_web_medium,
+                   'all_network_medium': all_network_medium, 'all_network_high': all_network_high,
+                   'all_web_low': all_web_low, 'all_network_low': all_network_low
+                   })
+
+
+import json
+
+
+def vuln_static_dashboard(request):
+    global dash_year
+
+    all_zap_scan = zap_scans_db.objects.aggregate(Sum('total_vul'))
+    all_burp_scan = burp_scan_db.objects.aggregate(Sum('total_vul'))
+    all_openvas_scan = scan_save_db.objects.aggregate(Sum('total_vul'))
+
+    for key, value in all_zap_scan.iteritems():
+        if value is None:
+            all_zap = '0'
+        else:
+            all_zap = value
+
+    for key, value in all_burp_scan.iteritems():
+        if value is None:
+            all_burp = '0'
+        else:
+            all_burp = value
+
+    for key, value in all_openvas_scan.iteritems():
+        if value is None:
+            all_openvas = '0'
+        else:
+            all_openvas = value
+
+    all_vuln = int(all_zap) + int(all_burp) + int(all_openvas)
+    total_network = all_openvas
+    total_web = int(all_zap) + int(all_burp)
+
+    all_zap_high = zap_scans_db.objects.aggregate(Sum('high_vul'))
+    all_burp_high = burp_scan_db.objects.aggregate(Sum('high_vul'))
+    all_openvas_high = scan_save_db.objects.aggregate(Sum('high_total'))
+
+    for key, value in all_zap_high.iteritems():
+        if value is None:
+            zap_high = '0'
+        else:
+            zap_high = value
+
+    for key, value in all_burp_high.iteritems():
+        if value is None:
+            burp_high = '0'
+        else:
+            burp_high = value
+
+    for key, value in all_openvas_high.iteritems():
+        if value is None:
+            openvas_high = '0'
+        else:
+            openvas_high = value
+
+    all_high = int(zap_high) + int(burp_high) + int(openvas_high)
+    all_web_high = int(zap_high) + int(burp_high)
+    all_network_high = openvas_high
+
+    all_zap_medium = zap_scans_db.objects.aggregate(Sum('medium_vul'))
+    all_burp_medium = burp_scan_db.objects.aggregate(Sum('medium_vul'))
+    all_openvas_medium = scan_save_db.objects.aggregate(Sum('medium_total'))
+
+    for key, value in all_zap_medium.iteritems():
+        if value is None:
+            zap_medium = '0'
+        else:
+            zap_medium = value
+
+    for key, value in all_burp_medium.iteritems():
+        if value is None:
+            burp_medium = '0'
+        else:
+            burp_medium = value
+
+    for key, value in all_openvas_medium.iteritems():
+        if value is None:
+            openvas_medium = '0'
+        else:
+            openvas_medium = value
+
+    all_medium = int(zap_medium) + int(burp_medium) + int(openvas_medium)
+    all_web_medium = int(zap_medium) + int(burp_medium)
+    all_network_medium = openvas_medium
+
+    all_zap_low = zap_scans_db.objects.aggregate(Sum('low_vul'))
+    all_burp_low = burp_scan_db.objects.aggregate(Sum('low_vul'))
+    all_openvas_low = scan_save_db.objects.aggregate(Sum('low_total'))
+
+    for key, value in all_zap_low.iteritems():
+        if value is None:
+            zap_low = '0'
+        else:
+            zap_low = value
+
+    for key, value in all_burp_low.iteritems():
+        if value is None:
+            burp_low = '0'
+        else:
+            burp_low = value
+
+    for key, value in all_openvas_low.iteritems():
+        if value is None:
+            openvas_low = '0'
+        else:
+            openvas_low = value
+
+    all_low = int(zap_low) + int(burp_low) + int(openvas_low)
+    all_web_low = int(zap_low) + int(burp_low)
+    all_network_low = openvas_low
+
+    if request.method == "POST":
+        dash_year = request.POST.get("year")
+        high_list = []
+        for m in range(1, 13):
+            high_zap = zap_scans_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('high_vul'))
+            high_burp = burp_scan_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('high_vul'))
+            high_openvas = scan_save_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('high_total'))
+
+            for key, value in high_zap.iteritems():
+                if value is None:
+                    zap_high = '0'
+                else:
+                    zap_high = value
+            for key, value in high_burp.iteritems():
+                if value is None:
+                    burp_high = '0'
+                else:
+                    burp_high = value
+
+            for key, value in high_openvas.iteritems():
+                if value is None:
+                    openvas_high = '0'
+                else:
+                    openvas_high = value
+            global data
+            all_high_stat = int(zap_high) + int(burp_high) + int(openvas_high)
+
+            medium_zap = zap_scans_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('medium_vul'))
+            medium_burp = burp_scan_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('medium_vul'))
+            medium_openvas = scan_save_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('medium_total'))
+
+            for key, value in medium_zap.iteritems():
+                if value is None:
+                    zap_medium = '0'
+                else:
+                    zap_medium = value
+            for key, value in medium_burp.iteritems():
+                if value is None:
+                    burp_medium = '0'
+                else:
+                    burp_medium = value
+
+            for key, value in medium_openvas.iteritems():
+                if value is None:
+                    openvas_medium = '0'
+                else:
+                    openvas_medium = value
+            global data
+            all_medium_stat = int(zap_medium) + int(burp_medium) + int(openvas_medium)
+
+            low_zap = zap_scans_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('low_vul'))
+            low_burp = burp_scan_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('low_vul'))
+            low_openvas = scan_save_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+                Sum('low_total'))
+
+            for key, value in low_zap.iteritems():
+                if value is None:
+                    zap_low = '0'
+                else:
+                    zap_low = value
+            for key, value in low_burp.iteritems():
+                if value is None:
+                    burp_low = '0'
+                else:
+                    burp_low = value
+
+            for key, value in low_openvas.iteritems():
+                if value is None:
+                    openvas_low = '0'
+                else:
+                    openvas_low = value
+            global data
+            all_low_stat = int(zap_low) + int(burp_low) + int(openvas_low)
+            print 'low-all', all_low_stat
+
+            data = {m: {'h': all_high_stat, 'm': all_medium_stat, 'l': all_low_stat}}
+            high_list.append(data)
+
+    return render(request, 'dashboard.html',
+                  {'high_data': high_list,
+                   'dash_year': dash_year,
+                   'all_vuln': all_vuln, 'total_web': total_web,
                    'total_network': total_network, 'all_high': all_high, 'all_medium': all_medium, 'all_low': all_low,
                    'all_web_high': all_web_high, 'all_web_medium': all_web_medium,
                    'all_network_medium': all_network_medium, 'all_network_high': all_network_high,

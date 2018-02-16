@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^net_dashboard/$', views.net_dashboard, name='net_dashboard'),
     url(r'^proj_data/$', views.proj_data, name='proj_data'),
     url(r'^web_dash_data/$', views.web_dash_data, name='web_dash_data'),
-    url(r'^net_dash_data/$', views.net_dash_data, name='net_dash_data')
+    url(r'^net_dash_data/$', views.net_dash_data, name='net_dash_data'),
+    url(r'^vuln_stat_dash/$', views.vuln_static_dashboard, name='vuln_stat_dash')
 
 ]

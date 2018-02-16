@@ -1,20 +1,21 @@
 {% extends 'dashboard_header.html' %}
 {% block body %}
 
+
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
+
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(drawVisualization);
+
 
       function drawVisualization() {
         // Some raw data (not necessarily accurate)
         var data = google.visualization.arrayToDataTable([
-         ['Month', 'Low', 'High', 'Medium', ],
-         ['2017/09',  165,      938,         522,],
-         ['2017/10',  135,      1120,        599,],
-         ['2017/11',  157,      1167,        587,],
-         ['2017/12',  139,      1110,        615,],
-         ['2018/01',  136,      691,         629,]
+         ['Month', 'High', 'Medium', 'Low', ],
+
+         {% for d in high_data %}{% for key, item in d.viewitems %}['{{ dash_year }}/{{key}}', {% for k, i in item.viewitems %}{% if k == 'h' %}{{i}}{% endif %}{% endfor %},    {% for k, i in item.viewitems %}{% if k == 'm' %}{{i}}{% endif %}{% endfor %},        {% for k, i in item.viewitems %}{% if k == 'l' %}{{i}}{% endif %}{% endfor %}{% endfor %},],{% endfor %}
+
       ]);
 
     var options = {
@@ -22,12 +23,15 @@
       vAxis: {title: 'Vulnerability'},
       hAxis: {title: 'Month'},
       seriesType: 'bars',
+      colors: ['#bd3f3b', '#ff7800', '#1b7ec7',],
       series: {5: {type: 'line'}}
     };
 
     var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
     chart.draw(data, options);
   }
+
+
 
    // Load Charts and the corechart and barchart packages.
       google.charts.load('current', {'packages':['corechart']});
@@ -96,9 +100,13 @@
 
 
 
+
+
+
 </script>
 
 <script type="text/javascript" src="/static/js/google_chart.js"></script>
+
 
 <div id="content">
     <div id="content-header">
@@ -116,6 +124,19 @@
                             <h5>Vulnerability Analytics</h5>
                         </div>
                         <div class="widget-content">
+                            <form action="/vuln_stat_dash/" method="POST" class="form-horizontal">
+                                {% csrf_token %}
+                                <div class="control-group">
+                                    <label class="control-label">Year :</label>
+                                    <div class="controls">
+                                        <input type="text" name="year"
+                                               value="{{ year }}">
+                                        <input type="submit" class="btn btn-primary"
+                                               value="Submit">
+                                    </div>
+                                </div>
+                            </form>
+
                             <div class="row-fluid">
                                 <div class="span9">
                                     <div id="chart_div" style="width: 1200px; height: 290px;"></div>
@@ -132,7 +153,8 @@
                                             <strong>{{total_web}}</strong>
                                             <small>Web Vulnerability</small>
                                         </li>
-                                        <li class="bg_lh"><i class="icon-indent-right"></i> <strong>{{all_high}}</strong>
+                                        <li class="bg_lh"><i class="icon-indent-right"></i>
+                                            <strong>{{all_high}}</strong>
                                             <small>Total High</small>
                                         </li>
                                         <li class="bg_lh"><i class=" icon-th-large"></i> <strong>{{all_medium}}</strong>
