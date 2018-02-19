@@ -54,12 +54,22 @@ def scan_status(request):
 def scan_vul_details(request):
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
-    else:
-        scan_id = ''
 
-    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('vul_id')
+    if request.method == 'POST':
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        false_positive = request.POST.get('false')
 
-    return render(request, 'vul_details.html', {'all_vuln': all_vuln, 'scan_id': scan_id})
+        ov_scan_result_db.objects.filter(scan_id=scan_id, vul_id=vuln_id).update(false_positive=false_positive)
+
+        return HttpResponseRedirect('/networkscanners/vul_details/?scan_id=%s' % scan_id)
+
+    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No').order_by('vul_id')
+
+    all_false_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='Yes')
+
+    return render(request, 'vul_details.html', {'all_vuln': all_vuln, 'scan_id': scan_id,
+                                                'all_false_vul': all_false_vul})
 
 
 def launch_scan(request):
@@ -268,8 +278,11 @@ def sav_vul_da(vul_id, openvas_results, scan_id):
                                                  host=host, port=port,
                                                  threat=threat,
                                                  severity=severity,
-                                                 description=description, family=family, cvss_base=cvss_base, cve=cve,
-                                                 bid=bid, xref=xref, tags=tags, banner=banner, date_time=date_time)
+                                                 description=description,
+                                                 family=family, cvss_base=cvss_base, cve=cve,
+                                                 bid=bid, xref=xref, tags=tags, banner=banner,
+                                                 date_time=date_time, false_positive='No'
+                                                 )
                     save_all.save()
     except Exception as e:
         print e
