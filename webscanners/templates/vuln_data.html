@@ -3,11 +3,13 @@
 
 <div id="content">{% for data in vul_dat %}
     <div id="content-header">
-        <div id="breadcrumb"><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_id}}" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
+        <div id="breadcrumb"><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_id}}" title="Go to Home"
+                                class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
             <a
                     href="#" class="current">{{ data.name }}</a></div>
         <div>
             <div class="btn-group">
+
                 <a class="btn btn-info"
                    href="#"><i
                         class="icon-edit icon-white"></i>
@@ -18,7 +20,7 @@
                     <li><a href="/webscanners/edit_vuln_dat/?vuln_id={{data.vuln_id}}"><i
                             class="icon-pencil"></i> Edit </a></li>
                     <!--<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i-->
-                            <!--class="icon-trash"></i> Delete</a></li>-->
+                    <!--class="icon-trash"></i> Delete</a></li>-->
                 </ul>
             </div>
 
@@ -35,8 +37,19 @@
                     <div class="widget-content">
                         <span class="label label-info">{{ data.name }}</span>
 
-                        <strong> </strong><br><br>
-                        <strong> Severity: </strong> <span class="badge badge-{{data.vuln_color}}"> {{ data.risk }}</span><br><br>
+                        <strong> </strong> <br><br>
+
+                        <strong> Flase Positive : </strong>
+                        <form method="POST" action="/webscanners/zap_vul_details/">{% csrf_token %}
+                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                            <input type="hidden" name="false" value="Yes">
+                            <input type="hidden" name="vuln_name" value="{{data.name}}">
+                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                            <button class="btn btn-info btn-mini">YES</button>
+                        </form>
+                        <br>
+                        <strong> Severity: </strong> <span
+                            class="badge badge-{{data.vuln_color}}"> {{ data.risk }}</span><br><br>
                         <strong> Method : </strong>{{data.method}}<br><br>
                         <strong> Vulnerable URL : </strong><code><a href="{{data.url}}">{{data.url}}</a> </code><br><br>
                         <strong> Parameter : </strong>{{data.param}}<br><br>
@@ -109,7 +122,8 @@
                     <div class="widget-content">
                         <span class="label label-info"></span>
                         <!--<iframe src="{{data.url}}" height="900" width="1200"></iframe>-->
-                        <iframe src="data:text/html;charset=utf-8,{{data.responseBody}}" height="900" width="1200"/></iframe>
+                        <iframe src="data:text/html;charset=utf-8,{{data.responseBody}}" height="900" width="1200"/>
+                        </iframe>
                     </div>
                 </div>
             </div>

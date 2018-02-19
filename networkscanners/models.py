@@ -37,6 +37,7 @@ class ov_scan_result_db(models.Model):
     tags = models.TextField(blank=True)
     banner = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
+    false_positive = models.TextField(null=True, blank=True)
 
 
 class scan_save_db(models.Model):

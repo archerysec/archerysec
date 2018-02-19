@@ -37,6 +37,15 @@
                         <span class="label label-info">{{ data.name }}</span>
 
                         <strong> </strong><br><br>
+                        <strong> False Positive: </strong>
+                        <form method="POST" action="/webscanners/burp_vuln_out/">{% csrf_token %}
+                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                            <input type="hidden" name="false" value="Yes">
+                            <input type="hidden" name="vuln_name" value="{{data.name}}">
+                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                            <button class="btn btn-info btn-mini">YES</button>
+                        </form>
+                        <br>
                         <strong> Severity: </strong> <span
                             class="badge badge-{{data.severity_color}}"> {{ data.severity }}</span><br><br>
                         <strong> Method : </strong>{{data.method}}<br><br>

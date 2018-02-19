@@ -9,6 +9,7 @@ import uuid
 from django.shortcuts import HttpResponse
 # from django.core.mail import send_mail
 import email_notification
+
 project_id = None
 target_url = None
 scan_ip = None
@@ -227,17 +228,19 @@ class burp_scans(object):
                 vul_col = "info"
 
             try:
-                data_dump = burp_scan_result_db(scan_id=self.scan_id, types=types, method=methods, scan_request=dec_req,
+                data_dump = burp_scan_result_db(scan_id=self.scan_id, types=types, method=methods,
+                                                scan_request=dec_req,
                                                 scan_response=dec_res,
                                                 project_id=self.project_id, vuln_id=vuln_id,
                                                 serialNumber=serialNumber, name=name, host=host,
                                                 path=path, location=location,
                                                 severity=severity, severity_color=vul_col, confidence=confidence,
                                                 issueBackground=issueBackground,
-                                                remediationBackground=remediationBackground, references=references,
+                                                remediationBackground=remediationBackground,
+                                                references=references,
                                                 vulnerabilityClassifications=vulnerabilityClassifications,
-                                                issueDetail=issueDetail, requestresponse=requestresponse
-                                                )
+                                                issueDetail=issueDetail, requestresponse=requestresponse,
+                                                false_positive='No')
                 data_dump.save()
             except Exception as e:
                 print e

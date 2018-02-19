@@ -279,6 +279,7 @@ def launch_web_scan(target_url, project_id):
         alert = vuln['alert']
         ids = vuln['id']
         description = vuln['description']
+        false_positive = 'No'
 
         global vul_col
 
@@ -301,7 +302,8 @@ def launch_web_scan(target_url, project_id):
                                        solution=solution,
                                        param=param, evidence=evidence, sourceid=sourceid, pluginId=pluginId,
                                        other=other, attack=attack, messageId=messageId, method=method,
-                                       alert=alert, ids=ids, description=description)
+                                       alert=alert, ids=ids, description=description,
+                                       flase_positive=false_positive)
         dump_all.save()
 
     time.sleep(5)
@@ -444,13 +446,23 @@ def vuln_details(request):
         scan_vul = request.GET['scan_id']
         scan_name = request.GET['scan_name']
 
-    else:
-        scan_vul = None
-        scan_name = None
+    if request.method == "POST":
+        false_positive = request.POST.get('false')
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        vuln_name = request.POST.get('vuln_name')
+        zap_scan_results_db.objects.filter(vuln_id=vuln_id,
+                                           scan_id=scan_id).update(false_positive=false_positive)
+        return HttpResponseRedirect(
+            '/webscanners/zap_vul_details/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul, name=scan_name).order_by('name')
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul, false_positive='No', name=scan_name).order_by(
+        'name')
+    zap_all_false_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul, name=scan_name,
+                                                           false_positive='Yes').order_by('name')
 
-    return render(request, 'vuln_details.html', {'zap_all_vul': zap_all_vul, 'scan_vul': scan_vul})
+    return render(request, 'vuln_details.html',
+                  {'zap_all_vul': zap_all_vul, 'scan_vul': scan_vul, 'zap_all_false_vul': zap_all_false_vul})
 
 
 def setting(request):
@@ -629,7 +641,7 @@ def slem(driver, url):
     global new_uri
     new_uri = url
     try:
-        driver.get(url,)
+        driver.get(url, )
     except Exception as e:
         print "Error Got !!!"
 
@@ -964,13 +976,23 @@ def burp_vuln_out(request):
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         name = request.GET['scan_name']
-    else:
-        scan_id = None
-        name = None
 
-    vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id, name=name)
+    if request.method == "POST":
+        false_positive = request.POST.get('false')
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        vuln_name = request.POST.get('vuln_name')
+        burp_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                           scan_id=scan_id).update(false_positive=false_positive)
+        return HttpResponseRedirect(
+            '/webscanners/burp_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
-    return render(request, 'burp_vuln_out.html', {'vuln_data': vuln_data})
+    vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id, name=name, false_positive='No')
+    false_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
+                                                    name=name,
+                                                    false_positive='Yes')
+
+    return render(request, 'burp_vuln_out.html', {'vuln_data': vuln_data, 'false_data': false_data})
 
 
 def del_burp_scan(request):

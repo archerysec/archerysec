@@ -37,35 +37,17 @@
                         <table class="table table-bordered data-table table-fixed" width="100%">
                             <thead>
                             <tr>
-                                <!--<th>Project ID</th>-->
+
                                 <th>Vulnerability</th>
                                 <th>Risk</th>
-                                <!--<th></th>-->
-                                <!--<th></th>-->
+
                             </tr>
                             </thead>
                             <tbody>{% for data in zap_all_vul %}
                             <tr data-target="#">
-                                <!--<td>{{data.project_id}}</td>-->
                                 <td><a href="/webscanners/zap_vul_details/?scan_id={{data.scan_id}}&scan_name={{data.name}}">{{data.name}}</a>
                                 </td>
                                 <td><span class="badge badge-{{data.vuln_color}}">{{data.risk}}</span></td>
-                                <!--<td>-->
-                                    <!--<div><a href="/webscanners/edit_vuln_dat/?vuln_id={{data.vuln_id}}" class="btn btn-primary"-->
-                                            <!--data-original-title="Edit"><i-->
-                                            <!--class="icon-pencil"></i></a>-->
-                                    <!--</div>-->
-                                <!--</td>-->
-                                <!--<td>-->
-                                    <!--<div>-->
-                                        <!--<form action="/webscanners/del_vuln/" method="POST" class="form-horizontal">-->
-                                            <!--{% csrf_token %}-->
-                                            <!--<input type="hidden" name="del_vuln" value="{{data.vuln_id}}">-->
-                                            <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}">-->
-                                            <!--<button class="btn btn-danger"><i class="icon-remove"></i></button>-->
-                                        <!--</form>-->
-                                    <!--</div>-->
-                                <!--</td>-->
                             </tr>
                             {% endfor %}
                             </tbody>

@@ -97,7 +97,7 @@ def xml_parser(root, project_id, scan_id):
                                                     solution=solution,
                                                     param=instance, sourceid=sourceid,
                                                     pluginId=pluginid,
-                                                    alert=alert, description=desc)
+                                                    alert=alert, description=desc, false_positive='No')
                     dump_data.save()
 
     zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color').distinct()
