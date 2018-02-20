@@ -43,7 +43,7 @@
                             </thead>
                             <tbody>{% for data in all_ip %}
                             <tr data-target="#">
-                                <td>{{data.scan_ip}}</td>
+                                <td><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
                                 <td>{{data.date_time}}</td>
                                 <td width="30%">
                                     <div class="progress progress-info">

@@ -64,7 +64,7 @@ def scan_vul_details(request):
 
         return HttpResponseRedirect('/networkscanners/vul_details/?scan_id=%s' % scan_id)
 
-    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No').order_by('vul_id')
+    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
 
     all_false_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='Yes')
 
@@ -132,7 +132,7 @@ def Scan_Launch(scan_ip, project_id, sel_profile):
             print e
 
         try:
-            openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+            openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity', 'vuln_color', 'threat', 'host', 'port').distinct()
             total_vul = len(openvas_vul)
             total_high = len(openvas_vul.filter(threat="High"))
             total_medium = len(openvas_vul.filter(threat="Medium"))
