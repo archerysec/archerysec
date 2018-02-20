@@ -1078,6 +1078,7 @@ def xml_upload(request):
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
             zap_xml_parser.xml_parser(project_id=project_id, scan_id=scan_id, root=root_xml)
+            return HttpResponseRedirect("/webscanners/scans_list/")
         elif scanner == "burp_scan":
             print scanner
             print xml_file

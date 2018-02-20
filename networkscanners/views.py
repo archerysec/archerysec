@@ -14,6 +14,8 @@ from django.core import signing
 import uuid
 from projects.models import project_db
 import datetime
+import xml.etree.ElementTree as ET
+import OpenVas_Parser
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -476,3 +478,25 @@ def add_vuln(request):
         return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % scan_id)
 
     return render(request, 'ov_add_vuln.html', {'scan_id': scan_id})
+
+
+def OpenVas_xml_upload(request):
+    all_project = project_db.objects.all()
+    if request.method == "POST":
+        project_id = request.POST.get("project_id")
+        scanner = request.POST.get("scanner")
+        xml_file = request.FILES['xmlfile']
+        scan_ip = request.POST.get("scan_url")
+        scan_id = uuid.uuid4()
+        scan_status = "100"
+        if scanner == "openvas":
+            date_time = datetime.datetime.now()
+            scan_dump = scan_save_db(scan_ip=scan_ip, scan_id=scan_id, date_time=date_time,
+                                     project_id=project_id, scan_status=scan_status)
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            OpenVas_Parser.xml_parser(project_id=project_id, scan_id=scan_id, root=root_xml)
+            return HttpResponseRedirect("/networkscanners/")
+
+    return render(request, 'net_upload_xml.html', {'all_project': all_project})
