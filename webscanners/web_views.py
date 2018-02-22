@@ -303,7 +303,7 @@ def launch_web_scan(target_url, project_id):
                                        param=param, evidence=evidence, sourceid=sourceid, pluginId=pluginId,
                                        other=other, attack=attack, messageId=messageId, method=method,
                                        alert=alert, ids=ids, description=description,
-                                       flase_positive=false_positive)
+                                       false_positive=false_positive)
         dump_all.save()
 
     time.sleep(5)
