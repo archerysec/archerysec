@@ -19,7 +19,7 @@ class zap_scans_db(models.Model):
     high_vul = models.IntegerField(blank=True, null=True)
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
-    project_id = models.UUIDField(blank=True)
+    project_id = models.UUIDField(null=True)
     date_time = models.DateTimeField(null=True)
 
 
