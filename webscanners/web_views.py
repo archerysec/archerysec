@@ -27,6 +27,7 @@ from django.conf import settings
 from easy_pdf.views import PDFTemplateView, render_to_pdf_response
 import xml.etree.ElementTree as ET
 from projects.models import project_db
+from django.contrib.auth.models import User
 
 from burp_scan import burp_scans
 from itertools import chain
@@ -113,6 +114,18 @@ def logout(request):
     auth.logout(request)
     return render_to_response("logout.html")
 
+@public
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+        user = User.objects.create_user(username, email, password)
+        user.save()
+        return HttpResponseRedirect('/login/')
+
+    return render(request, 'signup.html')
+
 
 def loggedin(request):
     return render(request, 'webscanner.html')
@@ -197,6 +210,11 @@ def launch_web_scan(target_url, project_id):
         scanid = zap.spider.scan(target_url)
         save_all = zap_spider_db(spider_url=target_url, spider_scanid=scanid)
         save_all.save()
+    except Exception as e:
+        print e
+
+    try:
+        zap.spider.set_option_thread_count(apikey=apikey, integer='30')
     except Exception as e:
         print e
 

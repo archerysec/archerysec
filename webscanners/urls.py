@@ -5,6 +5,7 @@ app_name = 'webscanners'
 
 urlpatterns = [
     url(r'^login/$', web_views.login, name='login'),
+    url(r'^signup/$',web_views.signup, name='signup'),
     url(r'^auth/$', web_views.auth_view, name='auth'),
     url(r'^logout/$', web_views.logout, name='logout'),
     url(r'^loggedin/$', web_views.loggedin, name='loggedin'),
