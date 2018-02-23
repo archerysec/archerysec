@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from webscanners.models import zap_scans_db, zap_scan_results_db
+from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db
 from networkscanners.models import scan_save_db, ov_scan_result_db
 from projects.models import project_db
 from webscanners.serializers import WebScanSerializer, WebScanResultSerializer
@@ -10,6 +10,8 @@ from networkscanners.serializers import NetworkScanSerializer, NetworkScanResult
 from rest_framework import generics
 import uuid
 from projects.serializers import ProjectDataSerializers
+from webscanners import burp_scan
+from itertools import chain
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -30,9 +32,15 @@ class WebScan(generics.ListCreateAPIView):
         """
         serializer = WebScanSerializer(data=request.data)
         if serializer.is_valid():
+            scan_id = uuid.uuid4()
+            scanner = request.data.get('scanner')
             target_url = request.data.get('scan_url', )
-            project_id = request.data.get('project_id', )
-            web_views.launch_web_scan(target_url, project_id)
+            project_id = request.data.get('project_id',)
+            if scanner == 'zap_scan':
+                web_views.launch_web_scan(target_url, project_id)
+            elif scanner == 'burp_scan':
+                do_scan = burp_scan.burp_scans(project_id, target_url, scan_id)
+                do_scan.scan_lauch()
 
             if not target_url:
                 return Response({"error": "No name passed"})
@@ -125,7 +133,9 @@ class WebScanResult(generics.ListCreateAPIView):
         if serializer.is_valid():
             scan_id = request.data.get('scan_id',)
             # project_id = request.data.get('project_id',)
-            all_scans = zap_scan_results_db.objects.filter(scan_id=scan_id)
+            zap_scan = zap_scan_results_db.objects.filter(scan_id=scan_id)
+            burp_scan = burp_scan_result_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(zap_scan, burp_scan)
             serialized_scans = WebScanResultSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
 
