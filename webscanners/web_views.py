@@ -148,21 +148,21 @@ def launch_web_scan(target_url, project_id):
 
     # Define settings to ZAP Proxy
     zap = ZAPv2(apikey=apikey,
-                proxies={'http': 'http://127.0.0.1' + ':' + zap_port, 'https': 'http://127.0.0.1' + ':' + zap_port})
+                proxies={'http': zapath + ':' + zap_port, 'https': zapath + ':' + zap_port})
 
     """
         Zap scan start
     """
-    try:
-        # ZAP launch function
-        zapscanner.start_zap()
-
-    except Exception as e:
-        print e
-        print "ZAP Failed.............."
-        print "ZAP Restarting"
-
-    time.sleep(15)
+    # try:
+    #     # ZAP launch function
+    #     zapscanner.start_zap()
+    #
+    # except Exception as e:
+    #     print e
+    #     print "ZAP Failed.............."
+    #     print "ZAP Restarting"
+    #
+    # time.sleep(15)
 
     # Get Excluded URL from excluded_db models
     try:
@@ -394,7 +394,7 @@ def launch_web_scan(target_url, project_id):
                                                                     res_type=res_type,
                                                                     res_id=res_id)
 
-    zapscanner.stop_zap()
+    #zapscanner.stop_zap()
     try:
         email_notification.email_notify()
     except Exception as e:

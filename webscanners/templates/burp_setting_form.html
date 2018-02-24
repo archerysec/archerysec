@@ -30,14 +30,14 @@
                     <div class="widget-content nopadding">
                         <form class="form-horizontal" method="POST" action="/webscanners/burp_setting/">{% csrf_token %}
                             <div class="control-group">
-                                <label class="control-label">Burp REST build jar Path :</label>
+                                <label class="control-label">Burp API Host :</label>
                                 <div class="controls">
                                     <input type="text" name="burpath" value="{{ burpath }}" class="span11"
-                                           placeholder="Burp build Path"/>
+                                           placeholder="Burp API Host"/>
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">Burp Port:</label>
+                                <label class="control-label">Burp API Port:</label>
                                 <div class="controls">
                                     <input type="text" name="burport" value="{{ burport }}" class="span11"
                                            placeholder="Burp Port"/>

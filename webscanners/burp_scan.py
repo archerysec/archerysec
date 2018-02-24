@@ -51,6 +51,7 @@ class burp_scans(object):
             with open(api_key_path, 'r+') as f:
                 data = json.load(f)
                 burp_path = data['burp_path']
+                burp_port = data['burp_port']
         except Exception as e:
             print e
 
@@ -59,7 +60,7 @@ class burp_scans(object):
 
         time.sleep(15)
 
-        host = 'http://localhost:8090'
+        host = 'http://' + burp_path + ':' + burp_port
 
         bi = burpscanner.BurpApi(host)
 
