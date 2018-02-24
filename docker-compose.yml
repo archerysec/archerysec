@@ -1,10 +1,10 @@
-version: '3'
+version: '1'
 
 services:
-  web33:
+  ArcheryWeb:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/Archerysec
     ports:
       - "8000:8000"
