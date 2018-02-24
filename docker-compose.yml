@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  ArcheryWeb:
+  archeryweb:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
