@@ -52,7 +52,7 @@
         }, 
         {
             "location": "/setupGuide/", 
-            "text": "Setup Settings\n\n\nZap Setting\n\n\n\n\nGo to Setting Page\n\n\nEdit ZAP setting or navigate URL : http://host:port/setting_edit/\n\n\nFill all required information and click on save.\n\n\n\n\nOpenVAS Setting\n\n\n\n\nGo to setting Page\n\n\nEdit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting\n\n\nFill all required information and click on save.", 
+            "text": "Setup Settings\n\n\nZap Setting\n\n\n\n\nGo to Setting Page\n\n\nEdit ZAP setting or navigate URL : http://host:port/setting_edit/\n\n\nFill all required information and click on save.\n\n\n\n\n\n\n\nOpenVAS Setting\n\n\n\n\nGo to setting Page\n\n\nEdit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting\n\n\nFill all required information and click on save.", 
             "title": "Setting up the Environment"
         }, 
         {
