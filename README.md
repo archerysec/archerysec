@@ -45,7 +45,7 @@ Follow the instruction in order to enable Burp REST API. You can manage and trig
 
 ## Installation
 
-<pre>
+```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ pip install -r requirements.txt
@@ -57,7 +57,7 @@ $ python manage.py makemigrations APIScan
 $ python manage.py migrate
 $ python manage.py createsuperuser
 $ python manage.py runserver
-</pre>
+```
 
 Note: Make sure these steps (except createsuperuser) should be perform after every git pull.
 
