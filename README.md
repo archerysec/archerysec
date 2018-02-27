@@ -63,10 +63,11 @@ Note: Make sure these steps (except createsuperuser) should be perform after eve
 
 
 ## Docker Installation
+```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ docker-compose up --build
-
+```
 
 ## Setup Setting
 
