@@ -40,7 +40,7 @@ reference = []
 
 def xml_parser(root, project_id, scan_id):
     global vul_col, confidence, wascid, risk, reference, url, name, solution, instance, sourceid, pluginid \
-        , alert, desc
+        , alert, desc, riskcode
 
     for zap in root:
         host = zap.attrib
@@ -75,7 +75,7 @@ def xml_parser(root, project_id, scan_id):
                         for instance in instances:
                             instance = instance.text
 
-                    global riskcode
+                    #global riskcode
 
                     if riskcode == "3":
                         vul_col = "important"
