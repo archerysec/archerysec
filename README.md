@@ -61,6 +61,13 @@ $ python manage.py runserver
 
 Note: Make sure these steps (except createsuperuser) should be perform after every git pull.
 
+
+## Docker Installation
+$ git clone https://github.com/archerysec/archerysec.git
+$ cd archerysec
+$ docker-compose up --build
+
+
 ## Setup Setting
 
 Zap Setting
