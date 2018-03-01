@@ -89,7 +89,7 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 
 1. Go to Setting Page
 2. Edit ZAP setting or navigate URL : http://host:port/setting_edit/
-3. Fill below required information.
+3. Fill below required information. <br><br>
     Zap API Key : Leave blank if you using ZAP as daemon ``` api.disablekey=true ``` <br>
     Zap API Host : Your zap API host ip or system IP Ex. ``` 127.0.0.1 ``` or ``` 192.168.0.2 ``` <br>
     Zap API Port : ZAP running port Ex. ``` 8080 ``` <br>
