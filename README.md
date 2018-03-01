@@ -71,7 +71,7 @@ $ docker-compose up --build
 
 ## Setup Setting
 
-# ZAP proxy running daemon mode
+### ZAP proxy running daemon mode
 
 Windows :
 
@@ -85,7 +85,7 @@ Others :
 zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
 ```
 
-# Zap Setting
+### Zap Setting
 
 1. Go to Setting Page
 2. Edit ZAP setting or navigate URL : http://host:port/setting_edit/
@@ -95,7 +95,7 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     Zap API Port : ZAP running port Ex. ``` 8080 ```
 
 
-# OpenVAS Setting
+### OpenVAS Setting
 
 1. Go to setting Page
 2. Edit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting
