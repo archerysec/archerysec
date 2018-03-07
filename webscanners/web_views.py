@@ -730,7 +730,6 @@ def edit_vuln(request):
     if request.method == 'POST':
         vuln_id = request.POST.get("vuln_id", )
         scan_id = request.POST.get("scan_id", )
-        print vuln_id
         name = request.POST.get("name", )
         risk = request.POST.get("risk", )
         url = request.POST.get("url", )
@@ -740,11 +739,20 @@ def edit_vuln(request):
         sourceid = request.POST.get("sourceid", )
         attack = request.POST.get("attack", )
         reference = request.POST.get("reference", )
-        vuln_col = request.POST.get("vuln_color", )
+        # vuln_col = request.POST.get("vuln_color", )
 
-        print "edit_vul :", name
+        global vul_col
 
-        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, vuln_color=vuln_col, risk=risk,
+        if risk == 'High':
+            vul_col = "important"
+        elif risk == 'Medium':
+            vul_col = "warning"
+        elif risk == 'Low':
+            vul_col = "info"
+        else:
+            vul_col = "info"
+
+        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, vuln_color=vul_col, risk=risk,
                                                                    url=url,
                                                                    description=description,
                                                                    solution=solution, param=param,
