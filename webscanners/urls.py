@@ -46,5 +46,6 @@ urlpatterns = [
     url(r'^edit_burp_vuln', web_views.edit_burp_vuln, name='edit_burp_vuln',),
     url(r'^xml_upload', web_views.xml_upload, name='xml_upload',),
     url(r'^email_setting', web_views.email_setting, name='email_setting',),
+    url(r'^cookie_add', web_views.add_cookies, name='add_cookies',),
 
 ]

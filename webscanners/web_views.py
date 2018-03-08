@@ -1122,3 +1122,25 @@ def xml_upload(request):
             return HttpResponseRedirect("/webscanners/burp_scan_list")
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
+
+
+def add_cookies(request):
+
+    if request.method == 'POST':
+        target_url = request.POST.get('url')
+        target_cookies = request.POST.get('cookies')
+        all_cookie_url = cookie_db.objects.filter(Q(url__icontains=target_url))
+        for da in all_cookie_url:
+            global cookies
+            cookies = da.url
+
+        if cookies == target_url:
+            print "updateeeeeeeee"
+            cookie_db.objects.filter(Q(url__icontains=target_url)).update(cookie=target_cookies)
+            return HttpResponseRedirect("/webscanners/")
+        else:
+            data_dump = cookie_db(url=target_url, cookie=target_cookies)
+            data_dump.save()
+            return HttpResponseRedirect("/webscanners/")
+
+    return render(request, 'cookie_add.html')
