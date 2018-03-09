@@ -43,6 +43,7 @@
                                 <th>Medium</th>
                                 <th>Low</th>
                                 <th>Action</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>{% for data in all_ip %}
@@ -69,11 +70,20 @@
                                         <ul class="dropdown-menu">
                                             <li><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}"><i
                                                     class="icon-pencil"></i> View </a></li>
-                                            <li><a href="/networkscanners/scan_del/?scan_scanid={{data.scan_id}}"><i
-                                                    class="icon-trash"></i> Delete</a></li>
+                                            <!--<li><a href="/networkscanners/scan_del/?scan_scanid={{data.scan_id}}"><i-->
+                                                    <!--class="icon-trash"></i> Delete</a></li>-->
                                         </ul>
                                     </div>
 
+                                </td>
+                                <td>
+                                    <form action="/networkscanners/scan_del/" method="post" class="forms-sample">
+
+                                        {% csrf_token %}
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+
+                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                             {% endfor %}

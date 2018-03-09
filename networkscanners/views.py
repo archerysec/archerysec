@@ -293,11 +293,14 @@ def sav_vul_da(vul_id, openvas_results, scan_id):
 def scan_del(request):
     all_ip = scan_save_db.objects.all()
 
-    if request.method == 'GET':
-        scanid = request.GET['scan_scanid']
+    if request.method == 'POST':
+        scanid = request.POST.get('scan_id')
 
         scans = scan_save_db.objects.filter(scan_id=scanid).order_by('scan_id')
         scans.delete()
+
+        vuln_data = ov_scan_result_db.objects.filter(scan_id=scanid)
+        vuln_data.delete()
 
     return render_to_response('index.html', {'all_ip': all_ip})
 
