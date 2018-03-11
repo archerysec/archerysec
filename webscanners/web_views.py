@@ -4,7 +4,7 @@ from django.shortcuts import render, render_to_response, HttpResponse
 
 from webscanners.models import zap_scan_results_db, zap_scans_db, zap_spider_db, zap_spider_results, cookie_db, \
     excluded_db, \
-    burp_scan_db, burp_scan_result_db, email_config_db
+    burp_scan_db, burp_scan_result_db, email_config_db, arachni_scan_db, arachni_scan_result_db
 from django.db.models import Q
 import os
 import json
@@ -33,6 +33,7 @@ from burp_scan import burp_scans
 from itertools import chain
 import email_notification
 import zap_xml_parser
+import arachni_xml_parser
 
 api_key_path = os.getcwd() + '/' + 'apidata.json'
 
@@ -1106,9 +1107,7 @@ def xml_upload(request):
             zap_xml_parser.xml_parser(project_id=project_id, scan_id=scan_id, root=root_xml)
             return HttpResponseRedirect("/webscanners/scans_list/")
         elif scanner == "burp_scan":
-            print scanner
-            print xml_file
-            print scan_url
+
             date_time = datetime.datetime.now()
             scan_dump = burp_scan_db(url=scan_url, scan_id=scan_id, date_time=date_time, project_id=project_id,
                                      scan_status=scan_status)
@@ -1120,6 +1119,20 @@ def xml_upload(request):
             do_xml_data.burp_scan_data(root_xml)
             print "Save scan Data"
             return HttpResponseRedirect("/webscanners/burp_scan_list")
+
+        elif scanner == "arachni":
+            print scanner
+            print xml_file
+            print scan_url
+            date_time = datetime.datetime.now()
+            scan_dump = arachni_scan_db(url=scan_url, scan_id=scan_id, date_time=date_time, project_id=project_id,
+                                        scan_status=scan_status)
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            arachni_xml_parser.xml_parser(project_id=project_id, scan_id=scan_id, root=root_xml)
+            print "Save scan Data"
+            return HttpResponseRedirect("/webscanners/arachni_scan_list")
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
 
@@ -1144,3 +1157,142 @@ def add_cookies(request):
             return HttpResponseRedirect("/webscanners/")
 
     return render(request, 'cookie_add.html')
+
+
+def arachni_list_vuln(request):
+
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+    else:
+        scan_id = None
+
+    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity', 'vuln_color',
+                                                                              'scan_id').distinct()
+
+    return render(request, 'arachni_list_vuln.html', {'arachni_all_vul': arachni_all_vul, 'scan_id': scan_id})
+
+
+def arachni_scan_list(request):
+    all_arachni_scan = arachni_scan_db.objects.all()
+
+    return render(request, 'arachni_scan_list.html', {'all_arachni_scan': all_arachni_scan})
+
+
+def arachni_vuln_data(request):
+    if request.method == 'GET':
+        # scan_id = request.GET['scan_id']
+        vuln_id = request.GET['vuln_id']
+    else:
+        # scan_id = None
+        vuln_id = None
+
+    vuln_data = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
+
+    return render(request, 'arachni_vuln_data.html', {'vuln_data': vuln_data, })
+
+
+def arachni_vuln_out(request):
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+        name = request.GET['scan_name']
+
+    if request.method == "POST":
+        false_positive = request.POST.get('false')
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        vuln_name = request.POST.get('vuln_name')
+        arachni_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                           scan_id=scan_id).update(false_positive=false_positive)
+        return HttpResponseRedirect(
+            '/webscanners/arachni_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+
+    vuln_data = arachni_scan_result_db.objects.filter(scan_id=scan_id, name=name, false_positive='No')
+    false_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
+                                                    name=name,
+                                                    false_positive='Yes')
+
+    return render(request, 'arachni_vuln_out.html', {'vuln_data': vuln_data, 'false_data': false_data})
+
+
+def del_arachni_scan(request):
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        scan_url = request.POST.get("scan_url")
+
+        item = arachni_scan_db.objects.filter(scan_id=scan_id, url=scan_url)
+        item.delete()
+        item_results = arachni_scan_result_db.objects.filter(scan_id=scan_id)
+        item_results.delete()
+        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+        return HttpResponseRedirect('/webscanners/arachni_scan_list/')
+
+
+def edit_arachni_vuln(request):
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+
+    else:
+        id_vul = ''
+
+    edit_vul_dat = burp_scan_result_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+
+    if request.method == 'POST':
+        vuln_id = request.POST.get("vuln_id", )
+        scan_id = request.POST.get("scan_id", )
+        name = request.POST.get("name", )
+        severity = request.POST.get("severity", )
+        host = request.POST.get("host", )
+        path = request.POST.get("path", )
+        issuedetail = request.POST.get("issuedetail")
+        description = request.POST.get("description", )
+        solution = request.POST.get("solution", )
+        location = request.POST.get("location", )
+        vulnerabilityClassifications = request.POST.get("reference", )
+
+        global vul_col
+
+        if severity == 'High':
+            vul_col = "important"
+        elif severity == 'Medium':
+            vul_col = "warning"
+        elif severity == 'Low':
+            vul_col = "info"
+        else:
+            vul_col = "info"
+
+        print "edit_vul :", name
+
+        burp_scan_result_db.objects.filter(vuln_id=vuln_id).update(name=name,
+                                                                   severity_color=vul_col, severity=severity,
+                                                                   host=host, path=path, location=location,
+                                                                   issueDetail=issuedetail,
+                                                                   issueBackground=description,
+                                                                   remediationBackground=solution,
+                                                                   vulnerabilityClassifications=vulnerabilityClassifications, )
+
+        # messages.success(request, "Vulnerability Edited")
+        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
+
+        return HttpResponseRedirect("/webscanners/burp_vuln_data/?vuln_id=%s" % vuln_id)
+
+    return render(request, 'edit_burp_vuln.html', {'edit_vul_dat': edit_vul_dat})
+
+
+def arachni_del_vuln(request):
+    if request.method == 'POST':
+        vuln_id = request.POST.get("del_vuln", )
+        un_scanid = request.POST.get("scan_id", )
+        delete_vuln = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
+        delete_vuln.delete()
+        arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=un_scanid).values('name', 'severity',
+                                                                                   'vuln_color').distinct()
+        total_vul = len(arachni_all_vul)
+        total_high = len(arachni_all_vul.filter(severity="high"))
+        total_medium = len(arachni_all_vul.filter(severity="medium"))
+        total_low = len(arachni_all_vul.filter(severity="low"))
+
+        arachni_scan_db.objects.filter(scan_id=un_scanid).update(total_vul=total_vul, high_vul=total_high,
+                                                                  medium_vul=total_medium, low_vul=total_low)
+        messages.success(request, "Deleted vulnerability")
+
+        return HttpResponseRedirect("/webscanners/arachni_list_vuln?scan_id=%s" % un_scanid)

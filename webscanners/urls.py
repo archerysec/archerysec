@@ -48,4 +48,11 @@ urlpatterns = [
     url(r'^email_setting', web_views.email_setting, name='email_setting',),
     url(r'^cookie_add', web_views.add_cookies, name='add_cookies',),
 
+    # arachni
+    url(r'^arachni_list_vuln', web_views.arachni_list_vuln, name='arachni_list_vuln'),
+    url(r'^arachni_scan_list', web_views.arachni_scan_list, name='arachni_scan_list'),
+    url(r'^arachni_vuln_data', web_views.arachni_vuln_data, name='arachni_vuln_data'),
+    url(r'^arachni_vuln_out', web_views.arachni_vuln_out, name='arachni_vuln_out'),
+    url(r'^del_arachni_scan', web_views.del_arachni_scan, name='del_arachni_scan'),
+    url(r'^arachni_del_vuln', web_views.arachni_del_vuln, name='arachni_del_vuln'),
 ]
