@@ -1,0 +1,222 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Archery_REST_API",
+		"_postman_id": "c5e67ae1-a78f-53cd-4774-384ae5ec7b2b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api-token-auth/",
+			"request": {
+				"url": "{{url}}/api-token-auth/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\":\"admin\",\"password\":\"admin@123A\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/project/",
+			"request": {
+				"url": "{{url}}/api/project/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{Authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/project/",
+			"request": {
+				"url": "{{url}}/api/project/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{Authorization}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"project_name\":\"ASDF\", \"project_disc\":\"ASD\", \"project_start\":\"2018-01-11\", \"project_end\":\"2018-01-09\", \"project_owner\":\"SDF\"}"
+				},
+				"description": "Create new project"
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/webscan/",
+			"request": {
+				"url": "{{url}}/api/webscan/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{Authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/webscan/",
+			"request": {
+				"url": "{{url}}/api/webscan/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_url\":\"http://crackme.cenzic.com\",\"project_id\":\"bfaa2514-a08b-4751-9e2d-3e62223141e3\",\"scanner\":\"zap_scan\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/webscanresult/",
+			"request": {
+				"url": "{{url}}/api/webscanresult/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\":\"69431553-7a0f-400e-845f-7a2f79314c96\"}"
+				},
+				"description": "Get the Web scans result."
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/networkscan/",
+			"request": {
+				"url": "{{url}}/api/networkscan/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Get the Network scans"
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/networkscan/",
+			"request": {
+				"url": "{{url}}/api/networkscan/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_ip\":\"192.168.1.1\",\"project_id\":\"bfaa2514-a08b-4751-9e2d-3e62223141e3\"}"
+				},
+				"description": "Launch Netowrk Scan"
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/networkscanresult/",
+			"request": {
+				"url": "{{url}}/api/networkscanresult/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\":\"a20b9c2e-1bd0-4a69-8771-67c023a3b96b\"}"
+				},
+				"description": "Get The scan data"
+			},
+			"response": []
+		}
+	]
+}
