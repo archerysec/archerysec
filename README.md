@@ -1,3 +1,6 @@
+[![Follow Archery on Twitter](https://img.shields.io/twitter/follow/Archerysec.svg?style=social&label=Follow%20%40archerysec)](https://twitter.com/intent/user?screen_name=archerysec "Follow Archery on Twitter")
+
+
 Archery
 =================
 Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.
@@ -6,8 +9,6 @@ Archery is an opensource vulnerability assessment and management tool which help
 <p align="center">
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
-
-[![Follow Archery on Twitter](https://img.shields.io/twitter/follow/Archerysec.svg?style=social&label=Follow%20%40archerysec)](https://twitter.com/intent/user?screen_name=archerysec "Follow Archery on Twitter")
 
 ### Documentation
 
