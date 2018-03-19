@@ -7,6 +7,8 @@ Archery is an opensource vulnerability assessment and management tool which help
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
 
+[![Follow Archery on Twitter](https://img.shields.io/twitter/follow/Archerysec.svg?style=social&label=Follow%20%40archerysec)](https://twitter.com/intent/user?screen_name=archerysec "Follow Archery on Twitter")
+
 ### Documentation
 
 > [https://archerysec.github.io/archerysec/](https://archerysec.github.io/archerysec/)
