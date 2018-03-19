@@ -1,10 +1,8 @@
+
+
 [![Follow Archery on Twitter](https://img.shields.io/twitter/follow/Archerysec.svg?style=social&label=Follow%20%40archerysec)](https://twitter.com/intent/user?screen_name=archerysec "Follow Archery on Twitter")
 
-![PyPI - License](https://img.shields.io/pypi/l/Django.svg)
-
-![PyPI - Django Version](https://img.shields.io/pypi/djversions/djangorestframework.svg)
-
-![Python - Python Version](https://img.shields.io/badge/Python-2.7-red.svg)
+![PyPI - License](https://img.shields.io/pypi/l/Django.svg) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/djangorestframework.svg) ![Python - Python Version](https://img.shields.io/badge/Python-2.7-red.svg)
 
 
 Archery
