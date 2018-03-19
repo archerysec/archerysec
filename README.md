@@ -4,7 +4,7 @@
 
 ![PyPI - Django Version](https://img.shields.io/pypi/djversions/djangorestframework.svg)
 
-![Python - Python Version] (https://img.shields.io/badge/python-2.7-blue.svg)
+![Python - Python Version](https://img.shields.io/badge/Python-2.7-red.svg)
 
 
 Archery
