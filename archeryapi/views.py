@@ -12,6 +12,7 @@ import uuid
 from projects.serializers import ProjectDataSerializers
 from webscanners import burp_scan
 from itertools import chain
+import threading
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -37,14 +38,21 @@ class WebScan(generics.ListCreateAPIView):
             target_url = request.data.get('scan_url', )
             project_id = request.data.get('project_id',)
             if scanner == 'zap_scan':
-                web_views.launch_web_scan(target_url, project_id)
+                run_s = web_views.launch_web_scan
+                thread = threading.Thread(target=run_s, args=(target_url, project_id))
+                thread.daemon = True
+                thread.start()
+
             elif scanner == 'burp_scan':
                 do_scan = burp_scan.burp_scans(project_id, target_url, scan_id)
-                do_scan.scan_lauch()
+                o = do_scan.scan_lauch
+                thread = threading.Thread(target=o, args=(project_id, target_url, scan_id))
+                thread.daemon = True
+                thread.start()
 
             if not target_url:
                 return Response({"error": "No name passed"})
-            return Response({"message": "Scan Completed"})
+            return Response({"message": "Scan Launched", "scanid": scan_id})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

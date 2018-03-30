@@ -45,7 +45,10 @@ class burp_scans(object):
         self.scan_url = scan_url
         self.scan_id = scan_id
 
-    def scan_lauch(self):
+    def scan_lauch(self, project_id, scan_url, scan_id):
+        self.project_id = project_id
+        self.scan_url = scan_url
+        self.scan_id = scan_id
         global vuln_id, burp_status
         try:
             with open(api_key_path, 'r+') as f:

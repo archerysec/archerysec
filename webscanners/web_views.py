@@ -956,7 +956,7 @@ def burp_scan_launch(request):
         scan_dump.save()
         try:
             do_scan = burp_scans(project_id, target_url, scan_id)
-            do_scan.scan_lauch()
+            do_scan.scan_lauch(project_id, target_url, scan_id)
         except Exception as e:
             print e
 
