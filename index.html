@@ -1,510 +1,504 @@
-
-
-
-
 <!DOCTYPE html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      <meta http-equiv="x-ua-compatible" content="ie=edge">
-      
-        <meta name="description" content="All about ArcherySec.">
-      
-      
-        <link rel="canonical" href="https://github.com/archerysec/archerysec/">
-      
-      
-        <meta name="author" content="Anand Tiwari">
-      
-      
-        <meta name="lang:clipboard.copy" content="Copy to clipboard">
-      
-        <meta name="lang:clipboard.copied" content="Copied to clipboard">
-      
-        <meta name="lang:search.language" content="en">
-      
-        <meta name="lang:search.result.none" content="No matching documents">
-      
-        <meta name="lang:search.result.one" content="1 matching document">
-      
-        <meta name="lang:search.result.other" content="# matching documents">
-      
-        <meta name="lang:search.tokenizer" content="[\s\-]+">
-      
-      <link rel="shortcut icon" href="./assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.2.5">
-    
-    
-      
-        <title>Archery</title>
-      
-    
-    
-      <link rel="stylesheet" href="./assets/stylesheets/application.bcabdff3.css">
-      
-    
-    
-      <script src="./assets/javascripts/modernizr.1aa3b519.js"></script>
-    
-    
-      
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
-        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
-      
-      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    
-    
-    
-  </head>
-  
-    <body>
-  
-    <svg class="md-svg">
-      <defs>
-        
-        
-          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
-        
-      </defs>
-    </svg>
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search">
-    <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
-    
-      <header class="md-header" data-md-component="header">
-  <nav class="md-header-nav md-grid">
-    <div class="md-flex">
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="https://github.com/archerysec/archerysec" title="Archery" class="md-header-nav__button md-logo">
-          
-            <i class="md-icon"></i>
-          
-        </a>
-      </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
-      </div>
-      <div class="md-flex__cell md-flex__cell--stretch">
-        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
-          
-            
-              <span class="md-header-nav__topic">
-                Archery
-              </span>
-              <span class="md-header-nav__topic">
-                Overview
-              </span>
-            
-          
-        </div>
-      </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
-        
-          
-            <label class="md-icon md-icon--search md-header-nav__button" for="search"></label>
-            
-<div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="search"></label>
-  <div class="md-search__inner">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" required placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query">
-      <label class="md-icon md-search__icon" for="search"></label>
-      <button type="reset" class="md-icon md-search__icon" data-md-component="reset">&#xE5CD;</button>
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="result">
-          <div class="md-search-result__meta">
-            Type to start searching
-          </div>
-          <ol class="md-search-result__list"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-          
-        
-      </div>
-      
-        <div class="md-flex__cell md-flex__cell--shrink">
-          <div class="md-header-nav__source">
-            
-
-
-  
-
-
-  <a href="https://github.com/archerysec/archerysec/" title="Go to repository" class="md-source" data-md-source="github">
-    
-      <div class="md-source__icon">
-        <svg viewBox="0 0 24 24" width="24" height="24">
-          <use xlink:href="#github" width="24" height="24"></use>
-        </svg>
-      </div>
-    
-    <div class="md-source__repository">
-      archerysec/archerysec
-    </div>
-  </a>
-
-          </div>
-        </div>
-      
-    </div>
-  </nav>
-</header>
-    
-    <div class="md-container">
-      
-        
-      
-      
-      <main class="md-main">
-        <div class="md-main__inner md-grid" data-md-component="container">
-          
-            
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    <nav class="md-nav md-nav--primary" data-md-level="0">
-  <label class="md-nav__title md-nav__title--site" for="drawer">
-    <span class="md-nav__button md-logo">
-      
-        <i class="md-icon"></i>
-      
-    </span>
-    Archery
-  </label>
-  
-    <div class="md-nav__source">
-      
-
-
-  
-
-
-  <a href="https://github.com/archerysec/archerysec/" title="Go to repository" class="md-source" data-md-source="github">
-    
-      <div class="md-source__icon">
-        <svg viewBox="0 0 24 24" width="24" height="24">
-          <use xlink:href="#github" width="24" height="24"></use>
-        </svg>
-      </div>
-    
-    <div class="md-source__repository">
-      archerysec/archerysec
-    </div>
-  </a>
-
-    </div>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-      
-
-  
-
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="toc">
-        Overview
-      </label>
-    
-    <a href="." title="Overview" class="md-nav__link md-nav__link--active">
-      Overview
-    </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
+<html >
+<head>
+  <!-- Site made with Mobirise Website Builder v4.5.4, https://mobirise.com -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Mobirise v4.5.4, mobirise.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="assets/images/logo.png" type="image/x-icon">
+  <meta name="description" content="">
+  <title>Archery</title>
+  <link rel="stylesheet" href="assets/web/assets/mobirise-icons/mobirise-icons.css">
+  <link rel="stylesheet" href="assets/web/assets/mobirise-icons-bold/mobirise-icons-bold.css">
+  <link rel="stylesheet" href="assets/tether/tether.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="assets/socicon/css/styles.css">
+  <link rel="stylesheet" href="assets/dropdown/css/style.css">
+  <link rel="stylesheet" href="assets/animatecss/animate.min.css">
+  <link rel="stylesheet" href="assets/theme/css/style.css">
+  <link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css" type="text/css">
   
   
-    
   
-  
-    <label class="md-nav__title" for="toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" title="Introduction" class="md-nav__link">
-    Introduction
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#problems-solved" title="Problems Solved:" class="md-nav__link">
-    Problems Solved:
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#note" title="Note" class="md-nav__link">
-    Note
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#requirements" title="Requirements" class="md-nav__link">
-    Requirements
-  </a>
-  
-</li>
-      
-      
-      
-    </ul>
-  
-</nav>
-    
-  </li>
+</head>
+<body>
+<section class="menu cid-qFMlGsng2m" once="menu" id="menu1-e">
 
     
-      
-      
-      
 
-
-  <li class="md-nav__item">
-    <a href="install/" title="Getting started" class="md-nav__link">
-      Getting started
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="setupGuide/" title="Setting up the Environment" class="md-nav__link">
-      Setting up the Environment
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="kaliGuide/" title="Install in Kali" class="md-nav__link">
-      Install in Kali
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="developers/" title="Developers" class="md-nav__link">
-      Developers
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="contributors/" title="Contributors" class="md-nav__link">
-      Contributors
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="roadmap/" title="Roadmap" class="md-nav__link">
-      Roadmap
-    </a>
-  </li>
-
-    
-  </ul>
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-<nav class="md-nav md-nav--secondary">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" title="Introduction" class="md-nav__link">
-    Introduction
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#problems-solved" title="Problems Solved:" class="md-nav__link">
-    Problems Solved:
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#note" title="Note" class="md-nav__link">
-    Note
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#requirements" title="Requirements" class="md-nav__link">
-    Requirements
-  </a>
-  
-</li>
-      
-      
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          <div class="md-content">
-            <article class="md-content__inner md-typeset">
-              
-                
-                  <a href="https://github.com/archerysec/archerysec/edit/master/docs/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
-                
-                
-                <h1 id="archery">Archery</h1>
-<h3 id="introduction">Introduction</h3>
-<p>Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.</p>
-<h3 id="problems-solved">Problems Solved:</h3>
-<ul>
-<li>Perform Web and Network vulnerability Scanning using opensource tools.</li>
-<li>Correlates and Collaborate all raw scans data, show them in a consolidated manner.</li>
-<li>Perform authenticated web scanning.</li>
-<li>Perform web application scanning using selenium.</li>
-<li>Vulnerability Management.</li>
-<li>Enable REST API's for developers to perform scanning and Vulnerability Management.</li>
-<li>Useful for DevOps teams for Vulnerability Management.</li>
-</ul>
-<h2 id="note">Note</h2>
-<p><strong>Currently project is in development phase and still lot of work going on</strong>.</p>
-<h2 id="requirements">Requirements</h2>
-<ul>
-<li>Python 2.7</li>
-<li>OpenVas 8</li>
-<li><a href="https://github.com/zaproxy/zaproxy/wiki/Downloads">OWASP ZAP 2.7.0</a></li>
-<li><a href="https://github.com/mozilla/geckodriver/releases">Selenium Python Firefox Webdriver</a></li>
-</ul>
-                
-                  
-                
-              
-              
-                
-              
-            </article>
-          </div>
-        </div>
-      </main>
-      
-        
-<footer class="md-footer">
-  
-    <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid">
-        
-        
-          <a href="install/" title="Getting started" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
+    <nav class="navbar navbar-expand beta-menu navbar-dropdown align-items-center navbar-fixed-top navbar-toggleable-sm">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+        <div class="menu-logo">
+            <div class="navbar-brand">
+                <span class="navbar-logo">
+                    <a href="http://archerysec.info">
+                         <img src="assets/images/archery-520x133.png" alt="Archery" title="Archery" style="height: 3.8rem;">
+                    </a>
                 </span>
-                Getting started
-              </span>
+                <span class="navbar-caption-wrap"><a class="navbar-caption text-white display-4" href="https://mobirise.com"></a></span>
             </div>
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
-            </div>
-          </a>
-        
-      </nav>
-    </div>
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-        powered by
-        <a href="http://www.mkdocs.org">MkDocs</a>
-        and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
-          Material for MkDocs</a>
-      </div>
-      
-        
-  <div class="md-footer-social">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
-      <a href="https://github.com/archerysec/archerysec" class="md-footer-social__link fa fa-github-alt"></a>
-    
-      <a href="https://twitter.com/archerysec" class="md-footer-social__link fa fa-twitter"></a>
-    
-      <a href="https://www.facebook.com/ArcherySec/" class="md-footer-social__link fa fa-facebook"></a>
-    
-  </div>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true"><li class="nav-item">
+                    <a class="nav-link link text-white display-7" href="index.html">HOME</a>
+                </li><li class="nav-item"><a class="nav-link link text-white display-7" href="index.html#header3-12">OVERVIEW</a></li><li class="nav-item"><a class="nav-link link text-white display-7" href="index.html#header3-11">SCREENSHOTS</a></li><li class="nav-item"><a class="nav-link link text-white display-7" href="index.html#tabs3-13">FEATURES</a></li><li class="nav-item"><a class="nav-link link text-white display-7" href="https://github.com/archerysec/archerysec/releases/tag/ARCHERY-v1.0-beta" target="_blank">DOWNLOAD</a></li><li class="nav-item"><a class="nav-link link text-white display-7" href="https://mobirise.com"></a></li><li class="nav-item"><a class="nav-link link text-white display-7" href="https://mobirise.com">
+                        </a></li><li class="nav-item"><a class="nav-link link text-white display-7" href="https://mobirise.com">
+                        </a></li></ul>
+            <div class="navbar-buttons mbr-section-btn"><a class="btn btn-sm btn-primary display-4" href="https://github.com/archerysec/archerysec" target="_blank"><span class="mbrib-github mbr-iconfont mbr-iconfont-btn" style="color: rgb(255, 255, 255);"></span>
+                    GitHub</a></div>
+        </div>
+    </nav>
+</section>
 
-      
+<section class="engine"><a href="https://mobirise.co/p">bootstrap menu</a></section><section class="cid-qNJ1nkJvuL mbr-fullscreen mbr-parallax-background" id="header2-o">
+
+    
+
+    
+
+    <div class="container align-center">
+        <div class="row justify-content-md-center">
+            <div class="mbr-white col-md-10">
+                
+                <h3 class="mbr-section-subtitle align-center mbr-light pb-3 mbr-fonts-style display-2"><br>OPEN SOURCE VULNERABILITY ASSESSMENT AND MANAGEMENT TOOL</h3>
+                <p class="mbr-text pb-3 mbr-fonts-style display-5">To help developers and pentesters to perform scans and manage vulnerabilities.</p>
+                <div class="mbr-section-btn"><a class="btn btn-md btn-secondary display-4" href="https://github.com/archerysec/archerysec/releases/tag/ARCHERY-v1.0-beta" target="_blank"><span class="mbri-save mbr-iconfont mbr-iconfont-btn"></span>Download</a>
+                    <a class="btn btn-md btn-secondary display-4" href="http://docs.archerysec.info" target="_blank"><span class="mbri-edit mbr-iconfont mbr-iconfont-btn"></span>Documentation</a> <a class="btn btn-md btn-secondary display-4" href="http://developers.archerysec.info/" target="_blank"><span class="mbri-setting3 mbr-iconfont mbr-iconfont-btn"></span>API Documentation</a></div>
+            </div>
+        </div>
     </div>
-  </div>
-</footer>
-      
+    <div class="mbr-arrow hidden-sm-down" aria-hidden="true">
+        <a href="#next">
+            <i class="mbri-down mbr-iconfont"></i>
+        </a>
     </div>
+</section>
+
+<section class="header3 cid-qNK39j7klV mbr-fullscreen" id="header3-12">
+
     
-      <script src="./assets/javascripts/application.6cdc17f0.js"></script>
-      
-      <script>app.initialize({version:"0.17.2",url:{base:"."}})</script>
-      
+
     
+
+    <div class="container">
+        <div class="media-container-row">
+            <div class="mbr-figure" style="width: 200%;">
+                <img src="assets/images/archery-architecture-1437x685.png" alt="Mobirise" title="">
+            </div>
+
+            <div class="media-content">
+                <h1 class="mbr-section-title mbr-white pb-3 mbr-fonts-style display-5"><br><br><br><br><br><br><br>Developers</h1>
+                
+                <div class="mbr-section-text mbr-white pb-3 ">
+                    <p class="mbr-text mbr-fonts-style display-4">Useful for DevOps team to manage scans and vulnerability in CI/CD environment.<br><br><br><br></p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="header3 cid-qNJbW90Rfj mbr-fullscreen" id="header3-10">
+
     
-      
+
     
+
+    <div class="container">
+        <div class="media-container-row">
+            <div class="mbr-figure" style="width: 200%;">
+                <img src="assets/images/dashboard-1893x1012.png" alt="Mobirise" title="">
+            </div>
+
+            <div class="media-content">
+                <h1 class="mbr-section-title mbr-white pb-3 mbr-fonts-style display-5"><br><br><br><br><br><br><br>Vulnerability Management</h1>
+                
+                <div class="mbr-section-text mbr-white pb-3 ">
+                    <p class="mbr-text mbr-fonts-style display-4">Open Source Vulnerability Assessment and Management helps developers and pentesters to perform scans and manage vulnerabilities.<br><br><br><br><br></p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="header3 cid-qNJekAAPis mbr-fullscreen" id="header3-11">
+
+    
+
+    
+
+    <div class="container">
+        <div class="media-container-row">
+            <div class="mbr-figure" style="width: 200%;">
+                <img src="assets/images/web-dashboard-1886x988.png" alt="Mobirise" title="">
+            </div>
+
+            <div class="media-content">
+                <h1 class="mbr-section-title mbr-white pb-3 mbr-fonts-style display-5"><br><br><br><br><br><br><br>Web Scan Dashboard</h1>
+                
+                <div class="mbr-section-text mbr-white pb-3 ">
+                    <p class="mbr-text mbr-fonts-style display-4">Manage your all web scan vulnerability and detect risk in your applications.<br><br><br><br><br></p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="header3 cid-qNNczl52YF mbr-fullscreen" id="header3-16">
+
+    
+
+    
+
+    <div class="container">
+        <div class="media-container-row">
+            <div class="mbr-figure" style="width: 200%;">
+                <img src="assets/images/newtowrk-dashboard-1882x997.png" alt="Mobirise" title="">
+            </div>
+
+            <div class="media-content">
+                <h1 class="mbr-section-title mbr-white pb-3 mbr-fonts-style display-5"><br><br><br><br><br><br><br>Network Scan Dashboard</h1>
+                
+                <div class="mbr-section-text mbr-white pb-3 ">
+                    <p class="mbr-text mbr-fonts-style display-4">Manage all Network scans and detect risk in your Infrastructure.<br><br><br><br></p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section class="tabs3 cid-qNK5zIdDqO" id="tabs3-13">
+
+    
+
+    
+
+    <div class="container">
+        <h2 class="mbr-section-title align-center pb-3 mbr-fonts-style display-2">Next Generation Vulnerability Management</h2>
+        <h3 class="mbr-section-subtitle  display-5 align-center mbr-light mbr-fonts-style">Smart and automated way detect vulnerabilities in your system and manage them in a consolidated manner.</h3>
+    </div>
+    <div class="container-fluid">
+        <div class="row tabcont">
+            <ul class="nav nav-tabs pt-3 mt-5" role="tablist">
+                <li class="nav-item mbr-fonts-style"><a class="nav-link active display-7" role="tab" data-toggle="tab" href="#tabs3-13_tab0" aria-expanded="true">Dashboard</a></li>
+                <li class="nav-item mbr-fonts-style"><a class="nav-link  active display-7" role="tab" data-toggle="tab" href="#tabs3-13_tab1" aria-expanded="true">Vulnerability Management&nbsp;</a></li>
+                <li class="nav-item mbr-fonts-style"><a class="nav-link display-7" role="tab" data-toggle="tab" href="#tabs3-13_tab2">Developers</a></li>
+                
+                
+                
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row px-1">
+            <div class="tab-content">
+                <div id="tab1" class="tab-pane in active mbr-table" role="tabpanel">
+                    <div class="row tab-content-row">
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbri-website-theme"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                Web Scan</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">All web scans results data visualize on a dashboard that helps you on web applications risk assessment.</p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbri-desktop"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">Network Scan</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                All Network scans results data visualize on a dashboard that helps you on network risk assessment.
+                            </p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbri-opened-folder"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">Projects</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">Manage your projects and Prioritize Risk based on the severity.&nbsp;</p>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <div id="tab2" class="tab-pane  mbr-table" role="tabpanel">
+                    <div class="row tab-content-row">
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbri-globe"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                Manage WebApp Vulnerability</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">Scan and Manage all web application vulnerability using multiple scanners.</p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbri-devices"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">Manage Network Vulnerability</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                Scan and manage your Network vulnerability using multiple scanning tools.</p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbri-protect"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">Prioritize Risk&nbsp;</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">Quickly spot high severity vulnerability and make smart remediation decisions based on data in a centralized view.</p>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <div id="tab3" class="tab-pane  mbr-table" role="tabpanel">
+                    <div class="row tab-content-row">
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbrib-globe-2"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">API and Integration</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                Well documented API-first design integrates easily with other systems providing endless possibilities.</p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbri-setting"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">Continuous Delivery</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">Easly integrate in CI/CD environments and manage Scan &amp; Vulnerability.</p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbr-iconfont mbri-link"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">Open Source</h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">Community-driven project which encourages continuous improvement and is distributed under the BSD.</p>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <div id="tab4" class="tab-pane  mbr-table" role="tabpanel">
+                    <div class="row tab-content-row">
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-responsive mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                MOBILE FRIENDLY
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                No special actions required, all sites you make with Mobirise are mobile-friendly. You don't have to create a special mobile version of your site, it will adapt automagically.
+                            </p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-responsive mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                MOBILE FRIENDLY
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                No special actions required, all sites you make with Mobirise are mobile-friendly. You don't have to create a special mobile version of your site, it will adapt automagically.
+                            </p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-responsive mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                MOBILE FRIENDLY
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                No special actions required, all sites you make with Mobirise are mobile-friendly. You don't have to create a special mobile version of your site, it will adapt automagically.
+                            </p>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <div id="tab5" class="tab-pane  mbr-table" role="tabpanel">
+                    <div class="row tab-content-row">
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-bootstrap mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                IT'S EASY AND SIMPLE
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                Cut down the development time with drag-and-drop website builder. Drop the blocks into the page, edit content inline and publish - no technical skills required.
+                            </p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-bootstrap mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                IT'S EASY AND SIMPLE
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                Cut down the development time with drag-and-drop website builder. Drop the blocks into the page, edit content inline and publish - no technical skills required.
+                            </p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-bootstrap mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                IT'S EASY AND SIMPLE
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                Cut down the development time with drag-and-drop website builder. Drop the blocks into the page, edit content inline and publish - no technical skills required.
+                            </p>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <div id="tab6" class="tab-pane  mbr-table" role="tabpanel">
+                    <div class="row tab-content-row">
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-extension mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                TRENDY WEBSITE BLOCKS
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                Choose from the large selection  pre-made blocks - full-screen intro, bootstrap carousel, slider, responsive image gallery with, parallax scrolling, sticky header and more.
+                            </p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-extension mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                TRENDY WEBSITE BLOCKS
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                Choose from the large selection  pre-made blocks - full-screen intro, bootstrap carousel, slider, responsive image gallery with, parallax scrolling, sticky header and more.
+                            </p>
+                        </div>
+
+                        <div class="col-xs-12 col-md-6 col-lg-4">
+                            <div class="card-img ">
+                                <span class="mbri-extension mbr-iconfont"></span>
+                            </div>
+                            <h4 class="mbr-element-title  align-center mbr-fonts-style pb-2 display-5">
+                                TRENDY WEBSITE BLOCKS
+                            </h4>
+                            <p class="mbr-section-text  align-center mbr-fonts-style display-7">
+                                Choose from the large selection  pre-made blocks - full-screen intro, bootstrap carousel, slider, responsive image gallery with, parallax scrolling, sticky header and more.
+                            </p>
+                        </div>
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section once="" class="cid-qNNh9tz4Nz mbr-reveal" id="footer7-19">
+
+    
+
+    
+
+    <div class="container">
+        <div class="media-container-row align-center mbr-white">
+            <div class="row row-links">
+                <ul class="foot-menu">
+                    
+                    
+                    
+                    
+                    
+                <li class="foot-menu-item mbr-fonts-style display-7"></li><li class="foot-menu-item mbr-fonts-style display-7"></li><li class="foot-menu-item mbr-fonts-style display-7"></li></ul>
+            </div>
+            <div class="row social-row">
+                <div class="social-list align-right pb-2">
+                    
+                    
+                    
+                    
+                    
+                    
+                <div class="soc-item">
+                        <a href="http://github.com/archerysec" target="_blank">
+                            <span class="mbr-iconfont mbr-iconfont-social mbrib-github" style="font-size: 75px;"></span>
+                        </a>
+                    </div><div class="soc-item">
+                        <a href="https://www.facebook.com/archerysec" target="_blank">
+                            <span class="mbr-iconfont mbr-iconfont-social socicon-facebook socicon" style="font-size: 70px;"></span>
+                        </a>
+                    </div><div class="soc-item">
+                        <a href="https://twitter.com/archerysec" target="_blank">
+                            <span class="mbr-iconfont mbr-iconfont-social socicon-twitter socicon" style="font-size: 70px;"></span>
+                        </a>
+                    </div></div>
+            </div>
+            <div class="row row-copirayt">
+                <p class="mbr-text mb-0 mbr-fonts-style mbr-white align-center display-7">
+                    © Copyright 2017 ArcherySec - All Rights Reserved
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+  <script src="assets/web/assets/jquery/jquery.min.js"></script>
+  <script src="assets/popper/popper.min.js"></script>
+  <script src="assets/tether/tether.min.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+  <script src="assets/parallax/jarallax.min.js"></script>
+  <script src="assets/viewportchecker/jquery.viewportchecker.js"></script>
+  <script src="assets/dropdown/js/script.min.js"></script>
+  <script src="assets/touchswipe/jquery.touch-swipe.min.js"></script>
+  <script src="assets/mbr-tabs/mbr-tabs.js"></script>
+  <script src="assets/smoothscroll/smooth-scroll.js"></script>
+  <script src="assets/theme/js/script.js"></script>
+  
+  
+ <div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i></i></a></div>
+    <input name="animation" type="hidden">
   </body>
 </html>
