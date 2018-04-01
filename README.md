@@ -72,10 +72,17 @@ Note: Make sure these steps (except createsuperuser) should be perform after eve
 
 
 ## Docker Installation
+
+ArcherySec Docker is available from [ArcherySec Docker](https://hub.docker.com/r/archerysec/archerysec/)
+
 ```
-$ git clone https://github.com/archerysec/archerysec.git
-$ cd archerysec
-$ docker-compose up --build
+$ docker pull archerysec/archerysec
+$ docker run -it -p 8000:8000 archerysec/archerysec:latest
+
+# For persistence
+
+docker run -it -p 8000:8000 -v <your_local_dir>:/root/.archerysec archerysec/archerysec:latest
+
 ```
 
 ## Setup Setting
