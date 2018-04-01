@@ -9,3 +9,6 @@ RUN python manage.py makemigrations webscanners
 RUN python manage.py makemigrations projects
 RUN python manage.py makemigrations APIScan
 RUN python manage.py migrate
+
+WORKDIR /archerysec
+CMD ["python","manage.py","runserver","0.0.0.0:8000"]
