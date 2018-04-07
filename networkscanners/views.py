@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+#                   _
+#    /\            | |
+#   /  \   _ __ ___| |__   ___ _ __ _   _
+#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+# / ____ \| | | (__| | | |  __/ |  | |_| |
+#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                    __/ |
+#                                   |___/
+# Copyright (C) 2017-2018 ArcherySec
+# This file is part of ArcherySec Project.
+
+""" Author: Anand Tiwari """
+
 from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response
@@ -16,6 +29,7 @@ from projects.models import project_db
 import datetime
 import xml.etree.ElementTree as ET
 import OpenVas_Parser
+from archerysettings import save_settings, load_settings
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -319,36 +333,20 @@ def ip_scan_table(request):
 
 
 def openvas_details(request):
-    with open(openvas_data, 'r+') as f:
-        data = json.load(f)
-        ov_user = data['open_vas_user']
-        ov_pass = data['open_vas_pass']
-        ov_ip = data['open_vas_ip']
 
-        lod_ov_user = signing.loads(ov_user)
-        lod_ov_pass = signing.loads(ov_pass)
-        lod_ov_ip = signing.loads(ov_ip)
+    # Load OpenVAS setting from archerysetting function
+    save_openvas_setting = save_settings.SaveSettings(openvas_data)
 
     if request.method == 'POST':
-        scan_host = request.POST.get("scan_host", )
+        openvas_host = request.POST.get("scan_host", )
         openvas_user = request.POST.get("openvas_user", )
         openvas_password = request.POST.get("openvas_password", )
-    else:
-        scan_host = lod_ov_user
-        openvas_user = lod_ov_pass
-        openvas_password = lod_ov_ip
 
-    with open(openvas_data, 'r+') as f:
-        sig_ov_user = signing.dumps(openvas_user)
-        sig_ov_pass = signing.dumps(openvas_password)
-        sig_ov_ip = signing.dumps(scan_host)
-        data = json.load(f)
-        data['open_vas_user'] = sig_ov_user
-        data['open_vas_pass'] = sig_ov_pass
-        data['open_vas_ip'] = sig_ov_ip
-        f.seek(0)
-        json.dump(data, f, indent=4)
-        f.truncate()
+        save_openvas_setting.openvas_settings(
+            ipaddress=openvas_host,
+            openvas_user=openvas_user,
+            openvas_password=openvas_password,
+        )
 
     messages.add_message(request, messages.SUCCESS, 'Openvas Setting Updated ')
 
