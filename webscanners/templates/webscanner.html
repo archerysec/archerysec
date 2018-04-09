@@ -148,11 +148,11 @@ $(document).on('submit', '#exclude_url', function(e){
                         <form id="start_scan" class="form-horizontal">{% csrf_token %}
 
                             <label class="control-label">
-                                <bold> URL :</bold>
+                                <bold> URL's :</bold>
                             </label>
                             <div class="controls">
-                                <input class="span4" type="url" name="url" id="url"
-                                       value="{{ url }}">
+                                <textarea class="span4" type="text" name="url" id="url"
+                                          value="{{ url }}" placeholder="http://website.com, http://website2.com, http://website3.com"></textarea>
                             </div>
 
                             <div>

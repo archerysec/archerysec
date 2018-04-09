@@ -266,13 +266,19 @@ def web_scan(request):
     """
     global scans_status
     if request.POST.get("url", ):
-        target_url = request.POST.get('url', )
-        project_id = request.POST.get('project_id', )
-        thread = threading.Thread(
-            target=launch_web_scan,
-            args=(target_url, project_id))
-        thread.daemon = True
-        thread.start()
+        target_url = request.POST.get('url')
+        project_id = request.POST.get('project_id')
+        print target_url
+        target__split = target_url.split(',')
+        split_length = target__split.__len__()
+        for i in range(0, split_length):
+            target = target__split.__getitem__(i)
+            print target
+            thread = threading.Thread(
+                target=launch_web_scan,
+                args=(target, project_id))
+            thread.daemon = True
+            thread.start()
 
         # launch_web_scan(target_url, project_id)
         if scans_status == '100':
@@ -900,23 +906,35 @@ def burp_scan_launch(request):
     if request.POST.get("url"):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
-        scan_id = uuid.uuid4()
-        date_time = timezone.now()
-        scan_dump = burp_scan_db(scan_id=scan_id,
-                                 project_id=project_id,
-                                 url=target_url,
-                                 date_time=date_time)
-        scan_dump.save()
-        try:
-            do_scan = burp_plugin.burp_scans(
-                project_id,
-                target_url,
-                scan_id)
-            do_scan.scan_lauch(project_id,
-                               target_url,
-                               scan_id)
-        except Exception as e:
-            print e
+        target__split = target_url.split(',')
+        split_length = target__split.__len__()
+        for i in range(0, split_length):
+            target = target__split.__getitem__(i)
+            print "Targets", target
+            scan_id = uuid.uuid4()
+            date_time = timezone.now()
+            scan_dump = burp_scan_db(scan_id=scan_id,
+                                     project_id=project_id,
+                                     url=target,
+                                     date_time=date_time)
+            scan_dump.save()
+            try:
+                do_scan = burp_plugin.burp_scans(
+                    project_id,
+                    target,
+                    scan_id)
+                # do_scan.scan_lauch(project_id,
+                #                    target,
+                #                    scan_id)
+
+                thread = threading.Thread(
+                    target=do_scan.scan_lauch,
+                    )
+                thread.daemon = True
+                thread.start()
+                time.sleep(5)
+            except Exception as e:
+                print e
 
     return render(request, 'scan_list.html')
 

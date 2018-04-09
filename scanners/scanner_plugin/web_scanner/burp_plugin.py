@@ -66,17 +66,11 @@ class burp_scans(object):
         self.scan_url = scan_url
         self.scan_id = scan_id
 
-    def scan_lauch(self, project_id, scan_url, scan_id):
+    def scan_lauch(self):
         """
         The function trigger the scans.
-        :param project_id:
-        :param scan_url:
-        :param scan_id:
-        :return:
         """
-        self.project_id = project_id
-        self.scan_url = scan_url
-        self.scan_id = scan_id
+
         global vuln_id, burp_status
         try:
             with open(setting_file, 'r+') as f:
@@ -105,10 +99,11 @@ class burp_scans(object):
                     scan_id=self.scan_id).update(
                     scan_status=burp_status)
                 time.sleep(5)
-        if burp_status == '100':
-            burp_status = "0"
-        else:
-            print "Scan Continue..."
+        burp_status = "100"
+        # if burp_status == '100':
+        #     burp_status = "0"
+        # else:
+        #     print "Scan Continue..."
         print "Result Extracting........"
         time.sleep(10)
         print "Result Extracted........"
