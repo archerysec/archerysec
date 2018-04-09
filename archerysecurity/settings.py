@@ -1,3 +1,14 @@
+#                   _
+#    /\            | |
+#   /  \   _ __ ___| |__   ___ _ __ _   _
+#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+# / ____ \| | | (__| | | |  __/ |  | |_| |
+#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                    __/ |
+#                                   |___/
+# Copyright (C) 2017-2018 ArcherySec
+# This file is part of ArcherySec Project.
+
 """
 Django settings for archerysecurity project.
 
@@ -15,9 +26,6 @@ from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4t9wrak-z(#hb&5!m$+s&plnl0a7nme4n=pn4juks!nu@5@(7l'
@@ -109,9 +117,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.11/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -162,4 +167,4 @@ REST_FRAMEWORK = {
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-SESSION_COOKIE_AGE = 5 * 100
+# SESSION_COOKIE_AGE = 5 * 100

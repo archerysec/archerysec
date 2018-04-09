@@ -18,7 +18,6 @@ from django.shortcuts import render, render_to_response
 from openvas_lib import VulnscanManager, VulnscanException
 from networkscanners.models import scan_save_db, ov_scan_result_db
 import time
-from django.db.models import Q
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 import os
@@ -43,7 +42,6 @@ threat = ""
 severity = ""
 description = ""
 page = ""
-
 family = ""
 cvss_base = ""
 cve = ""
@@ -54,12 +52,22 @@ banner = ""
 
 
 def index(request):
+    """
+    Function calling network base html.
+    :param request:
+    :return:
+    """
     all_ip = scan_save_db.objects.all()
 
     return render(request, 'index.html', {'all_ip': all_ip})
 
 
 def scan_status(request):
+    """
+    Check the network scan status.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         all_ip = scan_save_db.objects.all()
         scan_ip = request.POST.get('scan_id', )
@@ -68,6 +76,11 @@ def scan_status(request):
 
 
 def scan_vul_details(request):
+    """
+    Get the Network scan vulnerability details.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
 
@@ -76,32 +89,54 @@ def scan_vul_details(request):
         scan_id = request.POST.get('scan_id')
         false_positive = request.POST.get('false')
 
-        ov_scan_result_db.objects.filter(scan_id=scan_id, vul_id=vuln_id).update(false_positive=false_positive)
+        ov_scan_result_db.objects.filter(
+            scan_id=scan_id,
+            vul_id=vuln_id).update(
+            false_positive=false_positive)
 
-        return HttpResponseRedirect('/networkscanners/vul_details/?scan_id=%s' % scan_id)
+        return HttpResponseRedirect(
+            '/networkscanners/vul_details/?scan_id=%s' % scan_id)
 
-    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id,
+                                                false_positive='No')
 
-    all_false_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='Yes')
+    all_false_vul = ov_scan_result_db.objects.filter(scan_id=scan_id,
+                                                     false_positive='Yes')
 
-    return render(request, 'vul_details.html', {'all_vuln': all_vuln, 'scan_id': scan_id,
-                                                'all_false_vul': all_false_vul})
+    return render(request,
+                  'vul_details.html',
+                  {'all_vuln': all_vuln,
+                   'scan_id': scan_id,
+                   'all_false_vul': all_false_vul})
 
 
 def launch_scan(request):
+    """
+    Function Trigger Network scans.
+    :param request:
+    :return:
+    """
     all_ip = scan_save_db.objects.all()
 
     if request.method == 'POST':
         all_ip = scan_save_db.objects.all()
-        scan_ip = request.POST.get('ip', )
-        project_id = request.POST.get('project_id', )
-        sel_profile = request.POST.get('scan_profile', )
+        scan_ip = request.POST.get('ip')
+        project_id = request.POST.get('project_id')
+        sel_profile = request.POST.get('scan_profile')
         Scan_Launch(scan_ip, project_id, sel_profile)
 
-    return render_to_response('vul_details.html', {'all_ip': all_ip})
+    return render_to_response('vul_details.html',
+                              {'all_ip': all_ip})
 
 
 def Scan_Launch(scan_ip, project_id, sel_profile):
+    """
+    OpenVAS scan plugin. (this should be move into scanner folder)
+    :param scan_ip:
+    :param project_id:
+    :param sel_profile:
+    :return:
+    """
 
     with open(openvas_data, 'r+') as f:
         data = json.load(f)
@@ -113,17 +148,23 @@ def Scan_Launch(scan_ip, project_id, sel_profile):
         lod_ov_pass = signing.loads(ov_pass)
         lod_ov_ip = signing.loads(ov_ip)
 
-    scanner = VulnscanManager(str(lod_ov_ip), str(lod_ov_user), str(lod_ov_pass))
+    scanner = VulnscanManager(str(lod_ov_ip),
+                              str(lod_ov_user),
+                              str(lod_ov_pass))
     time.sleep(5)
     profile = None
     if profile is None:
         profile = "Full and fast"
     else:
         profile = sel_profile
-    scan_id, target_id = scanner.launch_scan(target=str(scan_ip), profile=str(profile))
+    scan_id, target_id = scanner.launch_scan(target=str(scan_ip),
+                                             profile=str(profile))
     date_time = datetime.datetime.now()
-    save_all = scan_save_db(scan_id=str(scan_id), project_id=str(project_id), scan_ip=str(scan_ip),
-                            target_id=str(target_id), date_time=date_time)
+    save_all = scan_save_db(scan_id=str(scan_id),
+                            project_id=str(project_id),
+                            scan_ip=str(scan_ip),
+                            target_id=str(target_id),
+                            date_time=date_time)
     save_all.save()
 
     while int(scanner.get_progress(str(scan_id))) < 100.0:
@@ -148,44 +189,73 @@ def Scan_Launch(scan_ip, project_id, sel_profile):
             print e
 
         try:
-            openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity', 'vuln_color', 'threat', 'host', 'port').distinct()
+            openvas_vul = ov_scan_result_db.objects.filter(
+                scan_id=scan_id).values('name',
+                                        'severity',
+                                        'vuln_color',
+                                        'threat',
+                                        'host',
+                                        'port').distinct()
             total_vul = len(openvas_vul)
             total_high = len(openvas_vul.filter(threat="High"))
             total_medium = len(openvas_vul.filter(threat="Medium"))
             total_low = len(openvas_vul.filter(threat="Low"))
 
-            scan_save_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul, high_total=total_high,
-                                                                medium_total=total_medium, low_total=total_low)
+            scan_save_db.objects.filter(
+                scan_id=scan_id).update(
+                total_vul=total_vul,
+                high_total=total_high,
+                medium_total=total_medium,
+                low_total=total_low)
         except Exception as e:
             print e
 
         try:
-            for vul_id in ov_scan_result_db.objects.values_list('vul_id', flat=True).distinct():
+            for vul_id in ov_scan_result_db.objects.values_list('vul_id',
+                                                                flat=True).distinct():
                 ov_scan_result_db.objects.filter(
-                    pk=ov_scan_result_db.objects.filter(vul_id=vul_id).values_list('id', flat=True)[1:]).delete()
+                    pk=ov_scan_result_db.objects.filter(
+                        vul_id=vul_id).values_list('id',
+                                                   flat=True)[1:]).delete()
         except Exception as e:
             print e
 
 
 def vul_an_id(scan_id, openvas_results):
+    """
+    The function parsing OpenVAS results.
+    :param scan_id:
+    :param openvas_results:
+    :return:
+    """
     try:
         for d in openvas_results.findall(".//result"):
             for datas, items in d.attrib.viewitems():
                 vul_id = items
-                print("Vulnerability ID :", vul_id)
-                sav_vul_da(vul_id, openvas_results, scan_id)
+                print("Vulnerability ID :",
+                      vul_id)
+                sav_vul_da(vul_id,
+                           openvas_results,
+                           scan_id)
     except Exception as e:
         print e
 
 
 def sav_vul_da(vul_id, openvas_results, scan_id):
+    """
+    The function dumping all vulnerability data into Archery database.
+    :param vul_id:
+    :param openvas_results:
+    :param scan_id:
+    :return:
+    """
     print(openvas_results)
     try:
         for data in openvas_results:
             for datas, items in data.attrib.viewitems():
                 if items == vul_id:
 
-                    print("-----------------------------------------------------------")
+                    print("-----------------------------------------")
                     print("The vuln is for :", items)
 
                     for r in data.getchildren():
@@ -195,14 +265,12 @@ def sav_vul_da(vul_id, openvas_results, scan_id):
                                 name = "NA"
                             else:
                                 name = r.text
-
                         if r.tag == "creation_time":
                             global creation_time
                             if r.text is None:
                                 creation_time = "NA"
                             else:
                                 creation_time = r.text
-
                         if r.tag == "modification_time":
                             global modification_time
                             if r.text is None:
@@ -215,7 +283,6 @@ def sav_vul_da(vul_id, openvas_results, scan_id):
                                 host = "NA"
                             else:
                                 host = r.text
-
                         if r.tag == "port":
                             global port
                             if r.text is None:
@@ -240,7 +307,6 @@ def sav_vul_da(vul_id, openvas_results, scan_id):
                                 description = "NA"
                             else:
                                 description = r.text
-
                         for rr in r.getchildren():
                             if rr.tag == "family":
                                 global family
@@ -289,15 +355,25 @@ def sav_vul_da(vul_id, openvas_results, scan_id):
 
                     date_time = datetime.datetime.now()
 
-                    save_all = ov_scan_result_db(scan_id=scan_id, vul_id=vul_id, name=name,
-                                                 creation_time=creation_time, modification_time=modification_time,
-                                                 host=host, port=port,
+                    save_all = ov_scan_result_db(scan_id=scan_id,
+                                                 vul_id=vul_id,
+                                                 name=name,
+                                                 creation_time=creation_time,
+                                                 modification_time=modification_time,
+                                                 host=host,
+                                                 port=port,
                                                  threat=threat,
                                                  severity=severity,
                                                  description=description,
-                                                 family=family, cvss_base=cvss_base, cve=cve,
-                                                 bid=bid, xref=xref, tags=tags, banner=banner,
-                                                 date_time=date_time, false_positive='No'
+                                                 family=family,
+                                                 cvss_base=cvss_base,
+                                                 cve=cve,
+                                                 bid=bid,
+                                                 xref=xref,
+                                                 tags=tags,
+                                                 banner=banner,
+                                                 date_time=date_time,
+                                                 false_positive='No'
                                                  )
                     save_all.save()
     except Exception as e:
@@ -305,42 +381,62 @@ def sav_vul_da(vul_id, openvas_results, scan_id):
 
 
 def scan_del(request):
+    """
+    Delete Network scans.
+    :param request:
+    :return:
+    """
     all_ip = scan_save_db.objects.all()
 
     if request.method == 'POST':
         scanid = request.POST.get('scan_id')
-
         scans = scan_save_db.objects.filter(scan_id=scanid).order_by('scan_id')
         scans.delete()
-
         vuln_data = ov_scan_result_db.objects.filter(scan_id=scanid)
         vuln_data.delete()
 
-    return render_to_response('index.html', {'all_ip': all_ip})
+    return render_to_response('index.html',
+                              {'all_ip': all_ip})
 
 
 def ip_scan(request):
+    """
+    List all network scan IP's.
+    :param request:
+    :return:
+    """
     all_scans = scan_save_db.objects.all()
     all_proj = project_db.objects.all()
 
-    return render(request, 'ipscan.html', {'all_scans': all_scans, 'all_proj': all_proj})
+    return render(request,
+                  'ipscan.html',
+                  {'all_scans': all_scans,
+                   'all_proj': all_proj})
 
 
 def ip_scan_table(request):
+    """
+    Network scan Table.
+    :param request:
+    :return:
+    """
     all_scans = scan_save_db.objects.all()
 
     return render(request, 'ip_scan_table.html', {'all_scans': all_scans})
 
 
 def openvas_details(request):
-
-    # Load OpenVAS setting from archerysetting function
+    """
+    OpenVAS tool settings.
+    :param request:
+    :return:
+    """
     save_openvas_setting = save_settings.SaveSettings(openvas_data)
 
     if request.method == 'POST':
-        openvas_host = request.POST.get("scan_host", )
-        openvas_user = request.POST.get("openvas_user", )
-        openvas_password = request.POST.get("openvas_password", )
+        openvas_host = request.POST.get("scan_host")
+        openvas_user = request.POST.get("openvas_user")
+        openvas_password = request.POST.get("openvas_password")
 
         save_openvas_setting.openvas_settings(
             ipaddress=openvas_host,
@@ -348,57 +444,74 @@ def openvas_details(request):
             openvas_password=openvas_password,
         )
 
-    messages.add_message(request, messages.SUCCESS, 'Openvas Setting Updated ')
+    messages.add_message(request,
+                         messages.SUCCESS,
+                         'Openvas Setting Updated ')
 
     return render(request, 'setting_form.html', )
 
 
 def openvas_setting(request):
-    return render(request, 'setting_form.html', )
+    """
+    Calling OpenVAS setting page.
+    :param request:
+    :return:
+    """
+    return render(request,
+                  'setting_form.html', )
 
 
 def del_vuln(request):
+    """
+    Delete Network Vulnerability.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
-        vuln_id = request.POST.get("del_vuln", )
-        un_scanid = request.POST.get("scan_id", )
+        vuln_id = request.POST.get("del_vuln")
+        un_scanid = request.POST.get("scan_id")
         delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
         delete_vuln.delete()
-
         ov_all_vul = ov_scan_result_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
         total_vul = len(ov_all_vul)
         total_high = len(ov_all_vul.filter(threat="High"))
         total_medium = len(ov_all_vul.filter(threat="Medium"))
         total_low = len(ov_all_vul.filter(threat="Low"))
 
-        scan_save_db.objects.filter(scan_id=un_scanid).update(total_vul=total_vul, high_total=total_high,
-                                                              medium_total=total_medium, low_total=total_low)
+        scan_save_db.objects.filter(scan_id=un_scanid)\
+            .update(total_vul=total_vul,
+                    high_total=total_high,
+                    medium_total=total_medium,
+                    low_total=total_low)
         messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % un_scanid)
 
 
 def edit_vuln(request):
+    """
+    Edit Network scan vulnerabilities.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
-        scan_id = request.POST.get("scan_id", )
-        vul_id = request.POST.get("vuln_id", )
-
-        name = request.POST.get("name", )
-        creation_time = request.POST.get("creation_time", )
-        modification_time = request.POST.get("modification_time", )
-        host = request.POST.get("host", )
-        port = request.POST.get("port", )
-        threat = request.POST.get("threat", )
-        severity = request.POST.get("severity", )
-        description = request.POST.get("description", )
-        family = request.POST.get("family", )
-        cvss_base = request.POST.get("cvss_base", )
-        cve = request.POST.get("cve", )
+        scan_id = request.POST.get("scan_id")
+        vul_id = request.POST.get("vuln_id")
+        name = request.POST.get("name")
+        creation_time = request.POST.get("creation_time")
+        modification_time = request.POST.get("modification_time")
+        host = request.POST.get("host")
+        port = request.POST.get("port")
+        threat = request.POST.get("threat")
+        severity = request.POST.get("severity")
+        description = request.POST.get("description")
+        family = request.POST.get("family")
+        cvss_base = request.POST.get("cvss_base")
+        cve = request.POST.get("cve")
         # bid = request.POST.get("bid")
-        xref = request.POST.get("xref", )
-        tags = request.POST.get("tags", )
-        banner = request.POST.get("banner", )
-
-        print "edit_vul :", name
+        xref = request.POST.get("xref")
+        tags = request.POST.get("tags")
+        banner = request.POST.get("banner")
 
         ov_scan_result_db.objects.filter(vul_id=vul_id).update(name=name,
                                                                creation_time=creation_time,
@@ -416,63 +529,73 @@ def edit_vuln(request):
 
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
-
     else:
         id_vul = ''
-
     edit_vul_dat = ov_scan_result_db.objects.filter(vul_id=id_vul).order_by('vul_id')
 
     return render(request, 'ov_edit_vuln_data.html', {'edit_vul_dat': edit_vul_dat})
 
 
 def vuln_check(request):
+    """
+    Get the detailed vulnerability information.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
-
     else:
         id_vul = ''
-
     vul_dat = ov_scan_result_db.objects.filter(vul_id=id_vul).order_by('vul_id')
 
     return render(request, 'ov_vuln_data.html', {'vul_dat': vul_dat})
 
 
 def add_vuln(request):
+    """
+    Add network vulnerability.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = ''
 
-    print "scan_id :----------", scan_id
-
     if request.method == 'POST':
         vuln_id = uuid.uuid4()
-        scan_id = request.POST.get("scan_id", )
-        name = request.POST.get("name", )
-        creation_time = request.POST.get("creation_time", )
-        modification_time = request.POST.get("modification_time", )
-        host = request.POST.get("host", )
-        port = request.POST.get("port", )
-        threat = request.POST.get("threat", )
-        severity = request.POST.get("severity", )
-        description = request.POST.get("description", )
-        family = request.POST.get("family", )
-        cvss_base = request.POST.get("cvss_base", )
-        cve = request.POST.get("cve", )
+        scan_id = request.POST.get("scan_id")
+        name = request.POST.get("name")
+        creation_time = request.POST.get("creation_time")
+        modification_time = request.POST.get("modification_time")
+        host = request.POST.get("host")
+        port = request.POST.get("port",)
+        threat = request.POST.get("threat",)
+        severity = request.POST.get("severity",)
+        description = request.POST.get("description",)
+        family = request.POST.get("family",)
+        cvss_base = request.POST.get("cvss_base",)
+        cve = request.POST.get("cve",)
         # bid = request.POST.get("bid")
-        xref = request.POST.get("xref", )
-        tags = request.POST.get("tags", )
-        banner = request.POST.get("banner", )
+        xref = request.POST.get("xref",)
+        tags = request.POST.get("tags",)
+        banner = request.POST.get("banner",)
 
-        save_vuln = ov_scan_result_db(name=name, vul_id=vuln_id, scan_id=scan_id,
+        save_vuln = ov_scan_result_db(name=name,
+                                      vul_id=vuln_id,
+                                      scan_id=scan_id,
                                       creation_time=creation_time,
                                       modification_time=modification_time,
                                       host=host, port=port,
                                       threat=threat,
                                       severity=severity,
-                                      description=description, family=family,
-                                      cvss_base=cvss_base, cve=cve,
-                                      xref=xref, tags=tags, banner=banner)
+                                      description=description,
+                                      family=family,
+                                      cvss_base=cvss_base,
+                                      cve=cve,
+                                      xref=xref,
+                                      tags=tags,
+                                      banner=banner)
         save_vuln.save()
 
         messages.success(request, "Vulnerability Added")
@@ -482,6 +605,11 @@ def add_vuln(request):
 
 
 def OpenVas_xml_upload(request):
+    """
+    OpenVAS XML file upload.
+    :param request:
+    :return:
+    """
     all_project = project_db.objects.all()
     if request.method == "POST":
         project_id = request.POST.get("project_id")
@@ -492,12 +620,19 @@ def OpenVas_xml_upload(request):
         scan_status = "100"
         if scanner == "openvas":
             date_time = datetime.datetime.now()
-            scan_dump = scan_save_db(scan_ip=scan_ip, scan_id=scan_id, date_time=date_time,
-                                     project_id=project_id, scan_status=scan_status)
+            scan_dump = scan_save_db(scan_ip=scan_ip,
+                                     scan_id=scan_id,
+                                     date_time=date_time,
+                                     project_id=project_id,
+                                     scan_status=scan_status)
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            OpenVas_Parser.xml_parser(project_id=project_id, scan_id=scan_id, root=root_xml)
+            OpenVas_Parser.xml_parser(project_id=project_id,
+                                      scan_id=scan_id,
+                                      root=root_xml)
             return HttpResponseRedirect("/networkscanners/")
 
-    return render(request, 'net_upload_xml.html', {'all_project': all_project})
+    return render(request,
+                  'net_upload_xml.html',
+                  {'all_project': all_project})

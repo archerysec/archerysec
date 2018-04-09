@@ -21,9 +21,10 @@ from networkscanners.serializers import NetworkScanSerializer, NetworkScanResult
 from rest_framework import generics
 import uuid
 from projects.serializers import ProjectDataSerializers
-from webscanners import burp_scan
+from scanners.scanner_plugin.web_scanner import burp_plugin
 from itertools import chain
 import threading
+from django.utils import timezone
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -55,7 +56,13 @@ class WebScan(generics.ListCreateAPIView):
                 thread.start()
 
             elif scanner == 'burp_scan':
-                do_scan = burp_scan.burp_scans(project_id, target_url, scan_id)
+                date_time = timezone.now()
+                scan_dump = burp_scan_db(scan_id=scan_id,
+                                         project_id=project_id,
+                                         url=target_url,
+                                         date_time=date_time)
+                scan_dump.save()
+                do_scan = burp_plugin.burp_scans(project_id, target_url, scan_id)
                 o = do_scan.scan_lauch
                 thread = threading.Thread(target=o, args=(project_id, target_url, scan_id))
                 thread.daemon = True

@@ -10,12 +10,13 @@
 # This file is part of ArcherySec Project.
 
 from rest_framework import serializers
-from networkscanners.models import scan_save_db
 
 
 class NetworkScanSerializer(serializers.Serializer):
-    scan_ip = serializers.IPAddressField(required=True, help_text=("Network IP should be provided"))
-    project_id = serializers.UUIDField(required=True, help_text=("Project ID should be provided"))
+    scan_ip = serializers.IPAddressField(required=True,
+                                         help_text="Network IP should be provided")
+    project_id = serializers.UUIDField(required=True,
+                                       help_text="Project ID should be provided")
     target_id = serializers.UUIDField(read_only=True)
     scan_id = serializers.UUIDField(read_only=True)
     scan_status = serializers.CharField(read_only=True)
@@ -28,7 +29,8 @@ class NetworkScanSerializer(serializers.Serializer):
 
 
 class NetworkScanResultSerializer(serializers.Serializer):
-    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    scan_id = serializers.UUIDField(required=True,
+                                    help_text="Provide ScanId")
     vul_id = serializers.UUIDField(read_only=True)
     name = serializers.CharField(read_only=True)
     owner = serializers.CharField(read_only=True)
@@ -50,7 +52,6 @@ class NetworkScanResultSerializer(serializers.Serializer):
     filtered = serializers.CharField(read_only=True)
     page = serializers.CharField(read_only=True)
     vuln_color = serializers.CharField(read_only=True)
-
     family = serializers.CharField(read_only=True)
     cvss_base = serializers.CharField(read_only=True)
     cve = serializers.CharField(read_only=True)

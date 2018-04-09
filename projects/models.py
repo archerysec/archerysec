@@ -15,7 +15,6 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-# Create your models here.
 class project_db(models.Model):
     project_id = models.TextField(blank=True)
     project_name = models.TextField(blank=True)

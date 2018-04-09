@@ -55,10 +55,6 @@ def xml_parser(root, project_id, scan_id):
         body, vuln_id, vul_col, ref_key, ref_values, vector_input_key, vector_input_values, vector_source_key, vector_source_values, page_body_data, request_url, request_method, request_raw, response_ip, response_raw_headers
 
     for issue in root:
-        # host = arachni.attrib
-        # for key, items in host.iteritems():
-        #     if key == "host":
-        #         url = items
         for data in issue.getchildren():
             if data.tag == "issue":
                 for vuln in data:

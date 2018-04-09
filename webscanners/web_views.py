@@ -3,7 +3,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -13,9 +13,13 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, render_to_response, HttpResponse
 
-from webscanners.models import zap_scan_results_db, zap_scans_db, zap_spider_db,\
-    zap_spider_results, cookie_db, excluded_db, \
-    burp_scan_db, burp_scan_result_db, arachni_scan_db, arachni_scan_result_db
+from webscanners.models import zap_scan_results_db, \
+    zap_scans_db, \
+    zap_spider_db, \
+    zap_spider_results, \
+    cookie_db, excluded_db, \
+    burp_scan_db, burp_scan_result_db, \
+    arachni_scan_db, arachni_scan_result_db
 
 from django.db.models import Q
 import os
@@ -28,13 +32,11 @@ import uuid
 from selenium import webdriver
 from django.contrib import messages
 from django.core import signing
-import datetime
 from networkscanners.models import scan_save_db
 from easy_pdf.views import PDFTemplateView, render_to_pdf_response
 import xml.etree.ElementTree as ET
 from projects.models import project_db
 from django.contrib.auth.models import User
-from burp_scan import burp_scans
 from itertools import chain
 import zap_xml_parser
 import arachni_xml_parser
@@ -42,6 +44,7 @@ import threading
 from archerysettings import load_settings, save_settings
 from scanners.scanner_plugin.web_scanner import zap_plugin
 from django.utils import timezone
+from scanners.scanner_plugin.web_scanner import burp_plugin
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -99,6 +102,11 @@ all_url_vuln = ""
 @public
 @csrf_protect
 def login(request):
+    """
+    Login Request
+    :param request:
+    :return:
+    """
     c = {}
     c.update(request)
     return render(request, "login.html", c)
@@ -106,6 +114,11 @@ def login(request):
 
 @public
 def auth_view(request):
+    """
+    Authentication request.
+    :param request:
+    :return:
+    """
     username = request.POST.get('username', '', )
     password = request.POST.get('password', '', )
     user = auth.authenticate(username=username, password=password)
@@ -119,12 +132,22 @@ def auth_view(request):
 
 @public
 def logout(request):
+    """
+    Logout request
+    :param request:
+    :return:
+    """
     auth.logout(request)
     return render_to_response("logout.html")
 
 
 @public
 def signup(request):
+    """
+    Signup Request.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -133,18 +156,34 @@ def signup(request):
         user.save()
         return HttpResponseRedirect('/login/')
 
-    return render(request, 'signup.html')
+    return render(request,
+                  'signup.html')
 
 
 def loggedin(request):
+    """
+    After login request.
+    :param request:
+    :return:
+    """
     return render(request, 'webscanner.html')
 
 
 def invalid_login():
+    """
+    Validate user login.
+    :return:
+    """
     return render_to_response('invalid_login.html')
 
 
 def launch_web_scan(target_url, project_id):
+    """
+    The function Launch ZAP Scan.
+    :param target_url: Target URL
+    :param project_id: Project ID
+    :return:
+    """
 
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(target_url, project_id)
@@ -162,8 +201,13 @@ def launch_web_scan(target_url, project_id):
     un_scanid = uuid.uuid4()
     date_time = timezone.now()
     try:
-        save_all_scan = zap_scans_db(project_id=project_id, scan_url=target_url, scan_scanid=un_scanid,
-                                     date_time=date_time)
+        save_all_scan = zap_scans_db(
+            project_id=project_id,
+            scan_url=target_url,
+            scan_scanid=un_scanid,
+            date_time=date_time
+        )
+
         save_all_scan.save()
     except Exception as e:
         print e
@@ -185,6 +229,11 @@ def launch_web_scan(target_url, project_id):
 
 
 def index(request):
+    """
+    The function calling web scan Page.
+    :param request:
+    :return:
+    """
     all_urls = zap_spider_db.objects.all()
     all_scans = zap_scans_db.objects.all()
     all_spider_results = zap_spider_results.objects.all()
@@ -210,11 +259,18 @@ def index(request):
 
 
 def web_scan(request):
+    """
+    The function trigger ZAP scan.
+    :param request:
+    :return:
+    """
     global scans_status
     if request.POST.get("url", ):
         target_url = request.POST.get('url', )
         project_id = request.POST.get('project_id', )
-        thread = threading.Thread(target=launch_web_scan, args=(target_url, project_id))
+        thread = threading.Thread(
+            target=launch_web_scan,
+            args=(target_url, project_id))
         thread.daemon = True
         thread.start()
 
@@ -225,52 +281,92 @@ def web_scan(request):
             return scans_status
         return HttpResponse(status=201)
 
-    return render(request, 'scan_list.html')
+    return render(request,
+                  'scan_list.html')
 
 
 def scan_list(request):
+    """
+    The function listing all ZAP Web scans.
+    :param request:
+    :return:
+    """
     all_scans = zap_scans_db.objects.all()
 
-    return render(request, 'scan_list.html', {'all_scans': all_scans})
+    return render(request,
+                  'scan_list.html',
+                  {'all_scans': all_scans})
 
 
 def list_web_vuln(request):
+    """
+    The function returning all Web Application Vulnerability.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color',
-                                                                             'scan_id').distinct()
+    zap_all_vul = zap_scan_results_db.objects.filter(
+        scan_id=scan_id).values(
+        'name',
+        'risk',
+        'vuln_color',
+        'scan_id').distinct()
 
-    return render(request, 'list_web_vuln.html', {'zap_all_vul': zap_all_vul, 'scan_id': scan_id})
+    return render(request,
+                  'list_web_vuln.html',
+                  {'zap_all_vul': zap_all_vul, 'scan_id': scan_id})
 
 
 def vuln_details(request):
+    """
+    The function retiring Web Application vulnerabilities details.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_vul = request.GET['scan_id']
         scan_name = request.GET['scan_name']
-
     if request.method == "POST":
         false_positive = request.POST.get('false')
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
-        zap_scan_results_db.objects.filter(vuln_id=vuln_id,
-                                           scan_id=scan_id).update(false_positive=false_positive)
+        zap_scan_results_db.objects.filter(
+            vuln_id=vuln_id,
+            scan_id=scan_id).update(false_positive=false_positive)
         return HttpResponseRedirect(
-            '/webscanners/zap_vul_details/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+            '/webscanners/zap_vul_details/?scan_id=%s&scan_name=%s' % (
+                scan_id,
+                vuln_name
+            )
+        )
+    zap_all_vul = zap_scan_results_db.objects.filter(
+        scan_id=scan_vul,
+        false_positive='No',
+        name=scan_name
+    ).order_by('name')
+    zap_all_false_vul = zap_scan_results_db.objects.filter(
+        scan_id=scan_vul,
+        name=scan_name,
+        false_positive='Yes').order_by('name')
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul, false_positive='No', name=scan_name).order_by(
-        'name')
-    zap_all_false_vul = zap_scan_results_db.objects.filter(scan_id=scan_vul, name=scan_name,
-                                                           false_positive='Yes').order_by('name')
-
-    return render(request, 'vuln_details.html',
-                  {'zap_all_vul': zap_all_vul, 'scan_vul': scan_vul, 'zap_all_false_vul': zap_all_false_vul})
+    return render(request,
+                  'vuln_details.html',
+                  {'zap_all_vul': zap_all_vul,
+                   'scan_vul': scan_vul,
+                   'zap_all_false_vul': zap_all_false_vul})
 
 
 def setting(request):
+    """
+    The function calling setting page.
+    :param request:
+    :return:
+    """
     # Loading settings
     settings = load_settings.ArcherySettings(setting_file)
 
@@ -297,20 +393,35 @@ def setting(request):
     to_email = settings.email_to()
 
     return render(request, 'setting.html',
-                  {'apikey': lod_apikey, 'zapath': zap_host, 'zap_port': zap_port,
+                  {'apikey': lod_apikey,
+                   'zapath': zap_host,
+                   'zap_port': zap_port,
                    'lod_ov_user': lod_ov_user,
                    'lod_ov_pass': lod_ov_pass,
-                   'lod_ov_ip': lod_ov_ip, 'burp_path': burp_host,
+                   'lod_ov_ip': lod_ov_ip,
+                   'burp_path': burp_host,
                    'burp_port': burp_port,
                    'email_subject': email_subject,
-                   'email_from': email_from, 'to_email': to_email})
+                   'email_from': email_from,
+                   'to_email': to_email})
 
 
 def zap_setting(request):
-    return render(request, 'settingform.html')
+    """
+    The function calling ZAP Scanner setting page.
+    :param request:
+    :return:
+    """
+    return render(request,
+                  'settingform.html')
 
 
 def zap_set_update(request):
+    """
+    The function Update the ZAP settings.
+    :param request:
+    :return:
+    """
     # Load ZAP setting function
     save_setting = save_settings.SaveSettings(setting_file)
 
@@ -319,14 +430,24 @@ def zap_set_update(request):
         zaphost = request.POST.get("zappath", )
         port = request.POST.get("port", )
 
-        save_setting.save_zap_settings(apikey=apikey, zaphost=zaphost, zaport=port)
+        save_setting.save_zap_settings(apikey=apikey,
+                                       zaphost=zaphost,
+                                       zaport=port)
 
-    messages.add_message(request, messages.SUCCESS, 'ZAP Setting Updated ')
+    messages.add_message(request,
+                         messages.SUCCESS,
+                         'ZAP Setting Updated ')
 
-    return render(request, 'settingform.html', )
+    return render(request,
+                  'settingform.html')
 
 
 def email_setting(request):
+    """
+    The function calling and updating Email Settings.
+    :param request:
+    :return:
+    """
     # Load Email Setting function
     save_email_setting = save_settings.SaveSettings(setting_file)
 
@@ -344,29 +465,50 @@ def email_setting(request):
 
 
 def scan_table(request):
+    """
+    Scan Table.
+    :param request:
+    :return:
+    """
     all_scans = zap_scans_db.objects.all()
 
     return render(request, 'scan_table.html', {'all_scans': all_scans})
 
 
 def del_scan(request):
+    """
+    The function deleting scans from ZAP scans.
+    :param request:
+    :return:
+    """
     try:
         if request.method == 'POST':
             item_id = request.POST.get("scan_scanid")
             scan_url = request.POST.get("scan_url")
-
-            item = zap_scans_db.objects.filter(scan_scanid=item_id, scan_url=scan_url)
+            item = zap_scans_db.objects.filter(scan_scanid=item_id,
+                                               scan_url=scan_url)
             item.delete()
-            item_results = zap_scan_results_db.objects.filter(scan_id=item_id, url=scan_url)
+            item_results = zap_scan_results_db.objects.filter(scan_id=item_id,
+                                                              url=scan_url)
             item_results.delete()
             messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
             return HttpResponseRedirect('/webscanners/scans_list/')
     except Exception as e:
-        print "Eroor Got !!!"
+        print "Error Got !!!"
 
 
 def dashboard(request):
-    global project_id, target_url, scan_ip, scanner, all_scan_url, all_url_vuln
+    """
+    Cool Dashboard working function.
+    :param request:
+    :return:
+    """
+    global project_id, \
+        target_url, \
+        scan_ip, \
+        scanner, \
+        all_scan_url, \
+        all_url_vuln
     all_data = project_db.objects.all()
     try:
         if request.method == 'POST':
@@ -376,37 +518,43 @@ def dashboard(request):
                 target_url = request.POST.get("target_url")
             elif request.POST.get("scan_ip"):
                 scan_ip = request.POST.get("scan_ip")
-
             zap_scan_url = zap_scans_db.objects.filter(project_id=project_id)
-            zap_url_vuln = zap_scans_db.objects.filter(project_id=project_id, scan_url=target_url)
-
+            zap_url_vuln = zap_scans_db.objects.filter(project_id=project_id,
+                                                       scan_url=target_url)
             burp_scan_url = burp_scan_db.objects.filter(project_id=project_id)
-            burp_url_vuln = burp_scan_db.objects.filter(project_id=project_id, url=target_url)
+            burp_url_vuln = burp_scan_db.objects.filter(project_id=project_id,
+                                                        url=target_url)
 
             all_scan_url = chain(zap_scan_url, burp_scan_url)
             all_url_vuln = chain(zap_url_vuln, burp_url_vuln)
     except Exception as e:
         print "Error Got !!!!"
-
     all_ip = scan_save_db.objects.filter(project_id=project_id)
-    all_ip_vul = scan_save_db.objects.filter(project_id=project_id, scan_ip=scan_ip)
+    all_ip_vul = scan_save_db.objects.filter(project_id=project_id,
+                                             scan_ip=scan_ip)
 
-    return render(request, 'web_dashboard.html',
-                  {'all_data': all_data, 'all_scan_url': all_scan_url, 'all_url_vuln': all_url_vuln,
+    return render(request,
+                  'web_dashboard.html',
+                  {'all_data': all_data,
+                   'all_scan_url': all_scan_url,
+                   'all_url_vuln': all_url_vuln,
                    'all_ip': all_ip,
                    'all_ip_vul': all_ip_vul})
 
 
 def dashboard_network(request):
+    """
+    Network Dashboard calling page.
+    :param request:
+    :return:
+    """
     global project_id, target_url, scan_ip
     all_data = project_db.objects.all()
-
     if request.method == 'POST':
         if request.POST.get("project_id"):
             project_id = request.POST.get("project_id")
         elif request.POST.get("scan_ip"):
             scan_ip = request.POST.get("scan_ip")
-
     all_ip = scan_save_db.objects.filter(project_id=project_id)
     all_ip_vul = scan_save_db.objects.filter(project_id=project_id, scan_ip=scan_ip)
 
@@ -416,6 +564,12 @@ def dashboard_network(request):
 
 
 def slem(driver, url):
+    """
+    Selenium calling function.
+    :param driver:
+    :param url:
+    :return:
+    """
     global new_uri
     new_uri = url
     try:
@@ -425,23 +579,30 @@ def slem(driver, url):
 
 
 def save_cookie(driver):
+    """
+    Cookie grabber.
+    :param driver:
+    :return:
+    """
     all_cookies = driver.get_cookies()
     print all_cookies
-
     f = open('cookies.txt', 'w+')
-
     for cookie in all_cookies:
         cookie_value = cookie['name'] + '=' + cookie['value'] + ';'
         print cookie_value
         f.write(cookie_value)
     f.close()
-
     driver.close()
 
     return HttpResponseRedirect('/webscanners/')
 
 
 def sel_login(request):
+    """
+    Lgoin perfrom using Selenium.
+    :param request:
+    :return:
+    """
     action_vul = request.POST.get("action", )
     url_da = request.POST.get("url_login", )
     print action_vul
@@ -450,35 +611,28 @@ def sel_login(request):
         global driver
         driver = webdriver.Firefox()
         slem(driver, url_da)
-
     elif action_vul == "save_cookie":
         save_cookie(driver)
         read_f = open('cookies.txt', 'r')
-
-        # chk_url = cookie_db.objects.filter(url=new_uri)
-        # for da in chk_url:
-        #     print "check url:", da.url
-        #     if da.url == new_uri:
-        #         chk_url.delete()
-        #         print "check url delete"
         del_all_cookie = cookie_db.objects.all()
         del_all_cookie.delete()
-
         print "url from cookie : ", new_uri
-
         for cookie_data in read_f:
             print "Cookies from text :", cookie_data
             cookie_save = cookie_db(url=new_uri, cookie=cookie_data)
             cookie_save.save()
-
         messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
     return HttpResponseRedirect('/webscanners/')
 
 
 def exclude_url(request):
+    """
+    Excluding URL from scanner. Save excluded URL in Archery Database.
+    :param request:
+    :return:
+    """
     exclud = request.POST.get("exclude_url", )
-
     exclude_save = excluded_db(exclude_url=exclud)
     exclude_save.save()
 
@@ -486,10 +640,13 @@ def exclude_url(request):
 
 
 def edit_vuln(request):
-    # all_vuln = zap_scan_results_db.objects.all()
+    """
+    Edit vulnerability.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         vuln_id = request.POST.get("vuln_id", )
-        scan_id = request.POST.get("scan_id", )
         name = request.POST.get("name", )
         risk = request.POST.get("risk", )
         url = request.POST.get("url", )
@@ -499,10 +656,7 @@ def edit_vuln(request):
         sourceid = request.POST.get("sourceid", )
         attack = request.POST.get("attack", )
         reference = request.POST.get("reference", )
-        # vuln_col = request.POST.get("vuln_color", )
-
         global vul_col
-
         if risk == 'High':
             vul_col = "important"
         elif risk == 'Medium':
@@ -511,34 +665,34 @@ def edit_vuln(request):
             vul_col = "info"
         else:
             vul_col = "info"
-
-        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name, vuln_color=vul_col, risk=risk,
+        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name,
+                                                                   vuln_color=vul_col,
+                                                                   risk=risk,
                                                                    url=url,
                                                                    description=description,
-                                                                   solution=solution, param=param,
-                                                                   sourceid=sourceid, attack=attack,
+                                                                   solution=solution,
+                                                                   param=param,
+                                                                   sourceid=sourceid,
+                                                                   attack=attack,
                                                                    reference=reference)
 
-        # messages.success(request, "Vulnerability Edited")
         messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
-
         return HttpResponseRedirect("/webscanners/vuln_dat/?vuln_id=%s" % vuln_id)
-
-        # return HttpResponseRedirect(
-        #     reversed('vuln_details.html')
-        # )
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
-
     else:
         id_vul = ''
-
     edit_vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
 
     return render(request, 'edit_vuln_data.html', {'edit_vul_dat': edit_vul_dat})
 
 
 def del_vuln(request):
+    """
+    Delete Vulnerability from database.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         un_scanid = request.POST.get("scan_id", )
@@ -559,88 +713,109 @@ def del_vuln(request):
 
 
 def vuln_check(request):
+    """
+    Calling vulnerability Data list.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
-
     else:
         id_vul = ''
-
     vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
 
     return render(request, 'vuln_data.html', {'vul_dat': vul_dat})
 
 
 def edit_vuln_check(request):
+    """
+    Editing vulnerability data.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
-
     else:
         id_vul = ''
-
     edit_vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
 
     return render(request, 'edit_vuln_data.html', {'edit_vul_dat': edit_vul_dat})
 
 
 def add_vuln(request):
+    """
+    Adding vulnerability in Databse.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         scanners = request.GET['scanner']
-
     else:
         scan_id = ''
         scanners = ''
-
     if request.method == 'POST':
         vuln_id = uuid.uuid4()
-        scan_id = request.POST.get("scan_id", )
-        scanners = request.POST.get("scanners", )
-        vuln_name = request.POST.get("vuln_name", )
-        risk = request.POST.get("risk", )
-        url = request.POST.get("url", )
-        param = request.POST.get("param", )
-        sourceid = request.POST.get("sourceid", )
-        attack = request.POST.get("attack", )
-        ref = request.POST.get("ref", )
-        description = request.POST.get("description", )
-        solution = request.POST.get("solution", )
-
-        req_header = request.POST.get("req_header", )
-        res_header = request.POST.get("res_header", )
-        vuln_col = request.POST.get("vuln_color", )
-
-        print scanners
+        scan_id = request.POST.get("scan_id")
+        scanners = request.POST.get("scanners")
+        vuln_name = request.POST.get("vuln_name")
+        risk = request.POST.get("risk")
+        url = request.POST.get("url")
+        param = request.POST.get("param")
+        sourceid = request.POST.get("sourceid")
+        attack = request.POST.get("attack")
+        ref = request.POST.get("ref")
+        description = request.POST.get("description")
+        solution = request.POST.get("solution")
+        req_header = request.POST.get("req_header")
+        res_header = request.POST.get("res_header")
+        vuln_col = request.POST.get("vuln_color")
 
         if scanners == 'zap':
-            save_vuln = zap_scan_results_db(scan_id=scan_id, vuln_color=vuln_col, risk=risk, url=url, param=param,
+            save_vuln = zap_scan_results_db(scan_id=scan_id,
+                                            vuln_color=vuln_col,
+                                            risk=risk, url=url,
+                                            param=param,
                                             sourceid=sourceid,
-                                            attack=attack, vuln_id=vuln_id, name=vuln_name,
+                                            attack=attack,
+                                            vuln_id=vuln_id,
+                                            name=vuln_name,
                                             description=description,
                                             reference=ref,
                                             solution=solution,
-                                            requestHeader=req_header, responseHeader=res_header)
+                                            requestHeader=req_header,
+                                            responseHeader=res_header)
             save_vuln.save()
-
             messages.success(request, "Vulnerability Added")
-            zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk',
-                                                                                     'vuln_color').distinct()
+            zap_all_vul = zap_scan_results_db.objects.filter(
+                scan_id=scan_id).values('name',
+                                        'risk',
+                                        'vuln_color').distinct()
             total_vul = len(zap_all_vul)
             total_high = len(zap_all_vul.filter(risk="High"))
             total_medium = len(zap_all_vul.filter(risk="Medium"))
             total_low = len(zap_all_vul.filter(risk="Low"))
 
-            zap_scans_db.objects.filter(scan_scanid=scan_id).update(total_vul=total_vul, high_vul=total_high,
-                                                                    medium_vul=total_medium, low_vul=total_low)
+            zap_scans_db.objects.filter(
+                scan_scanid=scan_id).update(total_vul=total_vul,
+                                            high_vul=total_high,
+                                            medium_vul=total_medium,
+                                            low_vul=total_low)
             return HttpResponseRedirect("/webscanners/web_vuln_list/?scan_id=%s" % scan_id)
 
         elif scanners == 'burp':
-            save_burp_vuln = burp_scan_result_db(scan_id=scan_id, severity_color=vuln_col, severity=risk,
-                                                 host=url, location=param,
-                                                 vuln_id=vuln_id, name=vuln_name,
+            save_burp_vuln = burp_scan_result_db(scan_id=scan_id,
+                                                 severity_color=vuln_col,
+                                                 severity=risk,
+                                                 host=url,
+                                                 location=param,
+                                                 vuln_id=vuln_id,
+                                                 name=vuln_name,
                                                  issueBackground=description,
                                                  references=ref,
                                                  remediationBackground=solution,
-                                                 scan_request=req_header, scan_response=res_header)
+                                                 scan_request=req_header,
+                                                 scan_response=res_header)
             save_burp_vuln.save()
 
             burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id)
@@ -650,8 +825,11 @@ def add_vuln(request):
             total_medium = len(burp_all_vul.filter(severity="Medium"))
             total_low = len(burp_all_vul.filter(severity="Low"))
 
-            burp_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul, high_vul=total_high,
-                                                                medium_vul=total_medium, low_vul=total_low)
+            burp_scan_db.objects.filter(
+                scan_id=scan_id).update(total_vul=total_vul,
+                                        high_vul=total_high,
+                                        medium_vul=total_medium,
+                                        low_vul=total_low)
 
             return HttpResponseRedirect("/webscanners/burp_vuln_list?scan_id=%s" % scan_id)
 
@@ -659,52 +837,84 @@ def add_vuln(request):
 
 
 def create_vuln(request):
+    """
+    Add vulnerabilities.
+    :param request:
+    :return:
+    """
     return render(request, 'add_vuln.html')
 
 
 def scan_pdf_gen(request):
+    """
+    Generate Report in PDF format.
+    :param request:
+    :return:
+    """
     all_scan = zap_scans_db.objects.all()
 
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
         vuln_scan = zap_scan_results_db.objects.filter(scan_id=scan_id)
-        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color',
-                                                                                 'scan_id', ).distinct()
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name',
+                                                                                 'risk',
+                                                                                 'vuln_color',
+                                                                                 'scan_id').distinct()
 
-        return render_to_pdf_response(request, template=str('pdf_generate.html'), download_filename=None,
+        return render_to_pdf_response(request,
+                                      template=str('pdf_generate.html'),
+                                      download_filename=None,
                                       content_type='application/pdf',
-                                      context={'all_scan': all_scan, 'vuln_scan': vuln_scan, 'scan_url': scan_url,
+                                      context={'all_scan': all_scan,
+                                               'vuln_scan': vuln_scan,
+                                               'scan_url': scan_url,
                                                'zap_all_vul': zap_all_vul})
 
 
 def burp_setting(request):
-    # Load Burp Settings
+    """
+    Load Burp Settings.
+    :param request:
+    :return:
+    """
     save_burp_setting = save_settings.SaveSettings(setting_file)
 
     if request.method == 'POST':
-        burphost = request.POST.get("burpath", )
-        burport = request.POST.get("burport", )
+        burphost = request.POST.get("burpath")
+        burport = request.POST.get("burport")
 
-        save_burp_setting.save_burp_settings(burphost=burphost, burport=burport)
+        save_burp_setting.save_burp_settings(burphost=burphost,
+                                             burport=burport)
 
     return render(request, 'burp_setting_form.html')
 
 
 def burp_scan_launch(request):
+    """
+    Burp Scan Trigger.
+    :param request:
+    :return:
+    """
     global vuln_id, burp_status
-
-    if request.POST.get("url", ):
-        target_url = request.POST.get('url', )
-        project_id = request.POST.get('project_id', )
+    if request.POST.get("url"):
+        target_url = request.POST.get('url')
+        project_id = request.POST.get('project_id')
         scan_id = uuid.uuid4()
-        date_time = datetime.datetime.now()
-
-        scan_dump = burp_scan_db(scan_id=scan_id, project_id=project_id, url=target_url, date_time=date_time)
+        date_time = timezone.now()
+        scan_dump = burp_scan_db(scan_id=scan_id,
+                                 project_id=project_id,
+                                 url=target_url,
+                                 date_time=date_time)
         scan_dump.save()
         try:
-            do_scan = burp_scans(project_id, target_url, scan_id)
-            do_scan.scan_lauch(project_id, target_url, scan_id)
+            do_scan = burp_plugin.burp_scans(
+                project_id,
+                target_url,
+                scan_id)
+            do_scan.scan_lauch(project_id,
+                               target_url,
+                               scan_id)
         except Exception as e:
             print e
 
@@ -712,46 +922,64 @@ def burp_scan_launch(request):
 
 
 def burp_scan_list(request):
+    """
+    List all burp scans.
+    :param request:
+    :return:
+    """
     all_burp_scan = burp_scan_db.objects.all()
 
-    return render(request, 'burp_scan_list.html', {'all_burp_scan': all_burp_scan})
+    return render(request,
+                  'burp_scan_list.html',
+                  {'all_burp_scan': all_burp_scan})
 
 
 def burp_list_vuln(request):
+    """
+    List all Burp Vulnerability.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
-
-    burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity', 'severity_color',
+    burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id).values('name',
+                                                                              'severity',
+                                                                              'severity_color',
                                                                               'scan_id').distinct()
-
-    return render(request, 'burp_list_vuln.html', {'burp_all_vul': burp_all_vul, 'scan_id': scan_id})
-
-
-requestz = ""
+    return render(request,
+                  'burp_list_vuln.html',
+                  {'burp_all_vul': burp_all_vul,
+                   'scan_id': scan_id})
 
 
 def burp_vuln_data(request):
+    """
+    Add Burp Vulnerability.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
-        # scan_id = request.GET['scan_id']
         vuln_id = request.GET['vuln_id']
     else:
-        # scan_id = None
         vuln_id = None
-
-    print vuln_id
-
     vuln_data = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
 
-    return render(request, 'burp_vuln_data.html', {'vuln_data': vuln_data, })
+    return render(request,
+                  'burp_vuln_data.html',
+                  {'vuln_data': vuln_data})
 
 
 def burp_vuln_out(request):
+    """
+    The function calling burp vulnerability details.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         name = request.GET['scan_name']
-
     if request.method == "POST":
         false_positive = request.POST.get('false')
         vuln_id = request.POST.get('vuln_id')
@@ -760,9 +988,11 @@ def burp_vuln_out(request):
         burp_scan_result_db.objects.filter(vuln_id=vuln_id,
                                            scan_id=scan_id).update(false_positive=false_positive)
         return HttpResponseRedirect(
-            '/webscanners/burp_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
-
-    vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id, name=name, false_positive='No')
+            '/webscanners/burp_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id,
+                                                                     vuln_name))
+    vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
+                                                   name=name,
+                                                   false_positive='No')
     false_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
                                                     name=name,
                                                     false_positive='Yes')
@@ -771,6 +1001,11 @@ def burp_vuln_out(request):
 
 
 def del_burp_scan(request):
+    """
+    Delete Burp scans.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
@@ -784,6 +1019,11 @@ def del_burp_scan(request):
 
 
 def edit_burp_vuln(request):
+    """
+    Edit Burp vulnerability.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
 
@@ -803,7 +1043,7 @@ def edit_burp_vuln(request):
         description = request.POST.get("description", )
         solution = request.POST.get("solution", )
         location = request.POST.get("location", )
-        vulnerabilityClassifications = request.POST.get("reference", )
+        vulnClass = request.POST.get("reference", )
 
         global vul_col
 
@@ -818,15 +1058,16 @@ def edit_burp_vuln(request):
 
         print "edit_vul :", name
 
-        burp_scan_result_db.objects.filter(vuln_id=vuln_id).update(name=name,
-                                                                   severity_color=vul_col, severity=severity,
-                                                                   host=host, path=path, location=location,
-                                                                   issueDetail=issuedetail,
-                                                                   issueBackground=description,
-                                                                   remediationBackground=solution,
-                                                                   vulnerabilityClassifications=vulnerabilityClassifications, )
-
-        # messages.success(request, "Vulnerability Edited")
+        burp_scan_result_db.objects.filter(
+            vuln_id=vuln_id).update(name=name,
+                                    severity_color=vul_col,
+                                    severity=severity,
+                                    host=host, path=path,
+                                    location=location,
+                                    issueDetail=issuedetail,
+                                    issueBackground=description,
+                                    remediationBackground=solution,
+                                    vulnerabilityClassifications=vulnClass)
         messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
 
         return HttpResponseRedirect("/webscanners/burp_vuln_data/?vuln_id=%s" % vuln_id)
@@ -835,6 +1076,11 @@ def edit_burp_vuln(request):
 
 
 def xml_upload(request):
+    """
+    Handling XML upload files.
+    :param request:
+    :return:
+    """
     all_project = project_db.objects.all()
 
     if request.method == "POST":
@@ -845,25 +1091,33 @@ def xml_upload(request):
         scan_id = uuid.uuid4()
         scan_status = "100"
         if scanner == "zap_scan":
-            date_time = datetime.datetime.now()
-            scan_dump = zap_scans_db(scan_url=scan_url, scan_scanid=scan_id, date_time=date_time,
+            date_time = timezone.now()
+            scan_dump = zap_scans_db(scan_url=scan_url,
+                                     scan_scanid=scan_id,
+                                     date_time=date_time,
                                      project_id=project_id,
                                      vul_status=scan_status)
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            zap_xml_parser.xml_parser(project_id=project_id, scan_id=scan_id, root=root_xml)
+            zap_xml_parser.xml_parser(project_id=project_id,
+                                      scan_id=scan_id,
+                                      root=root_xml)
             return HttpResponseRedirect("/webscanners/scans_list/")
         elif scanner == "burp_scan":
-
-            date_time = datetime.datetime.now()
-            scan_dump = burp_scan_db(url=scan_url, scan_id=scan_id, date_time=date_time, project_id=project_id,
+            date_time = timezone.now()
+            scan_dump = burp_scan_db(url=scan_url,
+                                     scan_id=scan_id,
+                                     date_time=date_time,
+                                     project_id=project_id,
                                      scan_status=scan_status)
             scan_dump.save()
             # Burp scan XML parser
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            do_xml_data = burp_scans(project_id, target_url, scan_id)
+            do_xml_data = burp_plugin.burp_scans(project_id,
+                                                 target_url,
+                                                 scan_id)
             do_xml_data.burp_scan_data(root_xml)
             print "Save scan Data"
             return HttpResponseRedirect("/webscanners/burp_scan_list")
@@ -872,13 +1126,18 @@ def xml_upload(request):
             print scanner
             print xml_file
             print scan_url
-            date_time = datetime.datetime.now()
-            scan_dump = arachni_scan_db(url=scan_url, scan_id=scan_id, date_time=date_time, project_id=project_id,
+            date_time = timezone.now()
+            scan_dump = arachni_scan_db(url=scan_url,
+                                        scan_id=scan_id,
+                                        date_time=date_time,
+                                        project_id=project_id,
                                         scan_status=scan_status)
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            arachni_xml_parser.xml_parser(project_id=project_id, scan_id=scan_id, root=root_xml)
+            arachni_xml_parser.xml_parser(project_id=project_id,
+                                          scan_id=scan_id,
+                                          root=root_xml)
             print "Save scan Data"
             return HttpResponseRedirect("/webscanners/arachni_scan_list")
 
@@ -886,6 +1145,11 @@ def xml_upload(request):
 
 
 def add_cookies(request):
+    """
+    Cookies storing into Archery Database.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         target_url = request.POST.get('url')
         target_cookies = request.POST.get('cookies')
@@ -899,7 +1163,8 @@ def add_cookies(request):
             cookie_db.objects.filter(Q(url__icontains=target_url)).update(cookie=target_cookies)
             return HttpResponseRedirect("/webscanners/")
         else:
-            data_dump = cookie_db(url=target_url, cookie=target_cookies)
+            data_dump = cookie_db(url=target_url,
+                                  cookie=target_cookies)
             data_dump.save()
             return HttpResponseRedirect("/webscanners/")
 
@@ -907,41 +1172,67 @@ def add_cookies(request):
 
 
 def arachni_list_vuln(request):
+    """
+    Arachni Vulnerability List
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
 
-    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity', 'vuln_color',
-                                                                                    'scan_id').distinct()
+    arachni_all_vul = arachni_scan_result_db.objects.filter(
+        scan_id=scan_id).values('name',
+                                'severity',
+                                'vuln_color',
+                                'scan_id').distinct()
 
-    return render(request, 'arachni_list_vuln.html', {'arachni_all_vul': arachni_all_vul, 'scan_id': scan_id})
+    return render(request,
+                  'arachni_list_vuln.html',
+                  {'arachni_all_vul': arachni_all_vul,
+                   'scan_id': scan_id})
 
 
 def arachni_scan_list(request):
+    """
+    Arachni Scan List.
+    :param request:
+    :return:
+    """
     all_arachni_scan = arachni_scan_db.objects.all()
 
-    return render(request, 'arachni_scan_list.html', {'all_arachni_scan': all_arachni_scan})
+    return render(request,
+                  'arachni_scan_list.html',
+                  {'all_arachni_scan': all_arachni_scan})
 
 
 def arachni_vuln_data(request):
+    """
+    Arachni Vulnerability Data.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
-        # scan_id = request.GET['scan_id']
         vuln_id = request.GET['vuln_id']
     else:
-        # scan_id = None
         vuln_id = None
-
     vuln_data = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
 
-    return render(request, 'arachni_vuln_data.html', {'vuln_data': vuln_data, })
+    return render(request,
+                  'arachni_vuln_data.html',
+                  {'vuln_data': vuln_data, })
 
 
 def arachni_vuln_out(request):
+    """
+    Arachni Vulnerability details.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         name = request.GET['scan_name']
-
     if request.method == "POST":
         false_positive = request.POST.get('false')
         vuln_id = request.POST.get('vuln_id')
@@ -952,19 +1243,30 @@ def arachni_vuln_out(request):
         return HttpResponseRedirect(
             '/webscanners/arachni_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
-    vuln_data = arachni_scan_result_db.objects.filter(scan_id=scan_id, name=name, false_positive='No')
+    vuln_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
+                                                      name=name,
+                                                      false_positive='No')
     false_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
                                                        name=name,
                                                        false_positive='Yes')
 
-    return render(request, 'arachni_vuln_out.html', {'vuln_data': vuln_data, 'false_data': false_data})
+    return render(request,
+                  'arachni_vuln_out.html',
+                  {'vuln_data': vuln_data,
+                   'false_data': false_data})
 
 
 def del_arachni_scan(request):
+    """
+    Delete Arachni Scans.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
-        item = arachni_scan_db.objects.filter(scan_id=scan_id, url=scan_url)
+        item = arachni_scan_db.objects.filter(scan_id=scan_id,
+                                              url=scan_url)
         item.delete()
         item_results = arachni_scan_result_db.objects.filter(scan_id=scan_id)
         item_results.delete()

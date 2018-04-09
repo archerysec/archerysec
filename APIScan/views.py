@@ -523,7 +523,7 @@ def url_api_scan(request):
                 print msg_id
                 print res_id
 
-            zap_scanner = zapscanner.stop_zap()
+            # zap_scanner = zapscanner.stop_zap()
             print "Status of zap scanner:", zap_scanner
 
             return HttpResponseRedirect('/scanapi/')

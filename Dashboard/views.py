@@ -4,7 +4,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -20,7 +20,6 @@ from projects.models import project_db
 from django.shortcuts import render, render_to_response, HttpResponse
 from itertools import chain
 from django.db.models import Sum
-import ast
 
 # Create your views here.
 chart = []
@@ -29,8 +28,12 @@ data = ""
 
 
 def dash_call(request):
+    """
+    Dashboard page call.
+    :param request:
+    :return:
+    """
     all_project = project_db.objects.all()
-
     all_zap_scan = zap_scans_db.objects.aggregate(Sum('total_vul'))
     all_burp_scan = burp_scan_db.objects.aggregate(Sum('total_vul'))
     all_openvas_scan = scan_save_db.objects.aggregate(Sum('total_vul'))
@@ -40,49 +43,40 @@ def dash_call(request):
             all_zap = '0'
         else:
             all_zap = value
-
     for key, value in all_burp_scan.iteritems():
         if value is None:
             all_burp = '0'
         else:
             all_burp = value
-
     for key, value in all_openvas_scan.iteritems():
         if value is None:
             all_openvas = '0'
         else:
             all_openvas = value
-
     all_vuln = int(all_zap) + int(all_burp) + int(all_openvas)
     total_network = all_openvas
     total_web = int(all_zap) + int(all_burp)
-
     all_zap_high = zap_scans_db.objects.aggregate(Sum('high_vul'))
     all_burp_high = burp_scan_db.objects.aggregate(Sum('high_vul'))
     all_openvas_high = scan_save_db.objects.aggregate(Sum('high_total'))
-
     for key, value in all_zap_high.iteritems():
         if value is None:
             zap_high = '0'
         else:
             zap_high = value
-
     for key, value in all_burp_high.iteritems():
         if value is None:
             burp_high = '0'
         else:
             burp_high = value
-
     for key, value in all_openvas_high.iteritems():
         if value is None:
             openvas_high = '0'
         else:
             openvas_high = value
-
     all_high = int(zap_high) + int(burp_high) + int(openvas_high)
     all_web_high = int(zap_high) + int(burp_high)
     all_network_high = openvas_high
-
     all_zap_medium = zap_scans_db.objects.aggregate(Sum('medium_vul'))
     all_burp_medium = burp_scan_db.objects.aggregate(Sum('medium_vul'))
     all_openvas_medium = scan_save_db.objects.aggregate(Sum('medium_total'))
@@ -135,19 +129,30 @@ def dash_call(request):
     all_web_low = int(zap_low) + int(burp_low)
     all_network_low = openvas_low
 
-    return render(request, 'dashboard.html',
-                  {'all_project': all_project, 'all_vuln': all_vuln, 'total_web': total_web,
-                   'total_network': total_network, 'all_high': all_high, 'all_medium': all_medium, 'all_low': all_low,
-                   'all_web_high': all_web_high, 'all_web_medium': all_web_medium,
-                   'all_network_medium': all_network_medium, 'all_network_high': all_network_high,
-                   'all_web_low': all_web_low, 'all_network_low': all_network_low
+    return render(request,
+                  'dashboard.html',
+                  {'all_project': all_project,
+                   'all_vuln': all_vuln,
+                   'total_web': total_web,
+                   'total_network': total_network,
+                   'all_high': all_high,
+                   'all_medium': all_medium,
+                   'all_low': all_low,
+                   'all_web_high': all_web_high,
+                   'all_web_medium': all_web_medium,
+                   'all_network_medium': all_network_medium,
+                   'all_network_high': all_network_high,
+                   'all_web_low': all_web_low,
+                   'all_network_low': all_network_low
                    })
 
 
-import json
-
-
 def vuln_static_dashboard(request):
+    """
+    Vulnerability Dashboard.
+    :param request:
+    :return:
+    """
     global dash_year
 
     all_zap_scan = zap_scans_db.objects.aggregate(Sum('total_vul'))
@@ -258,11 +263,17 @@ def vuln_static_dashboard(request):
             dash_year = request.POST.get("year")
         high_list = []
         for m in range(1, 13):
-            high_zap = zap_scans_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            high_zap = zap_scans_db.objects. \
+                filter(date_time__year=dash_year,
+                       date_time__month=m).aggregate(
                 Sum('high_vul'))
-            high_burp = burp_scan_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            high_burp = burp_scan_db. \
+                objects.filter(date_time__year=dash_year,
+                               date_time__month=m).aggregate(
                 Sum('high_vul'))
-            high_openvas = scan_save_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            high_openvas = scan_save_db.objects. \
+                filter(date_time__year=dash_year,
+                       date_time__month=m).aggregate(
                 Sum('high_total'))
 
             for key, value in high_zap.iteritems():
@@ -284,11 +295,17 @@ def vuln_static_dashboard(request):
             global data
             all_high_stat = int(zap_high) + int(burp_high) + int(openvas_high)
 
-            medium_zap = zap_scans_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            medium_zap = zap_scans_db. \
+                objects.filter(date_time__year=dash_year,
+                               date_time__month=m).aggregate(
                 Sum('medium_vul'))
-            medium_burp = burp_scan_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            medium_burp = burp_scan_db. \
+                objects.filter(date_time__year=dash_year,
+                               date_time__month=m).aggregate(
                 Sum('medium_vul'))
-            medium_openvas = scan_save_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            medium_openvas = scan_save_db. \
+                objects.filter(date_time__year=dash_year,
+                               date_time__month=m).aggregate(
                 Sum('medium_total'))
 
             for key, value in medium_zap.iteritems():
@@ -310,11 +327,17 @@ def vuln_static_dashboard(request):
             global data
             all_medium_stat = int(zap_medium) + int(burp_medium) + int(openvas_medium)
 
-            low_zap = zap_scans_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            low_zap = zap_scans_db. \
+                objects.filter(date_time__year=dash_year,
+                               date_time__month=m).aggregate(
                 Sum('low_vul'))
-            low_burp = burp_scan_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            low_burp = burp_scan_db. \
+                objects.filter(date_time__year=dash_year,
+                               date_time__month=m).aggregate(
                 Sum('low_vul'))
-            low_openvas = scan_save_db.objects.filter(date_time__year=dash_year, date_time__month=m).aggregate(
+            low_openvas = scan_save_db. \
+                objects.filter(date_time__year=dash_year,
+                               date_time__month=m).aggregate(
                 Sum('low_total'))
 
             for key, value in low_zap.iteritems():
@@ -336,40 +359,74 @@ def vuln_static_dashboard(request):
             global data
             all_low_stat = int(zap_low) + int(burp_low) + int(openvas_low)
 
-            data = {m: {'h': all_high_stat, 'm': all_medium_stat, 'l': all_low_stat}}
+            data = {m: {'h': all_high_stat,
+                        'm': all_medium_stat,
+                        'l': all_low_stat}}
             high_list.append(data)
     except Exception as e:
-        print "Error got !!!"
+        print "Error got !!!", e
 
     return render(request, 'dashboard.html',
                   {'high_data': high_list,
                    'dash_year': dash_year,
-                   'all_vuln': all_vuln, 'total_web': total_web,
-                   'total_network': total_network, 'all_high': all_high, 'all_medium': all_medium, 'all_low': all_low,
-                   'all_web_high': all_web_high, 'all_web_medium': all_web_medium,
-                   'all_network_medium': all_network_medium, 'all_network_high': all_network_high,
-                   'all_web_low': all_web_low, 'all_network_low': all_network_low
+                   'all_vuln': all_vuln,
+                   'total_web': total_web,
+                   'total_network': total_network,
+                   'all_high': all_high,
+                   'all_medium': all_medium,
+                   'all_low': all_low,
+                   'all_web_high': all_web_high,
+                   'all_web_medium': all_web_medium,
+                   'all_network_medium': all_network_medium,
+                   'all_network_high': all_network_high,
+                   'all_web_low': all_web_low,
+                   'all_network_low': all_network_low
                    })
 
 
 def project_dashboard(request):
-    global all_vuln, total_web, all_high, total_network, all_medium, all_low, all_web_high, all_web_medium, all_network_medium, all_web_low, all_network_low, all_network_high
+    """
+    The function calling Project Dashboard page.
+    :param request:
+    :return:
+    """
+    global all_vuln, \
+        total_web, \
+        all_high, \
+        total_network, \
+        all_medium, \
+        all_low, \
+        all_web_high, \
+        all_web_medium, \
+        all_network_medium, \
+        all_web_low, \
+        all_network_low, \
+        all_network_high
     all_project = project_db.objects.all()
 
-    return render(request, 'project_dashboard.html', {'all_project': all_project, })
+    return render(request,
+                  'project_dashboard.html',
+                  {'all_project': all_project})
 
 
 def proj_data(request):
+    """
+    The function pulling all project data from database.
+    :param request:
+    :return:
+    """
     all_project = project_db.objects.all()
     if request.GET['project_id']:
         project_id = request.GET['project_id']
-
     else:
         project_id = ''
 
-    all_zap_scan = zap_scans_db.objects.filter(project_id=project_id).aggregate(Sum('total_vul'))
-    all_burp_scan = burp_scan_db.objects.filter(project_id=project_id).aggregate(Sum('total_vul'))
-    all_openvas_scan = scan_save_db.objects.filter(project_id=project_id).aggregate(Sum('total_vul'))
+    all_zap_scan = zap_scans_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('total_vul'))
+    all_burp_scan = burp_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('total_vul'))
+    all_openvas_scan = scan_save_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('total_vul'))
 
     for key, value in all_zap_scan.iteritems():
         if value is None:
@@ -393,9 +450,12 @@ def proj_data(request):
 
     total_web = int(all_zap) + int(all_burp)
 
-    all_zap_high = zap_scans_db.objects.filter(project_id=project_id).aggregate(Sum('high_vul'))
-    all_burp_high = burp_scan_db.objects.filter(project_id=project_id).aggregate(Sum('high_vul'))
-    all_openvas_high = scan_save_db.objects.filter(project_id=project_id).aggregate(Sum('high_total'))
+    all_zap_high = zap_scans_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('high_vul'))
+    all_burp_high = burp_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('high_vul'))
+    all_openvas_high = scan_save_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('high_total'))
 
     for key, value in all_zap_high.iteritems():
         if value is None:
@@ -417,9 +477,12 @@ def proj_data(request):
     all_web_high = int(zap_high) + int(burp_high)
     all_network_high = openvas_high
 
-    all_zap_medium = zap_scans_db.objects.filter(project_id=project_id).aggregate(Sum('medium_vul'))
-    all_burp_medium = burp_scan_db.objects.filter(project_id=project_id).aggregate(Sum('medium_vul'))
-    all_openvas_medium = scan_save_db.objects.filter(project_id=project_id).aggregate(Sum('medium_total'))
+    all_zap_medium = zap_scans_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('medium_vul'))
+    all_burp_medium = burp_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('medium_vul'))
+    all_openvas_medium = scan_save_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('medium_total'))
 
     for key, value in all_zap_medium.iteritems():
         if value is None:
@@ -441,9 +504,12 @@ def proj_data(request):
     all_web_medium = int(zap_medium) + int(burp_medium)
     all_network_medium = openvas_medium
 
-    all_zap_low = zap_scans_db.objects.filter(project_id=project_id).aggregate(Sum('low_vul'))
-    all_burp_low = burp_scan_db.objects.filter(project_id=project_id).aggregate(Sum('low_vul'))
-    all_openvas_low = scan_save_db.objects.filter(project_id=project_id).aggregate(Sum('low_total'))
+    all_zap_low = zap_scans_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('low_vul'))
+    all_burp_low = burp_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('low_vul'))
+    all_openvas_low = scan_save_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('low_total'))
 
     for key, value in all_zap_low.iteritems():
         if value is None:
@@ -465,27 +531,44 @@ def proj_data(request):
     all_web_low = int(zap_low) + int(burp_low)
     all_network_low = openvas_low
 
-    return render(request, 'project_dashboard.html', {'all_vuln': all_vuln, 'total_web': total_web,
-                                                      'total_network': total_network, 'all_high': all_high,
-                                                      'all_medium': all_medium, 'all_low': all_low,
-                                                      'all_web_high': all_web_high,
-                                                      'all_web_medium': all_web_medium,
-                                                      'all_network_medium': all_network_medium,
-                                                      'all_network_high': all_network_high,
-                                                      'all_web_low': all_web_low,
-                                                      'all_network_low': all_network_low,
-                                                      'all_project': all_project})
+    return render(request,
+                  'project_dashboard.html',
+                  {'all_vuln': all_vuln,
+                   'total_web': total_web,
+                   'total_network': total_network,
+                   'all_high': all_high,
+                   'all_medium': all_medium,
+                   'all_low': all_low,
+                   'all_web_high': all_web_high,
+                   'all_web_medium': all_web_medium,
+                   'all_network_medium': all_network_medium,
+                   'all_network_high': all_network_high,
+                   'all_web_low': all_web_low,
+                   'all_network_low': all_network_low,
+                   'all_project': all_project})
 
 
 def web_dashboard(request):
+    """
+    The function calling Web Dashboard.
+    :param request:
+    :return:
+    """
     all_burp_data = burp_scan_db.objects.all()
     all_zap_data = zap_scans_db.objects.all()
     all_web_data = chain(all_burp_data, all_zap_data)
 
-    return render(request, 'web_scan_dashboard.html', {'all_web_data': all_web_data})
+    return render(request,
+                  'web_scan_dashboard.html',
+                  {'all_web_data': all_web_data})
 
 
 def web_dash_data(request):
+    """
+    The function pulling all web dashboard data from database.
+    :param request:
+    :return:
+    """
     all_burp_data = burp_scan_db.objects.all()
     all_zap_data = zap_scans_db.objects.all()
     all_web_data = chain(all_burp_data, all_zap_data)
@@ -496,8 +579,10 @@ def web_dash_data(request):
     else:
         scan_id = ''
 
-    all_zap_scan = zap_scans_db.objects.filter(scan_scanid=scan_id).aggregate(Sum('total_vul'))
-    all_burp_scan = burp_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('total_vul'))
+    all_zap_scan = zap_scans_db.objects.filter(scan_scanid=scan_id) \
+        .aggregate(Sum('total_vul'))
+    all_burp_scan = burp_scan_db.objects.filter(scan_id=scan_id) \
+        .aggregate(Sum('total_vul'))
 
     for key, value in all_zap_scan.iteritems():
         if value is None:
@@ -515,8 +600,10 @@ def web_dash_data(request):
 
     total_web = all_vuln
 
-    all_zap_high = zap_scans_db.objects.filter(scan_scanid=scan_id).aggregate(Sum('high_vul'))
-    all_burp_high = burp_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('high_vul'))
+    all_zap_high = zap_scans_db.objects.filter(scan_scanid=scan_id) \
+        .aggregate(Sum('high_vul'))
+    all_burp_high = burp_scan_db.objects.filter(scan_id=scan_id) \
+        .aggregate(Sum('high_vul'))
 
     for key, value in all_zap_high.iteritems():
         if value is None:
@@ -531,8 +618,10 @@ def web_dash_data(request):
 
     all_high = int(all_high_zap) + int(all_high_burp)
 
-    all_zap_medium = zap_scans_db.objects.filter(scan_scanid=scan_id).aggregate(Sum('medium_vul'))
-    all_burp_medium = burp_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('medium_vul'))
+    all_zap_medium = zap_scans_db.objects.filter(scan_scanid=scan_id) \
+        .aggregate(Sum('medium_vul'))
+    all_burp_medium = burp_scan_db.objects.filter(scan_id=scan_id) \
+        .aggregate(Sum('medium_vul'))
 
     for key, value in all_zap_medium.iteritems():
         if value is None:
@@ -547,8 +636,10 @@ def web_dash_data(request):
 
     all_medium = int(all_medium_zap) + int(all_medium_burp)
 
-    all_zap_low = zap_scans_db.objects.filter(scan_scanid=scan_id).aggregate(Sum('low_vul'))
-    all_burp_low = burp_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('low_vul'))
+    all_zap_low = zap_scans_db.objects.filter(scan_scanid=scan_id) \
+        .aggregate(Sum('low_vul'))
+    all_burp_low = burp_scan_db.objects.filter(scan_id=scan_id) \
+        .aggregate(Sum('low_vul'))
 
     for key, value in all_zap_low.iteritems():
         if value is None:
@@ -563,18 +654,34 @@ def web_dash_data(request):
 
     all_low = int(all_low_zap) + int(all_low_burp)
 
-    return render(request, 'web_scan_dashboard.html', {'all_web_data': all_web_data, 'total_web': total_web,
-                                                       'all_high': all_high, 'all_medium': all_medium,
-                                                       'all_low': all_low})
+    return render(request,
+                  'web_scan_dashboard.html',
+                  {'all_web_data': all_web_data,
+                   'total_web': total_web,
+                   'all_high': all_high,
+                   'all_medium': all_medium,
+                   'all_low': all_low})
 
 
 def net_dashboard(request):
+    """
+    Network vulnerability Dashboard.
+    :param request:
+    :return:
+    """
     all_openvas_data = scan_save_db.objects.all()
     all_network_data = all_openvas_data
-    return render(request, 'network_scan_dashboard.html', {'all_network_data': all_network_data})
+    return render(request,
+                  'network_scan_dashboard.html',
+                  {'all_network_data': all_network_data})
 
 
 def net_dash_data(request):
+    """
+    Pulling network dashboard data from database.
+    :param request:
+    :return:
+    """
     all_openvas_data = scan_save_db.objects.all()
     all_network_data = all_openvas_data
 
@@ -624,7 +731,10 @@ def net_dash_data(request):
 
     all_network_low = openvas_low
 
-    return render(request, 'network_scan_dashboard.html',
-                  {'all_network_data': all_network_data, 'total_network': total_network,
-                   'all_network_high': all_network_high, 'all_network_medium': all_network_medium,
+    return render(request,
+                  'network_scan_dashboard.html',
+                  {'all_network_data': all_network_data,
+                   'total_network': total_network,
+                   'all_network_high': all_network_high,
+                   'all_network_medium': all_network_medium,
                    'all_network_low': all_network_low})

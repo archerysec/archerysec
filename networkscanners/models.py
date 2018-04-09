@@ -15,6 +15,7 @@ from __future__ import unicode_literals
 from django.db import models
 from fernet_fields import EncryptedTextField
 
+
 class ov_scan_result_db(models.Model):
     scan_id = models.TextField(blank=True)
     project_id = models.UUIDField(null=True)
@@ -39,7 +40,6 @@ class ov_scan_result_db(models.Model):
     filtered = models.TextField(blank=True)
     page = models.TextField(blank=True)
     vuln_color = models.TextField(blank=True)
-
     family = models.TextField(blank=True)
     cvss_base = models.TextField(blank=True)
     cve = models.TextField(blank=True)
