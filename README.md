@@ -4,7 +4,7 @@
 
 [![Road Map](https://img.shields.io/badge/Road-Map-orange.svg)](https://github.com/archerysec/archerysec/projects/1)
 
-[![BlackHat Asia Arsenal 2018](https://github.com/toolswatch/badges/blob/master/arsenal/2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837)
+[![BlackHat Asia Arsenal 2018](https://raw.githubusercontent.com/toolswatch/badges/master/arsenal/asia/2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837)
 
 
 Archery
