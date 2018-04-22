@@ -16,6 +16,13 @@ import uuid
 
 
 def xml_parser(root, project_id, scan_id):
+    """
+    OpenVAS Scanner report parser.
+    :param root:
+    :param project_id:
+    :param scan_id:
+    :return:
+    """
     for openvas in root.findall(".//result"):
         for r in openvas:
             if r.tag == "name":
@@ -119,26 +126,42 @@ def xml_parser(root, project_id, scan_id):
         date_time = datetime.datetime.now()
         vul_id = uuid.uuid4()
 
-        save_all = ov_scan_result_db(scan_id=scan_id, vul_id=vul_id, name=name,
-                                     creation_time=creation_time, modification_time=modification_time,
-                                     host=host, port=port,
+        save_all = ov_scan_result_db(scan_id=scan_id,
+                                     vul_id=vul_id,
+                                     name=name,
+                                     creation_time=creation_time,
+                                     modification_time=modification_time,
+                                     host=host,
+                                     port=port,
                                      threat=threat,
                                      severity=severity,
                                      description=description,
-                                     family=family, cvss_base=cvss_base, cve=cve,
-                                     bid=bid, xref=xref, tags=tags, banner=banner,
-                                     date_time=date_time, false_positive='No'
+                                     family=family,
+                                     cvss_base=cvss_base,
+                                     cve=cve,
+                                     bid=bid,
+                                     xref=xref,
+                                     tags=tags,
+                                     banner=banner,
+                                     date_time=date_time,
+                                     false_positive='No'
                                      )
         save_all.save()
 
-        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity',
-                                                                               'vuln_color',
-                                                                               'threat', 'host',
-                                                                               'port').distinct()
+        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).\
+            values('name',
+                   'severity',
+                   'vuln_color',
+                   'threat',
+                   'host',
+                   'port').distinct()
         total_vul = len(openvas_vul)
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
         total_low = len(openvas_vul.filter(threat="Low"))
 
-        scan_save_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul, high_total=total_high,
-                                                            medium_total=total_medium, low_total=total_low)
+        scan_save_db.objects.filter(scan_id=scan_id).\
+            update(total_vul=total_vul,
+                   high_total=total_high,
+                   medium_total=total_medium,
+                   low_total=total_low)

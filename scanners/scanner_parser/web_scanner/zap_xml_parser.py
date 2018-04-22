@@ -16,42 +16,59 @@ import uuid
 spider_status = "0"
 scans_status = "0"
 spider_alert = ""
-target_url = []
-driver = []
-new_uri = []
-cookies = []
-excluded_url = []
-vul_col = []
-note = []
-rtt = []
-tags = []
-timestamp = []
-responseHeader = []
-requestBody = []
-responseBody = []
-requestHeader = []
-cookieParams = []
-res_type = []
-res_id = []
-url = []
-name = []
-solution = []
-instance = []
-sourceid = []
-pluginid = []
-alert = []
-desc = []
-riskcode = []
-confidence = []
-wascid = []
-risk = []
-reference = []
-
+target_url = ""
+driver = ""
+new_uri = ""
+cookies = ""
+excluded_url = ""
+vul_col = ""
+note = ""
+rtt = ""
+tags = ""
+timestamp = ""
+responseHeader = ""
+requestBody = ""
+responseBody = ""
+requestHeader = ""
+cookieParams = ""
+res_type = ""
+res_id = ""
+url = ""
+name = ""
+solution = ""
+instance = ""
+sourceid = ""
+pluginid = ""
+alert = ""
+desc = ""
+riskcode = ""
+confidence = ""
+wascid = ""
+risk = ""
+reference = ""
 
 
 def xml_parser(root, project_id, scan_id):
-    global vul_col, confidence, wascid, risk, reference, url, name, solution, instance, sourceid, pluginid \
-        , alert, desc, riskcode
+    """
+    ZAP Proxy scanner xml report parser.
+    :param root:
+    :param project_id:
+    :param scan_id:
+    :return:
+    """
+    global vul_col,\
+        confidence,\
+        wascid, risk,\
+        reference,\
+        url,\
+        name,\
+        solution,\
+        instance,\
+        sourceid,\
+        pluginid,\
+        alert,\
+        desc,\
+        riskcode
 
     for zap in root:
         host = zap.attrib
@@ -101,22 +118,35 @@ def xml_parser(root, project_id, scan_id):
                         vul_col = "info"
                         risk = "Informational"
 
-                    dump_data = zap_scan_results_db(vuln_id=vuln_id, vuln_color=vul_col, scan_id=scan_id,
+                    dump_data = zap_scan_results_db(vuln_id=vuln_id,
+                                                    vuln_color=vul_col,
+                                                    scan_id=scan_id,
                                                     project_id=project_id,
-                                                    confidence=confidence, wascid=wascid,
-                                                    risk=risk, reference=reference, url=url, name=name,
+                                                    confidence=confidence,
+                                                    wascid=wascid,
+                                                    risk=risk,
+                                                    reference=reference,
+                                                    url=url,
+                                                    name=name,
                                                     solution=solution,
-                                                    param=instance, sourceid=sourceid,
+                                                    param=instance,
+                                                    sourceid=sourceid,
                                                     pluginId=pluginid,
-                                                    alert=alert, description=desc, false_positive='No')
+                                                    alert=alert,
+                                                    description=desc,
+                                                    false_positive='No')
                     dump_data.save()
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name', 'risk', 'vuln_color').distinct()
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id)\
+        .values('name', 'risk', 'vuln_color').distinct()
 
     total_vul = len(zap_all_vul)
     total_high = len(zap_all_vul.filter(risk="High"))
     total_medium = len(zap_all_vul.filter(risk="Medium"))
     total_low = len(zap_all_vul.filter(risk="Low"))
 
-    zap_scans_db.objects.filter(scan_scanid=scan_id).update(total_vul=total_vul, high_vul=total_high,
-                                                            medium_vul=total_medium, low_vul=total_low)
+    zap_scans_db.objects.filter(scan_scanid=scan_id)\
+        .update(total_vul=total_vul,
+                high_vul=total_high,
+                medium_vul=total_medium,
+                low_vul=total_low)

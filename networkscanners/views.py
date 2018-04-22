@@ -14,21 +14,23 @@
 
 from __future__ import unicode_literals
 
-from django.shortcuts import render, render_to_response, HttpResponse
-from networkscanners.models import scan_save_db, ov_scan_result_db
+import datetime
+import os
+import threading
 import time
+import uuid
+import xml.etree.ElementTree as ET
+
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-import os
-import uuid
-from projects.models import project_db
-import datetime
-import xml.etree.ElementTree as ET
-import OpenVas_Parser
-from archerysettings import save_settings
-from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin, vuln_an_id
-import threading
+from django.shortcuts import render, render_to_response, HttpResponse
 from django.utils import timezone
+
+from archerysettings import save_settings
+from networkscanners.models import scan_save_db, ov_scan_result_db
+from projects.models import project_db
+from scanners.scanner_parser.network_scanner import OpenVas_Parser
+from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin, vuln_an_id
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -98,10 +100,16 @@ def scan_vul_details(request):
             '/networkscanners/vul_details/?scan_id=%s' % scan_id)
 
     all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id,
-                                                false_positive='No')
+                                                false_positive='No').values('name', 'severity',
+                                                                            'vuln_color',
+                                                                            'threat', 'host',
+                                                                            'port', 'vul_id').distinct()
 
     all_false_vul = ov_scan_result_db.objects.filter(scan_id=scan_id,
-                                                     false_positive='Yes')
+                                                     false_positive='Yes').values('name', 'severity',
+                                                                                  'vuln_color',
+                                                                                  'threat', 'host',
+                                                                                  'port', 'vul_id').distinct()
 
     return render(request,
                   'vul_details.html',
