@@ -7,6 +7,7 @@ setup(
     author='Anand Tiwari',
     description="Tool for managing and scanning vulnerability",
     install_requires=[
+        'djangorestframework-jwt',
         'asn1crypto==0.23.0',
         'certifi==2017.11.5',
         'cffi==1.11.2',
@@ -17,7 +18,6 @@ setup(
         'django-cryptography==0.2',
         'django-fernet-fields==0.5',
         'django-stronghold==0.2.9',
-        'djangorestframework==3.7.3',
         'enum34==1.1.6',
         'idna==2.6',
         'ipaddress==1.0.18',
@@ -29,6 +29,13 @@ setup(
         'selenium==3.8.0',
         'six==1.11.0',
         'urllib3==1.22',
+        'coreapi==2.3.3',
+        'coreapi-cli==1.0.6',
+        'djangorestframework==3.7.7',
+        'django-easy-pdf==0.1.1',
+        'WeasyPrint==0.42',
+        'PyBurprestapi==0.1',
+        'xhtml2pdf==0.2b1',
     ],
     url='https://github.com/anandtiwarics/archerysec/'
 )
