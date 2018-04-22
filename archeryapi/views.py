@@ -118,7 +118,14 @@ class NetworkScan(generics.ListCreateAPIView):
             target_ip = request.data.get('scan_ip', )
             project_id = request.data.get('project_id', )
             profile = None
-            views.openvas_scanner(target_ip, project_id, profile)
+            # views.openvas_scanner(target_ip, project_id, profile)
+            thread = threading.Thread(
+                target=views.openvas_scanner,
+                args=(target_ip, project_id, profile)
+            )
+            thread.daemon = True
+            thread.start()
+            # time.sleep(5)
             if not target_ip:
                 return Response({"error": "No name passed"})
             return Response({"message": "Scan Started"})
