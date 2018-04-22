@@ -11,8 +11,30 @@
 
 from __future__ import unicode_literals
 
+import os
+import threading
+import time
+import uuid
+import xml.etree.ElementTree as ET
+from itertools import chain
+from django.contrib import auth
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.core import signing
+from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response, HttpResponse
-
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_protect
+from easy_pdf.views import render_to_pdf_response
+from selenium import webdriver
+from stronghold.decorators import public
+from archerysettings import load_settings, save_settings
+from networkscanners.models import scan_save_db
+from projects.models import project_db
+from scanners.scanner_parser.web_scanner import zap_xml_parser, arachni_xml_parser
+from scanners.scanner_plugin.web_scanner import burp_plugin
+from scanners.scanner_plugin.web_scanner import zap_plugin
 from webscanners.models import zap_scan_results_db, \
     zap_scans_db, \
     zap_spider_db, \
@@ -20,31 +42,6 @@ from webscanners.models import zap_scan_results_db, \
     cookie_db, excluded_db, \
     burp_scan_db, burp_scan_result_db, \
     arachni_scan_db, arachni_scan_result_db
-
-from django.db.models import Q
-import os
-import time
-from stronghold.decorators import public
-from django.contrib import auth
-from django.views.decorators.csrf import csrf_protect
-from django.http import HttpResponseRedirect
-import uuid
-from selenium import webdriver
-from django.contrib import messages
-from django.core import signing
-from networkscanners.models import scan_save_db
-from easy_pdf.views import PDFTemplateView, render_to_pdf_response
-import xml.etree.ElementTree as ET
-from projects.models import project_db
-from django.contrib.auth.models import User
-from itertools import chain
-import zap_xml_parser
-import arachni_xml_parser
-import threading
-from archerysettings import load_settings, save_settings
-from scanners.scanner_plugin.web_scanner import zap_plugin
-from django.utils import timezone
-from scanners.scanner_plugin.web_scanner import burp_plugin
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
