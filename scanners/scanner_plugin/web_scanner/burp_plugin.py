@@ -20,6 +20,7 @@ import uuid
 from django.shortcuts import HttpResponse
 # from django.core.mail import send_mail
 from webscanners import email_notification
+from archerysettings import load_settings
 
 # Setting file importing
 setting_file = os.getcwd() + '/' + 'apidata.json'
@@ -66,23 +67,27 @@ class burp_scans(object):
         self.scan_url = scan_url
         self.scan_id = scan_id
 
-    def scan_lauch(self):
+    def scan_launch(self):
         """
         The function trigger the scans.
         """
 
+        settings = load_settings.ArcherySettings(setting_file)
+        burp_host = settings.burp_host()
+        burp_port = settings.burp_port()
+
         global vuln_id, burp_status
-        try:
-            with open(setting_file, 'r+') as f:
-                data = json.load(f)
-                burp_path = data['burp_path']
-                burp_port = data['burp_port']
-        except Exception as e:
-            print e
+        # try:
+        #     with open(setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         burp_path = data['burp_path']
+        #         burp_port = data['burp_port']
+        # except Exception as e:
+        #     print e
         print self.project_id
         print self.scan_url
         time.sleep(15)
-        host = 'http://' + burp_path + ':' + burp_port
+        host = 'http://' + burp_host + ':' + burp_port
         bi = burpscanner.BurpApi(host)
         bi.burp_scope_add(self.scan_url)
         bi.burp_spider(self.scan_url)

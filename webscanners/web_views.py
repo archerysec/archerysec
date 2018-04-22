@@ -928,7 +928,7 @@ def burp_scan_launch(request):
                 #                    scan_id)
 
                 thread = threading.Thread(
-                    target=do_scan.scan_lauch,
+                    target=do_scan.scan_launch,
                     )
                 thread.daemon = True
                 thread.start()
