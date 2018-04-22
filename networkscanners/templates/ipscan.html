@@ -45,6 +45,7 @@
 
 
 
+
 </script>
 
 <script type="text/javascript">
@@ -53,6 +54,7 @@
       $("#result").load("/networkscanners/ip_table/");// a function which will load data from other file after x seconds
   }
  setInterval('autoRefresh_div()', 5000);
+
 
 
 
@@ -75,8 +77,8 @@
                     <div class="row-fluid">
                         <form id="start_scan" class="form-horizontal">{% csrf_token %}
                             <div class="controls">
-                                <input type="text" name="ip" id="ip"
-                                       value="{{ ip }}" placeholder="Enter IP">
+                                <textarea class="span4" name="ip" id="ip" value="{{ ip }}"
+                                          placeholder="192.168.1.1,192.168.1.2"></textarea>
 
                             </div>
                             <div class="controls">
