@@ -62,11 +62,28 @@ class WebScan(generics.ListCreateAPIView):
                                          url=target_url,
                                          date_time=date_time)
                 scan_dump.save()
-                do_scan = burp_plugin.burp_scans(project_id, target_url, scan_id)
-                o = do_scan.scan_lauch
-                thread = threading.Thread(target=o, args=(project_id, target_url, scan_id))
-                thread.daemon = True
-                thread.start()
+                # do_scan = burp_plugin.burp_scans(project_id, target_url, scan_id)
+                # # o = ()
+                # thread = threading.Thread(target=do_scan.scan_launch(), args=(project_id, target_url, scan_id))
+                # thread.daemon = True
+                # thread.start()
+                try:
+                    do_scan = burp_plugin.burp_scans(
+                        project_id,
+                        target_url,
+                        scan_id)
+                    # do_scan.scan_lauch(project_id,
+                    #                    target,
+                    #                    scan_id)
+
+                    thread = threading.Thread(
+                        target=do_scan.scan_launch,
+                    )
+                    thread.daemon = True
+                    thread.start()
+                    # time.sleep(5)
+                except Exception as e:
+                    print e
 
             if not target_url:
                 return Response({"error": "No name passed"})
