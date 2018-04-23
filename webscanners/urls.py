@@ -3,7 +3,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -125,6 +125,9 @@ urlpatterns = [
     url(r'^del_burp_scan',
         web_views.del_burp_scan,
         name='del_burp_scan'),
+    url(r'^del_burp_vuln',
+        web_views.del_burp_vuln,
+        name='del_burp_vuln'),
     url(r'^edit_burp_vuln',
         web_views.edit_burp_vuln,
         name='edit_burp_vuln'),
@@ -133,10 +136,10 @@ urlpatterns = [
         name='xml_upload'),
     url(r'^email_setting',
         web_views.email_setting,
-        name='email_setting',),
+        name='email_setting', ),
     url(r'^cookie_add',
         web_views.add_cookies,
-        name='add_cookies',),
+        name='add_cookies', ),
 
     # arachni
     url(r'^arachni_list_vuln',

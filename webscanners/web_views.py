@@ -488,13 +488,21 @@ def del_scan(request):
         if request.method == 'POST':
             item_id = request.POST.get("scan_scanid")
             scan_url = request.POST.get("scan_url")
-            item = zap_scans_db.objects.filter(scan_scanid=item_id,
-                                               scan_url=scan_url)
-            item.delete()
-            item_results = zap_scan_results_db.objects.filter(scan_id=item_id,
-                                                              url=scan_url)
-            item_results.delete()
-            messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+            scan_item = str(item_id)
+            ip = scan_item.replace(" ", "")
+            target_split = ip.split(',')
+            split_length = target_split.__len__()
+            print "split_lenght", split_length
+            for i in range(0, split_length):
+                target = target_split.__getitem__(i)
+
+                item = zap_scans_db.objects.filter(scan_scanid=target,
+                                                   )
+                item.delete()
+                item_results = zap_scan_results_db.objects.filter(scan_id=target,
+                                                                  )
+                item_results.delete()
+                messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
             return HttpResponseRedirect('/webscanners/scans_list/')
     except Exception as e:
         print "Error Got !!!"
@@ -699,8 +707,15 @@ def del_vuln(request):
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         un_scanid = request.POST.get("scan_id", )
-        delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
-        delete_vuln.delete()
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+            delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln.delete()
         zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).values('name', 'risk',
                                                                                    'vuln_color').distinct()
         total_vul = len(zap_all_vul)
@@ -926,7 +941,7 @@ def burp_scan_launch(request):
 
                 thread = threading.Thread(
                     target=do_scan.scan_launch,
-                    )
+                )
                 thread.daemon = True
                 thread.start()
                 time.sleep(5)
@@ -1025,12 +1040,51 @@ def del_burp_scan(request):
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
 
-        item = burp_scan_db.objects.filter(scan_id=scan_id, url=scan_url)
-        item.delete()
-        item_results = burp_scan_result_db.objects.filter(scan_id=scan_id)
-        item_results.delete()
-        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            scan_id = value_split.__getitem__(i)
+            item = burp_scan_db.objects.filter(scan_id=scan_id)
+            item.delete()
+            item_results = burp_scan_result_db.objects.filter(scan_id=scan_id)
+            item_results.delete()
+            messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
         return HttpResponseRedirect('/webscanners/burp_scan_list/')
+
+
+def del_burp_vuln(request):
+    """
+    Delete Vulnerability from database.
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        vuln_id = request.POST.get("del_vuln", )
+        un_scanid = request.POST.get("scan_id", )
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+            delete_vuln = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln.delete()
+        burp_all_vul = burp_scan_result_db.objects.filter(scan_id=un_scanid).values('name', 'severity',
+                                                                                    'severity_color').distinct()
+        total_vul = len(burp_all_vul)
+        total_high = len(burp_all_vul.filter(severity="High"))
+        total_medium = len(burp_all_vul.filter(severity="Medium"))
+        total_low = len(burp_all_vul.filter(severity="Low"))
+
+        burp_scan_db.objects.filter(scan_id=un_scanid).update(total_vul=total_vul, high_vul=total_high,
+                                                              medium_vul=total_medium, low_vul=total_low)
+        messages.success(request, "Deleted vulnerability")
+
+        return HttpResponseRedirect("/webscanners/burp_vuln_list?scan_id=%s" % un_scanid)
 
 
 def edit_burp_vuln(request):
@@ -1280,9 +1334,18 @@ def del_arachni_scan(request):
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
-        item = arachni_scan_db.objects.filter(scan_id=scan_id,
-                                              url=scan_url)
-        item.delete()
+
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        # print "split_lenght", split_length
+        for i in range(0, split_length):
+            scan_id = value_split.__getitem__(i)
+
+            item = arachni_scan_db.objects.filter(scan_id=scan_id
+                                                  )
+            item.delete()
         item_results = arachni_scan_result_db.objects.filter(scan_id=scan_id)
         item_results.delete()
         messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
@@ -1352,8 +1415,16 @@ def arachni_del_vuln(request):
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         un_scanid = request.POST.get("scan_id", )
-        delete_vuln = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
-        delete_vuln.delete()
+
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+            delete_vuln = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln.delete()
         arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=un_scanid).values(
             'name',
             'severity',

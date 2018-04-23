@@ -1,12 +1,44 @@
 {% extends 'tablehead.html' %}
 {% block body %}
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = [];
+            $.each($("input[name='del_scan_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/webscanners/del_scan/',
+                data:{
+                   scan_scanid: json_scanid,
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+            setTimeout(location.reload(), 6000);
+        });
+
+    });
+
+</script>
 
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
                 href="#" class="current">Domain Scan List</a></div>
 
-        <h1>Scans</h1>
+        <h1>ZAP Scans Result</h1>
     </div>
 
     <div class="container-fluid">
@@ -28,9 +60,13 @@
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Domain Scan List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/webscanners/xml_upload"
-                                                class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
-                            XML</a>
+                        <div class="buttons">
+                            <a data-toggle="modal" href="/webscanners/xml_upload"
+                               class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
+                                XML</a>
+                        </div>
+                        <div class="buttons">
+                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
 
                     </div>
@@ -38,7 +74,7 @@
                         <table class="table table-bordered data-table">
                             <thead>
                             <tr>
-                                <!--<th>Project ID</th>-->
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                                 <th>URL</th>
                                 <th>Status</th>
                                 <th>Date Time</th>
@@ -53,7 +89,16 @@
                             </thead>
                             <tbody>{% for data in all_scans %}
                             <tr data-target="#">
-                                <!--<td>{{data.project_id}}</td>-->
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.scan_scanid}}" name="del_scan_id"
+                                                      onClick="reload">
+
+                                        </label>
+                                        <!--<br>-->
+                                        <!--<button type="button" >Get Values</button>-->
+                                    </form>
+                                </td>
                                 <td>
                                     <a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
                                 </td>
