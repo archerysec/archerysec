@@ -101,6 +101,8 @@ urlpatterns = [
         name='create_vuln'),
     url(r'^get_scan_pdf',
         web_views.scan_pdf_gen),
+    url(r'^zap_rescan',
+        web_views.zap_rescan),
 
     # Burp Setting from path
     url(r'^burp_setting',

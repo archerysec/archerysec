@@ -83,8 +83,10 @@ def scan_vul_details(request):
     :param request:
     :return:
     """
+    scanid = ""
     if request.method == 'GET':
-        scan_id = request.GET['scan_id']
+        scanid = request.GET['scan_id']
+    print "scansss", scanid
 
     if request.method == 'POST':
         vuln_id = request.POST.get('vuln_id')
@@ -99,22 +101,22 @@ def scan_vul_details(request):
         return HttpResponseRedirect(
             '/networkscanners/vul_details/?scan_id=%s' % scan_id)
 
-    all_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id,
+    all_vuln = ov_scan_result_db.objects.filter(scan_id=scanid,
                                                 false_positive='No').values('name', 'severity',
                                                                             'vuln_color',
                                                                             'threat', 'host',
                                                                             'port', 'vul_id').distinct()
 
-    all_false_vul = ov_scan_result_db.objects.filter(scan_id=scan_id,
+    all_false_vul = ov_scan_result_db.objects.filter(scan_id=scanid,
                                                      false_positive='Yes').values('name', 'severity',
                                                                                   'vuln_color',
                                                                                   'threat', 'host',
                                                                                   'port', 'vul_id').distinct()
-
+    print "zzzzzz", scanid
     return render(request,
                   'vul_details.html',
                   {'all_vuln': all_vuln,
-                   'scan_id': scan_id,
+                   'scan_id': scanid,
                    'all_false_vul': all_false_vul})
 
 
@@ -179,11 +181,18 @@ def scan_del(request):
     """
 
     if request.method == 'POST':
-        scanid = request.POST.get('scan_id')
-        scans = scan_save_db.objects.filter(scan_id=scanid).order_by('scan_id')
-        scans.delete()
-        vuln_data = ov_scan_result_db.objects.filter(scan_id=scanid)
-        vuln_data.delete()
+        scan_id = request.POST.get('scan_id')
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        # print "split_lenght", split_length
+        for i in range(0, split_length):
+            scan_id = value_split.__getitem__(i)
+            scans = scan_save_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+            scans.delete()
+            vuln_data = ov_scan_result_db.objects.filter(scan_id=scan_id)
+            vuln_data.delete()
 
     return HttpResponseRedirect("/networkscanners/")
 
@@ -259,8 +268,17 @@ def del_vuln(request):
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln")
         un_scanid = request.POST.get("scan_id")
-        delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
-        delete_vuln.delete()
+        print "scan_iddd", un_scanid
+
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+            delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
+            delete_vuln.delete()
         ov_all_vul = ov_scan_result_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
         total_vul = len(ov_all_vul)
         total_high = len(ov_all_vul.filter(threat="High"))

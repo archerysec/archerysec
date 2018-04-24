@@ -95,7 +95,7 @@ class ZAPScanner:
     """ Connect with ZAP scanner global variable """
     zap = zap_connect()
 
-    def __init__(self, target_url, project_id):
+    def __init__(self, target_url, project_id, rescan_id, rescan):
         """
 
         :param target_url: Target URL parameter.
@@ -103,6 +103,8 @@ class ZAPScanner:
         """
         self.target_url = target_url
         self.project_id = project_id
+        self.rescan_id = rescan_id
+        self.rescan = rescan
 
     def exclude_url(self):
         """
@@ -334,6 +336,8 @@ class ZAPScanner:
                 vuln_id=vuln_id,
                 vuln_color=vul_col,
                 scan_id=un_scanid,
+                rescan_id=self.rescan_id,
+                rescan=self.rescan,
                 project_id=project_id,
                 confidence=confidence,
                 wascid=wascid,

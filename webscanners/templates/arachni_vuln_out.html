@@ -139,13 +139,16 @@
                                                 <!--class="btn btn-primary btn-mini"><i-->
                                 <!--class="icon-plus icon-white"></i> Add new Vulnerability</a>-->
                         <!--</div>-->
+                        <div class="buttons">
+                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
                     </div>
 
                     <div class="widget-content nopadding">
                         <table class="table table-bordered data-table table-fixed" width="100%">
                             <thead>
                             <tr>
-                                <!--<th>Project ID</th>-->
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                                 <th>Vulnerability</th>
                                 <th>URL</th>
                                 <th>Risk</th>
@@ -156,7 +159,14 @@
                             </thead>
                             <tbody>{% for data in false_data %}
                             <tr data-target="#">
-                                <!--<td>{{data.project_id}}</td>-->
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                        </label>
+                                        <!--<br>-->
+                                        <!--<button type="button" >Get Values</button>-->
+                                    </form>
+                                </td>
                                 <td><a href="/webscanners/arachni_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                 </td>
                                 <td width="50%">{{data.url}}</td>

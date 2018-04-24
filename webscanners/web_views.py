@@ -174,57 +174,6 @@ def invalid_login():
     return render_to_response('invalid_login.html')
 
 
-def launch_web_scan(target_url, project_id):
-    """
-    The function Launch ZAP Scan.
-    :param target_url: Target URL
-    :param project_id: Project ID
-    :return:
-    """
-
-    # Load ZAP Plugin
-    zap = zap_plugin.ZAPScanner(target_url, project_id)
-    zap.exclude_url()
-    zap.cookies()
-    zap.zap_spider_thread(thread_value=30)
-    spider_id = zap.zap_spider()
-    zap.spider_status(spider_id=spider_id)
-    zap.spider_result(spider_id=spider_id)
-    print "Spider Completed"
-    time.sleep(5)
-    print 'Scanning Target %s' % target_url
-    """ ZAP Scan trigger on target_url  """
-    zap_scan_id = zap.zap_scan()
-    un_scanid = uuid.uuid4()
-    date_time = timezone.now()
-    try:
-        save_all_scan = zap_scans_db(
-            project_id=project_id,
-            scan_url=target_url,
-            scan_scanid=un_scanid,
-            date_time=date_time
-        )
-
-        save_all_scan.save()
-    except Exception as e:
-        print e
-    zap.zap_scan_status(
-        scan_id=zap_scan_id,
-        un_scanid=un_scanid
-    )
-    """ Save Vulnerability in database """
-    time.sleep(5)
-    all_vuln = zap.zap_scan_result()
-    time.sleep(5)
-    save_all_vuln = zap.zap_result_save(
-        all_vuln=all_vuln,
-        project_id=project_id,
-        un_scanid=un_scanid,
-    )
-    print save_all_vuln
-    return HttpResponse(status=201)
-
-
 def index(request):
     """
     The function calling web scan Page.
@@ -255,6 +204,59 @@ def index(request):
                   )
 
 
+def launch_web_scan(target_url, project_id, rescan_id, rescan):
+    """
+    The function Launch ZAP Scan.
+    :param target_url: Target URL
+    :param project_id: Project ID
+    :return:
+    """
+
+    # Load ZAP Plugin
+    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
+    zap.exclude_url()
+    zap.cookies()
+    zap.zap_spider_thread(thread_value=30)
+    spider_id = zap.zap_spider()
+    zap.spider_status(spider_id=spider_id)
+    zap.spider_result(spider_id=spider_id)
+    print "Spider Completed"
+    time.sleep(5)
+    print 'Scanning Target %s' % target_url
+    """ ZAP Scan trigger on target_url  """
+    zap_scan_id = zap.zap_scan()
+    un_scanid = uuid.uuid4()
+    date_time = timezone.now()
+    try:
+        save_all_scan = zap_scans_db(
+            project_id=project_id,
+            scan_url=target_url,
+            scan_scanid=un_scanid,
+            date_time=date_time,
+            rescan_id=rescan_id,
+            rescan=rescan,
+        )
+
+        save_all_scan.save()
+    except Exception as e:
+        print e
+    zap.zap_scan_status(
+        scan_id=zap_scan_id,
+        un_scanid=un_scanid
+    )
+    """ Save Vulnerability in database """
+    time.sleep(5)
+    all_vuln = zap.zap_scan_result()
+    time.sleep(5)
+    save_all_vuln = zap.zap_result_save(
+        all_vuln=all_vuln,
+        project_id=project_id,
+        un_scanid=un_scanid,
+    )
+    print save_all_vuln
+    return HttpResponse(status=201)
+
+
 def web_scan(request):
     """
     The function trigger ZAP scan.
@@ -265,15 +267,16 @@ def web_scan(request):
     if request.POST.get("url", ):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
+        rescan_id = None
+        rescan = 'No'
         print target_url
         target__split = target_url.split(',')
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
-            print target
             thread = threading.Thread(
                 target=launch_web_scan,
-                args=(target, project_id))
+                args=(target, project_id, rescan_id, rescan))
             thread.daemon = True
             thread.start()
 
@@ -288,17 +291,41 @@ def web_scan(request):
                   'scan_list.html')
 
 
+def zap_rescan(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        scan_url = request.POST.get('scan_url')
+        project_id = request.POST.get('project_id')
+        rescan_id = request.POST.get('old_scan_id')
+        rescan = 'Yes'
+
+        thread = threading.Thread(
+            target=launch_web_scan,
+            args=(scan_url, project_id, rescan_id, rescan))
+        thread.daemon = True
+        thread.start()
+        messages.add_message(request, messages.SUCCESS, 'Re-Scan Launched')
+
+    return HttpResponseRedirect('/webscanners/scans_list/')
+
+
 def scan_list(request):
     """
     The function listing all ZAP Web scans.
     :param request:
     :return:
     """
-    all_scans = zap_scans_db.objects.all()
+    all_scans = zap_scans_db.objects.filter(rescan='No')
+    rescan_all_scans = zap_scans_db.objects.filter(rescan='Yes')
 
     return render(request,
                   'scan_list.html',
-                  {'all_scans': all_scans})
+                  {'all_scans': all_scans,
+                   'rescan_all_scans': rescan_all_scans})
 
 
 def list_web_vuln(request):
@@ -1346,8 +1373,8 @@ def del_arachni_scan(request):
             item = arachni_scan_db.objects.filter(scan_id=scan_id
                                                   )
             item.delete()
-        item_results = arachni_scan_result_db.objects.filter(scan_id=scan_id)
-        item_results.delete()
+            item_results = arachni_scan_result_db.objects.filter(scan_id=scan_id)
+            item_results.delete()
         messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
         return HttpResponseRedirect('/webscanners/arachni_scan_list/')
 

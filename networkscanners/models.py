@@ -18,6 +18,7 @@ from fernet_fields import EncryptedTextField
 
 class ov_scan_result_db(models.Model):
     scan_id = models.TextField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
     project_id = models.UUIDField(null=True)
     vul_id = models.TextField(blank=True)
     name = models.TextField(blank=True)
@@ -53,6 +54,7 @@ class ov_scan_result_db(models.Model):
 
 class scan_save_db(models.Model):
     scan_id = models.TextField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
     scan_ip = models.TextField(blank=True)
     target_id = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)

@@ -24,6 +24,7 @@ class zap_spider_db(models.Model):
 class zap_scans_db(models.Model):
     scan_url = models.URLField(blank=True)
     scan_scanid = models.TextField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
     vul_num = models.TextField(blank=True)
     vul_status = models.TextField(blank=True)
     total_vul = models.IntegerField(blank=True, null=True)
@@ -32,6 +33,7 @@ class zap_scans_db(models.Model):
     low_vul = models.IntegerField(blank=True, null=True)
     project_id = models.UUIDField(null=True)
     date_time = models.DateTimeField(null=True)
+    rescan = models.TextField(blank=True, null=True)
 
 
 class zap_spider_results(models.Model):
@@ -42,6 +44,7 @@ class zap_spider_results(models.Model):
 class zap_scan_results_db(models.Model):
     vuln_id = models.TextField(blank=True)
     scan_id = models.TextField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
     confidence = models.TextField(blank=True)
     wascid = models.TextField(blank=True)
     cweid = models.TextField(blank=True)
@@ -64,7 +67,7 @@ class zap_scan_results_db(models.Model):
     req_res = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
     vuln_color = models.TextField(blank=True)
-
+    rescan = models.TextField(blank=True, null=True)
     note = models.TextField(blank=True)
     rtt = models.TextField(blank=True)
     tags = models.TextField(blank=True)
@@ -92,6 +95,7 @@ class excluded_db(models.Model):
 class burp_scan_db(models.Model):
     url = models.URLField(blank=True)
     scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
     project_id = models.UUIDField(blank=True)
@@ -100,13 +104,15 @@ class burp_scan_db(models.Model):
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
+    rescan = models.TextField(blank=True, null=True)
 
 
 class burp_scan_result_db(models.Model):
     scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
     project_id = models.TextField(blank=True)
     vuln_id = models.UUIDField(blank=True)
-
+    rescan = models.TextField(blank=True, null=True)
     serialNumber = models.TextField(blank=True)
     types = models.TextField(blank=True)
     name = models.TextField(blank=True)
@@ -152,6 +158,7 @@ class email_config_db(models.Model):
 class arachni_scan_db(models.Model):
     url = models.URLField(blank=True)
     scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
     project_id = models.UUIDField(blank=True)
@@ -160,13 +167,15 @@ class arachni_scan_db(models.Model):
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
+    rescan = models.TextField(blank=True, null=True)
 
 
 class arachni_scan_result_db(models.Model):
     scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
     project_id = models.TextField(blank=True)
     vuln_id = models.UUIDField(blank=True)
-
+    rescan = models.TextField(blank=True, null=True)
     name = models.TextField(blank=True)
     description = models.TextField(blank=True)
     remedy_guidance = models.TextField(blank=True)
