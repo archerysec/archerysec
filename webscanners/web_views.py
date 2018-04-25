@@ -1192,7 +1192,8 @@ def xml_upload(request):
                                      scan_scanid=scan_id,
                                      date_time=date_time,
                                      project_id=project_id,
-                                     vul_status=scan_status)
+                                     vul_status=scan_status,
+                                     rescan='No')
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()

@@ -134,7 +134,8 @@ def xml_parser(root, project_id, scan_id):
                                                     pluginId=pluginid,
                                                     alert=alert,
                                                     description=desc,
-                                                    false_positive='No')
+                                                    false_positive='No',
+                                                    rescan='No',)
                     dump_data.save()
 
     zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id)\
