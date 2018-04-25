@@ -5,19 +5,14 @@ ADD requirements.txt /root/archerysec
 RUN pip install -r requirements.txt
 COPY . /root/archerysec/
 
-CMD ["python","manage.py","makemigrations","networkscanners"]
-
-CMD ["python","manage.py","makemigrations","webscanners"]
-
-CMD ["python","manage.py","makemigrations","projects"]
-
-CMD ["python","manage.py","makemigrations","APIScan"]
-
-CMD ["python","manage.py","migrate"]
+RUN python manage.py makemigrations networkscanners
+RUN python manage.py makemigrations webscanners
+RUN python manage.py makemigrations projects
+RUN python manage.py makemigrations APIScan
+RUN python manage.py migrate
 
 EXPOSE 8000
 
 WORKDIR /root/archerysec/
 
-CMD ["python","manage.py","migrate"]
 CMD ["python","manage.py","runserver","0.0.0.0:8000"]
