@@ -3,7 +3,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -54,4 +54,10 @@ urlpatterns = [
     url(r'^OpenVas_xml_upload',
         views.OpenVas_xml_upload,
         name='OpenVas_xml_upload'),
+    url(r'^net_scan_schedule',
+        views.net_scan_schedule,
+        name='net_scan_schedule'),
+    url(r'^del_web_scan_schedule',
+        views.del_web_scan_schedule,
+        name='del_web_scan_schedule'),
 ]

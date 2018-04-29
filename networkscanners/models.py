@@ -64,3 +64,12 @@ class scan_save_db(models.Model):
     low_total = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
     date_time = models.TextField(null=True)
+
+
+class task_schedule_db(models.Model):
+    task_id = models.TextField(blank=True, null=True)
+    target = models.TextField(blank=True, null=True)
+    schedule_time = models.TextField(blank=True, null=True)
+    project_id = models.TextField(blank=True, null=True)
+    scanner = models.TextField(blank=True, null=True)
+    periodic_task = models.TextField(blank=True, null=True)

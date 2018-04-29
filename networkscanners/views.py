@@ -13,8 +13,6 @@
 """ Author: Anand Tiwari """
 
 from __future__ import unicode_literals
-
-import datetime
 import os
 import threading
 import time
@@ -27,10 +25,13 @@ from django.shortcuts import render, render_to_response, HttpResponse
 from django.utils import timezone
 
 from archerysettings import save_settings
-from networkscanners.models import scan_save_db, ov_scan_result_db
+from networkscanners.models import scan_save_db, ov_scan_result_db, task_schedule_db
 from projects.models import project_db
 from scanners.scanner_parser.network_scanner import OpenVas_Parser
 from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin, vuln_an_id
+from background_task.models import Task
+from background_task import background
+from datetime import datetime
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -131,7 +132,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile):
     openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile)
     scanner = openvas.connect()
     scan_id, target_id = openvas.scan_launch(scanner)
-    date_time = datetime.datetime.now()
+    date_time = datetime.now()
     save_all = scan_save_db(scan_id=str(scan_id),
                             project_id=str(project_id),
                             scan_ip=scan_ip,
@@ -428,7 +429,7 @@ def OpenVas_xml_upload(request):
         scan_id = uuid.uuid4()
         scan_status = "100"
         if scanner == "openvas":
-            date_time = datetime.datetime.now()
+            date_time = datetime.now()
             scan_dump = scan_save_db(scan_ip=scan_ip,
                                      scan_id=scan_id,
                                      date_time=date_time,
@@ -445,3 +446,114 @@ def OpenVas_xml_upload(request):
     return render(request,
                   'net_upload_xml.html',
                   {'all_project': all_project})
+
+
+@background(schedule=60)
+def task(target_ip, project_id, scanner):
+    rescan_id = ''
+    rescan = 'No'
+    sel_profile = ''
+    ip = target_ip.replace(" ", "")
+    target__split = ip.split(',')
+    split_length = target__split.__len__()
+    for i in range(0, split_length):
+        target = target__split.__getitem__(i)
+        if scanner == 'open_vas':
+            thread = threading.Thread(target=openvas_scanner, args=(target, project_id, sel_profile))
+            thread.daemon = True
+            thread.start()
+
+        return HttpResponse(status=200)
+
+
+def net_scan_schedule(request):
+    """
+
+    :param request:
+    :return:
+    """
+    all_scans_db = project_db.objects.all()
+    all_scheduled_scans = task_schedule_db.objects.all()
+
+    if request.method == 'POST':
+        scan_ip = request.POST.get('ip')
+        scan_schedule_time = request.POST.get('datetime')
+        project_id = request.POST.get('project_id')
+        scanner = request.POST.get('scanner')
+        # periodic_task = request.POST.get('periodic_task')
+        periodic_task_value = request.POST.get('periodic_task_value')
+        # periodic_task = 'Yes'
+        print 'scanner-', scanner
+
+        if periodic_task_value == 'HOURLY':
+            periodic_time = Task.HOURLY
+        elif periodic_task_value == 'DAILY':
+            periodic_time = Task.DAILY
+        elif periodic_task_value == 'WEEKLY':
+            periodic_time = Task.WEEKLY
+        elif periodic_task_value == 'EVERY_2_WEEKS':
+            periodic_time = Task.EVERY_2_WEEKS
+        elif periodic_task_value == 'EVERY_4_WEEKS':
+            periodic_time = Task.EVERY_4_WEEKS
+        else:
+            periodic_time = None
+
+        dt_str = scan_schedule_time
+        dt_obj = datetime.strptime(dt_str, '%d/%m/%Y %H:%M:%S %p')
+
+        print "scan_ip", scan_ip
+        print "schedule", scan_schedule_time
+
+        # task(scan_ip, project_id, schedule=dt_obj)
+        ip = scan_ip.replace(" ", "")
+        target__split = ip.split(',')
+        split_length = target__split.__len__()
+        for i in range(0, split_length):
+            target = target__split.__getitem__(i)
+
+            if scanner == 'open_vas':
+                if periodic_task_value == 'None':
+                    my_task = task(target, project_id, scanner, schedule=dt_obj)
+                    task_id = my_task.id
+                    print "Savedddddd taskid", task_id
+                else:
+                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
+                    task_id = my_task.id
+                    print "Savedddddd taskid", task_id
+
+            save_scheadule = task_schedule_db(task_id=task_id, target=target,
+                                              schedule_time=scan_schedule_time,
+                                              project_id=project_id,
+                                              scanner=scanner,
+                                              periodic_task=periodic_task_value)
+            save_scheadule.save()
+
+    return render(request, 'network_scan_schedule.html',
+                  {'all_scans_db': all_scans_db,
+                   'all_scheduled_scans': all_scheduled_scans}
+                  )
+
+
+def del_web_scan_schedule(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if request.method == "POST":
+        task_id = request.POST.get('task_id')
+
+        scan_item = str(task_id)
+        taskid = scan_item.replace(" ", "")
+        target_split = taskid.split(',')
+        split_length = target_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            task_id = target_split.__getitem__(i)
+            del_task = task_schedule_db.objects.filter(task_id=task_id)
+            del_task.delete()
+            del_task_schedule = Task.objects.filter(id=task_id)
+            del_task_schedule.delete()
+
+    return HttpResponseRedirect('/networkscanners/net_scan_schedule')
