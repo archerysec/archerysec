@@ -10,6 +10,7 @@ RUN python manage.py makemigrations webscanners
 RUN python manage.py makemigrations projects
 RUN python manage.py makemigrations APIScan
 RUN python manage.py migrate
+RUN python manage.py process_tasks
 
 EXPOSE 8000
 
