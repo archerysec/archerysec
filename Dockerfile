@@ -14,5 +14,4 @@ RUN python manage.py migrate
 EXPOSE 8000
 
 WORKDIR /root/archerysec/
-RUN /bin/bash -c  "python manage.py process_tasks"
 CMD ["python","manage.py","runserver","0.0.0.0:8000"]
