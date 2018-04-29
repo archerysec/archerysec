@@ -534,7 +534,7 @@ def net_scan_schedule(request):
                   )
 
 
-def del_web_scan_schedule(request):
+def del_net_scan_schedule(request):
     """
 
     :param request:

@@ -57,7 +57,7 @@ urlpatterns = [
     url(r'^net_scan_schedule',
         views.net_scan_schedule,
         name='net_scan_schedule'),
-    url(r'^del_web_scan_schedule',
-        views.del_web_scan_schedule,
-        name='del_web_scan_schedule'),
+    url(r'^del_net_scan_schedule',
+        views.del_net_scan_schedule,
+        name='del_net_scan_schedule'),
 ]

@@ -14,7 +14,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'POST',
             <!--contentType: 'application/json; charset=utf-8',-->
-            url: '/networkscanners/del_web_scan_schedule',
+            url: '/networkscanners/del_net_scan_schedule',
             data: {
                 task_id: json_scanid,
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
@@ -51,7 +51,7 @@ $(document).ready(function() {
                     {% csrf_token %}
                     <div class="widget-box">
                         <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                            <h5>Web Scan Schedule</h5>
+                            <h5>Network Scan Schedule</h5>
                         </div>
                         <div class="widget-content nopadding">
 
@@ -172,7 +172,7 @@ $(document).ready(function() {
                                 </td>
                                 <td>{{data.periodic_task}}</td>
                                 <td>
-                                    <form action="/networkscanners/del_web_scan_schedule" method="post"
+                                    <form action="/networkscanners/del_net_scan_schedule" method="post"
                                           class="forms-sample">
 
                                         {% csrf_token %}
