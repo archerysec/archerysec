@@ -14,5 +14,5 @@ RUN python manage.py migrate
 EXPOSE 8000
 
 WORKDIR /root/archerysec/
-CMD ["python","manage.py","process_tasks"]
+ENTRYPOINT ["python","manage.py","process_tasks"]
 CMD ["python","manage.py","runserver","0.0.0.0:8000"]
