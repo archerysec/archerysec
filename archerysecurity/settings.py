@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'easy_pdf',
     'Dashboard',
+    'background_task',
 ]
 
 MIDDLEWARE = [
@@ -64,7 +65,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'archerysecurity.urls'
@@ -119,13 +120,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
+# USE_TZ = True
+#
+# TIME_ZONE = 'UTC'
+#
+# USE_I18N = True
+#
+# USE_L10N = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -168,3 +169,5 @@ REST_FRAMEWORK = {
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # SESSION_COOKIE_AGE = 5 * 100
+
+BACKGROUND_TASK_RUN_ASYNC = True

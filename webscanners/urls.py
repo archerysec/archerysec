@@ -162,4 +162,17 @@ urlpatterns = [
     url(r'^arachni_del_vuln',
         web_views.arachni_del_vuln,
         name='arachni_del_vuln'),
+
+    url(r'^web_task_launch',
+        web_views.web_task_launch,
+        name='web_task_launch'),
+
+    url(r'^web_scan_schedule',
+        web_views.web_scan_schedule,
+        name='web_scan_schedule'),
+
+    url(r'^del_web_scan_schedule',
+        web_views.del_web_scan_schedule,
+        name='del_web_scan_schedule'),
+
 ]

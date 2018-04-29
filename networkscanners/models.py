@@ -48,7 +48,7 @@ class ov_scan_result_db(models.Model):
     xref = models.TextField(blank=True)
     tags = models.TextField(blank=True)
     banner = models.TextField(blank=True)
-    date_time = models.DateTimeField(null=True)
+    date_time = models.TextField(null=True)
     false_positive = models.TextField(null=True, blank=True)
 
 
@@ -63,4 +63,4 @@ class scan_save_db(models.Model):
     medium_total = models.TextField(blank=True)
     low_total = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
-    date_time = models.DateTimeField(null=True)
+    date_time = models.TextField(null=True)

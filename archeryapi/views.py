@@ -25,6 +25,7 @@ from scanners.scanner_plugin.web_scanner import burp_plugin
 from itertools import chain
 import threading
 from django.utils import timezone
+import datetime
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -56,7 +57,7 @@ class WebScan(generics.ListCreateAPIView):
                 thread.start()
 
             elif scanner == 'burp_scan':
-                date_time = timezone.now()
+                date_time = datetime.datetime.now()
                 scan_dump = burp_scan_db(scan_id=scan_id,
                                          project_id=project_id,
                                          url=target_url,

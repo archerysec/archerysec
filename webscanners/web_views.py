@@ -41,7 +41,16 @@ from webscanners.models import zap_scan_results_db, \
     zap_spider_results, \
     cookie_db, excluded_db, \
     burp_scan_db, burp_scan_result_db, \
-    arachni_scan_db, arachni_scan_result_db
+    arachni_scan_db, arachni_scan_result_db, task_schedule_db
+from background_task import background
+from datetime import datetime
+from background_task.models import Task
+import os
+import subprocess
+#
+# log_path = os.getcwd() + '/' + 'task_background.log'
+# with open(log_path, 'w+') as log_file:
+#     subprocess.Popen('python manage.py process_tasks', stdout=log_file, stderr=subprocess.STDOUT)
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -226,7 +235,7 @@ def launch_web_scan(target_url, project_id, rescan_id, rescan):
     """ ZAP Scan trigger on target_url  """
     zap_scan_id = zap.zap_scan()
     un_scanid = uuid.uuid4()
-    date_time = timezone.now()
+    date_time = datetime.now()
     try:
         save_all_scan = zap_scans_db(
             project_id=project_id,
@@ -254,7 +263,7 @@ def launch_web_scan(target_url, project_id, rescan_id, rescan):
         un_scanid=un_scanid,
     )
     print save_all_vuln
-    return HttpResponse(status=201)
+    #return HttpResponse(status=201)
 
 
 def web_scan(request):
@@ -267,6 +276,7 @@ def web_scan(request):
     if request.POST.get("url", ):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
+        print "Project id", project_id
         rescan_id = None
         rescan = 'No'
         print target_url
@@ -274,21 +284,169 @@ def web_scan(request):
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
+            print "targetssss -", target
             thread = threading.Thread(
                 target=launch_web_scan,
                 args=(target, project_id, rescan_id, rescan))
             thread.daemon = True
             thread.start()
+            return HttpResponse(status=200)
 
         # launch_web_scan(target_url, project_id)
         if scans_status == '100':
             scans_status = "0"
         else:
             return scans_status
-        return HttpResponse(status=201)
+        return HttpResponse(status=200)
 
     return render(request,
                   'scan_list.html')
+
+
+@background(schedule=60)
+def task(target_url, project_id, scanner):
+    rescan_id = ''
+    rescan = 'No'
+    target__split = target_url.split(',')
+    split_length = target__split.__len__()
+    for i in range(0, split_length):
+        target = target__split.__getitem__(i)
+        if scanner == 'zap_scan':
+            thread = threading.Thread(
+                target=launch_web_scan,
+                args=(target, project_id, rescan_id, rescan))
+            thread.daemon = True
+            thread.start()
+        elif scanner == 'burp_scan':
+            scan_id = uuid.uuid4()
+            do_scan = burp_plugin.burp_scans(
+                project_id,
+                target,
+                scan_id)
+            thread = threading.Thread(
+                target=do_scan.scan_launch,
+            )
+            thread.daemon = True
+            thread.start()
+
+        return HttpResponse(status=200)
+
+
+def web_task_launch(request):
+
+    if request.method == 'GET':
+        task_time = request.GET['time']
+
+        t = Task.objects.all()
+        #t.delete()
+        print task_time
+
+        for ta in t:
+            print ta.run_at
+            print ta.id
+
+    return HttpResponse(status=200)
+
+
+def web_scan_schedule(request):
+    """
+
+    :param request:
+    :return:
+    """
+    all_scans_db = project_db.objects.all()
+    all_scheduled_scans = task_schedule_db.objects.all()
+
+    if request.method == 'POST':
+        scan_url = request.POST.get('url')
+        scan_schedule_time = request.POST.get('datetime')
+        project_id = request.POST.get('project_id')
+        scanner = request.POST.get('scanner')
+        # periodic_task = request.POST.get('periodic_task')
+        periodic_task_value = request.POST.get('periodic_task_value')
+        # periodic_task = 'Yes'
+        print 'scanner-', scanner
+
+        if periodic_task_value == 'HOURLY':
+            periodic_time = Task.HOURLY
+        elif periodic_task_value == 'DAILY':
+            periodic_time = Task.DAILY
+        elif periodic_task_value == 'WEEKLY':
+            periodic_time = Task.WEEKLY
+        elif periodic_task_value == 'EVERY_2_WEEKS':
+            periodic_time = Task.EVERY_2_WEEKS
+        elif periodic_task_value == 'EVERY_4_WEEKS':
+            periodic_time = Task.EVERY_4_WEEKS
+        else:
+            periodic_time = None
+
+        dt_str = scan_schedule_time
+        dt_obj = datetime.strptime(dt_str, '%d/%m/%Y %H:%M:%S %p')
+
+        print "scan_url", scan_url
+        print "schedule", scan_schedule_time
+
+        # task(scan_url, project_id, schedule=dt_obj)
+
+        target__split = scan_url.split(',')
+        split_length = target__split.__len__()
+        for i in range(0, split_length):
+            target = target__split.__getitem__(i)
+
+            if scanner == 'zap_scan':
+                if periodic_task_value == 'None':
+                    my_task = task(target, project_id, scanner, schedule=dt_obj)
+                    task_id = my_task.id
+                    print "Savedddddd taskid", task_id
+                else:
+
+                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
+                    task_id = my_task.id
+                    print "Savedddddd taskid", task_id
+            elif scanner == 'burp_scan':
+                if periodic_task_value == 'None':
+                    my_task = task(target, project_id, scanner, schedule=dt_obj)
+                    task_id = my_task.id
+                else:
+                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
+                    task_id = my_task.id
+                    print "Savedddddd taskid", task_id
+            save_scheadule = task_schedule_db(task_id=task_id, target=target,
+                                              schedule_time=scan_schedule_time,
+                                              project_id=project_id,
+                                              scanner=scanner,
+                                              periodic_task=periodic_task_value)
+            save_scheadule.save()
+
+    return render(request, 'web_scan_schedule.html',
+                  {'all_scans_db': all_scans_db,
+                   'all_scheduled_scans': all_scheduled_scans}
+                  )
+
+
+def del_web_scan_schedule(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if request.method == "POST":
+        task_id = request.POST.get('task_id')
+
+        scan_item = str(task_id)
+        taskid = scan_item.replace(" ", "")
+        target_split = taskid.split(',')
+        split_length = target_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            task_id = target_split.__getitem__(i)
+            del_task = task_schedule_db.objects.filter(task_id=task_id)
+            del_task.delete()
+            del_task_schedule = Task.objects.filter(id=task_id)
+            del_task_schedule.delete()
+
+    return HttpResponseRedirect('/webscanners/web_scan_schedule')
 
 
 def zap_rescan(request):
@@ -951,7 +1109,7 @@ def burp_scan_launch(request):
             target = target__split.__getitem__(i)
             print "Targets", target
             scan_id = uuid.uuid4()
-            date_time = timezone.now()
+            date_time = datetime.now()
             scan_dump = burp_scan_db(scan_id=scan_id,
                                      project_id=project_id,
                                      url=target,
@@ -1187,7 +1345,7 @@ def xml_upload(request):
         scan_id = uuid.uuid4()
         scan_status = "100"
         if scanner == "zap_scan":
-            date_time = timezone.now()
+            date_time = datetime.now()
             scan_dump = zap_scans_db(scan_url=scan_url,
                                      scan_scanid=scan_id,
                                      date_time=date_time,
@@ -1202,7 +1360,7 @@ def xml_upload(request):
                                       root=root_xml)
             return HttpResponseRedirect("/webscanners/scans_list/")
         elif scanner == "burp_scan":
-            date_time = timezone.now()
+            date_time = datetime.now()
             scan_dump = burp_scan_db(url=scan_url,
                                      scan_id=scan_id,
                                      date_time=date_time,
@@ -1223,7 +1381,7 @@ def xml_upload(request):
             print scanner
             print xml_file
             print scan_url
-            date_time = timezone.now()
+            date_time = datetime.now()
             scan_dump = arachni_scan_db(url=scan_url,
                                         scan_id=scan_id,
                                         date_time=date_time,

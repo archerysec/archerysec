@@ -131,7 +131,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile):
     openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile)
     scanner = openvas.connect()
     scan_id, target_id = openvas.scan_launch(scanner)
-    date_time = timezone.now()
+    date_time = datetime.datetime.now()
     save_all = scan_save_db(scan_id=str(scan_id),
                             project_id=str(project_id),
                             scan_ip=scan_ip,
@@ -290,7 +290,7 @@ def del_vuln(request):
                     high_total=total_high,
                     medium_total=total_medium,
                     low_total=total_low)
-        messages.success(request, "Deleted vulnerability")
+        #messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % un_scanid)
 

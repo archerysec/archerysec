@@ -32,7 +32,7 @@ class zap_scans_db(models.Model):
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
     project_id = models.UUIDField(null=True)
-    date_time = models.DateTimeField(null=True)
+    date_time = models.TextField(null=True)
     rescan = models.TextField(blank=True, null=True)
 
 
@@ -79,7 +79,7 @@ class zap_scan_results_db(models.Model):
     cookieParams = models.TextField(blank=True)
     res_type = models.TextField(blank=True)
     res_id = models.TextField(blank=True)
-    date_time = models.DateTimeField(null=True)
+    date_time = models.TextField(null=True)
     false_positive = models.TextField(null=True, blank=True)
 
 
@@ -103,7 +103,7 @@ class burp_scan_db(models.Model):
     high_vul = models.IntegerField(blank=True, null=True)
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
-    date_time = models.DateTimeField(blank=True, null=True)
+    date_time = models.TextField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
 
 
@@ -166,7 +166,7 @@ class arachni_scan_db(models.Model):
     high_vul = models.IntegerField(blank=True, null=True)
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
-    date_time = models.DateTimeField(blank=True, null=True)
+    date_time = models.TextField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
 
 
@@ -199,3 +199,14 @@ class arachni_scan_result_db(models.Model):
     request_raw = models.TextField(blank=True)
     response_ip = models.TextField(blank=True)
     response_raw_headers = models.TextField(blank=True)
+
+
+class task_schedule_db(models.Model):
+    task_id = models.TextField(blank=True, null=True)
+    target = models.TextField(blank=True, null=True)
+    schedule_time = models.TextField(blank=True, null=True)
+    project_id = models.TextField(blank=True, null=True)
+    scanner = models.TextField(blank=True, null=True)
+    periodic_task = models.TextField(blank=True, null=True)
+
+
