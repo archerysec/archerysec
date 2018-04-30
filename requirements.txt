@@ -30,5 +30,4 @@ xhtml2pdf==0.2b1
 django-background-tasks==1.1.13
 argparse
 dnspython
-requests
 python-whois==0.6.2
