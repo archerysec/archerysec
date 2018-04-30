@@ -50,7 +50,7 @@ import subprocess
 #
 # log_path = os.getcwd() + '/' + 'task_background.log'
 # with open(log_path, 'w+') as log_file:
-#     subprocess.Popen('python manage.py process_tasks', stdout=log_file, stderr=subprocess.STDOUT)
+#     subprocess.Popen("process_task.bat", stdout=log_file, shell=False)
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -280,7 +280,9 @@ def web_scan(request):
         rescan_id = None
         rescan = 'No'
         print target_url
-        target__split = target_url.split(',')
+        target_item = str(target_url)
+        value = target_item.replace(" ", "")
+        target__split = value.split(',')
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
@@ -290,7 +292,6 @@ def web_scan(request):
                 args=(target, project_id, rescan_id, rescan))
             thread.daemon = True
             thread.start()
-            return HttpResponse(status=200)
 
         # launch_web_scan(target_url, project_id)
         if scans_status == '100':

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'projects',
     'APIScan',
     'networkscanners',
+    'osintscan',
     'django.contrib.admin',
     'stronghold',
     'django.contrib.auth',

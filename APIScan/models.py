@@ -26,7 +26,7 @@ class APIScan_db(models.Model):
     auth_url = models.CharField(blank=True, max_length=10)
     auth_token_key = models.TextField(blank=True)
     extra_vaule_auth = models.TextField(blank=True)
-    date_time = models.TextField(null=True)
+    date_time = models.DateTimeField(null=True)
 
 
 class APIScan_url_db(models.Model):
@@ -39,7 +39,7 @@ class APIScan_url_db(models.Model):
     auth_url = models.CharField(blank=True, max_length=10)
     auth_token_key = models.TextField(blank=True)
     extra_vaule_auth = models.TextField(blank=True)
-    date_time = models.TextField(null=True)
+    date_time = models.DateTimeField(null=True)
 
 
 class api_token_db(models.Model):
@@ -47,4 +47,4 @@ class api_token_db(models.Model):
     scan_url = models.URLField(blank=True)
     scan_id = models.UUIDField(blank=True)
     api_token = models.TextField(blank=True)
-    date_time = models.TextField(null=True)
+    date_time = models.DateTimeField(null=True)

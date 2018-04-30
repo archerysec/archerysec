@@ -11,57 +11,65 @@
     <link rel="stylesheet" href="/static/css/select2.css"/>
     <link rel="stylesheet" href="/static/css/archery-style.css"/>
     <link rel="stylesheet" href="/static/css/archery-media.css"/>
-    <link rel="stylesheet" href="/static/css/jquery.gritter.css" />
+    <link rel="stylesheet" href="/static/css/jquery.gritter.css"/>
     <link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet"/>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
-<div id="sidebar">
-    <ul>
-        <li><a href="/dashboard/"><i class="icon-tasks"></i> <span>Dashboard</span></a></li>
-        <li><a href="/projects/"><i class="icon-tasks"></i> <span>Projects</span></a></li>
-        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
-                class="label label-important">2</span></a>
-            <ul>
-                <li><a href="/webscanners/">Domain</a></li>
-                <li><a href="/networkscanners/ip_scan">IP</a></li>
+    <div id="sidebar">
+        <ul>
+            <li><a href="/dashboard/"><i class="icon-tasks"></i> <span>Dashboard</span></a></li>
+            <li><a href="/projects/"><i class="icon-tasks"></i> <span>Projects</span></a></li>
+            <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
+                    class="label label-important">2</span></a>
+                <ul>
+                    <li><a href="/webscanners/">Domain</a></li>
+                    <li><a href="/networkscanners/ip_scan">IP</a></li>
 
-            </ul>
-        </li>
-         <li class="submenu">
-            <a href="#">
-                <i class="icon icon-inbox"></i>
-                <span>Web Scans</span><span
-                class="label label-important">3</span>
-            </a>
-            <ul>
-                <li><a href="/webscanners/scans_list/">Zap Scan</a></li>
-                <li><a href="/webscanners/burp_scan_list">Burp Scan</a></li>
-                <li><a href="/webscanners/arachni_scan_list">Arachni</a></li>
-            </ul>
-        </li>
-        <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
-        <!--<li><a href="/scanapi/"><i class="icon icon-th"></i> <span>API Scan</span></a></li>-->
-    </ul>
-</div>
+                </ul>
+            </li>
+            <li class="submenu">
+                <a href="#">
+                    <i class="icon icon-inbox"></i>
+                    <span>Web Scans</span><span
+                        class="label label-important">3</span>
+                </a>
+                <ul>
+                    <li><a href="/webscanners/scans_list/">Zap Scan</a></li>
+                    <li><a href="/webscanners/burp_scan_list">Burp Scan</a></li>
+                    <li><a href="/webscanners/arachni_scan_list">Arachni</a></li>
+                </ul>
+            </li>
+            <li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>
+            <!--<li><a href="/scanapi/"><i class="icon icon-th"></i> <span>API Scan</span></a></li>-->
+            <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>OSINT Scan</span> <span
+                    class="label label-important">2</span></a>
+                <ul>
+                    <li><a href="/osintscan/domain_list/"><i class="icon-tasks"></i> <span>Domain List</span></a></li>
+                    <li><a href="/osintscan/domain_osint/"><i class="icon-tasks"></i> <span>Domain OSINT</span></a></li>
 
-{% block body %}
+                </ul>
+            </li>
+        </ul>
+    </div>
 
-{% endblock %}
-<!--Footer-part-->
-<div class="row-fluid">
-    <div id="footer" class="span12"><a href="http://themedesigner.in"></a></div>
-</div>
-<script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/jquery.ui.custom.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/jquery.uniform.js"></script>
-<script src="/static/js/select2.min.js"></script>
-<script src="/static/js/jquery.dataTables.min.js"></script>
-<script src="/static/js/archery.js"></script>
-<script src="/static/js/archery.tables.js"></script>
-<script src="/static/js/jquery.gritter.min.js"></script>
-<script src="/static/js/jquery.peity.min.js"></script>
-<script src="/static/js/archery.popover.js"></script>
-<!--<script src="/static/js/archery.interface.js"></script>-->
+    {% block body %}
 
-</body>
+    {% endblock %}
+    <!--Footer-part-->
+    <div class="row-fluid">
+        <div id="footer" class="span12"><a href="http://themedesigner.in"></a></div>
+    </div>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.ui.custom.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/jquery.uniform.js"></script>
+    <script src="/static/js/select2.min.js"></script>
+    <script src="/static/js/jquery.dataTables.min.js"></script>
+    <script src="/static/js/archery.js"></script>
+    <script src="/static/js/archery.tables.js"></script>
+    <script src="/static/js/jquery.gritter.min.js"></script>
+    <script src="/static/js/jquery.peity.min.js"></script>
+    <script src="/static/js/archery.popover.js"></script>
+    <!--<script src="/static/js/archery.interface.js"></script>-->
+
+    </body>
 </html>
