@@ -18,7 +18,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/networkscanners/scan_del/',
+                url:'/networkscanners/delete_nessus_scan/',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -38,7 +38,7 @@
     <div id="content-header">
         <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
                 href="#" class="current">IP Scan List</a></div>
-        <h1>OpenVAS Scans</h1>
+        <h1>Nessus Scans</h1>
     </div>
     <div class="container-fluid">
         <hr>
@@ -76,6 +76,7 @@
                                 <th>Date Time</th>
                                 <th>Status</th>
                                 <th>Total</th>
+                                <th>Critical</th>
                                 <th>High</th>
                                 <th>Medium</th>
                                 <th>Low</th>
@@ -83,7 +84,7 @@
                                 <th></th>
                             </tr>
                             </thead>
-                            <tbody>{% for data in all_ip %}
+                            <tbody>{% for data in all_scan %}
                             <tr data-target="#">
                                 <td>
                                     <form>
@@ -95,7 +96,7 @@
                                         <!--<button type="button" >Get Values</button>-->
                                     </form>
                                 </td>
-                                <td><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
+                                <td><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
                                 <td>{{data.date_time}}</td>
                                 <td width="30%">
                                     <div class="progress progress-info">
@@ -103,19 +104,20 @@
                                     </div>
                                 </td>
                                 <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-important">{{data.critical_total}}</span></td>
                                 <td><span class="badge badge-important">{{data.high_total}}</span></td>
                                 <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
                                 <td><span class="badge badge-info">{{data.low_total}}</span></td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn btn-primary"
-                                           href="/networkscanners/vul_details/?scan_id={{data.scan_id}}"><i
+                                           href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}"><i
                                                 class="icon-tasks icon-white"></i>
                                         </a>
                                         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
                                                 class="caret"></span></a>
                                         <ul class="dropdown-menu">
-                                            <li><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}"><i
+                                            <li><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}"><i
                                                     class="icon-pencil"></i> View </a></li>
                                             <!--<li><a href="/networkscanners/scan_del/?scan_scanid={{data.scan_id}}"><i-->
                                                     <!--class="icon-trash"></i> Delete</a></li>-->
@@ -124,7 +126,7 @@
 
                                 </td>
                                 <td>
-                                    <form action="/networkscanners/scan_del/" method="post" class="forms-sample">
+                                    <form action="/networkscanners/delete_nessus_scan/" method="post" class="forms-sample">
 
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>

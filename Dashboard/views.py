@@ -15,7 +15,7 @@
 from __future__ import unicode_literals
 
 from webscanners.models import zap_scans_db, burp_scan_db
-from networkscanners.models import scan_save_db
+from networkscanners.models import scan_save_db, nessus_scan_db
 from projects.models import project_db
 from django.shortcuts import render, render_to_response, HttpResponse
 from itertools import chain
@@ -33,11 +33,15 @@ def dash_call(request):
     :param request:
     :return:
     """
+
+    # All vulnerability count from database
     all_project = project_db.objects.all()
     all_zap_scan = zap_scans_db.objects.aggregate(Sum('total_vul'))
     all_burp_scan = burp_scan_db.objects.aggregate(Sum('total_vul'))
     all_openvas_scan = scan_save_db.objects.aggregate(Sum('total_vul'))
+    all_nessus_scan = nessus_scan_db.objects.aggregate(Sum('total_vul'))
 
+    # For ZAP Scan vulnerability count
     for key, value in all_zap_scan.iteritems():
         if value is None:
             all_zap = '0'
@@ -53,12 +57,20 @@ def dash_call(request):
             all_openvas = '0'
         else:
             all_openvas = value
-    all_vuln = int(all_zap) + int(all_burp) + int(all_openvas)
-    total_network = all_openvas
+    for key, value in all_nessus_scan.iteritems():
+        if value is None:
+            all_nessus = '0'
+        else:
+            all_nessus = value
+    all_vuln = int(all_zap) + int(all_burp) + int(all_openvas) + int(all_nessus)
+    total_network = int(all_openvas) + int(all_nessus)
+
     total_web = int(all_zap) + int(all_burp)
     all_zap_high = zap_scans_db.objects.aggregate(Sum('high_vul'))
     all_burp_high = burp_scan_db.objects.aggregate(Sum('high_vul'))
     all_openvas_high = scan_save_db.objects.aggregate(Sum('high_total'))
+    all_nessus_high = nessus_scan_db.objects.aggregate(Sum('high_total'))
+
     for key, value in all_zap_high.iteritems():
         if value is None:
             zap_high = '0'
@@ -74,12 +86,19 @@ def dash_call(request):
             openvas_high = '0'
         else:
             openvas_high = value
-    all_high = int(zap_high) + int(burp_high) + int(openvas_high)
+    for key, value in all_nessus_high.iteritems():
+        if value is None:
+            openvas_high = '0'
+        else:
+            openvas_high = value
+    all_high = int(zap_high) + int(burp_high) + int(openvas_high) + int(openvas_high) + int(openvas_high)
     all_web_high = int(zap_high) + int(burp_high)
-    all_network_high = openvas_high
+    all_network_high = int(openvas_high) + int(openvas_high)
+
     all_zap_medium = zap_scans_db.objects.aggregate(Sum('medium_vul'))
     all_burp_medium = burp_scan_db.objects.aggregate(Sum('medium_vul'))
     all_openvas_medium = scan_save_db.objects.aggregate(Sum('medium_total'))
+    all_nessus_medium = nessus_scan_db.objects.aggregate(Sum('medium_total'))
 
     for key, value in all_zap_medium.iteritems():
         if value is None:
@@ -98,14 +117,20 @@ def dash_call(request):
             openvas_medium = '0'
         else:
             openvas_medium = value
+    for key, value in all_nessus_medium.iteritems():
+        if value is None:
+            nessus_medium = '0'
+        else:
+            nessus_medium = value
 
-    all_medium = int(zap_medium) + int(burp_medium) + int(openvas_medium)
+    all_medium = int(zap_medium) + int(burp_medium) + int(openvas_medium) + int(nessus_medium)
     all_web_medium = int(zap_medium) + int(burp_medium)
-    all_network_medium = openvas_medium
+    all_network_medium = int(openvas_medium) + int(nessus_medium)
 
     all_zap_low = zap_scans_db.objects.aggregate(Sum('low_vul'))
     all_burp_low = burp_scan_db.objects.aggregate(Sum('low_vul'))
     all_openvas_low = scan_save_db.objects.aggregate(Sum('low_total'))
+    all_nessus_low = nessus_scan_db.objects.aggregate(Sum('low_total'))
 
     for key, value in all_zap_low.iteritems():
         if value is None:
@@ -124,10 +149,15 @@ def dash_call(request):
             openvas_low = '0'
         else:
             openvas_low = value
+    for key, value in all_nessus_low.iteritems():
+        if value is None:
+            nessus_low = '0'
+        else:
+            nessus_low = value
 
-    all_low = int(zap_low) + int(burp_low) + int(openvas_low)
+    all_low = int(zap_low) + int(burp_low) + int(openvas_low) + int(nessus_low)
     all_web_low = int(zap_low) + int(burp_low)
-    all_network_low = openvas_low
+    all_network_low = int(openvas_low) + int(nessus_low)
 
     return render(request,
                   'dashboard.html',
@@ -158,6 +188,7 @@ def vuln_static_dashboard(request):
     all_zap_scan = zap_scans_db.objects.aggregate(Sum('total_vul'))
     all_burp_scan = burp_scan_db.objects.aggregate(Sum('total_vul'))
     all_openvas_scan = scan_save_db.objects.aggregate(Sum('total_vul'))
+    all_nessus_scan = nessus_scan_db.objects.aggregate(Sum('total_vul'))
 
     for key, value in all_zap_scan.iteritems():
         if value is None:
@@ -172,6 +203,11 @@ def vuln_static_dashboard(request):
             all_burp = value
 
     for key, value in all_openvas_scan.iteritems():
+        if value is None:
+            all_openvas = '0'
+        else:
+            all_openvas = value
+    for key, value in all_nessus_scan.iteritems():
         if value is None:
             all_openvas = '0'
         else:

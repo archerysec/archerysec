@@ -25,9 +25,12 @@ from django.shortcuts import render, render_to_response, HttpResponse
 from django.utils import timezone
 
 from archerysettings import save_settings
-from networkscanners.models import scan_save_db, ov_scan_result_db, task_schedule_db
+from networkscanners.models import scan_save_db, \
+    ov_scan_result_db, \
+    task_schedule_db, \
+    nessus_scan_db, nessus_report_db
 from projects.models import project_db
-from scanners.scanner_parser.network_scanner import OpenVas_Parser
+from scanners.scanner_parser.network_scanner import OpenVas_Parser, Nessus_Parser
 from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin, vuln_an_id
 from background_task.models import Task
 from background_task import background
@@ -291,7 +294,7 @@ def del_vuln(request):
                     high_total=total_high,
                     medium_total=total_medium,
                     low_total=total_low)
-        #messages.success(request, "Deleted vulnerability")
+        # messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % un_scanid)
 
@@ -442,6 +445,24 @@ def OpenVas_xml_upload(request):
                                       scan_id=scan_id,
                                       root=root_xml)
             return HttpResponseRedirect("/networkscanners/")
+        elif scanner == "nessus":
+            date_time = datetime.now()
+            scan_dump = nessus_scan_db(
+                scan_ip=scan_ip,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            Nessus_Parser.nessus_parser(root=root_xml,
+                                        scan_id=scan_id,
+                                        project_id=project_id,
+                                        )
+            return HttpResponseRedirect("/networkscanners/nessus_scan")
 
     return render(request,
                   'net_upload_xml.html',
@@ -557,3 +578,124 @@ def del_net_scan_schedule(request):
             del_task_schedule.delete()
 
     return HttpResponseRedirect('/networkscanners/net_scan_schedule')
+
+
+def nessus_scan(request):
+    """
+
+    :param request:
+    :return:
+    """
+    all_scan = nessus_scan_db.objects.all()
+
+    return render(request,
+                  'nessus_scan.html',
+                  {'all_scan': all_scan}
+                  )
+
+
+def nessus_vuln_details(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    scanid = ""
+    if request.method == 'GET':
+        scanid = request.GET['scan_id']
+    print "scansss", scanid
+
+    if request.method == 'POST':
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        false_positive = request.POST.get('false')
+
+        nessus_report_db.objects.filter(scan_id=scan_id,
+                                        vul_id=vuln_id).update(false_positive=false_positive)
+
+        return HttpResponseRedirect(
+            '/networkscanners/nessus_vuln_details/?scan_id=%s' % scan_id)
+
+    all_vuln = nessus_report_db.objects.filter(scan_id=scanid,
+                                               false_positive='No')
+
+    all_false_vul = nessus_report_db.objects.filter(scan_id=scanid,
+                                                    false_positive='Yes')
+    print "zzzzzz", scanid
+    return render(request,
+                  'nessus_vuln_details.html',
+                  {'all_vuln': all_vuln,
+                   'scan_id': scanid,
+                   'all_false_vul': all_false_vul})
+
+
+def delete_nessus_scan(request):
+    if request.method == "POST":
+        scan_id = request.POST.get('scan_id')
+        del_vuln = request.POST.get('del_vuln')
+
+        scan_item = str(scan_id)
+        taskid = scan_item.replace(" ", "")
+        target_split = taskid.split(',')
+        split_length = target_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            task_id = target_split.__getitem__(i)
+
+            del_rep = nessus_report_db.objects.filter(scan_id=task_id)
+            del_rep.delete()
+            del_scan = nessus_scan_db.objects.filter(scan_id=task_id)
+            del_scan.delete()
+
+    return HttpResponseRedirect('/networkscanners/nessus_scan')
+
+
+def delete_nessus_vuln(request):
+    if request.method == "POST":
+        vuln_id = request.POST.get("del_vuln")
+        un_scanid = request.POST.get("scan_id")
+        print "scan_iddd", un_scanid
+
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+            delete_vuln = nessus_report_db.objects.filter(vul_id=vuln_id)
+            delete_vuln.delete()
+        ov_all_vul = nessus_report_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
+        total_vul = len(ov_all_vul)
+        total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
+        total_high = len(ov_all_vul.filter(risk_factor="High"))
+        total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
+        total_low = len(ov_all_vul.filter(risk_factor="Low"))
+
+        nessus_scan_db.objects.filter(scan_id=un_scanid) \
+            .update(total_vul=total_vul,
+                    critical_total=total_critical,
+                    high_total=total_high,
+                    medium_total=total_medium,
+                    low_total=total_low)
+        # messages.success(request, "Deleted vulnerability")
+
+        return HttpResponseRedirect("/networkscanners/nessus_vuln_details/?scan_id=%s" % un_scanid)
+
+
+def nessus_vuln_check(request):
+    """
+    Get the detailed vulnerability information.
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+    else:
+        id_vul = ''
+    vul_dat = nessus_report_db.objects.filter(vul_id=id_vul)
+
+    return render(request, 'nessus_vuln_data.html', {'vul_dat': vul_dat})
+
+
