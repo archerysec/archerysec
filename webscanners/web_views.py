@@ -49,7 +49,6 @@ import os
 from jiraticketing.models import jirasetting
 import subprocess
 
-
 # from background_task.management.commands.process_tasks import Command
 #
 # Command()
@@ -603,8 +602,15 @@ def setting(request):
         username = jira.jira_username
         password = jira.jira_password
     jira_server = jira_url
-    jira_username = signing.loads(username)
-    jira_password = signing.loads(password)
+    if username is None:
+        jira_username = None
+    else:
+        jira_username = signing.loads(username)
+
+    if password is None:
+        jira_password = None
+    else:
+        jira_password = signing.loads(password)
 
     return render(request, 'setting.html',
                   {'apikey': lod_apikey,
