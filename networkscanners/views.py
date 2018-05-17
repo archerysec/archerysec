@@ -35,6 +35,7 @@ from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugi
 from background_task.models import Task
 from background_task import background
 from datetime import datetime
+from jiraticketing.models import jirasetting
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -87,6 +88,9 @@ def scan_vul_details(request):
     :param request:
     :return:
     """
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
     scanid = ""
     if request.method == 'GET':
         scanid = request.GET['scan_id']
@@ -109,18 +113,21 @@ def scan_vul_details(request):
                                                 false_positive='No').values('name', 'severity',
                                                                             'vuln_color',
                                                                             'threat', 'host',
-                                                                            'port', 'vul_id').distinct()
+                                                                            'port', 'vul_id',
+                                                                            'jira_ticket').distinct()
 
     all_false_vul = ov_scan_result_db.objects.filter(scan_id=scanid,
                                                      false_positive='Yes').values('name', 'severity',
                                                                                   'vuln_color',
                                                                                   'threat', 'host',
-                                                                                  'port', 'vul_id').distinct()
+                                                                                  'port', 'vul_id',
+                                                                                  'jira_ticket').distinct()
     print "zzzzzz", scanid
     return render(request,
                   'vul_details.html',
                   {'all_vuln': all_vuln,
                    'scan_id': scanid,
+                   'jira_url': jira_url,
                    'all_false_vul': all_false_vul})
 
 
@@ -600,6 +607,9 @@ def nessus_vuln_details(request):
     :param request:
     :return:
     """
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
 
     scanid = ""
     if request.method == 'GET':
@@ -627,6 +637,7 @@ def nessus_vuln_details(request):
                   'nessus_vuln_details.html',
                   {'all_vuln': all_vuln,
                    'scan_id': scanid,
+                   'jira_url': jira_url,
                    'all_false_vul': all_false_vul})
 
 

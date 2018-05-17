@@ -89,12 +89,12 @@ def submit_jira_ticket(request):
         )
         elif scanner == 'arachni':
             arachni_scan_result_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect('')
+            return HttpResponseRedirect('/webscanners/arachni_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, summary))
         elif scanner == 'open_vas':
-            ov_scan_result_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect('')
+            ov_scan_result_db.objects.filter(vul_id=vuln_id).update(jira_ticket=new_issue)
+            return HttpResponseRedirect('/networkscanners/vul_details/?scan_id=%s' % scan_id)
         elif scanner == 'nessus':
-            nessus_report_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect('')
+            nessus_report_db.objects.filter(vul_id=vuln_id).update(jira_ticket=new_issue)
+            return HttpResponseRedirect('/networkscanners/nessus_vuln_details/?scan_id=%s' % scan_id)
 
             # return render(request, 'submit_jira_ticket.html')

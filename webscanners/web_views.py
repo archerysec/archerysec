@@ -1528,6 +1528,10 @@ def arachni_vuln_out(request):
     :param request:
     :return:
     """
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         name = request.GET['scan_name']
@@ -1551,7 +1555,9 @@ def arachni_vuln_out(request):
     return render(request,
                   'arachni_vuln_out.html',
                   {'vuln_data': vuln_data,
-                   'false_data': false_data})
+                   'false_data': false_data,
+                   'jira_url': jira_url,
+                   })
 
 
 def del_arachni_scan(request):

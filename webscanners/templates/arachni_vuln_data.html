@@ -15,12 +15,16 @@
                 </a>
                 <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span
                         class="caret"></span></a>
-                <!--<ul class="dropdown-menu">-->
+                <ul class="dropdown-menu">
                     <!--<li><a href="/webscanners/edit_burp_vuln/?vuln_id={{data.vuln_id}}"><i-->
-                            <!--class="icon-pencil"></i> Edit </a></li>-->
-                    <!--&lt;!&ndash;<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i&ndash;&gt;-->
-                    <!--&lt;!&ndash;class="icon-trash"></i> Delete</a></li>&ndash;&gt;-->
-                <!--</ul>-->
+                    <!--class="icon-pencil"></i> Edit </a></li>-->
+                    <!--<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i-->
+                    <!--class="icon-trash"></i> Delete</a></li>-->
+                    <li>
+                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description={{data.description}}%0a%0a%0a Vulnerable URL: {{data.url}} %0a%0a Vulnerable Parameter: {{data.vector_input_values}} %0a%0a Solution: {{data.remedy_guidance}} %0a%0a Archery URL: {SERVERIP}/webscanners/arachni_vuln_data/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.request_raw }}&scanner=arachni&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "><i
+                                class="icon-random"></i> Jira Ticket</a>
+                    </li>
+                </ul>
             </div>
 
             <h1>{{ data.name }}</h1>

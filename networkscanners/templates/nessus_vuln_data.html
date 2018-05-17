@@ -20,6 +20,10 @@
                             class="icon-pencil"></i> Edit </a></li>
                     <!--<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i-->
                     <!--class="icon-trash"></i> Delete</a></li>-->
+                    <li>
+                        <a href="/jira/submit_jira_ticket/?summary={{ data.plugin_name }}&description={{data.description}}%0a%0a%0a Vulnerable Host: {{data.scan_ip}} %0a%0a Vulnerable Port: {{data.port}} %0a%0a Solution: {{data.solution}} %0a%0a Archery URL: {SERVERIP}/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}} %0a%0a Request Header: {{ data.request_raw }}&scanner=nessus&vuln_id={{data.vul_id}}&scan_id={{data.scan_id}} "><i
+                                class="icon-random"></i> Jira Ticket</a>
+                    </li>
                 </ul>
             </div>
 

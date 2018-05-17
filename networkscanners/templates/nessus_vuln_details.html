@@ -75,6 +75,7 @@
                                 <th>Severity</th>
                                 <th>Host</th>
                                 <th>Location</th>
+                                <th>JIRA Ticket</th>
                                 <th>False Positive</th>
                                 <th></th>
                                 <th></th>
@@ -99,6 +100,7 @@
                                 <td>{{data.severity}}</td>
                                 <td>{{data.scan_ip}}</td>
                                 <td>{{data.port}}</td>
+                                <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                 <td>
                                     <form method="POST" action="/networkscanners/nessus_vuln_details/" >{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vul_id}}">

@@ -33,6 +33,7 @@
 
     });
 
+
 </script>
 
 <div id="content">
@@ -60,12 +61,13 @@
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Network Vulnerabilities</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/networkscanners/add_vuln/?scan_id={{ scan_id }}"
+                        <div class="buttons"><a data-toggle="modal"
+                                                href="/networkscanners/add_vuln/?scan_id={{ scan_id }}"
                                                 class="btn btn-primary btn-mini"><i
                                 class="icon-plus icon-white"></i> Add new Vulnerability</a>
                         </div>
                         <div class="buttons">
-                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
                     </div>
                     <div class="widget-content nopadding">
@@ -78,6 +80,7 @@
                                 <th>Severity</th>
                                 <th>Host</th>
                                 <th>Location</th>
+                                <th>JIRA Ticket</th>
                                 <th>False Positive</th>
                                 <th></th>
                                 <th></th>
@@ -102,8 +105,10 @@
                                 <td>{{data.severity}}</td>
                                 <td>{{data.host}}</td>
                                 <td>{{data.port}}</td>
+                                <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
+                                </td>
                                 <td>
-                                    <form method="POST" action="/networkscanners/vul_details/" >{% csrf_token %}
+                                    <form method="POST" action="/networkscanners/vul_details/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                         <input type="hidden" name="scan_id" value="{{scan_id}}">
                                         <input type="hidden" name="false" value="Yes">
@@ -128,7 +133,7 @@
                                     </div>
                                 </td>
                             </tr>
-{% endfor %}
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -142,7 +147,7 @@
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>False Positive Vulnerabilities</h5>
                         <div class="buttons">
-                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
                     </div>
                     <div class="widget-content nopadding">
@@ -180,7 +185,7 @@
                                 <td>{{data.host}}</td>
                                 <td>{{data.port}}</td>
                                 <td>
-                                    <form method="POST" action="/networkscanners/vul_details/" >{% csrf_token %}
+                                    <form method="POST" action="/networkscanners/vul_details/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                         <input type="hidden" name="scan_id" value="{{scan_id}}">
                                         <input type="hidden" name="false" value="No">
