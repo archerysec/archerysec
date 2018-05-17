@@ -567,6 +567,9 @@ def setting(request):
     :param request:
     :return:
     """
+    jira_url = None
+    username = None
+    password = None
     # Loading settings
     settings = load_settings.ArcherySettings(setting_file)
 
