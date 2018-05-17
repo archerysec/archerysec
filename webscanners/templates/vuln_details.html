@@ -77,6 +77,7 @@
                                 <th>Vulnerability</th>
                                 <th>URL</th>
                                 <th>Risk</th>
+                                <th>JIRA Ticket</th>
                                 <th>False Positive</th>
                                 <th></th>
                                 <th></th>
@@ -96,6 +97,7 @@
                                 </td>
                                 <td width="50%">{{data.url}}</td>
                                 <td><span class="badge badge-{{data.vuln_color}}">{{data.risk}}</span></td>
+                                <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a></td>
                                 <td>
                                     <form method="POST" action="/webscanners/zap_vul_details/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">

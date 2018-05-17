@@ -46,11 +46,17 @@ from background_task import background
 from datetime import datetime
 from background_task.models import Task
 import os
+from jiraticketing.models import jirasetting
 import subprocess
+
+
+# from background_task.management.commands.process_tasks import Command
 #
+# Command()
+
 # log_path = os.getcwd() + '/' + 'task_background.log'
 # with open(log_path, 'w+') as log_file:
-#     subprocess.Popen("process_task.bat", stdout=log_file, shell=False)
+# subprocess.Popen("python manage.py process_tasks", shell=False)
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -263,7 +269,7 @@ def launch_web_scan(target_url, project_id, rescan_id, rescan):
         un_scanid=un_scanid,
     )
     print save_all_vuln
-    #return HttpResponse(status=201)
+    # return HttpResponse(status=201)
 
 
 def web_scan(request):
@@ -334,12 +340,11 @@ def task(target_url, project_id, scanner):
 
 
 def web_task_launch(request):
-
     if request.method == 'GET':
         task_time = request.GET['time']
 
         t = Task.objects.all()
-        #t.delete()
+        # t.delete()
         print task_time
 
         for ta in t:
@@ -516,6 +521,10 @@ def vuln_details(request):
     :param request:
     :return:
     """
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
     if request.method == 'GET':
         scan_vul = request.GET['scan_id']
         scan_name = request.GET['scan_name']
@@ -547,7 +556,9 @@ def vuln_details(request):
                   'vuln_details.html',
                   {'zap_all_vul': zap_all_vul,
                    'scan_vul': scan_vul,
-                   'zap_all_false_vul': zap_all_false_vul})
+                   'zap_all_false_vul': zap_all_false_vul,
+                   'jira_url': jira_url
+                   })
 
 
 def setting(request):
@@ -581,6 +592,17 @@ def setting(request):
     email_from = settings.email_from()
     to_email = settings.email_to()
 
+    # Load JIRA Setting
+    jira_setting = jirasetting.objects.all()
+
+    for jira in jira_setting:
+        jira_url = jira.jira_server
+        username = jira.jira_username
+        password = jira.jira_password
+    jira_server = jira_url
+    jira_username = signing.loads(username)
+    jira_password = signing.loads(password)
+
     return render(request, 'setting.html',
                   {'apikey': lod_apikey,
                    'zapath': zap_host,
@@ -592,7 +614,11 @@ def setting(request):
                    'burp_port': burp_port,
                    'email_subject': email_subject,
                    'email_from': email_from,
-                   'to_email': to_email})
+                   'to_email': to_email,
+                   'jira_server': jira_server,
+                   'jira_username': jira_username,
+                   'jira_password': jira_password,
+                   })
 
 
 def zap_setting(request):
@@ -1193,6 +1219,10 @@ def burp_vuln_out(request):
     :param request:
     :return:
     """
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         name = request.GET['scan_name']
@@ -1213,7 +1243,10 @@ def burp_vuln_out(request):
                                                     name=name,
                                                     false_positive='Yes')
 
-    return render(request, 'burp_vuln_out.html', {'vuln_data': vuln_data, 'false_data': false_data})
+    return render(request, 'burp_vuln_out.html', {'vuln_data': vuln_data,
+                                                  'false_data': false_data,
+                                                  'jira_url': jira_url
+                                                  })
 
 
 def del_burp_scan(request):

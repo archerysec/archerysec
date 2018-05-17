@@ -81,6 +81,7 @@ class zap_scan_results_db(models.Model):
     res_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
     false_positive = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
 
 
 class cookie_db(models.Model):
@@ -132,6 +133,7 @@ class burp_scan_result_db(models.Model):
     scan_response = models.TextField(blank=True)
     method = models.TextField(blank=True)
     false_positive = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
 
 
 class web_scan_db(models.Model):
@@ -199,6 +201,7 @@ class arachni_scan_result_db(models.Model):
     request_raw = models.TextField(blank=True)
     response_ip = models.TextField(blank=True)
     response_raw_headers = models.TextField(blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
 
 
 class task_schedule_db(models.Model):

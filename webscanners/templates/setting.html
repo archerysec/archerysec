@@ -9,105 +9,145 @@
     </div>
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span6 offset3">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>Email Setting</h5>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="widget-content">
-                                <div>
-                                    <label>Email Subject</label>
-                                    <div class="form-group">
-                                        <pre>{{ email_subject }}</pre>
+            <div class="bs-docs-grid">
+                <div class="row-fluid show-grid">
+                    <div class="span4">
+                        <!--<div class="widget-box">-->
+                        <!--<div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>-->
+                        <!--<h5>Email Setting</h5>-->
+                        <!--</div>-->
+                        <!--<div class="card">-->
+                        <!--<div class="card-body">-->
+                        <!--<div class="widget-content">-->
+                        <!--<div>-->
+                        <!--<label>Email Subject</label>-->
+                        <!--<div class="form-group">-->
+                        <!--<pre>{{ email_subject }}</pre>-->
+                        <!--</div>-->
+                        <!--<label>From Email</label>-->
+                        <!--<div class="form-group">-->
+                        <!--<pre>{{ email_from }}</pre>-->
+                        <!--</div>-->
+                        <!--<label>To Email</label>-->
+                        <!--<div class="form-group">-->
+                        <!--<pre>{{ to_email }}</pre>-->
+                        <!--</div>-->
+                        <!--<a class="btn btn-primary" href="/webscanners/email_setting/"-->
+                        <!--role="button">Edit</a>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <div class="widget-box">
+                            <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                                <h5>JIRA Setting</h5>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="widget-content">
+                                        <div>
+                                            <label>JIRA Server URL</label>
+                                            <div class="form-group">
+                                                <pre>{{ jira_server }}</pre>
+                                            </div>
+                                            <label>JIRA Username</label>
+                                            <div class="form-group">
+                                                <pre>{{ jira_username }}</pre>
+                                            </div>
+
+                                            <label>JIRA Password</label>
+                                            <label>Password</label>
+                                            <div class="form-group">
+                                                <input disabled value="{{ jira_password }}" type="password">
+                                            </div>
+
+                                            <a class="btn btn-primary" href="/jira/jira_setting/"
+                                               role="button">Edit</a>
+                                        </div>
                                     </div>
-                                    <label>From Email</label>
-                                    <div class="form-group">
-                                        <pre>{{ email_from }}</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-box">
+                            <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                                <h5>OpenVas Setting</h5>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="widget-content">
+                                        <div>
+                                            <label>Host</label>
+                                            <div class="form-group">
+                                                <pre>{{ lod_ov_ip }}</pre>
+                                            </div>
+                                            <label>User</label>
+                                            <div class="form-group">
+                                                <pre>{{ lod_ov_user }}</pre>
+                                            </div>
+                                            <label>Password</label>
+                                            <div class="form-group">
+                                                <input disabled value="{{ lod_ov_pass }}" type="password">
+                                            </div>
+                                            <a class="btn btn-primary" href="/networkscanners/openvas_setting"
+                                               role="button">Edit</a>
+                                        </div>
                                     </div>
-                                    <label>To Email</label>
-                                    <div class="form-group">
-                                        <pre>{{ to_email }}</pre>
-                                    </div>
-                                    <a class="btn btn-primary" href="/webscanners/email_setting/" role="button">Edit</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>ZAP Setting</h5>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="widget-content">
-                                <div>
-                                    <label>Zap API Key</label>
-                                    <div class="form-group">
-                                        <pre>{{ apikey }}</pre>
+                    <div class="span4">
+                        <div class="widget-box">
+                            <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                                <h5>ZAP Setting</h5>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="widget-content">
+                                        <div>
+                                            <label>Zap API Key</label>
+                                            <div class="form-group">
+                                                <pre>{{ apikey }}</pre>
+                                            </div>
+                                            <label>Zap API Host</label>
+                                            <div class="form-group">
+                                                <pre>{{ zapath }}</pre>
+                                            </div>
+                                            <label>Zap API Port</label>
+                                            <div class="form-group">
+                                                <pre>{{ zap_port }}</pre>
+                                            </div>
+                                            <a class="btn btn-primary" href="/webscanners/zapsetting/"
+                                               role="button">Edit</a>
+                                        </div>
                                     </div>
-                                    <label>Zap API Host</label>
-                                    <div class="form-group">
-                                        <pre>{{ zapath }}</pre>
-                                    </div>
-                                    <label>Zap API Port</label>
-                                    <div class="form-group">
-                                        <pre>{{ zap_port }}</pre>
-                                    </div>
-                                    <a class="btn btn-primary" href="/webscanners/zapsetting/" role="button">Edit</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>Burp Setting</h5>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="widget-content">
-                                <div>
-                                    <label>Burp API Host</label>
-                                    <div class="form-group">
-                                        <pre>{{ burp_path }}</pre>
-                                    </div>
-                                    <label>Burp API Port</label>
-                                    <div class="form-group">
-                                        <pre>{{ burp_port }}</pre>
-                                    </div>
-
-                                    <a class="btn btn-primary" href="/webscanners/burp_setting/" role="button">Edit</a>
-                                </div>
+                    <div class="span4">
+                        <div class="widget-box">
+                            <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                                <h5>Burp Setting</h5>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="widget-content">
+                                        <div>
+                                            <label>Burp API Host</label>
+                                            <div class="form-group">
+                                                <pre>{{ burp_path }}</pre>
+                                            </div>
+                                            <label>Burp API Port</label>
+                                            <div class="form-group">
+                                                <pre>{{ burp_port }}</pre>
+                                            </div>
 
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>OpenVas Setting</h5>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="widget-content">
-                                <div>
-                                    <label>Host</label>
-                                    <div class="form-group">
-                                        <pre>{{ lod_ov_ip }}</pre>
+                                            <a class="btn btn-primary" href="/webscanners/burp_setting/"
+                                               role="button">Edit</a>
+                                        </div>
                                     </div>
-                                    <label>User</label>
-                                    <div class="form-group">
-                                        <pre>{{ lod_ov_user }}</pre>
-                                    </div>
-                                    <label>Password</label>
-                                    <div class="form-group">
-                                        <input disabled value="{{ lod_ov_pass }}" type="password">
-                                    </div>
-                                    <a class="btn btn-primary" href="/networkscanners/openvas_setting" role="button">Edit</a>
                                 </div>
                             </div>
                         </div>

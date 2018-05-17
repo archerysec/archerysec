@@ -36,5 +36,7 @@ urlpatterns = [
     # OSINT scan
     url(r'^osintscan/', include('osintscan.urls')),
 
+    # JIRA
+    url(r'^jira/', include('jiraticketing.urls')),
 
 ]
