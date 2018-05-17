@@ -10,6 +10,7 @@ RUN python manage.py makemigrations webscanners
 RUN python manage.py makemigrations projects
 RUN python manage.py makemigrations APIScan
 RUN python manage.py makemigrations osintscan
+RUN python manage.py makemigrations jiraticketing
 RUN python manage.py migrate
 
 EXPOSE 8000
