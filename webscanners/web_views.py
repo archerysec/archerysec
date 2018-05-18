@@ -520,6 +520,7 @@ def vuln_details(request):
     :param request:
     :return:
     """
+    jira_url = None
     jira = jirasetting.objects.all()
     for d in jira:
         jira_url = d.jira_server
@@ -1228,6 +1229,7 @@ def burp_vuln_out(request):
     :param request:
     :return:
     """
+    jira_url = None
     jira = jirasetting.objects.all()
     for d in jira:
         jira_url = d.jira_server
@@ -1528,6 +1530,8 @@ def arachni_vuln_out(request):
     :param request:
     :return:
     """
+    jira_url = None
+
     jira = jirasetting.objects.all()
     for d in jira:
         jira_url = d.jira_server
