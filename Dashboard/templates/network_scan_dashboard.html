@@ -20,14 +20,14 @@
           ['Low', {{all_network_low}}],
         ]);
 
-        var piechart_options = {title:'Pie Chart: How Much Pizza I Ate Last Night',
-                       width:800,
+        var piechart_options = {title:'Network Vulnerability Pie Chart',
+                       width:700,
                        height:400};
         var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
         piechart.draw(data, piechart_options);
 
-        var barchart_options = {title:'Barchart: How Much Pizza I Ate Last Night',
-                       width:800,
+        var barchart_options = {title:'Barchart: Network Vulnerability',
+                       width:600,
                        height:400,
                        legend: 'none'};
         var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));

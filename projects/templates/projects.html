@@ -10,27 +10,8 @@
     </div>
 
     <div class="container-fluid">
-        <hr>
-        <div class="span3 offset6">
-            {% if messages %}
-
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
-            </div>
-            {% endfor %}
-
-            {% endif %}
-        </div>
         <div class="row-fluid">
-            <!--<div class="span6 offset9">-->
-            <!--<div class="panel">-->
-            <!--<label><a class="btn btn-primary" href="/projects/create_form/">Add Project</a></label>-->
-            <!--</div>-->
-            <!--</div>-->
-        </div>
-        <div class="span12 offset2">
+            <div class="span12">
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                     <h5>Project List</h5>
@@ -73,6 +54,7 @@
                     </table>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 </div>

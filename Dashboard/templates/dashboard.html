@@ -52,13 +52,13 @@
         ]);
 
         var piechart_options = {title:'Pie Chart: Vulnerability found in Web Applicaiton',
-                       width:800,
+                       width:700,
                        height:400, colors: ['#bd3f3b', '#ff7800', '#1b7ec7',]};
         var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
         piechart.draw(data, piechart_options);
 
         var barchart_options = {title:'Barchart: Vulnerability found in Web Application',
-                       width:800,
+                       width:600,
                        height:400,
                        legend: 'none'};
         var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
@@ -81,7 +81,7 @@
         ]);
 
         var net_piechart_options = {title:'Pie Chart: Vulnerability found in Network',
-                       width:800,
+                       width:700,
                        height:400, colors: ['#bd3f3b', '#ff7800', '#1b7ec7',]
                        };
 
@@ -89,7 +89,7 @@
         net_piechart.draw(data, net_piechart_options);
 
         var net_barchart_options = {title:'Barchart: Vulnerability found in Network',
-                       width:800,
+                       width:600,
                        height:400,
                        legend: 'none'};
         var net_barchart = new google.visualization.BarChart(document.getElementById('net_barchart_div'));
@@ -176,7 +176,7 @@
                         </div>
                         <div class="widget-content">
                             <div class="row-fluid">
-                                <div class="span9">
+                                <div class="span6">
                                     <table class="columns">
                                         <tr>
                                             <td>

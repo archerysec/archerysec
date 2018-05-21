@@ -21,13 +21,13 @@
         ]);
 
         var piechart_options = {title:'Pie Chart: Vulnerability found in Project',
-                       width:800,
+                       width:700,
                        height:400, colors: ['#bd3f3b', '#ff7800', '#1b7ec7',]};
         var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
         piechart.draw(data, piechart_options);
 
         var barchart_options = {title:'Barchart: Vulnerability Found in Project',
-                       width:800,
+                       width:600,
                        height:400,
                        legend: 'none'};
         var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
