@@ -53,6 +53,14 @@ Follow the instruction in order to enable Burp REST API. You can manage and trig
 * [Burp REST API](https://github.com/vmware/burp-rest-api)
 
 ## Installation
+```
+$ git clone https://github.com/archerysec/archerysec.git
+$ cd archerysec
+$ chmod +x run.sh
+$ sudo ./run.sh
+```
+
+## Manual Installation
 
 ```
 $ git clone https://github.com/archerysec/archerysec.git
@@ -65,6 +73,7 @@ $ python manage.py makemigrations projects
 $ python manage.py makemigrations APIScan
 $ python manage.py makemigrations osintscan
 $ python manage.py makemigrations jiraticketing
+$ python manage.py makemigrations tools
 $ python manage.py migrate
 $ python manage.py createsuperuser
 $ python manage.py runserver
