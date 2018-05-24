@@ -136,6 +136,44 @@ class burp_scan_result_db(models.Model):
     jira_ticket = models.TextField(null=True, blank=True)
 
 
+class netsparker_scan_db(models.Model):
+    url = models.URLField(blank=True)
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    scan_status = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    total_vul = models.IntegerField(blank=True, null=True)
+    critical_vul = models.IntegerField(blank=True, null=True)
+    high_vul = models.IntegerField(blank=True, null=True)
+    medium_vul = models.IntegerField(blank=True, null=True)
+    low_vul = models.IntegerField(blank=True, null=True)
+    info_vul = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    rescan = models.TextField(blank=True, null=True)
+
+
+class netsparker_scan_result_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    project_id = models.TextField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    rescan = models.TextField(blank=True, null=True)
+    vuln_url = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True)
+    severity = models.TextField(blank=True, null=True)
+    certainty = models.TextField(blank=True, null=True)
+    rawrequest = models.TextField(blank=True, null=True)
+    rawresponse = models.TextField(blank=True, null=True)
+    extrainformation = models.TextField(blank=True, null=True)
+    classification = models.TextField(blank=True, null=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vuln_color = models.TextField(blank=True, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+
+
+
+
 class web_scan_db(models.Model):
     scan_url = models.URLField(blank=True)
     scan_id = models.UUIDField(blank=True)

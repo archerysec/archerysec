@@ -175,4 +175,24 @@ urlpatterns = [
         web_views.del_web_scan_schedule,
         name='del_web_scan_schedule'),
 
+    # All netsparker URL's
+    url(r'^netsparker_list_vuln',
+        web_views.netsparker_list_vuln,
+        name='netsparker_list_vuln'),
+    url(r'^netsparker_scan_list',
+        web_views.netsparker_scan_list,
+        name='netsparker_scan_list'),
+    url(r'^netsparker_vuln_data',
+        web_views.netsparker_vuln_data,
+        name='netsparker_vuln_data'),
+    url(r'^netsparker_vuln_out',
+        web_views.netsparker_vuln_out,
+        name='netsparker_vuln_out'),
+    url(r'^del_netsparker_scan',
+        web_views.del_netsparker_scan,
+        name='del_netsparker_scan'),
+    url(r'^netsparker_del_vuln',
+        web_views.netsparker_del_vuln,
+        name='netsparker_del_vuln'),
+
 ]
