@@ -44,6 +44,22 @@
            });
        }
 
+       if ($('[name="optradio3"]').is(':checked')){
+           $.ajax({
+                    type:'POST',
+                    url:'/tools/sslscan/',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+
     });
 
 
@@ -207,6 +223,11 @@ $(document).on('submit', '#exclude_url', function(e){
                     <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                         <label>
                             <input name="optradio2" type="checkbox"><span>Burp Scanner</span>
+                        </label>
+                    </div>
+                    <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
+                        <label>
+                            <input name="optradio3" type="checkbox"><span>SSLScan</span>
                         </label>
                     </div>
                 </div>

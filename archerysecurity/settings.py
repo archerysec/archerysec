@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'networkscanners',
     'osintscan',
     'jiraticketing',
+    'tools',
     'django.contrib.admin',
     'stronghold',
     'django.contrib.auth',

@@ -39,4 +39,7 @@ urlpatterns = [
     # JIRA
     url(r'^jira/', include('jiraticketing.urls')),
 
+    # Tools App
+    url(r'^tools/', include('tools.urls')),
+
 ]

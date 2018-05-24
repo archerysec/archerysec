@@ -1,0 +1,110 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = [];
+            $.each($("input[name='del_scan_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/webscanners/del_arachni_scan/',
+                data:{
+                   scan_id: json_scanid,
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+            setTimeout(function(){location.reload();},1000);
+        });
+
+    });
+
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">SSLScan List</a></div>
+
+        <h1>SSLScan Scans Result</h1>
+    </div>
+
+    <div class="container-fluid">
+        <hr>
+        <div class="span3 offset6">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <p class="alert-heading">{{ message }}</p>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Arachni Scan List</h5>
+                        <div class="buttons"><a data-toggle="modal" href="/webscanners/xml_upload"
+                                                class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
+                            XML</a>
+                        </div>
+                        <div class="buttons">
+                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>URL</th>
+                                <!--<th>Status</th>-->
+                                <!--<th>Date Time</th>-->
+                                <!--<th>Total Vulnerability</th>-->
+                                <!--<th>High</th>-->
+                                <!--<th>Medium</th>-->
+                                <!--<th>Low</th>-->
+                                <!--<th>Action</th>-->
+                                <!--<th></th>-->
+                                <!--<th></th>-->
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in all_sslscan %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
+                                                      onClick="reload">
+
+                                        </label>
+                                    </form>
+                                </td>
+                                <td><a href="/tools/sslscan_result/?scan_id={{data.scan_id}}">{{ data.scan_url }}</a></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
