@@ -9,4 +9,3 @@ python manage.py makemigrations jiraticketing
 python manage.py makemigrations tools
 python manage.py migrate
 python manage.py process_tasks &
-python manage.py runserver 0.0.0.0:8000
