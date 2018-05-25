@@ -5,6 +5,6 @@ ADD requirements.txt /root/archerysec
 RUN pip install -r requirements.txt
 COPY . /root/archerysec/
 EXPOSE 8000
-RUN chmod +x run.sh
-RUN ./run.sh
+RUN chmod +x docker_run.sh
+RUN ./docker_run.sh
 CMD ["python","manage.py","runserver","0.0.0.0:8000"]
