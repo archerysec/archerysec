@@ -35,6 +35,10 @@ Archery is an opensource vulnerability assessment and management tool which help
 * Perform web application scanning using selenium.
 * Vulnerability Management.
 * Enable REST API's for developers to perform scanning and Vulnerability Management.
+* JIRA Ticketing System.
+* Sub domain discovery and scanning.
+* Periodic scans.
+* Concurrent scans.
 * Useful for DevOps teams for Vulnerability Management.
 
 ## Note
@@ -130,16 +134,35 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 
 
 ### Road Map
-
-
+* Scanners parser & Plugin
+    - [x] Nessus
+    - [ ] Webinspect
+    - [ ] Acunetix
+    - [ ] AppScan
+    - [ ] Netsparker
+    - [ ] AppSpider  
+* Popular Tools plugin support. 
+    - [ ] Nmap 
+    - [ ] SSL Analysis
+    - [ ] Nikto
+    - [ ] skipfish
+    - [ ] WPScan
+    - [ ] OWASP JoomScan
+* Reporting
+    - [x] PDF
+    - [ ] Docx
+    - [ ] XML
+    - [ ] Excel
+    - [ ] JSON
 
 * API Automated vulnerability scanning.
-* Perform Reconnaissance before scanning.
-* Concurrent Scans.
 * Vulnerability POC pictures.
 * Cloud Security scanning.
-* Dashboards
-* Easy to installing.
+* Source code review project management?
+
+    - [ ] Fortify plugin
+    - [ ] Checkmarks ?
+    ....
 
 ### Lead Developer
 
