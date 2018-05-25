@@ -7,3 +7,4 @@ COPY . /root/archerysec/
 EXPOSE 8000
 RUN chmod +x run.sh
 RUN ./run.sh
+CMD ["python","manage.py","runserver","0.0.0.0:8000"]
