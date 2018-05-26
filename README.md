@@ -143,8 +143,8 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [ ] AppSpider  
 * Popular Tools plugin support. 
     - [ ] Nmap 
-    - [ ] SSL Analysis
-    - [ ] Nikto
+    - [x] SSL Analysis
+    - [x] Nikto
     - [ ] skipfish
     - [ ] WPScan
     - [ ] OWASP JoomScan
