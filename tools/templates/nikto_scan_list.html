@@ -18,7 +18,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/tools/sslcan_del/',
+                url:'/tools/nikto_scan_del/',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -79,7 +79,7 @@
                                 <th>Action</th>
                             </tr>
                             </thead>
-                            <tbody>{% for data in all_sslscan %}
+                            <tbody>{% for data in all_nikto %}
                             <tr data-target="#">
                                 <td>
                                     <form>
@@ -89,10 +89,10 @@
                                         </label>
                                     </form>
                                 </td>
-                                <td><a href="/tools/sslscan_result/?scan_id={{data.scan_id}}">{{ data.scan_url }}</a>
+                                <td><a href="/tools/nikto_result/?scan_id={{data.scan_id}}">{{ data.scan_url }}</a>
                                 </td>
                                 <td>
-                                    <form action="/tools/sslcan_del/" method="post" class="forms-sample">
+                                    <form action="/tools/nikto_scan_del/" method="post" class="forms-sample">
 
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>

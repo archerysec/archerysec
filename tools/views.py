@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from tools.models import sslscan_result_db
+from tools.models import sslscan_result_db, nikto_result_db
 from django.shortcuts import render, HttpResponseRedirect
 import uuid
 import subprocess
@@ -73,3 +73,76 @@ def sslcan_del(request):
         del_scan.delete()
 
     return HttpResponseRedirect('/tools/sslscan/')
+
+
+def nikto(request):
+    """
+
+    :return:
+    """
+    global nikto_output
+    all_nikto = nikto_result_db.objects.all()
+
+    if request.method == 'POST':
+        scan_url = request.POST.get('scan_url')
+        project_id = request.POST.get('project_id')
+        scan_id = uuid.uuid4()
+
+        try:
+            print(scan_url)
+            nikto_output = subprocess.check_output(['nikto.pl', '-host', scan_url])
+            print(nikto_output)
+
+        except Exception as e:
+            print (e)
+
+            try:
+                nikto_output = subprocess.check_output(['nikto', '-host', scan_url])
+                print(nikto_output)
+            except Exception as e:
+                print(e)
+
+        dump_scans = nikto_result_db(scan_url=scan_url,
+                                     scan_id=scan_id,
+                                     project_id=project_id,
+                                     nikto_scan_output=nikto_output)
+
+        dump_scans.save()
+
+    return render(request,
+                  'nikto_scan_list.html',
+                  {'all_nikto': all_nikto}
+
+                  )
+
+
+def nikto_result(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+        scan_result = nikto_result_db.objects.filter(scan_id=scan_id)
+
+    return render(request,
+                  'nikto_scan_result.html',
+                  {'scan_result': scan_result}
+                  )
+
+
+def nikto_scan_del(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get('scan_id')
+        del_scan = nikto_result_db.objects.filter(scan_id=scan_id)
+        del_scan.delete()
+
+    return HttpResponseRedirect('/tools/nikto/')

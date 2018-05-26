@@ -59,6 +59,21 @@
                     }
            });
        }
+       if ($('[name="optradio4"]').is(':checked')){
+           $.ajax({
+                    type:'POST',
+                    url:'/tools/nikto/',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
 
     });
 
@@ -198,7 +213,7 @@ $(document).on('submit', '#exclude_url', function(e){
                                 </div>
                             </div>
                             <div class="controls">
-                                <input onclick="location.href = '/webscanners/scans_list/'" type="submit"
+                                <input type="submit"
                                        class="btn btn-primary" value="Launch">
                                 <a href="/webscanners/web_scan_schedule" class="btn btn-success">Scan Schedule</a>
                             </div>
@@ -228,6 +243,11 @@ $(document).on('submit', '#exclude_url', function(e){
                     <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                         <label>
                             <input name="optradio3" type="checkbox"><span>SSLScan</span>
+                        </label>
+                    </div>
+                    <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
+                        <label>
+                            <input name="optradio4" type="checkbox"><span>Nikto</span>
                         </label>
                     </div>
                 </div>

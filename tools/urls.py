@@ -24,4 +24,15 @@ urlpatterns = [
     url(r'^sslcan_del/$',
         views.sslcan_del,
         name='sslcan_del'),
+
+    # Nikto requests
+    url(r'^nikto/$',
+        views.nikto,
+        name='nikto'),
+    url(r'^nikto_result/$',
+        views.nikto_result,
+        name='nikto_result'),
+    url(r'^nikto_scan_del/$',
+        views.nikto_scan_del,
+        name='nikto_scan_del'),
 ]
