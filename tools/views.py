@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from tools.models import sslscan_result_db
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect
 import uuid
 import subprocess
 
@@ -58,3 +58,18 @@ def sslscan_result(request):
                   'sslscan_result.html',
                   {'scan_result': scan_result}
                   )
+
+
+def sslcan_del(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get('scan_id')
+        del_scan = sslscan_result_db.objects.filter(scan_id=scan_id)
+        del_scan.delete()
+
+    return HttpResponseRedirect('/tools/sslscan/')

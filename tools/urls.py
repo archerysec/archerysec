@@ -21,4 +21,7 @@ urlpatterns = [
     url(r'^sslscan_result/$',
         views.sslscan_result,
         name='sslscan_result'),
+    url(r'^sslcan_del/$',
+        views.sslcan_del,
+        name='sslcan_del'),
 ]
