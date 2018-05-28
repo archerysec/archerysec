@@ -23,6 +23,15 @@ vuln_extrainformation = None
 vuln_classification = None
 vuln_id = None
 vul_col = None
+description = None
+impact = None
+actionsToTake = None
+remedy = None
+requiredSkillsForExploitation = None
+externalReferences = None
+remedyReferences = None
+proofOfConcept = None
+proofs = None
 
 
 def xml_parser(root,
@@ -30,7 +39,8 @@ def xml_parser(root,
                scan_id):
     global vuln_url, vuln_type, vuln_severity, vuln_certainty, vuln_rawrequest, \
         vuln_rawresponse, vuln_extrainformation, vuln_classification, vuln_id, \
-        vul_col
+        vul_col, description, impact, actionsToTake, remedy, requiredSkillsForExploitation, \
+        externalReferences, remedyReferences, proofOfConcept, proofs
 
     for data in root:
         for vuln in data:
@@ -60,6 +70,33 @@ def xml_parser(root,
 
             if vuln.tag == 'classification':
                 vuln_classification = vuln.text
+
+            if vuln.tag == 'description':
+                description = vuln.text
+
+            if vuln.tag == 'impact':
+                impact = vuln.text
+
+            if vuln.tag == 'actionsToTake':
+                actionsToTake = vuln.text
+
+            if vuln.tag == 'remedy':
+                remedy = vuln.text
+
+            if vuln.tag == 'requiredSkillsForExploitation':
+                requiredSkillsForExploitation = vuln.text
+
+            if vuln.tag == 'externalReferences':
+                externalReferences = vuln.text
+
+            if vuln.tag == 'remedyReferences':
+                remedyReferences = vuln.text
+
+            if vuln.tag == 'proofOfConcept':
+                proofOfConcept = vuln.text
+
+            if vuln.tag == 'proofs':
+                proofs = vuln.text
 
             vuln_id = uuid.uuid4()
 
@@ -93,7 +130,16 @@ def xml_parser(root,
                                               extrainformation=vuln_extrainformation,
                                               classification=vuln_classification,
                                               false_positive='No',
-                                              vuln_color=vul_col
+                                              vuln_color=vul_col,
+                                              description=description,
+                                              impact=impact,
+                                              actionsToTake=actionsToTake,
+                                              remedy=remedy,
+                                              requiredSkillsForExploitation=requiredSkillsForExploitation,
+                                              externalReferences=externalReferences,
+                                              remedyReferences=remedyReferences,
+                                              proofOfConcept=proofOfConcept,
+                                              proofs=proofs
 
                                               )
         dump_data.save()

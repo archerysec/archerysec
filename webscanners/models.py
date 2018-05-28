@@ -170,7 +170,15 @@ class netsparker_scan_result_db(models.Model):
     false_positive = models.TextField(null=True, blank=True)
     vuln_color = models.TextField(blank=True, null=True)
     jira_ticket = models.TextField(null=True, blank=True)
-
+    description = models.TextField(null=True, blank=True)
+    impact = models.TextField(null=True, blank=True)
+    actionsToTake = models.TextField(null=True, blank=True)
+    remedy = models.TextField(null=True, blank=True)
+    requiredSkillsForExploitation = models.TextField(null=True, blank=True)
+    externalReferences = models.TextField(null=True, blank=True)
+    remedyReferences = models.TextField(null=True, blank=True)
+    proofOfConcept = models.TextField(null=True, blank=True)
+    proofs = models.TextField(null=True, blank=True)
 
 
 

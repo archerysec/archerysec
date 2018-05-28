@@ -38,7 +38,7 @@
                         <h5>Vulnerability Name:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info">{{ data.typew }}</span>
+                        <span class="label label-info">{{ data.type }}</span>
 
                         <strong> </strong><br><br>
                         <strong> False Positive: </strong>
@@ -56,9 +56,8 @@
                         <strong> Vulnerable URL : </strong><code><a href="{{data.url}}">
                         {{data.vuln_url}}</a>
                     </code><br><br>
-                        <strong> Parameter : </strong>{{data.vector_input_values}}<br><br>
-                        <strong> Location : </strong>{{data.vector_source_values}}<br><br>
-                        <strong> Reference : </strong>{{data.ref_key}}:{{data.ref_value}}<br><br>
+
+
                     </div>
                 </div>
 
@@ -69,7 +68,18 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        {{data.extrainformation}}
+                        {{data.description | safe}}
+
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Impact:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        <strong> </strong>{{data.impact | safe}}
+                        <br><br>
                     </div>
                 </div>
                 <div class="widget-box">
@@ -78,7 +88,40 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        <strong> Solutions : </strong>{{data.certainty}}<br><br>
+                        <strong> Solutions : </strong>{{data.actionsToTake | safe}} <br><br>
+                        {{data.remedy | safe}}
+                        <br><br>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Exploitation:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        <strong></strong> {{data.requiredSkillsForExploitation | safe}}
+                        <br><br>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>References:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        <strong></strong> {{data.externalReferences | safe}}
+{{data.remedyReferences | safe}}
+                        <br><br>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Proof Of Concept:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        <strong></strong> {{data.proofOfConcept | safe}}
+                        <br><br>
                     </div>
                 </div>
                 <!--</div>-->
