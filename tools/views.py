@@ -5,7 +5,6 @@ from django.shortcuts import render, HttpResponseRedirect
 import uuid
 import subprocess
 
-# Create your views here.
 sslscan_output = None
 
 
