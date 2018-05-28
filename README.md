@@ -139,7 +139,7 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [ ] Webinspect
     - [ ] Acunetix
     - [ ] AppScan
-    - [ ] Netsparker
+    - [x] Netsparker
     - [ ] AppSpider  
 * Popular Tools plugin support. 
     - [ ] Nmap 
