@@ -23,6 +23,8 @@ import datetime
 from webscanners.models import burp_scan_db
 from itertools import chain
 
+project_dat = None
+
 def create_form(request):
     return render(request, 'project_create.html')
 
@@ -97,6 +99,43 @@ def projects_view(request):
     return render(request, 'project_view.html',
                   {'project_dat': project_dat, 'scan_dat': scan_dat, 'project_id': project_id,
                    'network_dat': network_dat})
+
+
+def project_edit(request):
+    """
+
+    :param request:
+    :return:
+    """
+    global project_dat
+    if request.method == 'GET':
+        project_id = request.GET['project_id']
+        project_dat = project_db.objects.filter(project_id=project_id)
+
+    if request.method == 'POST':
+        project_id = request.POST.get('project_id')
+        project_name = request.POST.get("projectname")
+        project_date = request.POST.get("projectstart")
+        project_end = request.POST.get("projectend")
+        project_owner = request.POST.get("projectowner")
+        project_disc = request.POST.get("project_disc")
+
+        project_db.objects.filter(
+            project_id=project_id
+        ).update(
+            project_name=project_name,
+            project_start=project_date,
+            project_end=project_end,
+            project_owner=project_owner,
+            project_disc=project_disc
+        )
+        return HttpResponseRedirect('/projects/projects_view/?proj_id=%s' % project_id)
+    return render(request,
+                  'project_edit.html',
+                  {'project_dat': project_dat}
+                  )
+
+
 
 
 def add_scan_v(request):

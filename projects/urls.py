@@ -33,4 +33,7 @@ urlpatterns = [
     url(r'^add_scan_v/$',
         views.add_scan_v,
         name='add_scan_v'),
+    url(r'^project_edit/$',
+        views.project_edit,
+        name='project_edit'),
 ]
