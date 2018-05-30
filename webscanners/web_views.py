@@ -1883,21 +1883,23 @@ def netsparker_del_vuln(request):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = netsparker_scan_result_db.objects.filter(vuln_id=vuln_id)
             delete_vuln.delete()
-        netsparker_all_vul = arachni_scan_result_db.objects.filter(scan_id=un_scanid).values(
-            'name',
-            'severity',
-            'vuln_color'
-        ).distinct()
+        netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=un_scanid)
+
         total_vul = len(netsparker_all_vul)
-        total_high = len(netsparker_all_vul.filter(severity="high"))
-        total_medium = len(netsparker_all_vul.filter(severity="medium"))
-        total_low = len(netsparker_all_vul.filter(severity="low"))
-        arachni_scan_db.objects.filter(scan_id=un_scanid).update(
+        total_critical = len(netsparker_all_vul.filter(severity='Critical'))
+        total_high = len(netsparker_all_vul.filter(severity="High"))
+        total_medium = len(netsparker_all_vul.filter(severity="Medium"))
+        total_low = len(netsparker_all_vul.filter(severity="Low"))
+        total_info = len(netsparker_all_vul.filter(severity="Information"))
+
+        netsparker_scan_db.objects.filter(scan_id=un_scanid).update(
             total_vul=total_vul,
+            critical_vul=total_critical,
             high_vul=total_high,
             medium_vul=total_medium,
-            low_vul=total_low
+            low_vul=total_low,
+            info_vul=total_info
         )
         messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/webscanners/arachni_list_vuln?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect("/webscanners/netsparker_list_vuln?scan_id=%s" % un_scanid)
