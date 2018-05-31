@@ -259,3 +259,48 @@ class task_schedule_db(models.Model):
     periodic_task = models.TextField(blank=True, null=True)
 
 
+class webinspect_scan_db(models.Model):
+    url = models.URLField(blank=True)
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    scan_status = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    total_vul = models.IntegerField(blank=True, null=True)
+    critical_vul = models.IntegerField(blank=True, null=True)
+    high_vul = models.IntegerField(blank=True, null=True)
+    medium_vul = models.IntegerField(blank=True, null=True)
+    low_vul = models.IntegerField(blank=True, null=True)
+    info_vul = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    rescan = models.TextField(blank=True, null=True)
+
+
+class webinspect_scan_result_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    project_id = models.TextField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    rescan = models.TextField(blank=True, null=True)
+    vuln_url = models.TextField(blank=True, null=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vuln_color = models.TextField(blank=True, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+    scheme = models.TextField(blank=True, null=True)
+    host = models.TextField(blank=True, null=True)
+    port = models.TextField(blank=True, null=True)
+    attackmethod = models.TextField(blank=True, null=True)
+    vulnerablesession = models.TextField(blank=True, null=True)
+    triggerSession = models.TextField(blank=True, null=True)
+    vulnerabilityID = models.TextField(blank=True, null=True)
+    severity = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    reportSection = models.TextField(blank=True, null=True)
+    highlightSelections = models.TextField(blank=True, null=True)
+    rawResponse = models.TextField(blank=True, null=True)
+    SectionText = models.TextField(blank=True, null=True)
+    severity_name = models.TextField(blank=True, null=True)
+
+
+
+

@@ -32,8 +32,8 @@ from stronghold.decorators import public
 from archerysettings import load_settings, save_settings
 from networkscanners.models import scan_save_db
 from projects.models import project_db
-from scanners.scanner_parser.web_scanner import zap_xml_parser,\
-    arachni_xml_parser, netsparker_xml_parser
+from scanners.scanner_parser.web_scanner import zap_xml_parser, \
+    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from scanners.scanner_plugin.web_scanner import zap_plugin
 from webscanners.models import zap_scan_results_db, \
@@ -49,7 +49,10 @@ from background_task.models import Task
 import os
 from jiraticketing.models import jirasetting
 import subprocess
-from webscanners.models import netsparker_scan_db, netsparker_scan_result_db
+from webscanners.models import netsparker_scan_db, \
+    netsparker_scan_result_db, \
+    webinspect_scan_db, \
+    webinspect_scan_result_db
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -1449,6 +1452,23 @@ def xml_upload(request):
                                              root=root_xml)
             print("Saved scan data")
             return HttpResponseRedirect("/webscanners/netsparker_scan_list/")
+        elif scanner == 'webinspect':
+            date_time = datetime.now()
+            scan_dump = webinspect_scan_db(
+                url=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            webinspect_xml_parser.xml_parser(project_id=project_id,
+                                             scan_id=scan_id,
+                                             root=root_xml)
+            print("Saved scan data")
+            return HttpResponseRedirect("/webscanners/webinspect_scan_list/")
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
 
@@ -1903,3 +1923,215 @@ def netsparker_del_vuln(request):
         messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/webscanners/netsparker_list_vuln?scan_id=%s" % un_scanid)
+
+
+def webinspect_list_vuln(request):
+    """
+    webinspect Vulnerability List
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+    else:
+        scan_id = None
+
+    webinspect_all_vul = webinspect_scan_result_db.objects.filter(
+        scan_id=scan_id)
+
+    return render(request,
+                  'webinspect_list_vuln.html',
+                  {'webinspect_all_vul': webinspect_all_vul,
+                   'scan_id': scan_id})
+
+
+def webinspect_scan_list(request):
+    """
+    webinspect Scan List.
+    :param request:
+    :return:
+    """
+    all_webinspect_scan = webinspect_scan_db.objects.all()
+
+    return render(request,
+                  'webinspect_scan_lis.html',
+                  {'all_webinspect_scan': all_webinspect_scan})
+
+
+def webinspect_vuln_data(request):
+    """
+    webinspect Vulnerability Data.
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        vuln_id = request.GET['vuln_id']
+    else:
+        vuln_id = None
+    vuln_data = webinspect_scan_result_db.objects.filter(vuln_id=vuln_id)
+
+    return render(request,
+                  'webinspect_vuln_data.html',
+                  {'vuln_data': vuln_data, })
+
+
+def webinspect_vuln_out(request):
+    """
+    webinspect Vulnerability details.
+    :param request:
+    :return:
+    """
+    jira_url = None
+
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+        name = request.GET['scan_name']
+    if request.method == "POST":
+        false_positive = request.POST.get('false')
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        vuln_name = request.POST.get('vuln_name')
+        webinspect_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                                 scan_id=scan_id).update(false_positive=false_positive)
+        return HttpResponseRedirect(
+            '/webscanners/webinspect_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+
+    vuln_data = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
+                                                         name=name,
+                                                         false_positive='No')
+    false_data = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
+                                                          name=name,
+                                                          false_positive='Yes')
+
+    return render(request,
+                  'webinspect_vuln_out.html',
+                  {'vuln_data': vuln_data,
+                   'false_data': false_data,
+                   'jira_url': jira_url,
+                   })
+
+
+def del_webinspect_scan(request):
+    """
+    Delete webinspect Scans.
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        scan_url = request.POST.get("scan_url")
+
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        # print "split_lenght", split_length
+        for i in range(0, split_length):
+            scan_id = value_split.__getitem__(i)
+
+            item = webinspect_scan_db.objects.filter(scan_id=scan_id
+                                                     )
+            item.delete()
+            item_results = webinspect_scan_result_db.objects.filter(scan_id=scan_id)
+            item_results.delete()
+        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+        return HttpResponseRedirect('/webscanners/webinspect_scan_list/')
+
+
+def edit_webinspect_vuln(request):
+    """
+    The funtion Editing webinspect Vulnerability.
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+    else:
+        id_vul = ''
+    edit_vul_dat = burp_scan_result_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+    if request.method == 'POST':
+        vuln_id = request.POST.get("vuln_id", )
+        scan_id = request.POST.get("scan_id", )
+        name = request.POST.get("name", )
+        severity = request.POST.get("severity", )
+        host = request.POST.get("host", )
+        path = request.POST.get("path", )
+        issuedetail = request.POST.get("issuedetail")
+        description = request.POST.get("description", )
+        solution = request.POST.get("solution", )
+        location = request.POST.get("location", )
+        vulnerabilityClassifications = request.POST.get("reference", )
+        global vul_col
+        if severity == 'High':
+            vul_col = "important"
+        elif severity == 'Medium':
+            vul_col = "warning"
+        elif severity == 'Low':
+            vul_col = "info"
+        else:
+            vul_col = "info"
+        print "edit_vul :", name
+
+        webinspect_scan_result_db.objects.filter(vuln_id=vuln_id).update(
+            name=name,
+            severity_color=vul_col,
+            severity=severity,
+            host=host,
+            path=path,
+            location=location,
+            issueDetail=issuedetail,
+            issueBackground=description,
+            remediationBackground=solution,
+            vulnerabilityClassifications=vulnerabilityClassifications,
+        )
+
+        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
+
+        return HttpResponseRedirect("/webscanners/webinspect_vuln_data/?vuln_id=%s" % vuln_id)
+
+    return render(request, 'edit_webinspect_vuln.html', {'edit_vul_dat': edit_vul_dat})
+
+
+def webinspect_del_vuln(request):
+    """
+    The function Delete the webinspect Vulnerability.
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        vuln_id = request.POST.get("del_vuln", )
+        un_scanid = request.POST.get("scan_id", )
+
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+            delete_vuln = webinspect_scan_result_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln.delete()
+        webinspect_all_vul = webinspect_scan_result_db.objects.filter(scan_id=un_scanid)
+
+        total_vul = len(webinspect_all_vul)
+        total_critical = len(webinspect_all_vul.filter(severity_name='Critical'))
+        total_high = len(webinspect_all_vul.filter(severity_name="High"))
+        total_medium = len(webinspect_all_vul.filter(severity_name="Medium"))
+        total_low = len(webinspect_all_vul.filter(severity_name="Low"))
+        total_info = len(webinspect_all_vul.filter(severity_name="Information"))
+
+        webinspect_scan_db.objects.filter(scan_id=un_scanid).update(
+            total_vul=total_vul,
+            critical_vul=total_critical,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            info_vul=total_info
+        )
+        messages.success(request, "Deleted vulnerability")
+
+        return HttpResponseRedirect("/webscanners/webinspect_list_vuln?scan_id=%s" % un_scanid)

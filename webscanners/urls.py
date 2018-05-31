@@ -195,4 +195,24 @@ urlpatterns = [
         web_views.netsparker_del_vuln,
         name='netsparker_del_vuln'),
 
+    # All webinspect URL's
+    url(r'^webinspect_list_vuln',
+        web_views.webinspect_list_vuln,
+        name='webinspect_list_vuln'),
+    url(r'^webinspect_scan_list',
+        web_views.webinspect_scan_list,
+        name='webinspect_scan_list'),
+    url(r'^webinspect_vuln_data',
+        web_views.webinspect_vuln_data,
+        name='webinspect_vuln_data'),
+    url(r'^webinspect_vuln_out',
+        web_views.webinspect_vuln_out,
+        name='webinspect_vuln_out'),
+    url(r'^del_webinspect_scan',
+        web_views.del_webinspect_scan,
+        name='del_webinspect_scan'),
+    url(r'^webinspect_del_vuln',
+        web_views.webinspect_del_vuln,
+        name='webinspect_del_vuln'),
+
 ]
