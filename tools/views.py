@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from tools.models import sslscan_result_db, nikto_result_db
+from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nmap_scan_db
 from django.shortcuts import render, HttpResponseRedirect
 import uuid
 import subprocess
@@ -145,3 +145,71 @@ def nikto_scan_del(request):
         del_scan.delete()
 
     return HttpResponseRedirect('/tools/nikto/')
+
+
+def nmap_scan(request):
+    """
+
+    :return:
+    """
+    all_nmap = nmap_scan_db.objects.all()
+
+    return render(request,
+                  'nmap_scan.html',
+                  {'all_nmap': all_nmap}
+
+                  )
+
+
+def nmap(request):
+    """
+
+    :return:
+    """
+
+    if request.method == 'GET':
+
+        ip_address = request.GET['ip']
+
+        all_nmap = nmap_result_db.objects.filter(ip_address=ip_address)
+
+    return render(request,
+                  'nmap_list.html',
+                  {'all_nmap': all_nmap}
+
+                  )
+
+
+def nmap_result(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+        scan_result = nmap_result_db.objects.filter(scan_id=scan_id)
+
+    return render(request,
+                  'nmap_scan_result.html',
+                  {'scan_result': scan_result}
+                  )
+
+
+def nmap_scan_del(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get('scan_id')
+        del_scan = nmap_result_db.objects.filter(scan_id=scan_id)
+        del_scan.delete()
+        del_scan = nmap_scan_db.objects.filter(scan_id=scan_id)
+        del_scan.delete()
+
+    return HttpResponseRedirect('/tools/nmap_scan/')
+

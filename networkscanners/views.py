@@ -30,7 +30,7 @@ from networkscanners.models import scan_save_db, \
     task_schedule_db, \
     nessus_scan_db, nessus_report_db
 from projects.models import project_db
-from scanners.scanner_parser.network_scanner import OpenVas_Parser, Nessus_Parser
+from scanners.scanner_parser.network_scanner import OpenVas_Parser, Nessus_Parser, nmap_parser
 from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin, vuln_an_id
 from background_task.models import Task
 from background_task import background
@@ -471,6 +471,23 @@ def OpenVas_xml_upload(request):
                                         project_id=project_id,
                                         )
             return HttpResponseRedirect("/networkscanners/nessus_scan")
+        elif scanner == "nmap":
+            # date_time = datetime.now()
+            # scan_dump = nessus_scan_db(
+            #     scan_ip=scan_ip,
+            #     scan_id=scan_id,
+            #     date_time=date_time,
+            #     project_id=project_id,
+            #     scan_status=scan_status
+            # )
+            # scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            nmap_parser.xml_parser(root=root_xml,
+                                   scan_id=scan_id,
+                                   project_id=project_id,
+                                   )
+            return HttpResponseRedirect("/tools/nmap_scan/")
 
     return render(request,
                   'net_upload_xml.html',
@@ -710,5 +727,3 @@ def nessus_vuln_check(request):
     vul_dat = nessus_report_db.objects.filter(vul_id=id_vul)
 
     return render(request, 'nessus_vuln_data.html', {'vul_dat': vul_dat})
-
-

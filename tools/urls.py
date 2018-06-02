@@ -35,4 +35,18 @@ urlpatterns = [
     url(r'^nikto_scan_del/$',
         views.nikto_scan_del,
         name='nikto_scan_del'),
+
+    # nmap requests
+    url(r'^nmap_scan/$',
+        views.nmap_scan,
+        name='nmap_scan'),
+    url(r'^nmap/$',
+        views.nmap,
+        name='nmap'),
+    url(r'^nmap_result/$',
+        views.nmap_result,
+        name='nmap_result'),
+    url(r'^nmap_scan_del/$',
+        views.nmap_scan_del,
+        name='nmap_scan_del'),
 ]

@@ -1,0 +1,153 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = [];
+            $.each($("input[name='del_scan_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/tools/nmap_del/',
+                data:{
+                   scan_id: json_scanid,
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+            setTimeout(function(){location.reload();},1000);
+        });
+
+    });
+
+
+
+
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">nmap List</a></div>
+
+        <h1>nmap Scans Result</h1>
+    </div>
+
+    <div class="container-fluid">
+        <hr>
+        <div class="span3 offset6">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <p class="alert-heading">{{ message }}</p>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>nmap Scan List</h5>
+                        <div class="buttons"><a data-toggle="modal" href="/webscanners/xml_upload"
+                                                class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
+                            XML</a>
+                        </div>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>URL</th>
+                                <th>Port</th>
+                                <!--<th>protocol</th>-->
+                                <th>port</th>
+                                <th>state</th>
+                                <!--<th> reason</th>-->
+                                <!--<th>reason_ttl</th>-->
+                                <th>version</th>
+                                <!--<th>extrainfo</th>-->
+                                <th>Service</th>
+                                <!--<th>conf</th>-->
+                                <!--<th>method</th>-->
+                                <!--<th>type_p</th>-->
+                                <th>osfamily</th>
+                                <!--<th>vendor</th>-->
+                                <th>osgen</th>
+                                <!--<th>accuracy</th>-->
+                                <th>cpe</th>
+                                <!--<th>used_state</th>-->
+                                <!--<th>used_portid</th>-->
+                                <!--<th>used_proto</th>-->
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in all_nmap %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
+                                                      onClick="reload">
+
+                                        </label>
+                                    </form>
+                                </td>
+                                <td><a href="/tools/nmap_result/?scan_id={{data.scan_id}}">{{ data.ip_address }}</a>
+                                </td>
+                                <td>{{data.port}}</td>
+                                <!--<td>{{data.protocol}}</td>-->
+                                <td>{{data.port}}</td>
+                                <td>{{data.state}}</td>
+                                <!--<td>{{data.reason}}</td>-->
+                                <!--<td>{{data.reason_ttl}}</td>-->
+                                <td>{{data.version}}</td>
+                                <!--<td>{{data.extrainfo}}</td>-->
+                                <td>{{data.name}}</td>
+                                <!--<td>{{data.conf}}</td>-->
+                                <!--<td>{{data.method}}</td>-->
+                                <!--<td>{{data.type_p}}</td>-->
+                                <td>{{data.osfamily}}</td>
+                                <!--<td>{{data.vendor}}</td>-->
+                                <td>{{data.osgen}}</td>
+                                <!--<td>{{data.accuracy}}</td>-->
+                                <td>{{data.cpe}}</td>
+                                <!--<td>{{data.used_state}}</td>-->
+                                <!--<td>{{data.used_portid}}</td>-->
+                                <!--<td>{{data.used_proto}}</td>-->
+                                <!--<td>-->
+                                    <!--<form action="/tools/nmap_del/" method="post" class="forms-sample">-->
+
+                                        <!--{% csrf_token %}-->
+                                        <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}"/>-->
+                                        <!--<button class="btn btn-danger"><i class="icon-remove"></i></button>-->
+                                    <!--</form>-->
+                                <!--</td>-->
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
