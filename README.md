@@ -145,7 +145,7 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [x] Netsparker
     - [ ] AppSpider  
 * Popular Tools plugin support. 
-    - [ ] Nmap 
+    - [x] Nmap 
     - [x] SSL Analysis
     - [x] Nikto
     - [ ] skipfish
