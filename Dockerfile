@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -q -y --fix-missing \
         zaproxy \
         sslscan \
         nikto \
+        nmap \
         python \
         wget \
         curl \

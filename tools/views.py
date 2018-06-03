@@ -182,7 +182,9 @@ def nmap(request):
 
         try:
             print('Start Nmap scan')
-            subprocess.check_output(['nmap', '-v', '-sV', '-Pn', '-p', '1-65535', ip_address, '-oX', 'output.xml'])
+            subprocess.check_output(
+                ['nmap', '-v', '-sV', '-Pn', '-p', '1-65535', ip_address, '-oX', 'output.xml']
+            )
 
             print('Completed nmap scan')
 
