@@ -24,11 +24,11 @@
        else if ($('[name="optradio2"]').is(':checked')){
            $.ajax({
                     type:'POST',
-                    url:'/networkscanners/launch_scan/',
+                    url:'/tools/nmap/',
                     data:{
 
-                       url:$('#url').val(),
-
+                       ip:$('#ip').val(),
+                       project_id:$('#project_id').val(),
                        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                     },
                     sucess:function(){
@@ -101,6 +101,11 @@
                             <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                                 <label>
                                     <input name="optradio1" type="checkbox"><span>OpenVAS</span>
+                                </label>
+                            </div>
+                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
+                                <label>
+                                    <input name="optradio2" type="checkbox"><span>Nmap</span>
                                 </label>
                             </div>
                         </div>

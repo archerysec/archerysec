@@ -4,6 +4,9 @@ from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nma
 from django.shortcuts import render, HttpResponseRedirect
 import uuid
 import subprocess
+import xml.etree.ElementTree as ET
+from scanners.scanner_parser.network_scanner import nmap_parser
+import uuid
 
 sslscan_output = None
 
@@ -168,10 +171,37 @@ def nmap(request):
     """
 
     if request.method == 'GET':
-
         ip_address = request.GET['ip']
 
         all_nmap = nmap_result_db.objects.filter(ip_address=ip_address)
+
+    if request.method == 'POST':
+        ip_address = request.POST.get('ip')
+        project_id = request.POST.get('project_id')
+        scan_id = uuid.uuid4()
+
+        try:
+            print('Start Nmap scan')
+            subprocess.check_output(['nmap', '-v', '-sV', '-Pn', '-p', '1-65535', ip_address, '-oX', 'output.xml'])
+
+            print('Completed nmap scan')
+
+        except Exception as e:
+            print('Eerror in nmap scan:', e)
+
+        try:
+            tree = ET.parse('output.xml')
+            root_xml = tree.getroot()
+
+            nmap_parser.xml_parser(root=root_xml,
+                                   scan_id=scan_id,
+                                   project_id=project_id,
+                                   )
+
+        except Exception as e:
+            print('Error in xml parser:', e)
+
+        return HttpResponseRedirect('/tools/nmap_scan/')
 
     return render(request,
                   'nmap_list.html',
@@ -205,11 +235,10 @@ def nmap_scan_del(request):
     """
 
     if request.method == 'POST':
-        scan_id = request.POST.get('scan_id')
-        del_scan = nmap_result_db.objects.filter(scan_id=scan_id)
+        ip_address = request.POST.get('ip_address')
+        del_scan = nmap_result_db.objects.filter(ip_address=ip_address)
         del_scan.delete()
-        del_scan = nmap_scan_db.objects.filter(scan_id=scan_id)
+        del_scan = nmap_scan_db.objects.filter(scan_ip=ip_address)
         del_scan.delete()
 
     return HttpResponseRedirect('/tools/nmap_scan/')
-

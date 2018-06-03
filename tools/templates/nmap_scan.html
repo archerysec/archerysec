@@ -18,9 +18,9 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/tools/nmap_del/',
+                url:'/tools/nmap_scan_del/',
                 data:{
-                   scan_id: json_scanid,
+                   ip_address: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                 },
                 sucess:function(){
@@ -31,6 +31,7 @@
         });
 
     });
+
 
 
 
@@ -87,7 +88,7 @@
                             <tr data-target="#">
                                 <td>
                                     <form>
-                                        <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
+                                        <label><input type="checkbox" value="{{data.scan_ip}}" name="del_scan_id"
                                                       onClick="reload">
 
                                         </label>
@@ -102,7 +103,7 @@
                                     <form action="/tools/nmap_scan_del/" method="post" class="forms-sample">
 
                                         {% csrf_token %}
-                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                        <input type="hidden" name="ip_address" value="{{data.scan_ip}}"/>
                                         <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                     </form>
                                 </td>

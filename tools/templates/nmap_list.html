@@ -64,10 +64,6 @@
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>nmap Scan List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/webscanners/xml_upload"
-                                                class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
-                            XML</a>
-                        </div>
                         <div class="buttons">
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
@@ -79,25 +75,13 @@
                                 <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                                 <th>URL</th>
                                 <th>Port</th>
-                                <!--<th>protocol</th>-->
-                                <th>port</th>
                                 <th>state</th>
-                                <!--<th> reason</th>-->
-                                <!--<th>reason_ttl</th>-->
                                 <th>version</th>
-                                <!--<th>extrainfo</th>-->
                                 <th>Service</th>
-                                <!--<th>conf</th>-->
-                                <!--<th>method</th>-->
-                                <!--<th>type_p</th>-->
                                 <th>osfamily</th>
-                                <!--<th>vendor</th>-->
                                 <th>osgen</th>
-                                <!--<th>accuracy</th>-->
                                 <th>cpe</th>
-                                <!--<th>used_state</th>-->
-                                <!--<th>used_portid</th>-->
-                                <!--<th>used_proto</th>-->
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>{% for data in all_nmap %}
@@ -113,33 +97,20 @@
                                 <td><a href="/tools/nmap_result/?scan_id={{data.scan_id}}">{{ data.ip_address }}</a>
                                 </td>
                                 <td>{{data.port}}</td>
-                                <!--<td>{{data.protocol}}</td>-->
-                                <td>{{data.port}}</td>
                                 <td>{{data.state}}</td>
-                                <!--<td>{{data.reason}}</td>-->
-                                <!--<td>{{data.reason_ttl}}</td>-->
                                 <td>{{data.version}}</td>
-                                <!--<td>{{data.extrainfo}}</td>-->
                                 <td>{{data.name}}</td>
-                                <!--<td>{{data.conf}}</td>-->
-                                <!--<td>{{data.method}}</td>-->
-                                <!--<td>{{data.type_p}}</td>-->
                                 <td>{{data.osfamily}}</td>
-                                <!--<td>{{data.vendor}}</td>-->
                                 <td>{{data.osgen}}</td>
-                                <!--<td>{{data.accuracy}}</td>-->
                                 <td>{{data.cpe}}</td>
-                                <!--<td>{{data.used_state}}</td>-->
-                                <!--<td>{{data.used_portid}}</td>-->
-                                <!--<td>{{data.used_proto}}</td>-->
-                                <!--<td>-->
-                                    <!--<form action="/tools/nmap_del/" method="post" class="forms-sample">-->
+                                <td>
+                                    <form action="/tools/nmap_del/" method="post" class="forms-sample">
 
-                                        <!--{% csrf_token %}-->
-                                        <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}"/>-->
-                                        <!--<button class="btn btn-danger"><i class="icon-remove"></i></button>-->
-                                    <!--</form>-->
-                                <!--</td>-->
+                                        {% csrf_token %}
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                    </form>
+                                </td>
                             </tr>
                             {% endfor %}
                             </tbody>
