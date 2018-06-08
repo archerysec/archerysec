@@ -107,6 +107,8 @@ docker run -it -p 8000:8000 -v <your_local_dir>:/root/.archerysec archerysec/arc
 
 ### ZAP running daemon mode
 
+Locate your [ZAP startup script](https://github.com/zaproxy/zap-core-help/wiki/HelpCmdline), and execute it using the options detailed below.
+
 Windows :
 
 ```
@@ -122,7 +124,7 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 ### Zap Setting
 
 1. Go to Setting Page
-2. Edit ZAP setting or navigate URL : http://host:port/setting_edit/
+2. Edit ZAP setting or navigate URL : http://host:port/webscanners/setting_edit/
 3. Fill below required information. <br>
     Zap API Key : Leave blank if you using ZAP as daemon ``` api.disablekey=true ``` <br>
     Zap API Host : Your zap API host ip or system IP Ex. ``` 127.0.0.1 ``` or ``` 192.168.0.2 ``` <br>
