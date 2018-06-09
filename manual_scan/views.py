@@ -196,15 +196,12 @@ def del_vuln(request):
         scan_id = request.POST.get('scan_id')
         get_vuln_id = request.POST.get('vuln_id')
 
-        print("gettttt", get_vuln_id)
-
         scan_item = str(get_vuln_id)
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            print "vvvvv", vuln_id
             del_vuln = manual_scan_results_db.objects.filter(vuln_id=vuln_id)
             del_vuln.delete()
 
