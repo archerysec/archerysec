@@ -42,4 +42,7 @@ urlpatterns = [
     # Tools App
     url(r'^tools/', include('tools.urls')),
 
+    # Manual App
+    url(r'^manual_scan/', include('manual_scan.urls')),
+
 ]

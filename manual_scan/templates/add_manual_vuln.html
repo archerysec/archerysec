@@ -1,0 +1,79 @@
+{% extends 'header.html' %}
+{% block body %}
+
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> {{ data.name }}</a>
+            <a
+                    href="#" class="current"></a></div>
+        <h1>{{ data.name }}</h1>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+            <form class="form-vertical" action="/manual_scan/add_vuln/" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input type="hidden" name="scan_id" value="{{scanid}}">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <textarea class="form-control" rows="1" name="vuln_name"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Severity</label>
+                        <select name="severity" class="selectpicker"
+                                data-live-search="true">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>URL:</label>
+                        <textarea class="form-control" rows="1" style="min-width: 70%"
+                                  name="vuln_url"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Descriptoin:</label>
+                        <textarea class="form-control" rows="8" name="description"
+                                  style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Solution:</label>
+                        <textarea class="form-control" rows="8" name="solution"
+                                  style="min-width: 100%"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Request Header:</label>
+                        <textarea class="form-control" name="request_header" rows="8" style="min-width: 30%"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Response Header:</label>
+                        <textarea class="form-control" name="response_header" rows="8" style="min-width: 30%"
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>reference:</label>
+                        <textarea class="form-control" rows="5" style="min-width: 70%"
+                                  name="reference"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!--<a class="btn btn-primary" aria-hidden="true"-->
+                       <!--href="/webscanners/web_vuln_list/?scan_id={{scan_id}}">Close-->
+                    <!--</a>-->
+                    <button class="btn btn-success">Save changes</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

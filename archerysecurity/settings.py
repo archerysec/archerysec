@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'osintscan',
     'jiraticketing',
     'tools',
+    'manual_scan',
     'django.contrib.admin',
     'stronghold',
     'django.contrib.auth',
