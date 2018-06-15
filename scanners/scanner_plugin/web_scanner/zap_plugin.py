@@ -31,7 +31,7 @@ from archerysettings import load_settings
 # Global Variables
 setting_file = os.getcwd() + '/apidata.json'
 zap_setting = load_settings.ArcherySettings(setting_file)
-# zap_api_key = zap_setting.zap_api_key()
+zap_api_key = ''
 zap_hosts = '127.0.0.1'
 zap_ports = '8080'
 
@@ -108,7 +108,7 @@ class ZAPScanner:
     all_url_vuln = []
 
     """ Connect with ZAP scanner global variable """
-    zap = zap_connect()
+    # zap = zap_connect()
 
     def __init__(self, target_url, project_id, rescan_id, rescan):
         """
@@ -120,6 +120,7 @@ class ZAPScanner:
         self.project_id = project_id
         self.rescan_id = rescan_id
         self.rescan = rescan
+        self.zap = zap_connect()
 
     def exclude_url(self):
         """
@@ -140,7 +141,7 @@ class ZAPScanner:
             print e
 
         try:
-            ZAPScanner.zap.spider.exclude_from_scan(
+            self.zap.spider.exclude_from_scan(
                 regex=excluded_url,
 
             )
@@ -169,7 +170,7 @@ class ZAPScanner:
             print e
 
         try:
-            ZAPScanner.zap.replacer.add_rule(
+            self.zap.replacer.add_rule(
                 apikey=zap_api_key,
                 description=self.target_url,
                 enabled="true",
@@ -191,7 +192,7 @@ class ZAPScanner:
 
         try:
             print "targets:-----", self.target_url
-            spider_id = ZAPScanner.zap.spider.scan(self.target_url)
+            spider_id = self.zap.spider.scan(self.target_url)
             save_all = zap_spider_db(
                 spider_url=self.target_url,
                 spider_scanid=spider_id
@@ -209,7 +210,7 @@ class ZAPScanner:
         """
         thread = ""
         try:
-            thread = ZAPScanner.zap.spider.set_option_thread_count(
+            thread = self.zap.spider.set_option_thread_count(
                 apikey=zap_api_key,
                 integer=thread_value
             )
@@ -227,9 +228,9 @@ class ZAPScanner:
         """
 
         try:
-            while int(ZAPScanner.zap.spider.status(spider_id)) < 100:
+            while int(self.zap.spider.status(spider_id)) < 100:
                 global spider_status
-                spider_status = ZAPScanner.zap.spider.status(spider_id)
+                spider_status = self.zap.spider.status(spider_id)
                 # print "Spider progress", spider_status
                 time.sleep(5)
         except Exception as e:
@@ -246,7 +247,7 @@ class ZAPScanner:
         """
         data_out = ""
         try:
-            spider_res_out = ZAPScanner.zap.spider.results(spider_id)
+            spider_res_out = self.zap.spider.results(spider_id)
             data_out = ("\n".join(map(str, spider_res_out)))
         except Exception as e:
             print e
@@ -261,7 +262,7 @@ class ZAPScanner:
         scan_id = ""
 
         try:
-            scan_id = ZAPScanner.zap.ascan.scan(self.target_url)
+            scan_id = self.zap.ascan.scan(self.target_url)
         except Exception as e:
             print e
 
@@ -275,8 +276,8 @@ class ZAPScanner:
         """
 
         try:
-            while int(ZAPScanner.zap.ascan.status(scan_id)) < 100:
-                scan_status = ZAPScanner.zap.ascan.status(scan_id)
+            while int(self.zap.ascan.status(scan_id)) < 100:
+                scan_status = self.zap.ascan.status(scan_id)
                 print "ZAP Scan Status:", scan_status
                 time.sleep(10)
                 zap_scans_db.objects.filter(
@@ -298,7 +299,7 @@ class ZAPScanner:
         The function return ZAP Scan Results.
         :return:
         """
-        all_vuln = ZAPScanner.zap.core.alerts(self.target_url)
+        all_vuln = self.zap.core.alerts(self.target_url)
 
         return all_vuln
 
@@ -404,7 +405,7 @@ class ZAPScanner:
         zap_web_all = zap_scan_results_db.objects.filter(scan_id=un_scanid)
         for m in zap_web_all:
             msg_id = m.messageId
-            request_response = ZAPScanner.zap.core.message(id=msg_id)
+            request_response = self.zap.core.message(id=msg_id)
             ja_son = json.dumps(request_response)
             ss = ast.literal_eval(ja_son)
 
