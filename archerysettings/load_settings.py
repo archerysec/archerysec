@@ -13,6 +13,7 @@
 import os
 import json
 from django.core import signing
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
 
 
 class ArcherySettings:
@@ -27,13 +28,18 @@ class ArcherySettings:
         """
         apikey = None
 
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                load_api_key = data['zap_api_key']
-                apikey = signing.loads(load_api_key)
-        except Exception as e:
-            print e
+        all_zap = zap_settings_db.objects.all()
+
+        for zap in all_zap:
+            apikey = zap.zap_api
+
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         load_api_key = data['zap_api_key']
+        #         apikey = signing.loads(load_api_key)
+        # except Exception as e:
+        #     print e
 
         return apikey
 
@@ -43,13 +49,19 @@ class ArcherySettings:
         :return:
         """
         zapath = None
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                zapath = data['zap_path']
 
-        except Exception as e:
-            print e
+        all_zap = zap_settings_db.objects.all()
+
+        for zap in all_zap:
+            zapath = zap.zap_url
+
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         zapath = data['zap_path']
+        #
+        # except Exception as e:
+        #     print e
         return zapath
 
     def zap_port(self):
@@ -58,13 +70,18 @@ class ArcherySettings:
         :return:
         """
         zaport = None
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                zaport = data['zap_port']
 
-        except Exception as e:
-            print "Error in setting file as", e
+        all_zap = zap_settings_db.objects.all()
+
+        for zap in all_zap:
+            zaport = zap.zap_port
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         zaport = data['zap_port']
+        #
+        # except Exception as e:
+        #     print "Error in setting file as", e
         return zaport
 
     def burp_host(self):
@@ -73,12 +90,18 @@ class ArcherySettings:
         :return:
         """
         burphost = None
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                burphost = data['burp_path']
-        except Exception as e:
-            print "Error in setting file as", e
+
+        all_burp = burp_setting_db.objects.all()
+
+        for burp in all_burp:
+            burphost = burp.burp_url
+
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         burphost = data['burp_path']
+        # except Exception as e:
+        #     print "Error in setting file as", e
 
         return burphost
 
@@ -88,12 +111,17 @@ class ArcherySettings:
         :return:
         """
         burport = None
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                burport = data['burp_port']
-        except Exception as e:
-            print "Error in setting file as", e
+
+        all_burp = burp_setting_db.objects.all()
+
+        for burp in all_burp:
+            burport = burp.burp_port
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         burport = data['burp_port']
+        # except Exception as e:
+        #     print "Error in setting file as", e
 
         return burport
 
@@ -104,12 +132,17 @@ class ArcherySettings:
         """
         openvashost = None
 
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                openvashost = data['open_vas_ip']
-        except Exception as e:
-            print "Error in setting file as", e
+        all_openvas = openvas_setting_db.objects.all()
+
+        for openvas in all_openvas:
+            openvashost = openvas.host
+
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         openvashost = data['open_vas_ip']
+        # except Exception as e:
+        #     print "Error in setting file as", e
 
         return openvashost
 
@@ -120,12 +153,17 @@ class ArcherySettings:
         """
         openvas_username = None
 
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                openvas_username = data['open_vas_user']
-        except Exception as e:
-            print "Error in setting file as", e
+        all_openvas = openvas_setting_db.objects.all()
+
+        for openvas in all_openvas:
+            openvas_username = openvas.user
+
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         openvas_username = data['open_vas_user']
+        # except Exception as e:
+        #     print "Error in setting file as", e
 
         return openvas_username
 
@@ -136,12 +174,17 @@ class ArcherySettings:
         """
         openvas_password = None
 
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                openvas_password = data['open_vas_pass']
-        except Exception as e:
-            print "Error in setting file as", e
+        all_openvas = openvas_setting_db.objects.all()
+
+        for openvas in all_openvas:
+            openvas_password = openvas.password
+
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         data = json.load(f)
+        #         openvas_password = data['open_vas_pass']
+        # except Exception as e:
+        #     print "Error in setting file as", e
 
         return openvas_password
 

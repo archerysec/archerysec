@@ -13,6 +13,7 @@
 
 import json
 from django.core import signing
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
 
 
 class SaveSettings:
@@ -29,19 +30,28 @@ class SaveSettings:
         :param zaport:
         :return:
         """
-        try:
-            with open(self.setting_file, 'r+') as f:
-                sig_apikey = signing.dumps(apikey)
-                data = json.load(f)
-                data['zap_api_key'] = sig_apikey
-                data['zap_path'] = str(zaphost)
-                data['zap_port'] = zaport
-                f.seek(0)
-                json.dump(data, f, indent=4)
-                f.truncate()
-        except Exception as e:
-            return e
-        return f.close()
+        all_zap = zap_settings_db.objects.all()
+        all_zap.delete()
+
+        save_zapsettings = zap_settings_db(zap_url=zaphost,
+                                           zap_api=apikey,
+                                           zap_port=zaport
+                                           )
+        save_zapsettings.save()
+
+        # try:
+        #     with open(self.setting_file, 'r+') as f:
+        #         sig_apikey = signing.dumps(apikey)
+        #         data = json.load(f)
+        #         data['zap_api_key'] = sig_apikey
+        #         data['zap_path'] = str(zaphost)
+        #         data['zap_port'] = zaport
+        #         f.seek(0)
+        #         json.dump(data, f, indent=4)
+        #         f.truncate()
+        # except Exception as e:
+        #     return e
+        # return f.close()
 
     def save_burp_settings(self, burphost, burport):
         """
@@ -50,6 +60,14 @@ class SaveSettings:
         :param burport:
         :return:
         """
+
+        all_burp = burp_setting_db.objects.all()
+        all_burp.delete()
+
+        save_burpsettings = burp_setting_db(burp_url=burphost,
+                                            burp_port=burport
+                                            )
+        save_burpsettings.save()
         try:
             with open(self.setting_file, 'r+') as f:
                 data = json.load(f)
@@ -70,6 +88,15 @@ class SaveSettings:
         :param passwrod:
         :return:
         """
+
+        all_openvas = openvas_setting_db.objects.all()
+        all_openvas.delete()
+
+        openvas_settings = openvas_setting_db(host=ipaddress,
+                                              user=openvas_user,
+                                              password=openvas_password
+                                              )
+        openvas_settings.save()
         try:
             with open(self.setting_file, 'r+') as f:
                 sig_ov_user = signing.dumps(openvas_user)

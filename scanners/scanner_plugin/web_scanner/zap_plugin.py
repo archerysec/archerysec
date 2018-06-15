@@ -16,8 +16,10 @@ import time
 import uuid
 import json
 import ast
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
 
 # ZAP Database import
+
 from webscanners.models import zap_scan_results_db,\
     zap_scans_db,\
     zap_spider_db,\
@@ -29,12 +31,25 @@ from archerysettings import load_settings
 # Global Variables
 setting_file = os.getcwd() + '/apidata.json'
 zap_setting = load_settings.ArcherySettings(setting_file)
-zap_api_key = zap_setting.zap_api_key()
-zap_hosts = zap_setting.zap_host()
-zap_ports = zap_setting.zap_port()
+# zap_api_key = zap_setting.zap_api_key()
+zap_hosts = '127.0.0.1'
+zap_ports = '8080'
 
 
 def zap_connect():
+    all_zap = zap_settings_db.objects.all()
+
+    zap_api_key = ''
+    zap_hosts = '127.0.0.1'
+    zap_ports = '8080'
+
+    for zap in all_zap:
+        zap_api_key = zap.zap_api
+        zap_hosts = zap.zap_url
+        zap_ports = zap.zap_port
+
+    print zap_hosts
+    print zap_ports
     zap = ZAPv2(apikey=zap_api_key,
                 proxies={
                     'http': zap_hosts + ':' + zap_ports,

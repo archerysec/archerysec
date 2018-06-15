@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'webscanners',
     'projects',
     'APIScan',
+    'archerysettings',
     'networkscanners',
     'osintscan',
     'jiraticketing',

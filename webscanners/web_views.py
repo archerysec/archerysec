@@ -54,6 +54,8 @@ from webscanners.models import netsparker_scan_db, \
     webinspect_scan_db, \
     webinspect_scan_result_db
 
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
 # All global variable
@@ -571,19 +573,30 @@ def setting(request):
     settings = load_settings.ArcherySettings(setting_file)
 
     # Loading OpenVAS Settings
-    ov_user = settings.openvas_username()
-    ov_pass = settings.openvas_pass()
-    ov_ip = settings.openvas_host()
-    lod_ov_user = signing.loads(ov_user)
-    lod_ov_pass = signing.loads(ov_pass)
-    lod_ov_ip = signing.loads(ov_ip)
+    # ov_user = settings.openvas_username()
+    # ov_pass = settings.openvas_pass()
+    # ov_ip = settings.openvas_host()
+    lod_ov_user = settings.openvas_username()
+    lod_ov_pass = settings.openvas_pass()
+    lod_ov_ip = settings.openvas_host()
 
     # Loading ZAP Settings
-    lod_apikey = settings.zap_api_key()
-    zap_host = settings.zap_host()
-    zap_port = settings.zap_port()
+    zap_api_key = ''
+    zap_hosts = ''
+    zap_ports = ''
+
+    all_zap = zap_settings_db.objects.all()
+    for zap in all_zap:
+        zap_api_key = zap.zap_api
+        zap_hosts = zap.zap_url
+        zap_ports = zap.zap_port
+
+    lod_apikey = zap_api_key
+    zap_host = zap_hosts
+    zap_port = zap_ports
 
     # Loading Burp Settings
+
     burp_host = settings.burp_host()
     burp_port = settings.burp_port()
 
