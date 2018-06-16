@@ -22,21 +22,28 @@ def sslscan(request):
     if request.method == 'POST':
         scan_url = request.POST.get('scan_url')
         project_id = request.POST.get('project_id')
-        scan_id = uuid.uuid4()
 
-        try:
-            sslscan_output = subprocess.check_output(['sslscan', '--no-colour', scan_url])
-            print(sslscan_output)
+        scan_item = str(scan_url)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        for i in range(0, split_length):
+            scan_id = uuid.uuid4()
+            scans_url = value_split.__getitem__(i)
 
-        except Exception as e:
-            print (e)
+            try:
+                sslscan_output = subprocess.check_output(['sslscan', '--no-colour', scans_url])
+                print(sslscan_output)
 
-        dump_scans = sslscan_result_db(scan_url=scan_url,
-                                       scan_id=scan_id,
-                                       project_id=project_id,
-                                       sslscan_output=sslscan_output)
+            except Exception as e:
+                print (e)
 
-        dump_scans.save()
+            dump_scans = sslscan_result_db(scan_url=scans_url,
+                                           scan_id=scan_id,
+                                           project_id=project_id,
+                                           sslscan_output=sslscan_output)
+
+            dump_scans.save()
 
     return render(request,
                   'sslscan_list.html',
@@ -71,8 +78,17 @@ def sslcan_del(request):
 
     if request.method == 'POST':
         scan_id = request.POST.get('scan_id')
-        del_scan = sslscan_result_db.objects.filter(scan_id=scan_id)
-        del_scan.delete()
+
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+
+            del_scan = sslscan_result_db.objects.filter(scan_id=vuln_id)
+            del_scan.delete()
 
     return HttpResponseRedirect('/tools/sslscan/')
 
@@ -88,28 +104,35 @@ def nikto(request):
     if request.method == 'POST':
         scan_url = request.POST.get('scan_url')
         project_id = request.POST.get('project_id')
-        scan_id = uuid.uuid4()
 
-        try:
-            print(scan_url)
-            nikto_output = subprocess.check_output(['nikto.pl', '-host', scan_url])
-            print(nikto_output)
-
-        except Exception as e:
-            print (e)
+        scan_item = str(scan_url)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        for i in range(0, split_length):
+            scan_id = uuid.uuid4()
+            scans_url = value_split.__getitem__(i)
 
             try:
-                nikto_output = subprocess.check_output(['nikto', '-host', scan_url])
+                print(scans_url)
+                nikto_output = subprocess.check_output(['nikto.pl', '-host', scans_url])
                 print(nikto_output)
+
             except Exception as e:
-                print(e)
+                print (e)
 
-        dump_scans = nikto_result_db(scan_url=scan_url,
-                                     scan_id=scan_id,
-                                     project_id=project_id,
-                                     nikto_scan_output=nikto_output)
+                try:
+                    nikto_output = subprocess.check_output(['nikto', '-host', scans_url])
+                    print(nikto_output)
+                except Exception as e:
+                    print(e)
 
-        dump_scans.save()
+            dump_scans = nikto_result_db(scan_url=scan_url,
+                                         scan_id=scan_id,
+                                         project_id=project_id,
+                                         nikto_scan_output=nikto_output)
+
+            dump_scans.save()
 
     return render(request,
                   'nikto_scan_list.html',
@@ -144,8 +167,17 @@ def nikto_scan_del(request):
 
     if request.method == 'POST':
         scan_id = request.POST.get('scan_id')
-        del_scan = nikto_result_db.objects.filter(scan_id=scan_id)
-        del_scan.delete()
+
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+
+            del_scan = nikto_result_db.objects.filter(scan_id=vuln_id)
+            del_scan.delete()
 
     return HttpResponseRedirect('/tools/nikto/')
 
@@ -238,9 +270,18 @@ def nmap_scan_del(request):
 
     if request.method == 'POST':
         ip_address = request.POST.get('ip_address')
-        del_scan = nmap_result_db.objects.filter(ip_address=ip_address)
-        del_scan.delete()
-        del_scan = nmap_scan_db.objects.filter(scan_ip=ip_address)
-        del_scan.delete()
+
+        scan_item = str(ip_address)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+
+            del_scan = nmap_result_db.objects.filter(ip_address=vuln_id)
+            del_scan.delete()
+            del_scan = nmap_scan_db.objects.filter(scan_ip=vuln_id)
+            del_scan.delete()
 
     return HttpResponseRedirect('/tools/nmap_scan/')

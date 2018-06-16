@@ -104,7 +104,7 @@
                                     <form method="POST" action="/webscanners/webinspect_vuln_out/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="Yes">
-                                        <input type="hidden" name="vuln_name" value="{{data.type}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">Yes</button>
                                     </form>
@@ -172,7 +172,7 @@
                                         <!--<button type="button" >Get Values</button>-->
                                     </form>
                                 </td>
-                                <td><a href="/webscanners/webinspect_vuln_data/?vuln_id={{data.vuln_id}}">{{data.type}}</a>
+                                <td><a href="/webscanners/webinspect_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                 </td>
                                 <td width="50%">{{data.vuln_url}}</td>
                                 <td><span class="badge badge-{{data.vuln_color}}">{{data.severity}}</span></td>
@@ -180,7 +180,7 @@
                                     <form method="POST" action="/webscanners/webinspect_vuln_out/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
-                                        <input type="hidden" name="vuln_name" value="{{data.type}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">No</button>
                                     </form>
