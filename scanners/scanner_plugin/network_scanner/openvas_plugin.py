@@ -6,9 +6,10 @@ from django.core import signing
 import time
 import os
 import uuid
+from archerysettings.models import openvas_setting_db
 
-openvas_data = os.getcwd() + '/' + 'apidata.json'
-openvas_setting = load_settings.ArcherySettings(openvas_data)
+# openvas_data = os.getcwd() + '/' + 'apidata.json'
+# openvas_setting = load_settings.ArcherySettings(openvas_data)
 
 
 class OpenVAS_Plugin:
@@ -33,13 +34,21 @@ class OpenVAS_Plugin:
         Connecting with OpenVAS
         :return:
         """
-        ov_user = openvas_setting.openvas_username()
-        ov_pass = openvas_setting.openvas_pass()
-        ov_ip = openvas_setting.openvas_host()
 
-        lod_ov_user = signing.loads(ov_user)
-        lod_ov_pass = signing.loads(ov_pass)
-        lod_ov_ip = signing.loads(ov_ip)
+        all_openvas = openvas_setting_db.objects.all()
+
+        for openvas in all_openvas:
+            ov_user = openvas.user
+            ov_pass = openvas.password
+            ov_ip = openvas.host
+
+        # ov_user = openvas_setting.openvas_username()
+        # ov_pass = openvas_setting.openvas_pass()
+        # ov_ip = openvas_setting.openvas_host()
+
+        lod_ov_user = ov_user
+        lod_ov_pass = ov_pass
+        lod_ov_ip = ov_ip
 
         scanner = VulnscanManager(str(lod_ov_ip),
                                   str(lod_ov_user),
@@ -90,13 +99,27 @@ def vuln_an_id(scan_id):
     :param scan_id:
     :return:
     """
-    ov_user = openvas_setting.openvas_username()
-    ov_pass = openvas_setting.openvas_pass()
-    ov_ip = openvas_setting.openvas_host()
+    # ov_user = openvas_setting.openvas_username()
+    # ov_pass = openvas_setting.openvas_pass()
+    # ov_ip = openvas_setting.openvas_host()
+    #
+    # lod_ov_user = signing.loads(ov_user)
+    # lod_ov_pass = signing.loads(ov_pass)
+    # lod_ov_ip = signing.loads(ov_ip)
 
-    lod_ov_user = signing.loads(ov_user)
-    lod_ov_pass = signing.loads(ov_pass)
-    lod_ov_ip = signing.loads(ov_ip)
+    all_openvas = openvas_setting_db.objects.all()
+
+    for openvas in all_openvas:
+        ov_user = openvas.user
+        ov_pass = openvas.password
+        ov_ip = openvas.host
+
+    print "---------------user", ov_user
+
+    lod_ov_user = ov_user
+    lod_ov_pass = ov_pass
+    lod_ov_ip = ov_ip
+
     scanner = VulnscanManager(str(lod_ov_ip),
                               str(lod_ov_user),
                               str(lod_ov_pass))
