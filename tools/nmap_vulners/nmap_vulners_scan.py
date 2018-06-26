@@ -6,19 +6,38 @@ import os
 from tools.models import nmap_vulners_port_result_db, nmap_scan_db
 
 
-def parse_port(proto, ip_addr, host_data):
+def parse_port(proto, ip_addr, host_data, scan_id, project_id):
     ports = host_data.get(proto)
     if not ports:
         return
 
+    print('[NMAP_VULNERS] Host : %s, proto %s, ports (%s)' % (ip_addr, proto, ports))
     for port, portData in dict(ports).items():
-        print('[NMAP_VULNERS] Host : %s ports (%s)' % (ip_addr, ports))
         nmap_obj, _ = nmap_vulners_port_result_db.objects.get_or_create(ip_address=ip_addr, port=port)
-        # nmap_obj.ip_address = ip_addr
+
         nmap_obj.protocol = proto
         nmap_obj.state = portData.get('state')
+        nmap_obj.scan_id = scan_id
+        nmap_obj.project_id = project_id
+        nmap_obj.reason = portData.get('reason')
+        nmap_obj.reason_ttl = portData.get('reason_ttl')
+        nmap_obj.version = portData.get('version')
+        nmap_obj.extrainfo = portData.get('extrainfo')
+        nmap_obj.name = portData.get('name')
+        nmap_obj.conf = portData.get('conf')
+        nmap_obj.method = portData.get('method')
+        nmap_obj.type_p = portData.get('type_p')
+        nmap_obj.osfamily = portData.get('osfamily')
+        nmap_obj.vendor = portData.get('vendor')
+        nmap_obj.osgen = portData.get('osgen')
+        nmap_obj.accuracy = portData.get('accuracy')
+        nmap_obj.cpe = portData.get('cpe')
+        nmap_obj.used_state = portData.get('used_state')
+        nmap_obj.used_portid = portData.get('used_portid')
+        nmap_obj.used_proto = portData.get('used_proto')
         if 'script' in portData and 'vulners' in portData.get('script'):
             nmap_obj.vulners_extrainfo = portData.get('script').get('vulners').strip('\n\t ')
+
         nmap_obj.save()
 
 
@@ -43,8 +62,8 @@ def run_nmap_vulners(ip_addr='', project_id=''):
         print('[NMAP_VULNERS] ----------------------------------------------------')
         print('[NMAP_VULNERS] Host : %s (%s)' % (host, host_data.get('hostnames')))
 
-        parse_port('tcp', host, host_data)
-        parse_port('udp', host, host_data)
+        parse_port('tcp', host, host_data, scan_id, project_id)
+        parse_port('udp', host, host_data, scan_id, project_id)
 
         all_data = nmap_vulners_port_result_db.objects.filter(ip_address=host)
         # for a in all_data:

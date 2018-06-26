@@ -43,6 +43,7 @@
                 href="#" class="current">nmap_vulners List</a></div>
 
         <h1>nmap_vulners Scans Result</h1>
+        <h2>Click on a vulnerable port (the red ones if any) to get more info.</h2>
     </div>
 
     <div class="container-fluid">
@@ -100,8 +101,12 @@
                                 <td><a href="#">{{ data.ip_address }}</a>
                                 </td>
                                 {% if data.vulners_extrainfo %}
-                                    <td><a href="/tools/nmap_vulners_port_list/?ip={{data.ip_address}}&port={{data.port}}"><p style="color: red;">{{data.port}}</p></a></td>
-                                    {% else %}
+                                    <td>
+                                        <a href="/tools/nmap_vulners_port_list/?ip={{data.ip_address}}&port={{data.port}}">
+                                            <p style="color: red;">{{data.port}}</p>
+                                        </a>
+                                    </td>
+                                {% else %}
                                     <td>{{ data.port }}</td>
                                 {% endif %}
 

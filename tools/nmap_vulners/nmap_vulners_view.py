@@ -58,11 +58,13 @@ def nmap_vulners_port(request):
 
     port_info = nmap_vulners_port_result_db.objects.filter(ip_address=ip_address, port=port)
 
-    info = port_info.first().vulners_extrainfo.split('\n\t')[1:]
-    info_gen = imap(lambda x: x.split('\t\t'), info)
+    cve_info = list()
+    if port_info.first().vulners_extrainfo:
+        info = port_info.first().vulners_extrainfo.split('\n\t')[1:]
+        info_gen = imap(lambda x: x.split('\t\t'), info)
 
-    names = ('cve', 'cvss', 'link',)
-    cve_info = (dict(zip(names, info)) for info in info_gen)
+        names = ('cve', 'cvss', 'link',)
+        cve_info = (dict(zip(names, info)) for info in info_gen)
 
     return render(request,
                   'nmap_vulners_port_list.html',
