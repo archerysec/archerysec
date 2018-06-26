@@ -20,7 +20,7 @@
                 <!--contentType: 'application/json; charset=utf-8',-->
                 url:'/tools/nmap_scan_del/',
                 data:{
-                   ip_address: json_scanid,
+                   scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                 },
                 sucess:function(){
@@ -40,9 +40,9 @@
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
-                href="#" class="current">Nmap List</a></div>
+                href="#" class="current">nmap_vulners List</a></div>
 
-        <h1>Nmap Scans Result</h1>
+        <h1>nmap_vulners Scans Result</h1>
     </div>
 
     <div class="container-fluid">
@@ -53,21 +53,17 @@
             {% for message in messages %}
             <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
                                                             href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
+                <p class="alert-heading">{{ message | escape}}</p>
             </div>
             {% endfor %}
 
             {% endif %}
         </div>
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                        <h5>Nmap Scan List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/networkscanners/OpenVas_xml_upload/"
-                                                class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
-                            XML</a>
-                        </div>
+                        <h5>nmap_vulners Scan List</h5>
                         <div class="buttons">
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
@@ -78,42 +74,55 @@
                             <tr>
                                 <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                                 <th>URL</th>
-                                <th>Total Ports</th>
-                                <th>Total Open Ports</th>
-                                <th>Total Close Ports</th>
+                                <th>Port</th>
+                                <th>state</th>
+                                <th>version</th>
+                                <th>Service</th>
+                                <th>osfamily</th>
+                                <th>osgen</th>
+                                <th>cpe</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
-                            <tbody>{% for data in all_nmap %}
+                            <tbody>
+                            {% autoescape on %}
+
+                            {% for data in all_nmap %}
                             <tr data-target="#">
                                 <td>
                                     <form>
-                                        <label><input type="checkbox" value="{{data.scan_ip}}" name="del_scan_id"
+                                        <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
                                                       onClick="reload">
 
                                         </label>
                                     </form>
                                 </td>
-                                <td>
-                                    {% if is_vulners %}
-                                        <a href="/tools/nmap_vulners/?ip={{data.scan_ip}}">{{data.scan_ip}}</a>
-                                    {% else %}
-                                        <a href="/tools/nmap/?ip={{data.scan_ip}}">{{data.scan_ip}}</a>
-                                    {% endif %}
+                                <td><a href="#">{{ data.ip_address }}</a>
                                 </td>
-                                <td>{{data.total_ports}}</td>
-                                <td>{{data.total_open_ports}}</td>
-                                <td>{{data.total_close_ports}}</td>
+                                {% if data.vulners_extrainfo %}
+                                    <td><a href="/tools/nmap_vulners_port_list/?ip={{data.ip_address}}&port={{data.port}}"><p style="color: red;">{{data.port}}</p></a></td>
+                                    {% else %}
+                                    <td>{{ data.port }}</td>
+                                {% endif %}
+
+                                <td>{{data.state}}</td>
+                                <td>{{data.version}}</td>
+                                <td>{{data.name}}</td>
+                                <td>{{data.osfamily}}</td>
+                                <td>{{data.osgen}}</td>
+                                <td>{{data.cpe}}</td>
                                 <td>
                                     <form action="/tools/nmap_scan_del/" method="post" class="forms-sample">
 
                                         {% csrf_token %}
-                                        <input type="hidden" name="ip_address" value="{{data.scan_ip}}"/>
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
                                         <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                     </form>
                                 </td>
                             </tr>
                             {% endfor %}
+
+                            {% endautoescape %}
                             </tbody>
                         </table>
                     </div>

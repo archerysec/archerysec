@@ -49,4 +49,15 @@ urlpatterns = [
     url(r'^nmap_scan_del/$',
         views.nmap_scan_del,
         name='nmap_scan_del'),
+
+    #Nmap_Vulners
+    url(r'^nmap_vulners_scan/$',
+        views.nmap_vulners_scan,
+        name='nmap_scan'),
+    url(r'^nmap_vulners/$',
+        views.nmap_vulners,
+        name='nmap_vulners'),
+    url(r'^nmap_vulners_port_list/$',
+        views.nmap_vulners_port,
+        name='nmap_vulners_port'),
 ]

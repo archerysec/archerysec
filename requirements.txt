@@ -58,3 +58,4 @@ urllib3==1.22
 WeasyPrint==0.42
 webencodings==0.5.1
 xhtml2pdf==0.2b1
+python-nmap==0.6.1
