@@ -217,6 +217,10 @@ hr{ border-top-color:#dadada;}
 	margin-left: 20px;
 	position: relative;
 }
+#content-header h2 {
+	font-size:12px;
+	margin-left: 20px;
+}
 #content-header .btn-group {
 	float: right;
 	right: 20px;

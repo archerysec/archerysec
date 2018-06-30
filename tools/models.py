@@ -53,3 +53,7 @@ class nmap_result_db(models.Model):
     used_state = models.TextField(blank=True, null=True)
     used_portid = models.TextField(blank=True, null=True)
     used_proto = models.TextField(blank=True, null=True)
+
+# NOTE[gmedian]: just base on the previous existing table in order not to make anything non-working
+class nmap_vulners_port_result_db(nmap_result_db):
+    vulners_extrainfo = models.TextField(blank=True, null=True)
