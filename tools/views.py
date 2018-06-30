@@ -2,11 +2,13 @@
 from __future__ import unicode_literals
 from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nmap_scan_db
 from django.shortcuts import render, HttpResponseRedirect
-import uuid
 import subprocess
 import xml.etree.ElementTree as ET
 from scanners.scanner_parser.network_scanner import nmap_parser
 import uuid
+
+# NOTE[gmedian]: in order to be more portable we just import everything rather than add anything in this very script
+from tools.nmap_vulners.nmap_vulners_view import nmap_vulners, nmap_vulners_port, nmap_vulners_scan
 
 sslscan_output = None
 

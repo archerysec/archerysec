@@ -1,0 +1,60 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a>
+            <a href="/tools/nmap_vulners/?ip={{ ip | escape }}">Scan results</a>
+            <a href="#" class="current">Port scan results</a>
+        </div>
+
+        <h1>Vulners port scan Result for {{ ip | escape}}:{{ port | escape }}</h1>
+    </div>
+
+    <div class="container-fluid">
+        <hr>
+        <div class="span3 offset6">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <p class="alert-heading">{{ message }}</p>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>nmap_vulners port scan result</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th>CVE</th>
+                                <th>CVSS Score</th>
+                                <th>Link</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in cve_info %}
+                            <tr data-target="#">
+                                <th>{{ data.cve }}</th>
+                                <th>{{ data.cvss }}</th>
+                                <th>{{ data.link }}</th>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
