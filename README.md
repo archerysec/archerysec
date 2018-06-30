@@ -173,6 +173,10 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 
 Anand Tiwari -  https://github.com/anandtiwarics
 
+### Contributors
+
+[GMedian](https://github.com/GMedian) - Nmap+Vulners 
+
 ### Social Media
 * [Official Website](https://archerysec.github.io/archerysec/)
 * [Twitter](https://twitter.com/archerysec)
