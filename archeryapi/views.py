@@ -3,17 +3,18 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
 from rest_framework.response import Response
-from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db
+from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
+    netsparker_scan_db, webinspect_scan_db
 from networkscanners.models import scan_save_db, ov_scan_result_db
 from projects.models import project_db
-from webscanners.serializers import WebScanSerializer, WebScanResultSerializer
+from webscanners.serializers import WebScanSerializer, WebScanResultSerializer, UploadScanSerializer
 from rest_framework import status
 from webscanners import web_views
 from networkscanners import views
@@ -26,6 +27,13 @@ from itertools import chain
 import threading
 from django.utils import timezone
 import datetime
+import xml.etree.ElementTree as ET
+from scanners.scanner_parser.web_scanner import zap_xml_parser, \
+    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -49,7 +57,7 @@ class WebScan(generics.ListCreateAPIView):
             scan_id = uuid.uuid4()
             scanner = request.data.get('scanner')
             target_url = request.data.get('scan_url', )
-            project_id = request.data.get('project_id',)
+            project_id = request.data.get('project_id', )
             rescanid = None
             rescan = 'No'
             if scanner == 'zap_scan':
@@ -136,7 +144,6 @@ class NetworkScan(generics.ListCreateAPIView):
 
 
 class Project(generics.CreateAPIView):
-
     queryset = project_db.objects.all()
     serializer_class = ProjectDataSerializers
 
@@ -158,11 +165,11 @@ class Project(generics.CreateAPIView):
         serializer = ProjectDataSerializers(data=request.data)
         if serializer.is_valid():
             project_id = uuid.uuid4()
-            project_name = request.data.get("project_name",)
-            project_start = request.data.get("project_start",)
-            project_end = request.data.get("project_end",)
-            project_owner = request.data.get("project_owner",)
-            project_disc = request.data.get("project_disc",)
+            project_name = request.data.get("project_name", )
+            project_start = request.data.get("project_start", )
+            project_end = request.data.get("project_end", )
+            project_owner = request.data.get("project_owner", )
+            project_disc = request.data.get("project_disc", )
             save_project = project_db(project_name=project_name, project_id=project_id,
                                       project_start=project_start, project_end=project_end,
                                       project_owner=project_owner, project_disc=project_disc, )
@@ -184,7 +191,7 @@ class WebScanResult(generics.ListCreateAPIView):
         """
         serializer = WebScanResultSerializer(data=request.data)
         if serializer.is_valid():
-            scan_id = request.data.get('scan_id',)
+            scan_id = request.data.get('scan_id', )
             # project_id = request.data.get('project_id',)
             zap_scan = zap_scan_results_db.objects.filter(scan_id=scan_id)
             burp_scan = burp_scan_result_db.objects.filter(scan_id=scan_id)
@@ -203,7 +210,102 @@ class NetworkScanResult(generics.ListCreateAPIView):
         """
         serializer = NetworkScanResultSerializer(data=request.data)
         if serializer.is_valid():
-            scan_id = request.data.get('scan_id',)
+            scan_id = request.data.get('scan_id', )
             all_scans = ov_scan_result_db.objects.filter(scan_id=scan_id)
             serialized_scans = NetworkScanResultSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
+
+
+class UpladScanResult(APIView):
+    parser_classes = (MultiPartParser,)
+
+    def post(self, request, format=None):
+
+        project_id = request.data.get("project_id")
+        scanner = request.data.get("scanner")
+        xml_file = request.data.get("filename")
+        scan_url = request.data.get("scan_url")
+        scan_id = uuid.uuid4()
+        scan_status = "100"
+        print xml_file
+        if scanner == "zap_scan":
+            date_time = datetime.datetime.now()
+            scan_dump = zap_scans_db(scan_url=scan_url,
+                                     scan_scanid=scan_id,
+                                     date_time=date_time,
+                                     project_id=project_id,
+                                     vul_status=scan_status,
+                                     rescan='No')
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            zap_xml_parser.xml_parser(project_id=project_id,
+                                      scan_id=scan_id,
+                                      root=root_xml)
+            return Response({"message": "Scan Data Uploaded"})
+        elif scanner == "burp_scan":
+            date_time = datetime.datetime.now()
+            scan_dump = burp_scan_db(url=scan_url,
+                                     scan_id=scan_id,
+                                     date_time=date_time,
+                                     project_id=project_id,
+                                     scan_status=scan_status)
+            scan_dump.save()
+            # Burp scan XML parser
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            do_xml_data = burp_plugin.burp_scans(project_id,
+                                                 scan_url,
+                                                 scan_id)
+            do_xml_data.burp_scan_data(root_xml)
+            return Response({"message": "Scan Data Uploaded"})
+
+        elif scanner == "arachni":
+            date_time = datetime.datetime.now()
+            scan_dump = arachni_scan_db(url=scan_url,
+                                        scan_id=scan_id,
+                                        date_time=date_time,
+                                        project_id=project_id,
+                                        scan_status=scan_status)
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            arachni_xml_parser.xml_parser(project_id=project_id,
+                                          scan_id=scan_id,
+                                          root=root_xml)
+            return Response({"message": "Scan Data Uploaded"})
+
+        elif scanner == 'netsparker':
+            date_time = datetime.datetime.now()
+            scan_dump = netsparker_scan_db(
+                url=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            netsparker_xml_parser.xml_parser(project_id=project_id,
+                                             scan_id=scan_id,
+                                             root=root_xml)
+            return Response({"message": "Scan Data Uploaded"})
+        elif scanner == 'webinspect':
+            date_time = datetime.datetime.now()
+            scan_dump = webinspect_scan_db(
+                url=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            webinspect_xml_parser.xml_parser(project_id=project_id,
+                                             scan_id=scan_id,
+                                             root=root_xml)
+            return Response({"message": "Scan Data Uploaded"})
+
+        return Response({"message": "Scan Data Uploaded"})

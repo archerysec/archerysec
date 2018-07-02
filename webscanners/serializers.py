@@ -31,7 +31,6 @@ class WebScanResultSerializer(serializers.Serializer):
     scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
     project_id = serializers.UUIDField(read_only=True)
     url = serializers.URLField(read_only=True)
-
     vuln_id = serializers.CharField(read_only=True)
     confidence = serializers.CharField(read_only=True)
     wascid = serializers.CharField(read_only=True)
@@ -52,7 +51,6 @@ class WebScanResultSerializer(serializers.Serializer):
     ids = serializers.CharField(read_only=True)
     description = serializers.CharField(read_only=True)
     req_res = serializers.CharField(read_only=True)
-
     note = serializers.CharField(read_only=True)
     rtt = serializers.CharField(read_only=True)
     tags = serializers.CharField(read_only=True)
@@ -65,7 +63,6 @@ class WebScanResultSerializer(serializers.Serializer):
     res_type = serializers.CharField(read_only=True)
     res_id = serializers.CharField(read_only=True)
     date_time = serializers.CharField(read_only=True)
-
     serialNumber = serializers.CharField(read_only=True)
     types = serializers.CharField(read_only=True)
     host = serializers.CharField(read_only=True)
@@ -83,4 +80,12 @@ class WebScanResultSerializer(serializers.Serializer):
     scan_response = serializers.CharField(read_only=True)
     #method = serializers.CharField(read_only=True)
     false_positive = serializers.CharField(read_only=True)
+
+
+class UploadScanSerializer(serializers.Serializer):
+    project_id = serializers.UUIDField()
+    scanner = serializers.CharField()
+    xml_file = serializers.FileField()
+    scan_url = serializers.URLField()
+
 
