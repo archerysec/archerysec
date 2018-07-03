@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'project/', views.Project.as_view()),
     url(r'webscanresult/', views.WebScanResult.as_view()),
     url(r'networkscanresult/', views.NetworkScanResult.as_view()),
+    url(r'uploadscan/', views.UpladScanResult.as_view())
 
 ]
 
