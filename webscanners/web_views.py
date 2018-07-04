@@ -854,13 +854,14 @@ def cookies_list(request):
 def del_cookies(request):
 
     if request.method == 'POST':
-        cookie_id = request.POST.get('id')
+        # cookie_id = request.POST.get('id')
         cookie_url = request.POST.get('url')
 
-        del_cookie = cookie_db.objects.filter(url=cookie_url, id=cookie_id)
+        del_cookie = cookie_db.objects.filter(url=cookie_url)
         del_cookie.delete()
+        return HttpResponseRedirect('/webscanners/')
 
-    return HttpResponseRedirect('/webscanners/cookies_list')
+    return render(request, 'cookies_list.html')
 
 
 def sel_login(request):
@@ -914,9 +915,9 @@ def exluded_url_list(request):
     all_excluded_url = excluded_db.objects.all()
 
     if request.method == 'POST':
-        exluded_id = request.POST.get('id')
+        exluded_url = request.POST.get('exclude_url')
 
-        del_excluded = excluded_db.objects.filter(id=exluded_id)
+        del_excluded = excluded_db.objects.filter(exclude_url=exluded_url)
         del_excluded.delete()
 
     return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})

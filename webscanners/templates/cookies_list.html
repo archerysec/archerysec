@@ -90,16 +90,15 @@
                                         </label>
                                     </form>
                                 </td>
-                                <td><a href="/tools/sslscan_result/?scan_id={{data.cookies}}">{{ data.url }}</a>
+                                <td>{{ data.url }}
                                 </td>
                                 <td>
                                     {{ data.cookie }}
                                 </td>
                                 <td>
-                                    <form action="/webscanners/cookies_del/" method="post" class="forms-sample">
+                                    <form action="/webscanners/cookies_del" method="post" class="forms-sample">
 
                                         {% csrf_token %}
-                                        <input type="hidden" name="id" value="{{data.id}}"/>
                                         <input type="hidden" name="url" value="{{data.url}}"/>
                                         <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                     </form>
