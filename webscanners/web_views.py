@@ -840,6 +840,29 @@ def save_cookie(driver):
     return HttpResponseRedirect('/webscanners/')
 
 
+def cookies_list(request):
+    """
+
+    :param request:
+    :return:
+    """
+    all_cookies = cookie_db.objects.all()
+
+    return render(request, 'cookies_list.html', {'all_cookies': all_cookies})
+
+
+def del_cookies(request):
+
+    if request.method == 'POST':
+        cookie_id = request.POST.get('id')
+        cookie_url = request.POST.get('url')
+
+        del_cookie = cookie_db.objects.filter(url=cookie_url, id=cookie_id)
+        del_cookie.delete()
+
+    return HttpResponseRedirect('/webscanners/cookies_list')
+
+
 def sel_login(request):
     """
     Lgoin perfrom using Selenium.
@@ -880,6 +903,23 @@ def exclude_url(request):
     exclude_save.save()
 
     return render(request, 'webscanner.html', )
+
+
+def exluded_url_list(request):
+    """
+
+    :param request:
+    :return:
+    """
+    all_excluded_url = excluded_db.objects.all()
+
+    if request.method == 'POST':
+        exluded_id = request.POST.get('id')
+
+        del_excluded = excluded_db.objects.filter(id=exluded_id)
+        del_excluded.delete()
+
+    return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})
 
 
 def edit_vuln(request):

@@ -83,6 +83,8 @@
 
 
 
+
+
 </script>
 
 <script>
@@ -146,6 +148,8 @@ $(document).on('submit', '#exclude_url', function(e){
 
 
 
+
+
 </script>
 
 <script type="text/javascript">
@@ -154,6 +158,8 @@ $(document).on('submit', '#exclude_url', function(e){
       $("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds
   }
  setInterval('autoRefresh_div()', 5000);
+
+
 
 
 
@@ -255,6 +261,13 @@ $(document).on('submit', '#exclude_url', function(e){
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
                     <h5>Cookie Store:</h5>
+                    <div class="buttons"><a data-toggle="modal" href="/webscanners/cookie_add/" target="_blank"
+                                            class="btn btn-primary btn-mini"><i
+                            class="icon-plus icon-white"></i> Add Cookies</a>
+                    </div>
+                    <div class="buttons"><a data-toggle="modal" href="/webscanners/cookies_list/" target="_blank"
+                                            class="btn btn-primary btn-mini">Cookies List</a>
+                    </div>
                 </div>
                 <div class="row-fluid">
                     <div class="control-group">
@@ -288,28 +301,11 @@ $(document).on('submit', '#exclude_url', function(e){
                     </div>
                 </div>
             </div>
-
-            <div class="widget-box">
-                <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                    <h5>Cookies:</h5>
-                    <div class="buttons"><a data-toggle="modal" href="/webscanners/cookie_add/"
-                                            class="btn btn-primary btn-mini"><i
-                            class="icon-plus icon-white"></i> Add Cookies</a>
-                    </div>
-                </div>
-                <div class="widget-content">
-                    <h5>Cookies</h5>
-                    {% for cookie in all_cookies %}
-                    {{cookie.cookie}}
-                    {% endfor %}
-                </div>
-            </div>
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
                     <h5>Exclude URL's:</h5>
-                    <div class="buttons"><a data-toggle="modal" href="#"
-                                            class="btn btn-primary btn-mini"><i
-                            class="icon-plus icon-white"></i> Exclude URL</a>
+                    <div class="buttons"><a data-toggle="modal" href="/webscanners/excluded_url_list" target="_blank"
+                                            class="btn btn-primary btn-mini">Excluded URL List</a>
                     </div>
                 </div>
                 <div class="widget-content nopadding">
