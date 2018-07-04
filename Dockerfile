@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -q -y --fix-missing \
         python-pip
 WORKDIR /root/archerysec
 RUN python manage.py process_tasks &
-RUN pip install -r requirements.txt
 COPY . /root/archerysec/
 EXPOSE 8000
 RUN chmod +x docker_run.sh
