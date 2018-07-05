@@ -59,12 +59,17 @@ Follow the instruction in order to enable Burp REST API. You can manage and trig
 
 * [Burp REST API](https://github.com/vmware/burp-rest-api)
 
+## Start app
+```
+$ python manage.py runserver 0.0.0.0:8000
+```
+
 ## Installation
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
-$ chmod +x run.sh
-$ sudo ./run.sh
+$ chmod +x install.sh
+$ sudo ./install.sh
 ```
 
 ## Manual Installation

@@ -19,6 +19,6 @@ WORKDIR /root/archerysec
 RUN python manage.py process_tasks &
 COPY . /root/archerysec/
 EXPOSE 8000
-RUN chmod +x docker_run.sh
-RUN ./docker_run.sh
+RUN chmod +x install.sh
+RUN ./install.sh
 CMD ["python","manage.py","runserver","0.0.0.0:8000"]
