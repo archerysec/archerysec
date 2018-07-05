@@ -14,7 +14,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-
 class zap_spider_db(models.Model):
     spider_url = models.TextField(blank=True)
     spider_scanid = models.TextField(blank=True)

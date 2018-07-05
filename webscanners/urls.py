@@ -103,6 +103,12 @@ urlpatterns = [
         web_views.scan_pdf_gen),
     url(r'^zap_rescan',
         web_views.zap_rescan),
+    url(r'^cookies_list',
+        web_views.cookies_list),
+    url(r'^cookies_del',
+        web_views.del_cookies),
+    url(r'^excluded_url_list',
+        web_views.exluded_url_list),
 
     # Burp Setting from path
     url(r'^burp_setting',
