@@ -50,7 +50,7 @@ Currently project is in development phase and still lot of work going on. Stay t
 ## Requirement
 
 * Python 2.7
-* OpenVas 8
+* OpenVas 8, 9
 * [OWASP ZAP 2.7.0](https://github.com/zaproxy/zaproxy/wiki/Downloads)
 * [Selenium Python Firefox Web driver](https://github.com/mozilla/geckodriver/releases)
 
