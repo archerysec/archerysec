@@ -82,6 +82,7 @@
                                 <th>False Positive</th>
                                 <th></th>
                                 <th></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>{% for data in vuln_data %}
@@ -96,13 +97,14 @@
                                 </td>
                                 <td><a href="/webscanners/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                 </td>
-                                <td width="50%">{{data.url}}</td>
+                                <td>{{data.url}}</td>
                                 <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span></td>
                                 <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a></td>
                                 <td>
                                     <form method="POST" action="/webscanners/burp_vuln_out/" >{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="Yes">
+                                        <input type="hidden" name="status" value="Open">
                                         <input type="hidden" name="vuln_name" value="{{data.name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">Yes</button>
@@ -124,6 +126,16 @@
                                         </form>
                                     </div>
                                 </td>
+                                <td>
+                                    <form method="POST" action="/webscanners/burp_vuln_out/" >{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Closed">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-danger btn-mini">Close</button>
+                                    </form>
+                                </td>
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -132,7 +144,7 @@
                 </div>
             </div>
         </div>
-
+        <!--False Positive Vulnerability List-->
         <div class="row-fluid">
             <div class="span9 offset1">
                 <div class="widget-box">
@@ -178,6 +190,7 @@
                                     <form method="POST" action="/webscanners/burp_vuln_out/" >{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Open">
                                         <input type="hidden" name="vuln_name" value="{{data.name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">No</button>
@@ -198,6 +211,93 @@
                                             <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                         </form>
                                     </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Closed Vulnerabilities list-->
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Closed Vulnerabilities List</h5>
+                        <!--<div class="buttons"><a data-toggle="modal" href="/add_vuln/?scan_id={{ scan_vul }}"-->
+                                                <!--class="btn btn-primary btn-mini"><i-->
+                                <!--class="icon-plus icon-white"></i> Add new Vulnerability</a>-->
+                        <!--</div>-->
+                        <div class="buttons">
+                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                    </div>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>Vulnerability</th>
+                                <th>URL</th>
+                                <th>Risk</th>
+                                <th>False Positive</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in vuln_close_data %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                        </label>
+                                        <!--<br>-->
+                                        <!--<button type="button" >Get Values</button>-->
+                                    </form>
+                                </td>
+                                <td><a href="/webscanners/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                </td>
+                                <td>{{data.url}}</td>
+                                <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span></td>
+                                <td>
+                                    <form method="POST" action="/webscanners/burp_vuln_out/" >{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-info btn-mini">No</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <div><a href="/webscanners/edit_burp_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"
+                                            data-original-title="Edit"><i
+                                            class="icon-pencil"></i></a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <form action="/webscanners/del_vuln/" method="POST" class="form-horizontal">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                                 <td>
+                                    <form method="POST" action="/webscanners/burp_vuln_out/" >{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Open">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-info btn-mini">Open</button>
+                                    </form>
                                 </td>
                             </tr>
                             {% endfor %}

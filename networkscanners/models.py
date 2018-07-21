@@ -51,6 +51,7 @@ class ov_scan_result_db(models.Model):
     date_time = models.DateTimeField(null=True)
     false_positive = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
 
 
 class scan_save_db(models.Model):
@@ -103,6 +104,7 @@ class nessus_report_db(models.Model):
     port = models.TextField(blank=True, null=True)
     scan_ip = models.TextField(blank=True, null=True)
     jira_ticket = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
 
 
 class nessus_scan_db(models.Model):

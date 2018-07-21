@@ -263,7 +263,9 @@ class burp_scans(object):
                     vulnerabilityClassifications=vulnerabilityClassifications,
                     issueDetail=issueDetail,
                     requestresponse=requestresponse,
-                    false_positive='No')
+                    false_positive='No',
+                    vuln_status='Open'
+                )
                 data_dump.save()
             except Exception as e:
                 print e

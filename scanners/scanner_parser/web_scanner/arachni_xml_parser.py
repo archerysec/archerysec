@@ -236,7 +236,8 @@ def xml_parser(root, project_id, scan_id):
                                                    response_ip=response_ip,
                                                    response_raw_headers=response_raw_headers,
                                                    vector_input_key=vector_input_key,
-                                                   false_positive='No')
+                                                   false_positive='No',
+                                                   vuln_status='Open')
                 dump_data.save()
 
     arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity', 'vuln_color').distinct()

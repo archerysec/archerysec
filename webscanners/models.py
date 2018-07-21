@@ -81,6 +81,7 @@ class zap_scan_results_db(models.Model):
     date_time = models.DateTimeField(null=True)
     false_positive = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
 
 
 class cookie_db(models.Model):
@@ -133,6 +134,7 @@ class burp_scan_result_db(models.Model):
     method = models.TextField(blank=True)
     false_positive = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
 
 
 class netsparker_scan_db(models.Model):
@@ -178,6 +180,7 @@ class netsparker_scan_result_db(models.Model):
     remedyReferences = models.TextField(null=True, blank=True)
     proofOfConcept = models.TextField(null=True, blank=True)
     proofs = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
 
 
 
@@ -247,6 +250,7 @@ class arachni_scan_result_db(models.Model):
     response_ip = models.TextField(blank=True)
     response_raw_headers = models.TextField(blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
 
 
 class task_schedule_db(models.Model):
@@ -299,6 +303,7 @@ class webinspect_scan_result_db(models.Model):
     rawResponse = models.TextField(blank=True, null=True)
     SectionText = models.TextField(blank=True, null=True)
     severity_name = models.TextField(blank=True, null=True)
+    vuln_status = models.TextField(null=True, blank=True)
 
 
 

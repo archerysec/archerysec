@@ -334,6 +334,7 @@ class ZAPScanner:
             ids = vuln['id']
             description = vuln['description']
             false_positive = 'No'
+            status = 'Open'
 
             global vul_col
 
@@ -374,7 +375,9 @@ class ZAPScanner:
                 alert=alert,
                 ids=ids,
                 description=description,
-                false_positive=false_positive)
+                false_positive=false_positive,
+                vuln_status=status
+            )
 
             dump_all.save()
 

@@ -39,3 +39,4 @@ class manual_scan_results_db(models.Model):
     request_header = models.TextField(blank=True, null=True)
     response_header = models.TextField(blank=True, null=True)
     reference = models.TextField(blank=True, null=True)
+    vuln_fixed = models.TextField(null=True, blank=True)
