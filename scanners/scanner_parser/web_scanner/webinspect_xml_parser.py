@@ -136,7 +136,7 @@ def xml_parser(root,
                                                   severity_name=severity_name,
                                                   vuln_color=vul_col,
                                                   false_positive='No',
-
+                                                  vuln_status='Open'
                                                   )
             dump_data.save()
 

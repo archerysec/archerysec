@@ -135,7 +135,9 @@ def xml_parser(root, project_id, scan_id):
                                                     alert=alert,
                                                     description=desc,
                                                     false_positive='No',
-                                                    rescan='No',)
+                                                    rescan='No',
+                                                    vuln_status='Open'
+                                                    )
                     dump_data.save()
 
     zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id)\

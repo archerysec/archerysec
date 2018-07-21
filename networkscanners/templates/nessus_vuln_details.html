@@ -77,6 +77,8 @@
                                 <th>Location</th>
                                 <th>JIRA Ticket</th>
                                 <th>False Positive</th>
+                                <th>Status</th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -94,7 +96,7 @@
                                         <!--<button type="button" >Get Values</button>-->
                                     </form>
                                 </td>
-                                <td width="40%"><a href="/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
+                                <td><a href="/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
                                 </td>
                                 <td>{{data.risk_factor}}</td>
                                 <td>{{data.severity}}</td>
@@ -106,9 +108,11 @@
                                         <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                         <input type="hidden" name="scan_id" value="{{scan_id}}">
                                         <input type="hidden" name="false" value="Yes">
+                                        <input type="hidden" name="status" value="Open">
                                         <button class="btn btn-info btn-mini">Yes</button>
                                     </form>
                                 </td>
+                                <td>{{data.vuln_status}}</td>
                                 <td>
                                     <div><a href="/networkscanners/edit_vuln/?vuln_id={{data.vul_id}}"
                                             class="btn btn-primary"
@@ -126,6 +130,15 @@
                                         </form>
                                     </div>
                                 </td>
+                                <td>
+                                    <form method="POST" action="/networkscanners/nessus_vuln_details/" >{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
+                                        <input type="hidden" name="scan_id" value="{{scan_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Closed">
+                                        <button class="btn btn-danger btn-mini">Close</button>
+                                    </form>
+                                </td>
                             </tr>
 {% endfor %}
                             </tbody>
@@ -134,6 +147,7 @@
                 </div>
             </div>
         </div>
+        <!--False Positive Vulnerabilities-->
 
         <div class="row-fluid">
             <div class="span9 offset1">
@@ -183,6 +197,7 @@
                                         <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                         <input type="hidden" name="scan_id" value="{{scan_id}}">
                                         <input type="hidden" name="false" value="No">
+                                         <input type="hidden" name="status" value="Open">
                                         <button class="btn btn-info btn-mini">No</button>
                                     </form>
                                 </td>
@@ -202,6 +217,94 @@
                                             <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                         </form>
                                     </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Closed Vulnerabilities List-->
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Closed Vulnerabilities List</h5>
+                        <div class="buttons">
+                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>Vulnerability</th>
+                                <th>Criticality</th>
+                                <th>Severity</th>
+                                <th>Host</th>
+                                <th>Location</th>
+                                <th>False Positive</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+
+                            </tfoot>
+                            <tbody>{% for data in all_vuln_closed %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.vul_id}}" name="del_vuln_id">
+                                        </label>
+                                        <!--<br>-->
+                                        <!--<button type="button" >Get Values</button>-->
+                                    </form>
+                                </td>
+                                <td width="40%"><a href="/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
+                                </td>
+                                <td>{{data.risk_factor}}</td>
+                                <td>{{data.severity}}</td>
+                                <td>{{data.scan_ip}}</td>
+                                <td>{{data.port}}</td>
+                                <td>
+                                    <form method="POST" action="/networkscanners/nessus_vuln_details/" >{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
+                                        <input type="hidden" name="scan_id" value="{{scan_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Open">
+                                        <button class="btn btn-info btn-mini">No</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <div><a href="/networkscanners/edit_vuln/?vuln_id={{data.vul_id}}"
+                                            class="btn btn-primary"
+                                            data-original-title="Edit"><i
+                                            class="icon-pencil"></i></a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <form action="/networkscanners/delete_nessus_vuln/" method="POST" class="form-horizontal">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="del_vuln" value="{{data.vul_id}}">
+                                            <input type="hidden" name="scan_id" value="{{scan_id}}">
+                                            <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form method="POST" action="/networkscanners/nessus_vuln_details/" >{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
+                                        <input type="hidden" name="scan_id" value="{{scan_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Open">
+                                        <button class="btn btn-info btn-mini">Open</button>
+                                    </form>
                                 </td>
                             </tr>
                             {% endfor %}

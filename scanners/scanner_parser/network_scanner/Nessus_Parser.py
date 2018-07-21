@@ -174,7 +174,8 @@ def nessus_parser(root, project_id, scan_id):
                                                  svc_name=svc_name,
                                                  pluginFamily=pluginFamily,
                                                  port=port,
-                                                 false_positive='No'
+                                                 false_positive='No',
+                                                 vuln_status='Open'
                                                  )
                 all_data_save.save()
 

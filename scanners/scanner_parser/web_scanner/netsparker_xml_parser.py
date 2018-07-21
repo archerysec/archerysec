@@ -139,7 +139,8 @@ def xml_parser(root,
                                               externalReferences=externalReferences,
                                               remedyReferences=remedyReferences,
                                               proofOfConcept=proofOfConcept,
-                                              proofs=proofs
+                                              proofs=proofs,
+                                              vuln_status='Open'
 
                                               )
         dump_data.save()

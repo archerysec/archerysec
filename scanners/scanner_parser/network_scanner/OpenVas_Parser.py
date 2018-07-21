@@ -144,7 +144,8 @@ def xml_parser(root, project_id, scan_id):
                                      tags=tags,
                                      banner=banner,
                                      date_time=date_time,
-                                     false_positive='No'
+                                     false_positive='No',
+                                     vuln_status='Open'
                                      )
         save_all.save()
 

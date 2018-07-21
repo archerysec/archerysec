@@ -502,7 +502,14 @@ def list_web_vuln(request):
         scan_id = None
 
     zap_all_vul = zap_scan_results_db.objects.filter(
-        scan_id=scan_id).values(
+        scan_id=scan_id, vuln_status='Open').values(
+        'name',
+        'risk',
+        'vuln_color',
+        'scan_id').distinct()
+
+    zap_all_close_vul = zap_scan_results_db.objects.filter(
+        scan_id=scan_id, vuln_status='Close').values(
         'name',
         'risk',
         'vuln_color',
@@ -510,7 +517,11 @@ def list_web_vuln(request):
 
     return render(request,
                   'list_web_vuln.html',
-                  {'zap_all_vul': zap_all_vul, 'scan_id': scan_id})
+                  {'zap_all_vul': zap_all_vul,
+                   'scan_id': scan_id,
+                   'zap_all_close_vul': zap_all_close_vul
+
+                   })
 
 
 def vuln_details(request):
@@ -529,12 +540,17 @@ def vuln_details(request):
         scan_name = request.GET['scan_name']
     if request.method == "POST":
         false_positive = request.POST.get('false')
+        vuln_status = request.POST.get('status')
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
         zap_scan_results_db.objects.filter(
             vuln_id=vuln_id,
-            scan_id=scan_id).update(false_positive=false_positive)
+            scan_id=scan_id).update(false_positive=false_positive,
+                                    vuln_status=vuln_status)
+        messages.add_message(request,
+                             messages.SUCCESS,
+                             'Vulnerability Status Changed')
         return HttpResponseRedirect(
             '/webscanners/zap_vul_details/?scan_id=%s&scan_name=%s' % (
                 scan_id,
@@ -544,8 +560,17 @@ def vuln_details(request):
     zap_all_vul = zap_scan_results_db.objects.filter(
         scan_id=scan_vul,
         false_positive='No',
-        name=scan_name
+        name=scan_name,
+        vuln_status='Open'
     ).order_by('name')
+
+    zap_all_close_vul = zap_scan_results_db.objects.filter(
+        scan_id=scan_vul,
+        false_positive='No',
+        name=scan_name,
+        vuln_status='Closed'
+    ).order_by('name')
+
     zap_all_false_vul = zap_scan_results_db.objects.filter(
         scan_id=scan_vul,
         name=scan_name,
@@ -556,7 +581,8 @@ def vuln_details(request):
                   {'zap_all_vul': zap_all_vul,
                    'scan_vul': scan_vul,
                    'zap_all_false_vul': zap_all_false_vul,
-                   'jira_url': jira_url
+                   'jira_url': jira_url,
+                   'zap_all_close_vul': zap_all_close_vul
                    })
 
 
@@ -852,7 +878,6 @@ def cookies_list(request):
 
 
 def del_cookies(request):
-
     if request.method == 'POST':
         # cookie_id = request.POST.get('id')
         cookie_url = request.POST.get('url')
@@ -1247,14 +1272,24 @@ def burp_list_vuln(request):
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
-    burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id).values('name',
-                                                                              'severity',
-                                                                              'severity_color',
-                                                                              'scan_id').distinct()
+    burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id,
+                                                      vuln_status='Open').values('name',
+                                                                                 'severity',
+                                                                                 'severity_color',
+                                                                                 'scan_id').distinct()
+
+    burp_all_vul_close = burp_scan_result_db.objects.filter(scan_id=scan_id,
+                                                            vuln_status='Closed').values('name',
+                                                                                         'severity',
+                                                                                         'severity_color',
+                                                                                         'scan_id').distinct()
+
     return render(request,
                   'burp_list_vuln.html',
                   {'burp_all_vul': burp_all_vul,
-                   'scan_id': scan_id})
+                   'scan_id': scan_id,
+                   'burp_all_vul_close': burp_all_vul_close
+                   })
 
 
 def burp_vuln_data(request):
@@ -1290,24 +1325,38 @@ def burp_vuln_out(request):
         name = request.GET['scan_name']
     if request.method == "POST":
         false_positive = request.POST.get('false')
+        vuln_status = request.POST.get('status')
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
         burp_scan_result_db.objects.filter(vuln_id=vuln_id,
-                                           scan_id=scan_id).update(false_positive=false_positive)
+                                           scan_id=scan_id).update(false_positive=false_positive,
+                                                                   vuln_status=vuln_status)
+        messages.add_message(request,
+                             messages.SUCCESS,
+                             'Vulnerability Status Changed')
         return HttpResponseRedirect(
             '/webscanners/burp_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id,
                                                                      vuln_name))
     vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
                                                    name=name,
-                                                   false_positive='No')
+                                                   false_positive='No',
+                                                   vuln_status='Open'
+                                                   )
+    vuln_close_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
+                                                         name=name,
+                                                         false_positive='No',
+                                                         vuln_status='Closed'
+                                                         )
+
     false_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
                                                     name=name,
                                                     false_positive='Yes')
 
     return render(request, 'burp_vuln_out.html', {'vuln_data': vuln_data,
                                                   'false_data': false_data,
-                                                  'jira_url': jira_url
+                                                  'jira_url': jira_url,
+                                                  'vuln_close_data': vuln_close_data
                                                   })
 
 
@@ -1566,15 +1615,23 @@ def arachni_list_vuln(request):
         scan_id = None
 
     arachni_all_vul = arachni_scan_result_db.objects.filter(
-        scan_id=scan_id).values('name',
-                                'severity',
-                                'vuln_color',
-                                'scan_id').distinct()
+        scan_id=scan_id, vuln_status='Open').values('name',
+                                                    'severity',
+                                                    'vuln_color',
+                                                    'scan_id').distinct()
+
+    arachni_all_vul_close = arachni_scan_result_db.objects.filter(
+        scan_id=scan_id, vuln_status='Closed').values('name',
+                                                      'severity',
+                                                      'vuln_color',
+                                                      'scan_id').distinct()
 
     return render(request,
                   'arachni_list_vuln.html',
                   {'arachni_all_vul': arachni_all_vul,
-                   'scan_id': scan_id})
+                   'scan_id': scan_id,
+                   'arachni_all_vul_close': arachni_all_vul_close
+                   })
 
 
 def arachni_scan_list(request):
@@ -1624,17 +1681,30 @@ def arachni_vuln_out(request):
         name = request.GET['scan_name']
     if request.method == "POST":
         false_positive = request.POST.get('false')
+        status = request.POST.get('status')
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
         arachni_scan_result_db.objects.filter(vuln_id=vuln_id,
-                                              scan_id=scan_id).update(false_positive=false_positive)
+                                              scan_id=scan_id).update(false_positive=false_positive, vuln_status=status)
+        messages.add_message(request,
+                             messages.SUCCESS,
+                             'Vulnerability Status Changed')
         return HttpResponseRedirect(
             '/webscanners/arachni_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
     vuln_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
                                                       name=name,
-                                                      false_positive='No')
+                                                      false_positive='No',
+                                                      vuln_status='Open'
+                                                      )
+
+    vuln_data_close = arachni_scan_result_db.objects.filter(scan_id=scan_id,
+                                                            name=name,
+                                                            false_positive='No',
+                                                            vuln_status='Closed'
+                                                            )
+
     false_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
                                                        name=name,
                                                        false_positive='Yes')
@@ -1644,6 +1714,7 @@ def arachni_vuln_out(request):
                   {'vuln_data': vuln_data,
                    'false_data': false_data,
                    'jira_url': jira_url,
+                   'vuln_data_close': vuln_data_close
                    })
 
 
@@ -1834,17 +1905,27 @@ def netsparker_vuln_out(request):
         name = request.GET['scan_name']
     if request.method == "POST":
         false_positive = request.POST.get('false')
+        status = request.POST.get('status')
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
         netsparker_scan_result_db.objects.filter(vuln_id=vuln_id,
-                                                 scan_id=scan_id).update(false_positive=false_positive)
+                                                 scan_id=scan_id).update(false_positive=false_positive,
+                                                                         vuln_status=status)
         return HttpResponseRedirect(
             '/webscanners/netsparker_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
     vuln_data = netsparker_scan_result_db.objects.filter(scan_id=scan_id,
                                                          type=name,
-                                                         false_positive='No')
+                                                         false_positive='No',
+                                                         vuln_status='Open'
+                                                         )
+
+    vuln_data_close = netsparker_scan_result_db.objects.filter(scan_id=scan_id,
+                                                               type=name,
+                                                               false_positive='No',
+                                                               vuln_status='Closed')
+
     false_data = netsparker_scan_result_db.objects.filter(scan_id=scan_id,
                                                           type=name,
                                                           false_positive='Yes')
@@ -1854,6 +1935,7 @@ def netsparker_vuln_out(request):
                   {'vuln_data': vuln_data,
                    'false_data': false_data,
                    'jira_url': jira_url,
+                   'vuln_data_close': vuln_data_close
                    })
 
 
@@ -1991,12 +2073,17 @@ def webinspect_list_vuln(request):
         scan_id = None
 
     webinspect_all_vul = webinspect_scan_result_db.objects.filter(
-        scan_id=scan_id)
+        scan_id=scan_id, vuln_status='Open')
+
+    webinspect_all_vul_close = webinspect_scan_result_db.objects.filter(
+        scan_id=scan_id, vuln_status='Close')
 
     return render(request,
                   'webinspect_list_vuln.html',
                   {'webinspect_all_vul': webinspect_all_vul,
-                   'scan_id': scan_id})
+                   'scan_id': scan_id,
+                   'webinspect_all_vul_close': webinspect_all_vul_close
+                   })
 
 
 def webinspect_scan_list(request):
@@ -2046,17 +2133,24 @@ def webinspect_vuln_out(request):
         name = request.GET['scan_name']
     if request.method == "POST":
         false_positive = request.POST.get('false')
+        status = request.POST.get('status')
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
         webinspect_scan_result_db.objects.filter(vuln_id=vuln_id,
-                                                 scan_id=scan_id).update(false_positive=false_positive)
+                                                 scan_id=scan_id).update(false_positive=false_positive,
+                                                                         vuln_status=status)
         return HttpResponseRedirect(
             '/webscanners/webinspect_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
     vuln_data = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
                                                          name=name,
+                                                         vuln_status='Open',
                                                          false_positive='No')
+    vuln_data_closed = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
+                                                                name=name,
+                                                                vuln_status='Closed',
+                                                                false_positive='No')
     false_data = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
                                                           name=name,
                                                           false_positive='Yes')
@@ -2066,6 +2160,7 @@ def webinspect_vuln_out(request):
                   {'vuln_data': vuln_data,
                    'false_data': false_data,
                    'jira_url': jira_url,
+                   'vuln_data_closed': vuln_data_closed
                    })
 
 

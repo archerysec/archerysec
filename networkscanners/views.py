@@ -101,21 +101,35 @@ def scan_vul_details(request):
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         false_positive = request.POST.get('false')
+        status = request.POST.get('status')
 
         ov_scan_result_db.objects.filter(
             scan_id=scan_id,
             vul_id=vuln_id).update(
-            false_positive=false_positive)
+            false_positive=false_positive, vuln_status=status)
 
         return HttpResponseRedirect(
             '/networkscanners/vul_details/?scan_id=%s' % scan_id)
 
     all_vuln = ov_scan_result_db.objects.filter(scan_id=scanid,
-                                                false_positive='No').values('name', 'severity',
-                                                                            'vuln_color',
-                                                                            'threat', 'host',
-                                                                            'port', 'vul_id',
-                                                                            'jira_ticket').distinct()
+                                                false_positive='No', vuln_status='Open').values('name', 'severity',
+                                                                                                'vuln_color',
+                                                                                                'threat', 'host',
+                                                                                                'port', 'vul_id',
+                                                                                                'jira_ticket',
+                                                                                                'vuln_status').distinct()
+
+    all_vuln_closed = ov_scan_result_db.objects.filter(scan_id=scanid,
+                                                       false_positive='No', vuln_status='Closed').values('name',
+                                                                                                         'severity',
+                                                                                                         'vuln_color',
+                                                                                                         'threat',
+                                                                                                         'host',
+                                                                                                         'port',
+                                                                                                         'vul_id',
+                                                                                                         'jira_ticket',
+                                                                                                         'vuln_status'
+                                                                                                         ).distinct()
 
     all_false_vul = ov_scan_result_db.objects.filter(scan_id=scanid,
                                                      false_positive='Yes').values('name', 'severity',
@@ -123,13 +137,14 @@ def scan_vul_details(request):
                                                                                   'threat', 'host',
                                                                                   'port', 'vul_id',
                                                                                   'jira_ticket').distinct()
-    print "zzzzzz", scanid
     return render(request,
                   'vul_details.html',
                   {'all_vuln': all_vuln,
                    'scan_id': scanid,
                    'jira_url': jira_url,
-                   'all_false_vul': all_false_vul})
+                   'all_false_vul': all_false_vul,
+                   'all_vuln_closed': all_vuln_closed
+                   })
 
 
 def openvas_scanner(scan_ip, project_id, sel_profile):
@@ -639,9 +654,10 @@ def nessus_vuln_details(request):
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         false_positive = request.POST.get('false')
+        status = request.POST.get('status')
 
         nessus_report_db.objects.filter(scan_id=scan_id,
-                                        vul_id=vuln_id).update(false_positive=false_positive)
+                                        vul_id=vuln_id).update(false_positive=false_positive, vuln_status=status)
 
         return HttpResponseRedirect(
             '/networkscanners/nessus_vuln_details/?scan_id=%s' % scan_id)
@@ -649,15 +665,19 @@ def nessus_vuln_details(request):
     all_vuln = nessus_report_db.objects.filter(scan_id=scanid,
                                                false_positive='No')
 
+    all_vuln_closed = nessus_report_db.objects.filter(scan_id=scanid, vuln_status='Closed',
+                                                      false_positive='No')
+
     all_false_vul = nessus_report_db.objects.filter(scan_id=scanid,
                                                     false_positive='Yes')
-    print "zzzzzz", scanid
     return render(request,
                   'nessus_vuln_details.html',
                   {'all_vuln': all_vuln,
                    'scan_id': scanid,
                    'jira_url': jira_url,
-                   'all_false_vul': all_false_vul})
+                   'all_false_vul': all_false_vul,
+                   'all_vuln_closed': all_vuln_closed
+                   })
 
 
 def delete_nessus_scan(request):
