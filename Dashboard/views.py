@@ -319,6 +319,22 @@ def dash_call(request):
     openvas_false_positive = ov_scan_result_db.objects.filter(false_positive='Yes')
     nessus_false_positive = nessus_report_db.objects.filter(false_positive='Yes')
 
+    zap_closed_vuln = zap_scan_results_db.objects.filter(vuln_status='Closed')
+    burp_closed_vuln = burp_scan_result_db.objects.filter(vuln_status='Closed')
+    arachni_closed_vuln = arachni_scan_result_db.objects.filter(vuln_status='Closed')
+    netsparker_closed_vuln = netsparker_scan_result_db.objects.filter(vuln_status='Closed')
+    webinspect_closed_vuln = webinspect_scan_result_db.objects.filter(vuln_status='Closed')
+    openvas_closed_vuln = ov_scan_result_db.objects.filter(vuln_status='Closed')
+    nessus_closed_vuln = nessus_report_db.objects.filter(vuln_status='Closed')
+
+    all_closed_vuln = int(len(zap_closed_vuln)) + \
+                      int(len(burp_closed_vuln)) + \
+                      int(len(arachni_closed_vuln)) + \
+                      int(len(netsparker_closed_vuln)) + \
+                      int(len(webinspect_closed_vuln)) + \
+                      int(len(openvas_closed_vuln)) + \
+                      int(len(nessus_closed_vuln))
+
     all_false_positive = int(len(zap_false_positive)) + \
                          int(len(burp_false_positive)) + \
                          int(len(webinspect_false_positive)) + \
@@ -342,7 +358,8 @@ def dash_call(request):
                    'all_network_high': all_network_high,
                    'all_web_low': all_web_low,
                    'all_network_low': all_network_low,
-                   'all_false_positive': all_false_positive
+                   'all_false_positive': all_false_positive,
+                   'all_closed_vuln': all_closed_vuln
                    })
 
 
@@ -1049,6 +1066,23 @@ def web_dash_data(request):
                          int(len(netsparker_false_positive)) + \
                          int(len(arachni_false_positive))
 
+    zap_closed_vuln = zap_scan_results_db.objects.filter(scan_id=scan_id,
+                                                         vuln_status='Closed')
+    burp_closed_vuln = burp_scan_result_db.objects.filter(scan_id=scan_id,
+                                                          vuln_status='Closed')
+    arachni_closed_vuln = arachni_scan_result_db.objects.filter(scan_id=scan_id,
+                                                                vuln_status='Closed')
+    netsparker_closed_vuln = netsparker_scan_result_db.objects.filter(scan_id=scan_id,
+                                                                      vuln_status='Closed')
+    webinspect_closed_vuln = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
+                                                                      vuln_status='Closed')
+
+    all_closed_vuln = int(len(zap_closed_vuln)) + \
+                      int(len(burp_closed_vuln)) + \
+                      int(len(webinspect_closed_vuln)) + \
+                      int(len(netsparker_closed_vuln)) + \
+                      int(len(arachni_closed_vuln))
+
     return render(request,
                   'web_scan_dashboard.html',
                   {'all_web_data': all_web_data,
@@ -1056,7 +1090,8 @@ def web_dash_data(request):
                    'all_high': all_high,
                    'all_medium': all_medium,
                    'all_low': all_low,
-                   'all_false_positive': all_false_positive
+                   'all_false_positive': all_false_positive,
+                   'all_closed_vuln': all_closed_vuln
                    })
 
 
@@ -1136,6 +1171,14 @@ def net_dash_data(request):
     all_false_positive = int(len(openvas_false_positive)) + \
                          int(len(nessus_false_positive))
 
+    openvas_closed_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id,
+                                                           vuln_status='Closed')
+    nessus_closed_vuln = nessus_report_db.objects.filter(scan_id=scan_id,
+                                                         vuln_status='Closed')
+
+    all_closed_vuln = int(len(openvas_closed_vuln)) + \
+                      int(len(nessus_closed_vuln))
+
     return render(request,
                   'network_scan_dashboard.html',
                   {'all_network_data': all_network_data,
@@ -1143,5 +1186,6 @@ def net_dash_data(request):
                    'all_network_high': all_network_high,
                    'all_network_medium': all_network_medium,
                    'all_network_low': all_network_low,
-                   'all_false_positive': all_false_positive
+                   'all_false_positive': all_false_positive,
+                   'all_closed_vuln': all_closed_vuln
                    })
