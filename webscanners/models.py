@@ -33,6 +33,7 @@ class zap_scans_db(models.Model):
     project_id = models.UUIDField(null=True)
     date_time = models.DateTimeField(null=True)
     rescan = models.TextField(blank=True, null=True)
+    total_dup = models.TextField(blank=True, null=True)
 
 
 class zap_spider_results(models.Model):
@@ -82,6 +83,8 @@ class zap_scan_results_db(models.Model):
     false_positive = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
 
 
 class cookie_db(models.Model):
@@ -106,6 +109,7 @@ class burp_scan_db(models.Model):
     low_vul = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
+    total_dup = models.TextField(blank=True, null=True)
 
 
 class burp_scan_result_db(models.Model):
@@ -135,6 +139,8 @@ class burp_scan_result_db(models.Model):
     false_positive = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
 
 
 class netsparker_scan_db(models.Model):
@@ -152,6 +158,7 @@ class netsparker_scan_db(models.Model):
     info_vul = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
+    total_dup = models.TextField(blank=True, null=True)
 
 
 class netsparker_scan_result_db(models.Model):
@@ -181,6 +188,8 @@ class netsparker_scan_result_db(models.Model):
     proofOfConcept = models.TextField(null=True, blank=True)
     proofs = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
 
 
 
@@ -218,6 +227,7 @@ class arachni_scan_db(models.Model):
     low_vul = models.IntegerField(blank=True, null=True)
     date_time = models.TextField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
+    total_dup = models.TextField(blank=True, null=True)
 
 
 class arachni_scan_result_db(models.Model):
@@ -251,6 +261,8 @@ class arachni_scan_result_db(models.Model):
     response_raw_headers = models.TextField(blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
 
 
 class task_schedule_db(models.Model):
@@ -277,6 +289,7 @@ class webinspect_scan_db(models.Model):
     info_vul = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
+    total_dup = models.TextField(blank=True, null=True)
 
 
 class webinspect_scan_result_db(models.Model):
@@ -304,6 +317,8 @@ class webinspect_scan_result_db(models.Model):
     SectionText = models.TextField(blank=True, null=True)
     severity_name = models.TextField(blank=True, null=True)
     vuln_status = models.TextField(null=True, blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
 
 
 

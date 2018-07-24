@@ -12,6 +12,7 @@
 import xml.etree.ElementTree as ET
 from webscanners.models import webinspect_scan_result_db, webinspect_scan_db
 import uuid
+import hashlib
 
 
 url = None
@@ -118,6 +119,20 @@ def xml_parser(root,
                 severity_name = 'Information'
                 vul_col = "info"
 
+            dup_data = Name + url + Severity
+            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+
+            match_dup = webinspect_scan_result_db.objects.filter(
+                dup_hash=duplicate_hash).values('dup_hash').distinct()
+            lenth_match = len(match_dup)
+
+            if lenth_match == 1:
+                duplicate_vuln = 'Yes'
+            elif lenth_match == 0:
+                duplicate_vuln = 'No'
+            else:
+                duplicate_vuln = 'None'
+
             dump_data = webinspect_scan_result_db(scan_id=scan_id,
                                                   vuln_id=vuln_id,
                                                   vuln_url=url,
@@ -136,7 +151,9 @@ def xml_parser(root,
                                                   severity_name=severity_name,
                                                   vuln_color=vul_col,
                                                   false_positive='No',
-                                                  vuln_status='Open'
+                                                  vuln_status='Open',
+                                                  dup_hash=duplicate_hash,
+                                                  vuln_duplicate=duplicate_vuln
                                                   )
             dump_data.save()
 
@@ -148,11 +165,23 @@ def xml_parser(root,
         total_medium = len(webinspect_all_vul.filter(severity_name="Medium"))
         total_low = len(webinspect_all_vul.filter(severity_name="Low"))
         total_info = len(webinspect_all_vul.filter(severity_name="Information"))
+        total_duplicate = len(webinspect_all_vul.filter(vuln_duplicate='Yes'))
 
         webinspect_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
                                                                   high_vul=total_high,
                                                                   medium_vul=total_medium,
                                                                   low_vul=total_low,
                                                                   critical_vul=total_critical,
-                                                                  info_vul=total_info
+                                                                  info_vul=total_info,
+                                                                  total_dup=total_duplicate
                                                                   )
+
+        if total_vul == total_duplicate:
+            webinspect_scan_db.objects.filter(scan_id=scan_id).update(total_vul='0',
+                                                                      high_vul='0',
+                                                                      medium_vul='0',
+                                                                      low_vul='0',
+                                                                      critical_vul='0',
+                                                                      info_vul='0',
+                                                                      total_dup=total_duplicate
+                                                                      )

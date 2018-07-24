@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 import datetime
 import uuid
 from networkscanners.models import nessus_report_db, nessus_scan_db
+import hashlib
 
 agent = "NA"
 description = "NA"
@@ -150,6 +151,20 @@ def nessus_parser(root, project_id, scan_id):
                             plugin_output = ReportItem.text
 
                 vul_id = uuid.uuid4()
+
+                dup_data = scan_ip + plugin_name + severity
+                duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+
+                match_dup = nessus_report_db.objects.filter(
+                    dup_hash=duplicate_hash).values('dup_hash').distinct()
+                lenth_match = len(match_dup)
+
+                if lenth_match == 1:
+                    duplicate_vuln = 'Yes'
+                elif lenth_match == 0:
+                    duplicate_vuln = 'No'
+                else:
+                    duplicate_vuln = 'None'
                 all_data_save = nessus_report_db(project_id=project_id,
                                                  scan_id=scan_id,
                                                  scan_ip=scan_ip,
@@ -175,7 +190,9 @@ def nessus_parser(root, project_id, scan_id):
                                                  pluginFamily=pluginFamily,
                                                  port=port,
                                                  false_positive='No',
-                                                 vuln_status='Open'
+                                                 vuln_status='Open',
+                                                 dup_hash=duplicate_hash,
+                                                 vuln_duplicate=duplicate_vuln
                                                  )
                 all_data_save.save()
 
@@ -188,10 +205,22 @@ def nessus_parser(root, project_id, scan_id):
                 total_high = len(ov_all_vul.filter(risk_factor="High"))
                 total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
                 total_low = len(ov_all_vul.filter(risk_factor="Low"))
+                total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
 
                 nessus_scan_db.objects.filter(scan_id=scan_id) \
                     .update(total_vul=total_vul,
                             critical_total=total_critical,
                             high_total=total_high,
                             medium_total=total_medium,
-                            low_total=total_low)
+                            low_total=total_low,
+                            total_dup=total_duplicate,
+                            )
+                if total_vul == total_duplicate:
+                    nessus_scan_db.objects.filter(scan_id=scan_id) \
+                        .update(total_vul='0',
+                                critical_total='0',
+                                high_total='0',
+                                medium_total='0',
+                                low_total='0',
+                                total_dup=total_duplicate,
+                                )

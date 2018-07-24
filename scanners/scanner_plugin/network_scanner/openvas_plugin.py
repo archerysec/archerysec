@@ -10,6 +10,7 @@ from archerysettings.models import openvas_setting_db
 
 # openvas_data = os.getcwd() + '/' + 'apidata.json'
 # openvas_setting = load_settings.ArcherySettings(openvas_data)
+import hashlib
 
 
 class OpenVAS_Plugin:
@@ -234,6 +235,10 @@ def vuln_an_id(scan_id):
             s_ip = data.scan_ip
 
         if s_ip == host:
+
+            dup_data = name + host + severity
+            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+
             save_all = ov_scan_result_db(scan_id=scan_id,
                                          vul_id=vul_id,
                                          name=name,
@@ -253,7 +258,8 @@ def vuln_an_id(scan_id):
                                          banner=banner,
                                          date_time=date_time,
                                          false_positive='No',
-                                         vuln_status='Open'
+                                         vuln_status='Open',
+                                         dup_hash=duplicate_hash
                                          )
             save_all.save()
 

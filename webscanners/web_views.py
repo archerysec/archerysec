@@ -487,7 +487,8 @@ def scan_list(request):
     return render(request,
                   'scan_list.html',
                   {'all_scans': all_scans,
-                   'rescan_all_scans': rescan_all_scans})
+                   'rescan_all_scans': rescan_all_scans,
+                   })
 
 
 def list_web_vuln(request):

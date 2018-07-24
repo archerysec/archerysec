@@ -3,7 +3,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -12,6 +12,7 @@
 import xml.etree.ElementTree as ET
 from webscanners.models import zap_scan_results_db, zap_scans_db
 import uuid
+import hashlib
 
 spider_status = "0"
 scans_status = "0"
@@ -56,18 +57,18 @@ def xml_parser(root, project_id, scan_id):
     :param scan_id:
     :return:
     """
-    global vul_col,\
-        confidence,\
-        wascid, risk,\
-        reference,\
-        url,\
-        name,\
-        solution,\
-        instance,\
-        sourceid,\
-        pluginid,\
-        alert,\
-        desc,\
+    global vul_col, \
+        confidence, \
+        wascid, risk, \
+        reference, \
+        url, \
+        name, \
+        solution, \
+        instance, \
+        sourceid, \
+        pluginid, \
+        alert, \
+        desc, \
         riskcode
 
     for zap in root:
@@ -103,7 +104,7 @@ def xml_parser(root, project_id, scan_id):
                         for instance in instances:
                             instance = instance.text
 
-                    #global riskcode
+                    # global riskcode
 
                     if riskcode == "3":
                         vul_col = "important"
@@ -117,6 +118,19 @@ def xml_parser(root, project_id, scan_id):
                     elif riskcode == '0':
                         vul_col = "info"
                         risk = "Informational"
+
+                    dup_data = name + url + alert
+                    duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+                    match_dup = zap_scan_results_db.objects.filter(
+                        dup_hash=duplicate_hash).values('dup_hash').distinct()
+                    lenth_match = len(match_dup)
+
+                    if lenth_match == 1:
+                        duplicate_vuln = 'Yes'
+                    elif lenth_match == 0:
+                        duplicate_vuln = 'No'
+                    else:
+                        duplicate_vuln = 'None'
 
                     dump_data = zap_scan_results_db(vuln_id=vuln_id,
                                                     vuln_color=vul_col,
@@ -136,20 +150,33 @@ def xml_parser(root, project_id, scan_id):
                                                     description=desc,
                                                     false_positive='No',
                                                     rescan='No',
-                                                    vuln_status='Open'
+                                                    vuln_status='Open',
+                                                    dup_hash=duplicate_hash,
+                                                    vuln_duplicate=duplicate_vuln
                                                     )
                     dump_data.save()
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id)\
-        .values('name', 'risk', 'vuln_color').distinct()
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id) \
+        .values('name', 'risk', 'vuln_color', 'vuln_duplicate').distinct()
 
     total_vul = len(zap_all_vul)
     total_high = len(zap_all_vul.filter(risk="High"))
     total_medium = len(zap_all_vul.filter(risk="Medium"))
     total_low = len(zap_all_vul.filter(risk="Low"))
+    total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
 
-    zap_scans_db.objects.filter(scan_scanid=scan_id)\
+    zap_scans_db.objects.filter(scan_scanid=scan_id) \
         .update(total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,
-                low_vul=total_low)
+                low_vul=total_low,
+                total_dup=total_duplicate
+                )
+    if total_vul == total_duplicate:
+        zap_scans_db.objects.filter(scan_scanid=scan_id) \
+            .update(total_vul='0',
+                    high_vul='0',
+                    medium_vul='0',
+                    low_vul='0',
+                    total_dup=total_duplicate
+                    )

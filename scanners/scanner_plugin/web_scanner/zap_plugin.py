@@ -17,6 +17,7 @@ import uuid
 import json
 import ast
 from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+import hashlib
 
 # ZAP Database import
 
@@ -336,6 +337,21 @@ class ZAPScanner:
             false_positive = 'No'
             status = 'Open'
 
+            dup_data = name + url + risk
+            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+
+            match_dup = zap_scan_results_db.objects.filter(
+                dup_hash=duplicate_hash).values('dup_hash').distinct()
+            lenth_match = len(match_dup)
+
+            if lenth_match == 1:
+                duplicate_vuln = 'Yes'
+            elif lenth_match == 0:
+                duplicate_vuln = 'No'
+            else:
+                duplicate_vuln = 'None'
+
+
             global vul_col
 
             if risk == 'High':
@@ -376,7 +392,9 @@ class ZAPScanner:
                 ids=ids,
                 description=description,
                 false_positive=false_positive,
-                vuln_status=status
+                vuln_status=status,
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln
             )
 
             dump_all.save()
@@ -393,6 +411,7 @@ class ZAPScanner:
         total_high = len(zap_all_vul.filter(risk="High"))
         total_medium = len(zap_all_vul.filter(risk="Medium"))
         total_low = len(zap_all_vul.filter(risk="Low"))
+        total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
 
         zap_scans_db.objects.filter(
             scan_scanid=un_scanid
@@ -400,8 +419,17 @@ class ZAPScanner:
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
-            low_vul=total_low
+            low_vul=total_low,
+            total_dup=total_duplicate
         )
+        if total_vul == total_duplicate:
+            zap_scans_db.objects.filter(scan_scanid=un_scanid) \
+                .update(total_vul='0',
+                        high_vul='0',
+                        medium_vul='0',
+                        low_vul='0',
+                        total_dup=total_duplicate
+                        )
 
         time.sleep(10)
 
