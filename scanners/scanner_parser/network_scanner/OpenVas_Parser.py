@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 from networkscanners.models import ov_scan_result_db, scan_save_db
 import datetime
 import uuid
+import hashlib
 
 
 def xml_parser(root, project_id, scan_id):
@@ -126,6 +127,20 @@ def xml_parser(root, project_id, scan_id):
         date_time = datetime.datetime.now()
         vul_id = uuid.uuid4()
 
+        dup_data = name + host + severity
+        duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+
+        match_dup = ov_scan_result_db.objects.filter(
+            dup_hash=duplicate_hash).values('dup_hash').distinct()
+        lenth_match = len(match_dup)
+
+        if lenth_match == 1:
+            duplicate_vuln = 'Yes'
+        elif lenth_match == 0:
+            duplicate_vuln = 'No'
+        else:
+            duplicate_vuln = 'None'
+
         save_all = ov_scan_result_db(scan_id=scan_id,
                                      vul_id=vul_id,
                                      name=name,
@@ -145,7 +160,9 @@ def xml_parser(root, project_id, scan_id):
                                      banner=banner,
                                      date_time=date_time,
                                      false_positive='No',
-                                     vuln_status='Open'
+                                     vuln_status='Open',
+                                     dup_hash=duplicate_hash,
+                                     vuln_duplicate=duplicate_vuln
                                      )
         save_all.save()
 
@@ -160,9 +177,20 @@ def xml_parser(root, project_id, scan_id):
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
         total_low = len(openvas_vul.filter(threat="Low"))
+        total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
 
         scan_save_db.objects.filter(scan_id=scan_id).\
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,
-                   low_total=total_low)
+                   low_total=total_low,
+                   total_dup=total_duplicate,
+                   )
+        if total_vul == total_duplicate:
+            scan_save_db.objects.filter(scan_id=scan_id). \
+                update(total_vul='0',
+                       high_total='0',
+                       medium_total='0',
+                       low_total='0',
+                       total_dup=total_duplicate,
+                       )

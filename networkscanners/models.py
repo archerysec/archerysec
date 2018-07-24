@@ -52,6 +52,8 @@ class ov_scan_result_db(models.Model):
     false_positive = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
 
 
 class scan_save_db(models.Model):
@@ -66,6 +68,7 @@ class scan_save_db(models.Model):
     low_total = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
+    total_dup = models.TextField(blank=True, null=True)
 
 
 class task_schedule_db(models.Model):
@@ -105,6 +108,8 @@ class nessus_report_db(models.Model):
     scan_ip = models.TextField(blank=True, null=True)
     jira_ticket = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
 
 
 class nessus_scan_db(models.Model):
@@ -120,3 +125,4 @@ class nessus_scan_db(models.Model):
     low_total = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
+    total_dup = models.TextField(blank=True, null=True)

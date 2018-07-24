@@ -12,6 +12,7 @@
 import xml.etree.ElementTree as ET
 from webscanners.models import netsparker_scan_result_db, netsparker_scan_db
 import uuid
+import hashlib
 
 vuln_url = None
 vuln_type = None
@@ -118,6 +119,19 @@ def xml_parser(root,
         elif vuln_severity == 'informational':
             vul_col = "info"
 
+        dup_data = str(vuln_type) + str(vuln_url) + str(vuln_severity)
+        duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+        match_dup = netsparker_scan_result_db.objects.filter(
+            dup_hash=duplicate_hash).values('dup_hash').distinct()
+        lenth_match = len(match_dup)
+
+        if lenth_match == 1:
+            duplicate_vuln = 'Yes'
+        elif lenth_match == 0:
+            duplicate_vuln = 'No'
+        else:
+            duplicate_vuln = 'None'
+
         dump_data = netsparker_scan_result_db(scan_id=scan_id,
                                               project_id=project_id,
                                               vuln_id=vuln_id,
@@ -140,8 +154,9 @@ def xml_parser(root,
                                               remedyReferences=remedyReferences,
                                               proofOfConcept=proofOfConcept,
                                               proofs=proofs,
-                                              vuln_status='Open'
-
+                                              vuln_status='Open',
+                                              dup_hash=duplicate_hash,
+                                              vuln_duplicate=duplicate_vuln
                                               )
         dump_data.save()
 
@@ -153,11 +168,23 @@ def xml_parser(root,
     total_medium = len(netsparker_all_vul.filter(severity="Medium"))
     total_low = len(netsparker_all_vul.filter(severity="Low"))
     total_info = len(netsparker_all_vul.filter(severity="Information"))
+    total_duplicate = len(netsparker_all_vul.filter(vuln_duplicate='Yes'))
 
     netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
                                                               high_vul=total_high,
                                                               medium_vul=total_medium,
                                                               low_vul=total_low,
                                                               critical_vul=total_critical,
-                                                              info_vul=total_info
+                                                              info_vul=total_info,
+                                                              total_dup=total_duplicate
                                                               )
+
+    if total_vul == total_duplicate:
+        netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul='0',
+                                                                  high_vul='0',
+                                                                  medium_vul='0',
+                                                                  low_vul='0',
+                                                                  critical_vul='0',
+                                                                  info_vul='0',
+                                                                  total_dup=total_duplicate
+                                                                  )

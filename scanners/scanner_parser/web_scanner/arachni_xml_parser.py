@@ -3,7 +3,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -12,6 +12,7 @@
 import xml.etree.ElementTree as ET
 from webscanners.models import arachni_scan_db, arachni_scan_result_db
 import uuid
+import hashlib
 
 name = ""
 description = ""
@@ -49,9 +50,9 @@ response_raw_headers = ""
 
 
 def xml_parser(root, project_id, scan_id):
-    global name, description, remedy_guidance, remedy_code, severity, check, digest, references,\
-        vector, remarks, page, signature,\
-        proof, trusted, platform_type, platform_name, url, action,\
+    global name, description, remedy_guidance, remedy_code, severity, check, digest, references, \
+        vector, remarks, page, signature, \
+        proof, trusted, platform_type, platform_name, url, action, \
         body, vuln_id, vul_col, ref_key, ref_values, vector_input_key, vector_input_values, vector_source_key, vector_source_values, page_body_data, request_url, request_method, request_raw, response_ip, response_raw_headers
 
     for issue in root:
@@ -182,8 +183,6 @@ def xml_parser(root, project_id, scan_id):
                         else:
                             proof = vuln.text
 
-
-
                     if severity == "high":
                         vul_col = "important"
 
@@ -217,6 +216,20 @@ def xml_parser(root, project_id, scan_id):
                                 else:
                                     body = extra_vuln.text
 
+                dup_data = name + url + severity
+                duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+
+                match_dup = arachni_scan_result_db.objects.filter(
+                    dup_hash=duplicate_hash).values('dup_hash').distinct()
+                lenth_match = len(match_dup)
+
+                if lenth_match == 1:
+                    duplicate_vuln = 'Yes'
+                elif lenth_match == 0:
+                    duplicate_vuln = 'No'
+                else:
+                    duplicate_vuln = 'None'
+
                 dump_data = arachni_scan_result_db(vuln_id=vuln_id, scan_id=scan_id, vuln_color=vul_col,
                                                    project_id=project_id,
                                                    name=name, description=description,
@@ -237,16 +250,32 @@ def xml_parser(root, project_id, scan_id):
                                                    response_raw_headers=response_raw_headers,
                                                    vector_input_key=vector_input_key,
                                                    false_positive='No',
-                                                   vuln_status='Open')
+                                                   vuln_status='Open',
+                                                   dup_hash=duplicate_hash,
+                                                   vuln_duplicate=duplicate_vuln
+
+                                                   )
                 dump_data.save()
 
-    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity', 'vuln_color').distinct()
+    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity',
+                                                                                    'vuln_color').distinct()
 
     total_vul = len(arachni_all_vul)
     total_high = len(arachni_all_vul.filter(severity="high"))
     total_medium = len(arachni_all_vul.filter(severity="medium"))
     total_low = len(arachni_all_vul.filter(severity="low"))
+    total_duplicate = len(arachni_all_vul.filter(vuln_duplicate='Yes'))
 
-    arachni_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul, high_vul=total_high,
-                                                            medium_vul=total_medium, low_vul=total_low)
-
+    arachni_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
+                                                           high_vul=total_high,
+                                                           medium_vul=total_medium,
+                                                           low_vul=total_low,
+                                                           total_dup=total_duplicate,
+                                                           )
+    if total_vul == total_duplicate:
+        arachni_scan_db.objects.filter(scan_id=scan_id).update(total_vul='0',
+                                                               high_vul='0',
+                                                               medium_vul='0',
+                                                               low_vul='0',
+                                                               total_dup=total_duplicate,
+                                                               )

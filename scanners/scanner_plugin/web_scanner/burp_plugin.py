@@ -21,6 +21,7 @@ from django.shortcuts import HttpResponse
 # from django.core.mail import send_mail
 from webscanners import email_notification
 from archerysettings import load_settings
+import hashlib
 
 # Setting file importing
 setting_file = os.getcwd() + '/' + 'apidata.json'
@@ -241,6 +242,21 @@ class burp_scans(object):
                 vul_col = "info"
             else:
                 vul_col = "info"
+
+            dup_data = name + location + severity
+            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+
+            match_dup = burp_scan_result_db.objects.filter(
+                dup_hash=duplicate_hash).values('dup_hash').distinct()
+            lenth_match = len(match_dup)
+
+            if lenth_match == 1:
+                duplicate_vuln = 'Yes'
+            elif lenth_match == 0:
+                duplicate_vuln = 'No'
+            else:
+                duplicate_vuln = 'None'
+
             try:
                 data_dump = burp_scan_result_db(
                     scan_id=self.scan_id,
@@ -264,7 +280,9 @@ class burp_scans(object):
                     issueDetail=issueDetail,
                     requestresponse=requestresponse,
                     false_positive='No',
-                    vuln_status='Open'
+                    vuln_status='Open',
+                    dup_hash=duplicate_hash,
+                    vuln_duplicate=duplicate_vuln
                 )
                 data_dump.save()
             except Exception as e:
@@ -275,11 +293,14 @@ class burp_scans(object):
         total_medium = len(burp_all_vul.filter(severity="Medium"))
         total_low = len(burp_all_vul.filter(severity="Low"))
         total_info = len(burp_all_vul.filter(severity="Information"))
+        total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
         burp_scan_db.objects.filter(scan_id=self.scan_id).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
-            low_vul=total_low)
+            low_vul=total_low,
+            total_dup=total_duplicate
+        )
         try:
             email_notification.email_notify()
         except Exception as e:
