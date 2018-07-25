@@ -287,6 +287,8 @@ def openvas_details(request):
             openvas_password=openvas_password,
         )
 
+        return HttpResponseRedirect('/webscanners/setting/')
+
     messages.add_message(request,
                          messages.SUCCESS,
                          'Openvas Setting Updated ')
