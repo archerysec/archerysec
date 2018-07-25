@@ -85,6 +85,7 @@ class zap_scan_results_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
 
 
 class cookie_db(models.Model):
@@ -141,6 +142,7 @@ class burp_scan_result_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
 
 
 class netsparker_scan_db(models.Model):
@@ -190,6 +192,7 @@ class netsparker_scan_result_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
 
 
 
@@ -263,6 +266,7 @@ class arachni_scan_result_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
 
 
 class task_schedule_db(models.Model):
@@ -319,6 +323,7 @@ class webinspect_scan_result_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
 
 
 

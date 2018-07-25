@@ -47,6 +47,7 @@ request_method = ""
 request_raw = ""
 response_ip = ""
 response_raw_headers = ""
+false_positive = None
 
 
 def xml_parser(root, project_id, scan_id):
@@ -230,6 +231,18 @@ def xml_parser(root, project_id, scan_id):
                 else:
                     duplicate_vuln = 'None'
 
+                false_p = arachni_scan_result_db.objects.filter(
+                    false_positive_hash=duplicate_hash)
+                fp_lenth_match = len(false_p)
+
+                global false_positive
+                if fp_lenth_match == 1:
+                    false_positive = 'Yes'
+                elif lenth_match == 0:
+                    false_positive = 'No'
+                else:
+                    false_positive = 'No'
+
                 dump_data = arachni_scan_result_db(vuln_id=vuln_id, scan_id=scan_id, vuln_color=vul_col,
                                                    project_id=project_id,
                                                    name=name, description=description,
@@ -249,7 +262,7 @@ def xml_parser(root, project_id, scan_id):
                                                    response_ip=response_ip,
                                                    response_raw_headers=response_raw_headers,
                                                    vector_input_key=vector_input_key,
-                                                   false_positive='No',
+                                                   false_positive=false_positive,
                                                    vuln_status='Open',
                                                    dup_hash=duplicate_hash,
                                                    vuln_duplicate=duplicate_vuln

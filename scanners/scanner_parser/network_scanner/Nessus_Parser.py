@@ -38,6 +38,7 @@ svc_name = "NA"
 pluginFamily = "NA"
 port = "NA"
 ip = ''
+false_positive = None
 
 
 def nessus_parser(root, project_id, scan_id):
@@ -152,7 +153,7 @@ def nessus_parser(root, project_id, scan_id):
 
                 vul_id = uuid.uuid4()
 
-                dup_data = scan_ip + plugin_name + severity
+                dup_data = scan_ip + plugin_name + severity + port
                 duplicate_hash = hashlib.sha1(dup_data).hexdigest()
 
                 match_dup = nessus_report_db.objects.filter(
@@ -165,6 +166,17 @@ def nessus_parser(root, project_id, scan_id):
                     duplicate_vuln = 'No'
                 else:
                     duplicate_vuln = 'None'
+
+                global false_positive
+                false_p = nessus_report_db.objects.filter(
+                    false_positive_hash=duplicate_hash)
+                fp_lenth_match = len(false_p)
+
+                if fp_lenth_match == 1:
+                    false_positive = 'Yes'
+                else:
+                    false_positive = 'No'
+
                 all_data_save = nessus_report_db(project_id=project_id,
                                                  scan_id=scan_id,
                                                  scan_ip=scan_ip,
@@ -189,7 +201,7 @@ def nessus_parser(root, project_id, scan_id):
                                                  svc_name=svc_name,
                                                  pluginFamily=pluginFamily,
                                                  port=port,
-                                                 false_positive='No',
+                                                 false_positive=false_positive,
                                                  vuln_status='Open',
                                                  dup_hash=duplicate_hash,
                                                  vuln_duplicate=duplicate_vuln

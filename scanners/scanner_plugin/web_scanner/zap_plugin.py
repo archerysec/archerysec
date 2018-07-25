@@ -107,6 +107,7 @@ class ZAPScanner:
     scanner = []
     all_scan_url = []
     all_url_vuln = []
+    false_positive = None
 
     """ Connect with ZAP scanner global variable """
     # zap = zap_connect()
@@ -334,10 +335,9 @@ class ZAPScanner:
             alert = vuln['alert']
             ids = vuln['id']
             description = vuln['description']
-            false_positive = 'No'
             status = 'Open'
 
-            dup_data = name + url + risk
+            dup_data = name + url + alert
             duplicate_hash = hashlib.sha1(dup_data).hexdigest()
 
             match_dup = zap_scan_results_db.objects.filter(
@@ -351,6 +351,17 @@ class ZAPScanner:
             else:
                 duplicate_vuln = 'None'
 
+            false_p = zap_scan_results_db.objects.filter(
+                false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            global false_positive
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            elif lenth_match == 0:
+                false_positive = 'No'
+            else:
+                false_positive = 'No'
 
             global vul_col
 

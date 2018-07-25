@@ -33,6 +33,7 @@ externalReferences = None
 remedyReferences = None
 proofOfConcept = None
 proofs = None
+false_positive = None
 
 
 def xml_parser(root,
@@ -132,6 +133,18 @@ def xml_parser(root,
         else:
             duplicate_vuln = 'None'
 
+        false_p = netsparker_scan_result_db.objects.filter(
+            false_positive_hash=duplicate_hash)
+        fp_lenth_match = len(false_p)
+
+        global false_positive
+        if fp_lenth_match == 1:
+            false_positive = 'Yes'
+        elif lenth_match == 0:
+            false_positive = 'No'
+        else:
+            false_positive = 'No'
+
         dump_data = netsparker_scan_result_db(scan_id=scan_id,
                                               project_id=project_id,
                                               vuln_id=vuln_id,
@@ -143,7 +156,7 @@ def xml_parser(root,
                                               rawresponse=vuln_rawresponse,
                                               extrainformation=vuln_extrainformation,
                                               classification=vuln_classification,
-                                              false_positive='No',
+                                              false_positive=false_positive,
                                               vuln_color=vul_col,
                                               description=description,
                                               impact=impact,

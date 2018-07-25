@@ -36,6 +36,7 @@ from background_task.models import Task
 from background_task import background
 from datetime import datetime
 from jiraticketing.models import jirasetting
+import hashlib
 
 openvas_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -107,6 +108,23 @@ def scan_vul_details(request):
             scan_id=scan_id,
             vul_id=vuln_id).update(
             false_positive=false_positive, vuln_status=status)
+
+        if false_positive == 'Yes':
+            vuln_info = ov_scan_result_db.objects.filter(scan_id=scan_id, vul_id=vuln_id)
+            for vi in vuln_info:
+                name = vi.name
+                host = vi.host
+                severity = vi.severity
+                port = vi.port
+                dup_data = name + host + severity + port
+                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                ov_scan_result_db.objects.filter(
+                    scan_id=scan_id,
+                    vul_id=vuln_id).update(
+                    false_positive=false_positive,
+                    vuln_status=status,
+                    false_positive_hash=false_positive_hash
+                )
 
         return HttpResponseRedirect(
             '/networkscanners/vul_details/?scan_id=%s' % scan_id)
@@ -658,6 +676,20 @@ def nessus_vuln_details(request):
 
         nessus_report_db.objects.filter(scan_id=scan_id,
                                         vul_id=vuln_id).update(false_positive=false_positive, vuln_status=status)
+
+        if false_positive == 'Yes':
+            vuln_info = nessus_report_db.objects.filter(scan_id=scan_id, vul_id=vuln_id)
+            for vi in vuln_info:
+                scan_ip = vi.scan_ip
+                plugin_name = vi.plugin_name
+                severity = vi.severity
+                port = vi.port
+                dup_data = scan_ip + plugin_name + severity + port
+                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                nessus_report_db.objects.filter(scan_id=scan_id,
+                                                vul_id=vuln_id).update(false_positive=false_positive,
+                                                                       vuln_status=status,
+                                                                       false_positive_hash=false_positive_hash)
 
         return HttpResponseRedirect(
             '/networkscanners/nessus_vuln_details/?scan_id=%s' % scan_id)

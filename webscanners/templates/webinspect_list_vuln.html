@@ -49,7 +49,7 @@
                                 <!--<td>{{data.project_id}}</td>-->
                                 <td><a href="/webscanners/webinspect_vuln_out/?scan_id={{data.scan_id}}&scan_name={{data.name}}">{{data.name}}</a>
                                 </td>
-                                <td><span class="badge badge-{{data.vuln_color}}">{{data.severity}}</span></td>
+                                <td><span class="badge badge-{{data.vuln_color}}">{{data.severity_name}}</span></td>
                             </tr>
                             {% endfor %}
                             </tbody>
