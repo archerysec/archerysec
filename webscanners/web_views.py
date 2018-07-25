@@ -55,6 +55,7 @@ from webscanners.models import netsparker_scan_db, \
     webinspect_scan_result_db
 
 from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+import hashlib
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -549,6 +550,21 @@ def vuln_details(request):
             vuln_id=vuln_id,
             scan_id=scan_id).update(false_positive=false_positive,
                                     vuln_status=vuln_status)
+        if false_positive == 'Yes':
+            vuln_info = zap_scan_results_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            for vi in vuln_info:
+                name = vi.name
+                url = vi.url
+                alert = vi.alert
+                dup_data = name + url + alert
+                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                zap_scan_results_db.objects.filter(
+                    vuln_id=vuln_id,
+                    scan_id=scan_id).update(false_positive=false_positive,
+                                            vuln_status=vuln_status,
+                                            false_positive_hash=false_positive_hash
+                                            )
+
         messages.add_message(request,
                              messages.SUCCESS,
                              'Vulnerability Status Changed')
@@ -1333,6 +1349,21 @@ def burp_vuln_out(request):
         burp_scan_result_db.objects.filter(vuln_id=vuln_id,
                                            scan_id=scan_id).update(false_positive=false_positive,
                                                                    vuln_status=vuln_status)
+
+        if false_positive == 'Yes':
+            vuln_info = burp_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            for vi in vuln_info:
+                name = vi.name
+                location = vi.location
+                severity = vi.severity
+                dup_data = name + location + severity
+                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                burp_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                                   scan_id=scan_id).update(false_positive=false_positive,
+                                                                           vuln_status=vuln_status,
+                                                                           false_positive_hash=false_positive_hash
+                                                                           )
+
         messages.add_message(request,
                              messages.SUCCESS,
                              'Vulnerability Status Changed')
@@ -1688,6 +1719,21 @@ def arachni_vuln_out(request):
         vuln_name = request.POST.get('vuln_name')
         arachni_scan_result_db.objects.filter(vuln_id=vuln_id,
                                               scan_id=scan_id).update(false_positive=false_positive, vuln_status=status)
+
+        if false_positive == 'Yes':
+            vuln_info = arachni_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            for vi in vuln_info:
+                name = vi.name
+                url = vi.url
+                severity = vi.severity
+                dup_data = name + url + severity
+                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                arachni_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                                      scan_id=scan_id).update(false_positive=false_positive,
+                                                                              vuln_status=status,
+                                                                              false_positive_hash=false_positive_hash
+                                                                              )
+
         messages.add_message(request,
                              messages.SUCCESS,
                              'Vulnerability Status Changed')
@@ -1913,6 +1959,21 @@ def netsparker_vuln_out(request):
         netsparker_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                  scan_id=scan_id).update(false_positive=false_positive,
                                                                          vuln_status=status)
+
+        if false_positive == 'Yes':
+            vuln_info = netsparker_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            for vi in vuln_info:
+                vuln_type = vi.type
+                url = vi.vuln_url
+                severity = vi.severity
+                dup_data = str(vuln_type) + str(url) + str(severity)
+                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                netsparker_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                                         scan_id=scan_id).update(false_positive=false_positive,
+                                                                                 vuln_status=status,
+                                                                                 false_positive_hash=false_positive_hash
+                                                                                 )
+
         return HttpResponseRedirect(
             '/webscanners/netsparker_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
@@ -2141,6 +2202,21 @@ def webinspect_vuln_out(request):
         webinspect_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                  scan_id=scan_id).update(false_positive=false_positive,
                                                                          vuln_status=status)
+
+        if false_positive == 'Yes':
+            vuln_info = webinspect_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            for vi in vuln_info:
+                name = vi.name
+                url = vi.vuln_url
+                Severity = vi.severity_name
+                dup_data = name + url + Severity
+                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                webinspect_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                                         scan_id=scan_id).update(false_positive=false_positive,
+                                                                                 vuln_status=status,
+                                                                                 false_positive_hash=false_positive_hash
+                                                                                 )
+
         return HttpResponseRedirect(
             '/webscanners/webinspect_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 

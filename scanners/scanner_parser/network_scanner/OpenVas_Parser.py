@@ -127,7 +127,7 @@ def xml_parser(root, project_id, scan_id):
         date_time = datetime.datetime.now()
         vul_id = uuid.uuid4()
 
-        dup_data = name + host + severity
+        dup_data = name + host + severity + port
         duplicate_hash = hashlib.sha1(dup_data).hexdigest()
 
         match_dup = ov_scan_result_db.objects.filter(
@@ -140,6 +140,15 @@ def xml_parser(root, project_id, scan_id):
             duplicate_vuln = 'No'
         else:
             duplicate_vuln = 'None'
+
+        false_p = ov_scan_result_db.objects.filter(
+            false_positive_hash=duplicate_hash)
+        fp_lenth_match = len(false_p)
+
+        if fp_lenth_match == 1:
+            false_positive = 'Yes'
+        else:
+            false_positive = 'No'
 
         save_all = ov_scan_result_db(scan_id=scan_id,
                                      vul_id=vul_id,
@@ -159,7 +168,7 @@ def xml_parser(root, project_id, scan_id):
                                      tags=tags,
                                      banner=banner,
                                      date_time=date_time,
-                                     false_positive='No',
+                                     false_positive=false_positive,
                                      vuln_status='Open',
                                      dup_hash=duplicate_hash,
                                      vuln_duplicate=duplicate_vuln

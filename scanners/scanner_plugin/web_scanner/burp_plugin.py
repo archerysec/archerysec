@@ -49,6 +49,7 @@ methods = ""
 dec_res = ""
 dec_req = ""
 vul_col = ""
+false_positive = None
 
 
 class burp_scans(object):
@@ -257,6 +258,18 @@ class burp_scans(object):
             else:
                 duplicate_vuln = 'None'
 
+            false_p = burp_scan_result_db.objects.filter(
+                false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            global false_positive
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            elif lenth_match == 0:
+                false_positive = 'No'
+            else:
+                false_positive = 'No'
+
             try:
                 data_dump = burp_scan_result_db(
                     scan_id=self.scan_id,
@@ -279,7 +292,7 @@ class burp_scans(object):
                     vulnerabilityClassifications=vulnerabilityClassifications,
                     issueDetail=issueDetail,
                     requestresponse=requestresponse,
-                    false_positive='No',
+                    false_positive=false_positive,
                     vuln_status='Open',
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln

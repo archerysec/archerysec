@@ -32,6 +32,7 @@ SectionText = None
 severity_name = None
 vuln_id = None
 vul_col = None
+false_positive = None
 
 
 def xml_parser(root,
@@ -119,7 +120,7 @@ def xml_parser(root,
                 severity_name = 'Information'
                 vul_col = "info"
 
-            dup_data = Name + url + Severity
+            dup_data = Name + url + severity_name
             duplicate_hash = hashlib.sha1(dup_data).hexdigest()
 
             match_dup = webinspect_scan_result_db.objects.filter(
@@ -132,6 +133,18 @@ def xml_parser(root,
                 duplicate_vuln = 'No'
             else:
                 duplicate_vuln = 'None'
+
+            false_p = webinspect_scan_result_db.objects.filter(
+                false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            global false_positive
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            elif lenth_match == 0:
+                false_positive = 'No'
+            else:
+                false_positive = 'No'
 
             dump_data = webinspect_scan_result_db(scan_id=scan_id,
                                                   vuln_id=vuln_id,
@@ -150,7 +163,7 @@ def xml_parser(root,
                                                   SectionText=SectionText,
                                                   severity_name=severity_name,
                                                   vuln_color=vul_col,
-                                                  false_positive='No',
+                                                  false_positive=false_positive,
                                                   vuln_status='Open',
                                                   dup_hash=duplicate_hash,
                                                   vuln_duplicate=duplicate_vuln

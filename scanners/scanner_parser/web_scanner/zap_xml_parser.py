@@ -132,6 +132,15 @@ def xml_parser(root, project_id, scan_id):
                     else:
                         duplicate_vuln = 'None'
 
+                    false_p = zap_scan_results_db.objects.filter(
+                        false_positive_hash=duplicate_hash)
+                    fp_lenth_match = len(false_p)
+
+                    if fp_lenth_match == 1:
+                        false_positive = 'Yes'
+                    else:
+                        false_positive = 'No'
+
                     dump_data = zap_scan_results_db(vuln_id=vuln_id,
                                                     vuln_color=vul_col,
                                                     scan_id=scan_id,
@@ -148,7 +157,7 @@ def xml_parser(root, project_id, scan_id):
                                                     pluginId=pluginid,
                                                     alert=alert,
                                                     description=desc,
-                                                    false_positive='No',
+                                                    false_positive=false_positive,
                                                     rescan='No',
                                                     vuln_status='Open',
                                                     dup_hash=duplicate_hash,
