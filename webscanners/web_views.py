@@ -281,17 +281,15 @@ def web_scan(request):
     if request.POST.get("url", ):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
-        print "Project id", project_id
         rescan_id = None
         rescan = 'No'
-        print target_url
         target_item = str(target_url)
         value = target_item.replace(" ", "")
         target__split = value.split(',')
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
-            print "targetssss -", target
+            print "Targets -", target
             thread = threading.Thread(
                 target=launch_web_scan,
                 args=(target, project_id, rescan_id, rescan))
@@ -302,7 +300,7 @@ def web_scan(request):
         if scans_status == '100':
             scans_status = "0"
         else:
-            return scans_status
+            return HttpResponse(status=200)
         return HttpResponse(status=200)
 
     return render(request,
@@ -711,6 +709,8 @@ def zap_set_update(request):
         save_setting.save_zap_settings(apikey=apikey,
                                        zaphost=zaphost,
                                        zaport=port)
+
+        return HttpResponseRedirect('/webscanners/setting/')
 
     messages.add_message(request,
                          messages.SUCCESS,
@@ -1219,6 +1219,8 @@ def burp_setting(request):
 
         save_burp_setting.save_burp_settings(burphost=burphost,
                                              burport=burport)
+
+        return HttpResponseRedirect('/webscanners/setting/')
 
     return render(request, 'burp_setting_form.html')
 

@@ -49,8 +49,6 @@ def zap_connect():
         zap_hosts = zap.zap_url
         zap_ports = zap.zap_port
 
-    print zap_hosts
-    print zap_ports
     zap = ZAPv2(apikey=zap_api_key,
                 proxies={
                     'http': zap_hosts + ':' + zap_ports,
