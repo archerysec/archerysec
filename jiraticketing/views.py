@@ -22,6 +22,8 @@ def jira_setting(request):
                                 jira_password=password)
         save_data.save()
 
+        return HttpResponseRedirect('/webscanners/setting/')
+
     return render(request, 'jira_setting_form.html')
 
 
