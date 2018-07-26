@@ -119,7 +119,7 @@ def xml_parser(root, project_id, scan_id):
                         vul_col = "info"
                         risk = "Informational"
 
-                    dup_data = name + url + alert
+                    dup_data = name + url + risk
                     duplicate_hash = hashlib.sha1(dup_data).hexdigest()
                     match_dup = zap_scan_results_db.objects.filter(
                         dup_hash=duplicate_hash).values('dup_hash').distinct()

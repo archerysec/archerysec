@@ -553,8 +553,8 @@ def vuln_details(request):
             for vi in vuln_info:
                 name = vi.name
                 url = vi.url
-                alert = vi.alert
-                dup_data = name + url + alert
+                risk = vi.risk
+                dup_data = name + url + risk
                 false_positive_hash = hashlib.sha1(dup_data).hexdigest()
                 zap_scan_results_db.objects.filter(
                     vuln_id=vuln_id,
