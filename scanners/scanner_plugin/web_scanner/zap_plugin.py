@@ -335,7 +335,20 @@ class ZAPScanner:
             description = vuln['description']
             status = 'Open'
 
-            dup_data = name + url + alert
+            global vul_col
+
+            if risk == 'High':
+                vul_col = "important"
+            elif risk == 'Medium':
+                vul_col = "warning"
+            elif risk == 'Low':
+                vul_col = "info"
+            else:
+                vul_col = "info"
+
+            # date_time = datetime.datetime.now()
+
+            dup_data = name + url + risk
             duplicate_hash = hashlib.sha1(dup_data).hexdigest()
 
             match_dup = zap_scan_results_db.objects.filter(
@@ -360,19 +373,6 @@ class ZAPScanner:
                 false_positive = 'No'
             else:
                 false_positive = 'No'
-
-            global vul_col
-
-            if risk == 'High':
-                vul_col = "important"
-            elif risk == 'Medium':
-                vul_col = "warning"
-            elif risk == 'Low':
-                vul_col = "info"
-            else:
-                vul_col = "info"
-
-            # date_time = datetime.datetime.now()
 
             dump_all = zap_scan_results_db(
                 vuln_id=vuln_id,
