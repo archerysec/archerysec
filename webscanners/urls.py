@@ -221,4 +221,24 @@ urlpatterns = [
         web_views.webinspect_del_vuln,
         name='webinspect_del_vuln'),
 
+    # All acunetix URL's
+    url(r'^acunetix_list_vuln',
+        web_views.acunetix_list_vuln,
+        name='acunetix_list_vuln'),
+    url(r'^acunetix_scan_list',
+        web_views.acunetix_scan_list,
+        name='acunetix_scan_list'),
+    url(r'^acunetix_vuln_data',
+        web_views.acunetix_vuln_data,
+        name='acunetix_vuln_data'),
+    url(r'^acunetix_vuln_out',
+        web_views.acunetix_vuln_out,
+        name='acunetix_vuln_out'),
+    url(r'^del_acunetix_scan',
+        web_views.del_acunetix_scan,
+        name='del_acunetix_scan'),
+    url(r'^acunetix_del_vuln',
+        web_views.acunetix_del_vuln,
+        name='acunetix_del_vuln'),
+
 ]

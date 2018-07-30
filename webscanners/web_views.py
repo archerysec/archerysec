@@ -33,7 +33,7 @@ from archerysettings import load_settings, save_settings
 from networkscanners.models import scan_save_db
 from projects.models import project_db
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
-    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser
+    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from scanners.scanner_plugin.web_scanner import zap_plugin
 from webscanners.models import zap_scan_results_db, \
@@ -42,13 +42,14 @@ from webscanners.models import zap_scan_results_db, \
     zap_spider_results, \
     cookie_db, excluded_db, \
     burp_scan_db, burp_scan_result_db, \
-    arachni_scan_db, arachni_scan_result_db, task_schedule_db
+    arachni_scan_db, arachni_scan_result_db, \
+    task_schedule_db, \
+    acunetix_scan_db, acunetix_scan_result_db
 from background_task import background
 from datetime import datetime
 from background_task.models import Task
 import os
 from jiraticketing.models import jirasetting
-import subprocess
 from webscanners.models import netsparker_scan_db, \
     netsparker_scan_result_db, \
     webinspect_scan_db, \
@@ -862,6 +863,7 @@ def slem(driver, url):
         driver.get(url, )
     except Exception as e:
         print "Error Got !!!"
+    return
 
 
 def save_cookie(driver):
@@ -871,11 +873,9 @@ def save_cookie(driver):
     :return:
     """
     all_cookies = driver.get_cookies()
-    print all_cookies
     f = open('cookies.txt', 'w+')
     for cookie in all_cookies:
         cookie_value = cookie['name'] + '=' + cookie['value'] + ';'
-        print cookie_value
         f.write(cookie_value)
     f.close()
     driver.close()
@@ -898,9 +898,16 @@ def del_cookies(request):
     if request.method == 'POST':
         # cookie_id = request.POST.get('id')
         cookie_url = request.POST.get('url')
-
-        del_cookie = cookie_db.objects.filter(url=cookie_url)
-        del_cookie.delete()
+        cookies_item = str(cookie_url)
+        cooki_split = cookies_item.replace(" ", "")
+        target_split = cooki_split.split(',')
+        split_length = target_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            cookies_target = target_split.__getitem__(i)
+            print(cookies_target)
+            del_cookie = cookie_db.objects.filter(url=cookies_target)
+            del_cookie.delete()
         return HttpResponseRedirect('/webscanners/')
 
     return render(request, 'cookies_list.html')
@@ -914,8 +921,7 @@ def sel_login(request):
     """
     action_vul = request.POST.get("action", )
     url_da = request.POST.get("url_login", )
-    print action_vul
-    print url_da
+    # print(url_da)
     if action_vul == "open_page":
         global driver
         driver = webdriver.Firefox()
@@ -923,16 +929,32 @@ def sel_login(request):
     elif action_vul == "save_cookie":
         save_cookie(driver)
         read_f = open('cookies.txt', 'r')
-        del_all_cookie = cookie_db.objects.all()
-        del_all_cookie.delete()
-        print "url from cookie : ", new_uri
+
         for cookie_data in read_f:
-            print "Cookies from text :", cookie_data
-            cookie_save = cookie_db(url=new_uri, cookie=cookie_data)
-            cookie_save.save()
+
+            # cookie_save = cookie_db(url=new_uri, cookie=cookie_data)
+            # cookie_save.save()
+
+            # target_url = request.POST.get('url')
+            # target_cookies = request.POST.get('cookies')
+            print(cookie_data)
+            all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri))
+            for da in all_cookie_url:
+                global cookies
+                cookies = da.url
+
+            if cookies == new_uri:
+                cookie_db.objects.filter(Q(url__icontains=new_uri)).update(cookie=cookie_data)
+                return HttpResponseRedirect("/webscanners/")
+            else:
+                data_dump = cookie_db(url=new_uri,
+                                      cookie=cookie_data)
+                data_dump.save()
+                return HttpResponseRedirect("/webscanners/")
         messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
-    return HttpResponseRedirect('/webscanners/')
+        return HttpResponseRedirect('/webscanners/')
+    return render(request, 'webscanner.html')
 
 
 def exclude_url(request):
@@ -957,10 +979,18 @@ def exluded_url_list(request):
     all_excluded_url = excluded_db.objects.all()
 
     if request.method == 'POST':
-        exluded_url = request.POST.get('exclude_url')
+        exclude_url = request.POST.get('exclude_url')
+        exluded_item = str(exclude_url)
+        exclude_split = exluded_item.replace(" ", "")
+        target_split = exclude_split.split(',')
+        split_length = target_split.__len__()
+        for i in range(0, split_length):
+            exclude_target = target_split.__getitem__(i)
 
-        del_excluded = excluded_db.objects.filter(exclude_url=exluded_url)
-        del_excluded.delete()
+            del_excluded = excluded_db.objects.filter(exclude_url=exclude_target)
+            del_excluded.delete()
+
+        return HttpResponseRedirect('/webscanners/excluded_url_list')
 
     return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})
 
@@ -1607,6 +1637,24 @@ def xml_upload(request):
             print("Saved scan data")
             return HttpResponseRedirect("/webscanners/webinspect_scan_list/")
 
+        elif scanner == 'acunetix':
+            date_time = datetime.now()
+            scan_dump = acunetix_scan_db(
+                url=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            acunetix_xml_parser.xml_parser(project_id=project_id,
+                                           scan_id=scan_id,
+                                           root=root_xml)
+            print("Saved scan data")
+            return HttpResponseRedirect("/webscanners/acunetix_scan_list/")
+
     return render(request, 'upload_xml.html', {'all_project': all_project})
 
 
@@ -1625,7 +1673,6 @@ def add_cookies(request):
             cookies = da.url
 
         if cookies == target_url:
-            print "updateeeeeeeee"
             cookie_db.objects.filter(Q(url__icontains=target_url)).update(cookie=target_cookies)
             return HttpResponseRedirect("/webscanners/")
         else:
@@ -2363,3 +2410,243 @@ def webinspect_del_vuln(request):
         messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/webscanners/webinspect_list_vuln?scan_id=%s" % un_scanid)
+
+
+def acunetix_list_vuln(request):
+    """
+    acunetix Vulnerability List
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+    else:
+        scan_id = None
+
+    acunetix_all_vul = acunetix_scan_result_db.objects.filter(
+        scan_id=scan_id, vuln_status='Open').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id', 'vuln_status').distinct()
+
+    acunetix_all_vul_close = acunetix_scan_result_db.objects.filter(
+        scan_id=scan_id, vuln_status='Close').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id', 'vuln_status').distinct()
+
+    return render(request,
+                  'acunetix_list_vuln.html',
+                  {'acunetix_all_vul': acunetix_all_vul,
+                   'scan_id': scan_id,
+                   'acunetix_all_vul_close': acunetix_all_vul_close
+                   })
+
+
+def acunetix_scan_list(request):
+    """
+    acunetix Scan List.
+    :param request:
+    :return:
+    """
+    all_acunetix_scan = acunetix_scan_db.objects.all()
+
+    return render(request,
+                  'acunetix_scan_lis.html',
+                  {'all_acunetix_scan': all_acunetix_scan})
+
+
+def acunetix_vuln_data(request):
+    """
+    acunetix Vulnerability Data.
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        vuln_id = request.GET['vuln_id']
+    else:
+        vuln_id = None
+    vuln_data = acunetix_scan_result_db.objects.filter(vuln_id=vuln_id)
+
+    return render(request,
+                  'acunetix_vuln_data.html',
+                  {'vuln_data': vuln_data, })
+
+
+def acunetix_vuln_out(request):
+    """
+    acunetix Vulnerability details.
+    :param request:
+    :return:
+    """
+    jira_url = None
+
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+        name = request.GET['scan_name']
+    if request.method == "POST":
+        false_positive = request.POST.get('false')
+        status = request.POST.get('status')
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        vuln_name = request.POST.get('vuln_name')
+        acunetix_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                               scan_id=scan_id).update(false_positive=false_positive,
+                                                                       vuln_status=status)
+
+        if false_positive == 'Yes':
+            vuln_info = acunetix_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            for vi in vuln_info:
+                name = vi.VulnName
+                url = vi.ScanStartURL
+                Severity = vi.VulnSeverity
+                dup_data = name + url + Severity
+                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                acunetix_scan_result_db.objects.filter(vuln_id=vuln_id,
+                                                       scan_id=scan_id).update(false_positive=false_positive,
+                                                                               vuln_status=status,
+                                                                               false_positive_hash=false_positive_hash
+                                                                               )
+
+        return HttpResponseRedirect(
+            '/webscanners/acunetix_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+
+    vuln_data = acunetix_scan_result_db.objects.filter(scan_id=scan_id,
+                                                       VulnName=name,
+                                                       vuln_status='Open',
+                                                       false_positive='No')
+    vuln_data_closed = acunetix_scan_result_db.objects.filter(scan_id=scan_id,
+                                                              VulnName=name,
+                                                              vuln_status='Closed',
+                                                              false_positive='No')
+    false_data = acunetix_scan_result_db.objects.filter(scan_id=scan_id,
+                                                        VulnName=name,
+                                                        false_positive='Yes')
+
+    return render(request,
+                  'acunetix_vuln_out.html',
+                  {'vuln_data': vuln_data,
+                   'false_data': false_data,
+                   'jira_url': jira_url,
+                   'vuln_data_closed': vuln_data_closed
+                   })
+
+
+def del_acunetix_scan(request):
+    """
+    Delete acunetix Scans.
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        scan_url = request.POST.get("scan_url")
+
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        # print "split_lenght", split_length
+        for i in range(0, split_length):
+            scan_id = value_split.__getitem__(i)
+
+            item = acunetix_scan_db.objects.filter(scan_id=scan_id
+                                                   )
+            item.delete()
+            item_results = acunetix_scan_result_db.objects.filter(scan_id=scan_id)
+            item_results.delete()
+        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+        return HttpResponseRedirect('/webscanners/acunetix_scan_list/')
+
+
+def edit_acunetix_vuln(request):
+    """
+    The funtion Editing acunetix Vulnerability.
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        id_vul = request.GET['vuln_id']
+    else:
+        id_vul = ''
+    edit_vul_dat = burp_scan_result_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+    if request.method == 'POST':
+        vuln_id = request.POST.get("vuln_id", )
+        scan_id = request.POST.get("scan_id", )
+        name = request.POST.get("name", )
+        severity = request.POST.get("severity", )
+        host = request.POST.get("host", )
+        path = request.POST.get("path", )
+        issuedetail = request.POST.get("issuedetail")
+        description = request.POST.get("description", )
+        solution = request.POST.get("solution", )
+        location = request.POST.get("location", )
+        vulnerabilityClassifications = request.POST.get("reference", )
+        global vul_col
+        if severity == 'High':
+            vul_col = "important"
+        elif severity == 'Medium':
+            vul_col = "warning"
+        elif severity == 'Low':
+            vul_col = "info"
+        else:
+            vul_col = "info"
+        print "edit_vul :", name
+
+        acunetix_scan_result_db.objects.filter(vuln_id=vuln_id).update(
+            name=name,
+            severity_color=vul_col,
+            severity=severity,
+            host=host,
+            path=path,
+            location=location,
+            issueDetail=issuedetail,
+            issueBackground=description,
+            remediationBackground=solution,
+            vulnerabilityClassifications=vulnerabilityClassifications,
+        )
+
+        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
+
+        return HttpResponseRedirect("/webscanners/acunetix_vuln_data/?vuln_id=%s" % vuln_id)
+
+    return render(request, 'edit_acunetix_vuln.html', {'edit_vul_dat': edit_vul_dat})
+
+
+def acunetix_del_vuln(request):
+    """
+    The function Delete the acunetix Vulnerability.
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        vuln_id = request.POST.get("del_vuln", )
+        un_scanid = request.POST.get("scan_id", )
+
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_lenght", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+            delete_vuln = acunetix_scan_result_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln.delete()
+        acunetix_all_vul = acunetix_scan_result_db.objects.filter(scan_id=un_scanid)
+
+        total_vul = len(acunetix_all_vul)
+        total_critical = len(acunetix_all_vul.filter(severity_name='Critical'))
+        total_high = len(acunetix_all_vul.filter(severity_name="High"))
+        total_medium = len(acunetix_all_vul.filter(severity_name="Medium"))
+        total_low = len(acunetix_all_vul.filter(severity_name="Low"))
+        total_info = len(acunetix_all_vul.filter(severity_name="Information"))
+
+        acunetix_scan_db.objects.filter(scan_id=un_scanid).update(
+            total_vul=total_vul,
+            critical_vul=total_critical,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            info_vul=total_info
+        )
+        messages.success(request, "Deleted vulnerability")
+
+        return HttpResponseRedirect("/webscanners/acunetix_list_vuln?scan_id=%s" % un_scanid)

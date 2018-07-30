@@ -20,7 +20,7 @@
                 <!--contentType: 'application/json; charset=utf-8',-->
                 url:'/webscanners/cookies_del/',
                 data:{
-                   id: json_scanid,
+                   url: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                 },
                 sucess:function(){
@@ -58,7 +58,7 @@
             {% endif %}
         </div>
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Cookies List</h5>
@@ -84,7 +84,7 @@
                             <tr data-target="#">
                                 <td>
                                     <form>
-                                        <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
+                                        <label><input type="checkbox" value="{{data.url}}" name="del_scan_id"
                                                       onClick="reload">
 
                                         </label>
