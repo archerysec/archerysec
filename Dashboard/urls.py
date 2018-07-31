@@ -34,10 +34,10 @@ urlpatterns = [
         name='signup'),
 
     url(r'^$',
-        views.dash_call,
+        views.vuln_static_dashboard,
         name='zap_vuln_chart'),
     url(r'^dashboard/$',
-        views.dash_call,
+        views.vuln_static_dashboard,
         name='dashboard'),
     url(r'^project_dashboard/$',
         views.project_dashboard,

@@ -2633,11 +2633,11 @@ def acunetix_del_vuln(request):
         acunetix_all_vul = acunetix_scan_result_db.objects.filter(scan_id=un_scanid)
 
         total_vul = len(acunetix_all_vul)
-        total_critical = len(acunetix_all_vul.filter(severity_name='Critical'))
-        total_high = len(acunetix_all_vul.filter(severity_name="High"))
-        total_medium = len(acunetix_all_vul.filter(severity_name="Medium"))
-        total_low = len(acunetix_all_vul.filter(severity_name="Low"))
-        total_info = len(acunetix_all_vul.filter(severity_name="Information"))
+        total_critical = len(acunetix_all_vul.filter(VulnSeverity='Critical'))
+        total_high = len(acunetix_all_vul.filter(VulnSeverity="High"))
+        total_medium = len(acunetix_all_vul.filter(VulnSeverity="Medium"))
+        total_low = len(acunetix_all_vul.filter(VulnSeverity="Low"))
+        total_info = len(acunetix_all_vul.filter(VulnSeverity="Information"))
 
         acunetix_scan_db.objects.filter(scan_id=un_scanid).update(
             total_vul=total_vul,
