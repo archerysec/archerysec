@@ -146,17 +146,16 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 
 ### Road Map
 * Scanners parser & Plugin
-    - [x] Nessus
-    - [ ] Webinspect
-    - [ ] Acunetix
-    - [ ] AppScan
-    - [x] Netsparker
+    - [x] Nessus (XML)
+    - [x] Webinspect (XML)
+    - [x] Acunetix (XML)
+    - [x] AppScan (XML)
+    - [x] Netsparker (XML)
     - [ ] AppSpider  
 * Popular Tools plugin support. 
     - [x] Nmap 
     - [x] SSL Analysis
     - [x] Nikto
-    - [ ] skipfish
     - [ ] WPScan
     - [ ] OWASP JoomScan
 * Reporting
