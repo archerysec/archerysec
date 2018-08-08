@@ -3,7 +3,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -21,10 +21,10 @@ import hashlib
 
 # ZAP Database import
 
-from webscanners.models import zap_scan_results_db,\
-    zap_scans_db,\
-    zap_spider_db,\
-    cookie_db,\
+from webscanners.models import zap_scan_results_db, \
+    zap_scans_db, \
+    zap_spider_db, \
+    cookie_db, \
     excluded_db
 
 from archerysettings import load_settings
@@ -54,6 +54,13 @@ def zap_connect():
                     'http': zap_hosts + ':' + zap_ports,
                     'https': zap_hosts + ':' + zap_ports})
     return zap
+
+
+def zap_replacer(target_url):
+    zap = zap_connect()
+    zap.replacer.remove_rule(description=target_url, apikey=zap_api_key)
+
+    return
 
 
 class ZAPScanner:
@@ -108,6 +115,7 @@ class ZAPScanner:
     false_positive = None
 
     """ Connect with ZAP scanner global variable """
+
     # zap = zap_connect()
 
     def __init__(self, target_url, project_id, rescan_id, rescan):
@@ -168,6 +176,8 @@ class ZAPScanner:
 
         except Exception as e:
             print e
+        print "All cookies", all_cookies
+        print "Target URL---", self.target_url
 
         try:
             self.zap.replacer.add_rule(
@@ -193,6 +203,12 @@ class ZAPScanner:
         try:
             print "targets:-----", self.target_url
             spider_id = self.zap.spider.scan(self.target_url)
+            time.sleep(5)
+            # try:
+            #     self.zap.ajaxSpider.scan(self.target_url)
+            # except Exception as e:
+            #     print e
+
             save_all = zap_spider_db(
                 spider_url=self.target_url,
                 spider_scanid=spider_id

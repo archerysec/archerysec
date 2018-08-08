@@ -230,7 +230,9 @@ def launch_web_scan(target_url, project_id, rescan_id, rescan):
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
     zap.exclude_url()
+    time.sleep(3)
     zap.cookies()
+    time.sleep(3)
     zap.zap_spider_thread(thread_value=30)
     spider_id = zap.zap_spider()
     zap.spider_status(spider_id=spider_id)
@@ -908,6 +910,7 @@ def del_cookies(request):
             print(cookies_target)
             del_cookie = cookie_db.objects.filter(url=cookies_target)
             del_cookie.delete()
+            zap_plugin.zap_replacer(target_url=cookies_target)
         return HttpResponseRedirect('/webscanners/')
 
     return render(request, 'cookies_list.html')
