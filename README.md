@@ -9,6 +9,8 @@
 
 [![BlackHat Asia Arsenal 2018](https://github.com/toolswatch/badges/blob/master/arsenal/asia/2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837)
 
+[![DEFCON 26 Demolabs](https://img.shields.io/badge/DEFCON%2026-Demo%20Labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
+
 
 Archery
 =================
