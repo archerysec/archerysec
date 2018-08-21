@@ -18,6 +18,7 @@ django-compat==1.0.15
 django-cryptography==0.2
 django-easy-pdf==0.1.1
 django-fernet-fields==0.5
+django-settings-export==1.2.1
 django-stronghold==0.2.9
 djangorestframework==3.7.7
 djangorestframework-jwt==1.11.0

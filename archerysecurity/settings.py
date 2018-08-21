@@ -86,6 +86,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
             ],
         },
     },
@@ -176,3 +177,10 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SESSION_COOKIE_AGE = 5 * 100
 
 BACKGROUND_TASK_RUN_ASYNC = True
+
+REFRESH_TIMER = 5
+
+SETTINGS_EXPORT = [
+    'REFRESH_TIMER',
+]
+

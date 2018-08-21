@@ -75,7 +75,7 @@
  {
       $("#result").load("/networkscanners/ip_table/");// a function which will load data from other file after x seconds
   }
- setInterval('autoRefresh_div()', 5000);
+ setInterval('autoRefresh_div()', {{ settings.REFRESH_TIMER }}000);
 
 
 
@@ -172,7 +172,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="widget-content nopadding"><em>Table content is refreshed every 5 seconds</em></div>
+                <div class="widget-content nopadding"><em>Table content is refreshed every {{ settings.REFRESH_TIMER }} seconds</em></div>
             </div>
         </div>
     </div>
