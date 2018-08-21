@@ -30,7 +30,7 @@ from networkscanners.models import scan_save_db, \
     task_schedule_db, \
     nessus_scan_db, nessus_report_db
 from projects.models import project_db
-from scanners.scanner_parser.network_scanner import OpenVAS_Parser, Nessus_Parser, nmap_parser
+from scanners.scanner_parser.network_scanner import OpenVas_Parser, Nessus_Parser, nmap_parser
 from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin, vuln_an_id
 from background_task.models import Task
 from background_task import background
@@ -484,7 +484,7 @@ def OpenVAS_xml_upload(request):
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            OpenVAS_Parser.xml_parser(project_id=project_id,
+            OpenVas_Parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml)
             return HttpResponseRedirect("/networkscanners/")
