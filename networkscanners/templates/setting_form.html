@@ -30,21 +30,21 @@
                     <div class="widget-content nopadding">
                         <form class="form-horizontal" method="POST" action="/networkscanners/openvas_details/">{% csrf_token %}
                             <div class="control-group">
-                                <label class="control-label">OpenVas Host :</label>
+                                <label class="control-label">OpenVas Manager<br/><small><em>(Default 9390/tcp port used)</em></small></label>
                                 <div class="controls">
                                     <input type="text" name="scan_host" value="{{ scan_host }}" class="span11"
                                            placeholder="Host"/>
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">User :</label>
+                                <label class="control-label">User</label>
                                 <div class="controls">
                                     <input type="text" name="openvas_user" value="{{ openvas_user }}" class="span11"
                                            placeholder="User Id"/>
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">Password :</label>
+                                <label class="control-label">Password</label>
                                 <div class="controls">
                                     <input type="password" name="openvas_password" value="{{ openvas_password }}" class="span11"
                                            placeholder="Password"/>
