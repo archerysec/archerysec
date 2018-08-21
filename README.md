@@ -51,7 +51,7 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 Currently project is in development phase and still lot of work going on. Stay tuned !!!
 
-## Requirement
+## Requirements
 
 * Python 2.7
 * [OpenVas 8, 9](http://www.openvas.org/index.html)
@@ -93,18 +93,17 @@ Simply install Nikto from your package manager.
 Simply get the NSE file to the proper directory:
 
 ```cd /usr/share/nmap/scripts/
-sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse```
+sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
+```
 
 ## Start app
 
-```
-$ python manage.py runserver 0.0.0.0:8000
+```$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Automated installation
 
-```
-$ git clone https://github.com/archerysec/archerysec.git
+```$ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ chmod +x install.sh
 $ sudo ./install.sh
@@ -112,8 +111,7 @@ $ sudo ./install.sh
 
 ## Manual Installation
 
-```
-$ git clone https://github.com/archerysec/archerysec.git
+```$ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ pip install -r requirements.txt
 $ python manage.py collectstatic
@@ -137,14 +135,12 @@ Note: Make sure these steps (except createsuperuser) should be perform after eve
 
 ArcherySec Docker is available from [ArcherySec Docker](https://hub.docker.com/r/archerysec/archerysec/)
 
-```
-$ docker pull archerysec/archerysec
+```$ docker pull archerysec/archerysec
 $ docker run -it -p 8000:8000 archerysec/archerysec:latest
 
 # For persistence
 
 docker run -it -p 8000:8000 -v <your_local_dir>:/root/.archerysec archerysec/archerysec:latest
-
 ```
 
 ## Setup Setting
@@ -155,14 +151,12 @@ Locate your [ZAP startup script](https://github.com/zaproxy/zap-core-help/wiki/H
 
 Windows :
 
-```
-zap.bat -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+```zap.bat -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
 ```
 
 Others :
 
-```
-zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+```zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
 ```
 
 ### Zap Setting
