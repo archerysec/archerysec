@@ -92,14 +92,9 @@ Simply install Nikto from your package manager.
 
 Simply get the NSE file to the proper directory:
 
-```cd /usr/share/nmap/scripts/
+```
+cd /usr/share/nmap/scripts/
 sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
-```
-
-## Start app
-
-```
-$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Automated installation
@@ -108,11 +103,19 @@ $ python manage.py runserver 0.0.0.0:8000
 $ cd archerysec
 $ chmod +x install.sh
 $ sudo ./install.sh
+
+```
+
+### Start app
+
+```
+$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Manual Installation
 
-```$ git clone https://github.com/archerysec/archerysec.git
+```
+$ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ pip install -r requirements.txt
 $ python manage.py collectstatic
@@ -136,7 +139,8 @@ Note: Make sure these steps (except createsuperuser) should be perform after eve
 
 ArcherySec Docker is available from [ArcherySec Docker](https://hub.docker.com/r/archerysec/archerysec/)
 
-```$ docker pull archerysec/archerysec
+```
+$ docker pull archerysec/archerysec
 $ docker run -it -p 8000:8000 archerysec/archerysec:latest
 
 # For persistence
