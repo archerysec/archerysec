@@ -4,8 +4,10 @@
 <script type="text/javascript">
 
  $(document).on('submit', '#start_scan', function(e){
+        var opt = false;
         e.preventDefault();
         if ($('[name="optradio1"]').is(':checked')){
+            opt = true;
             $.ajax({
                 type:'POST',
                 url:'/networkscanners/launch_scan/',
@@ -22,6 +24,7 @@
        this.reset();
        }
        else if ($('[name="optradio2"]').is(':checked')){
+            opt = true;
            $.ajax({
                     type:'POST',
                     url:'/tools/nmap/',
@@ -37,6 +40,7 @@
            });
        }
        else if ($('[name="optradio3"]').is(':checked')){
+            opt = true;
            $.ajax({
                     type:'POST',
                     url:'/tools/nmap_vulners/',
@@ -51,9 +55,12 @@
                     }
            });
        }
-       else{
-       alert("Please Select scanner")
-       }
+        if (opt) {
+                $('#status').text('Scan launched.').css ({'color': '#5bb75b', 'margin-left': '200px'});
+        } else {
+                $('#status').text("The scan can't launched: no scanner selected.").css({'color': '#b94a48', 'margin-left': '200px'});
+        }
+
     });
 
 
@@ -111,8 +118,7 @@
                         </form>
 
                         <div class="controls">
-                            <p>Select Scanner</p>
-                            <p>The following scanners are available :</p>
+                            <p>Select your scanner(s) from the ones available:</p>
                             <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                                 <label>
                                     <input name="optradio1" type="checkbox"><span>OpenVAS</span>
@@ -129,6 +135,7 @@
                                 </label>
                             </div>
                         </div>
+                        <div id='status'></div>
                     </div>
                 </div>
                 <div id="result" class="widget-box">
