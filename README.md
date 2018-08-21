@@ -98,7 +98,8 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 
 ## Start app
 
-```$ python manage.py runserver 0.0.0.0:8000
+```
+$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Automated installation
@@ -151,12 +152,14 @@ Locate your [ZAP startup script](https://github.com/zaproxy/zap-core-help/wiki/H
 
 Windows :
 
-```zap.bat -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+```
+zap.bat -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
 ```
 
 Others :
 
-```zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+```
+zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
 ```
 
 ### Zap Setting
