@@ -51,10 +51,10 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 Currently project is in development phase and still lot of work going on. Stay tuned !!!
 
-## Requirement
+## Requirements
 
 * Python 2.7
-* [OpenVas 8, 9](http://www.openvas.org/index.html)
+* [OpenVAS 8, 9](http://www.openvas.org/index.html)
 * [OWASP ZAP 2.7.0](https://github.com/zaproxy/zaproxy/wiki/Downloads)
 * [Selenium Python Firefox Web driver](https://github.com/mozilla/geckodriver/releases)
 * [SSLScan](https://github.com/rbsec/sslscan)
@@ -92,15 +92,14 @@ Simply install Nikto from your package manager.
 
 Simply get the NSE file to the proper directory:
 
-```cd /usr/share/nmap/scripts/
+```
+cd /usr/share/nmap/scripts/
 sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
-
 ```
 
 ## Automated installation
 
-```
-$ git clone https://github.com/archerysec/archerysec.git
+```$ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ chmod +x install.sh
 $ sudo ./install.sh
@@ -147,7 +146,6 @@ $ docker run -it -p 8000:8000 archerysec/archerysec:latest
 # For persistence
 
 docker run -it -p 8000:8000 -v <your_local_dir>:/root/.archerysec archerysec/archerysec:latest
-
 ```
 
 ## Setup Setting

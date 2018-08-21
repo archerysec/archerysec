@@ -115,7 +115,7 @@ $(document).on('submit', '#exclude_url', function(e){
  {
       $("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds
   }
- setInterval('autoRefresh_div()', 5000);
+ setInterval('autoRefresh_div()', {{ settings.REFRESH_TIMER }}000);
 
 
 </script>
@@ -277,7 +277,7 @@ $(document).on('submit', '#exclude_url', function(e){
                                             <td width="50%">
                                                 <div class="progress progress-info">
                                                     <div class="bar" style="width: {{data.vul_status}}%">
-                                                        {{data.vul_status}}
+                                                        {{data.vul_status}} %
                                                     </div>
                                                 </div>
                                             </td>
