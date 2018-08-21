@@ -1,0 +1,14 @@
+[Unit]
+Description=Service for Burp REST API
+After=network.target
+
+[Service]
+Environment="BURP_VER=1.0.3"
+ExecStart=/usr/bin/java -jar /usr/local/lib/burp-rest-api-${BURP_VER}.jar --burp.edition=free
+TimeoutStopSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=burp-api
+
+[Install]
+WantedBy=multi-user.target
