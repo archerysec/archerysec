@@ -10,8 +10,10 @@
 <script type="text/javascript">
 
  $(document).on('submit', '#start_scan', function(e){
+        var opt = false;
         e.preventDefault();
         if ($('[name="optradio1"]').is(':checked')){
+            opt = true;
             $.ajax({
                 type:'POST',
                 url:'/webscanners/scan_launch',
@@ -29,6 +31,7 @@
        }
 
        if ($('[name="optradio2"]').is(':checked')){
+           opt = true;
            $.ajax({
                     type:'POST',
                     url:'/webscanners/burp_launch_scan/',
@@ -45,6 +48,7 @@
        }
 
        if ($('[name="optradio3"]').is(':checked')){
+           opt = true;
            $.ajax({
                     type:'POST',
                     url:'/tools/sslscan/',
@@ -60,6 +64,7 @@
            });
        }
        if ($('[name="optradio4"]').is(':checked')){
+           opt = true;
            $.ajax({
                     type:'POST',
                     url:'/tools/nikto/',
@@ -75,6 +80,11 @@
            });
        }
 
+	if (opt) {
+		$('#status').text('Scan launched.').css	({'color': '#5bb75b', 'margin-left': '200px'});
+	} else {
+		$('#status').text("The scan can't launched: no scanner selected.").css({'color': '#b94a48', 'margin-left': '200px'});
+	}
     });
 
 
@@ -191,13 +201,13 @@ $(document).on('submit', '#exclude_url', function(e){
             <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Scan Launch:</h5>
+                        <h5>Scan Launch</h5>
                     </div>
                     <div class="widget-content nopadding">
                         <form id="start_scan" class="form-horizontal">{% csrf_token %}
 
                             <label class="control-label">
-                                <bold> URL's :</bold>
+                                <bold> URL's</bold>
                             </label>
                             <div class="controls">
                                 <textarea class="span4" type="text" name="url" id="url"
@@ -207,7 +217,7 @@ $(document).on('submit', '#exclude_url', function(e){
 
                             <div>
                                 <label class="control-label">
-                                    <bold>Project :</bold>
+                                    <bold>Project</bold>
                                 </label>
                                 <div class="controls">
                                     <select id="project_id" name="project_id" class="selectpicker"
@@ -223,19 +233,19 @@ $(document).on('submit', '#exclude_url', function(e){
                                        class="btn btn-primary" value="Launch">
                                 <a href="/webscanners/web_scan_schedule" class="btn btn-success">Scan Schedule</a>
                             </div>
+			    <div id='status'></div>
                         </form>
-
                     </div>
 
                 </div>
             </div>
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                    <h5>Scanners:</h5>
+                    <h5>Scanners</h5>
                 </div>
                 <div class="widget-content">
                     <p>Select Scanner</p>
-                    <p>The following scanners are available :</p>
+                    <p>The following scanners are available</p>
                     <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                         <label>
                             <input name="optradio1" type="checkbox"><span>Zap Scanner</span>
@@ -260,7 +270,7 @@ $(document).on('submit', '#exclude_url', function(e){
             </div>
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                    <h5>Cookie Store:</h5>
+                    <h5>Cookie Store</h5>
                     <div class="buttons"><a data-toggle="modal" href="/webscanners/cookie_add/" target="_blank"
                                             class="btn btn-primary btn-mini"><i
                             class="icon-plus icon-white"></i> Add Cookies</a>
@@ -275,7 +285,7 @@ $(document).on('submit', '#exclude_url', function(e){
                         <form id="open_login" class="form-horizontal">
                             {% csrf_token %}
                             <div class="control-group">
-                                <label class="control-label">URL :</label>
+                                <label class="control-label">URL</label>
                                 <div class="controls">
                                     <input type="text" name="url_login"
                                            value="{{ url_login }}">
@@ -303,7 +313,7 @@ $(document).on('submit', '#exclude_url', function(e){
             </div>
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                    <h5>Exclude URL's:</h5>
+                    <h5>Exclude URL's</h5>
                     <div class="buttons"><a data-toggle="modal" href="/webscanners/excluded_url_list" target="_blank"
                                             class="btn btn-primary btn-mini">Excluded URL List</a>
                     </div>
@@ -312,14 +322,14 @@ $(document).on('submit', '#exclude_url', function(e){
                     <form id="exclude_url" class="form-horizontal">
                         {% csrf_token %}
                         <div class="control-group">
-                            <label class="control-label">Exclude URL :</label>
+                            <label class="control-label">Exclude URL</label>
                             <div class="controls">
                                 <input type="text" name="exclude_url"
                                        value="{{ exclude_url }}">
                                 <input type="submit" class="btn btn-primary"
                                        value="Exclude">
                             </div>
-                            <p>Note : Exclude logout url for authenticated dynamic web scanning.</p>
+                            <p>Note: Exclude logout url for authenticated dynamic web scanning.</p>
                         </div>
                     </form>
                 </div>
