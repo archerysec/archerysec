@@ -93,12 +93,8 @@ Simply install Nikto from your package manager.
 Simply get the NSE file to the proper directory:
 
 ```cd /usr/share/nmap/scripts/
-sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse```
+sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
 
-## Start app
-
-```
-$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Automated installation
@@ -108,6 +104,13 @@ $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ chmod +x install.sh
 $ sudo ./install.sh
+
+```
+
+### Start app
+
+```
+$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Manual Installation
