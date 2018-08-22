@@ -1,6 +1,6 @@
 [Unit]
 Description=Archery Sec
-After=network.target owasp-zap.service burp-api.service openvas-manager.server
+After=network.target owasp-zap.service burp-api.service openvas-manager.service
 
 [Service]
 ExecStart=/usr/bin/python2.7 manage.py runserver 0.0.0.0:8000
