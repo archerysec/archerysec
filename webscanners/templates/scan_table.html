@@ -275,7 +275,7 @@ $(document).on('submit', '#exclude_url', function(e){
                                             <td><a href="/webscanners/scans_list/">{{data.scan_url}}</a>
                                             </td>
                                             <td width="50%">
-                                                <div class="progress progress-info{% if data.scan_status > '0' and data.scan_status < '100' %} progress-striped{% endif %}">
+                                                <div class="progress progress-info{% if data.scan_status > '0' and data.scan_status < '100' %} active progress-striped{% endif %}">
                                                     <div class="bar" style="width: {{data.vul_status}}%">
                                                         {{data.vul_status}} %
                                                     </div>
