@@ -128,7 +128,7 @@ LANGUAGE_CODE = 'en-us'
 
 USE_TZ = True
 
-TIME_ZONE = 'Asia/Calcutta'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
