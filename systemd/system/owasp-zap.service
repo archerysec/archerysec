@@ -1,0 +1,15 @@
+[Unit]
+Description=Service for OWASP ZAP
+After=network.target
+
+[Service]
+Environment="DISPLAY=:99"
+Environment="API_KEY=XvkNnXKc5QlJiLryunWQdy1J9kbr1WPA"
+ExecStart=/usr/share/owasp-zap/zap.sh -daemon -host 0.0.0.0 -port 8081 -config api.key=${API_KEY} -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config connection.timeoutInSecs=300
+TimeoutStopSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=owasp-zap
+
+[Install]
+WantedBy=multi-user.target

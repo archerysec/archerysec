@@ -23,17 +23,18 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 ### Documentation
 
-> [https://archerysec.github.io/archerysec/](https://archerysec.github.io/archerysec/)
-
+> [Official Website & Documentation](https://archerysec.github.io/archerysec/)
 
 > [API Documentation](http://developers.archerysec.info/)
 
 ## Demo
+
 ![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery_demo.gif)
 
 ![Overview](https://raw.githubusercontent.com/anandtiwarics/photoVideos/master/Photos/archery_architecture.png)
 
 ## Overview of the tool:
+
 * Perform Web and Network vulnerability Scanning using opensource tools.
 * Correlates and Collaborate all raw scans data, show them in a consolidated manner.
 * Perform authenticated web scanning.
@@ -46,32 +47,69 @@ Archery is an opensource vulnerability assessment and management tool which help
 * Concurrent scans.
 * Useful for DevOps teams for Vulnerability Management.
 
-## Note
+### Note
+
 Currently project is in development phase and still lot of work going on. Stay tuned !!!
 
-## Requirement
+## Requirements
 
 * Python 2.7
-* OpenVas 8, 9
+* [OpenVAS 8, 9](http://www.openvas.org/index.html)
 * [OWASP ZAP 2.7.0](https://github.com/zaproxy/zaproxy/wiki/Downloads)
 * [Selenium Python Firefox Web driver](https://github.com/mozilla/geckodriver/releases)
+* [SSLScan](https://github.com/rbsec/sslscan)
+* [Nikto](https://cirt.net/Nikto2)
+* [NMAP Vulners](https://github.com/vulnersCom/nmap-vulners)
 
-## Burp Scanner
+### OpenVAS
+
+You can follow the instructions to install OpenVAS from [Hacker Target](https://hackertarget.com/openvas-9-install-ubuntu-1604/)
+Note that, at this time, Archery generates a TCP connection towards the OpenVAS Manager (*not the GSA*) on its default port (9390/tcp): therefore, you need to update your OpenVAS Manager configuration to bind this port.
+
+### OWASP Zap
+
+Also known as Zaproxy. Simply download and install the matching package for your distro from the [official Github Page](https://github.com/zaproxy/zaproxy/wiki/Downloads).
+
+Systemd service file is available in the project.
+
+### Burp Scanner
+
 Follow the instruction in order to enable Burp REST API. You can manage and trigger scans using Archery once REST API enabled.
 
 * [Burp REST API](https://github.com/vmware/burp-rest-api)
 
-## Start app
+Systemd service file is available in the project.
+
+### SSLScan
+
+Simply install SSLScan from your package manager.
+
+### Nikto
+
+Simply install Nikto from your package manager.
+
+### NMAP Vulners
+
+Simply get the NSE file to the proper directory:
+
 ```
-$ python manage.py runserver 0.0.0.0:8000
+cd /usr/share/nmap/scripts/
+sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
 ```
 
-## Installation
-```
-$ git clone https://github.com/archerysec/archerysec.git
+## Automated installation
+
+```$ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ chmod +x install.sh
 $ sudo ./install.sh
+
+```
+
+### Start app
+
+```
+$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Manual Installation
@@ -108,7 +146,6 @@ $ docker run -it -p 8000:8000 archerysec/archerysec:latest
 # For persistence
 
 docker run -it -p 8000:8000 -v <your_local_dir>:/root/.archerysec archerysec/archerysec:latest
-
 ```
 
 ## Setup Setting
@@ -147,6 +184,7 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 
 
 ### Road Map
+
 * Scanners parser & Plugin
     - [x] Nessus (XML)
     - [x] Webinspect (XML)
@@ -185,6 +223,7 @@ Anand Tiwari -  https://github.com/anandtiwarics
 [GMedian](https://github.com/GMedian) - Nmap+Vulners 
 
 ### Social Media
+
 * [Official Website](https://archerysec.github.io/archerysec/)
 * [Twitter](https://twitter.com/archerysec)
 * [Facebook](https://facebook.com/archerysec)

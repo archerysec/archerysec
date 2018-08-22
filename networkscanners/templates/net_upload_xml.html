@@ -27,7 +27,7 @@
                         <h5>Scan Upload</h5>
                     </div>
                     <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="/networkscanners/OpenVas_xml_upload/">{% csrf_token %}
+                        <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="/networkscanners/OpenVAS_xml_upload/">{% csrf_token %}
                             <div>
                                 <label class="control-label">
                                     <bold>Project :</bold>
@@ -48,7 +48,7 @@
                                 <div class="controls">
                                     <select id="scanner" name="scanner" class="selectpicker"
                                             data-live-search="true">
-                                        <option value="openvas">OpenVas</option>
+                                        <option value="openvas">OpenVAS</option>
                                         <option value="nessus">Nessus</option>
                                         <option value="nmap">Nmap</option>
                                     </select>

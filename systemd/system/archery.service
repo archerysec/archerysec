@@ -1,0 +1,15 @@
+[Unit]
+Description=Archery Sec
+After=network.target owasp-zap.service burp-api.service openvas-manager.server
+
+[Service]
+ExecStart=/usr/bin/python2.7 manage.py runserver 0.0.0.0:8000
+WorkingDirectory=/opt/archerysec
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=archery
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

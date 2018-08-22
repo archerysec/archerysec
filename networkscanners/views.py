@@ -460,7 +460,7 @@ def add_vuln(request):
     return render(request, 'ov_add_vuln.html', {'scan_id': scan_id})
 
 
-def OpenVas_xml_upload(request):
+def OpenVAS_xml_upload(request):
     """
     OpenVAS XML file upload.
     :param request:
