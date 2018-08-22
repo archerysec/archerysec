@@ -206,7 +206,7 @@ def launch_scan(request):
         ip = scan_ip.replace(" ", "")
         target_split = ip.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             target = target_split.__getitem__(i)
             print "Scan Launched IP:", target
@@ -231,7 +231,7 @@ def scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        # print "split_lenght", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
             scans = scan_save_db.objects.filter(scan_id=scan_id).order_by('scan_id')
@@ -321,7 +321,7 @@ def del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
@@ -629,7 +629,7 @@ def del_net_scan_schedule(request):
         taskid = scan_item.replace(" ", "")
         target_split = taskid.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
             del_task = task_schedule_db.objects.filter(task_id=task_id)
@@ -723,7 +723,7 @@ def delete_nessus_scan(request):
         taskid = scan_item.replace(" ", "")
         target_split = taskid.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
 
@@ -745,7 +745,7 @@ def delete_nessus_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = nessus_report_db.objects.filter(vul_id=vuln_id)
