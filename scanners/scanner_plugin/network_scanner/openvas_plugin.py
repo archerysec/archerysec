@@ -83,7 +83,7 @@ class OpenVAS_Plugin:
         """
 
         while int(scanner.get_progress(str(scan_id))) < 100.0:
-            print 'Scan progress %: ' + str(scanner.get_progress(str(scan_id)))
+            print '[OpenVAS][Scan ID '+str(scan_id)+'] Scan progress: ' + str(scanner.get_progress(str(scan_id)))+' %'
             status = str(scanner.get_progress(str(scan_id)))
             scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
             time.sleep(5)
