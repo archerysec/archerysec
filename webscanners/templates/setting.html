@@ -79,7 +79,11 @@
                                         <div>
                                             <label>Host</label>
                                             <div class="form-group">
-                                                <pre>{{ lod_ov_ip }}</pre>
+                                                <pre>{{ lod_ov_host }}</pre>
+                                            </div>
+                                            <label>Port</label>
+                                            <div class="form-group">
+                                                <pre>{{ lod_ov_port }}</pre>
                                             </div>
                                             <label>User</label>
                                             <div class="form-group">
@@ -88,6 +92,10 @@
                                             <label>Password</label>
                                             <div class="form-group">
                                                 <input disabled value="{{ lod_ov_pass }}" type="password">
+                                            </div>
+                                            <label>Enabled</label>
+                                            <div class="form-group">
+                                                <pre>{{ lod_ov_enabled }}</pre>
                                             </div>
                                             <a class="btn btn-primary" href="/networkscanners/openvas_setting"
                                                role="button">Edit</a>

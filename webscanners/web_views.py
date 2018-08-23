@@ -622,7 +622,9 @@ def setting(request):
     # ov_ip = settings.openvas_host()
     lod_ov_user = settings.openvas_username()
     lod_ov_pass = settings.openvas_pass()
-    lod_ov_ip = settings.openvas_host()
+    lod_ov_host = settings.openvas_host()
+    lod_ov_port = settings.openvas_port()
+    lod_ov_enabled = settings.openvas_enabled()
 
     # Loading ZAP Settings
     zap_api_key = ''
@@ -673,7 +675,9 @@ def setting(request):
                    'zap_port': zap_port,
                    'lod_ov_user': lod_ov_user,
                    'lod_ov_pass': lod_ov_pass,
-                   'lod_ov_ip': lod_ov_ip,
+                   'lod_ov_host': lod_ov_host,
+                   'lod_ov_enabled': lod_ov_enabled,
+                   'lod_ov_port': lod_ov_port,
                    'burp_path': burp_host,
                    'burp_port': burp_port,
                    'email_subject': email_subject,

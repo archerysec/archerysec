@@ -64,7 +64,7 @@ Currently project is in development phase and still lot of work going on. Stay t
 ### OpenVAS
 
 You can follow the instructions to install OpenVAS from [Hacker Target](https://hackertarget.com/openvas-9-install-ubuntu-1604/)
-Note that, at this time, Archery generates a TCP connection towards the OpenVAS Manager (*not the GSA*) on its default port (9390/tcp): therefore, you need to update your OpenVAS Manager configuration to bind this port.
+Note that, at this time, Archery generates a TCP connection towards the OpenVAS Manager (*not the GSA*): therefore, you need to update your OpenVAS Manager configuration to bind this port. Its default port (9390/tcp), but you can update this in your settings.
 
 ### OWASP Zap
 

@@ -25,6 +25,7 @@ from django.shortcuts import render, render_to_response, HttpResponse
 from django.utils import timezone
 
 from archerysettings import save_settings
+from archerysettings import load_settings
 from networkscanners.models import scan_save_db, \
     ov_scan_result_db, \
     task_schedule_db, \
@@ -275,14 +276,21 @@ def openvas_details(request):
     :return:
     """
     save_openvas_setting = save_settings.SaveSettings(openvas_data)
-
     if request.method == 'POST':
-        openvas_host = request.POST.get("scan_host")
+        print request.POST
+        if request.POST.get("openvas_enabled") == 'on':
+            openvas_enabled = True
+        else:
+            openvas_enabled = False
+        openvas_host = request.POST.get("openvas_host")
+        openvas_port = request.POST.get("openvas_port")
         openvas_user = request.POST.get("openvas_user")
         openvas_password = request.POST.get("openvas_password")
 
         save_openvas_setting.openvas_settings(
-            ipaddress=openvas_host,
+            openvas_host=openvas_host,
+            openvas_port=openvas_port,
+            openvas_enabled=openvas_enabled,
             openvas_user=openvas_user,
             openvas_password=openvas_password,
         )
@@ -302,8 +310,27 @@ def openvas_setting(request):
     :param request:
     :return:
     """
+    print load_settings
+    load_openvas_setting = load_settings.ArcherySettings(openvas_data)
+    openvas_host=load_openvas_setting.openvas_host()
+    openvas_port=load_openvas_setting.openvas_port()
+    openvas_enabled=load_openvas_setting.openvas_enabled()
+    if openvas_enabled:
+        openvas_enabled = 'True'
+    else:
+        openvas_enabled = 'False'
+    openvas_user=load_openvas_setting.openvas_username()
+    openvas_password=load_openvas_setting.openvas_pass()
     return render(request,
-                  'setting_form.html', )
+                  'setting_form.html', 
+                  { 
+                    'openvas_host':openvas_host,
+                    'openvas_port': openvas_port,
+                    'openvas_enabled': openvas_enabled,
+                    'openvas_user': openvas_user,
+                    'openvas_password': openvas_password
+                  }
+                )
 
 
 def del_vuln(request):

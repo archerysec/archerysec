@@ -1,93 +1,69 @@
 {% extends 'header.html' %}
 {% block body %}
-
 <script type="text/javascript">
+function autoRefresh_div() {
+    $("#result").load("/networkscanners/ip_table/");// a function which will load data from other file after x seconds
+}
+setInterval('autoRefresh_div()', {{ settings.REFRESH_TIMER }}000);
 
- $(document).on('submit', '#start_scan', function(e){
-        var opt = false;
-        e.preventDefault();
-        if ($('[name="optradio1"]').is(':checked')){
-            opt = true;
-            $.ajax({
-                type:'POST',
-                url:'/networkscanners/launch_scan/',
-                data:{
-
-                   ip:$('#ip').val(),
-                   project_id:$('#project_id').val(),
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-
-                }
-            });
-       this.reset();
-       }
-       else if ($('[name="optradio2"]').is(':checked')){
-            opt = true;
-           $.ajax({
-                    type:'POST',
-                    url:'/tools/nmap/',
-                    data:{
-
-                       ip:$('#ip').val(),
-                       project_id:$('#project_id').val(),
-                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    sucess:function(){
-
-                    }
-           });
-       }
-       else if ($('[name="optradio3"]').is(':checked')){
-            opt = true;
-           $.ajax({
-                    type:'POST',
-                    url:'/tools/nmap_vulners/',
-                    data:{
-
-                       ip:$('#ip').val(),
-                       project_id:$('#project_id').val(),
-                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    sucess:function(){
-
-                    }
-           });
-       }
-        if (opt) {
-                $('#status').text('Scan launched.').css ({'color': '#5bb75b', 'margin-left': '200px'});
-        } else {
-                $('#status').text("The scan can't launched: no scanner selected.").css({'color': '#b94a48', 'margin-left': '200px'});
-        }
-
-    });
-
-
-
-
-
-
-</script>
-
-<script type="text/javascript">
- function autoRefresh_div()
- {
-      $("#result").load("/networkscanners/ip_table/");// a function which will load data from other file after x seconds
-  }
- setInterval('autoRefresh_div()', {{ settings.REFRESH_TIMER }}000);
-
-
-
-
-
+$(document).on('submit', '#start_scan', function(e){
+    var opt = false;
+    e.preventDefault();
+    if ($('[name="optradio1"]').is(':checked')){
+        opt = true;
+        $.ajax({
+            type:'POST',
+            url:'/networkscanners/launch_scan/',
+            data:{
+                ip:$('#ip').val(),
+                project_id:$('#project_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success:function(){
+            }
+        });
+        this.reset();
+    }
+    else if ($('[name="optradio2"]').is(':checked')){
+        opt = true;
+        $.ajax({
+            type:'POST',
+            url:'/tools/nmap/',
+            data:{
+                ip:$('#ip').val(),
+                project_id:$('#project_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success:function(){
+            }
+        });
+    }
+    else if ($('[name="optradio3"]').is(':checked')){
+        opt = true;
+        $.ajax({
+            type:'POST',
+            url:'/tools/nmap_vulners/',
+            data:{
+                ip:$('#ip').val(),
+                project_id:$('#project_id').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success:function(){
+            }
+        });
+    }
+    if (opt) {
+        $('#status').text('Scan launched.').css ({'color': '#5bb75b', 'margin-left': '200px'});
+    } else {
+        $('#status').text("The scan can't launched: no scanner selected.").css({'color': '#b94a48', 'margin-left': '200px'});
+    }
+});
 </script>
 
 <div id="content">
     <!--breadcrumbs-->
     <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-            Home</a></div>
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a></div>
     </div>
     <div class="container-fluid">
         <div class="row-fluid">
@@ -99,13 +75,10 @@
                     <div class="row-fluid">
                         <form id="start_scan" class="form-horizontal">{% csrf_token %}
                             <div class="controls">
-                                <textarea class="span4" name="ip" id="ip" value="{{ ip }}"
-                                          placeholder="192.168.1.1,192.168.1.2"></textarea>
-
+                                <textarea class="span4" name="ip" id="ip" value="{{ ip }}" placeholder="192.168.1.1,192.168.1.2"></textarea>
                             </div>
                             <div class="controls">
-                                <select id="project_id" name="project_id" class="selectpicker"
-                                        data-live-search="true">
+                                <select id="project_id" name="project_id" class="selectpicker" data-live-search="true">
                                     {% for data in all_proj %}
                                     <option value="{{data.project_id}}">{{data.project_name}}</option>
                                     {% endfor %}
@@ -115,27 +88,26 @@
                                 <input type="submit" class="btn btn-primary" value="Launch">
                                 <a href="/networkscanners/net_scan_schedule" class="btn btn-success">Scan Schedule</a>
                             </div>
+                            <div class="controls">
+                                <p>Select your scanner(s) from the ones available:</p>
+                                <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
+                                    <label>
+                                        <input name="optradio1" type="checkbox"><span>OpenVAS</span>
+                                    </label>
+                                </div>
+                                <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
+                                    <!--<label>-->
+                                        <!--<input name="optradio2" type="checkbox"><span>Nmap</span>-->
+                                    <!--</label>-->
+                                <!--</div>-->
+                                <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
+                                    <label>
+                                        <input name="optradio3" type="checkbox"><span>Nmap_Vulners</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id='status'></div>
                         </form>
-
-                        <div class="controls">
-                            <p>Select your scanner(s) from the ones available:</p>
-                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
-                                <label>
-                                    <input name="optradio1" type="checkbox"><span>OpenVAS</span>
-                                </label>
-                            </div>
-                            <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b">-->
-                                <!--<label>-->
-                                    <!--<input name="optradio2" type="checkbox"><span>Nmap</span>-->
-                                <!--</label>-->
-                            <!--</div>-->
-                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
-                                <label>
-                                    <input name="optradio3" type="checkbox"><span>Nmap_Vulners</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div id='status'></div>
                     </div>
                 </div>
                 <div id="result" class="widget-box">
@@ -154,8 +126,7 @@
                                     </thead>
                                     <tbody>
                                     <tr data-target="#">{% for data in all_scans %}
-                                        <td><a href="/" data-toggle="modal"
-                                               data-target="#{{data.scan_id}}">{{data.scan_ip}}</a>
+                                        <td><a href="/" data-toggle="modal" data-target="#{{data.scan_id}}">{{data.scan_ip}}</a>
                                         </td>
                                         <td>
                                             <div class="progress progress-info{% if data.scan_status > '0' and data.scan_status < '100' %} active progress-striped{% endif %}">
@@ -177,6 +148,4 @@
         </div>
     </div>
 </div>
-
-
 {% endblock %}

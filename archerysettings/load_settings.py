@@ -130,22 +130,22 @@ class ArcherySettings:
         Loading OpenVAS Setting from setting file.
         :return:
         """
-        openvashost = None
+        openvas_host = None
 
         all_openvas = openvas_setting_db.objects.all()
 
         for openvas in all_openvas:
-            openvashost = openvas.host
+            openvas_host = openvas.host
 
         # try:
         #     with open(self.setting_file, 'r+') as f:
         #         data = json.load(f)
-        #         openvashost = data['open_vas_ip']
+        #         openvashost = data['open_vas_host']
         # except Exception as e:
         #     print "Error in setting file as", e
 
-        return openvashost
-
+        return openvas_host
+ 
     def openvas_username(self):
         """
         Loading OpenVAS Username from setting file.
@@ -156,6 +156,7 @@ class ArcherySettings:
         all_openvas = openvas_setting_db.objects.all()
 
         for openvas in all_openvas:
+            print openvas
             openvas_username = openvas.user
 
         # try:
@@ -187,6 +188,28 @@ class ArcherySettings:
         #     print "Error in setting file as", e
 
         return openvas_password
+
+    def openvas_port(self):
+        openvas_port = None
+
+        all_openvas = openvas_setting_db.objects.all()
+
+        for openvas in all_openvas:
+            openvas_port = openvas.port
+        if not isinstance(openvas_port, int):
+            openvas_port=9390
+        return openvas_port
+
+    def openvas_enabled(self):
+        openvas_enabled = None
+
+        all_openvas = openvas_setting_db.objects.all()
+
+        for openvas in all_openvas:
+            openvas_enabled = openvas.enabled
+        if not isinstance(openvas_enabled, bool):
+            openvas_enabled = False 
+        return openvas_enabled
 
     def email_subject(self):
         """

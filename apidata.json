@@ -1,13 +1,16 @@
 {
+    "open_vas_host": "IjE3Mi4xNi4wLjExIg:1fsjTe:w2Q9LDx-vRkB0a8HbwSvI_HqnOc", 
     "to_email": "toemail@co.c", 
-    "open_vas_pass": "IlBhc3N3b3JkIg:1eijxk:dnmdDh-NmDVxxBVpGohYmFCF0Uk", 
+    "zap_path": "Zap Path", 
+    "open_vas_pass": "ImZFcjZldEZwZFRaZmNpYnVaeGNoS2M5SXp4dTlrZk9sIg:1fsjTe:yaIdowC6YRkHW8b6FxGy2Zv_s4w", 
     "burp_path": "Burp REST build jar Path", 
-    "open_vas_ip": "Ik9wZW5WYXMgSG9zdCI:1eijxk:eRUibLk8Iid5-XYYyG2jSNOrpWY", 
+    "open_vas_port": "IjkzOTAi:1fsjTe:R5CqsjoEyxptJ4i-J6NGrlAb3XU", 
+    "open_vas_user": "ImFyY2hlcnki:1fsjTe:ngZcN0gNjJVQPBnXyCcFsCDdB_Q", 
     "from_email": "fromemail@co.c", 
-    "open_vas_user": "IlVzZXIi:1eijxk:EQV2HNCUM4hvWL0TvSDdz-wh2JM", 
+    "open_vas_ip": "IjE3Mi4xNi4wLjExIg:1fsVnw:VgCjLtQqThWZpcfncuXqC-hU7C4", 
     "email_subject": "Email Subject", 
     "zap_port": "PORT", 
     "burp_port": "Burp Port", 
-    "zap_path": "Zap Path", 
+    "open_vas_enabled": "dHJ1ZQ:1fsjTe:_1H6dflc5hbncVBryOHhvfMxXmw", 
     "zap_api_key": "IkFQSSBLZXki:1ejMDD:5F6sZzGTGFxRBQ4V4EOKXk1nW_o"
 }

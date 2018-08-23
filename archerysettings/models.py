@@ -28,5 +28,7 @@ class burp_setting_db(models.Model):
 
 class openvas_setting_db(models.Model):
     host = models.TextField(blank=True, null=True)
+    port = models.IntegerField(blank=9390, null=9390)
+    enabled = models.NullBooleanField(blank=True, null=True)
     user = models.TextField(blank=True, null=True)
     password = models.TextField(blank=True, null=True)
