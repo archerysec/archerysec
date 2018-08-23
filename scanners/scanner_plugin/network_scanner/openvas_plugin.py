@@ -41,7 +41,8 @@ class OpenVAS_Plugin:
         for openvas in all_openvas:
             ov_user = openvas.user
             ov_pass = openvas.password
-            ov_ip = openvas.host
+            ov_host = openvas.host
+            ov_port = openvas.port
 
         # ov_user = openvas_setting.openvas_username()
         # ov_pass = openvas_setting.openvas_pass()
@@ -49,11 +50,13 @@ class OpenVAS_Plugin:
 
         lod_ov_user = ov_user
         lod_ov_pass = ov_pass
-        lod_ov_ip = ov_ip
+        lod_ov_host = ov_host
+        lod_ov_port = ov_port
 
-        scanner = VulnscanManager(str(lod_ov_ip),
+        scanner = VulnscanManager(str(lod_ov_host),
                                   str(lod_ov_user),
-                                  str(lod_ov_pass))
+                                  str(lod_ov_pass),
+                                  int(lod_ov_port))
         time.sleep(5)
 
         return scanner
@@ -82,10 +85,14 @@ class OpenVAS_Plugin:
         :return:
         """
 
-        while int(scanner.get_progress(str(scan_id))) < 100.0:
-            print 'Scan progress %: ' + str(scanner.get_progress(str(scan_id)))
-            status = str(scanner.get_progress(str(scan_id)))
-            scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+        previous = ''
+        while float(scanner.get_progress(str(scan_id))) < 100.0:
+            current=str(scanner.get_scan_status(str(scan_id)))+str(scanner.get_progress(str(scan_id)))
+            if current != previous:
+                    print '[Scan ID '+str(scan_id)+']('+str(scanner.get_scan_status(str(scan_id)))+') Scan progress: ' + str(scanner.get_progress(str(scan_id)))+' %'
+                    status = float(scanner.get_progress(str(scan_id)))
+                    scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+                    previous = current
             time.sleep(5)
 
         status = "100"

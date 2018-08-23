@@ -338,7 +338,7 @@ Slider default rounded
 }
 .checkbox-slider--a-rounded input + span:after,
 .checkbox-slider--a-rounded input:checked + span:after {
-  border: solid transparent 2px;
+  border: solid transparent 0px;
   background-clip: content-box;
 }
 /*******************************************************
@@ -567,7 +567,7 @@ Slider B
   background: #FFF;
   content: "";
   width: 20px;
-  border: solid transparent 2px;
+  border: solid transparent 0px;
   background-clip: padding-box;
   border-radius: 20px;
 }
@@ -577,7 +577,7 @@ Slider B
 .checkbox-slider--b input:checked + span:after {
   content: "";
   margin-left: 20px;
-  border: solid transparent 2px;
+  border: solid transparent 0px;
   background-clip: padding-box;
   animation: popIn ease-in 0.3s normal;
 }
@@ -678,7 +678,7 @@ Slider B-flat
   background: #FFF;
   content: "";
   width: 20px;
-  border: solid transparent 2px;
+  border: solid transparent 0px;
   background-clip: padding-box;
   border-radius: 20px;
 }
@@ -688,7 +688,7 @@ Slider B-flat
 .checkbox-slider--b-flat input:checked + span:after {
   content: "";
   margin-left: 20px;
-  border: solid transparent 2px;
+  border: solid transparent 0px;
   background-clip: padding-box;
   animation: popIn ease-in 0.3s normal;
 }
@@ -979,7 +979,7 @@ State Disabled
 }
 .checkbox-slider--b-flat input:disabled + span:after,
 .checkbox-slider--b input:disabled + span:after {
-  border: solid transparent 2px;
+  border: solid transparent 0px;
   border-radius: 40px;
 }
 .checkbox-slider--b-flat input:disabled + span:before,

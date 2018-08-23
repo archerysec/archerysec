@@ -25,6 +25,7 @@ from django.shortcuts import render, render_to_response, HttpResponse
 from django.utils import timezone
 
 from archerysettings import save_settings
+from archerysettings import load_settings
 from networkscanners.models import scan_save_db, \
     ov_scan_result_db, \
     task_schedule_db, \
@@ -206,7 +207,7 @@ def launch_scan(request):
         ip = scan_ip.replace(" ", "")
         target_split = ip.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             target = target_split.__getitem__(i)
             print "Scan Launched IP:", target
@@ -231,7 +232,7 @@ def scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        # print "split_lenght", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
             scans = scan_save_db.objects.filter(scan_id=scan_id).order_by('scan_id')
@@ -275,14 +276,21 @@ def openvas_details(request):
     :return:
     """
     save_openvas_setting = save_settings.SaveSettings(openvas_data)
-
     if request.method == 'POST':
-        openvas_host = request.POST.get("scan_host")
+        print request.POST
+        if request.POST.get("openvas_enabled") == 'on':
+            openvas_enabled = True
+        else:
+            openvas_enabled = False
+        openvas_host = request.POST.get("openvas_host")
+        openvas_port = request.POST.get("openvas_port")
         openvas_user = request.POST.get("openvas_user")
         openvas_password = request.POST.get("openvas_password")
 
         save_openvas_setting.openvas_settings(
-            ipaddress=openvas_host,
+            openvas_host=openvas_host,
+            openvas_port=openvas_port,
+            openvas_enabled=openvas_enabled,
             openvas_user=openvas_user,
             openvas_password=openvas_password,
         )
@@ -302,8 +310,27 @@ def openvas_setting(request):
     :param request:
     :return:
     """
+    print load_settings
+    load_openvas_setting = load_settings.ArcherySettings(openvas_data)
+    openvas_host=load_openvas_setting.openvas_host()
+    openvas_port=load_openvas_setting.openvas_port()
+    openvas_enabled=load_openvas_setting.openvas_enabled()
+    if openvas_enabled:
+        openvas_enabled = 'True'
+    else:
+        openvas_enabled = 'False'
+    openvas_user=load_openvas_setting.openvas_username()
+    openvas_password=load_openvas_setting.openvas_pass()
     return render(request,
-                  'setting_form.html', )
+                  'setting_form.html', 
+                  { 
+                    'openvas_host':openvas_host,
+                    'openvas_port': openvas_port,
+                    'openvas_enabled': openvas_enabled,
+                    'openvas_user': openvas_user,
+                    'openvas_password': openvas_password
+                  }
+                )
 
 
 def del_vuln(request):
@@ -321,7 +348,7 @@ def del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
@@ -629,7 +656,7 @@ def del_net_scan_schedule(request):
         taskid = scan_item.replace(" ", "")
         target_split = taskid.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
             del_task = task_schedule_db.objects.filter(task_id=task_id)
@@ -723,7 +750,7 @@ def delete_nessus_scan(request):
         taskid = scan_item.replace(" ", "")
         target_split = taskid.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
 
@@ -745,7 +772,7 @@ def delete_nessus_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = nessus_report_db.objects.filter(vul_id=vuln_id)

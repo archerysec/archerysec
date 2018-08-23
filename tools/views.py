@@ -85,7 +85,7 @@ def sslcan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
@@ -174,7 +174,7 @@ def nikto_scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
@@ -277,7 +277,7 @@ def nmap_scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
