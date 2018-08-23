@@ -182,7 +182,8 @@ def openvas_scanner(scan_ip, project_id, sel_profile):
                             project_id=str(project_id),
                             scan_ip=scan_ip,
                             target_id=str(target_id),
-                            date_time=date_time)
+                            date_time=date_time,
+                            scan_status=0.0)
     save_all.save()
     openvas.scan_status(scanner=scanner, scan_id=scan_id)
     time.sleep(5)

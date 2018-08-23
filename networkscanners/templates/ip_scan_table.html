@@ -18,7 +18,7 @@
                                data-target="#{{data.scan_id}}">{{data.scan_ip}}</a>
                         </td>
                         <td>
-                            <div class="progress progress-info{% if data.scan_status > '0' and data.scan_status < '100' %} active progress-striped{% endif %}">
+                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
                             </div>
                         </td>
