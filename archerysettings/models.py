@@ -29,6 +29,15 @@ class burp_setting_db(models.Model):
 class openvas_setting_db(models.Model):
     host = models.TextField(blank=True, null=True)
     port = models.IntegerField(blank=9390, null=9390)
-    enabled = models.NullBooleanField(blank=True, null=True)
+    enabled = models.NullBooleanField(blank=False, null=False)
     user = models.TextField(blank=True, null=True)
     password = models.TextField(blank=True, null=True)
+
+class nmap_vulners_setting_db(models.Model):
+    enabled = models.NullBooleanField(blank=False, null=False)
+    # -sV | Version detection
+    version = models.NullBooleanField(blank=False, null=False)
+    # -Pn | Treat all hosts as online -- skip host discovery
+    online = models.NullBooleanField(blank=False, null=False)
+    # -T4 | Set timing template (higher is faster)
+    timing = models.IntegerField(blank=0, null=0)

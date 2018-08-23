@@ -39,7 +39,7 @@ from datetime import datetime
 from jiraticketing.models import jirasetting
 import hashlib
 
-openvas_data = os.getcwd() + '/' + 'apidata.json'
+api_data = os.getcwd() + '/' + 'apidata.json'
 
 status = ""
 name = ""
@@ -276,9 +276,8 @@ def openvas_details(request):
     :param request:
     :return:
     """
-    save_openvas_setting = save_settings.SaveSettings(openvas_data)
+    save_openvas_setting = save_settings.SaveSettings(api_data)
     if request.method == 'POST':
-        print request.POST
         if request.POST.get("openvas_enabled") == 'on':
             openvas_enabled = True
         else:
@@ -312,7 +311,7 @@ def openvas_setting(request):
     :return:
     """
     print load_settings
-    load_openvas_setting = load_settings.ArcherySettings(openvas_data)
+    load_openvas_setting = load_settings.ArcherySettings(api_data)
     openvas_host=load_openvas_setting.openvas_host()
     openvas_port=load_openvas_setting.openvas_port()
     openvas_enabled=load_openvas_setting.openvas_enabled()
@@ -809,3 +808,73 @@ def nessus_vuln_check(request):
     vul_dat = nessus_report_db.objects.filter(vul_id=id_vul)
 
     return render(request, 'nessus_vuln_data.html', {'vul_dat': vul_dat})
+
+
+def nv_setting(request):
+    """
+    Calling NMAP Vulners setting page.
+    :param request:
+    :return:
+    """
+    load_nv_setting = load_settings.ArcherySettings(api_data)
+    nv_enabled=str(load_nv_setting.nv_enabled())
+    nv_online=str(load_nv_setting.nv_enabled())
+    nv_version=str(load_nv_setting.nv_enabled())
+    nv_timing=load_nv_setting.nv_timing()
+
+    return render(request,
+                  'nv_settings.html', 
+                  { 
+                    'nv_enabled':nv_enabled,
+                    'nv_online': nv_online,
+                    'nv_version': nv_version,
+                    'nv_timing': nv_timing,
+                  }
+                )
+
+
+def nv_details(request):
+    """
+    OpenVAS tool settings.
+    :param request:
+    :return:
+    """
+    save_nv_setting = save_settings.SaveSettings(api_data)
+    if request.method == 'POST':
+        if str(request.POST.get("nv_enabled")) == 'on':
+            nv_enabled = True
+        else:
+            nv_enabled = False
+        if str(request.POST.get("nv_online")) == 'on':
+            nv_online = True
+        else:
+            nv_online = False
+        if str(request.POST.get("nv_version")) == 'on':
+            nv_version = True
+        else:
+            nv_version = False
+        nv_timing = int(str(request.POST.get('nv_timing')))
+        if nv_timing > 5:
+            nv_timing = 5
+        elif nv_timing < 0:
+            nv_timing = 0
+
+        save_nv_setting.nmap_vulners(
+            enabled=nv_enabled,
+            version=nv_version,
+            online=nv_online,
+            timing=nv_timing
+        )
+
+        return HttpResponseRedirect('/webscanners/setting/')
+
+    messages.add_message(request,
+                         messages.SUCCESS,
+                         'NMAP Vulners Setting Updated ')
+
+    return render(request, 
+                  'nv_settings.html', 
+                  {
+                    'messages': messages,
+                  })
+

@@ -13,7 +13,7 @@
 
 import json
 from django.core import signing
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
 
 
 class SaveSettings:
@@ -21,6 +21,29 @@ class SaveSettings:
     def __init__(self, setting_file):
 
         self.setting_file = setting_file
+
+    def nmap_vulners(self, enabled, version, online, timing):
+        """
+        Save NAMP Vulners Settings into setting file.
+        :param enabled:
+        :param version:
+        :param online:
+        :param timing:
+        :return:
+        """
+        all_nv = nmap_vulners_setting_db.objects.all()
+        all_nv.delete()
+        if timing > 5:
+            timing=5
+        elif timing <0:
+            timing=0
+            
+        save_nv_settings = nmap_vulners_setting_db(enabled=enabled,
+                                           version=version,
+                                           online=online,
+                                           timing=timing
+                                           )
+        save_nv_settings.save()
 
     def save_zap_settings(self, apikey, zaphost, zaport):
         """
