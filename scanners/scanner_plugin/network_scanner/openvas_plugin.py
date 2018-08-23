@@ -46,7 +46,7 @@ class OpenVAS_Plugin:
 
         # ov_user = openvas_setting.openvas_username()
         # ov_pass = openvas_setting.openvas_pass()
-        # ov_ip = openvas_setting.openvas_host()
+        # ov_host = openvas_setting.openvas_host()
 
         lod_ov_user = ov_user
         lod_ov_pass = ov_pass
@@ -121,8 +121,6 @@ def vuln_an_id(scan_id):
         ov_user = openvas.user
         ov_pass = openvas.password
         ov_ip = openvas.host
-
-    print "---------------user", ov_user
 
     lod_ov_user = ov_user
     lod_ov_pass = ov_pass
@@ -239,49 +237,49 @@ def vuln_an_id(scan_id):
         s_data = scan_save_db.objects.filter(scan_id=scan_id)
 
         for data in s_data:
-            s_ip = data.scan_ip
+            if data.scan_ip == host:
 
-        if s_ip == host:
+                dup_data = name + host + severity
+                duplicate_hash = hashlib.sha1(dup_data).hexdigest()
 
-            dup_data = name + host + severity
-            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+                save_all = ov_scan_result_db(scan_id=scan_id,
+                                             vul_id=vul_id,
+                                             name=name,
+                                             creation_time=creation_time,
+                                             modification_time=modification_time,
+                                             host=host,
+                                             port=port,
+                                             threat=threat,
+                                             severity=severity,
+                                             description=description,
+                                             family=family,
+                                             cvss_base=cvss_base,
+                                             cve=cve,
+                                             bid=bid,
+                                             xref=xref,
+                                             tags=tags,
+                                             banner=banner,
+                                             date_time=date_time,
+                                             false_positive='No',
+                                             vuln_status='Open',
+                                             dup_hash=duplicate_hash
+                                             )
+                save_all.save()
 
-            save_all = ov_scan_result_db(scan_id=scan_id,
-                                         vul_id=vul_id,
-                                         name=name,
-                                         creation_time=creation_time,
-                                         modification_time=modification_time,
-                                         host=host,
-                                         port=port,
-                                         threat=threat,
-                                         severity=severity,
-                                         description=description,
-                                         family=family,
-                                         cvss_base=cvss_base,
-                                         cve=cve,
-                                         bid=bid,
-                                         xref=xref,
-                                         tags=tags,
-                                         banner=banner,
-                                         date_time=date_time,
-                                         false_positive='No',
-                                         vuln_status='Open',
-                                         dup_hash=duplicate_hash
-                                         )
-            save_all.save()
+                openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id) \
+                    .values('name', 'severity',
+                            'vuln_color',
+                            'threat', 'host',
+                            'port').distinct()
+                total_vul = len(openvas_vul)
+                total_high = len(openvas_vul.filter(threat="High"))
+                total_medium = len(openvas_vul.filter(threat="Medium"))
+                total_low = len(openvas_vul.filter(threat="Low"))
+                scan_status = str(scanner.get_progress(str(scan_id)))
 
-            openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id) \
-                .values('name', 'severity',
-                        'vuln_color',
-                        'threat', 'host',
-                        'port').distinct()
-            total_vul = len(openvas_vul)
-            total_high = len(openvas_vul.filter(threat="High"))
-            total_medium = len(openvas_vul.filter(threat="Medium"))
-            total_low = len(openvas_vul.filter(threat="Low"))
-
-            scan_save_db.objects.filter(scan_id=scan_id) \
-                .update(total_vul=total_vul,
-                        high_total=total_high,
-                        medium_total=total_medium,
-                        low_total=total_low)
+                scan_save_db.objects.filter(scan_id=scan_id) \
+                    .update(total_vul=total_vul,
+                            high_total=total_high,
+                            medium_total=total_medium,
+                            low_total=total_low,
+                            scan_status=scan_status)
