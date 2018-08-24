@@ -2,8 +2,10 @@ import uuid
 
 import nmap
 import os
+from django.conf import settings
 
 from tools.models import nmap_vulners_port_result_db, nmap_scan_db
+from archerysettings.models import nmap_vulners_setting_db
 
 
 def parse_port(proto, ip_addr, host_data, scan_id, project_id):
@@ -11,7 +13,7 @@ def parse_port(proto, ip_addr, host_data, scan_id, project_id):
     if not ports:
         return
 
-    print('[NMAP_VULNERS] Host : %s, proto %s, ports (%s)' % (ip_addr, proto, ports))
+    print('[NMAP_VULNERS][%s] Host : %s, proto %s, ports (%s)' % (scan_id, ip_addr, proto, ports))
     for port, portData in dict(ports).items():
         nmap_obj, _ = nmap_vulners_port_result_db.objects.get_or_create(ip_address=ip_addr, port=port)
 
@@ -47,9 +49,23 @@ def run_nmap_vulners(ip_addr='', project_id=''):
 
     scan_id = uuid.uuid4()
 
-    nmap_vulners_path = os.path.join(os.getcwd(), 'tools/nmap_vulners/vulners.nse')
-    args = '-sV -T4 -Pn --script ' + nmap_vulners_path
-    print('[NMAP_VULNERS] - ARGUMENTS -' + args)
+    nmap_vulners_path = os.path.join(settings.BASE_DIR, 'tools/nmap_vulners/vulners.nse')
+    all_nv = nmap_vulners_setting_db.objects.all()
+    for nv in all_nv:
+        nv_enabled = bool(nv.enabled)
+        nv_online = bool(nv.online)
+        nv_version = bool(nv.version)
+        nv_timing = int(nv.timing)
+
+    args = ''
+    if nv_version:
+        args += ' -sV'
+    if nv_online:
+        args += ' -Pn'
+    if nv_timing:
+        args += ' -T'+str(nv_timing)
+    args += ' --script ' + nmap_vulners_path
+    print('[NMAP_VULNERS][%s] - ARGUMENTS -%s' % (scan_id, args))
 
     nm = nmap.PortScanner()
     nm = nm.scan(hosts=ip_addr, arguments=args)
@@ -59,8 +75,8 @@ def run_nmap_vulners(ip_addr='', project_id=''):
     nmap_vulners_port_result_db.objects.filter(ip_address=ip_addr).delete()
 
     for host, host_data in scan.items():
-        print('[NMAP_VULNERS] ----------------------------------------------------')
-        print('[NMAP_VULNERS] Host : %s (%s)' % (host, host_data.get('hostnames')))
+        print('[NMAP_VULNERS][%s] ----------------------------------------------------' % (scan_id))
+        print('[NMAP_VULNERS][%s] Host : %s (%s)' % (scan_id, host, host_data.get('hostnames')))
 
         parse_port('tcp', host, host_data, scan_id, project_id)
         parse_port('udp', host, host_data, scan_id, project_id)
@@ -92,4 +108,4 @@ def run_nmap_vulners(ip_addr='', project_id=''):
                                  )
         save_scan.save()
 
-    print('[NMAP_VULNERS] - END - scan of domain {0}'.format(ip_addr))
+    print('[NMAP_VULNERS][] - END - scan of domain %s' % (scan_id, format(ip_addr)))

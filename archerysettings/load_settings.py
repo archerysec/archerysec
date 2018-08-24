@@ -13,7 +13,7 @@
 import os
 import json
 from django.core import signing
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
 
 
 class ArcherySettings:
@@ -156,7 +156,6 @@ class ArcherySettings:
         all_openvas = openvas_setting_db.objects.all()
 
         for openvas in all_openvas:
-            print openvas
             openvas_username = openvas.user
 
         # try:
@@ -258,3 +257,55 @@ class ArcherySettings:
             print "Error in setting file as", e
 
         return emails_to
+
+    def nv_enabled(self):
+        nv_enabled = False
+
+        all_nv = nmap_vulners_setting_db.objects.all()
+
+        for nv in all_nv:
+            nv_enabled = nv.enabled
+        print nv_enabled
+        if not isinstance(nv_enabled, bool):
+            nv_enabled=False
+        return nv_enabled
+
+    def nv_version(self):
+        nv_version = False
+
+        all_nv = nmap_vulners_setting_db.objects.all()
+
+        for nv in all_nv:
+            nv_version = nv.version
+        print nv_version
+        if not isinstance(nv_version, bool):
+            nv_version=False
+        return nv_version
+
+    def nv_online(self):
+        nv_online = False
+
+        all_nv = nmap_vulners_setting_db.objects.all()
+
+        for nv in all_nv:
+            nv_online = nv.online
+        print nv_online
+        if not isinstance(nv_online, bool):
+            nv_online=False
+        return nv_online
+
+    def nv_timing(self):
+        nv_timing = 0
+
+        all_nv = nmap_vulners_setting_db.objects.all()
+
+        for nv in all_nv:
+            nv_timing = nv.timing
+        if not isinstance(nv_timing, int):
+            nv_timing=0
+        if nv_timing > 5:
+            nv_timing = 5
+        elif nv_timing < 0:
+            nv_timing = 0
+        return nv_timing
+

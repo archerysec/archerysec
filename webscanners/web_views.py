@@ -55,7 +55,7 @@ from webscanners.models import netsparker_scan_db, \
     webinspect_scan_db, \
     webinspect_scan_result_db
 
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
 import hashlib
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
@@ -641,6 +641,19 @@ def setting(request):
     zap_host = zap_hosts
     zap_port = zap_ports
 
+    # Loading NMAP Vulners Settings
+    nv_enabled = False
+    nv_online = False
+    nv_version = False
+    nv_timing = 0
+
+    all_nv = nmap_vulners_setting_db.objects.all()
+    for nv in all_nv:
+        nv_enabled = bool(nv.enabled)
+        nv_online = bool(nv.online)
+        nv_version = bool(nv.version)
+        nv_timing = int(nv.timing)
+
     # Loading Burp Settings
 
     burp_host = settings.burp_host()
@@ -686,6 +699,10 @@ def setting(request):
                    'jira_server': jira_server,
                    'jira_username': jira_username,
                    'jira_password': jira_password,
+                    'nv_enabled': nv_enabled,
+                    'nv_version': nv_version,
+                    'nv_online': nv_online,
+                    'nv_timing': nv_timing,
                    })
 
 
