@@ -57,102 +57,89 @@ def nessus_parser(root, project_id, scan_id):
         synopsis, plugin_output, see_also, scan_ip, \
         pluginName, pluginID, protocol, severity,\
         svc_name, pluginFamily, port
-    for data in root:
-        for report in data:
-            if report.tag == 'ReportHost':
-                global ip
-                ip = report.attrib
-    for key, value in ip.viewitems():
-        scan_ip = value
 
     for data in root:
-        for report in data:
-            for reportHost in report:
-                report_attrib = reportHost.attrib
-                for key, values in report_attrib.viewitems():
+        for reportHost in data.iter('ReportHost'):
+            ip = reportHost.attrib
+            try:
+                for key, value in ip.viewitems():
+                    scan_ip = value
+            except:
+                continue
+
+            for ReportItem in reportHost.iter('ReportItem'):
+                for key, value in ReportItem.attrib.viewitems():
                     if key == 'pluginName':
-                        pluginName = values
+                        pluginName = value
                     if key == 'pluginID':
-                        pluginID = values
+                        pluginID = value
                     if key == 'protocol':
-                        protocol = values
+                        protocol = value
                     if key == 'severity':
-                        severity = values
+                        severity = value
                     if key == 'svc_name':
-                        svc_name = values
+                        svc_name = value
                     if key == 'pluginFamily':
-                        pluginFamily = values
+                        pluginFamily = value
                     if key == 'port':
-                        port = values
-                for ReportItem in reportHost:
-                    if ReportItem.tag == 'agent':
-                        if ReportItem.text is None:
-                            agent = "NA"
-                        else:
-                            agent = ReportItem.text
-                    if ReportItem.tag == 'description':
-                        if ReportItem.text is None:
-                            description = "NA"
-                        else:
-                            description = ReportItem.text
-                    if ReportItem.tag == 'fname':
-                        if ReportItem.text is None:
-                            fname = "NA"
-                        else:
-                            fname = ReportItem.text
-                    if ReportItem.tag == 'plugin_modification_date':
-                        if ReportItem.text is None:
-                            plugin_modification_date = "NA"
-                        else:
-                            plugin_modification_date = ReportItem.text
-                    if ReportItem.tag == 'plugin_name':
-                        if ReportItem.text is None:
-                            plugin_name = "NA"
-                        else:
-                            plugin_name = ReportItem.text
-                    if ReportItem.tag == 'plugin_publication_date':
-                        if ReportItem.text is None:
-                            plugin_publication_date = "NA"
-                        else:
-                            plugin_publication_date = ReportItem.text
-                    if ReportItem.tag == 'plugin_type':
-                        if ReportItem.text is None:
-                            plugin_type = "NA"
-                        else:
-                            plugin_type = ReportItem.text
-                    if ReportItem.tag == 'risk_factor':
-                        if ReportItem.text is None:
-                            risk_factor = "NA"
-                        else:
-                            risk_factor = ReportItem.text
-                    if ReportItem.tag == 'script_version':
-                        if ReportItem.text is None:
-                            script_version = "NA"
-                        else:
-                            script_version = ReportItem.text
-                    if ReportItem.tag == 'see_also':
-                        if ReportItem.text is None:
-                            see_also = "NA"
-                        else:
-                            see_also = ReportItem.text
-                    if ReportItem.tag == 'solution':
-                        if ReportItem.text is None:
-                            solution = "NA"
-                        else:
-                            solution = ReportItem.text
-                    if ReportItem.tag == 'synopsis':
-                        if ReportItem.text is None:
-                            synopsis = "NA"
-                        else:
-                            synopsis = ReportItem.text
-                    if ReportItem.tag == 'plugin_output':
-                        if ReportItem.text is None:
-                            plugin_output = "NA"
-                        else:
-                            plugin_output = ReportItem.text
+                        port = value
+
+                try:
+                    agent = ReportItem.find('agent').text
+                except:
+                    agent = "NA"
+                try:
+                    description = ReportItem.find('description').text
+                except:
+                    description = "NA"
+                try:
+                    fname = ReportItem.find('fname').text
+                except:
+                    fname = "NA"
+                try:
+                    plugin_modification_date = ReportItem.find('plugin_modification_date').text
+                except:
+                    plugin_modification_date = "NA"
+                try:
+                    plugin_name = ReportItem.find('plugin_name').text
+                except:
+                    plugin_name = "NA"
+                try:
+                    plugin_publication_date = ReportItem.find('plugin_publication_date').text
+                except:
+                    plugin_publication_date = "NA"
+                try:
+                    plugin_type = ReportItem.find('plugin_type').text
+                except:
+                    plugin_type = "NA"
+                try:
+                    risk_factor = ReportItem.find('risk_factor').text
+                except:
+                    risk_factor = "NA"
+                try:
+                    script_version = ReportItem.find('script_version').text
+                except:
+                    script_version = "NA"
+                try:
+                    see_also = ReportItem.find('see_also').text
+                except:
+                    see_also = "NA"
+                try:
+                    solution = ReportItem.find('solution').text
+                except:
+                    solution = "NA"
+                try:
+                    synopsis = ReportItem.find('synopsis').text
+                except:
+                    synopsis = "NA"
+                try:
+                    plugin_output = ReportItem.find('plugin_output').text
+                except:
+                    plugin_output = "NA"
+
 
                 vul_id = uuid.uuid4()
-
+                
                 dup_data = scan_ip + plugin_name + severity + port
                 duplicate_hash = hashlib.sha1(dup_data).hexdigest()
 
