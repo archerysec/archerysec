@@ -25,6 +25,7 @@ from django.shortcuts import render, render_to_response, HttpResponse
 from django.utils import timezone
 
 from archerysettings import save_settings
+from archerysettings import load_settings
 from networkscanners.models import scan_save_db, \
     ov_scan_result_db, \
     task_schedule_db, \
@@ -38,7 +39,7 @@ from datetime import datetime
 from jiraticketing.models import jirasetting
 import hashlib
 
-openvas_data = os.getcwd() + '/' + 'apidata.json'
+api_data = os.getcwd() + '/' + 'apidata.json'
 
 status = ""
 name = ""
@@ -181,7 +182,8 @@ def openvas_scanner(scan_ip, project_id, sel_profile):
                             project_id=str(project_id),
                             scan_ip=scan_ip,
                             target_id=str(target_id),
-                            date_time=date_time)
+                            date_time=date_time,
+                            scan_status=0.0)
     save_all.save()
     openvas.scan_status(scanner=scanner, scan_id=scan_id)
     time.sleep(5)
@@ -206,7 +208,7 @@ def launch_scan(request):
         ip = scan_ip.replace(" ", "")
         target_split = ip.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             target = target_split.__getitem__(i)
             print "Scan Launched IP:", target
@@ -231,7 +233,7 @@ def scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        # print "split_lenght", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
             scans = scan_save_db.objects.filter(scan_id=scan_id).order_by('scan_id')
@@ -274,15 +276,21 @@ def openvas_details(request):
     :param request:
     :return:
     """
-    save_openvas_setting = save_settings.SaveSettings(openvas_data)
-
+    save_openvas_setting = save_settings.SaveSettings(api_data)
     if request.method == 'POST':
-        openvas_host = request.POST.get("scan_host")
+        if request.POST.get("openvas_enabled") == 'on':
+            openvas_enabled = True
+        else:
+            openvas_enabled = False
+        openvas_host = request.POST.get("openvas_host")
+        openvas_port = request.POST.get("openvas_port")
         openvas_user = request.POST.get("openvas_user")
         openvas_password = request.POST.get("openvas_password")
 
         save_openvas_setting.openvas_settings(
-            ipaddress=openvas_host,
+            openvas_host=openvas_host,
+            openvas_port=openvas_port,
+            openvas_enabled=openvas_enabled,
             openvas_user=openvas_user,
             openvas_password=openvas_password,
         )
@@ -302,8 +310,27 @@ def openvas_setting(request):
     :param request:
     :return:
     """
+    print load_settings
+    load_openvas_setting = load_settings.ArcherySettings(api_data)
+    openvas_host=load_openvas_setting.openvas_host()
+    openvas_port=load_openvas_setting.openvas_port()
+    openvas_enabled=load_openvas_setting.openvas_enabled()
+    if openvas_enabled:
+        openvas_enabled = 'True'
+    else:
+        openvas_enabled = 'False'
+    openvas_user=load_openvas_setting.openvas_username()
+    openvas_password=load_openvas_setting.openvas_pass()
     return render(request,
-                  'setting_form.html', )
+                  'setting_form.html', 
+                  { 
+                    'openvas_host':openvas_host,
+                    'openvas_port': openvas_port,
+                    'openvas_enabled': openvas_enabled,
+                    'openvas_user': openvas_user,
+                    'openvas_password': openvas_password
+                  }
+                )
 
 
 def del_vuln(request):
@@ -321,7 +348,7 @@ def del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
@@ -460,7 +487,7 @@ def add_vuln(request):
     return render(request, 'ov_add_vuln.html', {'scan_id': scan_id})
 
 
-def OpenVas_xml_upload(request):
+def OpenVAS_xml_upload(request):
     """
     OpenVAS XML file upload.
     :param request:
@@ -629,7 +656,7 @@ def del_net_scan_schedule(request):
         taskid = scan_item.replace(" ", "")
         target_split = taskid.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
             del_task = task_schedule_db.objects.filter(task_id=task_id)
@@ -723,7 +750,7 @@ def delete_nessus_scan(request):
         taskid = scan_item.replace(" ", "")
         target_split = taskid.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
 
@@ -745,7 +772,7 @@ def delete_nessus_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = nessus_report_db.objects.filter(vul_id=vuln_id)
@@ -781,3 +808,73 @@ def nessus_vuln_check(request):
     vul_dat = nessus_report_db.objects.filter(vul_id=id_vul)
 
     return render(request, 'nessus_vuln_data.html', {'vul_dat': vul_dat})
+
+
+def nv_setting(request):
+    """
+    Calling NMAP Vulners setting page.
+    :param request:
+    :return:
+    """
+    load_nv_setting = load_settings.ArcherySettings(api_data)
+    nv_enabled=str(load_nv_setting.nv_enabled())
+    nv_online=str(load_nv_setting.nv_enabled())
+    nv_version=str(load_nv_setting.nv_enabled())
+    nv_timing=load_nv_setting.nv_timing()
+
+    return render(request,
+                  'nv_settings.html', 
+                  { 
+                    'nv_enabled':nv_enabled,
+                    'nv_online': nv_online,
+                    'nv_version': nv_version,
+                    'nv_timing': nv_timing,
+                  }
+                )
+
+
+def nv_details(request):
+    """
+    OpenVAS tool settings.
+    :param request:
+    :return:
+    """
+    save_nv_setting = save_settings.SaveSettings(api_data)
+    if request.method == 'POST':
+        if str(request.POST.get("nv_enabled")) == 'on':
+            nv_enabled = True
+        else:
+            nv_enabled = False
+        if str(request.POST.get("nv_online")) == 'on':
+            nv_online = True
+        else:
+            nv_online = False
+        if str(request.POST.get("nv_version")) == 'on':
+            nv_version = True
+        else:
+            nv_version = False
+        nv_timing = int(str(request.POST.get('nv_timing')))
+        if nv_timing > 5:
+            nv_timing = 5
+        elif nv_timing < 0:
+            nv_timing = 0
+
+        save_nv_setting.nmap_vulners(
+            enabled=nv_enabled,
+            version=nv_version,
+            online=nv_online,
+            timing=nv_timing
+        )
+
+        return HttpResponseRedirect('/webscanners/setting/')
+
+    messages.add_message(request,
+                         messages.SUCCESS,
+                         'NMAP Vulners Setting Updated ')
+
+    return render(request, 
+                  'nv_settings.html', 
+                  {
+                    'messages': messages,
+                  })
+

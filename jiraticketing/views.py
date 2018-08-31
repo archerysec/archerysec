@@ -8,8 +8,28 @@ from jira import JIRA
 from webscanners.models import zap_scan_results_db, burp_scan_result_db, arachni_scan_result_db
 from networkscanners.models import ov_scan_result_db, nessus_report_db
 
+jira_url = ''
+username = ''
+
+password = ''
 
 def jira_setting(request):
+    """
+
+    :param request:
+    :return:
+    """
+
+    all_jira_settings = jirasetting.objects.all()
+    for jira in all_jira_settings:
+        global jira_url, username, password
+        jira_url = jira.jira_server
+        username = signing.loads(jira.jira_username)
+        password = signing.loads(jira.jira_password)
+    jira_server = jira_url
+    jira_username = username
+    jira_password = password
+
     if request.method == 'POST':
         jira_url = request.POST.get('jira_url')
         jira_username = request.POST.get('jira_username')
@@ -24,7 +44,10 @@ def jira_setting(request):
 
         return HttpResponseRedirect('/webscanners/setting/')
 
-    return render(request, 'jira_setting_form.html')
+    return render(request, 'jira_setting_form.html', {'jira_server': jira_server,
+                                                      'jira_username': jira_username,
+                                                      'jira_password': jira_password,
+                                                      })
 
 
 def submit_jira_ticket(request):

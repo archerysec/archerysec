@@ -1,4 +1,3 @@
-<div class="widget-box">
     <div class="widget-content">
         <div class="center">
             <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
@@ -19,9 +18,8 @@
                                data-target="#{{data.scan_id}}">{{data.scan_ip}}</a>
                         </td>
                         <td>
-                            <div class="progress progress-info">
-                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}}
-                                </div>
+                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
                             </div>
                         </td>
                     </tr>
@@ -31,4 +29,3 @@
             </div>
         </div>
     </div>
-</div>

@@ -112,7 +112,7 @@ def del_sub_domain(request):
         value = domain_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             sub_domain = value_split.__getitem__(i)
             del_subdomain = osint_domain_db.objects.filter(sub_domains=sub_domain)

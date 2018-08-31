@@ -86,6 +86,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
             ],
         },
     },
@@ -127,7 +128,7 @@ LANGUAGE_CODE = 'en-us'
 
 USE_TZ = True
 
-TIME_ZONE = 'Asia/Calcutta'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -137,7 +138,7 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join("/", 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
@@ -176,3 +177,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SESSION_COOKIE_AGE = 5 * 100
 
 BACKGROUND_TASK_RUN_ASYNC = True
+
+REFRESH_TIMER = 5
+
+SETTINGS_EXPORT = [
+    'REFRESH_TIMER',
+]

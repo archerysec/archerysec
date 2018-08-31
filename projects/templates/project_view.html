@@ -121,8 +121,8 @@
                             <tr data-target="#">
                                 <td>{{data.scan_url}}{{data.url}}</td>
                                 <td width="30%">
-                                    <div class="progress progress-info">
-                                        <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">{{data.scan_status}}{{data.vul_status}}</div>
+                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                        <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">{{data.scan_status}}{{data.vul_status}} %</div>
                                     </div>
                                 </td>
                                 <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
@@ -162,8 +162,8 @@
                             <tr data-target="#">
                                 <td>{{data.scan_ip}}</td>
                                 <td>
-                                    <div class="progress progress-info">
-                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}}</div>
+                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
                                     </div>
                                 </td>
                                 <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>

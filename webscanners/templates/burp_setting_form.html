@@ -31,16 +31,16 @@
                         <form class="form-horizontal" method="POST" action="/webscanners/burp_setting/">{% csrf_token %}
                             <div class="control-group">
                                 <label class="control-label">Burp API Host :</label>
-                                <div class="controls">
-                                    <input type="text" name="burpath" value="{{ burpath }}" class="span11"
-                                           placeholder="Burp API Host"/>
+                                <div class="controls"><small><em>Burp API Host (Ex.127.0.0.1)</em></small>
+                                    <input type="text" name="burpath" value="{{ burp_url }}" class="span11"
+                                           />
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">Burp API Port:</label>
-                                <div class="controls">
-                                    <input type="text" name="burport" value="{{ burport }}" class="span11"
-                                           placeholder="Burp Port"/>
+                                <div class="controls"><small><em>Burp API Port (Ex.8080)</em></small>
+                                    <input type="text" name="burport" value="{{ burp_port }}" class="span11"
+                                           />
                                 </div>
                             </div>
                             <div class="form-actions">

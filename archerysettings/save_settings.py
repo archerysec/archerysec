@@ -13,7 +13,7 @@
 
 import json
 from django.core import signing
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
 
 
 class SaveSettings:
@@ -21,6 +21,29 @@ class SaveSettings:
     def __init__(self, setting_file):
 
         self.setting_file = setting_file
+
+    def nmap_vulners(self, enabled, version, online, timing):
+        """
+        Save NAMP Vulners Settings into setting file.
+        :param enabled:
+        :param version:
+        :param online:
+        :param timing:
+        :return:
+        """
+        all_nv = nmap_vulners_setting_db.objects.all()
+        all_nv.delete()
+        if timing > 5:
+            timing=5
+        elif timing <0:
+            timing=0
+            
+        save_nv_settings = nmap_vulners_setting_db(enabled=enabled,
+                                           version=version,
+                                           online=online,
+                                           timing=timing
+                                           )
+        save_nv_settings.save()
 
     def save_zap_settings(self, apikey, zaphost, zaport):
         """
@@ -80,10 +103,12 @@ class SaveSettings:
             return e
         return f.close()
 
-    def openvas_settings(self, ipaddress, openvas_user, openvas_password):
+    def openvas_settings(self, openvas_host, openvas_port, openvas_enabled, openvas_user, openvas_password):
         """
         Save OpenVAS Settings into Setting files.
-        :param ipaddress:
+        :param host:
+        :param port:
+        :param enabled:
         :param username:
         :param passwrod:
         :return:
@@ -92,7 +117,9 @@ class SaveSettings:
         all_openvas = openvas_setting_db.objects.all()
         all_openvas.delete()
 
-        openvas_settings = openvas_setting_db(host=ipaddress,
+        openvas_settings = openvas_setting_db(host=openvas_host,
+                                              port=openvas_port,
+                                              enabled=openvas_enabled,
                                               user=openvas_user,
                                               password=openvas_password
                                               )
@@ -101,11 +128,15 @@ class SaveSettings:
             with open(self.setting_file, 'r+') as f:
                 sig_ov_user = signing.dumps(openvas_user)
                 sig_ov_pass = signing.dumps(openvas_password)
-                sig_ov_ip = signing.dumps(ipaddress)
+                sig_ov_host = signing.dumps(openvas_host)
+                sig_ov_port = signing.dumps(openvas_port)
+                sig_ov_enabled = signing.dumps(openvas_enabled)
                 data = json.load(f)
                 data['open_vas_user'] = sig_ov_user
                 data['open_vas_pass'] = sig_ov_pass
-                data['open_vas_ip'] = sig_ov_ip
+                data['open_vas_host'] = sig_ov_host
+                data['open_vas_port'] = sig_ov_port
+                data['open_vas_enabled'] = sig_ov_enabled
                 f.seek(0)
                 json.dump(data, f, indent=4)
                 f.truncate()

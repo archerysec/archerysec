@@ -30,23 +30,23 @@
                     <div class="widget-content nopadding">
                         <form class="form-horizontal" method="POST" action="/webscanners/setting_edit/">{% csrf_token %}
                             <div class="control-group">
-                                <label class="control-label">Zap API Key :</label>
-                                <div class="controls">
-                                    <input type="text" name="apikey" value="{{ apikey }}" class="span11"
+                                <label class="control-label">ZAP API Key :</label>
+                                <div class="controls"><small><em>Skip ZAP API Key if not enabled</em></small>
+                                    <input type="text" name="apikey" value="{{ zap_apikey }}" class="span11"
                                            placeholder="API Key"/>
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">Zap API Host :</label>
-                                <div class="controls">
-                                    <input type="text" name="zappath" value="{{ zappath }}" class="span11"
+                                <label class="control-label">ZAP API Host :</label>
+                                <div class="controls"><small><em>ZAP API Host address (Ex.127.0.0.1)</em></small>
+                                    <input type="text" name="zappath" value="{{ zap_host }}" class="span11"
                                            placeholder="Zap API Host"/>
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">Zap API Port :</label>
-                                <div class="controls">
-                                    <input type="text" name="port" value="{{ port }}" class="span11"
+                                <label class="control-label">ZAP API Port :</label>
+                                <div class="controls"><small><em>ZAP API Port (Ex. 8080)</em></small>
+                                    <input type="text" name="port" value="{{ zap_port }}" class="span11"
                                            placeholder="PORT"/>
                                 </div>
                             </div>

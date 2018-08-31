@@ -55,7 +55,7 @@ from webscanners.models import netsparker_scan_db, \
     webinspect_scan_db, \
     webinspect_scan_result_db
 
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
 import hashlib
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
@@ -108,6 +108,9 @@ decd_req = ""
 scanner = ""
 all_scan_url = ""
 all_url_vuln = ""
+zap_apikey = None
+zap_host = None
+zap_port = None
 
 
 # Login View
@@ -444,7 +447,7 @@ def del_web_scan_schedule(request):
         taskid = scan_item.replace(" ", "")
         target_split = taskid.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
             del_task = task_schedule_db.objects.filter(task_id=task_id)
@@ -622,7 +625,9 @@ def setting(request):
     # ov_ip = settings.openvas_host()
     lod_ov_user = settings.openvas_username()
     lod_ov_pass = settings.openvas_pass()
-    lod_ov_ip = settings.openvas_host()
+    lod_ov_host = settings.openvas_host()
+    lod_ov_port = settings.openvas_port()
+    lod_ov_enabled = settings.openvas_enabled()
 
     # Loading ZAP Settings
     zap_api_key = ''
@@ -638,6 +643,19 @@ def setting(request):
     lod_apikey = zap_api_key
     zap_host = zap_hosts
     zap_port = zap_ports
+
+    # Loading NMAP Vulners Settings
+    nv_enabled = False
+    nv_online = False
+    nv_version = False
+    nv_timing = 0
+
+    all_nv = nmap_vulners_setting_db.objects.all()
+    for nv in all_nv:
+        nv_enabled = bool(nv.enabled)
+        nv_online = bool(nv.online)
+        nv_version = bool(nv.version)
+        nv_timing = int(nv.timing)
 
     # Loading Burp Settings
 
@@ -673,7 +691,9 @@ def setting(request):
                    'zap_port': zap_port,
                    'lod_ov_user': lod_ov_user,
                    'lod_ov_pass': lod_ov_pass,
-                   'lod_ov_ip': lod_ov_ip,
+                   'lod_ov_host': lod_ov_host,
+                   'lod_ov_enabled': lod_ov_enabled,
+                   'lod_ov_port': lod_ov_port,
                    'burp_path': burp_host,
                    'burp_port': burp_port,
                    'email_subject': email_subject,
@@ -682,6 +702,10 @@ def setting(request):
                    'jira_server': jira_server,
                    'jira_username': jira_username,
                    'jira_password': jira_password,
+                   'nv_enabled': nv_enabled,
+                   'nv_version': nv_version,
+                   'nv_online': nv_online,
+                   'nv_timing': nv_timing,
                    })
 
 
@@ -691,8 +715,29 @@ def zap_setting(request):
     :param request:
     :return:
     """
+    zap_api_key = ''
+    zap_hosts = None
+    zap_ports = None
+
+    all_zap = zap_settings_db.objects.all()
+    for zap in all_zap:
+        global zap_api_key, zap_hosts, zap_ports
+        zap_api_key = zap.zap_api
+        zap_hosts = zap.zap_url
+        zap_ports = zap.zap_port
+
+    # zap_apikey = zap_api_key
+    # zap_host = zap_hosts
+    # zap_port = zap_ports
+
     return render(request,
-                  'settingform.html')
+                  'settingform.html',
+                  {
+                      'zap_apikey': zap_api_key,
+                      'zap_host': zap_hosts,
+                      'zap_port': zap_ports,
+                  }
+                  )
 
 
 def zap_set_update(request):
@@ -770,7 +815,7 @@ def del_scan(request):
             ip = scan_item.replace(" ", "")
             target_split = ip.split(',')
             split_length = target_split.__len__()
-            print "split_lenght", split_length
+            print "split_length", split_length
             for i in range(0, split_length):
                 target = target_split.__getitem__(i)
 
@@ -904,7 +949,7 @@ def del_cookies(request):
         cooki_split = cookies_item.replace(" ", "")
         target_split = cooki_split.split(',')
         split_length = target_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             cookies_target = target_split.__getitem__(i)
             print(cookies_target)
@@ -1059,7 +1104,7 @@ def del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
@@ -1244,18 +1289,24 @@ def burp_setting(request):
     :param request:
     :return:
     """
-    save_burp_setting = save_settings.SaveSettings(setting_file)
+    burp_url = None
+    burp_port = None
+    all_burp_setting = burp_setting_db.objects.all()
+
+    for data in all_burp_setting:
+        global burp_url, burp_port
+        burp_url = data.burp_url
+        burp_port = data.burp_port
 
     if request.method == 'POST':
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
-
-        save_burp_setting.save_burp_settings(burphost=burphost,
-                                             burport=burport)
+        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport)
+        save_burp_settings.save()
 
         return HttpResponseRedirect('/webscanners/setting/')
 
-    return render(request, 'burp_setting_form.html')
+    return render(request, 'burp_setting_form.html', {'burp_url': burp_url, 'burp_port': burp_port})
 
 
 def burp_scan_launch(request):
@@ -1441,7 +1492,7 @@ def del_burp_scan(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
             item = burp_scan_db.objects.filter(scan_id=scan_id)
@@ -1465,7 +1516,7 @@ def del_burp_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
@@ -1831,7 +1882,7 @@ def del_arachni_scan(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        # print "split_lenght", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
@@ -1912,7 +1963,7 @@ def arachni_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
@@ -2067,7 +2118,7 @@ def del_netsparker_scan(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        # print "split_lenght", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
@@ -2148,7 +2199,7 @@ def netsparker_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = netsparker_scan_result_db.objects.filter(vuln_id=vuln_id)
@@ -2307,7 +2358,7 @@ def del_webinspect_scan(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        # print "split_lenght", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
@@ -2388,7 +2439,7 @@ def webinspect_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = webinspect_scan_result_db.objects.filter(vuln_id=vuln_id)
@@ -2427,10 +2478,12 @@ def acunetix_list_vuln(request):
         scan_id = None
 
     acunetix_all_vul = acunetix_scan_result_db.objects.filter(
-        scan_id=scan_id, vuln_status='Open').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id', 'vuln_status').distinct()
+        scan_id=scan_id, vuln_status='Open').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
+                                                    'vuln_status').distinct()
 
     acunetix_all_vul_close = acunetix_scan_result_db.objects.filter(
-        scan_id=scan_id, vuln_status='Close').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id', 'vuln_status').distinct()
+        scan_id=scan_id, vuln_status='Close').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
+                                                     'vuln_status').distinct()
 
     return render(request,
                   'acunetix_list_vuln.html',
@@ -2547,7 +2600,7 @@ def del_acunetix_scan(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        # print "split_lenght", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
@@ -2628,7 +2681,7 @@ def acunetix_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_lenght", split_length
+        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = acunetix_scan_result_db.objects.filter(vuln_id=vuln_id)

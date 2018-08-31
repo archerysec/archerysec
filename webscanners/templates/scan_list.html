@@ -109,8 +109,8 @@
                                     <a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
                                 </td>
                                 <td width="20%">
-                                    <div class="progress progress-info">
-                                        <div class="bar" style="width: {{data.vul_status}}%">{{data.vul_status}}</div>
+                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                        <div class="bar" style="width: {{data.vul_status}}%">{{data.vul_status}} %</div>
                                     </div>
                                 </td>
                                 <td>{{data.date_time}}</td>
@@ -216,8 +216,8 @@
                                     <a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
                                 </td>
                                 <td width="30%">
-                                    <div class="progress progress-info">
-                                        <div class="bar" style="width: {{data.vul_status}}%">{{data.vul_status}}</div>
+                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                        <div class="bar" style="width: {{data.vul_status}}%">{{data.vul_status}} %</div>
                                     </div>
                                 </td>
                                 <td>{{data.date_time}}</td>

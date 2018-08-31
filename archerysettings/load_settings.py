@@ -13,7 +13,7 @@
 import os
 import json
 from django.core import signing
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
+from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
 
 
 class ArcherySettings:
@@ -130,22 +130,22 @@ class ArcherySettings:
         Loading OpenVAS Setting from setting file.
         :return:
         """
-        openvashost = None
+        openvas_host = None
 
         all_openvas = openvas_setting_db.objects.all()
 
         for openvas in all_openvas:
-            openvashost = openvas.host
+            openvas_host = openvas.host
 
         # try:
         #     with open(self.setting_file, 'r+') as f:
         #         data = json.load(f)
-        #         openvashost = data['open_vas_ip']
+        #         openvashost = data['open_vas_host']
         # except Exception as e:
         #     print "Error in setting file as", e
 
-        return openvashost
-
+        return openvas_host
+ 
     def openvas_username(self):
         """
         Loading OpenVAS Username from setting file.
@@ -187,6 +187,28 @@ class ArcherySettings:
         #     print "Error in setting file as", e
 
         return openvas_password
+
+    def openvas_port(self):
+        openvas_port = None
+
+        all_openvas = openvas_setting_db.objects.all()
+
+        for openvas in all_openvas:
+            openvas_port = openvas.port
+        if not isinstance(openvas_port, int):
+            openvas_port=9390
+        return openvas_port
+
+    def openvas_enabled(self):
+        openvas_enabled = None
+
+        all_openvas = openvas_setting_db.objects.all()
+
+        for openvas in all_openvas:
+            openvas_enabled = openvas.enabled
+        if not isinstance(openvas_enabled, bool):
+            openvas_enabled = False 
+        return openvas_enabled
 
     def email_subject(self):
         """
@@ -235,3 +257,55 @@ class ArcherySettings:
             print "Error in setting file as", e
 
         return emails_to
+
+    def nv_enabled(self):
+        nv_enabled = False
+
+        all_nv = nmap_vulners_setting_db.objects.all()
+
+        for nv in all_nv:
+            nv_enabled = nv.enabled
+        print nv_enabled
+        if not isinstance(nv_enabled, bool):
+            nv_enabled=False
+        return nv_enabled
+
+    def nv_version(self):
+        nv_version = False
+
+        all_nv = nmap_vulners_setting_db.objects.all()
+
+        for nv in all_nv:
+            nv_version = nv.version
+        print nv_version
+        if not isinstance(nv_version, bool):
+            nv_version=False
+        return nv_version
+
+    def nv_online(self):
+        nv_online = False
+
+        all_nv = nmap_vulners_setting_db.objects.all()
+
+        for nv in all_nv:
+            nv_online = nv.online
+        print nv_online
+        if not isinstance(nv_online, bool):
+            nv_online=False
+        return nv_online
+
+    def nv_timing(self):
+        nv_timing = 0
+
+        all_nv = nmap_vulners_setting_db.objects.all()
+
+        for nv in all_nv:
+            nv_timing = nv.timing
+        if not isinstance(nv_timing, int):
+            nv_timing=0
+        if nv_timing > 5:
+            nv_timing = 5
+        elif nv_timing < 0:
+            nv_timing = 0
+        return nv_timing
+

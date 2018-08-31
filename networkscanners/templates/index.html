@@ -59,7 +59,7 @@
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>IP Scan List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/networkscanners/OpenVas_xml_upload/"
+                        <div class="buttons"><a data-toggle="modal" href="/networkscanners/OpenVAS_xml_upload/"
                                                 class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
                             XML</a>
                         </div>
@@ -99,8 +99,8 @@
                                 <td><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
                                 <td>{{data.date_time}}</td>
                                 <td width="30%">
-                                    <div class="progress progress-info">
-                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}}</div>
+                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
                                     </div>
                                 </td>
                                 <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
