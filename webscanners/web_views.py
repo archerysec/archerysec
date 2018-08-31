@@ -108,6 +108,9 @@ decd_req = ""
 scanner = ""
 all_scan_url = ""
 all_url_vuln = ""
+zap_apikey = None
+zap_host = None
+zap_port = None
 
 
 # Login View
@@ -699,10 +702,10 @@ def setting(request):
                    'jira_server': jira_server,
                    'jira_username': jira_username,
                    'jira_password': jira_password,
-                    'nv_enabled': nv_enabled,
-                    'nv_version': nv_version,
-                    'nv_online': nv_online,
-                    'nv_timing': nv_timing,
+                   'nv_enabled': nv_enabled,
+                   'nv_version': nv_version,
+                   'nv_online': nv_online,
+                   'nv_timing': nv_timing,
                    })
 
 
@@ -712,8 +715,29 @@ def zap_setting(request):
     :param request:
     :return:
     """
+    zap_api_key = ''
+    zap_hosts = None
+    zap_ports = None
+
+    all_zap = zap_settings_db.objects.all()
+    for zap in all_zap:
+        global zap_api_key, zap_hosts, zap_ports
+        zap_api_key = zap.zap_api
+        zap_hosts = zap.zap_url
+        zap_ports = zap.zap_port
+
+    # zap_apikey = zap_api_key
+    # zap_host = zap_hosts
+    # zap_port = zap_ports
+
     return render(request,
-                  'settingform.html')
+                  'settingform.html',
+                  {
+                      'zap_apikey': zap_api_key,
+                      'zap_host': zap_hosts,
+                      'zap_port': zap_ports,
+                  }
+                  )
 
 
 def zap_set_update(request):
@@ -1265,18 +1289,24 @@ def burp_setting(request):
     :param request:
     :return:
     """
-    save_burp_setting = save_settings.SaveSettings(setting_file)
+    burp_url = None
+    burp_port = None
+    all_burp_setting = burp_setting_db.objects.all()
+
+    for data in all_burp_setting:
+        global burp_url, burp_port
+        burp_url = data.burp_url
+        burp_port = data.burp_port
 
     if request.method == 'POST':
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
-
-        save_burp_setting.save_burp_settings(burphost=burphost,
-                                             burport=burport)
+        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport)
+        save_burp_settings.save()
 
         return HttpResponseRedirect('/webscanners/setting/')
 
-    return render(request, 'burp_setting_form.html')
+    return render(request, 'burp_setting_form.html', {'burp_url': burp_url, 'burp_port': burp_port})
 
 
 def burp_scan_launch(request):
@@ -2448,10 +2478,12 @@ def acunetix_list_vuln(request):
         scan_id = None
 
     acunetix_all_vul = acunetix_scan_result_db.objects.filter(
-        scan_id=scan_id, vuln_status='Open').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id', 'vuln_status').distinct()
+        scan_id=scan_id, vuln_status='Open').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
+                                                    'vuln_status').distinct()
 
     acunetix_all_vul_close = acunetix_scan_result_db.objects.filter(
-        scan_id=scan_id, vuln_status='Close').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id', 'vuln_status').distinct()
+        scan_id=scan_id, vuln_status='Close').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
+                                                     'vuln_status').distinct()
 
     return render(request,
                   'acunetix_list_vuln.html',

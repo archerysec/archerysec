@@ -4,7 +4,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -32,6 +32,7 @@ class openvas_setting_db(models.Model):
     enabled = models.NullBooleanField(blank=False, null=False)
     user = models.TextField(blank=True, null=True)
     password = models.TextField(blank=True, null=True)
+
 
 class nmap_vulners_setting_db(models.Model):
     enabled = models.NullBooleanField(blank=False, null=False)

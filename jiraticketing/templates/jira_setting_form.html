@@ -31,23 +31,23 @@
                         <form class="form-horizontal" method="POST" action="/jira/jira_setting/">{% csrf_token %}
                             <div class="control-group">
                                 <label class="control-label">JIRA Server URL :</label>
-                                <div class="controls">
+                                <div class="controls"><small><em>JIRA Cloud URL (Ex. https://xyz.atlassian.net/)</em></small>
                                     <input type="text" name="jira_url" class="span11"
-                                           placeholder="https://YOUR_INSTANCE.atlassian.net/"/>
+                                           value="{{ jira_server }}" />
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">JIRA Server Username :</label>
                                 <div class="controls">
                                     <input type="text" name="jira_username" class="span11"
-                                           placeholder="JIRA Username"/>
+                                            value="{{ jira_username }}"/>
                                 </div>
                             </div>
                             <div class="control-group">
                                 <label class="control-label">JIRA Server Password :</label>
                                 <div class="controls">
                                     <input type="password" name="jira_password" class="span11"
-                                           placeholder="JIRA Password"/>
+                                           value="{{ jira_password }}"/>
                                 </div>
                             </div>
                             <div class="form-actions">
