@@ -19,7 +19,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from easy_pdf.views import render_to_pdf_response
 from selenium import webdriver
-from archerysettings import save_settings
+from archerysettings.models import zap_settings_db
 from projects.models import project_db
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from scanners.scanner_plugin.web_scanner import zap_plugin
@@ -443,7 +443,7 @@ def zap_settings(request):
 
     all_zap = zap_settings_db.objects.all()
     for zap in all_zap:
-        global zap_api_key, zap_hosts, zap_ports
+        # global zap_api_key, zap_hosts, zap_ports
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
         zap_ports = zap.zap_port
@@ -465,18 +465,20 @@ def zap_setting_update(request):
     :return:
     """
     # Load ZAP setting function
-    save_setting = save_settings.SaveSettings(setting_file)
+    # save_setting = save_settings.SaveSettings(setting_file)
 
     if request.method == 'POST':
         apikey = request.POST.get("apikey", )
         zaphost = request.POST.get("zappath", )
         port = request.POST.get("port", )
 
-        save_setting.save_zap_settings(apikey=apikey,
-                                       zaphost=zaphost,
-                                       zaport=port)
+        zap_settings_db.objects.update(
+            zap_url=zaphost,
+            zap_port=port,
+            zap_api=apikey
+        )
 
-        return HttpResponseRedirect('/zapscanner/setting/')
+        return HttpResponseRedirect('/webscanners/setting/')
 
     messages.add_message(request,
                          messages.SUCCESS,
