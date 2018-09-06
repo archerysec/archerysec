@@ -471,12 +471,12 @@ def zap_setting_update(request):
         apikey = request.POST.get("apikey", )
         zaphost = request.POST.get("zappath", )
         port = request.POST.get("port", )
-
-        zap_settings_db.objects.update(
+        save_data = zap_settings_db(
             zap_url=zaphost,
             zap_port=port,
             zap_api=apikey
         )
+        save_data.save()
 
         return HttpResponseRedirect('/webscanners/setting/')
 
