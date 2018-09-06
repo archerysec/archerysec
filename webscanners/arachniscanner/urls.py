@@ -12,8 +12,6 @@
 from django.conf.urls import url
 from webscanners.arachniscanner import views
 
-app_name = 'webscanners'
-
 urlpatterns = [
 
     # arachni

@@ -12,8 +12,6 @@
 from django.conf.urls import url
 from webscanners.burpscanner import views
 
-app_name = 'webscanners'
-
 urlpatterns = [
     # Burp scans
     url(r'^burp_launch_scan',

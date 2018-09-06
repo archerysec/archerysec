@@ -12,8 +12,6 @@
 from django.conf.urls import url
 from webscanners.acunetixscanner import views
 
-app_name = 'webscanners'
-
 urlpatterns = [
     # All acunetix URL's
     url(r'^acunetix_list_vuln',

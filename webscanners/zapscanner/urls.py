@@ -12,8 +12,6 @@
 from django.conf.urls import url
 from webscanners.zapscanner import views
 
-app_name = 'webscanners'
-
 urlpatterns = [
     url(r'^zap_scan/',
         views.zap_scan,
