@@ -17,6 +17,7 @@ from projects.models import project_db
 from webscanners.serializers import WebScanSerializer, WebScanResultSerializer, UploadScanSerializer
 from rest_framework import status
 from webscanners import web_views
+from webscanners.zapscanner.views import launch_zap_scan
 from networkscanners import views
 from networkscanners.serializers import NetworkScanSerializer, NetworkScanResultSerializer
 from rest_framework import generics
@@ -61,8 +62,8 @@ class WebScan(generics.ListCreateAPIView):
             rescanid = None
             rescan = 'No'
             if scanner == 'zap_scan':
-                run_s = web_views.launch_web_scan
-                thread = threading.Thread(target=run_s, args=(target_url, project_id, rescanid, rescan))
+                # run_s = launch_zap_scan
+                thread = threading.Thread(target=launch_zap_scan, args=(target_url, project_id, rescanid, rescan))
                 thread.daemon = True
                 thread.start()
 
