@@ -1,11 +1,22 @@
-FROM kalilinux/kali-linux-docker
-RUN mkdir /root/archerysec
-WORKDIR /root/archerysec
-ADD requirements.txt /root/archerysec
-RUN apt-get update && apt-get install -q -y --fix-missing \
+#Ubuntu base OS
+FROM ubuntu:18.04
+MAINTAINER Anand Tiwari
+
+#Create archerysec folder.
+RUN mkdir archerysec
+
+#Set archerysec as a work directory.
+WORKDIR archerysec
+
+#Adding requirements file.
+ADD requirements.txt archerysec
+
+# Update & Upgrade Ubuntu
+RUN apt-get update && apt-get -y upgrade
+
+#Install dependency tools.
+RUN apt-get install --quiet --yes --fix-missing \
         make \
-        openjdk-8-jdk \
-        zaproxy \
         sslscan \
         nikto \
         nmap \
@@ -15,10 +26,18 @@ RUN apt-get update && apt-get install -q -y --fix-missing \
         unzip \
         git \
         python-pip
-WORKDIR /root/archerysec
-RUN python manage.py process_tasks &
-COPY . /root/archerysec/
+
+#Copy all file to archerysec folder.
+COPY . /archerysec
+
+#Exposing port.
 EXPOSE 8000
+
+#Given permission to install.sh file.
 RUN chmod +x install.sh
+
+#Running installation file.
 RUN ./install.sh
+
+# UP & RUN application.
 CMD ["python","manage.py","runserver","0.0.0.0:8000"]
