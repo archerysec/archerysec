@@ -12,7 +12,6 @@
 [![DEFCON 26 Demolabs](https://img.shields.io/badge/DEFCON%2026-Demo%20Labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
 
 
-
 Archery
 =================
 Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.
