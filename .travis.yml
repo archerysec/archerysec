@@ -17,7 +17,7 @@ services:
 before_script:
   - export -f travis_fold
   - export REPO=archerysec/archerysec
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - export TRAVIS_TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 
 script:
  - |
@@ -52,5 +52,5 @@ after_success:
     if [ "$TRAVIS_TAG" != "" ] && [ "$DOCKER_USER" != "" ] && [  "$DOCKER_PASS" != "" ]; then
       docker tag $REPO $REPO:$TRAVIS_TAG
       docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
-      docker push $REPO:latest ;
+      docker push $REPO ;
     fi

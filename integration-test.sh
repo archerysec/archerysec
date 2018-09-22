@@ -9,7 +9,7 @@ docker logs $CONTAINER_NAME
 pip install bandit
 docker ps -a
 docker logs $CONTAINER_NAME
-echo "Checking to see if dojo is running"
+echo "Checking to see if Archery is running"
 
 # Check whether the container is running and came up as expected
 set +e
