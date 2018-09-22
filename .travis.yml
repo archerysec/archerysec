@@ -16,7 +16,7 @@ services:
 
 before_script:
   - export -f travis_fold
-  - export REPO=archerysec/archerysec
+  - export REPO=archerysec/archerysec:latest
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
 
 script:
