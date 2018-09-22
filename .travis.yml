@@ -8,4 +8,3 @@ install:
 # command to run tests
 script:
   - ./install.sh
-  - python manage.py runserver 0.0.0.0:8000
