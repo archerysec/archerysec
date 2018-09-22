@@ -1,4 +1,5 @@
 #!/bin/bash
+export $CONTAINER_NAME=archery
 set -ex
 
 # Docker Build
