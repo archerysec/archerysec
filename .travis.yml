@@ -45,3 +45,12 @@ script:
         sh docker-bench-security.sh
         ;;
     esac
+
+after_success:
+  #Push to docker repo
+  - |
+    if [ "$TRAVIS_TAG" != "" ] && [ "$DOCKER_USER" != "" ] && [  "$DOCKER_PASS" != "" ]; then
+      docker tag $REPO $REPO:$TRAVIS_TAG
+      docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+      docker push $REPO ;
+    fi
