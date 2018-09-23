@@ -184,4 +184,4 @@ SETTINGS_EXPORT = [
     'REFRESH_TIMER',
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
