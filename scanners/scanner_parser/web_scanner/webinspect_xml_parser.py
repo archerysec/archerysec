@@ -121,7 +121,7 @@ def xml_parser(root,
                 vul_col = "info"
 
             dup_data = Name + url + severity_name
-            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
             match_dup = webinspect_scan_result_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()

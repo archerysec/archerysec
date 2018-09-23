@@ -385,7 +385,7 @@ def zap_vuln_details(request):
                 url = vi.url
                 risk = vi.risk
                 dup_data = name + url + risk
-                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
                 zap_scan_results_db.objects.filter(
                     vuln_id=vuln_id,
                     scan_id=scan_id).update(false_positive=false_positive,

@@ -218,7 +218,7 @@ def xml_parser(root, project_id, scan_id):
                                     body = extra_vuln.text
 
                 dup_data = name + url + severity
-                duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
                 match_dup = arachni_scan_result_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()

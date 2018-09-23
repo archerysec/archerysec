@@ -365,7 +365,7 @@ class ZAPScanner:
             # date_time = datetime.datetime.now()
 
             dup_data = name + url + risk
-            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
             match_dup = zap_scan_results_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()

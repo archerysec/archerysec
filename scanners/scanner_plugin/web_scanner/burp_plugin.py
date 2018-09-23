@@ -245,7 +245,7 @@ class burp_scans(object):
                 vul_col = "info"
 
             dup_data = name + location + severity
-            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
             match_dup = burp_scan_result_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()
