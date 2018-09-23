@@ -43,7 +43,7 @@ MarkupSafe==1.0
 mccabe==0.6.1
 mysqlclient==1.3.13
 oauthlib==2.0.7
-openvas-lib==1.1.5
+openvas_lib
 ordereddict==1.1
 pbr==4.0.3
 pdfrw==0.4
