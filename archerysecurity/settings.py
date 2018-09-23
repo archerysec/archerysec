@@ -33,8 +33,8 @@ SECRET_KEY = '4t9wrak-z(#hb&5!m$+s&plnl0a7nme4n=pn4juks!nu@5@(7l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['archerysectest.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
+
 # Application definition
 
 INSTALLED_APPS = [
