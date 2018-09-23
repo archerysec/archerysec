@@ -138,7 +138,7 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
@@ -183,3 +183,5 @@ REFRESH_TIMER = 5
 SETTINGS_EXPORT = [
     'REFRESH_TIMER',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
