@@ -139,7 +139,7 @@ def nessus_parser(root, project_id, scan_id):
                 vul_id = uuid.uuid4()
                 
                 dup_data = scan_ip + plugin_name + severity + port
-                duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
                 match_dup = nessus_report_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
