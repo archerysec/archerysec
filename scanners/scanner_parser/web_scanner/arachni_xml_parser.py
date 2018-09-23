@@ -9,7 +9,7 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-import xml.etree.ElementTree as ET
+
 from webscanners.models import arachni_scan_db, arachni_scan_result_db
 import uuid
 import hashlib

@@ -13,7 +13,7 @@ from PyBurprestapi import burpscanner
 import os
 import json
 import time
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 import base64
 from webscanners.models import burp_scan_db, burp_scan_result_db
 import uuid

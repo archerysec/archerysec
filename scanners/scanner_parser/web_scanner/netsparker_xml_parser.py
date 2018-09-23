@@ -9,7 +9,7 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-import xml.etree.ElementTree as ET
+
 from webscanners.models import netsparker_scan_result_db, netsparker_scan_db
 import uuid
 import hashlib

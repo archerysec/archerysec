@@ -17,13 +17,11 @@ import os
 import threading
 import time
 import uuid
-import xml.etree.ElementTree as ET
-
+import defusedxml.ElementTree as ET
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response, HttpResponse
 from django.utils import timezone
-
 from archerysettings import save_settings
 from archerysettings import load_settings
 from networkscanners.models import scan_save_db, \

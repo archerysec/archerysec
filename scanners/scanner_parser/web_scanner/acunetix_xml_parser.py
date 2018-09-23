@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from webscanners.models import acunetix_scan_db, acunetix_scan_result_db
 import uuid
 import hashlib

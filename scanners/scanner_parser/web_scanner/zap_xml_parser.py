@@ -9,7 +9,6 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-import xml.etree.ElementTree as ET
 from webscanners.models import zap_scan_results_db, zap_scans_db
 import uuid
 import hashlib

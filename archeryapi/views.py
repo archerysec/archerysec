@@ -28,7 +28,7 @@ from itertools import chain
 import threading
 from django.utils import timezone
 import datetime
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
     arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser
 from rest_framework.response import Response
