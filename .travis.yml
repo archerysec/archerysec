@@ -4,8 +4,8 @@ install: true
 
 env:
   - TEST=integration-test
-  - TEST=bandit
   - TEST=docker-bench-security
+  - TEST=bandit
 
 matrix:
   allow_failures:
@@ -32,17 +32,17 @@ script:
         ## Run the SRC:CLR Scan
         curl -sSL https://download.sourceclear.com/ci.sh | bash
         ;;
-      bandit)
-        # install bandit
-        pip install bandit
-        ## Run Bandit python static code
-        bandit -r * -x venv
-        ;;
       docker-bench-security)
         ## Run Docker Bench for Security
         git clone https://github.com/docker/docker-bench-security.git
         cd docker-bench-security
         sh docker-bench-security.sh
+        ;;
+      bandit)
+        # install bandit
+        pip install bandit
+        ## Run Bandit python static code
+        bandit -r * -x venv
         ;;
     esac
 
