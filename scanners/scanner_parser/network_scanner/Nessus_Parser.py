@@ -9,8 +9,6 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-import xml.etree.ElementTree as ET
-
 import datetime
 import uuid
 from networkscanners.models import nessus_report_db, nessus_scan_db

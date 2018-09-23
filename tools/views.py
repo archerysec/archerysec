@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nmap_scan_db
 from django.shortcuts import render, HttpResponseRedirect
 import subprocess
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 from scanners.scanner_parser.network_scanner import nmap_parser
 import uuid
 

@@ -9,7 +9,6 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-import xml.etree.ElementTree as ET
 from networkscanners.models import ov_scan_result_db, scan_save_db
 import datetime
 import uuid
