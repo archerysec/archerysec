@@ -9,13 +9,12 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-from __future__ import unicode_literals
 
 import os
 import threading
 import time
 import uuid
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -257,11 +256,11 @@ def web_task_launch(request):
 
         t = Task.objects.all()
         # t.delete()
-        print task_time
+        print(task_time)
 
         for ta in t:
-            print ta.run_at
-            print ta.id
+            print(ta.run_at)
+            print(ta.id)
 
     return HttpResponse(status=200)
 
@@ -283,7 +282,7 @@ def web_scan_schedule(request):
         # periodic_task = request.POST.get('periodic_task')
         periodic_task_value = request.POST.get('periodic_task_value')
         # periodic_task = 'Yes'
-        print 'scanner-', scanner
+        print('scanner-', scanner)
 
         if periodic_task_value == 'HOURLY':
             periodic_time = Task.HOURLY
@@ -301,8 +300,8 @@ def web_scan_schedule(request):
         dt_str = scan_schedule_time
         dt_obj = datetime.strptime(dt_str, '%d/%m/%Y %H:%M:%S %p')
 
-        print "scan_url", scan_url
-        print "schedule", scan_schedule_time
+        print("scan_url", scan_url)
+        print("schedule", scan_schedule_time)
 
         # task(scan_url, project_id, schedule=dt_obj)
 
@@ -315,12 +314,12 @@ def web_scan_schedule(request):
                 if periodic_task_value == 'None':
                     my_task = task(target, project_id, scanner, schedule=dt_obj)
                     task_id = my_task.id
-                    print "Savedddddd taskid", task_id
+                    print("Savedddddd taskid", task_id)
                 else:
 
                     my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
                     task_id = my_task.id
-                    print "Savedddddd taskid", task_id
+                    print("Savedddddd taskid", task_id)
             elif scanner == 'burp_scan':
                 if periodic_task_value == 'None':
                     my_task = task(target, project_id, scanner, schedule=dt_obj)
@@ -328,7 +327,7 @@ def web_scan_schedule(request):
                 else:
                     my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
                     task_id = my_task.id
-                    print "Savedddddd taskid", task_id
+                    print("Savedddddd taskid", task_id)
             save_scheadule = task_schedule_db(task_id=task_id, target=target,
                                               schedule_time=scan_schedule_time,
                                               project_id=project_id,
@@ -356,7 +355,7 @@ def del_web_scan_schedule(request):
         taskid = scan_item.replace(" ", "")
         target_split = taskid.split(',')
         split_length = target_split.__len__()
-        print "split_length", split_length
+        print("split_length", split_length)
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
             del_task = task_schedule_db.objects.filter(task_id=task_id)
@@ -531,7 +530,7 @@ def burp_scan_launch(request):
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
-            print "Targets", target
+            print("Targets", target)
             scan_id = uuid.uuid4()
             date_time = datetime.now()
             scan_dump = burp_scan_db(scan_id=scan_id,
@@ -555,7 +554,7 @@ def burp_scan_launch(request):
                 thread.start()
                 time.sleep(5)
             except Exception as e:
-                print e
+                print(e)
 
     return render(request, 'scan_list.html')
 
@@ -589,7 +588,7 @@ def xml_upload(request):
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml)
-            return HttpResponseRedirect("/webscanners/scans_list/")
+            return HttpResponseRedirect("/zapscanner/zap_scan_list/")
         elif scanner == "burp_scan":
             date_time = datetime.now()
             scan_dump = burp_scan_db(url=scan_url,
@@ -605,8 +604,8 @@ def xml_upload(request):
                                                  target_url,
                                                  scan_id)
             do_xml_data.burp_scan_data(root_xml)
-            print "Save scan Data"
-            return HttpResponseRedirect("/webscanners/burp_scan_list")
+            print("Save scan Data")
+            return HttpResponseRedirect("/burpscanner/burp_scan_list")
 
         elif scanner == "arachni":
             date_time = datetime.now()
@@ -621,8 +620,8 @@ def xml_upload(request):
             arachni_xml_parser.xml_parser(project_id=project_id,
                                           scan_id=scan_id,
                                           root=root_xml)
-            print "Save scan Data"
-            return HttpResponseRedirect("/webscanners/arachni_scan_list")
+            print("Save scan Data")
+            return HttpResponseRedirect("/arachniscanner/arachni_scan_list")
 
         elif scanner == 'netsparker':
             date_time = datetime.now()
@@ -640,7 +639,7 @@ def xml_upload(request):
                                              scan_id=scan_id,
                                              root=root_xml)
             print("Saved scan data")
-            return HttpResponseRedirect("/webscanners/netsparker_scan_list/")
+            return HttpResponseRedirect("/netsparkerscanner/netsparker_scan_list/")
         elif scanner == 'webinspect':
             date_time = datetime.now()
             scan_dump = webinspect_scan_db(
@@ -657,7 +656,7 @@ def xml_upload(request):
                                              scan_id=scan_id,
                                              root=root_xml)
             print("Saved scan data")
-            return HttpResponseRedirect("/webscanners/webinspect_scan_list/")
+            return HttpResponseRedirect("/webinspectscanner/webinspect_scan_list/")
 
         elif scanner == 'acunetix':
             date_time = datetime.now()
@@ -675,7 +674,7 @@ def xml_upload(request):
                                            scan_id=scan_id,
                                            root=root_xml)
             print("Saved scan data")
-            return HttpResponseRedirect("/webscanners/acunetix_scan_list/")
+            return HttpResponseRedirect("/acunetixscanner/acunetix_scan_list/")
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
 
@@ -718,7 +717,7 @@ def slem(driver, url):
     try:
         driver.get(url, )
     except Exception as e:
-        print "Error Got !!!"
+        print("Error Got !!!")
     return
 
 
@@ -758,7 +757,7 @@ def del_cookies(request):
         cooki_split = cookies_item.replace(" ", "")
         target_split = cooki_split.split(',')
         split_length = target_split.__len__()
-        print "split_length", split_length
+        print("split_length", split_length)
         for i in range(0, split_length):
             cookies_target = target_split.__getitem__(i)
             print(cookies_target)
@@ -850,4 +849,3 @@ def exluded_url_list(request):
         return HttpResponseRedirect('/zapscanner/excluded_url_list')
 
     return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})
-

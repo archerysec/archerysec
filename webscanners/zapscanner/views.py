@@ -301,7 +301,7 @@ def zap_rescan(request):
         thread.start()
         messages.add_message(request, messages.SUCCESS, 'Re-Scan Launched')
 
-    return HttpResponseRedirect('/zapscanner/scans_list/')
+    return HttpResponseRedirect('/zapscanner/zap_scan_list/')
 
 
 def zap_scan_list(request):

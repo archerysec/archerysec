@@ -120,7 +120,7 @@
                                 <td><span class="badge badge-info">{{data.low_vul}}</span></td>
                                 <td><span class="badge badge-important">{{data.total_dup}}</span></td>
                                 <td>
-                                    <form action="/webscanners/get_scan_pdf/" method="post" class="forms-sample">
+                                    <form action="/zapscanner/zap_scan_pdf_gen/" method="post" class="forms-sample">
 
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>
@@ -135,10 +135,10 @@
                                         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
                                                 class="caret"></span></a>
                                         <ul class="dropdown-menu">
-                                            <li><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}"><i
+                                            <li><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}"><i
                                                     class="icon-pencil"></i> View </a></li>
                                             <li>
-                                                <form action="/webscanners/zap_rescan/" method="POST"
+                                                <form action="/zapscanner/zap_rescan/" method="POST"
                                                       class="forms-sample">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="old_scan_id"
@@ -213,7 +213,7 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
+                                    <a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
                                 </td>
                                 <td width="30%">
                                     <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
@@ -238,7 +238,7 @@
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn btn-primary"
-                                           href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}"><i
+                                           href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}"><i
                                                 class="icon-tasks icon-white"></i>
                                         </a>
                                         <a class="btn btn-primary dropdown-toggle"
@@ -248,7 +248,7 @@
                                             <li><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}"><i
                                                     class="icon-pencil"></i> View </a></li>
                                             <li>
-                                                <form action="/webscanners/zap_rescan/" method="POST"
+                                                <form action="/zapscanner/zap_rescan/" method="POST"
                                                       class="forms-sample">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="old_scan_id"
@@ -265,7 +265,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <form action="/webscanners/del_scan/" method="post" class="forms-sample">
+                                    <form action="/zapscanner/del_zap_scan/" method="post" class="forms-sample">
 
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_scanid" value="{{data.scan_scanid}}"/>
