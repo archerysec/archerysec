@@ -31,7 +31,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4t9wrak-z(#hb&5!m$+s&plnl0a7nme4n=pn4juks!nu@5@(7l'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -138,7 +138,7 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join("/", 'static/')
+STATIC_ROOT = os.path.join("/", '/static/')
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
