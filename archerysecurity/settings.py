@@ -138,7 +138,7 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join("/", 'static/')
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
