@@ -28,6 +28,11 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 ## Demo
 
+URL: [Demo Application](https://archerysec-test.herokuapp.com/) <br>
+Username: archerysec <br>
+Password: archerysec@archerysec <br>
+<br>
+<br>
 ![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery_demo.gif)
 
 ![Overview](https://raw.githubusercontent.com/anandtiwarics/photoVideos/master/Photos/archery_architecture.png)
