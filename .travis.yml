@@ -42,7 +42,7 @@ script:
         # install bandit
         pip install bandit
         ## Run Bandit python static code
-        bandit -r * -x venv
+        bandit -lll -r * -x venv
         ;;
     esac
 
