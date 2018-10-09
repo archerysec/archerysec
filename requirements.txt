@@ -14,7 +14,7 @@ coreschema==0.0.4
 cryptography==2.3
 cssselect2==0.2.1
 defusedxml==0.5.0
-Django==2.1.2
+Django
 django-appconf==1.0.2
 django-background-tasks==1.1.13
 django-compat==1.0.15
