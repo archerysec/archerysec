@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'APIScan',
     'archerysettings',
     'networkscanners',
+    'staticscanners',
     'osintscan',
     'jiraticketing',
     'tools',

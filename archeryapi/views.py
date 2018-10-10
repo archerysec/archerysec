@@ -33,8 +33,10 @@ from scanners.scanner_parser.web_scanner import zap_xml_parser, \
     arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+import json
 from rest_framework.parsers import MultiPartParser, FormParser
+from staticscanners.models import bandit_scan_db, bandit_scan_results_db
+from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -229,6 +231,7 @@ class UpladScanResult(APIView):
         scan_id = uuid.uuid4()
         scan_status = "100"
         print xml_file
+        print scanner
         if scanner == "zap_scan":
             date_time = datetime.datetime.now()
             scan_dump = zap_scans_db(scan_url=scan_url,
@@ -307,6 +310,22 @@ class UpladScanResult(APIView):
             webinspect_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
+            return Response({"message": "Scan Data Uploaded"})
+
+        elif scanner == 'banditscan':
+            date_time = datetime.datetime.now()
+            scan_dump = bandit_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            data = json.loads(xml_file)
+            bandit_report_json(data=data,
+                               project_id=project_id,
+                               scan_id=scan_id)
             return Response({"message": "Scan Data Uploaded"})
 
         return Response({"message": "Scan Data Uploaded"})

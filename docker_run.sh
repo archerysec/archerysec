@@ -9,5 +9,6 @@ python manage.py makemigrations jiraticketing
 python manage.py makemigrations tools
 python manage.py makemigrations manual_scan
 python manage.py makemigrations archerysettings
+python manage.py makemigrations staticscanners
 python manage.py migrate
 python manage.py process_tasks &
