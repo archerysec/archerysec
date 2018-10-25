@@ -764,7 +764,7 @@ def del_cookies(request):
             del_cookie = cookie_db.objects.filter(url=cookies_target)
             del_cookie.delete()
             zap_plugin.zap_replacer(target_url=cookies_target)
-        return HttpResponseRedirect('/zapscanner/')
+        return HttpResponseRedirect('/webscanners/cookies_list/')
 
     return render(request, 'cookies_list.html')
 
