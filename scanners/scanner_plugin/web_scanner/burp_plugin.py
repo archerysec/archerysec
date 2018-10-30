@@ -13,7 +13,7 @@ from PyBurprestapi import burpscanner
 import os
 import json
 import time
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 import base64
 from webscanners.models import burp_scan_db, burp_scan_result_db
 import uuid
@@ -245,7 +245,7 @@ class burp_scans(object):
                 vul_col = "info"
 
             dup_data = name + location + severity
-            duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
             match_dup = burp_scan_result_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()

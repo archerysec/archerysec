@@ -9,7 +9,6 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-import xml.etree.ElementTree as ET
 from networkscanners.models import ov_scan_result_db, scan_save_db
 import datetime
 import uuid
@@ -128,7 +127,7 @@ def xml_parser(root, project_id, scan_id):
         vul_id = uuid.uuid4()
 
         dup_data = name + host + severity + port
-        duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
         match_dup = ov_scan_result_db.objects.filter(
             dup_hash=duplicate_hash).values('dup_hash').distinct()

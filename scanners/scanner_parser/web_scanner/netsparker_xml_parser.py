@@ -9,7 +9,7 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-import xml.etree.ElementTree as ET
+
 from webscanners.models import netsparker_scan_result_db, netsparker_scan_db
 import uuid
 import hashlib
@@ -121,7 +121,7 @@ def xml_parser(root,
             vul_col = "info"
 
         dup_data = str(vuln_type) + str(vuln_url) + str(vuln_severity)
-        duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
         match_dup = netsparker_scan_result_db.objects.filter(
             dup_hash=duplicate_hash).values('dup_hash').distinct()
         lenth_match = len(match_dup)

@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from webscanners.models import acunetix_scan_db, acunetix_scan_result_db
 import uuid
 import hashlib
@@ -222,7 +221,7 @@ def xml_parser(root, project_id, scan_id):
                 vuln_id = uuid.uuid4()
                 # print VulnName, ScanStartURL, VulnSeverity
                 dup_data = str(VulnName) + str(ScanStartURL) + str(VulnSeverity)
-                duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
                 match_dup = acunetix_scan_result_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)

@@ -29,7 +29,7 @@ def email_notify():
             email_from = data['from_email']
             to_email = data['to_email']
     except Exception as e:
-        print e
+        print(e)
 
     send_mail(
         email_subject,

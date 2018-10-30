@@ -17,13 +17,11 @@ import os
 import threading
 import time
 import uuid
-import xml.etree.ElementTree as ET
-
+import defusedxml.ElementTree as ET
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response, HttpResponse
 from django.utils import timezone
-
 from archerysettings import save_settings
 from archerysettings import load_settings
 from networkscanners.models import scan_save_db, \
@@ -118,7 +116,7 @@ def scan_vul_details(request):
                 severity = vi.severity
                 port = vi.port
                 dup_data = name + host + severity + port
-                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
                 ov_scan_result_db.objects.filter(
                     scan_id=scan_id,
                     vul_id=vuln_id).update(
@@ -714,7 +712,7 @@ def nessus_vuln_details(request):
                 severity = vi.severity
                 port = vi.port
                 dup_data = scan_ip + plugin_name + severity + port
-                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
                 nessus_report_db.objects.filter(scan_id=scan_id,
                                                 vul_id=vuln_id).update(false_positive=false_positive,
                                                                        vuln_status=status,

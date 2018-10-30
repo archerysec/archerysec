@@ -1,10 +1,46 @@
-version: '3'
+version: '3.6'
 
 services:
-  archeryweb:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
+  db:
+    image: postgres:10.1-alpine
     volumes:
-      - .:/Archerysec
+      - postgres_data:/var/lib/postgresql/data/
+
+  archerysec:
+    image: archerysec/archerysec:latest
+  #  build: .
+    command: install.sh
+    command: python manage.py runserver 0.0.0.0:8008
     ports:
-      - "8000:8000"
+      - "8008:8008"
+    expose:
+      - "8008"
+    depends_on:
+      - db
+
+  zaproxy:
+    image: owasp/zap2docker-stable
+    command: zap.sh -daemon -host 0.0.0.0 -port 8090 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+    ports:
+      - "8090:8090"
+    expose:
+    # ZAP is running on 8090, we want it to be accessible by our tools
+      - "8090"
+    links:
+      - archerysec
+
+  openvas:
+    image: avhost/docker-openvas
+    ports:
+      - "443:443"
+      - "9390:9390"
+      - "9392:9392"
+    expose:
+      - "9390"
+      - "9392"
+      - "443"
+    links:
+      - archerysec
+
+volumes:
+  postgres_data:

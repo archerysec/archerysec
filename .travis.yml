@@ -1,0 +1,56 @@
+sudo: required
+language: python
+install: true
+
+env:
+  - TEST=integration-test
+  - TEST=docker-bench-security
+  - TEST=bandit
+
+matrix:
+  allow_failures:
+    - env: TEST=bandit
+
+services:
+  - docker
+
+before_script:
+  - export -f travis_fold
+  - export REPO=archerysec/archerysec
+  - export TRAVIS_TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+
+script:
+ - |
+    echo "Running test=$TEST"
+    case "$TEST" in
+      integration-test)
+        travis_fold start "integration-test"
+        bash integration-test.sh || exit 1
+        travis_fold end "integration-test"
+        ;;
+      sourceclear)
+        ## Run the SRC:CLR Scan
+        curl -sSL https://download.sourceclear.com/ci.sh | bash
+        ;;
+      docker-bench-security)
+        ## Run Docker Bench for Security
+        git clone https://github.com/docker/docker-bench-security.git
+        cd docker-bench-security
+        sh docker-bench-security.sh
+        ;;
+      bandit)
+        # install bandit
+        pip install bandit
+        ## Run Bandit python static code
+        bandit -lll -r * -x venv
+        ;;
+    esac
+
+after_success:
+  #Push to docker repo
+  - |
+    if [ "$TRAVIS_TAG" != "" ] && [ "$DOCKER_USER" != "" ] && [  "$DOCKER_PASS" != "" ]; then
+      docker tag $REPO $REPO:$TRAVIS_TAG
+      docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+      docker push $REPO ;
+    fi

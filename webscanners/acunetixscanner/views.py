@@ -108,7 +108,7 @@ def acunetix_vuln_out(request):
                 url = vi.ScanStartURL
                 Severity = vi.VulnSeverity
                 dup_data = name + url + Severity
-                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
                 acunetix_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                        scan_id=scan_id).update(false_positive=false_positive,
                                                                                vuln_status=status,

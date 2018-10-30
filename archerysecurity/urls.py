@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^webinspectscanner/', include('webscanners.webinspectscanner.urls')),
     url(r'^projects/', include('projects.urls')),
     url(r'^networkscanners/', include('networkscanners.urls')),
+    url(r'^staticscanners/', include('staticscanners.urls')),
+    url(r'^banditscanner/', include('staticscanners.banditscanner.urls')),
     url(r'^api/', include('archeryapi.urls')),
     url(r'^scanapi/', include('APIScan.urls')),
     url(r'^', include('Dashboard.urls')),

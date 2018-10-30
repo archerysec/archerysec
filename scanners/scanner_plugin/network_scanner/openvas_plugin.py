@@ -240,7 +240,7 @@ def vuln_an_id(scan_id):
             if data.scan_ip == host:
 
                 dup_data = name + host + severity
-                duplicate_hash = hashlib.sha1(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
                 save_all = ov_scan_result_db(scan_id=scan_id,
                                              vul_id=vul_id,

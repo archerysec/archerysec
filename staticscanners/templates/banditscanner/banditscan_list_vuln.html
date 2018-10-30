@@ -1,0 +1,63 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Vulnerabilities Details</a></div>
+        <h1>Vulnerabilities List</h1>
+    </div>
+    <div class="container-fluid">
+
+        <!--<div class="span3 offset6">-->
+            <!--{% if messages %}-->
+
+            <!--{% for message in messages %}-->
+            <!--<div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"-->
+                                                            <!--href="#">×</a>-->
+                <!--<p class="alert-heading">{{ message }}</p>-->
+
+                <!--{% endfor %}-->
+
+                <!--{% endif %}-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Vulnerability List</h5>
+                        <!--<div class="buttons"><a data-toggle="modal" href="/acunetixscanner/add_vuln/?scan_id={{ scan_id }}&scanner=arachni"-->
+                                                <!--class="btn btn-primary btn-mini"><i-->
+                                <!--class="icon-plus icon-white"></i> Add new Vulnerability</a>-->
+                        <!--</div>-->
+                    </div>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <!--<th>Project ID</th>-->
+                                <th>Vulnerability</th>
+                                <th>Risk</th>
+                                <!--<th></th>-->
+                                <!--<th></th>-->
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in bandit_all_vuln %}
+                            <tr data-target="#">
+                                <!--<td>{{data.project_id}}</td>-->
+                                <td><a href="/banditscanner/banditscan_vuln_data/?scan_id={{data.scan_id}}&test_name={{data.test_name}}">{{data.test_name}}</a>
+                                </td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

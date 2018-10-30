@@ -1,6 +1,6 @@
 [![Follow Archery on Twitter](https://img.shields.io/twitter/follow/archerysec.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/user?screen_name=archerysec "Follow Archery on Twitter")
 
-[![PyPI - License](https://img.shields.io/pypi/l/Django.svg)](https://github.com/archerysec/archerysec/blob/master/LICENSE) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/djangorestframework.svg) ![Python - Python Version](https://img.shields.io/badge/Python-2.7-red.svg)
+[![PyPI - License](https://img.shields.io/pypi/l/Django.svg)](https://github.com/archerysec/archerysec/blob/master/LICENSE) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/djangorestframework.svg) ![Python - Python Version](https://img.shields.io/badge/Python-2.7-red.svg) ![Travis-ci](https://api.travis-ci.com/archerysec/archerysec.svg?branch=master)
 
 [![Road Map](https://img.shields.io/badge/Road-Map-orange.svg)](https://github.com/archerysec/archerysec/projects/1)
 
@@ -16,7 +16,6 @@ Archery
 =================
 Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.
 
-
 <p align="center">
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
@@ -27,8 +26,13 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 > [API Documentation](http://developers.archerysec.info/)
 
-## Demo
+## Demo Application
 
+URL: [https://archerysec-test.herokuapp.com/](https://archerysec-test.herokuapp.com/) <br>
+Username: archerysec <br>
+Password: archerysec@archerysec<br>
+<br>
+<br>
 ![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery_demo.gif)
 
 ![Overview](https://raw.githubusercontent.com/anandtiwarics/photoVideos/master/Photos/archery_architecture.png)

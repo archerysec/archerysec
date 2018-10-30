@@ -19,7 +19,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from easy_pdf.views import render_to_pdf_response
 from selenium import webdriver
-from archerysettings import save_settings
+from archerysettings.models import zap_settings_db
 from projects.models import project_db
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from scanners.scanner_plugin.web_scanner import zap_plugin
@@ -35,6 +35,8 @@ from jiraticketing.models import jirasetting
 from archerysettings.models import zap_settings_db
 import hashlib
 
+
+scans_status = None
 
 def launch_zap_scan(target_url, project_id, rescan_id, rescan):
     """
@@ -301,7 +303,7 @@ def zap_rescan(request):
         thread.start()
         messages.add_message(request, messages.SUCCESS, 'Re-Scan Launched')
 
-    return HttpResponseRedirect('/zapscanner/scans_list/')
+    return HttpResponseRedirect('/zapscanner/zap_scan_list/')
 
 
 def zap_scan_list(request):
@@ -385,7 +387,7 @@ def zap_vuln_details(request):
                 url = vi.url
                 risk = vi.risk
                 dup_data = name + url + risk
-                false_positive_hash = hashlib.sha1(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
                 zap_scan_results_db.objects.filter(
                     vuln_id=vuln_id,
                     scan_id=scan_id).update(false_positive=false_positive,
@@ -443,7 +445,7 @@ def zap_settings(request):
 
     all_zap = zap_settings_db.objects.all()
     for zap in all_zap:
-        global zap_api_key, zap_hosts, zap_ports
+        # global zap_api_key, zap_hosts, zap_ports
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
         zap_ports = zap.zap_port
@@ -465,18 +467,20 @@ def zap_setting_update(request):
     :return:
     """
     # Load ZAP setting function
-    save_setting = save_settings.SaveSettings(setting_file)
+    # save_setting = save_settings.SaveSettings(setting_file)
 
     if request.method == 'POST':
         apikey = request.POST.get("apikey", )
         zaphost = request.POST.get("zappath", )
         port = request.POST.get("port", )
+        save_data = zap_settings_db(
+            zap_url=zaphost,
+            zap_port=port,
+            zap_api=apikey
+        )
+        save_data.save()
 
-        save_setting.save_zap_settings(apikey=apikey,
-                                       zaphost=zaphost,
-                                       zaport=port)
-
-        return HttpResponseRedirect('/zapscanner/setting/')
+        return HttpResponseRedirect('/webscanners/setting/')
 
     messages.add_message(request,
                          messages.SUCCESS,
