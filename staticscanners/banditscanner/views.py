@@ -17,6 +17,7 @@ import hashlib
 
 def banditscans_list(request):
     """
+    Bandit Scan list.
     :param request:
     :return:
     """
@@ -28,7 +29,7 @@ def banditscans_list(request):
 
 def banditscan_list_vuln(request):
     """
-
+    Vulnerability list.
     :param request:
     :return:
     """
@@ -52,7 +53,6 @@ def banditscan_list_vuln(request):
 
 def banditscan_vuln_data(request):
     """
-
     :param request:
     :return:
     """

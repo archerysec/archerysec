@@ -35,6 +35,7 @@ filename = None
 more_info = None
 vul_col = None
 
+
 def bandit_report_json(data, project_id, scan_id):
     """
 
@@ -145,8 +146,6 @@ def bandit_report_json(data, project_id, scan_id):
                 else:
                     false_positive = 'No'
 
-                print(vul_col)
-
                 save_all = bandit_scan_results_db(
                     scan_id=scan_id,
                     # rescan_id = rescan_id,
@@ -178,11 +177,13 @@ def bandit_report_json(data, project_id, scan_id):
         total_high = len(all_bandit_data.filter(issue_severity="HIGH"))
         total_medium = len(all_bandit_data.filter(issue_severity="MEDIUM"))
         total_low = len(all_bandit_data.filter(issue_severity="LOW"))
-        # total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
+        total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
+        print "total duplicats", total_duplicate
 
         bandit_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low
+            SEVERITY_LOW=total_low,
+            total_dup=total_duplicate
         )
