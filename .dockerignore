@@ -1,0 +1,6 @@
+.git
+*.pyc
+*.log
+scanners/zap.log
+.DS_Store
+*Postman*

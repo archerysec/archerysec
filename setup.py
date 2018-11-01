@@ -25,7 +25,7 @@ setup(
         'pycparser==2.18',
         'python-owasp-zap-v2.4==0.0.13',
         'pytz==2017.3',
-        'requests==2.18.4',
+        'requests==2.20.0',
         'selenium==3.8.0',
         'six==1.11.0',
         'urllib3==1.22',

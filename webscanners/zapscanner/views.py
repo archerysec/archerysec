@@ -36,6 +36,8 @@ from archerysettings.models import zap_settings_db
 import hashlib
 
 
+scans_status = None
+
 def launch_zap_scan(target_url, project_id, rescan_id, rescan):
     """
     The function Launch ZAP Scans.

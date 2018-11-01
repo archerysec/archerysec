@@ -1,4 +1,5 @@
 pip install -r requirements.txt
+rm -rf /root/.cache
 yes yes | python manage.py collectstatic
 python manage.py makemigrations networkscanners
 python manage.py makemigrations webscanners
