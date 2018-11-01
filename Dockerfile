@@ -1,6 +1,6 @@
 #Ubuntu base OS
 FROM ubuntu:18.04
-LABEL MAINTAINER="Anand Tiwari"  
+LABEL MAINTAINER="Anand Tiwari"
 
 #Create archerysec folder.
 RUN mkdir /archerysec
@@ -16,6 +16,7 @@ RUN \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install --quiet --yes --fix-missing \
     make \
+    postgresql-client-10 \
     sslscan \
     nikto \
     nmap \

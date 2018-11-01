@@ -5,18 +5,32 @@ services:
     image: postgres:10.1-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_PASSWORD=archerysec
+      - POSTGRES_USER=archerysec
+      - POSTGRES_DB=archerysec
+
 
   archerysec:
-    image: archerysec/archerysec:latest
-  #  build: .
-    command: install.sh
+    # image: archerysec/archerysec:latest
+    build: .
+    # command: install.sh
     command: python manage.py runserver 0.0.0.0:8008
     ports:
       - "8008:8008"
+    volumes:
+      - .:/archerysec
     expose:
       - "8008"
     depends_on:
       - db
+    links:
+      - db
+    environment:
+      - POSTGRES_PASSWORD=archerysec
+      - POSTGRES_USER=archerysec
+      - POSTGRES_DB=archerysec
+
 
   zaproxy:
     image: owasp/zap2docker-stable
