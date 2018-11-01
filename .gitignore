@@ -6,9 +6,6 @@ apidata.json
 cookies.txt
 db.sqlite3
 geckodriver.log
-migrations
-networkscanners/migrations/0001_initial.py
 scanners/zap.log
 site/
-webscanners/migrations/0001_initial.py
 archerysecurity/local_settings.py
