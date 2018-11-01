@@ -138,6 +138,17 @@ $ python manage.py runserver
 
 Note: Make sure these steps (except createsuperuser) should be perform after every git pull.
 
+## Note on installation for developers and contributors
+
+If you wish to contribute to the project, make sure you are using requirements-dev.txt and
+run this command once you have installed the requirements
+
+```
+pre-commit install
+```
+
+This will automatically check for code linting and rules used on this project
+and if everything is correct, the commit will be made.
 
 ## Docker Installation
 
@@ -196,8 +207,8 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [x] AppScan (XML)
     - [x] Netsparker (XML)
     - [ ] AppSpider  
-* Popular Tools plugin support. 
-    - [x] Nmap 
+* Popular Tools plugin support.
+    - [x] Nmap
     - [x] SSL Analysis
     - [x] Nikto
     - [ ] WPScan
@@ -224,7 +235,7 @@ Anand Tiwari -  https://github.com/anandtiwarics
 
 ### Contributors
 
-[GMedian](https://github.com/GMedian) - Nmap+Vulners 
+[GMedian](https://github.com/GMedian) - Nmap+Vulners
 
 ### Social Media
 
