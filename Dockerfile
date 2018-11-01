@@ -1,31 +1,35 @@
 #Ubuntu base OS
 FROM ubuntu:18.04
-MAINTAINER Anand Tiwari
+LABEL MAINTAINER="Anand Tiwari"  
 
 #Create archerysec folder.
-RUN mkdir archerysec
+RUN mkdir /archerysec
 
 #Set archerysec as a work directory.
-WORKDIR archerysec
+WORKDIR /archerysec
 
-#Adding requirements file.
-ADD requirements.txt archerysec
-
-# Update & Upgrade Ubuntu
-RUN apt-get update && apt-get -y upgrade
-
-#Install dependency tools.
-RUN apt-get install --quiet --yes --fix-missing \
-        make \
-        sslscan \
-        nikto \
-        nmap \
-        python \
-        wget \
-        curl \
-        unzip \
-        git \
-        python-pip
+# Update & Upgrade Ubuntu. Install packages
+RUN \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get --quiet -y upgrade && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install --quiet --yes --fix-missing \
+    make \
+    sslscan \
+    nikto \
+    nmap \
+    python \
+    wget \
+    curl \
+    unzip \
+    git \
+    python-pip \
+    && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get autoremove --purge -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 #Copy all file to archerysec folder.
 COPY . /archerysec
@@ -33,11 +37,8 @@ COPY . /archerysec
 #Exposing port.
 EXPOSE 8000
 
-#Given permission to install.sh file.
-RUN chmod +x install.sh
-
 #Running installation file.
-RUN ./install.sh
+RUN chmod +x install.sh && ./install.sh
 
 # UP & RUN application.
-CMD ["python","manage.py","runserver","0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
