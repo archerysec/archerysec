@@ -12,7 +12,7 @@ class bandit_scan_db(models.Model):
     project_id = models.UUIDField(blank=True, null=True)
     project_name = models.TextField(blank=True, null=True)
     source_line = models.TextField(blank=True, null=True)
-    total_vuln = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
     SEVERITY_HIGH = models.TextField(blank=True, null=True)
     CONFIDENCE_HIGH = models.TextField(blank=True, null=True)
     CONFIDENCE_LOW = models.TextField(blank=True, null=True)
@@ -25,7 +25,7 @@ class bandit_scan_db(models.Model):
     SEVERITY_LOW = models.TextField(blank=True, null=True)
     scan_status = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
-    total_dup = models.TextField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
 
 
 class bandit_scan_results_db(models.Model):
@@ -60,13 +60,13 @@ class retirejs_scan_db(models.Model):
     project_id = models.UUIDField(blank=True, null=True)
     project_name = models.TextField(blank=True, null=True)
     source_line = models.TextField(blank=True, null=True)
-    total_vuln = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
     SEVERITY_HIGH = models.TextField(blank=True, null=True)
     SEVERITY_MEDIUM = models.TextField(blank=True, null=True)
     SEVERITY_LOW = models.TextField(blank=True, null=True)
     scan_status = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
-    total_dup = models.TextField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
 
 
 class retirejs_scan_results_db(models.Model):
@@ -88,7 +88,3 @@ class retirejs_scan_results_db(models.Model):
     false_positive_hash = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
     issue = models.TextField(null=True, blank=True)
-
-
-
-
