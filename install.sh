@@ -12,4 +12,5 @@ python manage.py makemigrations manual_scan
 python manage.py makemigrations archerysettings
 python manage.py makemigrations staticscanners
 python manage.py migrate
+python manage.py initadmin
 python manage.py process_tasks &

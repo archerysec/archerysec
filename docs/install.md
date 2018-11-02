@@ -62,9 +62,13 @@ Now you need to create application Credentials
 python manage.py createsuperuser
 ```
 
+Or you could auto create the superuser executing. This command uses the ADMINS
+setting to create the admin accounts so remember to set some username first
+``` sh
+python manage.py initadmin
+```
+
 Let's run the application
 ``` sh
 python manage.py runserver
 ```
-
-
