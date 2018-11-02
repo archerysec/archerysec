@@ -63,7 +63,8 @@ python manage.py createsuperuser
 ```
 
 Or you could auto create the superuser executing. This command uses the ADMINS
-setting to create the admin accounts so remember to set some username first
+setting to create the admin accounts so remember to set some username first.
+Default password is "admin". REMEMBER TO CHANGE IT!
 ``` sh
 python manage.py initadmin
 ```
