@@ -24,3 +24,7 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+
+ADMINS = [
+    ('admin', 'admin@example.com')
+]
