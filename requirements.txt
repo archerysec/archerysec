@@ -19,6 +19,7 @@ django-appconf==1.0.2
 django-background-tasks==1.1.13
 django-compat==1.0.15
 django-cryptography==0.2
+django-debug-toolbar==1.10.1
 django-easy-pdf==0.1.1
 django-fernet-fields==0.5
 django-settings-export==1.2.1
