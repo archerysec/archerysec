@@ -180,7 +180,7 @@ class Project(generics.CreateAPIView):
 
             if not project_name:
                 return Response({"error": "No name passed"})
-            return Response({"message": "Project Created"})
+            return Response({"message": "Project Created", "Project ID": project_id})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -246,7 +246,11 @@ class UpladScanResult(APIView):
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml)
-            return Response({"message": "Scan Data Uploaded"})
+            return Response({"message": "ZAP Scan Data Uploaded",
+                             "scanner": scanner,
+                             "project_id": project_id,
+                             "scan_id": scan_id
+                             })
         elif scanner == "burp_scan":
             date_time = datetime.datetime.now()
             scan_dump = burp_scan_db(url=scan_url,
@@ -262,7 +266,11 @@ class UpladScanResult(APIView):
                                                  scan_url,
                                                  scan_id)
             do_xml_data.burp_scan_data(root_xml)
-            return Response({"message": "Scan Data Uploaded"})
+            return Response({"message": "Burp Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
 
         elif scanner == "arachni":
             date_time = datetime.datetime.now()
@@ -277,7 +285,11 @@ class UpladScanResult(APIView):
             arachni_xml_parser.xml_parser(project_id=project_id,
                                           scan_id=scan_id,
                                           root=root_xml)
-            return Response({"message": "Scan Data Uploaded"})
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
 
         elif scanner == 'netsparker':
             date_time = datetime.datetime.now()
@@ -294,7 +306,11 @@ class UpladScanResult(APIView):
             netsparker_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
-            return Response({"message": "Scan Data Uploaded"})
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
         elif scanner == 'webinspect':
             date_time = datetime.datetime.now()
             scan_dump = webinspect_scan_db(
@@ -310,7 +326,11 @@ class UpladScanResult(APIView):
             webinspect_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
-            return Response({"message": "Scan Data Uploaded"})
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
 
         elif scanner == 'banditscan':
             date_time = datetime.datetime.now()
@@ -326,6 +346,10 @@ class UpladScanResult(APIView):
             bandit_report_json(data=data,
                                project_id=project_id,
                                scan_id=scan_id)
-            return Response({"message": "Scan Data Uploaded"})
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
 
         return Response({"message": "Scan Data Uploaded"})

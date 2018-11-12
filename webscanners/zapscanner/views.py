@@ -35,8 +35,8 @@ from jiraticketing.models import jirasetting
 from archerysettings.models import zap_settings_db
 import hashlib
 
-
 scans_status = None
+
 
 def launch_zap_scan(target_url, project_id, rescan_id, rescan):
     """
@@ -301,7 +301,7 @@ def zap_rescan(request):
             args=(scan_url, project_id, rescan_id, rescan))
         thread.daemon = True
         thread.start()
-        messages.add_message(request, messages.SUCCESS, 'Re-Scan Launched')
+        # messages.add_message(request, messages.SUCCESS, 'Re-Scan Launched')
 
     return HttpResponseRedirect('/zapscanner/zap_scan_list/')
 
