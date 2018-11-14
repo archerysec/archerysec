@@ -38,7 +38,7 @@ import hashlib
 scans_status = None
 
 
-def launch_zap_scan(target_url, project_id, rescan_id, rescan):
+def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     """
     The function Launch ZAP Scans.
     :param target_url: Target URL
@@ -61,13 +61,13 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan):
     print 'Scanning Target %s' % target_url
     """ ZAP Scan trigger on target_url  """
     zap_scan_id = zap.zap_scan()
-    un_scanid = uuid.uuid4()
+    # un_scanid = uuid.uuid4()
     date_time = datetime.now()
     try:
         save_all_scan = zap_scans_db(
             project_id=project_id,
             scan_url=target_url,
-            scan_scanid=un_scanid,
+            scan_scanid=scan_id,
             date_time=date_time,
             rescan_id=rescan_id,
             rescan=rescan,
@@ -78,7 +78,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan):
         print e
     zap.zap_scan_status(
         scan_id=zap_scan_id,
-        un_scanid=un_scanid
+        un_scanid=scan_id
     )
     """ Save Vulnerability in database """
     time.sleep(5)
@@ -87,7 +87,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan):
     save_all_vuln = zap.zap_result_save(
         all_vuln=all_vuln,
         project_id=project_id,
-        un_scanid=un_scanid,
+        un_scanid=scan_id,
     )
     print save_all_vuln
     # return HttpResponse(status=201)
@@ -112,9 +112,10 @@ def zap_scan(request):
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
             print "Targets -", target
+            scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_zap_scan,
-                args=(target, project_id, rescan_id, rescan))
+                args=(target, project_id, rescan_id, rescan, scan_id))
             thread.daemon = True
             thread.start()
 
@@ -144,9 +145,10 @@ def task(target_url, project_id, scanner):
     for i in range(0, split_length):
         target = target__split.__getitem__(i)
         if scanner == 'zap_scan':
+            scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_zap_scan,
-                args=(target, project_id, rescan_id, rescan))
+                args=(target, project_id, rescan_id, rescan, scan_id))
             thread.daemon = True
             thread.start()
         elif scanner == 'burp_scan':
@@ -295,10 +297,10 @@ def zap_rescan(request):
         project_id = request.POST.get('project_id')
         rescan_id = request.POST.get('old_scan_id')
         rescan = 'Yes'
-
+        scan_id = uuid.uuid4()
         thread = threading.Thread(
             target=launch_zap_scan,
-            args=(scan_url, project_id, rescan_id, rescan))
+            args=(scan_url, project_id, rescan_id, rescan, scan_id))
         thread.daemon = True
         thread.start()
         # messages.add_message(request, messages.SUCCESS, 'Re-Scan Launched')

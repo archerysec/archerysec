@@ -14,7 +14,8 @@ from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, 
     netsparker_scan_db, webinspect_scan_db
 from networkscanners.models import scan_save_db, ov_scan_result_db
 from projects.models import project_db
-from webscanners.serializers import WebScanSerializer, WebScanResultSerializer, UploadScanSerializer
+from webscanners.serializers import WebScanSerializer, WebScanResultSerializer, UploadScanSerializer, \
+    WebScanStatusSerializer
 from rest_framework import status
 from webscanners import web_views
 from webscanners.zapscanner.views import launch_zap_scan
@@ -65,7 +66,11 @@ class WebScan(generics.ListCreateAPIView):
             rescan = 'No'
             if scanner == 'zap_scan':
                 # run_s = launch_zap_scan
-                thread = threading.Thread(target=launch_zap_scan, args=(target_url, project_id, rescanid, rescan))
+                thread = threading.Thread(target=launch_zap_scan, args=(target_url,
+                                                                        project_id,
+                                                                        rescanid,
+                                                                        rescan,
+                                                                        scan_id))
                 thread.daemon = True
                 thread.start()
 
@@ -200,6 +205,23 @@ class WebScanResult(generics.ListCreateAPIView):
             burp_scan = burp_scan_result_db.objects.filter(scan_id=scan_id)
             all_scans = chain(zap_scan, burp_scan)
             serialized_scans = WebScanResultSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class ZapScanStatus(generics.ListCreateAPIView):
+    queryset = zap_scans_db.objects.all()
+    serializer_class = WebScanStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = WebScanStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_scanid', )
+            zap_scan = zap_scans_db.objects.filter(scan_scanid=scan_id)
+            all_scans = chain(zap_scan)
+            serialized_scans = WebScanStatusSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
 
 
