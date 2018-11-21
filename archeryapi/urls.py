@@ -37,7 +37,8 @@ urlpatterns = [
     url(r'webscanresult/', views.WebScanResult.as_view()),
     url(r'zapscanstatus/', views.ZapScanStatus.as_view()),
     url(r'networkscanresult/', views.NetworkScanResult.as_view()),
-    url(r'uploadscan/', views.UpladScanResult.as_view())
+    url(r'uploadscan/', views.UpladScanResult.as_view()),
+    url(r'createuser/', views.CreateUsers.as_view())
 
 ]
 

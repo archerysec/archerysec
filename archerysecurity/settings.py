@@ -154,6 +154,7 @@ STRONGHOLD_PUBLIC_URLS = (
     r'^/accounts/login/$',  # Avoid redirect loop
     r'^/api.*?$',
     r'^/o.*?$',
+    r'^/api/createuser/$',
 )
 
 LOGIN_URL = '/login/'

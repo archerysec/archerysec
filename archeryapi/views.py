@@ -21,6 +21,7 @@ from webscanners import web_views
 from webscanners.zapscanner.views import launch_zap_scan
 from networkscanners import views
 from networkscanners.serializers import NetworkScanSerializer, NetworkScanResultSerializer
+from serializers import CreateUser
 from rest_framework import generics
 import uuid
 from projects.serializers import ProjectDataSerializers
@@ -38,7 +39,9 @@ import json
 from rest_framework.parsers import MultiPartParser, FormParser
 from staticscanners.models import bandit_scan_db, bandit_scan_results_db
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
-
+from django.contrib.auth.models import User
+from stronghold.decorators import public
+from rest_framework import authentication, permissions
 
 class WebScan(generics.ListCreateAPIView):
     queryset = zap_scans_db.objects.all()
@@ -239,6 +242,28 @@ class NetworkScanResult(generics.ListCreateAPIView):
             all_scans = ov_scan_result_db.objects.filter(scan_id=scan_id)
             serialized_scans = NetworkScanResultSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
+
+
+@public
+class CreateUsers(generics.CreateAPIView):
+    authentication_classes = ()
+    permission_classes = ()
+    serializer_class = CreateUser
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = CreateUser(data=request.data)
+        if serializer.is_valid():
+            username = request.data.get('username')
+            password = request.data.get('password')
+            email = request.data.get('email')
+            user = User.objects.create_user(username, email, password)
+            user.save()
+
+            return Response({"message": "User Created !!!"})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpladScanResult(APIView):
