@@ -35,7 +35,9 @@ urlpatterns = [
     url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     url(r'^api/', include('archeryapi.urls')),
     url(r'^scanapi/', include('APIScan.urls')),
-    url(r'^', include('Dashboard.urls')),
+
+    # Default url
+    url(r'', include('Dashboard.urls')),
 
     # API authentication
     url(r'^api-token-auth/', obtain_jwt_token),

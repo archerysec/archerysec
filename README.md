@@ -103,11 +103,10 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 
 ## Automated installation
 
-```$ git clone https://github.com/archerysec/archerysec.git
+```
+$ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
-$ chmod +x install.sh
 $ sudo ./install.sh
-
 ```
 
 ### Start app
