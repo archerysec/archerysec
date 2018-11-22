@@ -21,6 +21,11 @@ class zap_settings_db(models.Model):
     zap_port = models.TextField(blank=True, null=True)
 
 
+class arachni_settings_db(models.Model):
+    arachni_url = models.TextField(blank=True, null=True)
+    arachni_port = models.TextField(blank=True, null=True)
+
+
 class burp_setting_db(models.Model):
     burp_url = models.TextField(blank=True, null=True)
     burp_port = models.TextField(blank=True, null=True)

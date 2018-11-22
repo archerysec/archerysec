@@ -1,0 +1,56 @@
+{% extends 'header.html' %}
+{% block body %}
+
+<div id="content">
+    <!--breadcrumbs-->
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
+            Home</a></div>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="span3 offset6">
+            {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
+                                                            href="#">×</a>
+                <p class="alert-heading">{{ message }}</p>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+        </div>
+        <div class="row-fluid">
+            <div class="span6 offset3">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
+                        <h5>arachni Settings</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <form class="form-horizontal" method="POST" action="/arachniscanner/arachni_setting_update/">{% csrf_token %}
+                            <div class="control-group">
+                                <label class="control-label">arachni API Host :</label>
+                                <div class="controls"><small><em>arachni API Host address (Ex.http://127.0.0.1 or https://127.0.0.1)</em></small>
+                                    <input type="text" name="arachnihost" value="{{ arachni_host }}" class="span11"
+                                           placeholder="arachni API Host"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">arachni API Port :</label>
+                                <div class="controls"><small><em>arachni API Port (Ex. 8080)</em></small>
+                                    <input type="text" name="arachniport" value="{{ arachni_port }}" class="span11"
+                                           placeholder="PORT"/>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

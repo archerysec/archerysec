@@ -79,6 +79,22 @@
                     }
            });
        }
+       if ($('[name="optradio5"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'/arachniscanner/arachni_scan_launch/',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
 
 	if (opt) {
 		$('#status').text('Scan launched.').css	({'color': '#5bb75b', 'margin-left': '200px'});
@@ -263,6 +279,11 @@ $(document).on('submit', '#exclude_url', function(e){
                     <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                         <label>
                             <input name="optradio4" type="checkbox"><span>Nikto</span>
+                        </label>
+                    </div>
+                    <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
+                        <label>
+                            <input name="optradio5" type="checkbox"><span>Arachni</span>
                         </label>
                     </div>
                 </div>

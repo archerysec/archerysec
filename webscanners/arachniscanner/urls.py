@@ -33,5 +33,16 @@ urlpatterns = [
     url(r'^arachni_del_vuln',
         views.arachni_del_vuln,
         name='arachni_del_vuln'),
+    url(r'^arachni_settings/',
+        views.arachni_settings,
+        name='arachni_settings'),
+
+    url(r'^arachni_setting_update/',
+        views.arachni_setting_update,
+        name='arachni_setting_update'),
+
+    url(r'^arachni_scan_launch/',
+        views.arachni_scan,
+        name='arachni_scan_launch'),
 
 ]

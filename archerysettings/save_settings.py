@@ -3,7 +3,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -13,7 +13,11 @@
 
 import json
 from django.core import signing
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
+from archerysettings.models import zap_settings_db,\
+    burp_setting_db,\
+    openvas_setting_db,\
+    nmap_vulners_setting_db, \
+    arachni_settings_db
 
 
 class SaveSettings:
@@ -34,15 +38,15 @@ class SaveSettings:
         all_nv = nmap_vulners_setting_db.objects.all()
         all_nv.delete()
         if timing > 5:
-            timing=5
-        elif timing <0:
-            timing=0
-            
+            timing = 5
+        elif timing < 0:
+            timing = 0
+
         save_nv_settings = nmap_vulners_setting_db(enabled=enabled,
-                                           version=version,
-                                           online=online,
-                                           timing=timing
-                                           )
+                                                   version=version,
+                                                   online=online,
+                                                   timing=timing
+                                                   )
         save_nv_settings.save()
 
     def save_zap_settings(self, apikey, zaphost, zaport):
@@ -61,20 +65,6 @@ class SaveSettings:
                                            zap_port=zaport
                                            )
         save_zapsettings.save()
-
-        # try:
-        #     with open(self.setting_file, 'r+') as f:
-        #         sig_apikey = signing.dumps(apikey)
-        #         data = json.load(f)
-        #         data['zap_api_key'] = sig_apikey
-        #         data['zap_path'] = str(zaphost)
-        #         data['zap_port'] = zaport
-        #         f.seek(0)
-        #         json.dump(data, f, indent=4)
-        #         f.truncate()
-        # except Exception as e:
-        #     return e
-        # return f.close()
 
     def save_burp_settings(self, burphost, burport):
         """
@@ -166,3 +156,18 @@ class SaveSettings:
         except Exception as e:
             return e
         return f.close()
+
+    def save_arachni_settings(self, arachnihost, arachniport):
+        """
+
+        :param arachnihost:
+        :param arachniport:
+        :return:
+        """
+        all_arachni = arachni_settings_db.objects.all()
+        all_arachni.delete()
+
+        save_arachnisettings = arachni_settings_db(arachni_url=arachnihost,
+                                                   arachni_port=arachniport,
+                                                   )
+        save_arachnisettings.save()

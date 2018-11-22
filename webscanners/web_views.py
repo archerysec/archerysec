@@ -54,8 +54,11 @@ from webscanners.models import netsparker_scan_db, \
     webinspect_scan_result_db
 from webscanners.zapscanner.views import launch_zap_scan
 
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
-import hashlib
+from archerysettings.models import zap_settings_db,\
+    burp_setting_db,\
+    openvas_setting_db,\
+    nmap_vulners_setting_db, \
+    arachni_settings_db
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -378,10 +381,6 @@ def setting(request):
     # Loading settings
     settings = load_settings.ArcherySettings(setting_file)
 
-    # Loading OpenVAS Settings
-    # ov_user = settings.openvas_username()
-    # ov_pass = settings.openvas_pass()
-    # ov_ip = settings.openvas_host()
     lod_ov_user = settings.openvas_username()
     lod_ov_pass = settings.openvas_pass()
     lod_ov_host = settings.openvas_host()
@@ -402,6 +401,18 @@ def setting(request):
     lod_apikey = zap_api_key
     zap_host = zap_hosts
     zap_port = zap_ports
+
+    # Loading Arachni Settings
+    arachni_hosts = ''
+    arachni_ports = ''
+
+    all_arachni = arachni_settings_db.objects.all()
+    for arachni in all_arachni:
+        arachni_hosts = arachni.arachni_url
+        arachni_ports = arachni.arachni_port
+
+    arachni_hosts = arachni_hosts
+    arachni_ports = arachni_ports
 
     # Loading NMAP Vulners Settings
     nv_enabled = False
@@ -448,6 +459,8 @@ def setting(request):
                   {'apikey': lod_apikey,
                    'zapath': zap_host,
                    'zap_port': zap_port,
+                   'arachni_hosts': arachni_hosts,
+                   'arachni_ports': arachni_ports,
                    'lod_ov_user': lod_ov_user,
                    'lod_ov_pass': lod_ov_pass,
                    'lod_ov_host': lod_ov_host,

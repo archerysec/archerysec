@@ -42,6 +42,8 @@ from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import ba
 from django.contrib.auth.models import User
 from stronghold.decorators import public
 from rest_framework import authentication, permissions
+from webscanners.arachniscanner.views import launch_arachni_scan
+
 
 class WebScan(generics.ListCreateAPIView):
     queryset = zap_scans_db.objects.all()
@@ -106,6 +108,14 @@ class WebScan(generics.ListCreateAPIView):
                     # time.sleep(5)
                 except Exception as e:
                     print e
+            elif scanner == 'arachni':
+                thread = threading.Thread(target=launch_arachni_scan, args=(target_url,
+                                                                            project_id,
+                                                                            rescanid,
+                                                                            rescan,
+                                                                            scan_id))
+                thread.daemon = True
+                thread.start()
 
             if not target_url:
                 return Response({"error": "No name passed"})

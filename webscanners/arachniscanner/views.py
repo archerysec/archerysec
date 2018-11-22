@@ -11,12 +11,121 @@
 
 from __future__ import unicode_literals
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from webscanners.models import burp_scan_result_db, \
     arachni_scan_db, arachni_scan_result_db
 from jiraticketing.models import jirasetting
 import hashlib
+import PyArachniapi
+from archerysettings.models import arachni_settings_db
+import uuid
+import threading
+from datetime import datetime
+import defusedxml.ElementTree as ET
+from scanners.scanner_parser.web_scanner import arachni_xml_parser
+import json
+import time
+
+
+def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
+    arachni_hosts = None
+    arachni_ports = None
+
+    all_arachni = arachni_settings_db.objects.all()
+    for arachni in all_arachni:
+        # global arachni_api_key, arachni_hosts, arachni_ports
+        arachni_hosts = arachni.arachni_url
+        arachni_ports = arachni.arachni_port
+
+    arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports)
+
+    data = {"url": target, "checks": "*"}
+    d = json.dumps(data)
+    print d
+    print "-------------------", type(d)
+
+    scan_launch = arachni.scan_launch(d)
+    time.sleep(3)
+
+    print("Scan Launched !!!!!")
+
+    date_time = datetime.now()
+
+    try:
+        save_all_scan = arachni_scan_db(
+            project_id=project_id,
+            url=target,
+            scan_id=scan_id,
+            date_time=date_time,
+            rescan_id=rescan_id,
+            rescan=rescan,
+        )
+
+        save_all_scan.save()
+
+    except Exception as e:
+        print e
+
+    scan_data = scan_launch.data
+
+    for key, value in scan_data.viewitems():
+        if key == 'id':
+            scan_run_id = value
+
+    scan_sum = arachni.scan_summary(id=scan_run_id).data
+    for key, value in scan_sum.viewitems():
+        if key == 'status':
+            scan_status = value
+    while scan_status != 'done':
+        arachni_scan_db.objects.filter(scan_id=scan_id).update(scan_status=scan_status)
+        scan_sum = arachni.scan_summary(id=scan_run_id).data
+        for key, value in scan_sum.viewitems():
+            if key == 'status':
+                scan_status = value
+                print scan_status
+        time.sleep(3)
+    print "scan_di", scan_run_id
+    if scan_status == 'done':
+        xml_report = arachni.scan_xml_report(id=scan_run_id).data
+        root_xml = ET.fromstring(xml_report)
+        arachni_xml_parser.xml_parser(project_id=project_id,
+                                      scan_id=scan_id,
+                                      root=root_xml)
+        arachni_scan_db.objects.filter(scan_id=scan_id).update(scan_status='100')
+        print("Data uploaded !!!!")
+
+    print scan_run_id
+
+
+def arachni_scan(request):
+    """
+    The function trigger Arachni scan.
+    :param request:
+    :return:
+    """
+    if request.method == "POST":
+        target_url = request.POST.get('scan_url')
+        print target_url
+        project_id = request.POST.get('project_id')
+        rescan_id = None
+        rescan = 'No'
+        target_item = str(target_url)
+        value = target_item.replace(" ", "")
+        target__split = value.split(',')
+        split_length = target__split.__len__()
+        for i in range(0, split_length):
+            target = target__split.__getitem__(i)
+            print "Targets -", target
+            scan_id = uuid.uuid4()
+            thread = threading.Thread(
+                target=launch_arachni_scan,
+                args=(target, project_id, rescan_id, rescan, scan_id))
+            thread.daemon = True
+            thread.start()
+
+    return render(request,
+                  'arachniscanner/arachni_scan_list.html')
 
 
 def arachni_list_vuln(request):
@@ -267,3 +376,53 @@ def arachni_del_vuln(request):
         messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/arachniscanner/arachni_list_vuln?scan_id=%s" % un_scanid)
+
+
+def arachni_settings(request):
+    """
+    The function calling arachni Scanner setting page.
+    :param request:
+    :return:
+    """
+    arachni_hosts = None
+    arachni_ports = None
+
+    all_arachni = arachni_settings_db.objects.all()
+    for arachni in all_arachni:
+        # global arachni_api_key, arachni_hosts, arachni_ports
+        arachni_hosts = arachni.arachni_url
+        arachni_ports = arachni.arachni_port
+
+    return render(request,
+                  'arachniscanner/arachni_settings_form.html',
+                  {
+                      'arachni_host': arachni_hosts,
+                      'arachni_port': arachni_ports,
+                  }
+                  )
+
+
+def arachni_setting_update(request):
+    """
+    The function Update the arachni settings.
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        arachnihost = request.POST.get("arachnihost", )
+        port = request.POST.get("arachniport", )
+        save_data = arachni_settings_db(
+            arachni_url=arachnihost,
+            arachni_port=port,
+        )
+        save_data.save()
+
+        return HttpResponseRedirect('/webscanners/setting/')
+
+    messages.add_message(request,
+                         messages.SUCCESS,
+                         'arachni Setting Updated ')
+
+    return render(request,
+                  'arachniscanner/arachni_settings_form.html')
