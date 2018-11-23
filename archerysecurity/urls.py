@@ -58,6 +58,7 @@ urlpatterns = [
     url(r'^manual_scan/', include('manual_scan.urls')),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns = [
