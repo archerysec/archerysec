@@ -34,7 +34,6 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
 
     all_arachni = arachni_settings_db.objects.all()
     for arachni in all_arachni:
-        # global arachni_api_key, arachni_hosts, arachni_ports
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
 
@@ -42,8 +41,6 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
 
     data = {"url": target, "checks": "*"}
     d = json.dumps(data)
-    print d
-    print "-------------------", type(d)
 
     scan_launch = arachni.scan_launch(d)
     time.sleep(3)
@@ -78,12 +75,16 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
         if key == 'status':
             scan_status = value
     while scan_status != 'done':
-        arachni_scan_db.objects.filter(scan_id=scan_id).update(scan_status=scan_status)
+        status = '0'
+        if scan_sum['statistics']['browser_cluster']['queued_job_count'] and scan_sum['statistics']['browser_cluster'][
+            'total_job_time']:
+            status = 100 - scan_sum['statistics']['browser_cluster']['queued_job_count'] * 100 / \
+                     scan_sum['statistics']['browser_cluster']['total_job_time']
+        arachni_scan_db.objects.filter(scan_id=scan_id).update(scan_status=status)
         scan_sum = arachni.scan_summary(id=scan_run_id).data
         for key, value in scan_sum.viewitems():
             if key == 'status':
                 scan_status = value
-                print scan_status
         time.sleep(3)
     print "scan_di", scan_run_id
     if scan_status == 'done':
