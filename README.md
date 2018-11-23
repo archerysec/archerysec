@@ -2,42 +2,65 @@
 
 [![PyPI - License](https://img.shields.io/pypi/l/Django.svg)](https://github.com/archerysec/archerysec/blob/master/LICENSE) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/djangorestframework.svg) ![Python - Python Version](https://img.shields.io/badge/Python-2.7-red.svg) ![Travis-ci](https://api.travis-ci.com/archerysec/archerysec.svg?branch=master)
 
-[![Road Map](https://img.shields.io/badge/Road-Map-orange.svg)](https://github.com/archerysec/archerysec/projects/1)
+[![Road Map](assets/roadmap-orange.svg)](https://github.com/archerysec/archerysec/projects/1)
 
 
-[![BlackHat USA Arsenal 2018](https://github.com/toolswatch/badges/blob/master/arsenal/usa/2018.svg)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/)
+[![BlackHat USA Arsenal 2018](assets/blackhat-usa-2018.svg)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/)
 
-[![BlackHat Asia Arsenal 2018](https://github.com/toolswatch/badges/blob/master/arsenal/asia/2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837)
+[![BlackHat Asia Arsenal 2018](assets/blackhat-asia-2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837)
 
-[![DEFCON 26 Demolabs](https://img.shields.io/badge/DEFCON%2026-Demo%20Labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
+[![DEFCON 26 Demolabs](assets/defcon-26-demo-labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
 
 
 Archery
 =================
+
+- [Demo Application](#demo-application)
+- [Overview of the tool](#overview-of-the-tool)
+    - [Note](#note)
+- [Requirements](#requirements)
+    - [OpenVAS](#openvas)
+    - [OWASP Zap](#owasp-zap)
+    - [Burp Scanner](#burp-scanner)
+    - [SSLScan](#sslscan)
+    - [Nikto](#nikto)
+    - [NMAP Vulners](#nmap-vulners)
+- [Automated installation](#automated-installation)
+- [Manual Installation](#manual-installation)
+- [Note on installation for developers and contributors](#note-on-installation-for-developers-and-contributors)
+- [Note on manual and automated installation](#note-on-manual-and-automated-installation)
+- [Docker Installation](#docker-installation)
+- [Using ArcherySec through docker compose](#using-archerysec-through-docker-compose)
+- [Setup third-party integrations](#setup-third-party-integrations)
+    - [ZAP running daemon mode](#zap-running-daemon-mode)
+    - [Zap Setting](#zap-setting)
+    - [OpenVAS Setting](#openvas-setting)
+- [Road Map](#road-map)
+- [Lead Developer](#lead-developer)
+- [Contributors](#contributors)
+- [Social Media](#social-media)
+
 Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.
 
-<p align="center">
-  <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
-</p>
+![ArcherySec - A security tool](assets/logo.png)
 
 ### Documentation
 
-> [Official Website & Documentation](https://archerysec.github.io/archerysec/)
-
-> [API Documentation](http://developers.archerysec.info/)
+* [Official Website & Documentation](https://archerysec.github.io/archerysec/)
+* [API Documentation](http://developers.archerysec.info/)
 
 ## Demo Application
 
-URL: [https://archerysec-test.herokuapp.com/](https://archerysec-test.herokuapp.com/) <br>
-Username: archerysec <br>
-Password: archerysec@archerysec<br>
-<br>
-<br>
-![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery_demo.gif)
+**URL**: [https://archerysec-test.herokuapp.com/](https://archerysec-test.herokuapp.com/)
 
-![Overview](https://raw.githubusercontent.com/anandtiwarics/photoVideos/master/Photos/archery_architecture.png)
+* **Username**: archerysec
+* **Password**: archerysec@archerysec
 
-## Overview of the tool:
+![Demo](assets/archery-demo.gif)
+
+![Overview](assets/archery-architecture.png)
+
+## Overview of the tool
 
 * Perform Web and Network vulnerability Scanning using opensource tools.
 * Correlates and Collaborate all raw scans data, show them in a consolidated manner.
@@ -68,6 +91,7 @@ Currently project is in development phase and still lot of work going on. Stay t
 ### OpenVAS
 
 You can follow the instructions to install OpenVAS from [Hacker Target](https://hackertarget.com/openvas-9-install-ubuntu-1604/)
+
 Note that, at this time, Archery generates a TCP connection towards the OpenVAS Manager (*not the GSA*): therefore, you need to update your OpenVAS Manager configuration to bind this port. Its default port (9390/tcp), but you can update this in your settings.
 
 ### OWASP Zap
@@ -106,13 +130,14 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
-$ sudo ./install.sh
+$ ./install.sh
 ```
 
-### Start app
+Starting background tasks and django built-in server with the following commands
 
 ```
-$ python manage.py runserver 0.0.0.0:8000
+$ python manage.py process_tasks &
+$ python manage.py runserver 0.0.0.0:8008
 ```
 
 ## Manual Installation
@@ -124,22 +149,26 @@ $ pip install -r requirements.txt
 $ python manage.py collectstatic
 $ python manage.py migrate
 $ python manage.py createsuperuser
-$ python manage.py runserver
+$ python manage.py runserver 0.0.0.0:8008
 ```
 
 Note: Make sure these steps (except createsuperuser) should be perform after every git pull.
 
 ## Note on installation for developers and contributors
 
-If you wish to contribute to the project, make sure you are using requirements-dev.txt and
-run this command once you have installed the requirements
+If you wish to contribute to the project, make sure you are using requirements-dev.txt and run this command once you have installed the requirements
 
 ```
 pre-commit install
 ```
 
-This will automatically check for code linting and rules used on this project
-and if everything is correct, the commit will be made.
+This will automatically check for code linting and rules used on this project and if everything is correct, the commit will be made.
+
+## Note on manual and automated installation
+
+If you are running the code directly without setting **DJANGO_SETTINGS_MODULE**, this will default to using `archerysec.settings.base`. all defaults will be used in this case and for customizing options you can copy `local_settings.sample.py` to `local_settings.py`
+
+Docker option should use environment variables to set different settings of the container.
 
 ## Docker Installation
 
@@ -147,14 +176,59 @@ ArcherySec Docker is available from [ArcherySec Docker](https://hub.docker.com/r
 
 ```
 $ docker pull archerysec/archerysec
-$ docker run -it -p 8000:8000 archerysec/archerysec:latest
+$ docker run -it -p 8008:8008 archerysec/archerysec:latest
 
 # For persistence
 
-docker run -it -p 8000:8000 -v <your_local_dir>:/root/.archerysec archerysec/archerysec:latest
+docker run -it -p 8008:8008 -v <your_local_dir>:/archerysec archerysec/archerysec:latest
 ```
 
-## Setup Setting
+## Using ArcherySec through docker compose
+
+This is the simplest way to get things running. For the time being the docker-compose.yml is focused on development configuration but with some changes you can get a production ready definition.
+
+Running the following command will get you all the services up, creates a postgres db and connects ArcherySec with it.
+
+```
+$ docker-compose up -d
+```
+
+### Environment variables for this project <!-- omit in toc -->
+
+The following environment variables are used to change behaviour of the container settings
+
+#### `DB_PASSWORD` <!-- omit in toc -->
+
+Database password for the postgres db server
+
+#### `DB_USER` <!-- omit in toc -->
+
+Database user for the postgres db server
+
+#### `DB_NAME` <!-- omit in toc -->
+
+Database name for the postgres db server
+
+#### `DJANGO_SETTINGS_MODULE` <!-- omit in toc -->
+
+Django setting to use. currently this can be set to `archerysecurity.settings.development` or `archerysecurity.settings.production` depending on your needs
+
+#### `DJANGO_SECRET_KEY` <!-- omit in toc -->
+
+Always generate and set a secret key for you project. Tools like [this one](https://www.miniwebtool.com/django-secret-key-generator/) can be used for this purpose
+
+#### `DJANGO_DEBUG` <!-- omit in toc -->
+
+Set this variable to `1` if debug should be enabled
+
+#### `ARCHERY_WORKER` <!-- omit in toc -->
+
+This variable is used to tell the container it has to behave as a worker to process tasks
+and not as a web server running on port 8008. Set it to `True` if you want to run on
+this mode.
+
+
+## Setup third-party integrations
 
 ### ZAP running daemon mode
 
@@ -175,21 +249,20 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 ### Zap Setting
 
 1. Go to Setting Page
-2. Edit ZAP setting or navigate URL : http://host:port/webscanners/setting_edit/
-3. Fill below required information. <br>
-    Zap API Key : Leave blank if you using ZAP as daemon ``` api.disablekey=true ``` <br>
-    Zap API Host : Your zap API host ip or system IP Ex. ``` 127.0.0.1 ``` or ``` 192.168.0.2 ``` <br>
-    Zap API Port : ZAP running port Ex. ``` 8080 ``` <br>
+2. Edit ZAP setting or navigate URL : [http://host:port/webscanners/setting_edit/](http://host:port/webscanners/setting_edit/)
+3. Fill below required information.
+   + **Zap API Key**: Leave blank if you using ZAP as daemon `api.disablekey=true`
+   + **Zap API Host**: Your zap API host ip or system IP Ex. `127.0.0.1` or `192.168.0.2`
+   + **Zap API Port**: ZAP running port Ex. `8080`
 
 
 ### OpenVAS Setting
 
 1. Go to setting Page
-2. Edit OpenVAS setting or navigate URL : http://host:port/networkscanners/openvas_setting
+2. Edit OpenVAS setting or navigate URL: [http://host:port/networkscanners/openvas_setting](http://host:port/networkscanners/openvas_setting)
 3. Fill all required information and click on save.
 
-
-### Road Map
+## Road Map
 
 * Scanners parser & Plugin
     - [x] Nessus (XML)
@@ -220,15 +293,15 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [ ] Checkmarks ?
     ....
 
-### Lead Developer
+## Lead Developer
 
-Anand Tiwari -  https://github.com/anandtiwarics
+[Anand Tiwari](https://github.com/anandtiwarics)
 
-### Contributors
+## Contributors
 
 [GMedian](https://github.com/GMedian) - Nmap+Vulners
 
-### Social Media
+## Social Media
 
 * [Official Website](https://archerysec.github.io/archerysec/)
 * [Twitter](https://twitter.com/archerysec)
