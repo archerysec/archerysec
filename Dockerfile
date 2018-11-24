@@ -2,6 +2,8 @@
 FROM ubuntu:18.04
 LABEL MAINTAINER="Anand Tiwari"
 
+ENV DJANGO_SETTINGS_MODULE=archerysecurity.settings.production
+
 #Create archerysec folder.
 RUN mkdir /archerysec
 
@@ -35,11 +37,15 @@ RUN \
 #Copy all file to archerysec folder.
 COPY . /archerysec
 
+# Install requirements
+RUN pip install -r requirements.txt && \
+    rm -rf /root/.cache
+
 #Exposing port.
 EXPOSE 8000
 
-#Running installation file.
-RUN chmod +x install.sh && ./install.sh
+# Include init script
+ADD ./docker-files/init.sh /sbin/init.sh
 
 # UP & RUN application.
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["/sbin/init.sh"]

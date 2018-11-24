@@ -10,27 +10,42 @@ services:
       - POSTGRES_USER=archerysec
       - POSTGRES_DB=archerysec
 
-
   archerysec:
-    # image: archerysec/archerysec:latest
     build: .
-    # command: install.sh
-    command: python manage.py runserver 0.0.0.0:8008
     ports:
-      - "8008:8008"
+      - "8000:8000"
     volumes:
       - .:/archerysec
     expose:
-      - "8008"
+      - "8000"
     depends_on:
       - db
     links:
       - db
     environment:
-      - POSTGRES_PASSWORD=archerysec
-      - POSTGRES_USER=archerysec
-      - POSTGRES_DB=archerysec
+      - DB_PASSWORD=archerysec
+      - DB_USER=archerysec
+      - DB_NAME=archerysec
+      - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
+      - DJANGO_DEBUG=1
 
+  archerysec-worker:
+    build: .
+    volumes:
+      - .:/archerysec
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - DB_PASSWORD=archerysec
+      - DB_USER=archerysec
+      - DB_NAME=archerysec
+      - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
+      - DJANGO_DEBUG=1
+      - ARCHERY_WORKER=True
 
   zaproxy:
     image: owasp/zap2docker-stable

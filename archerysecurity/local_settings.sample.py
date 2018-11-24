@@ -21,17 +21,6 @@ INTERNAL_IPS = [
     '127.0.0.1'
 ]
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'archerysec',
-        'USER': 'archerysec',
-        'PASSWORD': 'archerysec',
-        'HOST': 'db',
-        'PORT': 5432,
-    }
-}
-
 ADMINS = [
     ('admin', 'admin@example.com')
 ]
