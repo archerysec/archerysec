@@ -1,16 +1,17 @@
 [![Follow Archery on Twitter](https://img.shields.io/twitter/follow/archerysec.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/user?screen_name=archerysec "Follow Archery on Twitter")
 
-[![PyPI - License](https://img.shields.io/pypi/l/Django.svg)](https://github.com/archerysec/archerysec/blob/master/LICENSE) ![PyPI - Django Version](https://img.shields.io/pypi/djversions/djangorestframework.svg) ![Python - Python Version](https://img.shields.io/badge/Python-2.7-red.svg) ![Travis-ci](https://api.travis-ci.com/archerysec/archerysec.svg?branch=master)
+[![PyPI - License](assets/django.svg)](https://github.com/archerysec/archerysec/blob/master/LICENSE) ![PyPI - Django Version](assets/djangorestframework.svg) ![Python - Python Version](assets/python-2.7-red.svg) ![Travis-ci](https://api.travis-ci.com/archerysec/archerysec.svg?branch=master)
 
 [![Road Map](assets/roadmap-orange.svg)](https://github.com/archerysec/archerysec/projects/1)
 
 
-[![BlackHat USA Arsenal 2018](assets/blackhat-usa-2018.svg)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/)
+[![BlackHat USA Arsenal 2018sd](assets/blackhat-usa-2018.svg)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/)
 
 [![BlackHat Asia Arsenal 2018](assets/blackhat-asia-2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837)
 
 [![DEFCON 26 Demolabs](assets/defcon-26-demo-labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
 
+![ArcherySec - A security tool](assets/logo.png)
 
 Archery
 =================
@@ -41,8 +42,6 @@ Archery
 - [Social Media](#social-media)
 
 Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment.
-
-![ArcherySec - A security tool](assets/logo.png)
 
 ### Documentation
 
@@ -130,6 +129,7 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
+$ cp archerysecurity/local_settings.sample.py archerysecurity/local_settings
 $ ./install.sh
 ```
 
@@ -145,6 +145,7 @@ $ python manage.py runserver 0.0.0.0:8000
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
+$ cp archerysecurity/local_settings.sample.py archerysecurity/local_settings.py
 $ pip install -r requirements.txt
 $ python manage.py collectstatic
 $ python manage.py migrate
