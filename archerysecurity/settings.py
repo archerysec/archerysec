@@ -31,7 +31,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4t9wrak-z(#hb&5!m$+s&plnl0a7nme4n=pn4juks!nu@5@(7l'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -58,12 +58,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
+    'debug_toolbar',
     'easy_pdf',
     'Dashboard',
     'background_task',
 ]
 
+
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'stronghold.middleware.LoginRequiredMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -187,6 +190,6 @@ SETTINGS_EXPORT = [
 ]
 
 try:
-    from local_settings import *
+    from archerysecurity.local_settings import *
 except ImportError:
     pass
