@@ -42,7 +42,7 @@ RUN pip install -r requirements.txt && \
     rm -rf /root/.cache
 
 #Exposing port.
-EXPOSE 8000
+EXPOSE 8008
 
 # Include init script
 ADD ./docker-files/init.sh /sbin/init.sh

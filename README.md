@@ -137,7 +137,7 @@ Starting background tasks and django built-in server with the following commands
 
 ```
 $ python manage.py process_tasks &
-$ python manage.py runserver 0.0.0.0:8008
+$ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Manual Installation
@@ -149,7 +149,7 @@ $ pip install -r requirements.txt
 $ python manage.py collectstatic
 $ python manage.py migrate
 $ python manage.py createsuperuser
-$ python manage.py runserver 0.0.0.0:8008
+$ python manage.py runserver 0.0.0.0:8000
 ```
 
 Note: Make sure these steps (except createsuperuser) should be perform after every git pull.
@@ -176,11 +176,11 @@ ArcherySec Docker is available from [ArcherySec Docker](https://hub.docker.com/r
 
 ```
 $ docker pull archerysec/archerysec
-$ docker run -it -p 8008:8008 archerysec/archerysec:latest
+$ docker run -it -p 8000:8000 archerysec/archerysec:latest
 
 # For persistence
 
-docker run -it -p 8008:8008 -v <your_local_dir>:/archerysec archerysec/archerysec:latest
+docker run -it -p 8000:8000 -v <your_local_dir>:/archerysec archerysec/archerysec:latest
 ```
 
 ## Using ArcherySec through docker compose
@@ -224,7 +224,7 @@ Set this variable to `1` if debug should be enabled
 #### `ARCHERY_WORKER` <!-- omit in toc -->
 
 This variable is used to tell the container it has to behave as a worker to process tasks
-and not as a web server running on port 8008. Set it to `True` if you want to run on
+and not as a web server running on port 8000. Set it to `True` if you want to run on
 this mode.
 
 

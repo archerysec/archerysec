@@ -13,11 +13,11 @@ services:
   archerysec:
     build: .
     ports:
-      - "8008:8008"
+      - "8000:8000"
     volumes:
       - .:/archerysec
     expose:
-      - "8008"
+      - "8000"
     depends_on:
       - db
     links:
