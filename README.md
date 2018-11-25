@@ -129,7 +129,7 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
-$ cp archerysecurity/local_settings.sample.py archerysecurity/local_settings
+$ cp archerysecurity/local_settings.sample.py archerysecurity/local_settings.py
 $ ./install.sh
 ```
 

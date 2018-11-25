@@ -2,7 +2,7 @@
 FROM ubuntu:18.04
 LABEL MAINTAINER="Anand Tiwari"
 
-ENV DJANGO_SETTINGS_MODULE=archerysecurity.settings.production
+ENV DJANGO_SETTINGS_MODULE=archerysecurity.settings.base
 
 #Create archerysec folder.
 RUN mkdir /archerysec
