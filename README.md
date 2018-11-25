@@ -303,6 +303,7 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 ## Contributors
 
 [GMedian](https://github.com/GMedian) - Nmap+Vulners
+[Kenneth Belitzky](https://github.com/httpdss)
 
 ## Social Media
 
