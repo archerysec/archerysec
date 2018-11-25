@@ -4,11 +4,11 @@ services:
   db:
     image: postgres:10.1-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ./dbdata:/var/lib/postgresql/data
     environment:
+      - POSTGRES_DB=archerysec
       - POSTGRES_PASSWORD=archerysec
       - POSTGRES_USER=archerysec
-      - POSTGRES_DB=archerysec
 
   archerysec:
     build: .
@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
     links:
-      - db
+      - db:db
     environment:
       - DB_PASSWORD=archerysec
       - DB_USER=archerysec

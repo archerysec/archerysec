@@ -11,7 +11,9 @@
 
 [![DEFCON 26 Demolabs](assets/defcon-26-demo-labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
 
-![ArcherySec - A security tool](assets/logo.png)
+<p align="center">
+  <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
+</p>
 
 Archery
 =================
