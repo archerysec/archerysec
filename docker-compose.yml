@@ -29,6 +29,7 @@ services:
       - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
       - DJANGO_DEBUG=1
+    container_name: archerysec
 
   archerysec-worker:
     build: .
@@ -46,6 +47,7 @@ services:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
       - DJANGO_DEBUG=1
       - ARCHERY_WORKER=True
+    container_name: archerysec-worker
 
   zaproxy:
     image: owasp/zap2docker-stable
@@ -57,6 +59,19 @@ services:
       - "8090"
     links:
       - archerysec
+    container_name: zapscanner
+
+
+  arachni:
+    image: ahannigan/docker-arachni
+    #build: ../arachni
+    ports:
+      - "9292:9292"
+      - "7331:7331"
+    command: bin/arachni_rest_server --address 0.0.0.0
+    links:
+      - archerysec
+    container_name: arachniscanner
 
   openvas:
     image: avhost/docker-openvas
@@ -70,6 +85,8 @@ services:
       - "443"
     links:
       - archerysec
+    container_name: openvas
+
 
 volumes:
   postgres_data:

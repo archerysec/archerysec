@@ -10,3 +10,4 @@ scanners/zap.log
 site/
 archerysecurity/local_settings.py
 static/
+dbdata
