@@ -28,6 +28,12 @@ Move to directory archerysec
 cd /archerysec
 ```
 
+Copy sample settings and modify as needed
+
+``` sh
+cp archerysecurity/local_settings.sample.py archerysecurity/local_settings.py
+```
+
 Install requirements
 ``` sh
 pip install -r requirements.txt
