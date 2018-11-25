@@ -9,8 +9,6 @@
 # Copyright (C) 2017-2018 ArcherySec
 # This file is part of ArcherySec Project.
 
-
-import os
 import threading
 import time
 import uuid
@@ -22,43 +20,39 @@ from django.core import signing
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response, HttpResponse
-from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect
-from easy_pdf.views import render_to_pdf_response
 from selenium import webdriver
 from stronghold.decorators import public
 from archerysettings import load_settings, save_settings
-from networkscanners.models import scan_save_db
 from projects.models import project_db
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
     arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from scanners.scanner_plugin.web_scanner import zap_plugin
-from webscanners.models import zap_scan_results_db, \
+from webscanners.models import \
     zap_scans_db, \
     zap_spider_db, \
     zap_spider_results, \
     cookie_db, excluded_db, \
-    burp_scan_db, burp_scan_result_db, \
-    arachni_scan_db, arachni_scan_result_db, \
+    burp_scan_db, \
+    arachni_scan_db, \
     task_schedule_db, \
-    acunetix_scan_db, acunetix_scan_result_db
+    acunetix_scan_db
 from background_task import background
 from datetime import datetime
 from background_task.models import Task
 import os
 from jiraticketing.models import jirasetting
 from webscanners.models import netsparker_scan_db, \
-    netsparker_scan_result_db, \
-    webinspect_scan_db, \
-    webinspect_scan_result_db
+    webinspect_scan_db
 from webscanners.zapscanner.views import launch_zap_scan
-
-from archerysettings.models import zap_settings_db,\
-    burp_setting_db,\
-    openvas_setting_db,\
+from archerysettings.models import zap_settings_db, \
+    burp_setting_db, \
     nmap_vulners_setting_db, \
     arachni_settings_db
+from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser
+from lxml import etree
+from staticscanners.models import dependencycheck_scan_db
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -688,6 +682,23 @@ def xml_upload(request):
                                            root=root_xml)
             print("Saved scan data")
             return HttpResponseRedirect("/acunetixscanner/acunetix_scan_list/")
+
+        elif scanner == 'dependencycheck':
+            date_time = datetime.now()
+            scan_dump = dependencycheck_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            data = etree.parse(xml_file)
+            dependencycheck_report_parser.xml_parser(project_id=project_id,
+                                                     scan_id=scan_id,
+                                                     data=data)
+            print("Saved scan data")
+            return HttpResponseRedirect("/dependencycheck/dependencycheck_list")
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
 

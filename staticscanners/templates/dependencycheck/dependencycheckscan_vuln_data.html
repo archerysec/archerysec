@@ -1,0 +1,280 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = [];
+            $.each($("input[name='del_vuln_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/dependencycheckscanner/dependencycheck_del_vuln',
+                data:{
+                   del_vuln: json_scanid,
+                   scan_id: $('input[name=scan_id]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+                }
+            });
+            setTimeout(function(){location.reload();},1000);
+        });
+
+    });
+
+
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Vulnerabilities Details</a></div>
+        <h1>Vulnerabilities List</h1>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Vulnerability List</h5>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                    </div>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>Vulnerability</th>
+                                <th>Filename</th>
+                                <th>Risk</th>
+                                <th>JIRA Ticket</th>
+                                <th>False Positive</th>
+                                <th>Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in dependencycheck_vuln_data %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                        </label>
+                                    </form>
+                                </td>
+                                <td><a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                </td>
+                                <td>{{data.fileName}}</td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
+                                </td>
+                                <td>
+                                    <form method="POST" action="/dependencycheckscanner/dependencycheckscan_vuln_data/">{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                        <input type="hidden" name="false" value="Yes">
+                                        <input type="hidden" name="status" value="Open">
+                                        <input type="hidden" name="vuln_name" value="{{data.test_name}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-info btn-mini">Yes</button>
+                                    </form>
+                                </td>
+                                <td>{{data.vuln_status}}</td>
+                                <td>
+                                    <div>
+                                        <form action="/dependencycheckscanner/dependencycheck_del_vuln" method="POST"
+                                              class="form-horizontal">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form method="POST" action="/dependencycheckscanner/dependencycheckscan_vuln_data/">{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Closed">
+                                        <input type="hidden" name="vuln_name" value="{{data.test_name}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-info btn-mini">Close</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--False Positive Vulnerability List-->
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>False Positive Vulnerability List</h5>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                    </div>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>Vulnerability</th>
+                                <th>URL</th>
+                                <th>Risk</th>
+                                <th>False Positive</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in false_data %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                        </label>
+                                    </form>
+                                </td>
+                                <td><a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.test_name}}</a>
+                                </td>
+                                <td>{{data.filename}}</td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                                 <td>
+                                    <form method="POST" action="/dependencycheckscanner/dependencycheckscan_vuln_data/">{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Open">
+                                        <input type="hidden" name="vuln_name" value="{{data.test_name}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-info btn-mini">No</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <div>
+                                        <form action="/acunetixscanner/acunetix_del_vuln/" method="POST"
+                                              class="form-horizontal">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Closed Vulnerabilities List</h5>
+                        <!--<div class="buttons"><a data-toggle="modal" href="/add_vuln/?scan_id={{ scan_vul }}"-->
+                        <!--class="btn btn-primary btn-mini"><i-->
+                        <!--class="icon-plus icon-white"></i> Add new Vulnerability</a>-->
+                        <!--</div>-->
+                        <div class="buttons">
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                    </div>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>Vulnerability</th>
+                                <th>URL</th>
+                                <th>Risk</th>
+                                <th>False Positive</th>
+                                <th>Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in vuln_data_closed %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                        </label>
+                                        <!--<br>-->
+                                        <!--<button type="button" >Get Values</button>-->
+                                    </form>
+                                </td>
+                                <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
+                                </td>
+                                <td>{{data.vuln_url}}</td>
+                                <td><span class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span></td>
+                                <td>
+                                    <form method="POST" action="/acunetixscanner/acunetix_vuln_out/">{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Open">
+                                        <input type="hidden" name="vuln_name" value="{{data.VulnName}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-info btn-mini">No</button>
+                                    </form>
+                                </td>
+                                <td>{{data.vuln_status}}</td>
+                                <!--<td>-->
+                                <!--<div><a href="/acunetixscanner/edit_acunetix_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"-->
+                                <!--data-original-title="Edit"><i-->
+                                <!--class="icon-pencil"></i></a>-->
+                                <!--</div>-->
+                                <!--</td>-->
+                                <td>
+                                    <div>
+                                        <form action="/acunetixscanner/acunetix_del_vuln/" method="POST"
+                                              class="form-horizontal">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form method="POST" action="/dependencycheckscanner/dependencycheckscan_vuln_data/">{% csrf_token %}
+                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                        <input type="hidden" name="false" value="No">
+                                        <input type="hidden" name="status" value="Open">
+                                        <input type="hidden" name="vuln_name" value="{{data.test_name}}">
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                        <button class="btn btn-info btn-mini">Open</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

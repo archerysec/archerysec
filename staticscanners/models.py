@@ -53,6 +53,55 @@ class bandit_scan_results_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
 
 
+class dependencycheck_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.TextField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.TextField(blank=True, null=True)
+    SEVERITY_LOW = models.TextField(blank=True, null=True)
+
+
+class dependencycheck_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    name = models.TextField(blank=True, null=True)
+    cvssScore = models.TextField(blank=True, null=True)
+    cvssAccessVector = models.TextField(blank=True, null=True)
+    cvssAccessComplexity = models.TextField(blank=True, null=True)
+    cvssAuthenticationr = models.TextField(blank=True, null=True)
+    cvssConfidentialImpact = models.TextField(blank=True, null=True)
+    cvssIntegrityImpact = models.TextField(blank=True, null=True)
+    cvssAvailabilityImpact = models.TextField(blank=True, null=True)
+    severity = models.TextField(blank=True, null=True)
+    cwe = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    references = models.TextField(blank=True, null=True)
+    vulnerableSoftware = models.TextField(blank=True, null=True)
+    fileName = models.TextField(blank=True, null=True)
+    filePath = models.TextField(blank=True, null=True)
+    md5 = models.TextField(blank=True, null=True)
+    sha1 = models.TextField(blank=True, null=True)
+    sha256 = models.TextField(blank=True, null=True)
+    evidenceCollected = models.TextField(blank=True, null=True)
+
+
 class retirejs_scan_db(models.Model):
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)

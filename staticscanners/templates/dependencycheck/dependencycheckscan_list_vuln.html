@@ -1,0 +1,42 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Vulnerabilities Details</a></div>
+        <h1>Vulnerabilities List</h1>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span9 offset1">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Vulnerability List</h5>
+                    </div>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th>Vulnerability</th>
+                                <th>Risk</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in dependencycheck_all_vuln %}
+                            <tr data-target="#">
+                                <td>
+                                    <a href="/dependencycheck/dependencycheck_vuln_data/?scan_id={{data.scan_id}}&test_name={{data.name}}">{{data.name}}</a>
+                                </td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
