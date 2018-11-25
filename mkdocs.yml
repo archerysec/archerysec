@@ -25,7 +25,6 @@ extra:
       link: https://www.facebook.com/ArcherySec/
 
 # Project information
-site_name: Archery
 site_description: All about ArcherySec.
 site_author: Anand Tiwari
 site_url: https://github.com/archerysec/archerysec
@@ -33,5 +32,3 @@ site_url: https://github.com/archerysec/archerysec
 # Repository
 repo_name: archerysec/archerysec
 repo_url: https://github.com/archerysec/archerysec
-
-

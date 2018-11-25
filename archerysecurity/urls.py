@@ -13,7 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import url, include
+from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token
 from rest_framework_jwt.views import refresh_jwt_token
@@ -35,7 +37,9 @@ urlpatterns = [
     url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     url(r'^api/', include('archeryapi.urls')),
     url(r'^scanapi/', include('APIScan.urls')),
-    url(r'^', include('Dashboard.urls')),
+
+    # Default url
+    url(r'', include('Dashboard.urls')),
 
     # API authentication
     url(r'^api-token-auth/', obtain_jwt_token),
@@ -53,5 +57,13 @@ urlpatterns = [
 
     # Manual App
     url(r'^manual_scan/', include('manual_scan.urls')),
-
 ]
+
+urlpatterns = urlpatterns + \
+    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

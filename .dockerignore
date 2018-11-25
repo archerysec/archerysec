@@ -5,3 +5,4 @@ scanners/zap.log
 .DS_Store
 *Postman*
 archerysecurity/local_settings.py
+static/

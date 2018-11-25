@@ -4,7 +4,7 @@ set -ex
 # Docker Build
 export CONTAINER_NAME=archery
 docker build -t $REPO .
-docker run -d -p 127.0.0.1:8000:8000 --name=$CONTAINER_NAME $REPO
+docker run -d -e DJANGO_SETTINGS_MODULE=archerysecurity.settings.base -p 127.0.0.1:8000:8000 --name=$CONTAINER_NAME $REPO
 docker logs $CONTAINER_NAME
 pip install bandit
 docker ps -a
