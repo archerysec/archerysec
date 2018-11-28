@@ -20,3 +20,7 @@ DATABASES = {
 ADMINS = [
     ('admin', os.getenv('DJANGO_ADMIN_EMAIL', 'admin@example.com'))
 ]
+
+EMAIL_HOST = os.getenv("EMAIL_HOST", "localhost")
+EMAIL_PORT = os.getenv("EMAIL_PORT", 25)
+EMAIL_SUBJECT_PREFIX = "[ArcherySec] "
