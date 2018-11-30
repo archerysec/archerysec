@@ -41,7 +41,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'POST',
             <!--contentType: 'application/json; charset=utf-8',-->
-            url: '/webscanners/scan_launch',
+            url: '/zapscanner/zap_scan/',
             data: {
                 url: json_scanid,
                 project_id: '{{ all_domain.0.project_id }}',

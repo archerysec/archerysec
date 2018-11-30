@@ -48,6 +48,9 @@ def run_nmap_vulners(ip_addr='', project_id=''):
         raise ValueError('[NMAP_VULNERS] - ip_addr must be specified')
 
     scan_id = uuid.uuid4()
+    nv_version = ''
+    nv_online = ''
+    nv_timing = ''
 
     nmap_vulners_path = os.path.join(settings.BASE_DIR, 'tools/nmap_vulners/vulners.nse')
     all_nv = nmap_vulners_setting_db.objects.all()

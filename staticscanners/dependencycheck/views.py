@@ -81,24 +81,27 @@ def dependencycheck_vuln_data(request):
 
     # dependencycheck_vuln_data = dependencycheck_scan_results_db.objects.filter(
     #     scan_id=scan_id,
-    #     test_name=test_name
+    #     name=test_name
     # )
 
     dependencycheck_vuln_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id,
                                                                                name=test_name,
+                                                                               vuln_status='Open',
+                                                                               false_positive='No'
                                                                                )
-    # vuln_data_closed = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id,
-    #                                                                   test_name=test_name,
-    #                                                                   vuln_status='Closed',
-    #                                                                   false_positive='No')
-    # false_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id,
-    #                                                             test_name=test_name,
-    #                                                             false_positive='Yes')
+
+    vuln_data_closed = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id,
+                                                                      name=test_name,
+                                                                      vuln_status='Closed',
+                                                                      false_positive='No')
+    false_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id,
+                                                                name=test_name,
+                                                                false_positive='Yes')
 
     return render(request, 'dependencycheck/dependencycheckscan_vuln_data.html',
                   {'dependencycheck_vuln_data': dependencycheck_vuln_data,
-                   # 'false_data': false_data,
-                   # 'vuln_data_closed': vuln_data_closed
+                   'false_data': false_data,
+                   'vuln_data_closed': vuln_data_closed
                    })
 
 
@@ -146,7 +149,7 @@ def del_dependencycheck(request):
             item_results = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id)
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/dependencycheckscanner/dependencycheckscans_list')
+        return HttpResponseRedirect('/dependencycheck/dependencycheck_list')
 
 
 def dependencycheck_del_vuln(request):

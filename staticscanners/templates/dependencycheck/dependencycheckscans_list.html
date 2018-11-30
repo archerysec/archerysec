@@ -17,7 +17,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/dependencycheckscanner/del_dependencycheck_scan',
+                url:'/dependencycheck/del_dependencycheck',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -38,7 +38,7 @@
         <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
                 href="#" class="current">Dependency Check Scans List</a></div>
 
-        <h1>dependencycheck Scans</h1>
+        <h1>Dependencycheck Scans</h1>
     </div>
 
     <div class="container-fluid">
@@ -61,7 +61,7 @@
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>dependencycheck Scanner Scan List</h5>
                         <div class="buttons">
-                            <a data-toggle="modal" href="/staticscanners/report_import/"
+                            <a data-toggle="modal" href="/webscanners/xml_upload"
                                class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
                                 Report</a>
                         </div>
@@ -79,12 +79,12 @@
                                 <th>Status</th>
                                 <th>Date Time</th>
                                 <th>Total Vulnerability</th>
-                                <th>SEVERITY_HIGH</th>
-                                <th>SEVERITY_MEDIUM</th>
-                                <th>SEVERITY_LOW</th>
+                                <th>HIGH</th>
+                                <th>MEDIUM</th>
+                                <th>LOW</th>
                                 <th>Duplicates</th>
-                                <th>Action</th>
-                                <th></th>
+                                <!--<th>Action</th>-->
+                                <!--<th></th>-->
                                 <th></th>
                             </tr>
                             </thead>
@@ -114,43 +114,43 @@
                                 <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
                                 <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
                                 <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                                <td>
-                                    <form action="/zapscanner/zap_scan_pdf_gen/" method="post" class="forms-sample">
+                                <!--<td>-->
+                                    <!--<form action="/zapscanner/zap_scan_pdf_gen/" method="post" class="forms-sample">-->
 
-                                        {% csrf_token %}
-                                        <input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>
-                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
+                                        <!--{% csrf_token %}-->
+                                        <!--<input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>-->
+                                        <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
 
-                                        <button class="btn btn-success"><i class="icon-file"></i></button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
+                                        <!--<button class="btn btn-success"><i class="icon-file"></i></button>-->
+                                    <!--</form>-->
+                                <!--</td>-->
+                                <!--<td>-->
+                                    <!--<div class="btn-group">-->
 
-                                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
-                                                class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}"><i
-                                                    class="icon-pencil"></i> View </a></li>
-                                            <li>
-                                                <form action="/zapscanner/zap_rescan/" method="POST"
-                                                      class="forms-sample">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="old_scan_id"
-                                                           value="{{data.scan_scanid}}"/>
-                                                    <input type="hidden" name="scan_url"
-                                                           value="{{data.scan_url}}"/>
-                                                    <input type="hidden" name="project_id"
-                                                           value="{{data.project_id}}"/>
-                                                     <button class="btn btn-info btn-mini"><i
-                                                        class="icon-play"></i> Re-Scan </button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
+                                        <!--<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span-->
+                                                <!--class="caret"></span></a>-->
+                                        <!--<ul class="dropdown-menu">-->
+                                            <!--<li><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}"><i-->
+                                                    <!--class="icon-pencil"></i> View </a></li>-->
+                                            <!--<li>-->
+                                                <!--<form action="/zapscanner/zap_rescan/" method="POST"-->
+                                                      <!--class="forms-sample">-->
+                                                    <!--{% csrf_token %}-->
+                                                    <!--<input type="hidden" name="old_scan_id"-->
+                                                           <!--value="{{data.scan_scanid}}"/>-->
+                                                    <!--<input type="hidden" name="scan_url"-->
+                                                           <!--value="{{data.scan_url}}"/>-->
+                                                    <!--<input type="hidden" name="project_id"-->
+                                                           <!--value="{{data.project_id}}"/>-->
+                                                     <!--<button class="btn btn-info btn-mini"><i-->
+                                                        <!--class="icon-play"></i> Re-Scan </button>-->
+                                                <!--</form>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                <!--</td>-->
                                 <td>
-                                    <form action="/dependencycheckscanner/del_dependencycheck_scan" method="post" class="forms-sample">
+                                    <form action="/dependencycheck/del_dependencycheck" method="post" class="forms-sample">
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
                                         <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
