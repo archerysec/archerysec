@@ -94,10 +94,7 @@
                                     <form>
                                         <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
                                                       onClick="reload">
-
                                         </label>
-                                        <!--<br>-->
-                                        <!--<button type="button" >Get Values</button>-->
                                     </form>
                                 </td>
                                 <td>
@@ -154,116 +151,6 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
                                         <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
-                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                        <h5>Re-Scans List</h5>
-                        <div class="buttons">
-                            <a data-toggle="modal" href="/webscanners/xml_upload"
-                               class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
-                                XML</a>
-                        </div>
-                        <div class="buttons">
-                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
-                        </div>
-
-                    </div>
-                    <div class="widget-content nopadding">
-                        <table class="table table-bordered data-table">
-                            <thead>
-                            <tr>
-                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
-                                <th>URL</th>
-                                <th>Status</th>
-                                <th>Date Time</th>
-                                <th>Total Vulnerability</th>
-                                <th>High</th>
-                                <th>Medium</th>
-                                <th>Low</th>
-                                <th>Action</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>{% for data in rescan_all_scans %}
-                            <tr data-target="#">
-                                <td>
-                                    <form>
-                                        <label><input type="checkbox" value="{{data.scan_scanid}}" name="del_scan_id"
-                                                      onClick="reload">
-
-                                        </label>
-                                        <!--<br>-->
-                                        <!--<button type="button" >Get Values</button>-->
-                                    </form>
-                                </td>
-                                <td>
-                                    <a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
-                                </td>
-                                <td width="30%">
-                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                        <div class="bar" style="width: {{data.vul_status}}%">{{data.vul_status}} %</div>
-                                    </div>
-                                </td>
-                                <td>{{data.date_time}}</td>
-                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                                <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                                <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                                <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-                                <td>
-                                    <form action="/webscanners/get_scan_pdf/" method="post" class="forms-sample">
-
-                                        {% csrf_token %}
-                                        <input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>
-                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
-
-                                        <button class="btn btn-success"><i class="icon-file"></i></button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn btn-primary"
-                                           href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}"><i
-                                                class="icon-tasks icon-white"></i>
-                                        </a>
-                                        <a class="btn btn-primary dropdown-toggle"
-                                           data-toggle="dropdown" href="#"><span
-                                                class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_scanid}}"><i
-                                                    class="icon-pencil"></i> View </a></li>
-                                            <li>
-                                                <form action="/zapscanner/zap_rescan/" method="POST"
-                                                      class="forms-sample">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="old_scan_id"
-                                                           value="{{data.scan_scanid}}"/>
-                                                    <input type="hidden" name="scan_url"
-                                                           value="{{data.scan_url}}"/>
-                                                    <input type="hidden" name="project_id"
-                                                           value="{{data.project_id}}"/>
-                                                     <button class="btn btn-info btn-mini"><i
-                                                        class="icon-play"></i> Re-Scan </button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                                <td>
-                                    <form action="/zapscanner/del_zap_scan/" method="post" class="forms-sample">
-
-                                        {% csrf_token %}
-                                        <input type="hidden" name="scan_scanid" value="{{data.scan_scanid}}"/>
-                                        <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
                                         <button class="btn btn-danger"><i class="icon-remove"></i></button>
                                     </form>
                                 </td>

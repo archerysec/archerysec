@@ -24,7 +24,7 @@
                 </ul>
             </div>
 
-            <h1>{{ data.test_name }}</h1>
+            <h1>{{ data.name }}</h1>
         </div>
     </div>
     <div class="container-fluid">
@@ -35,7 +35,7 @@
                         <h5>Vulnerability Name:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info">{{ data.test_name }}</span>
+                        <span class="label label-info">{{ data.name }}</span>
 
                         <strong> </strong><br><br>
                         <strong> False Positive: </strong>
@@ -47,12 +47,18 @@
                             <button class="btn btn-info btn-mini">YES</button>
                         </form>
                         <br>
-                        <strong> Severity: </strong> <span
-                            class="badge badge-{{data.vul_col}}"> {{ data.issue_severity }}</span>
-                        <strong> Vulnerable File : </strong><code><a href="{{data.VulnFullUrl}}">
-                        {{data.filename}}</a>
-                    </code><br><br>
-
+                        <strong> Severity: </strong> <span class="badge-{{data.vul_col}}"> {{ data.severity }}</span> <br>
+                            <br>
+                        <strong> Vulnerable File Name : </strong>
+                        <code><a href="{{data.fileName}}">
+                            {{data.fileName}}</a>
+                        </code>
+                        <br><br>
+                        <strong> Vulnerable File Path : </strong>
+                        <code><a href="{{data.fileName}}">
+                            {{data.filePath}}</a>
+                        </code>
+                        <br><br>
 
                     </div>
                 </div>
@@ -64,7 +70,37 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        {{data.issue_text | safe}}
+                        {{data.description | safe}}
+
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Evidence Collected:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        {{data.evidenceCollected | safe}}
+
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>CWE:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        {{data.cwe | safe}}
+
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>vulnerableSoftware:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        {{data.vulnerableSoftware | safe}}
 
                     </div>
                 </div>
@@ -74,7 +110,7 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        <pre>{{data.code | safe}}</pre>
+                        <pre>{{data.references | safe}}</pre>
                         <br><br>
                     </div>
                 </div>
@@ -89,60 +125,60 @@
                     </div>
                 </div>
                 <!--<div class="widget-box">-->
-                    <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                        <!--<h5>Exploitation:</h5>-->
-                    <!--</div>-->
-                    <!--<div class="widget-content">-->
-                        <!--<span class="label label-info"></span>-->
-                        <!--<strong></strong> {{data.requiredSkillsForExploitation | safe}}-->
-                        <!--<br><br>-->
-                    <!--</div>-->
+                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
+                <!--<h5>Exploitation:</h5>-->
+                <!--</div>-->
+                <!--<div class="widget-content">-->
+                <!--<span class="label label-info"></span>-->
+                <!--<strong></strong> {{data.requiredSkillsForExploitation | safe}}-->
+                <!--<br><br>-->
+                <!--</div>-->
                 <!--</div>-->
                 <!--<div class="widget-box">-->
-                    <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                        <!--<h5>References:</h5>-->
-                    <!--</div>-->
-                    <!--<div class="widget-content">-->
-                        <!--<span class="label label-info"></span>-->
-                        <!--<strong></strong> {{data.highlightSelections | safe}}-->
-<!--{{data.remedyReferences | safe}}-->
-                        <!--<br><br>-->
-                    <!--</div>-->
+                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
+                <!--<h5>References:</h5>-->
+                <!--</div>-->
+                <!--<div class="widget-content">-->
+                <!--<span class="label label-info"></span>-->
+                <!--<strong></strong> {{data.highlightSelections | safe}}-->
+                <!--{{data.remedyReferences | safe}}-->
+                <!--<br><br>-->
+                <!--</div>-->
                 <!--</div>-->
                 <!--<div class="widget-box">-->
-                    <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                        <!--<h5>Proof Of Concept:</h5>-->
-                    <!--</div>-->
-                    <!--<div class="widget-content">-->
-                        <!--<span class="label label-info"></span>-->
-                        <!--<strong></strong> {{data.reportSection | safe}}-->
-                        <!--<br><br>-->
-                    <!--</div>-->
+                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
+                <!--<h5>Proof Of Concept:</h5>-->
+                <!--</div>-->
+                <!--<div class="widget-content">-->
+                <!--<span class="label label-info"></span>-->
+                <!--<strong></strong> {{data.reportSection | safe}}-->
+                <!--<br><br>-->
+                <!--</div>-->
                 <!--</div>-->
                 <!--&lt;!&ndash;</div>&ndash;&gt;-->
                 <!--&lt;!&ndash;<div class="span12 ">&ndash;&gt;-->
                 <!--<div class="widget-box">-->
-                    <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                        <!--<h5>Request Header:</h5>-->
-                    <!--</div>-->
-                    <!--<div class="widget-content">-->
-                        <!--<span class="label label-info"></span>-->
-                        <!--<pre-->
-                        <!--&gt;{{ data.rawrequest }} <br></pre>-->
-                    <!--</div>-->
+                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
+                <!--<h5>Request Header:</h5>-->
+                <!--</div>-->
+                <!--<div class="widget-content">-->
+                <!--<span class="label label-info"></span>-->
+                <!--<pre-->
+                <!--&gt;{{ data.rawrequest }} <br></pre>-->
+                <!--</div>-->
                 <!--</div>-->
                 <!--&lt;!&ndash;</div>&ndash;&gt;-->
                 <!--&lt;!&ndash;<div class="span12">&ndash;&gt;-->
                 <!--<div class="widget-box">-->
-                    <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                        <!--<h5>Response Header:</h5>-->
-                    <!--</div>-->
-                    <!--<div class="widget-content">-->
-                        <!--<span class="label label-info"></span>-->
-                        <!--<pre-->
-                        <!--&gt;{{ data.rawResponse }} </pre>-->
+                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
+                <!--<h5>Response Header:</h5>-->
+                <!--</div>-->
+                <!--<div class="widget-content">-->
+                <!--<span class="label label-info"></span>-->
+                <!--<pre-->
+                <!--&gt;{{ data.rawResponse }} </pre>-->
 
-                    <!--</div>-->
+                <!--</div>-->
                 <!--</div>-->
                 <!--</div>-->
 

@@ -26,6 +26,7 @@ services:
       - DB_PASSWORD=archerysec
       - DB_USER=archerysec
       - DB_NAME=archerysec
+      - DB_HOST=db
       - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
       - DJANGO_DEBUG=1
@@ -45,6 +46,7 @@ services:
       - DB_PASSWORD=archerysec
       - DB_USER=archerysec
       - DB_NAME=archerysec
+      - DB_HOST=db
       - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
       - DJANGO_DEBUG=1

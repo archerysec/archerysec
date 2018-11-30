@@ -93,6 +93,29 @@ def xml_parser(data, project_id, scan_id):
                         elif severity == 'Low':
                             vul_col = "info"
 
+                        dup_data = name + fileName + severity
+                        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+
+                        match_dup = dependencycheck_scan_results_db.objects.filter(
+                            dup_hash=duplicate_hash).values('dup_hash')
+                        lenth_match = len(match_dup)
+
+                        if lenth_match == 1:
+                            duplicate_vuln = 'Yes'
+                        elif lenth_match == 0:
+                            duplicate_vuln = 'No'
+                        else:
+                            duplicate_vuln = 'None'
+
+                        false_p = dependencycheck_scan_results_db.objects.filter(
+                            false_positive_hash=duplicate_hash)
+                        fp_lenth_match = len(false_p)
+
+                        if fp_lenth_match == 1:
+                            false_positive = 'Yes'
+                        else:
+                            false_positive = 'No'
+
                         save_all = dependencycheck_scan_results_db(
                             # date_time=date_time,
                             vuln_id=vul_id,
@@ -114,6 +137,26 @@ def xml_parser(data, project_id, scan_id):
                             description=description,
                             references=references,
                             vulnerableSoftware=vulnerableSoftware,
-                            vul_col=vul_col
+                            vul_col=vul_col,
+                            vuln_status='Open',
+                            dup_hash=duplicate_hash,
+                            vuln_duplicate=duplicate_vuln,
+                            false_positive=false_positive
                         )
                         save_all.save()
+        all_dependency_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id)
+
+        total_vul = len(all_dependency_data)
+        total_high = len(all_dependency_data.filter(severity="High"))
+        total_medium = len(all_dependency_data.filter(severity="Medium"))
+        total_low = len(all_dependency_data.filter(severity="Low"))
+        total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
+        print "total duplicats", total_duplicate
+
+        dependencycheck_scan_db.objects.filter(scan_id=scan_id).update(
+            total_vuln=total_vul,
+            SEVERITY_HIGH=total_high,
+            SEVERITY_MEDIUM=total_medium,
+            SEVERITY_LOW=total_low,
+            total_dup=total_duplicate
+        )
