@@ -43,6 +43,9 @@ from django.contrib.auth.models import User
 from stronghold.decorators import public
 from rest_framework import authentication, permissions
 from webscanners.arachniscanner.views import launch_arachni_scan
+from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser
+from lxml import etree
+from staticscanners.models import dependencycheck_scan_db
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -403,6 +406,26 @@ class UpladScanResult(APIView):
             bandit_report_json(data=data,
                                project_id=project_id,
                                scan_id=scan_id)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'dependencycheck':
+            date_time = datetime.datetime.now()
+            scan_dump = dependencycheck_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            data = etree.parse(xml_file)
+            dependencycheck_report_parser.xml_parser(project_id=project_id,
+                                                     scan_id=scan_id,
+                                                     data=data)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,

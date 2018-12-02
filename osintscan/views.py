@@ -142,19 +142,16 @@ def osint_whois(request):
     domain_z = ''
     if request.method == "POST":
         domain = request.POST.get('domain')
-        print domain
-
+        project_id = request.POST.get('project_id')
         domain_item = str(domain)
         value = domain_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
         for i in range(0, split_length):
             domain_s = value_split.__getitem__(i)
-            print domain_s
             all_whois_info = osint_whois_db.objects.filter(domain=domain)
             for a in all_whois_info:
                 domain_z = a.domain
-            print "aaaa", domain_z
             if domain_s == domain_z:
                 print "Domain Already Existed", domain
                 return HttpResponseRedirect('/osintscan/domain_list/')
@@ -212,7 +209,7 @@ def osint_whois(request):
                         creation_date = value
                     global emails
                     if key == 'emails':
-                        email = ("</p>".join(map(str, value)))
+                        email = ("".join(map(str, value)))
                         emails = email
 
                 dump_all_whois = osint_whois_db(domain=domain,
@@ -235,6 +232,10 @@ def osint_whois(request):
                                                 emails=emails
                                                 )
                 dump_all_whois.save()
+
+                save_subdoamin = osint_domain_db(domains=domain,
+                                                 project_id=project_id)
+                save_subdoamin.save()
 
     return HttpResponseRedirect('/osintscan/domain_list/')
 

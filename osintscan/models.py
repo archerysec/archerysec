@@ -16,9 +16,9 @@ from django.db import models
 
 
 class osint_domain_db(models.Model):
-    domains = models.TextField(blank=True)
-    sub_domains = models.TextField(blank=True)
-    project_id = models.TextField(blank=True)
+    domains = models.TextField(blank=True, null=True)
+    sub_domains = models.TextField(blank=True, null=True)
+    project_id = models.TextField(blank=True, null=True)
 
 
 class osint_whois_db(models.Model):
