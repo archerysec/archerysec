@@ -44,20 +44,6 @@ Load static files
 python manage.py collectstatic
 ```
 
-Makemigrations of all networkscanners app models
-``` sh
-python manage.py makemigrations networkscanners
-```
-Makemigrations of all webscanners app models
-``` sh
-python manage.py makemigrations webscanners
-```
-
-Makemigrations of all projects app models
-```sh
-python manage.py makemigrations projects
-```
-
 Migrate all data
 ``` sh
 python manage.py migrate
