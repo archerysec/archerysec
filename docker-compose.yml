@@ -30,6 +30,8 @@ services:
       - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
       - DJANGO_DEBUG=1
+      - EMAIL_HOST=mailhog
+      - EMAIL_PORT=1025
     container_name: archerysec
 
   archerysec-worker:
@@ -48,6 +50,8 @@ services:
       - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
       - DJANGO_DEBUG=1
+      - EMAIL_HOST=mailhog
+      - EMAIL_PORT=1025
       - ARCHERY_WORKER=True
     container_name: archerysec-worker
 
@@ -89,6 +93,9 @@ services:
       - archerysec
     container_name: openvas
 
-
-volumes:
-  postgres_data:
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    container_name: mailhog
