@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^scanapi/', include('APIScan.urls')),
 
     # Default url
-    url(r'', include('Dashboard.urls')),
+    url(r'', include('dashboard.urls')),
 
     # API authentication
     url(r'^api-token-auth/', obtain_jwt_token),

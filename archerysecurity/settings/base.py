@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'debug_toolbar',
     'easy_pdf',
-    'Dashboard',
+    'dashboard',
     'background_task',
 ]
 

@@ -10,10 +10,10 @@
 # This file is part of ArcherySec Project.
 
 from django.conf.urls import url
-from Dashboard import views
+from dashboard import views
 from webscanners import web_views
 
-app_name = 'Dashboard'
+app_name = 'dashboard'
 
 urlpatterns = [
 
