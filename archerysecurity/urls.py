@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^staticscanners/', include('staticscanners.urls')),
     url(r'^banditscanner/', include('staticscanners.banditscanner.urls')),
     url(r'^dependencycheck/', include('staticscanners.dependencycheck.urls')),
+    url(r'^findbugs/', include('staticscanners.findbugs.urls')),
     url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     url(r'^api/', include('archeryapi.urls')),
     url(r'^scanapi/', include('APIScan.urls')),
