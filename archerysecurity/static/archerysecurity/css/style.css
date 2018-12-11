@@ -79,7 +79,7 @@ hr{ border-top-color:#dadada;}
 }
 #search button {
 	border: 0;
-	margin-left:-3px; 
+	margin-left:-3px;
 	margin-top: -11px;
 	padding: 5px 10px 4px;
 }
@@ -120,7 +120,7 @@ hr{ border-top-color:#dadada;}
 	color: #ffffff;  background:#000;
 }
 #user-nav > ul > li > a > i, #sidebar li a i {
-	opacity: .5; 
+	opacity: .5;
 	margin-top: 2px;
 }
 #user-nav > ul > li > a:hover > i, #user-nav > ul > li.open > a > i {
@@ -313,7 +313,7 @@ hr{ border-top-color:#dadada;}
 .stat-boxes2 {
 	display: inline-block;
 	list-style: none outside none;
-	margin:0px; 
+	margin:0px;
 	text-align: center;
 }
 .stat-boxes2 li {
@@ -378,7 +378,7 @@ hr{ border-top-color:#dadada;}
 	margin: 0 10px 20px;
 }
 .quick-actions li a {
-	padding:10px 30px; 
+	padding:10px 30px;
 }
 .stats-plain li h4 {
 	font-size: 40px;
@@ -399,7 +399,7 @@ hr{ border-top-color:#dadada;}
 }
 .quick-actions li a i[class^="icon-"], .quick-actions li a i[class*=" icon-"] {
 	font-size:30px;
-	display: block;	
+	display: block;
 	margin: 0 auto 5px;
 }
 .quick-actions-horizontal li a i[class^="icon-"], .quick-actions-horizontal li a i[class*=" icon-"] {
@@ -541,10 +541,10 @@ hr{ border-top-color:#dadada;}
 .widget-title, .modal-header, .table th, div.dataTables_wrapper .ui-widget-header {
 	 background:#efefef;
 	border-bottom: 1px solid #CDCDCD;
-	height: 36px;  
+	height: 36px;
 }
 .widget-title .nav-tabs {
-	border-bottom: 0 none; 
+	border-bottom: 0 none;
 }
 .widget-title .nav-tabs li a {
 	border-bottom: medium none !important;
@@ -556,7 +556,7 @@ hr{ border-top-color:#dadada;}
 	margin: 0;
 	outline: medium none;
 	padding: 9px 10px 8px;
-	font-weight: bold; 
+	font-weight: bold;
 	text-shadow: 0 1px 0 #FFFFFF;
 }
 .widget-title .nav-tabs li:first-child a {
