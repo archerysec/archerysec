@@ -105,22 +105,22 @@ def vuln_static_dashboard(request):
             all_nessus = value
 
     all_vuln = int(all_zap) + \
-               int(all_burp) + \
-               int(all_openvas) + \
-               int(all_nessus) + \
-               int(all_arachni) + \
-               int(all_netsparker) + \
-               int(all_webinspect) + \
-               int(all_acunetix)
+        int(all_burp) + \
+        int(all_openvas) + \
+        int(all_nessus) + \
+        int(all_arachni) + \
+        int(all_netsparker) + \
+        int(all_webinspect) + \
+        int(all_acunetix)
 
     total_network = int(all_openvas) + int(all_nessus)
 
     total_web = int(all_zap) + \
-                int(all_burp) + \
-                int(all_arachni) + \
-                int(all_netsparker) + \
-                int(all_webinspect) + \
-                int(all_acunetix)
+        int(all_burp) + \
+        int(all_arachni) + \
+        int(all_netsparker) + \
+        int(all_webinspect) + \
+        int(all_acunetix)
 
     all_zap_high = zap_scans_db.objects.aggregate(Sum('high_vul'))
     all_burp_high = burp_scan_db.objects.aggregate(Sum('high_vul'))
@@ -180,20 +180,20 @@ def vuln_static_dashboard(request):
             openvas_high = value
 
     all_high = int(zap_high) + \
-               int(burp_high) + \
-               int(openvas_high) + \
-               int(arachni_high) + \
-               int(webinspect_high) + \
-               int(netsparker_high) + \
-               int(acunetix_high) + \
-               int(nessus_high)
+        int(burp_high) + \
+        int(openvas_high) + \
+        int(arachni_high) + \
+        int(webinspect_high) + \
+        int(netsparker_high) + \
+        int(acunetix_high) + \
+        int(nessus_high)
 
     all_web_high = int(zap_high) + \
-                   int(burp_high) + \
-                   int(arachni_high) + \
-                   int(webinspect_high) + \
-                   int(netsparker_high) + \
-                   int(acunetix_high)
+        int(burp_high) + \
+        int(arachni_high) + \
+        int(webinspect_high) + \
+        int(netsparker_high) + \
+        int(acunetix_high)
 
     all_network_high = int(openvas_high) + int(nessus_high)
 
@@ -256,19 +256,19 @@ def vuln_static_dashboard(request):
             nessus_medium = value
 
     all_medium = int(zap_medium) + \
-                 int(burp_medium) + \
-                 int(openvas_medium) + \
-                 int(arachni_medium) + \
-                 int(webinspect_medium) + \
-                 int(netsparker_medium) + \
-                 int(acunetix_medium) + int(nessus_medium)
+        int(burp_medium) + \
+        int(openvas_medium) + \
+        int(arachni_medium) + \
+        int(webinspect_medium) + \
+        int(netsparker_medium) + \
+        int(acunetix_medium) + int(nessus_medium)
 
     all_web_medium = int(zap_medium) + \
-                     int(burp_medium) + \
-                     int(arachni_medium) + \
-                     int(webinspect_medium) + \
-                     int(netsparker_medium) + \
-                     int(acunetix_medium)
+        int(burp_medium) + \
+        int(arachni_medium) + \
+        int(webinspect_medium) + \
+        int(netsparker_medium) + \
+        int(acunetix_medium)
 
     all_network_medium = int(openvas_medium) + int(nessus_medium)
 
@@ -331,20 +331,20 @@ def vuln_static_dashboard(request):
             nessus_low = value
 
     all_low = int(zap_low) + \
-              int(burp_low) + \
-              int(openvas_low) + \
-              int(arachni_low) + \
-              int(webinspect_low) + \
-              int(netsparker_low) + \
-              int(acunetix_low) + \
-              int(nessus_low)
+        int(burp_low) + \
+        int(openvas_low) + \
+        int(arachni_low) + \
+        int(webinspect_low) + \
+        int(netsparker_low) + \
+        int(acunetix_low) + \
+        int(nessus_low)
 
     all_web_low = int(zap_low) + \
-                  int(burp_low) + \
-                  int(arachni_low) + \
-                  int(webinspect_low) + \
-                  int(netsparker_low) + \
-                  int(acunetix_low)
+        int(burp_low) + \
+        int(arachni_low) + \
+        int(webinspect_low) + \
+        int(netsparker_low) + \
+        int(acunetix_low)
 
     all_network_low = int(openvas_low) + int(nessus_low)
 
@@ -358,41 +358,41 @@ def vuln_static_dashboard(request):
             high_zap = zap_scans_db.objects. \
                 filter(date_time__year=dash_year,
                        date_time__month=m).aggregate(
-                Sum('high_vul'))
+                           Sum('high_vul'))
             high_burp = burp_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('high_vul'))
+                                   Sum('high_vul'))
 
             high_arachni = arachni_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('high_vul'))
+                                   Sum('high_vul'))
 
             high_webinspect = webinspect_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('high_vul'))
+                                   Sum('high_vul'))
 
             high_netsparker = netsparker_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('high_vul'))
+                                   Sum('high_vul'))
 
             high_acunetix_low = acunetix_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('high_vul'))
+                                   Sum('high_vul'))
 
             high_nessus = nessus_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('high_total'))
+                                   Sum('high_total'))
 
             high_openvas = scan_save_db.objects. \
                 filter(date_time__year=dash_year,
                        date_time__month=m).aggregate(
-                Sum('high_total'))
+                           Sum('high_total'))
 
             for key, value in high_zap.iteritems():
                 if value is None:
@@ -442,22 +442,22 @@ def vuln_static_dashboard(request):
                     openvas_high = value
             global data
             all_high_stat = int(zap_high) + \
-                            int(burp_high) + \
-                            int(openvas_high) + \
-                            int(arachni_high) + \
-                            int(webinspect_high) + \
-                            int(netsparker_high) + \
-                            int(acunetix_high) + \
-                            int(nessus_high)
+                int(burp_high) + \
+                int(openvas_high) + \
+                int(arachni_high) + \
+                int(webinspect_high) + \
+                int(netsparker_high) + \
+                int(acunetix_high) + \
+                int(nessus_high)
 
             medium_zap = zap_scans_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('medium_vul'))
+                                   Sum('medium_vul'))
             medium_burp = burp_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('medium_vul'))
+                                   Sum('medium_vul'))
             # medium_openvas = scan_save_db. \
             #     objects.filter(date_time__year=dash_year,
             #                    date_time__month=m).aggregate(
@@ -477,32 +477,32 @@ def vuln_static_dashboard(request):
             medium_arachni = arachni_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('medium_vul'))
+                                   Sum('medium_vul'))
 
             medium_webinspect = webinspect_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('medium_vul'))
+                                   Sum('medium_vul'))
 
             medium_netsparker = netsparker_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('medium_vul'))
+                                   Sum('medium_vul'))
 
             medium_acunetix_low = acunetix_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('medium_vul'))
+                                   Sum('medium_vul'))
 
             medium_nessus = nessus_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('medium_total'))
+                                   Sum('medium_total'))
 
             medium_openvas = scan_save_db.objects. \
                 filter(date_time__year=dash_year,
                        date_time__month=m).aggregate(
-                Sum('medium_total'))
+                           Sum('medium_total'))
 
             for key, value in medium_zap.iteritems():
                 if value is None:
@@ -552,52 +552,52 @@ def vuln_static_dashboard(request):
                     openvas_medium = value
             global data
             all_medium_stat = int(zap_medium) + \
-                              int(burp_medium) + \
-                              int(openvas_medium) + \
-                              int(arachni_medium) + \
-                              int(webinspect_medium) + \
-                              int(netsparker_medium) + \
-                              int(acunetix_medium) + \
-                              int(nessus_medium)
+                int(burp_medium) + \
+                int(openvas_medium) + \
+                int(arachni_medium) + \
+                int(webinspect_medium) + \
+                int(netsparker_medium) + \
+                int(acunetix_medium) + \
+                int(nessus_medium)
 
             low_zap = zap_scans_db.objects. \
                 filter(date_time__year=dash_year,
                        date_time__month=m).aggregate(
-                Sum('low_vul'))
+                           Sum('low_vul'))
             low_burp = burp_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('low_vul'))
+                                   Sum('low_vul'))
 
             low_arachni = arachni_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('low_vul'))
+                                   Sum('low_vul'))
 
             low_webinspect = webinspect_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('low_vul'))
+                                   Sum('low_vul'))
 
             low_netsparker = netsparker_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('low_vul'))
+                                   Sum('low_vul'))
 
             low_acunetix_low = acunetix_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('low_vul'))
+                                   Sum('low_vul'))
 
             low_nessus = nessus_scan_db. \
                 objects.filter(date_time__year=dash_year,
                                date_time__month=m).aggregate(
-                Sum('low_total'))
+                                   Sum('low_total'))
 
             low_openvas = scan_save_db.objects. \
                 filter(date_time__year=dash_year,
                        date_time__month=m).aggregate(
-                Sum('low_total'))
+                           Sum('low_total'))
 
             for key, value in low_zap.iteritems():
                 if value is None:
@@ -647,13 +647,13 @@ def vuln_static_dashboard(request):
                     openvas_low = value
             global data
             all_low_stat = int(zap_low) + \
-                           int(burp_low) + \
-                           int(openvas_low) + \
-                           int(arachni_low) + \
-                           int(webinspect_low) + \
-                           int(netsparker_low) + \
-                           int(acunetix_low) + \
-                           int(nessus_low)
+                int(burp_low) + \
+                int(openvas_low) + \
+                int(arachni_low) + \
+                int(webinspect_low) + \
+                int(netsparker_low) + \
+                int(acunetix_low) + \
+                int(nessus_low)
 
             data = {m: {'h': all_high_stat,
                         'm': all_medium_stat,
@@ -680,22 +680,22 @@ def vuln_static_dashboard(request):
     nessus_closed_vuln = nessus_report_db.objects.filter(vuln_status='Closed')
 
     all_closed_vuln = int(len(zap_closed_vuln)) + \
-                      int(len(burp_closed_vuln)) + \
-                      int(len(arachni_closed_vuln)) + \
-                      int(len(netsparker_closed_vuln)) + \
-                      int(len(webinspect_closed_vuln)) + \
-                      int(len(openvas_closed_vuln)) + \
-                      int(len(nessus_closed_vuln))
+        int(len(burp_closed_vuln)) + \
+        int(len(arachni_closed_vuln)) + \
+        int(len(netsparker_closed_vuln)) + \
+        int(len(webinspect_closed_vuln)) + \
+        int(len(openvas_closed_vuln)) + \
+        int(len(nessus_closed_vuln))
 
     all_false_positive = int(len(zap_false_positive)) + \
-                         int(len(burp_false_positive)) + \
-                         int(len(webinspect_false_positive)) + \
-                         int(len(netsparker_false_positive)) + \
-                         int(len(arachni_false_positive)) + \
-                         int(len(openvas_false_positive)) + \
-                         int(len(nessus_false_positive))
+        int(len(burp_false_positive)) + \
+        int(len(webinspect_false_positive)) + \
+        int(len(netsparker_false_positive)) + \
+        int(len(arachni_false_positive)) + \
+        int(len(openvas_false_positive)) + \
+        int(len(nessus_false_positive))
 
-    return render(request, 'dashboard.html',
+    return render(request, 'dashboard/index.html',
 
                   {'high_data': high_list,
                    'all_project': all_project,
@@ -738,7 +738,7 @@ def project_dashboard(request):
     all_project = project_db.objects.all()
 
     return render(request,
-                  'project_dashboard.html',
+                  'dashboard/project.html',
                   {'all_project': all_project})
 
 
@@ -865,7 +865,7 @@ def proj_data(request):
     all_network_low = openvas_low
 
     return render(request,
-                  'project_dashboard.html',
+                  'dashboard/project.html',
                   {'all_vuln': all_vuln,
                    'total_web': total_web,
                    'total_network': total_network,
@@ -902,7 +902,7 @@ def web_dashboard(request):
                          )
 
     return render(request,
-                  'web_scan_dashboard.html',
+                  'dashboard/web_scan.html',
                   {'all_web_data': all_web_data})
 
 
@@ -987,11 +987,11 @@ def web_dash_data(request):
             all_acunetix = value
 
     all_vuln = int(all_zap) + \
-               int(all_burp) + \
-               int(all_netsparker) + \
-               int(all_webinspect) + \
-               int(all_arachni) + \
-               int(all_acunetix)
+        int(all_burp) + \
+        int(all_netsparker) + \
+        int(all_webinspect) + \
+        int(all_arachni) + \
+        int(all_acunetix)
 
     total_web = all_vuln
 
@@ -1039,10 +1039,10 @@ def web_dash_data(request):
             all_high_arachni = value
 
     all_high = int(all_high_zap) + \
-               int(all_high_burp) + \
-               int(all_high_netsparker) + \
-               int(all_high_webinspect) + \
-               int(all_high_arachni)
+        int(all_high_burp) + \
+        int(all_high_netsparker) + \
+        int(all_high_webinspect) + \
+        int(all_high_arachni)
 
     all_zap_medium = zap_scans_db.objects.filter(scan_scanid=scan_id) \
         .aggregate(Sum('medium_vul'))
@@ -1088,10 +1088,10 @@ def web_dash_data(request):
             all_medium_arachni = value
 
     all_medium = int(all_medium_zap) + \
-                 int(all_medium_burp) + \
-                 int(all_medium_netsparker) + \
-                 int(all_medium_webinspect) + \
-                 int(all_medium_arachni)
+        int(all_medium_burp) + \
+        int(all_medium_netsparker) + \
+        int(all_medium_webinspect) + \
+        int(all_medium_arachni)
 
     all_zap_low = zap_scans_db.objects.filter(scan_scanid=scan_id) \
         .aggregate(Sum('low_vul'))
@@ -1137,10 +1137,10 @@ def web_dash_data(request):
             all_low_arachni = value
 
     all_low = int(all_low_zap) + \
-              int(all_low_burp) + \
-              int(all_low_netsparker) + \
-              int(all_low_webinspect) + \
-              int(all_low_arachni)
+        int(all_low_burp) + \
+        int(all_low_netsparker) + \
+        int(all_low_webinspect) + \
+        int(all_low_arachni)
 
     zap_false_positive = zap_scan_results_db.objects.filter(scan_id=scan_id,
                                                             false_positive='Yes')
@@ -1154,10 +1154,10 @@ def web_dash_data(request):
                                                                          false_positive='Yes')
 
     all_false_positive = int(len(zap_false_positive)) + \
-                         int(len(burp_false_positive)) + \
-                         int(len(webinspect_false_positive)) + \
-                         int(len(netsparker_false_positive)) + \
-                         int(len(arachni_false_positive))
+        int(len(burp_false_positive)) + \
+        int(len(webinspect_false_positive)) + \
+        int(len(netsparker_false_positive)) + \
+        int(len(arachni_false_positive))
 
     zap_closed_vuln = zap_scan_results_db.objects.filter(scan_id=scan_id,
                                                          vuln_status='Closed')
@@ -1171,13 +1171,13 @@ def web_dash_data(request):
                                                                       vuln_status='Closed')
 
     all_closed_vuln = int(len(zap_closed_vuln)) + \
-                      int(len(burp_closed_vuln)) + \
-                      int(len(webinspect_closed_vuln)) + \
-                      int(len(netsparker_closed_vuln)) + \
-                      int(len(arachni_closed_vuln))
+        int(len(burp_closed_vuln)) + \
+        int(len(webinspect_closed_vuln)) + \
+        int(len(netsparker_closed_vuln)) + \
+        int(len(arachni_closed_vuln))
 
     return render(request,
-                  'web_scan_dashboard.html',
+                  'dashboard/web_scan.html',
                   {'all_web_data': all_web_data,
                    'total_web': total_web,
                    'all_high': all_high,
@@ -1200,7 +1200,7 @@ def net_dashboard(request):
                              all_nessus_data
                              )
     return render(request,
-                  'network_scan_dashboard.html',
+                  'dashboard/network_scan.html',
                   {'all_network_data': all_network_data})
 
 
@@ -1296,7 +1296,7 @@ def net_dash_data(request):
                                                             false_positive='Yes')
 
     all_false_positive = int(len(openvas_false_positive)) + \
-                         int(len(nessus_false_positive))
+        int(len(nessus_false_positive))
 
     openvas_closed_vuln = ov_scan_result_db.objects.filter(scan_id=scan_id,
                                                            vuln_status='Closed')
@@ -1304,10 +1304,10 @@ def net_dash_data(request):
                                                          vuln_status='Closed')
 
     all_closed_vuln = int(len(openvas_closed_vuln)) + \
-                      int(len(nessus_closed_vuln))
+        int(len(nessus_closed_vuln))
 
     return render(request,
-                  'network_scan_dashboard.html',
+                  'dashboard/network_scan.html',
                   {'all_network_data': all_network_data,
                    'total_network': total_network,
                    'all_network_high': all_network_high,
