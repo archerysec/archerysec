@@ -1,11 +1,11 @@
 
 $(document).ready(function(){
-	
-	
-	
+
+
+
 	// === Prepare peity charts === //
 	maruti.peity();
-	
+
 	// === Prepare the chart data ===/
 	var sin = [], cos = [];
     for (var i = 0; i < 14; i += 0.5) {
@@ -23,41 +23,41 @@ $(document).ready(function(){
                grid: { hoverable: true, clickable: true },
                yaxis: { min: -1.6, max: 1.6 }
 		   });
-    
+
 	// === Point hover in chart === //
     var previousPoint = null;
     $(".chart").bind("plothover", function (event, pos, item) {
-		
+
         if (item) {
             if (previousPoint != item.dataIndex) {
                 previousPoint = item.dataIndex;
-                
+
                 $('#tooltip').fadeOut(200,function(){
 					$(this).remove();
 				});
                 var x = item.datapoint[0].toFixed(2),
 					y = item.datapoint[1].toFixed(2);
-                    
+
                 maruti.flot_tooltip(item.pageX, item.pageY,item.series.label + " of " + x + " = " + y);
             }
-            
+
         } else {
 			$('#tooltip').fadeOut(200,function(){
 					$(this).remove();
 				});
-            previousPoint = null;           
-        }   
-    });	
-    
-	
-	
-	
-    // === Calendar === //    
+            previousPoint = null;
+        }
+    });
+
+
+
+
+    // === Calendar === //
     var date = new Date();
 	var d = date.getDate();
 	var m = date.getMonth();
 	var y = date.getFullYear();
-	
+
 	$('.calendar').fullCalendar({
 		header: {
 			left: 'prev,next',
@@ -114,7 +114,7 @@ $(document).ready(function(){
 
 maruti = {
 		// === Peity charts === //
-		peity: function(){		
+		peity: function(){
 			$.fn.peity.defaults.line = {
 				strokeWidth: 1,
 				delimeter: ",",
@@ -137,7 +137,7 @@ maruti = {
 			$(".peity_line_bad span").peity("line", {
 				colour: "#FFC4C7",
 				strokeColour: "#BA1E20"
-			});	
+			});
 			$(".peity_line_neutral span").peity("line", {
 				colour: "#CCCCCC",
 				strokeColour: "#757575"
@@ -147,7 +147,7 @@ maruti = {
 			});
 			$(".peity_bar_bad span").peity("bar", {
 				colour: "#BA1E20"
-			});	
+			});
 			$(".peity_bar_neutral span").peity("bar", {
 				colour: "#4fb9f0"
 			});
@@ -155,7 +155,7 @@ maruti = {
 
 		// === Tooltip for flot charts === //
 		flot_tooltip: function(x, y, contents) {
-			
+
 			$('<div id="tooltip">' + contents + '</div>').css( {
 				top: y + 5,
 				left: x + 5
