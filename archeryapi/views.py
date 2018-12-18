@@ -41,11 +41,10 @@ from staticscanners.models import bandit_scan_db, bandit_scan_results_db
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from django.contrib.auth.models import User
 from stronghold.decorators import public
-from rest_framework import authentication, permissions
 from webscanners.arachniscanner.views import launch_arachni_scan
-from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser
+from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser
 from lxml import etree
-from staticscanners.models import dependencycheck_scan_db
+from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -426,6 +425,26 @@ class UpladScanResult(APIView):
             dependencycheck_report_parser.xml_parser(project_id=project_id,
                                                      scan_id=scan_id,
                                                      data=data)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+        elif scanner == 'findbugs':
+            date_time = datetime.datetime.now()
+            scan_dump = findbugs_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root_xml = tree.getroot()
+            findbugs_report_parser.xml_parser(project_id=project_id,
+                                              scan_id=scan_id,
+                                              root=root_xml)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,

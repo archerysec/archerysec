@@ -28,7 +28,7 @@ setup(
         'requests==2.20.0',
         'selenium==3.8.0',
         'six==1.11.0',
-        'urllib3==1.22',
+        'urllib3',
         'coreapi==2.3.3',
         'coreapi-cli==1.0.6',
         'djangorestframework==3.7.7',

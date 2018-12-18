@@ -26,6 +26,7 @@ RUN \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Create archerysec user and group
 RUN groupadd -r archerysec && useradd -r -m -g archerysec archerysec
 
 # Set user to archerysec to execute rest of commands
