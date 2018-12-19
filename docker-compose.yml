@@ -15,7 +15,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/archerysec
+      - .:/home/archerysec/app
     expose:
       - "8000"
     depends_on:
@@ -37,9 +37,10 @@ services:
   archerysec-worker:
     build: .
     volumes:
-      - .:/archerysec
+      - .:/home/archerysec/app
     depends_on:
       - db
+      - archerysec
     links:
       - db
     environment:

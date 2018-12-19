@@ -1,0 +1,81 @@
+{% load static i18n %}<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>{% block title %}{% endblock title %} » Archery</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="icon" href="{% static "logo.png" %}" type="image/x-icon" />
+
+        <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" />
+        <link href="{% static "css/bootstrap-responsive.min.css" %}" rel="stylesheet" />
+        <link href="{% static "font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
+        <link href="{% static "css/uniform.css" %}" rel="stylesheet" />
+        <link href="{% static "css/select2.css" %}" rel="stylesheet" />
+        <link href="{% static "css/jquery.gritter.css" %}" rel="stylesheet" />
+
+        <link href="{% static "css/sitetree_bootstrap_submenu.css"%}" type="text/css" rel="stylesheet" media="screen">
+        <link href="{% static "archerysecurity/css/fonts.css" %}" rel="stylesheet" />
+        <link href="{% static "archerysecurity/css/style.css" %}" rel="stylesheet" />
+        <link href="{% static "archerysecurity/css/media.css" %}" rel="stylesheet" />
+
+        {% block extra_head %}{% endblock extra_head %}
+    </head>
+
+    <body class="{% block body_class %}{% endblock %}">
+    {% block body %}
+        <div id="header">
+            <img src="/static/archery_logo.svg" style="max-width:200px; margin-top: 20px;">
+        </div>
+        {% include '_top_menu.html' %}
+
+        {% comment %}
+        {% include '_search.html' %}
+        {% endcomment %}
+
+        {% include '_sidebar.html' %}
+
+        <div id="content">
+            <div id="content-header">
+                {% include '_breadcrumbs.html' %}
+                <h1>{% block header_title %}{% endblock  %}</h1>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        {% block content %}{% endblock content %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include '_footer.html' %}
+
+        <script src="{% static "js/jquery.min.js" %}"></script>
+        <script src="{% static "js/jquery.ui.custom.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
+        <script src="{% static "js/jquery.uniform.js" %}"></script>
+        <script src="{% static "js/select2.min.js" %}"></script>
+        <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
+        <script src="{% static "js/jquery.gritter.min.js" %}"></script>
+        <script src="{% static "js/jquery.flot.min.js" %}"></script>
+        <script src="{% static "js/jquery.flot.resize.min.js" %}"></script>
+        <script src="{% static "js/jquery.peity.min.js" %}"></script>
+
+        <script src="{% static "archerysecurity/js/base.js" %}"></script>
+        <script src="{% static "archerysecurity/js/tables.js" %}"></script>
+        <script src="{% static "archerysecurity/js/popover.js" %}"></script>
+
+        {% comment %}
+        <script src="{% static "js/archery.interface.js" %}"></script>
+        {% endcomment %}
+
+        <script src="{% static "dashboard/js/base.js" %}"></script>
+
+        {% block extra_body %}{% endblock extra_body %}
+
+    {% endblock body %}
+    </body>
+</html>
