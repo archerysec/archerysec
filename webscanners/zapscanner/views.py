@@ -176,7 +176,6 @@ def zap_scan_task_launch(request):
 
         t = Task.objects.all()
         # t.delete()
-        print task_time
 
         for ta in t:
             print ta.run_at
@@ -234,12 +233,12 @@ def zap_scan_schedule(request):
                 if periodic_task_value == 'None':
                     my_task = task(target, project_id, scanner, schedule=dt_obj)
                     task_id = my_task.id
-                    print "Savedddddd taskid", task_id
+
                 else:
 
                     my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
                     task_id = my_task.id
-                    print "Savedddddd taskid", task_id
+
             elif scanner == 'burp_scan':
                 if periodic_task_value == 'None':
                     my_task = task(target, project_id, scanner, schedule=dt_obj)
@@ -247,7 +246,7 @@ def zap_scan_schedule(request):
                 else:
                     my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
                     task_id = my_task.id
-                    print "Savedddddd taskid", task_id
+
             save_scheadule = task_schedule_db(task_id=task_id, target=target,
                                               schedule_time=scan_schedule_time,
                                               project_id=project_id,

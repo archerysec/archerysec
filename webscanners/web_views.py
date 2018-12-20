@@ -230,9 +230,10 @@ def task(target_url, project_id, scanner):
     for i in range(0, split_length):
         target = target__split.__getitem__(i)
         if scanner == 'zap_scan':
+            scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_zap_scan,
-                args=(target, project_id, rescan_id, rescan))
+                args=(target, project_id, rescan_id, rescan, scan_id))
             thread.daemon = True
             thread.start()
         elif scanner == 'burp_scan':
