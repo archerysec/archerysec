@@ -52,6 +52,21 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     time.sleep(3)
     zap.cookies()
     time.sleep(3)
+    date_time = datetime.now()
+    try:
+        save_all_scan = zap_scans_db(
+            project_id=project_id,
+            scan_url=target_url,
+            scan_scanid=scan_id,
+            date_time=date_time,
+            rescan_id=rescan_id,
+            rescan=rescan,
+            vul_status='0'
+        )
+
+        save_all_scan.save()
+    except Exception as e:
+        print e
     zap.zap_spider_thread(thread_value=30)
     spider_id = zap.zap_spider()
     zap.spider_status(spider_id=spider_id)
@@ -62,20 +77,6 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     """ ZAP Scan trigger on target_url  """
     zap_scan_id = zap.zap_scan()
     # un_scanid = uuid.uuid4()
-    date_time = datetime.now()
-    try:
-        save_all_scan = zap_scans_db(
-            project_id=project_id,
-            scan_url=target_url,
-            scan_scanid=scan_id,
-            date_time=date_time,
-            rescan_id=rescan_id,
-            rescan=rescan,
-        )
-
-        save_all_scan.save()
-    except Exception as e:
-        print e
     zap.zap_scan_status(
         scan_id=zap_scan_id,
         un_scanid=scan_id
