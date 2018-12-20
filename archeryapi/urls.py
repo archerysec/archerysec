@@ -36,7 +36,11 @@ urlpatterns = [
     url(r'project/', views.Project.as_view()),
     url(r'webscanresult/', views.WebScanResult.as_view()),
     url(r'zapscanstatus/', views.ZapScanStatus.as_view()),
-    url(r'networkscanresult/', views.NetworkScanResult.as_view()),
+    url(r'burpscanstatus/', views.BurpScanStatus.as_view()),
+    url(r'arachniscanstatus/', views.ArachniScanStatus.as_view()),
+    url(r'netsparkerscanstatus/', views.NetsparkerScanStatus.as_view()),
+    url(r'webinspectscanstatus/', views.WebinspectScanStatus.as_view()),
+    url(r'acunetixscanresult/', views.AcunetixScanStatus.as_view()),
     url(r'uploadscan/', views.UpladScanResult.as_view()),
     url(r'createuser/', views.CreateUsers.as_view())
 

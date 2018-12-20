@@ -11,11 +11,19 @@
 
 from rest_framework.response import Response
 from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
-    netsparker_scan_db, webinspect_scan_db
+    netsparker_scan_db, webinspect_scan_db, acunetix_scan_db
 from networkscanners.models import scan_save_db, ov_scan_result_db
 from projects.models import project_db
-from webscanners.serializers import WebScanSerializer, WebScanResultSerializer, UploadScanSerializer, \
-    WebScanStatusSerializer
+from webscanners.serializers import WebScanSerializer,\
+    WebScanResultSerializer,\
+    UploadScanSerializer, \
+    WebScanStatusSerializer,\
+    ArachniScanStatusSerializer,\
+    BurpScanStatusSerializer,\
+    NetsparkerScanStatusSerializer, \
+    AcunetixStatusSerializer, \
+    WebinspectScanStatusSerializer
+
 from rest_framework import status
 from webscanners import web_views
 from webscanners.zapscanner.views import launch_zap_scan
@@ -237,6 +245,90 @@ class ZapScanStatus(generics.ListCreateAPIView):
             zap_scan = zap_scans_db.objects.filter(scan_scanid=scan_id)
             all_scans = chain(zap_scan)
             serialized_scans = WebScanStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+class ArachniScanStatus(generics.ListCreateAPIView):
+    queryset = arachni_scan_db.objects.all()
+    serializer_class = ArachniScanStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = ArachniScanStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            arachni_scan = arachni_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(arachni_scan)
+            serialized_scans = ArachniScanStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class BurpScanStatus(generics.ListCreateAPIView):
+    queryset = burp_scan_db.objects.all()
+    serializer_class = BurpScanStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = BurpScanStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            burp_scan = burp_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(burp_scan)
+            serialized_scans = BurpScanStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class NetsparkerScanStatus(generics.ListCreateAPIView):
+    queryset = netsparker_scan_db.objects.all()
+    serializer_class = NetsparkerScanStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = NetsparkerScanStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            netsparker_scan = netsparker_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(netsparker_scan)
+            serialized_scans = NetsparkerScanStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class WebinspectScanStatus(generics.ListCreateAPIView):
+    queryset = webinspect_scan_db.objects.all()
+    serializer_class = WebinspectScanStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = WebinspectScanStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            webinspect_scan = webinspect_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(webinspect_scan)
+            serialized_scans = WebinspectScanStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class AcunetixScanStatus(generics.ListCreateAPIView):
+    queryset = acunetix_scan_db.objects.all()
+    serializer_class = AcunetixStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = AcunetixStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            acunetix_scan = acunetix_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(acunetix_scan)
+            serialized_scans = AcunetixStatusSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
 
 
