@@ -65,9 +65,9 @@ def dependencycheck_vuln_data(request):
         if false_positive == 'Yes':
             vuln_info = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
-                name = vi.test_name
-                filename = vi.filename
-                Severity = vi.issue_severity
+                name = vi.name
+                filename = vi.fileName
+                Severity = vi.severity
                 dup_data = name + filename + Severity
                 false_positive_hash = hashlib.sha256(dup_data).hexdigest()
                 dependencycheck_scan_results_db.objects.filter(vuln_id=vuln_id,
@@ -77,7 +77,7 @@ def dependencycheck_vuln_data(request):
                                                                                        )
 
         return HttpResponseRedirect(
-            '/dependencycheckscanner/dependencycheckscan_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
+            '/dependencycheck/dependencycheck_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     # dependencycheck_vuln_data = dependencycheck_scan_results_db.objects.filter(
     #     scan_id=scan_id,

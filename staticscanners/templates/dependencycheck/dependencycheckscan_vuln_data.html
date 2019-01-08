@@ -83,11 +83,11 @@
                                 <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/dependencycheckscanner/dependencycheckscan_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/dependencycheck/dependencycheck_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="Yes">
                                         <input type="hidden" name="status" value="Open">
-                                        <input type="hidden" name="vuln_name" value="{{data.test_name}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">Yes</button>
                                     </form>
@@ -95,7 +95,7 @@
                                 <td>{{data.vuln_status}}</td>
                                 <td>
                                     <div>
-                                        <form action="/dependencycheckscanner/dependencycheck_del_vuln" method="POST"
+                                        <form action="/dependencycheck/dependencycheck_del_vuln" method="POST"
                                               class="form-horizontal">
                                             {% csrf_token %}
                                             <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -105,11 +105,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/dependencycheckscanner/dependencycheckscan_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/dependencycheck/dependencycheck_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
                                         <input type="hidden" name="status" value="Closed">
-                                        <input type="hidden" name="vuln_name" value="{{data.test_name}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">Close</button>
                                     </form>
@@ -139,7 +139,7 @@
                             <tr>
                                 <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                                 <th>Vulnerability</th>
-                                <th>URL</th>
+                                <th>File Name</th>
                                 <th>Risk</th>
                                 <th>False Positive</th>
                                 <th></th>
@@ -153,23 +153,23 @@
                                         </label>
                                     </form>
                                 </td>
-                                <td><a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.test_name}}</a>
+                                <td><a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                 </td>
-                                <td>{{data.filename}}</td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                                <td>{{data.fileName}}</td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
                                  <td>
-                                    <form method="POST" action="/dependencycheckscanner/dependencycheckscan_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/dependencycheck/dependencycheck_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
                                         <input type="hidden" name="status" value="Open">
-                                        <input type="hidden" name="vuln_name" value="{{data.test_name}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">No</button>
                                     </form>
                                 </td>
                                 <td>
                                     <div>
-                                        <form action="/acunetixscanner/acunetix_del_vuln/" method="POST"
+                                        <form action="/dependencycheck/dependencycheck_del_vuln" method="POST"
                                               class="form-horizontal">
                                             {% csrf_token %}
                                             <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -209,7 +209,6 @@
                                 <th>Vulnerability</th>
                                 <th>URL</th>
                                 <th>Risk</th>
-                                <th>False Positive</th>
                                 <th>Status</th>
                                 <th></th>
                                 <th></th>
@@ -225,30 +224,15 @@
                                         <!--<button type="button" >Get Values</button>-->
                                     </form>
                                 </td>
-                                <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
+                                <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                 </td>
-                                <td>{{data.vuln_url}}</td>
-                                <td><span class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span></td>
-                                <td>
-                                    <form method="POST" action="/acunetixscanner/acunetix_vuln_out/">{% csrf_token %}
-                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                        <input type="hidden" name="false" value="No">
-                                        <input type="hidden" name="status" value="Open">
-                                        <input type="hidden" name="vuln_name" value="{{data.VulnName}}">
-                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                        <button class="btn btn-info btn-mini">No</button>
-                                    </form>
-                                </td>
-                                <td>{{data.vuln_status}}</td>
-                                <!--<td>-->
-                                <!--<div><a href="/acunetixscanner/edit_acunetix_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"-->
-                                <!--data-original-title="Edit"><i-->
-                                <!--class="icon-pencil"></i></a>-->
-                                <!--</div>-->
-                                <!--</td>-->
+                                <td>{{data.fileName}}</td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
+
+                                <td><span class="badge badge-success">{{data.vuln_status}}</span></td>
                                 <td>
                                     <div>
-                                        <form action="/acunetixscanner/acunetix_del_vuln/" method="POST"
+                                        <form action="/dependencycheck/dependencycheck_del_vuln" method="POST"
                                               class="form-horizontal">
                                             {% csrf_token %}
                                             <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -258,11 +242,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/dependencycheckscanner/dependencycheckscan_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/dependencycheck/dependencycheck_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
                                         <input type="hidden" name="status" value="Open">
-                                        <input type="hidden" name="vuln_name" value="{{data.test_name}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">Open</button>
                                     </form>

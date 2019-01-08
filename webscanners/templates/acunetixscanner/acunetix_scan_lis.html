@@ -44,18 +44,18 @@
 
     <div class="container-fluid">
         <hr>
-        <div class="span3 offset6">
-            {% if messages %}
+        <!--<div class="span3 offset6">-->
+            <!--{% if messages %}-->
 
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
-            </div>
-            {% endfor %}
+            <!--{% for message in messages %}-->
+            <!--<div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"-->
+                                                            <!--href="#">×</a>-->
+                <!--<p class="alert-heading">{{ message }}</p>-->
+            <!--</div>-->
+            <!--{% endfor %}-->
 
-            {% endif %}
-        </div>
+            <!--{% endif %}-->
+        <!--</div>-->
         <div class="row-fluid">
             <div class="span12">
                 <div class="widget-box">
@@ -111,16 +111,6 @@
                                 <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
                                 <td><span class="badge badge-info">{{data.low_vul}}</span></td>
                                 <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                                <!--<td>-->
-                                    <!--<form action="/acunetixscanner/get_scan_pdf/" method="post" class="forms-sample">-->
-
-                                        <!--{% csrf_token %}-->
-                                        <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}"/>-->
-                                        <!--<input type="hidden" name="scan_url" value="{{data.url}}"/>-->
-
-                                        <!--<button class="btn btn-success"><i class="icon-file"></i></button>-->
-                                    <!--</form>-->
-                                <!--</td>-->
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn btn-primary"
@@ -130,9 +120,6 @@
                                         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
                                                 class="caret"></span></a>
                                         <ul class="dropdown-menu">
-                                            <!--<li><a href="/acunetixscanner/acunetix_vuln_list?scan_id={{data.scan_id}}"><i-->
-                                                    <!--class="icon-pencil"></i> View </a></li>-->
-                                            <!--<li>-->
 
                                             </li>
                                         </ul>

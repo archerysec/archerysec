@@ -9,44 +9,36 @@
     </div>
     <div class="container-fluid">
 
-        <div class="span3 offset6">
-            {% if messages %}
+        <!--<div class="span3 offset6">-->
+            <!--{% if messages %}-->
 
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
+            <!--{% for message in messages %}-->
+            <!--<div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"-->
+                                                            <!--href="#">×</a>-->
+                <!--<p class="alert-heading">{{ message }}</p>-->
 
-                {% endfor %}
+                <!--{% endfor %}-->
 
-                {% endif %}
-            </div>
-        </div>
+                <!--{% endif %}-->
+            <!--</div>-->
+        <!--</div>-->
         <div class="row-fluid">
             <div class="span9 offset1">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Vulnerability List</h5>
-                        <!--<div class="buttons"><a data-toggle="modal" href="/acunetixscanner/add_vuln/?scan_id={{ scan_id }}&scanner=arachni"-->
-                                                <!--class="btn btn-primary btn-mini"><i-->
-                                <!--class="icon-plus icon-white"></i> Add new Vulnerability</a>-->
-                        <!--</div>-->
                     </div>
 
                     <div class="widget-content nopadding">
                         <table class="table table-bordered data-table table-fixed" width="100%">
                             <thead>
                             <tr>
-                                <!--<th>Project ID</th>-->
                                 <th>Vulnerability</th>
                                 <th>Risk</th>
-                                <!--<th></th>-->
-                                <!--<th></th>-->
                             </tr>
                             </thead>
                             <tbody>{% for data in acunetix_all_vul %}
                             <tr data-target="#">
-                                <!--<td>{{data.project_id}}</td>-->
                                 <td><a href="/acunetixscanner/acunetix_vuln_out/?scan_id={{data.scan_id}}&scan_name={{data.VulnName}}">{{data.VulnName}}</a>
                                 </td>
                                 <td><span class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span></td>
