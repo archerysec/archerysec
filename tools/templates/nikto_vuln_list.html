@@ -1,0 +1,261 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = [];
+            $.each($("input[name='del_vuln_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/tools/nikto_vuln_del/',
+                data:{
+                   del_vuln: json_scanid,
+                   scan_id: $('input[name=scan_id]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+                }
+            });
+            setTimeout(function(){location.reload();},1000);
+        });
+
+    });
+
+$(document).on('click', '.confirm-delete', function(){
+    return confirm('Are you sure you want to delete this?');
+})
+
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Vulnerabilities Details</a></div>
+        <h1>Vulnerabilities List</h1>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <!--<div class="span3 offset6">-->
+            <!--{% if messages %}-->
+
+            <!--{% for message in messages %}-->
+            <!--<div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"-->
+                                                            <!--href="#">×</a>-->
+                <!--<p class="alert-heading">{{ message }}</p>-->
+
+                <!--{% endfor %}-->
+
+                <!--{% endif %}-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="widget-box">
+                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                            <h5>Vulnerability List</h5>
+                            <!--<div class="buttons"><a data-toggle="modal"-->
+                                                    <!--href="/webscanners/add_vuln/?scan_id={{ scan_vul }}&scanner=zap"-->
+                                                    <!--class="btn btn-primary btn-mini"><i-->
+                                    <!--class="icon-plus icon-white"></i> Add new Vulnerability</a>-->
+                            <!--</div>-->
+                            <div class="buttons">
+                                <div class="confirm-delete">
+                                <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected
+                                </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-content nopadding">
+                            <table class="table table-bordered data-table table-fixed" width="100%">
+                                <thead>
+                                <tr>
+                                    <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                    <th>Vulnerability</th>
+                                    <th>URL</th>
+                                    <th>False Positive</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in vuln_data %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                            <!--<br>-->
+                                            <!--<button type="button" >Get Values</button>-->
+                                        </form>
+                                    </td>
+                                    <td><a href="#">{{data.discription}}</a>
+                                    </td>
+                                    <td>{{data.uri}}</td>
+                                    <!--<td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>-->
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="/tools/nikto_result_vul/">{% csrf_token %}
+                                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="false" value="Yes">
+                                            <input type="hidden" name="status" value="{{data.vuln_status}}">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-info btn-mini">Yes</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <div class="confirm-delete">
+                                            <form action="/tools/nikto_vuln_del/" method="POST" class="form-horizontal">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="/tools/nikto_result_vul/">{% csrf_token %}
+                                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="false" value="No">
+                                            <input type="hidden" name="status" value="Closed">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-danger btn-mini">Close</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                            <h5>False Positive Vulnerability List</h5>
+                            <div class="buttons">
+                                <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div class="widget-content nopadding">
+                            <table class="table table-bordered data-table table-fixed" width="100%">
+                                <thead>
+                                <tr>
+                                    <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                    <th>Vulnerability</th>
+                                    <th>URL</th>
+                                    <th>False Positive</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in false_data %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                        </form>
+                                    </td>
+                                    <td><a href="#">{{data.discription}}</a>
+                                    </td>
+                                    <td>{{data.uri}}</td>
+                                    <td>
+                                        <form method="POST" action="/tools/nikto_result_vul/">{% csrf_token %}
+                                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="false" value="No">
+                                            <input type="hidden" name="status" value="{{data.vuln_status}}">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-info btn-mini">No</button>
+                                        </form>
+                                    </td>
+                                   <td>
+                                        <div class="confirm-delete">
+                                            <form action="/tools/nikto_vuln_del/" method="POST" class="form-horizontal">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                            <h5>Closed Vulerability list</h5>
+                            <div class="buttons">
+                                <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div class="widget-content nopadding">
+                            <table class="table table-bordered data-table table-fixed" width="100%">
+                                <thead>
+                                <tr>
+                                    <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                    <th>Vulnerability</th>
+                                    <th>URL</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in vuln_data_close %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                        </form>
+                                    </td>
+                                    <td><a href="/zapscanner/zap_vuln_check/?vuln_id={{data.vuln_id}}">{{data.discription}}</a>
+                                    </td>
+                                    <td>{{data.uri}}</td>
+                                    <td>
+                                        <div class="confirm-delete">
+                                            <form action="/tools/nikto_vuln_del/" method="POST" class="form-horizontal">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="/tools/nikto_result_vul/">{% csrf_token %}
+                                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="false" value="No">
+                                            <input type="hidden" name="status" value="Open">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-info btn-mini">Open</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -20,6 +20,28 @@ class nikto_result_db(models.Model):
     nikto_scan_output = models.TextField(blank=True, null=True)
 
 
+class nikto_vuln_db(models.Model):
+    vuln_id = models.UUIDField(blank=True, null=True)
+    scan_id = models.UUIDField(blank=True, null=True)
+    project_id = models.TextField(blank=True, null=True)
+    scan_url = models.TextField(blank=True, null=True)
+    discription = models.TextField(blank=True, null=True)
+    targetip = models.TextField(blank=True, null=True)
+    hostname = models.TextField(blank=True, null=True)
+    port = models.TextField(blank=True, null=True)
+    uri = models.TextField(blank=True, null=True)
+    httpmethod = models.TextField(blank=True, null=True)
+    testlinks = models.TextField(blank=True, null=True)
+    osvdb = models.TextField(blank=True, null=True)
+    false_positive = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+
+
+
 # Nmap tool models
 class nmap_scan_db(models.Model):
     scan_id = models.TextField(blank=True, null=True)

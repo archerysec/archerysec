@@ -36,6 +36,13 @@ urlpatterns = [
         views.nikto_scan_del,
         name='nikto_scan_del'),
 
+    url(r'^nikto_result_vul/$',
+        views.nikto_result_vul,
+        name='nikto_result_vul'),
+    url(r'^nikto_vuln_del/$',
+        views.nikto_vuln_del,
+        name='nikto_vuln_del'),
+
     # nmap requests
     url(r'^nmap_scan/$',
         views.nmap_scan,

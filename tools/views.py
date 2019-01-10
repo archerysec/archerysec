@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nmap_scan_db
+from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nmap_scan_db, nikto_vuln_db
 from django.shortcuts import render, HttpResponseRedirect
 import subprocess
 import defusedxml.ElementTree as ET
 from scanners.scanner_parser.network_scanner import nmap_parser
 import uuid
+import codecs
+from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
+import hashlib
 
 # NOTE[gmedian]: in order to be more portable we just import everything rather than add anything in this very script
 from tools.nmap_vulners.nmap_vulners_view import nmap_vulners, nmap_vulners_port, nmap_vulners_scan
@@ -36,6 +39,7 @@ def sslscan(request):
             try:
                 sslscan_output = subprocess.check_output(['sslscan', '--no-colour', scans_url])
                 print(sslscan_output)
+
 
             except Exception as e:
                 print (e)
@@ -115,18 +119,25 @@ def nikto(request):
             scan_id = uuid.uuid4()
             scans_url = value_split.__getitem__(i)
 
+            nikto_res_path = 'nikto_result/' + str(scan_id) + '.html'
+            print nikto_res_path
+
             try:
                 print(scans_url)
-                nikto_output = subprocess.check_output(['nikto.pl', '-o', 'report.html',
+                nikto_output = subprocess.check_output(['nikto.pl', '-o', nikto_res_path,
                                                         '-Format', 'htm', '-Tuning', '123bde',
                                                         '-host', scans_url])
                 print(nikto_output)
+                f = codecs.open(nikto_res_path, 'r')
+                data = f.read()
+
+                nikto_html_parser(data, project_id, scan_id)
 
             except Exception as e:
                 print (e)
 
                 try:
-                    nikto_output = subprocess.check_output(['nikto.pl', '-o', 'report.html',
+                    nikto_output = subprocess.check_output(['nikto', '-o', 'report.html',
                                                             '-Format', 'htm', '-Tuning', '123bde',
                                                             '-host', scans_url])
                     print(nikto_output)
@@ -164,6 +175,82 @@ def nikto_result(request):
                   )
 
 
+def nikto_result_vul(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+
+    if request.method == "POST":
+        false_positive = request.POST.get('false')
+        status = request.POST.get('status')
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        nikto_vuln_db.objects.filter(vuln_id=vuln_id,
+                                     scan_id=scan_id).update(false_positive=false_positive, vuln_status=status)
+
+        if false_positive == 'Yes':
+            vuln_info = nikto_vuln_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            for vi in vuln_info:
+                discription = vi.discription
+                hostname = vi.hostname
+                dup_data = discription + hostname
+                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                nikto_vuln_db.objects.filter(vuln_id=vuln_id,
+                                             scan_id=scan_id).update(false_positive=false_positive,
+                                                                     vuln_status=status,
+                                                                     false_positive_hash=false_positive_hash
+                                                                     )
+    scan_result = nikto_vuln_db.objects.filter(scan_id=scan_id)
+
+    vuln_data = nikto_vuln_db.objects.filter(scan_id=scan_id,
+                                             false_positive='No',
+                                             )
+
+    vuln_data_close = nikto_vuln_db.objects.filter(scan_id=scan_id,
+                                                   false_positive='No',
+                                                   vuln_status='Closed'
+                                                   )
+
+    false_data = nikto_vuln_db.objects.filter(scan_id=scan_id,
+                                              false_positive='Yes')
+
+    return render(request,
+                  'nikto_vuln_list.html',
+                  {'scan_result': scan_result,
+                   'vuln_data': vuln_data,
+                   'vuln_data_close': vuln_data_close,
+                   'false_data': false_data
+                   }
+                  )
+
+
+def nikto_vuln_del(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        vuln_id = request.POST.get("del_vuln")
+        scan_id = request.POST.get("scan_id")
+
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print "split_length", split_length
+        for i in range(0, split_length):
+            _vuln_id = value_split.__getitem__(i)
+            delete_vuln = nikto_vuln_db.objects.filter(vuln_id=_vuln_id)
+            delete_vuln.delete()
+
+        return HttpResponseRedirect("/tools/nikto_result_vul/?scan_id=%s" % scan_id)
+
+
 def nikto_scan_del(request):
     """
 
@@ -180,9 +267,11 @@ def nikto_scan_del(request):
         split_length = value_split.__len__()
         print "split_length", split_length
         for i in range(0, split_length):
-            vuln_id = value_split.__getitem__(i)
+            _scan_id = value_split.__getitem__(i)
 
-            del_scan = nikto_result_db.objects.filter(scan_id=vuln_id)
+            del_scan = nikto_result_db.objects.filter(scan_id=_scan_id)
+            del_scan.delete()
+            del_scan = nikto_vuln_db.objects.filter(scan_id=_scan_id)
             del_scan.delete()
 
     return HttpResponseRedirect('/tools/nikto/')
