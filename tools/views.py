@@ -9,6 +9,7 @@ import uuid
 import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 import hashlib
+import os
 
 # NOTE[gmedian]: in order to be more portable we just import everything rather than add anything in this very script
 from tools.nmap_vulners.nmap_vulners_view import nmap_vulners, nmap_vulners_port, nmap_vulners_scan
@@ -119,7 +120,7 @@ def nikto(request):
             scan_id = uuid.uuid4()
             scans_url = value_split.__getitem__(i)
 
-            nikto_res_path = 'nikto_result/' + str(scan_id) + '.html'
+            nikto_res_path = os.getcwd() + '/nikto_result/' + str(scan_id) + '.html'
             print nikto_res_path
 
             try:
