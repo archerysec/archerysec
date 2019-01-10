@@ -18,6 +18,7 @@ class nikto_result_db(models.Model):
     project_id = models.TextField(blank=True, null=True)
     scan_url = models.TextField(blank=True, null=True)
     nikto_scan_output = models.TextField(blank=True, null=True)
+    date_time = models.TextField(null=True, blank=True)
 
 
 class nikto_vuln_db(models.Model):
@@ -39,6 +40,7 @@ class nikto_vuln_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    date_time = models.TextField(null=True, blank=True)
 
 
 

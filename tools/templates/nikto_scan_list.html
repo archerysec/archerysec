@@ -79,6 +79,7 @@
                             <tr>
                                 <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                                 <th>URL</th>
+                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -94,6 +95,7 @@
                                 </td>
                                 <td><a href="/tools/nikto_result_vul/?scan_id={{data.scan_id}}">{{ data.scan_url }}</a>
                                 </td>
+                                <td>{{data.date_time}}</td>
                                 <td>
                                     <form action="/tools/nikto_scan_del/" method="post" class="forms-sample">
 

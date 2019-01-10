@@ -53,7 +53,8 @@ from webscanners.arachniscanner.views import launch_arachni_scan
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser
 from lxml import etree
 from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db
-
+from tools.models import nikto_result_db
+from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 
 class WebScan(generics.ListCreateAPIView):
     queryset = zap_scans_db.objects.all()
@@ -537,6 +538,22 @@ class UpladScanResult(APIView):
             findbugs_report_parser.xml_parser(project_id=project_id,
                                               scan_id=scan_id,
                                               root=root_xml)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+        elif scanner == 'nikto':
+            date_time = datetime.datetime.now()
+            scan_dump = nikto_result_db(
+                date_time=date_time,
+                scan_url=scan_url,
+                scan_id=scan_id,
+                project_id=project_id,
+            )
+            scan_dump.save()
+
+            nikto_html_parser(xml_file, project_id, scan_id)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,

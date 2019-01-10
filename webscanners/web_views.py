@@ -726,7 +726,9 @@ def xml_upload(request):
             return HttpResponseRedirect("/findbugs/findbugs_list")
 
         elif scanner == 'nikto':
+            date_time = datetime.now()
             scan_dump = nikto_result_db(
+                date_time=date_time,
                 scan_url=scan_url,
                 scan_id=scan_id,
                 project_id=project_id,

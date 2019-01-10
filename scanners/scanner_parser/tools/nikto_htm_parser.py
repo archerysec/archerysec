@@ -16,7 +16,7 @@ def nikto_html_parser(data, project_id, scan_id):
     soup = BeautifulSoup(data, 'html.parser')
 
     for link in soup.find_all(class_='dataTable'):
-        print "------------------------"
+        # print "------------------------"
         table_rows = link.find_all('tr')
         for tr in table_rows:
             for tt in tr.find_all(class_='column-head'):
@@ -24,50 +24,50 @@ def nikto_html_parser(data, project_id, scan_id):
                     for ttt in tr.find_all('td'):
                         for tttt in ttt.find_all('b'):
                             del tttt
-                    print "Description:", ttt.text
+                    # print "Description:", ttt.text
                     discription = ttt.text
                 if tt.text == 'Target IP':
                     for ttt in tr.find_all('td'):
                         for tttt in ttt.find_all('b'):
                             del tttt
-                    print "Target IP", ttt.text
+                    # print "Target IP", ttt.text
                     targetip = ttt.test
                 if tt.text == 'Target hostname':
                     for ttt in tr.find_all('td'):
                         for tttt in ttt.find_all('b'):
                             del tttt
-                    print "Target hostname", ttt.text
+                    # print "Target hostname", ttt.text
                     hostname = ttt.text
                 if tt.text == 'Target Port':
                     for ttt in tr.find_all('td'):
                         for tttt in ttt.find_all('b'):
                             del tttt
-                    print "Target Port", ttt.text
+                    # print "Target Port", ttt.text
                     port = ttt.text
 
                 if tt.text == 'URI':
                     for ttt in tr.find_all('td'):
                         for tttt in ttt.find_all('b'):
                             del tttt
-                    print "URI:", ttt.text
+                    # print "URI:", ttt.text
                     uri = ttt.text
                 if tt.text == 'HTTP Method':
                     for ttt in tr.find_all('td'):
                         for tttt in ttt.find_all('b'):
                             del tttt
-                    print "HTTP Method:", ttt.text
+                    # print "HTTP Method:", ttt.text
                     httpmethod = ttt.text
                 if tt.text == 'Test Links':
                     for ttt in tr.find_all('td'):
                         for tttt in ttt.find_all('b'):
                             del tttt
-                    print "Test Links:", ttt.text
+                    # print "Test Links:", ttt.text
                     testlinks = ttt.text
                 if tt.text == 'OSVDB Entries':
                     for ttt in tr.find_all('td'):
                         for tttt in ttt.find_all('b'):
                             del tttt
-                    print "OSVDB Entries:", ttt.text
+                    # print "OSVDB Entries:", ttt.text
                     osvdb = ttt.text
 
         vuln_id = uuid.uuid4()
