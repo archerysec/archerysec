@@ -130,21 +130,27 @@ def nikto(request):
                 print(nikto_output)
                 f = codecs.open(nikto_res_path, 'r')
                 data = f.read()
-
-                nikto_html_parser(data, project_id, scan_id)
+                try:
+                    nikto_html_parser(data, project_id, scan_id)
+                except Exception as e:
+                    print e
 
             except Exception as e:
                 print (e)
 
                 try:
+                    print("New command running......")
                     nikto_output = subprocess.check_output(['nikto', '-o', nikto_res_path,
                                                             '-Format', 'htm', '-Tuning', '123bde',
                                                             '-host', scans_url])
                     print(nikto_output)
                     f = codecs.open(nikto_res_path, 'r')
                     data = f.read()
+                    try:
+                        nikto_html_parser(data, project_id, scan_id)
+                    except Exception as e:
+                        print e
 
-                    nikto_html_parser(data, project_id, scan_id)
                 except Exception as e:
                     print(e)
 
