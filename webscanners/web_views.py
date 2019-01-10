@@ -55,6 +55,9 @@ from lxml import etree
 from staticscanners.models import dependencycheck_scan_db,\
     findbugs_scan_db, \
     findbugs_scan_results_db
+from tools.models import nikto_result_db
+import codecs
+from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
@@ -721,6 +724,18 @@ def xml_upload(request):
                                               root=root)
             print("Saved scan data")
             return HttpResponseRedirect("/findbugs/findbugs_list")
+
+        elif scanner == 'nikto':
+            scan_dump = nikto_result_db(
+                scan_url=scan_url,
+                scan_id=scan_id,
+                project_id=project_id,
+            )
+            scan_dump.save()
+
+            nikto_html_parser(xml_file, project_id, scan_id)
+            print("Saved scan data")
+            return HttpResponseRedirect("/tools/nikto/")
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
 
