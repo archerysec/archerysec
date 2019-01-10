@@ -117,14 +117,18 @@ def nikto(request):
 
             try:
                 print(scans_url)
-                nikto_output = subprocess.check_output(['nikto.pl', '-host', scans_url])
+                nikto_output = subprocess.check_output(['nikto.pl', '-o', 'report.html',
+                                                        '-Format', 'htm', '-Tuning', '123bde',
+                                                        '-host', scans_url])
                 print(nikto_output)
 
             except Exception as e:
                 print (e)
 
                 try:
-                    nikto_output = subprocess.check_output(['nikto', '-host', scans_url])
+                    nikto_output = subprocess.check_output(['nikto.pl', '-o', 'report.html',
+                                                            '-Format', 'htm', '-Tuning', '123bde',
+                                                            '-host', scans_url])
                     print(nikto_output)
                 except Exception as e:
                     print(e)

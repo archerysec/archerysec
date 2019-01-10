@@ -520,13 +520,13 @@ def del_zap_scan(request):
             print "split_length", split_length
             for i in range(0, split_length):
                 target = target_split.__getitem__(i)
+                item_results = zap_scan_results_db.objects.filter(scan_id=target,
+                                                                  )
+                item_results.delete()
 
                 item = zap_scans_db.objects.filter(scan_scanid=target,
                                                    )
                 item.delete()
-                item_results = zap_scan_results_db.objects.filter(scan_id=target,
-                                                                  )
-                item_results.delete()
                 messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
             return HttpResponseRedirect('/zapscanner/zap_scan_list/')
     except Exception as e:
