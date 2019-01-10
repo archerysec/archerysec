@@ -9,6 +9,5 @@ geckodriver.log
 scanners/zap.log
 site/
 archerysecurity/local_settings.py
-nikto_result/*
 dbdata
 static/*
