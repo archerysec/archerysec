@@ -41,6 +41,10 @@ WORKDIR /home/archerysec/app
 # Copy all file to archerysec folder.
 COPY . .
 
+RUN sudo rm -rf nikto_result
+
+RUN mkdir nikto_result
+
 # Install requirements
 RUN pip install --no-cache-dir -r requirements.txt && \
     rm -rf /home/archerysec/.cache

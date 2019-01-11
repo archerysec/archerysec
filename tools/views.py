@@ -124,8 +124,8 @@ def nikto(request):
             print nikto_res_path
 
             try:
-                print(scans_url)
-                nikto_output = subprocess.check_output(['nikto.pl', '-o', nikto_res_path,
+
+                nikto_output = subprocess.check_output(['nikto', '-o', nikto_res_path,
                                                         '-Format', 'htm', '-Tuning', '123bde',
                                                         '-host', scans_url])
                 print(nikto_output)
@@ -141,7 +141,8 @@ def nikto(request):
 
                 try:
                     print("New command running......")
-                    nikto_output = subprocess.check_output(['nikto', '-o', nikto_res_path,
+                    print(scans_url)
+                    nikto_output = subprocess.check_output(['nikto.pl', '-o', nikto_res_path,
                                                             '-Format', 'htm', '-Tuning', '123bde',
                                                             '-host', scans_url])
                     print(nikto_output)
@@ -151,6 +152,7 @@ def nikto(request):
                         nikto_html_parser(data, project_id, scan_id)
                     except Exception as e:
                         print e
+
 
                 except Exception as e:
                     print(e)
