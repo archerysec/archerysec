@@ -41,8 +41,6 @@ WORKDIR /home/archerysec/app
 # Copy all file to archerysec folder.
 COPY . .
 
-RUN rm -rf nikto_result
-
 RUN mkdir nikto_result
 
 # Install requirements
