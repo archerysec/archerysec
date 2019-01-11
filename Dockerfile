@@ -41,7 +41,7 @@ WORKDIR /home/archerysec/app
 # Copy all file to archerysec folder.
 COPY . .
 
-RUN sudo rm -rf nikto_result
+RUN rm -rf nikto_result
 
 RUN mkdir nikto_result
 
