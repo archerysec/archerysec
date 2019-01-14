@@ -13,7 +13,7 @@ setup(
         'cffi==1.11.2',
         'chardet==3.0.4',
         'cryptography==2.3',
-        'Django==2.1.2',
+        'Django',
         'django-appconf==1.0.2',
         'django-cryptography==0.2',
         'django-fernet-fields==0.5',
