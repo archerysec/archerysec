@@ -38,6 +38,8 @@ urlpatterns = [
     url(r'zapscanstatus/', views.ZapScanStatus.as_view()),
     url(r'burpscanstatus/', views.BurpScanStatus.as_view()),
     url(r'arachniscanstatus/', views.ArachniScanStatus.as_view()),
+    url(r'dependencycheckscanstatus/', views.DependencycheckScanStatus.as_view()),
+    url(r'findbugscanstatus/', views.FindbugsScanStatus.as_view()),
     url(r'netsparkerscanstatus/', views.NetsparkerScanStatus.as_view()),
     url(r'webinspectscanstatus/', views.WebinspectScanStatus.as_view()),
     url(r'acunetixscanresult/', views.AcunetixScanStatus.as_view()),

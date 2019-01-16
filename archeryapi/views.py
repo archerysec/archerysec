@@ -14,15 +14,17 @@ from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, 
     netsparker_scan_db, webinspect_scan_db, acunetix_scan_db
 from networkscanners.models import scan_save_db, ov_scan_result_db
 from projects.models import project_db
-from webscanners.serializers import WebScanSerializer,\
-    WebScanResultSerializer,\
+from webscanners.serializers import WebScanSerializer, \
+    WebScanResultSerializer, \
     UploadScanSerializer, \
-    WebScanStatusSerializer,\
-    ArachniScanStatusSerializer,\
-    BurpScanStatusSerializer,\
+    WebScanStatusSerializer, \
+    ArachniScanStatusSerializer, \
+    BurpScanStatusSerializer, \
     NetsparkerScanStatusSerializer, \
     AcunetixStatusSerializer, \
-    WebinspectScanStatusSerializer
+    WebinspectScanStatusSerializer, \
+    DependencycheckStatusSerializer, \
+    findbugsStatusSerializer
 
 from rest_framework import status
 from webscanners import web_views
@@ -55,6 +57,7 @@ from lxml import etree
 from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db
 from tools.models import nikto_result_db
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
+
 
 class WebScan(generics.ListCreateAPIView):
     queryset = zap_scans_db.objects.all()
@@ -248,6 +251,7 @@ class ZapScanStatus(generics.ListCreateAPIView):
             serialized_scans = WebScanStatusSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
 
+
 class ArachniScanStatus(generics.ListCreateAPIView):
     queryset = arachni_scan_db.objects.all()
     serializer_class = ArachniScanStatusSerializer
@@ -262,6 +266,40 @@ class ArachniScanStatus(generics.ListCreateAPIView):
             arachni_scan = arachni_scan_db.objects.filter(scan_id=scan_id)
             all_scans = chain(arachni_scan)
             serialized_scans = ArachniScanStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class DependencycheckScanStatus(generics.ListCreateAPIView):
+    queryset = dependencycheck_scan_db.objects.all()
+    serializer_class = DependencycheckStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = DependencycheckStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            dependencycheck_scan = dependencycheck_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(dependencycheck_scan)
+            serialized_scans = DependencycheckStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class FindbugsScanStatus(generics.ListCreateAPIView):
+    queryset = findbugs_scan_db.objects.all()
+    serializer_class = findbugsStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = findbugsStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            findbugs_scan = findbugs_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(findbugs_scan)
+            serialized_scans = findbugsStatusSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
 
 
