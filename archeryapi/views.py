@@ -197,6 +197,9 @@ class Project(generics.CreateAPIView):
            Current user's identity endpoint.
 
         """
+        _project_name = None
+        _project_id = None
+
         serializer = ProjectDataSerializers(data=request.data)
         if serializer.is_valid():
             project_id = uuid.uuid4()
@@ -205,14 +208,25 @@ class Project(generics.CreateAPIView):
             project_end = request.data.get("project_end", )
             project_owner = request.data.get("project_owner", )
             project_disc = request.data.get("project_disc", )
-            save_project = project_db(project_name=project_name, project_id=project_id,
-                                      project_start=project_start, project_end=project_end,
-                                      project_owner=project_owner, project_disc=project_disc, )
-            save_project.save()
 
-            if not project_name:
-                return Response({"error": "No name passed"})
-            return Response({"message": "Project Created", "Project ID": project_id})
+            all_project = project_db.objects.filter(project_name=project_name)
+
+            for project in all_project:
+                _project_name = project.project_name
+                _project_id = project.project_id
+
+            if _project_name == project_name:
+                return Response({"message": "Project already existed", "project_id": _project_id})
+
+            else:
+                save_project = project_db(project_name=project_name, project_id=project_id,
+                                          project_start=project_start, project_end=project_end,
+                                          project_owner=project_owner, project_disc=project_disc, )
+                save_project.save()
+
+                if not project_name:
+                    return Response({"error": "No name passed"})
+                return Response({"message": "Project Created", "project_id": project_id})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
