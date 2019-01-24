@@ -88,55 +88,88 @@
             </div>
         </div>
         <div class="widget-content">
-            <table class="columns">
-                <tr>
-                    <td>
-                        <div id="piechart_div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="barchart_div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-            </table>
+            <div class="row-fluid">
+                <div class="span6">
+                    <canvas id="NetBar"></canvas>
+                </div>
+                <div class="span6">
+                    <canvas id="NetChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 {% endblock content %}
 
 {% block extra_body %}
-<script type="text/javascript" src="/static/js/google_chart.js"></script>
+<script type="text/javascript" src="/static/js/Chart.js"></script>
 <script type="text/javascript">
-    // Load Charts and the corechart and barchart packages.
-      google.charts.load('current', {'packages':['corechart']});
+    var ctx = document.getElementById("NetBar").getContext('2d');
+var NetBar = new Chart(ctx, {
+    type: 'pie',
+    data: {
+				datasets: [{
+					data: [
+						{{all_network_high}},
+						{{all_network_medium}},
+						{{all_network_low}},
 
-      // Draw the pie chart and bar chart when Charts is loaded.
-      google.charts.setOnLoadCallback(drawChart);
+					],
+					backgroundColor: [
+						'#bd3f3b', '#ff7800', '#1b7ec7'
 
-      function drawChart() {
-
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-          ['High', {{all_network_high}}],
-          ['Medium', {{all_network_medium}}],
-          ['Low', {{all_network_low}}],
-        ]);
-
-        var piechart_options = {title:'Network Vulnerability Pie Chart',
-                       width:700,
-                       height:400};
-        var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
-        piechart.draw(data, piechart_options);
-
-        var barchart_options = {title:'Barchart: Network Vulnerability',
-                       width:600,
-                       height:400,
-                       legend: 'none'};
-        var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
-        barchart.draw(data, barchart_options);
-      }
+					],
+					label: 'Venerability'
+				}],
+				labels: [
+					'High',
+					'Medium',
+					'Low',
+				]
+			},
+    options: {
+				responsive: true,
+				title: {
+						display: true,
+						text: 'Bar Chart: Vulnerability found in Network'
+					}
+			}
+});
 
 
+var ctx = document.getElementById("NetChart").getContext('2d');
+var NetChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+				datasets: [{
+					data: [
+						{{all_network_high}},
+						{{all_network_medium}},
+						{{all_network_low}},
+
+					],
+					backgroundColor: [
+						'#bd3f3b', '#ff7800', '#1b7ec7'
+
+					],
+					label: 'Venerability'
+				}],
+				labels: [
+					'High',
+					'Medium',
+					'Low',
+				]
+			},
+    options: {
+        responsive: true,
+        scales: {
+            xAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
 </script>
 {% endblock extra_body %}

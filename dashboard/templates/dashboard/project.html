@@ -90,16 +90,56 @@
             </div>
         </div>
         <div class="widget-content">
-            <table class="columns">
-                <tr>
-                    <td>
-                        <div id="piechart_div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="barchart_div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-            </table>
+            <div class="row-fluid">
+                <div class="span6">
+                    <canvas id="ProBar"></canvas>
+                </div>
+                <div class="span6">
+                    <canvas id="ProChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i
+                            class="icon-th"></i></span>
+                        <h5>Scanners List</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th>Scanners</th>
+                                <th>High</th>
+                                <th>Medium</th>
+                                <th>Low</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>OWASP ZAP</td>
+                                <td>10</td>
+                                <td>30</td>
+                                <td>60</td>
+                            </tr>
+                            <tr>
+                                <td>Arachni</td>
+                                <td>34</td>
+                                <td>45</td>
+                                <td>78</td>
+                            </tr>
+                            <tr>
+                                <td>Netsparker</td>
+                                <td>33</td>
+                                <td>34</td>
+                                <td>33</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -138,5 +178,81 @@
         var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
         barchart.draw(data, barchart_options);
       }
+
+
+</script>
+
+
+<script type="text/javascript" src="/static/js/Chart.js"></script>
+<script type="text/javascript">
+    var ctx = document.getElementById("ProBar").getContext('2d');
+var ProBar = new Chart(ctx, {
+    type: 'pie',
+    data: {
+				datasets: [{
+					data: [
+						{{all_high}},
+						{{all_medium}},
+						{{all_low}},
+
+					],
+					backgroundColor: [
+						'#bd3f3b', '#ff7800', '#1b7ec7'
+
+					],
+					label: 'Venerability'
+				}],
+				labels: [
+					'High',
+					'Medium',
+					'Low',
+				]
+			},
+    options: {
+				responsive: true,
+				title: {
+						display: true,
+						text: 'Vulnerability found in Project'
+					}
+			}
+});
+
+
+var ctx = document.getElementById("ProChart").getContext('2d');
+var ProChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+				datasets: [{
+					data: [
+						{{all_high}},
+						{{all_medium}},
+						{{all_low}},
+
+					],
+					backgroundColor: [
+						'#bd3f3b', '#ff7800', '#1b7ec7'
+
+					],
+					label: 'Venerability'
+				}],
+				labels: [
+					'High',
+					'Medium',
+					'Low',
+				]
+			},
+    options: {
+        responsive: true,
+        scales: {
+            xAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+
+
 </script>
 {% endblock extra_body %}

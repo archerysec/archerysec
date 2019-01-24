@@ -12,7 +12,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
 
-            <form class="form-vertical" action="/webscanners/add_vuln/" method="POST">
+            <form class="form-vertical" action="/zapscanner/add_zap_vuln/" method="POST">
                 {% csrf_token %}
                 <div>
                     <input name="scan_id" value="{{scan_id}}" type="hidden">

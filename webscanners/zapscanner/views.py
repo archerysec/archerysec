@@ -831,7 +831,9 @@ def add_zap_vuln(request):
                                             reference=ref,
                                             solution=solution,
                                             requestHeader=req_header,
-                                            responseHeader=res_header)
+                                            responseHeader=res_header,
+                                            vuln_status='Open'
+                                            )
             save_vuln.save()
             messages.success(request, "Vulnerability Added")
             zap_all_vul = zap_scan_results_db.objects.filter(
@@ -848,7 +850,7 @@ def add_zap_vuln(request):
                                             high_vul=total_high,
                                             medium_vul=total_medium,
                                             low_vul=total_low)
-            return HttpResponseRedirect("/zapscanner/web_vuln_list/?scan_id=%s" % scan_id)
+            return HttpResponseRedirect("/zapscanner/zap_list_vuln/?scan_id=%s" % scan_id)
 
         elif scanners == 'burp':
             save_burp_vuln = burp_scan_result_db(scan_id=scan_id,

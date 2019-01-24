@@ -9,7 +9,7 @@
         <div>
             <div class="btn-group">
                 <a class="btn btn-info"
-                   href="#"><i
+                   href="/projects/project_edit/?project_id={{data.project_id}}"><i
                         class="icon-edit icon-white"></i>
                 </a>
                 <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span
@@ -136,6 +136,49 @@
                         </table>
                     </div>
                 </div>
+
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
+                        <h5>Static Scan List</h5>
+                        <!--<div class="buttons"><a data-toggle="modal"-->
+                                                <!--href="/webscanners/"-->
+                                                <!--class="btn btn-primary btn-mini"><i-->
+                                <!--class="icon-plus icon-white"></i> Add Static Scan</a>-->
+                        <!--</div>-->
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th>Projects Name</th>
+                                <th>Status</th>
+                                <th>Total Vulnerability</th>
+                                <th>High</th>
+                                <th>Medium</th>
+                                <th>Low</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in static_scan %}
+                            <tr data-target="#">
+                                <td>{{data.project_name}}{{data.project_name}}</td>
+                                <td width="30%">
+                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                        <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">{{data.scan_status}}{{data.vul_status}} %</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
+                                <td><span class="badge badge-important">{{data.SEVERITY_HIGH}}</span></td>
+                                <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
+                                <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
+
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
                         <h5>Network Scan List</h5>

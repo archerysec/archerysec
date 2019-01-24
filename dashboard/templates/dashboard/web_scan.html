@@ -88,53 +88,87 @@
             </div>
         </div>
         <div class="widget-content">
-            <table class="columns">
-                <tr>
-                    <td>
-                        <div id="piechart_div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="barchart_div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-            </table>
+            <div class="row-fluid">
+                <div class="span6">
+                    <canvas id="WebChart"></canvas>
+                </div>
+                <div class="span6">
+                    <canvas id="WebBar"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 {% endblock content %}
 
 {% block extra_body %}
-<script type="text/javascript" src="/static/js/google_chart.js"></script>
-<script type="text/javascript">
-    // Load Charts and the corechart and barchart packages.
-      google.charts.load('current', {'packages':['corechart']});
+<script src="/static/js/Chart.js"></script>
+<script>
+    var ctx = document.getElementById("WebBar").getContext('2d');
+var WebBar = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+				datasets: [{
+					data: [
+						{{all_high}},
+						{{all_medium}},
+						{{all_low}},
 
-      // Draw the pie chart and bar chart when Charts is loaded.
-      google.charts.setOnLoadCallback(drawChart);
+					],
+					backgroundColor: [
+						'#bd3f3b', '#ff7800', '#1b7ec7'
 
-      function drawChart() {
+					],
+					label: 'Venerability'
+				}],
+				labels: [
+					'High',
+					'Medium',
+					'Low',
+				]
+			},
+   options: {
+        responsive: true,
+        scales: {
+            xAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
 
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-          ['High', {{all_high}}],
-          ['Medium', {{all_medium}}],
-          ['Low', {{all_low}}],
-        ]);
+var ctx = document.getElementById("WebChart").getContext('2d');
+var WebChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+				datasets: [{
+					data: [
+						{{all_high}},
+						{{all_medium}},
+						{{all_low}},
 
-        var piechart_options = {title:'Web Vulnerability Pie Chart',
-                       width:700,
-                       height:400, colors: ['#bd3f3b', '#ff7800', '#1b7ec7',]};
-        var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
-        piechart.draw(data, piechart_options);
+					],
+					backgroundColor: [
+						'#bd3f3b', '#ff7800', '#1b7ec7'
 
-        var barchart_options = {title:'Web Vulnerability Bar Chart',
-                       width:600,
-                       height:400,
-                       legend: 'none'};
-        var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
-        barchart.draw(data, barchart_options);
-      }
+					],
+					label: 'Venerability'
+				}],
+				labels: [
+					'High',
+					'Medium',
+					'Low',
+				]
+			},
+    options: {
+				responsive: true,
+				title: {
+						display: true,
+						text: 'Pie Chart: Vulnerability found in Web Application'
+					}
+			}
+});
 </script>
 {% endblock extra_body %}
