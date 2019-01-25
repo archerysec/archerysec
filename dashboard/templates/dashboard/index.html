@@ -4,346 +4,67 @@
 {% block title %}Dashboard{% endblock title %}
 
 {% block content %}
-{% include "dashboard/_top_links.html" %}
 <div class="row-fluid">
     <div class="widget-box">
-        <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
-            <h5>Vulnerability Analytics</h5>
-        </div>
-        <div class="widget-content">
-            <form action="/vuln_stat_dash/" method="POST" class="form-horizontal">
-                {% csrf_token %}
-                <div class="control-group">
-                    <label class="control-label">Year:</label>
-                    <div class="controls">
-                        <input type="text" name="year"
-                        >
-                        <input type="submit" class="btn btn-primary"
-                               value="Submit">
+        <div class="span12">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="widget-box">
+                        <div class="widget-title"><span class="icon"><i
+                                class="icon-th"></i></span>
+                            <h5>Project List</h5>
+                            <div class="buttons"><a data-toggle="modal" href="/projects/create_form/"
+                                                    class="btn btn-primary btn-mini"><i
+                                    class="icon-plus icon-white"></i> Add new Project</a>
+                            </div>
+
+                        </div>
+                        <div class="widget-content nopadding">
+                            <table class="table table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    <!--<th>Project ID</th>-->
+                                    <th>Project</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Owner</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in all_project %}
+                                <tr data-target="#">
+                                    <!--<td>{{data.project_id}}</td>-->
+
+                                    <td>
+                                        <a href="/proj_data/?project_id={{data.project_id}}">{{data.project_name}}</a>
+                                    </td>
+                                    <td><span
+                                            class="badge badge-inverse">{{data.project_start}}</span>
+                                    </td>
+                                    <td><span
+                                            class="badge badge-inverse">{{data.project_end}}</span>
+                                    </td>
+                                    <td><span
+                                            class="badge badge-important">{{data.project_owner}}</span>
+                                    </td>
+                                    <td><span
+                                            class="badge badge-warning">{{data.project_status}}</span>
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </form>
-
-            <div class="row-fluid">
-                <div class="span9">
-                    <canvas id="myLineChart"></canvas>
-                </div>
-                <div class="span3">
-                    <ul class="site-stats">
-                        <li class="bg_lh"><i class="icon-bolt"></i> <strong>{{all_vuln}}</strong>
-                            <small>All Vulnerability</small>
-                        </li>
-                        <li class="bg_lh"><i class="icon-th"></i> <strong>{{total_network}}</strong>
-                            <small>Network Vulnerability</small>
-                        </li>
-                        <li class="bg_lh"><i class="icon-globe"></i>
-                            <strong>{{total_web}}</strong>
-                            <small>Web Vulnerability</small>
-                        </li>
-                        <li class="bg_lh"><i class="icon-indent-right"></i>
-                            <strong>{{all_high}}</strong>
-                            <small>Total High</small>
-                        </li>
-                        <li class="bg_lh"><i class=" icon-th-large"></i> <strong>{{all_medium}}</strong>
-                            <small>Total Medium</small>
-                        </li>
-                        <li class="bg_lh"><i class="icon-align-center"></i> <strong>{{all_low}}</strong>
-                            <small>Total Low</small>
-                        </li>
-                        <li class="bg_lh"><i class="icon-align-center"></i> <strong>{{all_false_positive}}</strong>
-                            <small>False Positive</small>
-                        </li>
-                        <li class="bg_lh"><i class="icon-align-center"></i> <strong>{{all_closed_vuln}}</strong>
-                            <small>Closed Vulnerability</small>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
 </div>
-<div class="row-fluid">
-    <div class="widget-box">
-        <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
-            <h5>Web Vulnerability Analytics</h5>
-        </div>
-        <div class="widget-content">
-            <div class="row-fluid">
-                <div class="span6">
-                    <canvas id="WebChart"></canvas>
-                </div>
-                <div class="span6">
-                    <canvas id="WebBar"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row-fluid">
-    <div class="widget-box">
-        <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
-            <h5>Network Vulnerability Analytics</h5>
-        </div>
-        <div class="widget-content">
-            <div class="row-fluid">
-                <div class="span6">
-                    <canvas id="NetBar"></canvas>
-                </div>
-                <div class="span6">
-                    <canvas id="NetChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--<div class="row-fluid">-->
-    <!--<div class="widget-box">-->
-        <!--<div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>-->
-            <!--<h5>Network Vulnerability Analytics</h5>-->
-        <!--</div>-->
-        <!--<div class="widget-content">-->
-            <!--<div class="row-fluid">-->
-                <!--<div class="span6">-->
-                    <!--<canvas id="myLineChart"></canvas>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
 
 {% endblock content %}
 
 {% block extra_body %}
 
-<script src="/static/js/Chart.js"></script>
-<script>
-var ctx = document.getElementById("WebBar").getContext('2d');
-var WebBar = new Chart(ctx, {
-    type: 'horizontalBar',
-    data: {
-				datasets: [{
-					data: [
-						{{all_web_high}},
-						{{all_web_medium}},
-						{{all_web_low}},
-
-					],
-					backgroundColor: [
-						'#bd3f3b', '#ff7800', '#1b7ec7'
-
-					],
-					label: 'Venerability'
-				}],
-				labels: [
-					'High',
-					'Medium',
-					'Low',
-				]
-			},
-   options: {
-        responsive: true,
-        scales: {
-            xAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-
-var ctx = document.getElementById("WebChart").getContext('2d');
-var WebChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-				datasets: [{
-					data: [
-						{{all_web_high}},
-						{{all_web_medium}},
-						{{all_web_low}},
-
-					],
-					backgroundColor: [
-						'#bd3f3b', '#ff7800', '#1b7ec7'
-
-					],
-					label: 'Venerability'
-				}],
-				labels: [
-					'High',
-					'Medium',
-					'Low',
-				]
-			},
-    options: {
-				responsive: true,
-				title: {
-						display: true,
-						text: 'Pie Chart: Vulnerability found in Web Application'
-					}
-			}
-});
-
-var ctx = document.getElementById("NetBar").getContext('2d');
-var NetBar = new Chart(ctx, {
-    type: 'pie',
-    data: {
-				datasets: [{
-					data: [
-						{{all_network_high}},
-						{{all_network_medium}},
-						{{all_network_low}},
-
-					],
-					backgroundColor: [
-						'#bd3f3b', '#ff7800', '#1b7ec7'
-
-					],
-					label: 'Dataset 1'
-				}],
-				labels: [
-					'High',
-					'Medium',
-					'Low',
-				]
-			},
-    options: {
-				responsive: true,
-				title: {
-						display: true,
-						text: 'Bar Chart: Vulnerability found in Network'
-					}
-			}
-});
-
-
-var ctx = document.getElementById("NetChart").getContext('2d');
-var NetChart = new Chart(ctx, {
-    type: 'horizontalBar',
-    data: {
-				datasets: [{
-					data: [
-						{{all_network_high}},
-						{{all_network_medium}},
-						{{all_network_low}},
-
-					],
-					backgroundColor: [
-						'#bd3f3b', '#ff7800', '#1b7ec7'
-
-					],
-					label: 'Dataset 1'
-				}],
-				labels: [
-					'High',
-					'Medium',
-					'Low',
-				]
-			},
-    options: {
-        responsive: true,
-        scales: {
-            xAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-
-
-var HighData = {
-  label: "High",
-  data: [{% for d in high_data %}
-            {% for key, item in d.viewitems %}
-                [
-                {% for k, i in item.viewitems %}
-                    {% if k == 'h' %}{{i}}{% endif %}
-                {% endfor %}
-            {% endfor %},],
-        {% endfor %}],
-  backgroundColor: [
-					    '#bd3f3b'
-					],
-
-  borderColor: [
-				    '#bd3f3b'
-				],
-
-    fill: false,
-
-};
-
-var MediumData = {
-  label: "Medium",
-  data: [{% for d in high_data %}
-            {% for key, item in d.viewitems %}
-                [
-                {% for k, i in item.viewitems %}
-                    {% if k == 'm' %}{{i}}{% endif %}
-                {% endfor %}
-            {% endfor %},],
-        {% endfor %}],
-  backgroundColor: [
-						'#ff7800'
-
-					],
-   borderColor: [
-                        '#ff7800'
-                    ],
-
-	fill: false,
-  // Set More Options
-};
-
-var LowData = {
-  label: "Low",
-  data: [{% for d in high_data %}
-            {% for key, item in d.viewitems %}
-                [
-                {% for k, i in item.viewitems %}
-                    {% if k == 'l' %}{{i}}{% endif %}
-                {% endfor %}
-            {% endfor %},],
-        {% endfor %}],
-  backgroundColor: [
-						'#1b7ec7'
-
-					],
-    borderColor: [
-                        '#1b7ec7'
-                    ],
-
-
-	fill: false,
-  // Set More Options
-};
-
-
-var speedData = {
-  labels: [{% for d in high_data %}
-            {% for key, item in d.viewitems %}
-                ['{{ dash_year }}/{{key}}'
-            {% endfor %},],
-        {% endfor %}],
-  datasets: [HighData, MediumData, LowData]
-};
-
-var ctx = document.getElementById("myLineChart").getContext('2d');
-var myLineChart = new Chart(ctx, {
-    type: 'line',
-    data: speedData,
-    options: {
-				responsive: true,
-				title: {
-						display: true,
-						text: 'Monthly Vulnerability'
-					}
-			}
-});
-
-</script>
 {% endblock extra_body %}

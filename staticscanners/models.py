@@ -51,6 +51,7 @@ class bandit_scan_results_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
+    scanner = models.CharField(max_length=15, default='Bandit', editable=False)
 
 
 class dependencycheck_scan_db(models.Model):
@@ -100,6 +101,7 @@ class dependencycheck_scan_results_db(models.Model):
     sha1 = models.TextField(blank=True, null=True)
     sha256 = models.TextField(blank=True, null=True)
     evidenceCollected = models.TextField(blank=True, null=True)
+    scanner = models.CharField(max_length=15, default='Dependency Check', editable=False)
 
 
 class retirejs_scan_db(models.Model):
@@ -137,6 +139,7 @@ class retirejs_scan_results_db(models.Model):
     false_positive_hash = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
     issue = models.TextField(null=True, blank=True)
+    scanner = models.CharField(max_length=15, default='RetireJs', editable=False)
 
 
 class findbugs_scan_db(models.Model):
@@ -166,7 +169,6 @@ class findbugs_scan_results_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
-
     name = models.TextField(blank=True)
     ShortMessage = models.TextField(blank=True)
     LongMessage = models.TextField(blank=True)
@@ -183,3 +185,4 @@ class findbugs_scan_results_db(models.Model):
     Details = models.TextField(blank=True)
     priority = models.TextField(blank=True)
     risk = models.TextField(blank=True)
+    scanner = models.CharField(max_length=15, default='Findbugs', editable=False)

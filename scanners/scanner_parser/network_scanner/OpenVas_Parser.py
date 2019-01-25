@@ -170,7 +170,8 @@ def xml_parser(root, project_id, scan_id):
                                      false_positive=false_positive,
                                      vuln_status='Open',
                                      dup_hash=duplicate_hash,
-                                     vuln_duplicate=duplicate_vuln
+                                     vuln_duplicate=duplicate_vuln,
+                                     project_id=project_id
                                      )
         save_all.save()
 

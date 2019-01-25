@@ -4,7 +4,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -13,6 +13,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+
 
 class zap_spider_db(models.Model):
     spider_url = models.TextField(blank=True)
@@ -86,6 +87,7 @@ class zap_scan_results_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.CharField(max_length=15, default='ZAP Scanner', editable=False)
 
 
 class cookie_db(models.Model):
@@ -143,6 +145,7 @@ class burp_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.CharField(max_length=15, default='Burp Scanner', editable=False)
 
 
 class netsparker_scan_db(models.Model):
@@ -193,7 +196,7 @@ class netsparker_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
-
+    scanner = models.CharField(max_length=15, default='Netsparker', editable=False)
 
 
 class web_scan_db(models.Model):
@@ -267,6 +270,8 @@ class arachni_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.CharField(max_length=15, default='Arachni', editable=False)
+
 
 
 class task_schedule_db(models.Model):
@@ -324,6 +329,7 @@ class webinspect_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.CharField(max_length=15, default='Webinspect', editable=False)
 
 
 class acunetix_scan_db(models.Model):
@@ -395,6 +401,4 @@ class acunetix_scan_result_db(models.Model):
     UriName = models.TextField(null=True, blank=True)
     VulnUrl = models.TextField(null=True, blank=True)
     VulnFullUrl = models.TextField(null=True, blank=True)
-
-
-
+    scanner = models.CharField(max_length=15, default='Acunetix', editable=False)

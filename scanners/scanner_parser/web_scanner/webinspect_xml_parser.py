@@ -166,7 +166,8 @@ def xml_parser(root,
                                                   false_positive=false_positive,
                                                   vuln_status='Open',
                                                   dup_hash=duplicate_hash,
-                                                  vuln_duplicate=duplicate_vuln
+                                                  vuln_duplicate=duplicate_vuln,
+                                                  project_id=project_id
                                                   )
             dump_data.save()
 

@@ -150,11 +150,6 @@
                             </table>
                         </div>
                     </div>
-                    <!--</div>-->
-                    <!--</div>-->
-                    <!--&lt;!&ndash;False Positive List&ndash;&gt;-->
-                    <!--<div class="row-fluid">-->
-                    <!--<div class="span9 offset1">-->
                     <div class="widget-box">
                         <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                             <h5>False Positive Vulnerability List</h5>
@@ -185,8 +180,6 @@
                                         <form>
                                             <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
                                             </label>
-                                            <!--<br>-->
-                                            <!--<button type="button" >Get Values</button>-->
                                         </form>
                                     </td>
                                     <td><a href="/zapscanner/zap_vuln_check/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
@@ -227,12 +220,6 @@
                             </table>
                         </div>
                     </div>
-                    <!--</div>-->
-                    <!--</div>-->
-
-                    <!--&lt;!&ndash;Closed Vulnerabilities&ndash;&gt;-->
-                    <!--<div class="row-fluid">-->
-                    <!--<div class="span9 offset1">-->
                     <div class="widget-box">
                         <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                             <h5>Closed Vulerability list</h5>
@@ -264,24 +251,12 @@
                                         <form>
                                             <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
                                             </label>
-                                            <!--<br>-->
-                                            <!--<button type="button" >Get Values</button>-->
                                         </form>
                                     </td>
                                     <td><a href="/zapscanner/zap_vuln_check/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.url}}</td>
                                     <td><span class="badge badge-{{data.vuln_color}}">{{data.risk}}</span></td>
-                                    <!--<td>-->
-                                        <!--<form method="POST" action="/zapscanner/zap_vuln_details/">{% csrf_token %}-->
-                                            <!--<input type="hidden" name="vuln_id" value="{{data.vuln_id}}">-->
-                                            <!--<input type="hidden" name="false" value="No">-->
-                                            <!--<input type="hidden" name="status" value="Open">-->
-                                            <!--<input type="hidden" name="vuln_name" value="{{data.name}}">-->
-                                            <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}">-->
-                                            <!--<button class="btn btn-info btn-mini">No</button>-->
-                                        <!--</form>-->
-                                    <!--</td>-->
                                     <td> {{data.vuln_status}}</td>
                                     <td>
                                         <div><a href="/zapscanner/edit_zap_vuln_check/?vuln_id={{data.vuln_id}}"

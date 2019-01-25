@@ -1,0 +1,289 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = [];
+            $.each($("input[name='del_vuln_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/zapscanner/del_zap_vuln/',
+                data:{
+                   del_vuln: json_scanid,
+                   scan_id: $('input[name=scan_id]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+                }
+            });
+            setTimeout(function(){location.reload();},1000);
+        });
+
+    });
+
+
+
+
+
+
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Vulnerabilities Details</a></div>
+        <h1>High Vulnerabilities List</h1>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="widget-box">
+                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                            <h5>Vulnerability List</h5>
+                            <div class="buttons"><a data-toggle="modal"
+                                                    href="/zapscanner/add_zap_vuln/?scan_id={{ scan_vul }}&scanner=zap"
+                                                    class="btn btn-primary btn-mini"><i
+                                    class="icon-plus icon-white"></i> Add new Vulnerability</a>
+                            </div>
+                            <div class="buttons">
+                                <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="widget-content nopadding">
+                            <table class="table table-bordered data-table table-fixed" width="100%">
+                                <thead>
+                                <tr>
+                                    <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                    <th>Vulnerability</th>
+                                    <th>Scanner</th>
+                                    <th>URL/IP</th>
+                                    <th>Risk</th>
+                                </tr>
+                                </thead>
+                                <!--zap-->
+                                <tbody>{% for data in zap_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                            <!--<br>-->
+                                            <!--<button type="button" >Get Values</button>-->
+                                        </form>
+                                    </td>
+                                    <td><a href="/zapscanner/zap_vuln_check/?vuln_id={{data.vuln_id}}">{{data.name}}</a></td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.url}}</td>
+                                    <td><span class="badge badge-{{data.vuln_color}}">{{data.risk}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--arachni-->
+                                {% for data in arachni_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                            <!--<br>-->
+                                            <!--<button type="button" >Get Values</button>-->
+                                        </form>
+                                    </td>
+                                    <td><a href="/arachniscanner/arachni_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.url}}</td>
+                                    <td><span class="badge badge-{{data.vuln_color}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--Webinspect-->
+                                {% for data in webinspect_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                        </form>
+                                    </td>
+                                    <td><a href="/webinspectscanner/webinspect_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a></td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.host}}</td>
+                                    <td><span class="badge badge-{{data.vuln_color}}">{{data.severity_name}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Netsparker&ndash;&gt;-->
+                                {% for data in netsparker_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                            <!--<br>-->
+                                            <!--<button type="button" >Get Values</button>-->
+                                        </form>
+                                    </td>
+                                    <td><a href="/netsparkerscanner/netsparker_vuln_data/?vuln_id={{data.vuln_id}}">{{data.type}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td width="50%">{{data.vuln_url}}</td>
+                                    <td><span class="badge badge-{{data.vuln_color}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Burp&ndash;&gt;-->
+                                {% for data in burp_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                            <!--<br>-->
+                                            <!--<button type="button" >Get Values</button>-->
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.host}}{{data.location}}</td>
+                                    <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Acunetix&ndash;&gt;-->
+                                {% for data in acunetix_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                        </form>
+                                    </td>
+                                    <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.VulnFullUrl}}</td>
+                                    <td><span class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Dependencycheck&ndash;&gt;-->
+                                {% for data in dependencycheck_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.fileName}}</td>
+                                    <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Findsecbug&ndash;&gt;-->
+                                {% for data in findbugs_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="/findbugs/findbugs_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.sourcepath}}</td>
+                                    <td><span class="badge badge-{{data.vul_col}}">{{data.risk}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Bandit&ndash;&gt;-->
+                                {% for data in bandit_vuln_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vuln_id}}" name="del_vuln_id">
+                                            </label>
+                                            <!--<br>-->
+                                            <!--<button type="button" >Get Values</button>-->
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="/banditscanner/banditscan_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.test_name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Nessus&ndash;&gt;-->
+                                {% for data in nessus_all_high %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label><input type="checkbox" value="{{data.vul_id}}" name="del_vuln_id">
+                                            </label>
+                                            <!--<br>-->
+                                            <!--<button type="button" >Get Values</button>-->
+                                        </form>
+                                    </td>
+                                    <td><a href="/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.scan_ip}}</td>
+                                    <td>{{data.risk_factor}}</td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;OpenVAS&ndash;&gt;-->
+                                {% for data in openvas_all_high %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.vul_id}}" name="del_vuln_id">
+                                        </label>
+                                        <!--<br>-->
+                                        <!--<button type="button" >Get Values</button>-->
+                                    </form>
+                                </td>
+                                <td><a href="/networkscanners/vuln_check/?vuln_id={{data.vul_id}}">{{data.name}}</a>
+                                </td>
+                                <td>{{data.scanner}}</td>
+                                <td>{{data.host}}</td>
+                                <td>{{data.threat}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,48 +1,69 @@
 <div id="sidebar">
     <ul>
-        <li><a href="/dashboard/"><i class="icon icon-th"></i> <span>Dashboard</span></a></li>
-        <li><a href="/project_dashboard/"><i class="icon-tasks"></i> <span>Project Dashboard</span></a></li>
-        <li><a href="/web_dashboard/"><i class="icon-tasks"></i> <span>Web Dashboard</span></a></li>
-        <li><a href="/net_dashboard/"><i class="icon-tasks"></i> <span>Network Dashboard</span></a></li>
-
-
-        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> <span
-                class="label label-important">11</span></a>
+        <li><a href="/dashboard/"><i class="icon-tasks"></i><span>Dashboard</span></a></li>
+        <!--<li><a href="/projects/"><i class="icon-tasks"></i><span>Projects</span></a></li>-->
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> </a>
             <ul>
-                <li><a href="/zapscanner/zap_scan_list/"><i class="icon-tasks"></i> <span>ZAP Scans</span></a></li>
-                <li><a href="/burpscanner/burp_scan_list"><i class="icon-tasks"></i> <span>Burp Scans</span></a></li>
-                <li><a href="/arachniscanner/arachni_scan_list"><i class="icon-tasks"></i> <span>Arachni</span></a></li>
-                <li><a href="/netsparkerscanner/netsparker_scan_list/"><i class="icon-tasks"></i>
-                    <span>Netsparker</span></a></li>
-                <li><a href="/webinspectscanner/webinspect_scan_list/"><i class="icon-tasks"></i>
-                    <span>Webinspect</span></a></li>
-                <li><a href="/acunetixscanner/acunetix_scan_list/"><i class="icon-tasks"></i><span>Acunetix</span></a></li>
-                <li><a href="/banditscanner/banditscans_list"><i class="icon-tasks"></i><span>Bandit Scans</span></a></li>
-                <li><a href=" /dependencycheck/dependencycheck_list"><i class="icon-tasks"></i><span>Dependency Check</span></a></li>
-                <li><a href="/findbugs/findbugs_list"><i class="icon-tasks"></i><span>FindBugs</span></a></li>
-                <li><a href="/networkscanners/"><i class="icon-tasks"></i> <span>OpenVAS Scans</span></a></li>
-                <li><a href="/networkscanners/nessus_scan/"><i class="icon-tasks"></i> <span>Nessus</span></a></li>
+                <li><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan">IP</a></li>
             </ul>
-
         </li>
         <li><a href="/manual_scan/"><i class="icon-tasks"></i><span>Manual Scans</span></a></li>
         <li class="submenu">
             <a href="#">
                 <i class="icon icon-inbox"></i>
-                <span>Tools</span><span
-                    class="label label-important">4</span>
+                <span>Web Scans</span>
+                <!--<span-->
+                    <!--class="label label-important">6</span>-->
+            </a>
+            <ul>
+                <li><a href="/zapscanner/zap_scan_list/">Zap Scan</a></li>
+                <li><a href="/burpscanner/burp_scan_list">Burp Scan</a></li>
+                <li><a href="/arachniscanner/arachni_scan_list">Arachni</a></li>
+                <li><a href="/netsparkerscanner/netsparker_scan_list/">Netsparker</a></li>
+                <li><a href="/webinspectscanner/webinspect_scan_list/">Webinspect</a></li>
+                <li><a href="/acunetixscanner/acunetix_scan_list/">Acunetix</a></li>
+
+            </ul>
+        </li>
+        <li class="submenu">
+            <a href="#">
+                <i class="icon icon-inbox"></i>
+                <span>Tools</span>
             </a>
             <ul>
                 <li><a href="/tools/sslscan/">SSLScan</a></li>
                 <li><a href="/tools/nikto/">Nikto</a></li>
                 <!--<li><a href="/tools/nmap_scan/">Nmap</a></li>-->
                 <li><a href="/tools/nmap_vulners_scan/">Nmap Vulners</a></li>
-                <!--<li><a href="/webscanners/burp_scan_list">Burp Scan</a></li>-->
                 <!--<li><a href="/webscanners/arachni_scan_list">Arachni</a></li>-->
             </ul>
         </li>
-        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>OSINT Scan</span> <span
-                class="label label-important">2</span></a>
+        <!--<li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>-->
+        <li class="submenu">
+            <a href="#">
+                <i class="icon icon-inbox"></i>
+                <span>Network Scans</span>
+            </a>
+            <ul>
+                <li><a href="/networkscanners/">OpenVAS</a></li>
+                <li><a href="/networkscanners/nessus_scan">Nessus</a></li>
+            </ul>
+        </li>
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Static Scans</span> </a>
+            <ul>
+                <li><a href="/banditscanner/banditscans_list"><i class="icon-tasks"></i> <span>Bandit Scan</span></a>
+                </li>
+                <!--<li><a href="/osintscan/domain_osint/"><i class="icon-tasks"></i> <span>Domain OSINT</span></a></li>-->
+                <li><a href="/dependencycheck/dependencycheck_list"><i
+                        class="icon-tasks"></i><span>Dependency Check</span></a></li>
+                <li><a href="/findbugs/findbugs_list"><i class="icon-tasks"></i><span>FindBugs</span></a></li>
+
+
+            </ul>
+        </li>
+        <!--<li><a href="/scanapi/"><i class="icon icon-th"></i> <span>API Scan</span></a></li>-->
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>OSINT Scan</span> </a>
             <ul>
                 <li><a href="/osintscan/domain_list/"><i class="icon-tasks"></i> <span>Domain List</span></a></li>
                 <li><a href="/osintscan/domain_osint/"><i class="icon-tasks"></i> <span>Domain OSINT</span></a></li>

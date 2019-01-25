@@ -83,8 +83,6 @@
                                 <th>MEDIUM</th>
                                 <th>LOW</th>
                                 <th>Duplicates</th>
-                                <!--<th>Action</th>-->
-                                <!--<th></th>-->
                                 <th></th>
                             </tr>
                             </thead>
@@ -96,8 +94,6 @@
                                                       onClick="reload">
 
                                         </label>
-                                        <!--<br>-->
-                                        <!--<button type="button" >Get Values</button>-->
                                     </form>
                                 </td>
                                 <td>
@@ -114,41 +110,6 @@
                                 <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
                                 <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
                                 <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                                <!--<td>-->
-                                    <!--<form action="/zapscanner/zap_scan_pdf_gen/" method="post" class="forms-sample">-->
-
-                                        <!--{% csrf_token %}-->
-                                        <!--<input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>-->
-                                        <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
-
-                                        <!--<button class="btn btn-success"><i class="icon-file"></i></button>-->
-                                    <!--</form>-->
-                                <!--</td>-->
-                                <!--<td>-->
-                                    <!--<div class="btn-group">-->
-
-                                        <!--<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span-->
-                                                <!--class="caret"></span></a>-->
-                                        <!--<ul class="dropdown-menu">-->
-                                            <!--<li><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}"><i-->
-                                                    <!--class="icon-pencil"></i> View </a></li>-->
-                                            <!--<li>-->
-                                                <!--<form action="/zapscanner/zap_rescan/" method="POST"-->
-                                                      <!--class="forms-sample">-->
-                                                    <!--{% csrf_token %}-->
-                                                    <!--<input type="hidden" name="old_scan_id"-->
-                                                           <!--value="{{data.scan_scanid}}"/>-->
-                                                    <!--<input type="hidden" name="scan_url"-->
-                                                           <!--value="{{data.scan_url}}"/>-->
-                                                    <!--<input type="hidden" name="project_id"-->
-                                                           <!--value="{{data.project_id}}"/>-->
-                                                     <!--<button class="btn btn-info btn-mini"><i-->
-                                                        <!--class="icon-play"></i> Re-Scan </button>-->
-                                                <!--</form>-->
-                                            <!--</li>-->
-                                        <!--</ul>-->
-                                    <!--</div>-->
-                                <!--</td>-->
                                 <td>
                                     <form action="/findbugs/del_findbugs" method="post" class="forms-sample">
                                         {% csrf_token %}

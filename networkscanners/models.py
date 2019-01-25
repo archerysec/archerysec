@@ -55,6 +55,7 @@ class ov_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.CharField(max_length=15, default='OpenVAS', editable=False)
 
 
 class scan_save_db(models.Model):
@@ -112,6 +113,7 @@ class nessus_report_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.CharField(max_length=15, default='Nessus', editable=False)
 
 
 class nessus_scan_db(models.Model):
