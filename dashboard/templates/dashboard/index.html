@@ -29,6 +29,7 @@
                                     <th>End Date</th>
                                     <th>Owner</th>
                                     <th>Status</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>{% for data in all_project %}
@@ -51,6 +52,12 @@
                                             class="badge badge-warning">{{data.project_status}}</span>
                                     </td>
 
+                                    <td>
+                                <form action="/projects/" method="POST">
+                                    <input type="hidden" name="proj_id" value="{{data.project_id}}"/>{% csrf_token %}
+                                    <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                </form>
+                            </td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>
