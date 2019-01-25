@@ -87,7 +87,7 @@ class zap_scan_results_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
-    scanner = models.CharField(max_length=15, default='ZAP Scanner', editable=False)
+    scanner = models.TextField(default='ZAP Scanner', editable=False)
 
 
 class cookie_db(models.Model):
@@ -145,7 +145,7 @@ class burp_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
-    scanner = models.CharField(max_length=15, default='Burp Scanner', editable=False)
+    scanner = models.TextField(default='Burp Scanner', editable=False)
 
 
 class netsparker_scan_db(models.Model):
@@ -196,7 +196,7 @@ class netsparker_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
-    scanner = models.CharField(max_length=15, default='Netsparker', editable=False)
+    scanner = models.TextField(default='Netsparker', editable=False)
 
 
 class web_scan_db(models.Model):
@@ -270,7 +270,7 @@ class arachni_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
-    scanner = models.CharField(max_length=15, default='Arachni', editable=False)
+    scanner = models.TextField(default='Arachni', editable=False)
 
 
 
@@ -329,7 +329,7 @@ class webinspect_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
-    scanner = models.CharField(max_length=15, default='Webinspect', editable=False)
+    scanner = models.TextField(default='Webinspect', editable=False)
 
 
 class acunetix_scan_db(models.Model):
@@ -401,4 +401,4 @@ class acunetix_scan_result_db(models.Model):
     UriName = models.TextField(null=True, blank=True)
     VulnUrl = models.TextField(null=True, blank=True)
     VulnFullUrl = models.TextField(null=True, blank=True)
-    scanner = models.CharField(max_length=15, default='Acunetix', editable=False)
+    scanner = models.TextField(default='Acunetix', editable=False)
