@@ -44,5 +44,8 @@ urlpatterns = [
     url(r'^arachni_scan_launch/',
         views.arachni_scan,
         name='arachni_scan_launch'),
+    url(r'^export',
+        views.export,
+        name='export'),
 
 ]

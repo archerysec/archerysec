@@ -66,9 +66,9 @@ INSTALLED_APPS = [
     'easy_pdf',
     'dashboard',
     'background_task',
-    'sitetree'
+    'sitetree',
+    'import_export',
 ]
-
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -181,7 +181,6 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning'
 }
 
-
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # SESSION_COOKIE_AGE = 5 * 100
@@ -194,8 +193,9 @@ SETTINGS_EXPORT = [
     'REFRESH_TIMER',
 ]
 
-
 try:
     from archerysecurity.local_settings import *
 except ImportError:
     pass
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True

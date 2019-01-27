@@ -35,6 +35,7 @@ from projects.models import project_db
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from itertools import chain
 import datetime
+from webscanners.resources import AllResource
 
 # Create your views here.
 chart = []
@@ -1327,4 +1328,256 @@ def all_high_vuln(request):
                    'findbugs_all_high': findbugs_all_high,
                    'openvas_all_high': openvas_all_high,
                    'nessus_all_high': nessus_all_high,
+                   'project_id': project_id,
+                   'severity': severity
                    })
+
+
+def export(request):
+    """
+    :param request:
+    :return:
+    """
+    dataset = None
+
+    if request.method == 'POST':
+        project_id = request.POST.get("project_id")
+        report_type = request.POST.get("type")
+        severity = request.POST.get("severity")
+
+        resource = AllResource()
+
+        if severity == 'High':
+
+            zap_all_high = zap_scan_results_db.objects.filter(project_id=project_id,
+                                                              risk='High')
+            arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
+                                                                     severity='high')
+            webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
+                                                                           severity_name__in=[
+                                                                               'Critical', 'High'])
+            netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
+                                                                           severity='High')
+            acunetix_all_high = acunetix_scan_result_db.objects.filter(project_id=project_id,
+                                                                       VulnSeverity='High')
+            burp_all_high = burp_scan_result_db.objects.filter(project_id=project_id,
+                                                               severity='High')
+
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
+                                                                                      severity='High')
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='High', project_id=project_id)
+
+            openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
+            nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)
+
+            all_data = chain(zap_all_high,
+                             burp_all_high,
+                             arachni_all_high,
+                             webinspect_all_high,
+                             netsparker_all_high,
+                             acunetix_all_high,
+                             dependencycheck_all_high,
+                             findbugs_all_high,
+                             openvas_all_high,
+                             netsparker_all_high,
+                             nessus_all_high
+                             )
+
+            # dataset = resource.export(all_data)
+
+        elif severity == 'Medium':
+            # All Medium
+
+            zap_all_high = zap_scan_results_db.objects.filter(project_id=project_id,
+                                                              risk='Medium')
+            arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
+                                                                     severity='Medium')
+            webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
+                                                                           severity_name__in=[
+                                                                               'Medium'])
+            netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
+                                                                           severity='Medium')
+            acunetix_all_high = acunetix_scan_result_db.objects.filter(project_id=project_id,
+                                                                       VulnSeverity='Medium')
+            burp_all_high = burp_scan_result_db.objects.filter(project_id=project_id,
+                                                               severity='Medium')
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
+                                                                                      severity='Medium')
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
+
+            openvas_all_high = ov_scan_result_db.objects.filter(threat='Medium', project_id=project_id)
+            nessus_all_high = nessus_report_db.objects.filter(risk_factor='Medium', project_id=project_id)
+
+            all_data = chain(zap_all_high,
+                             burp_all_high,
+                             arachni_all_high,
+                             webinspect_all_high,
+                             netsparker_all_high,
+                             acunetix_all_high,
+                             dependencycheck_all_high,
+                             findbugs_all_high,
+                             openvas_all_high,
+                             netsparker_all_high,
+                             nessus_all_high
+                             )
+
+            # dataset = resource.export(all_data)
+
+        elif severity == 'Low':
+
+            zap_all_high = zap_scan_results_db.objects.filter(project_id=project_id,
+                                                              risk='Low')
+            arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
+                                                                     severity='Low')
+            webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
+                                                                           severity_name__in=[
+                                                                               'Low'])
+            netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
+                                                                           severity='Low')
+            acunetix_all_high = acunetix_scan_result_db.objects.filter(project_id=project_id,
+                                                                       VulnSeverity='Low')
+            burp_all_high = burp_scan_result_db.objects.filter(project_id=project_id,
+                                                               severity='Low')
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
+                                                                                      severity='Low')
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Low', project_id=project_id)
+
+            openvas_all_high = ov_scan_result_db.objects.filter(threat='Low', project_id=project_id)
+            nessus_all_high = nessus_report_db.objects.filter(risk_factor='Low', project_id=project_id)
+
+            all_data = chain(zap_all_high,
+                             burp_all_high,
+                             arachni_all_high,
+                             webinspect_all_high,
+                             netsparker_all_high,
+                             acunetix_all_high,
+                             dependencycheck_all_high,
+                             findbugs_all_high,
+                             openvas_all_high,
+                             netsparker_all_high,
+                             nessus_all_high
+                             )
+
+            # dataset = resource.export(all_data)
+
+        elif severity == 'Total':
+
+            zap_all_high = zap_scan_results_db.objects.filter(project_id=project_id,
+                                                              )
+            arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
+                                                                     )
+            webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
+                                                                           )
+
+            netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
+                                                                           )
+            acunetix_all_high = acunetix_scan_result_db.objects.filter(project_id=project_id,
+                                                                       )
+            burp_all_high = burp_scan_result_db.objects.filter(project_id=project_id,
+                                                               )
+
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
+                                                                                      )
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id)
+
+            openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id)
+            nessus_all_high = nessus_report_db.objects.filter(project_id=project_id)
+
+            all_data = chain(zap_all_high,
+                             burp_all_high,
+                             arachni_all_high,
+                             webinspect_all_high,
+                             netsparker_all_high,
+                             acunetix_all_high,
+                             dependencycheck_all_high,
+                             findbugs_all_high,
+                             openvas_all_high,
+                             netsparker_all_high,
+                             nessus_all_high
+                             )
+
+        elif severity == 'False':
+
+            zap_all_high = zap_scan_results_db.objects.filter(project_id=project_id,
+                                                              false_positive='Yes')
+            arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
+                                                                     false_positive='Yes')
+            webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
+                                                                           false_positive='Yes')
+
+            netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
+                                                                           false_positive='Yes')
+            acunetix_all_high = acunetix_scan_result_db.objects.filter(project_id=project_id,
+                                                                       false_positive='Yes')
+            burp_all_high = burp_scan_result_db.objects.filter(project_id=project_id,
+                                                               false_positive='Yes')
+
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
+                                                                                      false_positive='Yes')
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
+
+            openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, false_positive='Yes')
+            nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, false_positive='Yes')
+
+            all_data = chain(zap_all_high,
+                             burp_all_high,
+                             arachni_all_high,
+                             webinspect_all_high,
+                             netsparker_all_high,
+                             acunetix_all_high,
+                             dependencycheck_all_high,
+                             findbugs_all_high,
+                             openvas_all_high,
+                             netsparker_all_high,
+                             nessus_all_high
+                             )
+
+        elif severity == 'Close':
+
+            zap_all_high = zap_scan_results_db.objects.filter(project_id=project_id,
+                                                              vuln_status='Closed')
+            arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
+                                                                     vuln_status='Closed')
+            webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
+                                                                           vuln_status='Closed')
+
+            netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
+                                                                           vuln_status='Closed')
+            acunetix_all_high = acunetix_scan_result_db.objects.filter(project_id=project_id,
+                                                                       vuln_status='Closed')
+            burp_all_high = burp_scan_result_db.objects.filter(project_id=project_id,
+                                                               vuln_status='Closed')
+
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
+                                                                                      vuln_status='Closed')
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
+
+            openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, vuln_status='Closed')
+            nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, vuln_status='Closed')
+
+            all_data = chain(zap_all_high,
+                             burp_all_high,
+                             arachni_all_high,
+                             webinspect_all_high,
+                             netsparker_all_high,
+                             acunetix_all_high,
+                             dependencycheck_all_high,
+                             findbugs_all_high,
+                             openvas_all_high,
+                             netsparker_all_high,
+                             nessus_all_high
+                             )
+
+        else:
+            return HttpResponseRedirect('/proj_data/?project_id=%s' % project_id)
+
+        dataset = resource.export(all_data)
+
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % project_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % project_id
+            return response

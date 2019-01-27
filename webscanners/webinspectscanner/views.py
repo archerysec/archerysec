@@ -11,13 +11,14 @@
 
 from __future__ import unicode_literals
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from webscanners.models import burp_scan_result_db
 from jiraticketing.models import jirasetting
 from webscanners.models import webinspect_scan_db, \
     webinspect_scan_result_db
 import hashlib
+from webscanners.resources import WebinspectResource
 
 
 def webinspect_list_vuln(request):
@@ -258,3 +259,30 @@ def webinspect_del_vuln(request):
         messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/webinspectscanner/webinspect_list_vuln?scan_id=%s" % un_scanid)
+
+def export(request):
+    """
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
+
+        zap_resource = WebinspectResource()
+        queryset = webinspect_scan_result_db.objects.filter(scan_id=scan_id)
+        dataset = zap_resource.export(queryset)
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == 'yaml':
+            response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            return response
+

@@ -32,5 +32,8 @@ urlpatterns = [
     url(r'^acunetix_del_vuln',
         views.acunetix_del_vuln,
         name='acunetix_del_vuln'),
+    url(r'^export',
+        views.export,
+        name='export'),
 
 ]

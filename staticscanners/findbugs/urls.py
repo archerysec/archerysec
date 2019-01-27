@@ -38,4 +38,7 @@ urlpatterns = [
     url(r'^findbugs_del_vuln',
         views.findbugs_del_vuln,
         name='findbugs_del_vuln'),
+    url(r'^export',
+        views.export,
+        name='export'),
 ]

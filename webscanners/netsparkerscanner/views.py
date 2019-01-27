@@ -10,13 +10,14 @@
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from webscanners.models import burp_scan_result_db
 from jiraticketing.models import jirasetting
 from webscanners.models import netsparker_scan_db, \
     netsparker_scan_result_db
 import hashlib
+from webscanners.resources import NetsparkerResource
 
 
 def netsparker_list_vuln(request):
@@ -255,3 +256,30 @@ def netsparker_del_vuln(request):
         # messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect("/netsparkerscanner/netsparker_list_vuln?scan_id=%s" % un_scanid)
+
+
+def export(request):
+    """
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
+
+        netsparker_resource = NetsparkerResource()
+        queryset = netsparker_scan_result_db.objects.filter(scan_id=scan_id)
+        dataset = netsparker_resource.export(queryset)
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == 'yaml':
+            response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            return response

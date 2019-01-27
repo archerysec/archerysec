@@ -13,6 +13,7 @@
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from staticscanners.models import dependencycheck_scan_results_db, dependencycheck_scan_db
 import hashlib
+from staticscanners.resources import DependencyResource
 
 
 def dependencycheck_list(request):
@@ -78,11 +79,6 @@ def dependencycheck_vuln_data(request):
 
         return HttpResponseRedirect(
             '/dependencycheck/dependencycheck_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
-
-    # dependencycheck_vuln_data = dependencycheck_scan_results_db.objects.filter(
-    #     scan_id=scan_id,
-    #     name=test_name
-    # )
 
     dependencycheck_vuln_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id,
                                                                                name=test_name,
@@ -185,3 +181,31 @@ def dependencycheck_del_vuln(request):
         )
 
         return HttpResponseRedirect("/dependencycheckscanner/dependencycheckscan_list_vuln/?scan_id=%s" % un_scanid)
+
+
+def export(request):
+    """
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
+
+        dependency_resource = DependencyResource()
+        queryset = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id)
+        dataset = dependency_resource.export(queryset)
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == 'yaml':
+            response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            return response
+

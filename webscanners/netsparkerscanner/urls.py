@@ -32,5 +32,8 @@ urlpatterns = [
     url(r'^netsparker_del_vuln',
         views.netsparker_del_vuln,
         name='netsparker_del_vuln'),
+    url(r'^export',
+        views.export,
+        name='export'),
 
 ]

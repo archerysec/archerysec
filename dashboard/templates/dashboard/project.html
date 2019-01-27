@@ -239,7 +239,7 @@
         </div>
         <div class="widget-box">
             <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
-                <h5>Web Scans List</h5>
+                <h5>Dynamic Scans List</h5>
             </div>
             <div class="widget-content nopadding">
                 <table class="table table-bordered data-table">
@@ -247,6 +247,7 @@
                     <tr>
                         <th>URL</th>
                         <th>Status</th>
+                        <th>Date Time</th>
                         <th>Total</th>
                         <th>High</th>
                         <th>Medium</th>
@@ -256,14 +257,15 @@
                     </thead>
                     <tbody>{% for data in zap %}
                     <tr data-target="#">
-                        <td><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a></td>
-                        <td width="30%">
+                        <td width="20%"><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a></td>
+                        <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
                                     {{data.scan_status}}{{data.vul_status}} %
                                 </div>
                             </div>
                         </td>
+                        <td>{{data.date_time}}</td>
                         <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                         <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                         <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
@@ -274,14 +276,15 @@
                     </tbody>
                     <tbody>{% for data in burp %}
                     <tr data-target="#">
-                        <td><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
-                        <td width="30%">
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
                                     {{data.scan_status}}{{data.vul_status}} %
                                 </div>
                             </div>
                         </td>
+                        <td>{{data.date_time}}</td>
                         <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                         <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                         <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
@@ -292,14 +295,15 @@
                     </tbody>
                     <tbody>{% for data in arachni %}
                     <tr data-target="#">
-                        <td><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
-                        <td width="30%">
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
                                     {{data.scan_status}}{{data.vul_status}} %
                                 </div>
                             </div>
                         </td>
+                        <td>{{data.date_time}}</td>
                         <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                         <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                         <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
@@ -310,14 +314,15 @@
                     </tbody>
                     <tbody>{% for data in webinspect %}
                     <tr data-target="#">
-                        <td><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
-                        <td width="30%">
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
                                     {{data.scan_status}}{{data.vul_status}} %
                                 </div>
                             </div>
                         </td>
+                        <td>{{data.date_time}}</td>
                         <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                         <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                         <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
@@ -328,14 +333,15 @@
                     </tbody>
                     <tbody>{% for data in netsparker %}
                     <tr data-target="#">
-                        <td><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
-                        <td width="30%">
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
                                     {{data.scan_status}}{{data.vul_status}} %
                                 </div>
                             </div>
                         </td>
+                        <td>{{data.date_time}}</td>
                         <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                         <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                         <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
@@ -346,14 +352,15 @@
                     </tbody>
                     <tbody>{% for data in acunetix %}
                     <tr data-target="#">
-                        <td><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
-                        <td width="30%">
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
                                     {{data.scan_status}}{{data.vul_status}} %
                                 </div>
                             </div>
                         </td>
+                        <td>{{data.date_time}}</td>
                         <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                         <td><span class="badge badge-important">{{data.high_vul}}</span></td>
                         <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
@@ -362,22 +369,7 @@
                     </tr>
                     {% endfor %}
                     </tbody>
-                    <!--<tbody>{% for data in burp %}-->
-                    <!--<tr data-target="#">-->
-                    <!--<td><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>-->
-                    <!--<td width="30%">-->
-                    <!--<div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">-->
-                    <!--<div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">{{data.scan_status}}{{data.vul_status}} %</div>-->
-                    <!--</div>-->
-                    <!--</td>-->
-                    <!--<td><span class="badge badge-inverse">{{data.total_vul}}</span></td>-->
-                    <!--<td><span class="badge badge-important">{{data.high_vul}}</span></td>-->
-                    <!--<td><span class="badge badge-warning">{{data.medium_vul}}</span></td>-->
-                    <!--<td><span class="badge badge-info">{{data.low_vul}}</span></td>-->
 
-                    <!--</tr>-->
-                    <!--{% endfor %}-->
-                    <!--</tbody>-->
                 </table>
             </div>
         </div>
@@ -395,7 +387,6 @@
                 <table class="table table-bordered data-table">
                     <thead>
                     <tr>
-                        <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                         <th>Project Name</th>
                         <th>Status</th>
                         <th>Date Time</th>
@@ -403,21 +394,11 @@
                         <th>HIGH</th>
                         <th>MEDIUM</th>
                         <th>LOW</th>
-                        <th>Duplicates</th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>{% for data in dependency_check %}
                     <tr data-target="#">
-                        <td>
-                            <form>
-                                <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
-                                              onClick="reload">
-
-                                </label>
-                            </form>
-                        </td>
-                        <td>
+                        <td width="20%">
                             <a href="/dependencycheck/dependencycheck_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                         </td>
                         <td width="20%">
@@ -430,29 +411,13 @@
                         <td><span class="badge badge-important">{{data.SEVERITY_HIGH}}</span></td>
                         <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
                         <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
-                        <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                        <td>
-                            <form action="/dependencycheck/del_dependencycheck" method="post" class="forms-sample">
-                                {% csrf_token %}
-                                <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
-                                <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
-                                <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                            </form>
-                        </td>
+
                     </tr>
                     {% endfor %}
                     </tbody>
                     <tbody>{% for data in findbugs %}
                     <tr data-target="#">
-                        <td>
-                            <form>
-                                <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
-                                              onClick="reload">
-
-                                </label>
-                            </form>
-                        </td>
-                        <td>
+                        <td width="20%">
                             <a href="/findbugs/findbugs_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                         </td>
                         <td width="20%">
@@ -465,15 +430,7 @@
                         <td><span class="badge badge-important">{{data.SEVERITY_HIGH}}</span></td>
                         <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
                         <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
-                        <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                        <td>
-                            <form action="/findbugs/del_findbugs" method="post" class="forms-sample">
-                                {% csrf_token %}
-                                <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
-                                <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
-                                <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                            </form>
-                        </td>
+
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -484,79 +441,35 @@
         <div class="widget-box">
             <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
                 <h5>Network Scans List</h5>
-                <!--<div class="buttons"><a data-toggle="modal"-->
-                <!--href="/webscanners/"-->
-                <!--class="btn btn-primary btn-mini"><i-->
-                <!--class="icon-plus icon-white"></i> Network Scans</a>-->
-                <!--</div>-->
             </div>
             <div class="widget-content nopadding">
                 <table class="table table-bordered data-table">
                     <thead>
                     <tr>
-                        <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                         <th>IP</th>
-                        <th>Date Time</th>
                         <th>Status</th>
+                        <th>Date Time</th>
                         <th>Total</th>
                         <th>High</th>
                         <th>Medium</th>
                         <th>Low</th>
-                        <th>Duplicate</th>
-                        <th>Action</th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>{% for data in network_dat %}
                     <tr data-target="#">
-                        <td>
-                            <form>
-                                <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
-                                              onClick="reload">
 
-                                </label>
-                                <!--<br>-->
-                                <!--<button type="button" >Get Values</button>-->
-                            </form>
-                        </td>
-                        <td><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
-                        <td>{{data.date_time}}</td>
-                        <td width="30%">
+                        <td width="20%"><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
+                        <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
                             </div>
                         </td>
+                        <td>{{data.date_time}}</td>
                         <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
                         <td><span class="badge badge-important">{{data.high_total}}</span></td>
                         <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
                         <td><span class="badge badge-info">{{data.low_total}}</span></td>
-                        <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                        <td>
-                            <div class="btn-group">
-                                <a class="btn btn-primary"
-                                   href="/networkscanners/vul_details/?scan_id={{data.scan_id}}"><i
-                                        class="icon-tasks icon-white"></i>
-                                </a>
-                                <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
-                                        class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}"><i
-                                            class="icon-pencil"></i> View </a></li>
-                                    <!--<li><a href="/networkscanners/scan_del/?scan_scanid={{data.scan_id}}"><i-->
-                                    <!--class="icon-trash"></i> Delete</a></li>-->
-                                </ul>
-                            </div>
 
-                        </td>
-                        <td>
-                            <form action="/networkscanners/scan_del/" method="post" class="forms-sample">
-
-                                {% csrf_token %}
-                                <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
-
-                                <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                            </form>
-                        </td>
                     </tr>
                     {% endfor %}
                     </tbody>

@@ -60,6 +60,11 @@ urlpatterns = [
 
     url(r'^all_high_vuln/$',
         views.all_high_vuln,
-        name='all_high_vuln')
+        name='all_high_vuln'),
+
+    url(r'^export/$',
+        views.export,
+        name='export')
+
 
 ]

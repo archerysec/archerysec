@@ -53,8 +53,7 @@ from archerysettings.models import zap_settings_db, \
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser
 from lxml import etree
 from staticscanners.models import dependencycheck_scan_db,\
-    findbugs_scan_db, \
-    findbugs_scan_results_db
+    findbugs_scan_db
 from tools.models import nikto_result_db
 import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
@@ -85,9 +84,9 @@ res_type = ""
 res_id = ""
 alert = ""
 project_id = None
-target_url = None
+# target_url = None
 scan_ip = None
-burp_status = 0
+# burp_status = 0
 serialNumber = ""
 types = ""
 name = ""
@@ -102,7 +101,7 @@ references = ""
 vulnerabilityClassifications = ""
 issueDetail = ""
 requestresponse = ""
-vuln_id = ""
+# vuln_id = ""
 methods = ""
 dec_res = ""
 dec_req = ""
@@ -515,7 +514,6 @@ def burp_setting(request):
     all_burp_setting = burp_setting_db.objects.all()
 
     for data in all_burp_setting:
-        global burp_url, burp_port
         burp_url = data.burp_url
         burp_port = data.burp_port
 
@@ -536,7 +534,7 @@ def burp_scan_launch(request):
     :param request:
     :return:
     """
-    global vuln_id, burp_status
+    # global vuln_id, burp_status
     if request.POST.get("url"):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
@@ -840,7 +838,6 @@ def sel_login(request):
     """
     action_vul = request.POST.get("action", )
     url_da = request.POST.get("url_login", )
-    # print(url_da)
     if action_vul == "open_page":
         global driver
         driver = webdriver.Firefox()
@@ -851,11 +848,6 @@ def sel_login(request):
 
         for cookie_data in read_f:
 
-            # cookie_save = cookie_db(url=new_uri, cookie=cookie_data)
-            # cookie_save.save()
-
-            # target_url = request.POST.get('url')
-            # target_cookies = request.POST.get('cookies')
             print(cookie_data)
             all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri))
             for da in all_cookie_url:

@@ -108,5 +108,9 @@ urlpatterns = [
         views.del_zap_scan_schedule,
         name='del_zap_scan_schedule'),
 
+    url(r'^export',
+        views.export,
+        name='export'),
+
 
 ]

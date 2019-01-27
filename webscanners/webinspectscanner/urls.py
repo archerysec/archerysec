@@ -33,4 +33,8 @@ urlpatterns = [
     url(r'^webinspect_del_vuln',
         views.webinspect_del_vuln,
         name='webinspect_del_vuln'),
+    url(r'^export',
+        views.export,
+        name='export'),
+
 ]

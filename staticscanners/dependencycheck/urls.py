@@ -37,4 +37,7 @@ urlpatterns = [
     url(r'^dependencycheck_del_vuln',
         views.dependencycheck_del_vuln,
         name='dependencycheck_del_vuln'),
+    url(r'^export',
+        views.export,
+        name='export'),
 ]

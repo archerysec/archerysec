@@ -13,6 +13,7 @@
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from staticscanners.models import findbugs_scan_results_db, findbugs_scan_db
 import hashlib
+from staticscanners.resources import FindbugResource
 
 
 def findbugs_list(request):
@@ -185,3 +186,29 @@ def findbugs_del_vuln(request):
         )
 
         return HttpResponseRedirect("/findbugsscanner/findbugsscan_list_vuln/?scan_id=%s" % un_scanid)
+
+def export(request):
+    """
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
+
+        findbugs_resource = FindbugResource()
+        queryset = findbugs_scan_results_db.objects.filter(scan_id=scan_id)
+        dataset = findbugs_resource.export(queryset)
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == 'yaml':
+            response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            return response

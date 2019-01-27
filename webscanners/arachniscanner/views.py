@@ -26,6 +26,7 @@ import defusedxml.ElementTree as ET
 from scanners.scanner_parser.web_scanner import arachni_xml_parser
 import json
 import time
+from webscanners.resources import ArachniResource
 
 
 def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
@@ -38,8 +39,29 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
         arachni_ports = arachni.arachni_port
 
     arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports)
+    check = [
+        "xss_event",
+        "xss",
+        "xss_script_context",
+        "xss_tag",
+        "xss_path",
+        "xss_dom_script_context",
+        "xss_dom",
+        "sql_injection",
+        "sql_injection_differential",
+        "sql_injection_timing",
+        "csrf",
+        "common_files",
+        "directory_listing",
+    ]
 
-    data = {"url": target, "checks": "*"}
+    # data = {"url": target, "checks": check}
+    data = {
+        "url": target,
+        "checks": check,
+        "audit": {
+        }
+    }
     d = json.dumps(data)
 
     scan_launch = arachni.scan_launch(d)
@@ -427,3 +449,30 @@ def arachni_setting_update(request):
 
     return render(request,
                   'arachniscanner/arachni_settings_form.html')
+
+
+def export(request):
+    """
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
+
+        zap_resource = ArachniResource()
+        queryset = arachni_scan_result_db.objects.filter(scan_id=scan_id)
+        dataset = zap_resource.export(queryset)
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == 'yaml':
+            response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            return response

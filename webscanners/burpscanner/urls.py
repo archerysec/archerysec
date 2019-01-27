@@ -46,4 +46,8 @@ urlpatterns = [
         views.edit_burp_vuln,
         name='edit_burp_vuln'),
 
+    url(r'^export',
+        views.export,
+        name='export'),
+
 ]

@@ -44,18 +44,6 @@
 
     <div class="container-fluid">
         <hr>
-        <!--<div class="span3 offset6">-->
-            <!--{% if messages %}-->
-
-            <!--{% for message in messages %}-->
-            <!--<div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"-->
-                                                            <!--href="#">×</a>-->
-                <!--<p class="alert-heading">{{ message }}</p>-->
-            <!--</div>-->
-            <!--{% endfor %}-->
-
-            <!--{% endif %}-->
-        <!--</div>-->
         <div class="row-fluid">
             <div class="span12">
                 <div class="widget-box">
@@ -83,8 +71,7 @@
                                 <th>Medium</th>
                                 <th>Low</th>
                                 <th>Duplicates</th>
-                                <th>Action</th>
-                                <!--<th></th>-->
+                                <th>Export</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -101,7 +88,7 @@
                                 <td>
                                     <a href="/netsparkerscanner/netsparker_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
                                 </td>
-                                <td width="30%">
+                                <td width="20%">
                                     <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                         <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
                                     </div>
@@ -113,31 +100,36 @@
                                 <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
                                 <td><span class="badge badge-info">{{data.low_vul}}</span></td>
                                 <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                                <!--<td>-->
-                                    <!--<form action="/netsparkerscanner/get_scan_pdf/" method="post" class="forms-sample">-->
-
-                                        <!--{% csrf_token %}-->
-                                        <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}"/>-->
-                                        <!--<input type="hidden" name="scan_url" value="{{data.url}}"/>-->
-
-                                        <!--<button class="btn btn-success"><i class="icon-file"></i></button>-->
-                                    <!--</form>-->
-                                <!--</td>-->
                                 <td>
                                     <div class="btn-group">
-                                        <a class="btn btn-primary"
-                                           href="/netsparkerscanner/netsparker_vuln_list?scan_id={{data.scan_id}}"><i
-                                                class="icon-tasks icon-white"></i>
-                                        </a>
-                                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
-                                                class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <!--<li><a href="/netsparkerscanner/netsparker_vuln_list?scan_id={{data.scan_id}}"><i-->
-                                                    <!--class="icon-pencil"></i> View </a></li>-->
-                                            <!--<li>-->
-
-                                            </li>
-                                        </ul>
+                                        <form action="/netsparkerscanner/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="csv"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> CSV
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="btn-group">
+                                        <form action="/netsparkerscanner/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="json"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> JSON
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="btn-group">
+                                        <form action="/netsparkerscanner/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="yaml"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> YAML
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                                 <td>

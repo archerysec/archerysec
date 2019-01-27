@@ -32,12 +32,14 @@
 
     });
 
+
+
 </script>
 
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
-                href="#" class="current">Domain Scan List</a></div>
+                href="#" class="current">Burp Scan List</a></div>
 
         <h1>Burp Scans Result</h1>
     </div>
@@ -54,7 +56,7 @@
                             XML</a>
                         </div>
                         <div class="buttons">
-                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
                     </div>
                     <div class="widget-content nopadding">
@@ -70,8 +72,7 @@
                                 <th>Medium</th>
                                 <th>Low</th>
                                 <th>Duplicates</th>
-                                <th>Action</th>
-
+                                <th>Export</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -90,7 +91,8 @@
                                 </td>
                                 <td width="30%">
                                     <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
+                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %
+                                        </div>
                                     </div>
                                 </td>
                                 <td>{{data.date_time}}</td>
@@ -99,31 +101,36 @@
                                 <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
                                 <td><span class="badge badge-info">{{data.low_vul}}</span></td>
                                 <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                                <!--<td>-->
-                                    <!--<form action="/burpscanner/get_scan_pdf/" method="post" class="forms-sample">-->
-
-                                        <!--{% csrf_token %}-->
-                                        <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}"/>-->
-                                        <!--<input type="hidden" name="scan_url" value="{{data.url}}"/>-->
-
-                                        <!--<button class="btn btn-success"><i class="icon-file"></i></button>-->
-                                    <!--</form>-->
-                                <!--</td>-->
                                 <td>
                                     <div class="btn-group">
-                                        <a class="btn btn-primary"
-                                           href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}"><i
-                                                class="icon-tasks icon-white"></i>
-                                        </a>
-                                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
-                                                class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}"><i
-                                                    class="icon-pencil"></i> View </a></li>
-                                            <li>
-
-                                            </li>
-                                        </ul>
+                                        <form action="/burpscanner/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="csv"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> CSV
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="btn-group">
+                                        <form action="/burpscanner/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="json"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> JSON
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="btn-group">
+                                        <form action="/burpscanner/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="yaml"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> YAML
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                                 <td>

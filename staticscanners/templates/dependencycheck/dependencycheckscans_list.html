@@ -83,7 +83,7 @@
                                 <th>MEDIUM</th>
                                 <th>LOW</th>
                                 <th>Duplicates</th>
-                                <!--<th>Action</th>-->
+                                <th>Export</th>
                                 <!--<th></th>-->
                                 <th></th>
                             </tr>
@@ -114,6 +114,38 @@
                                 <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
                                 <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
                                 <td><span class="badge badge-important">{{data.total_dup}}</span></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <form action="/dependencycheck/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="csv"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> CSV
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="btn-group">
+                                        <form action="/dependencycheck/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="json"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> JSON
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="btn-group">
+                                        <form action="/dependencycheck/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="yaml"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> YAML
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                                 <td>
                                     <form action="/dependencycheck/del_dependencycheck" method="post" class="forms-sample">
                                         {% csrf_token %}

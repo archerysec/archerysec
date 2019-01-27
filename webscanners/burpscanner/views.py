@@ -14,7 +14,7 @@ import threading
 import time
 import uuid
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from webscanners.models import burp_scan_db, burp_scan_result_db
@@ -22,6 +22,7 @@ from datetime import datetime
 from jiraticketing.models import jirasetting
 from archerysettings.models import burp_setting_db
 import hashlib
+from webscanners.resources import BurpResource
 
 
 def burp_setting(request):
@@ -213,10 +214,10 @@ def burp_vuln_out(request):
                                                     false_positive='Yes')
 
     return render(request, 'burpscanner/burp_vuln_out.html', {'vuln_data': vuln_data,
-                                                  'false_data': false_data,
-                                                  'jira_url': jira_url,
-                                                  'vuln_close_data': vuln_close_data
-                                                  })
+                                                              'false_data': false_data,
+                                                              'jira_url': jira_url,
+                                                              'vuln_close_data': vuln_close_data
+                                                              })
 
 
 def del_burp_scan(request):
@@ -331,3 +332,30 @@ def edit_burp_vuln(request):
         return HttpResponseRedirect("/burpscanner/burp_vuln_data/?vuln_id=%s" % vuln_id)
 
     return render(request, 'burpscanner/edit_burp_vuln.html', {'edit_vul_dat': edit_vul_dat})
+
+
+def export(request):
+    """
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
+
+        zap_resource = BurpResource()
+        queryset = burp_scan_result_db.objects.filter(scan_id=scan_id)
+        dataset = zap_resource.export(queryset)
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == 'yaml':
+            response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            return response
