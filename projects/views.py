@@ -17,16 +17,16 @@ from django.contrib import messages
 import uuid
 from projects.models import project_db, project_scan_db
 from webscanners import web_views
-from webscanners.models import zap_scans_db, \
-    burp_scan_db, \
-    arachni_scan_db, \
-    netsparker_scan_db, \
-    webinspect_scan_db, \
-    acunetix_scan_db
-from staticscanners.models import dependencycheck_scan_db, \
-    findbugs_scan_db, \
-    bandit_scan_db
-from networkscanners.models import scan_save_db
+from webscanners.models import zap_scans_db, zap_scan_results_db, \
+    burp_scan_db, burp_scan_result_db, \
+    arachni_scan_db, arachni_scan_result_db, \
+    netsparker_scan_db, netsparker_scan_result_db, \
+    webinspect_scan_db, webinspect_scan_result_db, \
+    acunetix_scan_db, acunetix_scan_result_db
+from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_results_db, \
+    findbugs_scan_db, findbugs_scan_results_db, \
+    bandit_scan_db, bandit_scan_results_db
+from networkscanners.models import scan_save_db, ov_scan_result_db
 import datetime
 # from webscanners.models import burp_scan_db
 from itertools import chain
@@ -65,24 +65,54 @@ def projects(request):
 
     if request.method == 'POST':
         project_id = request.POST.get("proj_id", )
+
         del_proj = project_db.objects.filter(project_id=project_id)
         del_proj.delete()
+
         burp = burp_scan_db.objects.filter(project_id=project_id)
         burp.delete()
+        burp_result_data = burp_scan_result_db.objects.filter(project_id=project_id)
+        burp_result_data.delete()
+
         zap = zap_scans_db.objects.filter(project_id=project_id)
         zap.delete()
+        zap_result = zap_scan_results_db.objects.filter(project_id=project_id)
+        zap_result.delete()
+
         arachni = arachni_scan_db.objects.filter(project_id=project_id)
         arachni.delete()
+        arachni_result = arachni_scan_result_db.objects.filter(project_id=project_id)
+        arachni_result.delete()
+
         webinspect = webinspect_scan_db.objects.filter(project_id=project_id)
         webinspect.delete()
+        webinspect_result = webinspect_scan_result_db.objects.filter(project_id=project_id)
+        webinspect_result.delete()
+
         netsparker = netsparker_scan_db.objects.filter(project_id=project_id)
         netsparker.delete()
+        netsparker_result = netsparker_scan_result_db.objects.filter(project_id=project_id)
+        netsparker_result.delete()
+
         acunetix = acunetix_scan_db.objects.filter(project_id=project_id)
         acunetix.delete()
+        acunetix_result = acunetix_scan_result_db.objects.filter(project_id=project_id)
+        acunetix_result.delete()
+
         dependency_check = dependencycheck_scan_db.objects.filter(project_id=project_id)
         dependency_check.delete()
+        dependency_check_result = dependencycheck_scan_results_db.objects.filter(project_id=project_id)
+        dependency_check_result.delete()
+
         findbugs = findbugs_scan_db.objects.filter(project_id=project_id)
         findbugs.delete()
+        findbugs_result = findbugs_scan_results_db.objects.filter(project_id=project_id)
+        findbugs_result.delete()
+
+        openvas = scan_save_db.objects.filter(project_id=project_id)
+        openvas.delete()
+        openvas_result = ov_scan_result_db.objects.filter(project_id=project_id)
+        openvas_result.delete()
 
         messages.success(request, "Deleted Project")
         return HttpResponseRedirect("/projects/")
