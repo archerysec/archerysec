@@ -156,7 +156,7 @@ def dependencycheck_del_vuln(request):
     """
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
-        un_scanid = request.POST.get("scan_id", )
+        scan_id = request.POST.get("scan_id", )
         scan_item = str(vuln_id)
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
@@ -166,21 +166,25 @@ def dependencycheck_del_vuln(request):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = dependencycheck_scan_results_db.objects.filter(vuln_id=vuln_id)
             delete_vuln.delete()
-        all_dependencycheck_data = dependencycheck_scan_results_db.objects.filter(scan_id=un_scanid)
 
-        total_vul = len(all_dependencycheck_data)
-        total_high = len(all_dependencycheck_data.filter(issue_severity="HIGH"))
-        total_medium = len(all_dependencycheck_data.filter(issue_severity="MEDIUM"))
-        total_low = len(all_dependencycheck_data.filter(issue_severity="LOW"))
+        all_dependency_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id)
 
-        dependencycheck_scan_db.objects.filter(scan_id=un_scanid).update(
+        total_vul = len(all_dependency_data)
+        total_high = len(all_dependency_data.filter(severity="High"))
+        total_medium = len(all_dependency_data.filter(severity="Medium"))
+        total_low = len(all_dependency_data.filter(severity="Low"))
+        total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
+        print "total duplicats", total_duplicate
+
+        dependencycheck_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low
+            SEVERITY_LOW=total_low,
+            total_dup=total_duplicate
         )
 
-        return HttpResponseRedirect("/dependencycheckscanner/dependencycheckscan_list_vuln/?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect("/dependencycheck/dependencycheck_all_vuln/?scan_id=%s" % scan_id)
 
 
 def export(request):
