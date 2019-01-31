@@ -182,9 +182,9 @@ def xml_parser(root, project_id, scan_id):
                 )
     if total_vul == total_duplicate:
         zap_scans_db.objects.filter(scan_scanid=scan_id) \
-            .update(total_vul='0',
-                    high_vul='0',
-                    medium_vul='0',
-                    low_vul='0',
+            .update(total_vul=total_vul,
+                    high_vul=total_high,
+                    medium_vul=total_medium,
+                    low_vul=total_low,
                     total_dup=total_duplicate
                     )
