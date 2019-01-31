@@ -271,9 +271,15 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [x] Nessus (XML)
     - [x] Webinspect (XML)
     - [x] Acunetix (XML)
-    - [x] AppScan (XML)
     - [x] Netsparker (XML)
-    - [ ] AppSpider  
+    - [x] OWASP ZAP (XML) & (Plugin)
+    - [x] Burp Pro Scanner (XML)
+    - [x] Arachni (XML) & (Plugin)
+    - [x] OpenVAS (XML) & (Plugin)
+    - [x] Bandit Scan (XML)
+    - [x] Dependency Check (XML)
+    - [x] FindBugs (XML)
+    
 * Popular Tools plugin support.
     - [x] Nmap
     - [x] SSL Analysis
@@ -281,20 +287,15 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [ ] WPScan
     - [ ] OWASP JoomScan
 * Reporting
-    - [x] PDF
+    - [ ] PDF
     - [ ] Docx
-    - [ ] XML
-    - [ ] Excel
-    - [ ] JSON
+    - [x] XML
+    - [x] Excel
+    - [x] JSON
 
 * API Automated vulnerability scanning.
 * Vulnerability POC pictures.
 * Cloud Security scanning.
-* Source code review project management?
-
-    - [ ] Fortify plugin
-    - [ ] Checkmarks ?
-    ....
 
 ## Lead Developer
 
