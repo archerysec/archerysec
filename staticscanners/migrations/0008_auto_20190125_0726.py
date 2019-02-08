@@ -15,21 +15,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='bandit_scan_results_db',
             name='scanner',
-            field=models.CharField(default='Bandit', editable=False, max_length=15),
+            field=models.TextField(default='Bandit', editable=False, max_length=15),
         ),
         migrations.AddField(
             model_name='dependencycheck_scan_results_db',
             name='scanner',
-            field=models.CharField(default='Dependency Check', editable=False, max_length=15),
+            field=models.TextField(default='Dependency Check', editable=False),
         ),
         migrations.AddField(
             model_name='findbugs_scan_results_db',
             name='scanner',
-            field=models.CharField(default='Findbugs', editable=False, max_length=15),
+            field=models.TextField(default='Findbugs', editable=False),
         ),
         migrations.AddField(
             model_name='retirejs_scan_results_db',
             name='scanner',
-            field=models.CharField(default='RetireJs', editable=False, max_length=15),
+            field=models.TextField(default='RetireJs', editable=False),
         ),
     ]
