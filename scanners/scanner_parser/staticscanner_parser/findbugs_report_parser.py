@@ -14,7 +14,13 @@ import uuid
 import hashlib
 from datetime import datetime
 
-Details = ''
+Details = 'NA'
+classname = 'NA'
+ShortMessage = 'NA'
+sourcepath = 'NA'
+sourcefile = 'NA'
+LongMessage = 'NA'
+
 
 def xml_parser(root, project_id, scan_id):
     """
@@ -24,8 +30,6 @@ def xml_parser(root, project_id, scan_id):
     :param scan_id:
     :return:
     """
-    classname = '   '
-
     # print root
     for bug in root:
         if bug.tag == 'BugInstance':
@@ -33,12 +37,16 @@ def xml_parser(root, project_id, scan_id):
             priority = bug.attrib['priority']
             for BugInstance in bug:
                 if BugInstance.tag == 'ShortMessage':
+                    global ShortMessage
                     ShortMessage = BugInstance.text
                 if BugInstance.tag == 'LongMessage':
+                    global LongMessage
                     LongMessage = BugInstance.text
                 if BugInstance.tag == 'Class':
+                    global classname
                     classname = BugInstance.attrib['classname']
                 if BugInstance.tag == 'SourceLine':
+                    global sourcepath, sourcefile
                     sourcepath = BugInstance.attrib['sourcepath']
                     sourcefile = BugInstance.attrib['sourcefile']
 
