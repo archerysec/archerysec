@@ -21,7 +21,8 @@
                     <!--<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i-->
                     <!--class="icon-trash"></i> Delete</a></li>-->
                     <li>
-                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description={{data.issueDetail}}%0a%0a%0a Vulnerable URL: {{data.host}} %0a%0a Vulnerable Parameter: {{data.location}} %0a%0a Solution: {{data.remediationBackground}} %0a%0a Archery URL: {SERVERIP}/webscanners/burp_vuln_data/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.requestHeader }}&scanner=burp&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} " target="_blank"><i
+                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description={{data.issueDetail}}%0a%0a%0a Vulnerable URL: {{data.host}} %0a%0a Vulnerable Parameter: {{data.location}} %0a%0a Solution: {{data.remediationBackground}} %0a%0a Archery URL: {SERVERIP}/webscanners/burp_vuln_data/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.requestHeader }}&scanner=burp&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+                           target="_blank"><i
                                 class="icon-random"></i> Jira Ticket</a>
                     </li>
                 </ul>
@@ -42,15 +43,17 @@
 
                         <strong> </strong><br><br>
                         <strong> False Positive: </strong>
-                        <form method="POST" action="/webscanners/burp_vuln_out/">{% csrf_token %}
+                        <form method="POST" action="/burpscanner/burp_vuln_out/">{% csrf_token %}
                             <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                             <input type="hidden" name="false" value="Yes">
+                            <input type="hidden" name="status" value="Open">
                             <input type="hidden" name="vuln_name" value="{{data.name}}">
                             <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                            <button class="btn btn-info btn-mini">YES</button>
+                            <button class="btn btn-info btn-mini">Yes</button>
                         </form>
                         <br>
-                        <strong> Severity: </strong><span class="badge badge-{{data.severity_color}}"> {{ data.severity }}</span> <br><br>
+                        <strong> Severity: </strong><span class="badge badge-{{data.severity_color}}"> {{ data.severity }}</span>
+                        <br><br>
                         <strong> Method : </strong>{{data.method}}<br><br>
                         <strong> Vulnerable URL : </strong><code><a href="{{data.url}}">{{data.host}}</a>
                     </code><br><br>

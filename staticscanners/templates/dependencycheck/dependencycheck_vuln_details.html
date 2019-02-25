@@ -39,16 +39,18 @@
 
                         <strong> </strong><br><br>
                         <strong> False Positive: </strong>
-                        <form method="POST" action="/acunetixscanner/acunetix_vuln_out/">{% csrf_token %}
+                        <form method="POST" action="/dependencycheck/dependencycheck_vuln_data/">{% csrf_token %}
                             <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                             <input type="hidden" name="false" value="Yes">
-                            <input type="hidden" name="vuln_name" value="{{data.VulnName}}">
+                            <input type="hidden" name="status" value="Open">
+                            <input type="hidden" name="vuln_name" value="{{data.name}}">
                             <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                            <button class="btn btn-info btn-mini">YES</button>
+                            <button class="btn btn-info btn-mini">Yes</button>
                         </form>
                         <br>
-                        <strong> Severity: </strong> <span class="badge-{{data.vul_col}}"> {{ data.severity }}</span> <br>
-                            <br>
+                        <strong> Severity: </strong> <span class="badge-{{data.vul_col}}"> {{ data.severity }}</span>
+                        <br>
+                        <br>
                         <strong>CVE: </strong><a href="/vfeed/cve_info/?cve={{data.name}}">{{data.name}}</a><br><br>
                         <strong> Vulnerable File Name : </strong>
                         <code><a href="{{data.fileName}}">

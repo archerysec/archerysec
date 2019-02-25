@@ -40,12 +40,13 @@
                         <strong> </strong> <br><br>
 
                         <strong> Flase Positive : </strong>
-                        <form method="POST" action="/webscanners/zap_vul_details/">{% csrf_token %}
+                        <form method="POST" action="/zapscanner/zap_vuln_details/">{% csrf_token %}
                             <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                             <input type="hidden" name="false" value="Yes">
+                            <input type="hidden" name="status" value="{{data.vuln_status}}">
                             <input type="hidden" name="vuln_name" value="{{data.name}}">
                             <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                            <button class="btn btn-info btn-mini">YES</button>
+                            <button class="btn btn-info btn-mini">Yes</button>
                         </form>
                         <br>
                         <strong> Severity: </strong> <span
