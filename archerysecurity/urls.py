@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     url(r'^api/', include('archeryapi.urls')),
     url(r'^scanapi/', include('APIScan.urls')),
+    url(r'^vfeed/', include('vFeedgui.urls')),
 
     # Default url
     url(r'', include('dashboard.urls')),

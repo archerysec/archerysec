@@ -9,7 +9,7 @@
     </div>
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Vulnerability List</h5>
@@ -26,7 +26,7 @@
                             <tbody>{% for data in dependencycheck_all_vuln %}
                             <tr data-target="#">
                                 <td>
-                                    <a href="/dependencycheck/dependencycheck_vuln_data/?scan_id={{data.scan_id}}&test_name={{data.name}}">{{data.name}}</a>
+                                    <a href="/dependencycheck/dependencycheck_vuln_data/?scan_id={{data.scan_id}}&test_name={{data.name}}">{{data.cwe}}</a>
                                 </td>
                                 <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
                             </tr>

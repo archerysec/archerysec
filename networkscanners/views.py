@@ -36,6 +36,7 @@ from background_task import background
 from datetime import datetime
 from jiraticketing.models import jirasetting
 import hashlib
+import json
 
 api_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -310,25 +311,25 @@ def openvas_setting(request):
     """
     print load_settings
     load_openvas_setting = load_settings.ArcherySettings(api_data)
-    openvas_host=load_openvas_setting.openvas_host()
-    openvas_port=load_openvas_setting.openvas_port()
-    openvas_enabled=load_openvas_setting.openvas_enabled()
+    openvas_host = load_openvas_setting.openvas_host()
+    openvas_port = load_openvas_setting.openvas_port()
+    openvas_enabled = load_openvas_setting.openvas_enabled()
     if openvas_enabled:
         openvas_enabled = 'True'
     else:
         openvas_enabled = 'False'
-    openvas_user=load_openvas_setting.openvas_username()
-    openvas_password=load_openvas_setting.openvas_pass()
+    openvas_user = load_openvas_setting.openvas_username()
+    openvas_password = load_openvas_setting.openvas_pass()
     return render(request,
-                  'setting_form.html', 
-                  { 
-                    'openvas_host':openvas_host,
-                    'openvas_port': openvas_port,
-                    'openvas_enabled': openvas_enabled,
-                    'openvas_user': openvas_user,
-                    'openvas_password': openvas_password
+                  'setting_form.html',
+                  {
+                      'openvas_host': openvas_host,
+                      'openvas_port': openvas_port,
+                      'openvas_enabled': openvas_enabled,
+                      'openvas_user': openvas_user,
+                      'openvas_password': openvas_password
                   }
-                )
+                  )
 
 
 def del_vuln(request):
@@ -421,13 +422,24 @@ def vuln_check(request):
     :param request:
     :return:
     """
+    global cve_list
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
     else:
         id_vul = ''
     vul_dat = ov_scan_result_db.objects.filter(vul_id=id_vul).order_by('vul_id')
 
-    return render(request, 'ov_vuln_data.html', {'vul_dat': vul_dat})
+    for cve_dat in vul_dat:
+        cve = cve_dat.cve
+        xref = cve_dat.xref
+        xref_list = xref.split(",")
+        cve_list = cve.split(",")
+
+    return render(request, 'ov_vuln_data.html', {'vul_dat': vul_dat,
+                                                 'cve_list': cve_list,
+                                                 'xref_list': xref_list
+
+                                                 })
 
 
 def add_vuln(request):
@@ -815,20 +827,20 @@ def nv_setting(request):
     :return:
     """
     load_nv_setting = load_settings.ArcherySettings(api_data)
-    nv_enabled=str(load_nv_setting.nv_enabled())
-    nv_online=str(load_nv_setting.nv_enabled())
-    nv_version=str(load_nv_setting.nv_enabled())
-    nv_timing=load_nv_setting.nv_timing()
+    nv_enabled = str(load_nv_setting.nv_enabled())
+    nv_online = str(load_nv_setting.nv_enabled())
+    nv_version = str(load_nv_setting.nv_enabled())
+    nv_timing = load_nv_setting.nv_timing()
 
     return render(request,
-                  'nv_settings.html', 
-                  { 
-                    'nv_enabled':nv_enabled,
-                    'nv_online': nv_online,
-                    'nv_version': nv_version,
-                    'nv_timing': nv_timing,
+                  'nv_settings.html',
+                  {
+                      'nv_enabled': nv_enabled,
+                      'nv_online': nv_online,
+                      'nv_version': nv_version,
+                      'nv_timing': nv_timing,
                   }
-                )
+                  )
 
 
 def nv_details(request):
@@ -870,9 +882,8 @@ def nv_details(request):
                          messages.SUCCESS,
                          'NMAP Vulners Setting Updated ')
 
-    return render(request, 
-                  'nv_settings.html', 
+    return render(request,
+                  'nv_settings.html',
                   {
-                    'messages': messages,
+                      'messages': messages,
                   })
-

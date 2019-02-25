@@ -50,17 +50,19 @@
                             <button class="btn btn-info btn-mini">YES</button>
                         </form>
                         <br>
-                        <strong> Severity: </strong> <span
-                            class="badge badge-{{data.severity_color}}"> {{ data.severity }}</span><br><br>
+                        <strong> Severity: </strong><span class="badge badge-{{data.severity_color}}"> {{ data.severity }}</span> <br><br>
                         <strong> Method : </strong>{{data.method}}<br><br>
                         <strong> Vulnerable URL : </strong><code><a href="{{data.url}}">{{data.host}}</a>
                     </code><br><br>
                         <strong> Parameter : </strong>{{data.location}}<br><br>
                         <strong> Location : </strong>{{data.location}}<br><br>
-                        <strong> Reference : </strong>{{data.vulnerabilityClassifications}}<br><br>
+                        <strong> Reference : </strong>{{data.vulnerabilityClassifications | safe}}<br><br>
                     </div>
                 </div>
-
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
                 <!--<div class="span12">-->
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
@@ -68,7 +70,7 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        {{data.issueDetail}}
+                        {{data.issueDetail | safe}}
                     </div>
                 </div>
                 <div class="widget-box">
@@ -77,7 +79,7 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        {{data.issueBackground}}
+                        {{data.issueBackground | safe}}
                     </div>
                 </div>
                 <!--</div>-->
@@ -88,7 +90,7 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        <strong> Solutions : </strong>{{data.remediationBackground}}<br><br>
+                        <strong> Solutions : </strong>{{data.remediationBackground | safe}}<br><br>
                     </div>
                 </div>
                 <!--</div>-->
@@ -116,7 +118,6 @@
                     </div>
                 </div>
                 <!--</div>-->
-
             </div>
         </div>
     </div>

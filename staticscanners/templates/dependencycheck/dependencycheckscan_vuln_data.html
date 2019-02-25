@@ -42,9 +42,8 @@
         <h1>Vulnerabilities List</h1>
     </div>
     <div class="container-fluid">
-        <hr>
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Vulnerability List</h5>
@@ -76,7 +75,7 @@
                                         </label>
                                     </form>
                                 </td>
-                                <td><a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                <td><a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.cwe}}</a>
                                 </td>
                                 <td>{{data.fileName}}</td>
                                 <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
@@ -124,7 +123,7 @@
         </div>
         <!--False Positive Vulnerability List-->
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>False Positive Vulnerability List</h5>
@@ -153,7 +152,7 @@
                                         </label>
                                     </form>
                                 </td>
-                                <td><a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                <td><a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.cwe}}</a>
                                 </td>
                                 <td>{{data.fileName}}</td>
                                 <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
@@ -188,7 +187,7 @@
         </div>
 
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Closed Vulnerabilities List</h5>

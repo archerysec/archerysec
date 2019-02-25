@@ -88,8 +88,6 @@ def xml_parser(root, project_id, scan_id):
                 else:
                     false_positive = 'No'
 
-            print "zzzzz", sourcefile
-
             save_all = findbugs_scan_results_db(
                 vuln_id=vul_id,
                 scan_id=scan_id,
@@ -129,7 +127,6 @@ def xml_parser(root, project_id, scan_id):
         total_medium = len(all_findbugs_data.filter(priority="2"))
         total_low = len(all_findbugs_data.filter(priority="3"))
         total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
-        print "total duplicats", total_duplicate
 
         findbugs_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

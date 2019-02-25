@@ -30,57 +30,57 @@
             <div class="row-fluid">
                 <div class="span12">
                     <div class="row-fluid">
-                        <div class="span8">
-                            <div class="widget-box">
-                                <div class="widget-title"><span class="icon"><i
-                                        class="icon-th"></i></span>
-                                    <h5>Project List</h5>
-                                    <div class="buttons"><a data-toggle="modal" href="/projects/create_form/"
-                                                            class="btn btn-primary btn-mini"><i
-                                            class="icon-plus icon-white"></i> Add new Project</a>
-                                    </div>
+                        <!--<div class="span8">-->
+                            <!--<div class="widget-box">-->
+                                <!--<div class="widget-title"><span class="icon"><i-->
+                                        <!--class="icon-th"></i></span>-->
+                                    <!--<h5>Project List</h5>-->
+                                    <!--<div class="buttons"><a data-toggle="modal" href="/projects/create_form/"-->
+                                                            <!--class="btn btn-primary btn-mini"><i-->
+                                            <!--class="icon-plus icon-white"></i> Add new Project</a>-->
+                                    <!--</div>-->
 
-                                </div>
-                                <div class="widget-content nopadding">
-                                    <table class="table table-bordered data-table">
-                                        <thead>
-                                        <tr>
-                                            <!--<th>Project ID</th>-->
-                                            <th>Project</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Owner</th>
-                                            <th>Status</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>{% for data in all_project %}
-                                        <tr data-target="#">
-                                            <!--<td>{{data.project_id}}</td>-->
+                                <!--</div>-->
+                                <!--<div class="widget-content nopadding">-->
+                                    <!--<table class="table table-bordered data-table">-->
+                                        <!--<thead>-->
+                                        <!--<tr>-->
+                                            <!--&lt;!&ndash;<th>Project ID</th>&ndash;&gt;-->
+                                            <!--<th>Project</th>-->
+                                            <!--<th>Start Date</th>-->
+                                            <!--<th>End Date</th>-->
+                                            <!--<th>Owner</th>-->
+                                            <!--<th>Status</th>-->
+                                        <!--</tr>-->
+                                        <!--</thead>-->
+                                        <!--<tbody>{% for data in all_project %}-->
+                                        <!--<tr data-target="#">-->
+                                            <!--&lt;!&ndash;<td>{{data.project_id}}</td>&ndash;&gt;-->
 
-                                            <td>
-                                                <a href="/proj_data/?project_id={{data.project_id}}">{{data.project_name}}</a>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-inverse">{{data.project_start}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-inverse">{{data.project_end}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-important">{{data.project_owner}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-warning">{{data.project_status}}</span>
-                                            </td>
+                                            <!--<td>-->
+                                                <!--<a href="/proj_data/?project_id={{data.project_id}}">{{data.project_name}}</a>-->
+                                            <!--</td>-->
+                                            <!--<td><span-->
+                                                    <!--class="badge badge-inverse">{{data.project_start}}</span>-->
+                                            <!--</td>-->
+                                            <!--<td><span-->
+                                                    <!--class="badge badge-inverse">{{data.project_end}}</span>-->
+                                            <!--</td>-->
+                                            <!--<td><span-->
+                                                    <!--class="badge badge-important">{{data.project_owner}}</span>-->
+                                            <!--</td>-->
+                                            <!--<td><span-->
+                                                    <!--class="badge badge-warning">{{data.project_status}}</span>-->
+                                            <!--</td>-->
 
-                                        </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="span4">
+                                        <!--</tr>-->
+                                        <!--{% endfor %}-->
+                                        <!--</tbody>-->
+                                    <!--</table>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="span12">
                             <div class="widget-box">
                                 <div class="widget-title"><span class="icon"><i
                                         class="icon-th"></i></span>

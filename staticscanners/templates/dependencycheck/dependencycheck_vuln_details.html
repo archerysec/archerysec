@@ -3,7 +3,7 @@
 
 <div id="content">{% for data in dependencycheck_vuln_details %}
     <div id="content-header">
-        <div id="breadcrumb"><a href="/acunetixscanner/web_vuln_list/?scan_id={{data.scan_id}}" title="Go to Home"
+        <div id="breadcrumb"><a href="#" title="Go to Home"
                                 class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
             <a
                     href="#" class="current">{{ data.test_name }}</a></div>
@@ -24,7 +24,7 @@
                 </ul>
             </div>
 
-            <h1>{{ data.name }}</h1>
+            <h1>{{data.cwe | safe}}</h1>
         </div>
     </div>
     <div class="container-fluid">
@@ -35,7 +35,7 @@
                         <h5>Vulnerability Name:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info">{{ data.name }}</span>
+                        <span class="label label-info">{{data.cwe | safe}}</span>
 
                         <strong> </strong><br><br>
                         <strong> False Positive: </strong>
@@ -49,6 +49,7 @@
                         <br>
                         <strong> Severity: </strong> <span class="badge-{{data.vul_col}}"> {{ data.severity }}</span> <br>
                             <br>
+                        <strong>CVE: </strong><a href="/vfeed/cve_info/?cve={{data.name}}">{{data.name}}</a><br><br>
                         <strong> Vulnerable File Name : </strong>
                         <code><a href="{{data.fileName}}">
                             {{data.fileName}}</a>
@@ -124,63 +125,6 @@
                         <br><br>
                     </div>
                 </div>
-                <!--<div class="widget-box">-->
-                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                <!--<h5>Exploitation:</h5>-->
-                <!--</div>-->
-                <!--<div class="widget-content">-->
-                <!--<span class="label label-info"></span>-->
-                <!--<strong></strong> {{data.requiredSkillsForExploitation | safe}}-->
-                <!--<br><br>-->
-                <!--</div>-->
-                <!--</div>-->
-                <!--<div class="widget-box">-->
-                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                <!--<h5>References:</h5>-->
-                <!--</div>-->
-                <!--<div class="widget-content">-->
-                <!--<span class="label label-info"></span>-->
-                <!--<strong></strong> {{data.highlightSelections | safe}}-->
-                <!--{{data.remedyReferences | safe}}-->
-                <!--<br><br>-->
-                <!--</div>-->
-                <!--</div>-->
-                <!--<div class="widget-box">-->
-                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                <!--<h5>Proof Of Concept:</h5>-->
-                <!--</div>-->
-                <!--<div class="widget-content">-->
-                <!--<span class="label label-info"></span>-->
-                <!--<strong></strong> {{data.reportSection | safe}}-->
-                <!--<br><br>-->
-                <!--</div>-->
-                <!--</div>-->
-                <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="span12 ">&ndash;&gt;-->
-                <!--<div class="widget-box">-->
-                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                <!--<h5>Request Header:</h5>-->
-                <!--</div>-->
-                <!--<div class="widget-content">-->
-                <!--<span class="label label-info"></span>-->
-                <!--<pre-->
-                <!--&gt;{{ data.rawrequest }} <br></pre>-->
-                <!--</div>-->
-                <!--</div>-->
-                <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="span12">&ndash;&gt;-->
-                <!--<div class="widget-box">-->
-                <!--<div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>-->
-                <!--<h5>Response Header:</h5>-->
-                <!--</div>-->
-                <!--<div class="widget-content">-->
-                <!--<span class="label label-info"></span>-->
-                <!--<pre-->
-                <!--&gt;{{ data.rawResponse }} </pre>-->
-
-                <!--</div>-->
-                <!--</div>-->
-                <!--</div>-->
 
             </div>
         </div>

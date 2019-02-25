@@ -55,7 +55,7 @@
                         <strong> Parameter : </strong>{{data.param}}<br><br>
                         <strong> Sourceid :</strong>{{data.sourceid}}<br><br>
                         <strong> Attack : </strong>{{data.attack}}<br><br>
-                        <strong> Reference : </strong>{{data.reference}}<br><br>
+                        <strong> Reference : </strong>{{data.reference | safe}}<br><br>
                     </div>
                 </div>
 
@@ -66,7 +66,7 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        {{data.description}}
+                        {{data.description | safe}}
                     </div>
                 </div>
                 <!--</div>-->
@@ -77,7 +77,7 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        <strong> Solutions : </strong>{{data.solution}}<br><br>
+                        <strong> Solutions : </strong>{{data.solution | safe}}<br><br>
                     </div>
                 </div>
                 <!--</div>-->

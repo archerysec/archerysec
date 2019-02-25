@@ -52,13 +52,17 @@
                         <strong> Type : </strong><br><br>{{data.banner}}<br><br>
                         <strong>Family : </strong><br><br>{{data.family}}<br><br>
                         <strong>Base Score : </strong>{{data.cvss_base}}<br><br>
-                        <strong>CVE : </strong>{{data.cve}}<br><br>
-                        <strong>xref : </strong><br><br>{{data.xref}}<br><br>
+                        <strong>CVE : </strong>{% for data in cve_list %}
+                        <li><a href="/vfeed/cve_info/?cve={{data}}" target="_blank">{{data}}</a></li>
+                        {% endfor %}
+                        <br>
+                        <strong>References : </strong><br>{% for data in xref_list %} <a href="{{data}}" target="_blank">{{data}}</a> <br> {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 {% endfor %}
