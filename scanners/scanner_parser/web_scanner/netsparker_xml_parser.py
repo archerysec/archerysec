@@ -175,13 +175,13 @@ def xml_parser(root,
 
     netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=scan_id)
 
-    total_vul = len(netsparker_all_vul)
     total_critical = len(netsparker_all_vul.filter(severity='Critical'))
     total_high = len(netsparker_all_vul.filter(severity="High"))
     total_medium = len(netsparker_all_vul.filter(severity="Medium"))
     total_low = len(netsparker_all_vul.filter(severity="Low"))
     total_info = len(netsparker_all_vul.filter(severity="Information"))
     total_duplicate = len(netsparker_all_vul.filter(vuln_duplicate='Yes'))
+    total_vul = total_critical + total_high + total_medium + total_low + total_info
 
     netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
                                                               high_vul=total_high,
@@ -193,11 +193,11 @@ def xml_parser(root,
                                                               )
 
     if total_vul == total_duplicate:
-        netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul='0',
-                                                                  high_vul='0',
-                                                                  medium_vul='0',
-                                                                  low_vul='0',
-                                                                  critical_vul='0',
-                                                                  info_vul='0',
+        netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
+                                                                  high_vul=total_high,
+                                                                  medium_vul=total_medium,
+                                                                  low_vul=total_low,
+                                                                  critical_vul=total_critical,
+                                                                  info_vul=total_info,
                                                                   total_dup=total_duplicate
                                                                   )

@@ -271,24 +271,26 @@ def xml_parser(root, project_id, scan_id):
                 dump_data.save()
 
     arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity',
-                                                                                    'vuln_color').distinct()
+                                                                                    ).distinct()
 
-    total_vul = len(arachni_all_vul)
     total_high = len(arachni_all_vul.filter(severity="high"))
     total_medium = len(arachni_all_vul.filter(severity="medium"))
     total_low = len(arachni_all_vul.filter(severity="low"))
+    total_info = len(arachni_all_vul.filter(severity="informational"))
     total_duplicate = len(arachni_all_vul.filter(vuln_duplicate='Yes'))
+    total_vul = total_high + total_medium + total_low + total_info
 
     arachni_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
                                                            high_vul=total_high,
                                                            medium_vul=total_medium,
                                                            low_vul=total_low,
+                                                           info_vul=total_info,
                                                            total_dup=total_duplicate,
                                                            )
     if total_vul == total_duplicate:
-        arachni_scan_db.objects.filter(scan_id=scan_id).update(total_vul='0',
-                                                               high_vul='0',
-                                                               medium_vul='0',
-                                                               low_vul='0',
+        arachni_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
+                                                               high_vul=total_high,
+                                                               medium_vul=total_medium,
+                                                               low_vul=total_low,
                                                                total_dup=total_duplicate,
                                                                )

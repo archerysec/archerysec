@@ -34,7 +34,7 @@ cookieParams = ""
 res_type = ""
 res_id = ""
 url = ""
-name = ""
+name = "None"
 solution = ""
 instance = ""
 sourceid = ""
@@ -140,44 +140,49 @@ def xml_parser(root, project_id, scan_id):
                     else:
                         false_positive = 'No'
 
-                    dump_data = zap_scan_results_db(vuln_id=vuln_id,
-                                                    vuln_color=vul_col,
-                                                    scan_id=scan_id,
-                                                    project_id=project_id,
-                                                    confidence=confidence,
-                                                    wascid=wascid,
-                                                    risk=risk,
-                                                    reference=reference,
-                                                    url=url,
-                                                    name=name,
-                                                    solution=solution,
-                                                    param=instance,
-                                                    sourceid=sourceid,
-                                                    pluginId=pluginid,
-                                                    alert=alert,
-                                                    description=desc,
-                                                    false_positive=false_positive,
-                                                    rescan='No',
-                                                    vuln_status='Open',
-                                                    dup_hash=duplicate_hash,
-                                                    vuln_duplicate=duplicate_vuln
-                                                    )
-                    dump_data.save()
+                    if name == "None":
+                        print name
+                    else:
+                        dump_data = zap_scan_results_db(vuln_id=vuln_id,
+                                                        vuln_color=vul_col,
+                                                        scan_id=scan_id,
+                                                        project_id=project_id,
+                                                        confidence=confidence,
+                                                        wascid=wascid,
+                                                        risk=risk,
+                                                        reference=reference,
+                                                        url=url,
+                                                        name=name,
+                                                        solution=solution,
+                                                        param=instance,
+                                                        sourceid=sourceid,
+                                                        pluginId=pluginid,
+                                                        alert=alert,
+                                                        description=desc,
+                                                        false_positive=false_positive,
+                                                        rescan='No',
+                                                        vuln_status='Open',
+                                                        dup_hash=duplicate_hash,
+                                                        vuln_duplicate=duplicate_vuln
+                                                        )
+                        dump_data.save()
 
     zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id) \
-        .values('name', 'risk', 'vuln_color', 'vuln_duplicate').distinct()
+        .values('name', 'risk').distinct()
 
-    total_vul = len(zap_all_vul)
     total_high = len(zap_all_vul.filter(risk="High"))
     total_medium = len(zap_all_vul.filter(risk="Medium"))
     total_low = len(zap_all_vul.filter(risk="Low"))
+    total_info = len(zap_all_vul.filter(risk="Informational"))
     total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
+    total_vul = total_high + total_medium + total_low + total_info
 
     zap_scans_db.objects.filter(scan_scanid=scan_id) \
         .update(total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low,
+                info_vul=total_info,
                 total_dup=total_duplicate
                 )
     if total_vul == total_duplicate:

@@ -43,7 +43,6 @@ UriName = None
 VulnUrl = None
 FullURL = None
 
-
 def xml_parser(root, project_id, scan_id):
     """
 
@@ -134,7 +133,6 @@ def xml_parser(root, project_id, scan_id):
 
                     if ReportItem.tag == 'Name':
                         VulnName = ReportItem.text
-                        print VulnName
 
                     if ReportItem.tag == 'ModuleName':
                         VulnModuleName = ReportItem.text
@@ -242,78 +240,78 @@ def xml_parser(root, project_id, scan_id):
                 else:
                     false_positive = 'No'
 
-                dump_data = acunetix_scan_result_db(
-                    scan_id=scan_id,
-                    project_id=project_id,
-                    vuln_id=vuln_id,
-                    false_positive=false_positive,
-                    vuln_color=vul_col,
-                    vuln_status='Open',
-                    dup_hash=duplicate_hash,
-                    vuln_duplicate=duplicate_vuln,
-                    ScanName=ScanName,
-                    ScanShortName=ScanShortName,
-                    ScanStartURL=ScanStartURL,
-                    ScanStartTime=ScanStartTime,
-                    ScanFinishTime=ScanFinishTime,
-                    ScanScanTime=ScanScanTime,
-                    ScanAborted=ScanAborted,
-                    ScanResponsive=ScanResponsive,
-                    ScanBanner=ScanBanner,
-                    ScanOs=ScanOs,
-                    ScanWebServer=ScanWebServer,
-                    ScanTechnologies=ScanTechnologies,
-                    ScanCrawler=ScanCrawler,
-                    ScanReportItems=ScanReportItems,
-                    VulnName=VulnName,
-                    VulnModuleName=VulnModuleName,
-                    VulnDetails=VulnDetails,
-                    VulnAffects=VulnAffects,
-                    VulnParameter=VulnParameter,
-                    VulnAOP_SourceFile=VulnAOP_SourceFile,
-                    VulnAOP_SourceLine=VulnAOP_SourceLine,
-                    VulnAOP_Additional=VulnAOP_Additional,
-                    VulnIsFalsePositive=VulnIsFalsePositive,
-                    VulnSeverity=risk,
-                    VulnType=VulnType,
-                    VulnImpact=VulnImpact,
-                    VulnDescription=VulnDescription,
-                    VulnDetailedInformation=VulnDetailedInformation,
-                    VulnRecommendation=VulnRecommendation,
-                    VulnTechnicalDetails=VulnTechnicalDetails,
-                    VulnCWEList=VulnCWEList,
-                    VulnCVEList=VulnCVEList,
-                    VulnCVSS=VulnCVSS,
-                    VulnCVSS3=VulnCVSS3,
-                    VulnReferences=VulnReferences,
-                    UriName=UriName,
-                    VulnUrl=VulnUrl,
-                    VulnFullUrl=FullURL
+                if VulnName is None:
+                    print VulnName
+                else:
 
-                )
-                dump_data.save()
+                    dump_data = acunetix_scan_result_db(
+                        scan_id=scan_id,
+                        project_id=project_id,
+                        vuln_id=vuln_id,
+                        false_positive=false_positive,
+                        vuln_color=vul_col,
+                        vuln_status='Open',
+                        dup_hash=duplicate_hash,
+                        vuln_duplicate=duplicate_vuln,
+                        ScanName=ScanName,
+                        ScanShortName=ScanShortName,
+                        ScanStartURL=ScanStartURL,
+                        ScanStartTime=ScanStartTime,
+                        ScanFinishTime=ScanFinishTime,
+                        ScanScanTime=ScanScanTime,
+                        ScanAborted=ScanAborted,
+                        ScanResponsive=ScanResponsive,
+                        ScanBanner=ScanBanner,
+                        ScanOs=ScanOs,
+                        ScanWebServer=ScanWebServer,
+                        ScanTechnologies=ScanTechnologies,
+                        ScanCrawler=ScanCrawler,
+                        ScanReportItems=ScanReportItems,
+                        VulnName=VulnName,
+                        VulnModuleName=VulnModuleName,
+                        VulnDetails=VulnDetails,
+                        VulnAffects=VulnAffects,
+                        VulnParameter=VulnParameter,
+                        VulnAOP_SourceFile=VulnAOP_SourceFile,
+                        VulnAOP_SourceLine=VulnAOP_SourceLine,
+                        VulnAOP_Additional=VulnAOP_Additional,
+                        VulnIsFalsePositive=VulnIsFalsePositive,
+                        VulnSeverity=risk,
+                        VulnType=VulnType,
+                        VulnImpact=VulnImpact,
+                        VulnDescription=VulnDescription,
+                        VulnDetailedInformation=VulnDetailedInformation,
+                        VulnRecommendation=VulnRecommendation,
+                        VulnTechnicalDetails=VulnTechnicalDetails,
+                        VulnCWEList=VulnCWEList,
+                        VulnCVEList=VulnCVEList,
+                        VulnCVSS=VulnCVSS,
+                        VulnCVSS3=VulnCVSS3,
+                        VulnReferences=VulnReferences,
+                        UriName=UriName,
+                        VulnUrl=VulnUrl,
+                        VulnFullUrl=FullURL
+
+                    )
+                    dump_data.save()
 
     acunetix_all_vul = acunetix_scan_result_db.objects.filter(scan_id=scan_id) \
-        .values('VulnName', 'VulnSeverity', 'vuln_color', 'vuln_duplicate').distinct()
+        .values('VulnName').distinct()
 
-    total_vul = len(acunetix_all_vul)
     total_high = len(acunetix_all_vul.filter(VulnSeverity="High"))
     total_medium = len(acunetix_all_vul.filter(VulnSeverity="Medium"))
     total_low = len(acunetix_all_vul.filter(VulnSeverity="Low"))
+    total_info = len(acunetix_all_vul.filter(VulnSeverity="Informational"))
     total_duplicate = len(acunetix_all_vul.filter(vuln_duplicate='Yes'))
+    total_vul = total_high + total_medium + total_low + total_info
+
+    # cal_total_vuln = total_high + total_medium + total_low + total_info
 
     acunetix_scan_db.objects.filter(scan_id=scan_id) \
         .update(total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low,
+                info_vul=total_info,
                 total_dup=total_duplicate
                 )
-    if total_vul == total_duplicate:
-        acunetix_scan_db.objects.filter(scan_id=scan_id) \
-            .update(total_vul='0',
-                    high_vul='0',
-                    medium_vul='0',
-                    low_vul='0',
-                    total_dup=total_duplicate
-                    )

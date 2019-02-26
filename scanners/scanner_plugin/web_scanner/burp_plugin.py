@@ -300,7 +300,8 @@ class burp_scans(object):
                 data_dump.save()
             except Exception as e:
                 print e
-        burp_all_vul = burp_scan_result_db.objects.filter(scan_id=self.scan_id)
+        burp_all_vul = burp_scan_result_db.objects.filter(scan_id=self.scan_id).values('name', 'severity'
+                                                                                       ).distinct()
         total_vul = len(burp_all_vul)
         total_high = len(burp_all_vul.filter(severity="High"))
         total_medium = len(burp_all_vul.filter(severity="Medium"))
@@ -312,6 +313,7 @@ class burp_scans(object):
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,
+            info_vul=total_info,
             total_dup=total_duplicate
         )
         try:
