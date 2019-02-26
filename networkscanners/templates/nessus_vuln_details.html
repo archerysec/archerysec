@@ -71,8 +71,8 @@
                             <tr>
                                 <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                                 <th>Vulnerability</th>
-                                <th>Criticality</th>
                                 <th>Severity</th>
+                                <!--<th>Severity</th>-->
                                 <th>Host</th>
                                 <th>Location</th>
                                 <th>JIRA Ticket</th>
@@ -99,7 +99,7 @@
                                 <td><a href="/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
                                 </td>
                                 <td>{{data.risk_factor}}</td>
-                                <td>{{data.severity}}</td>
+                                <!--<td>{{data.severity}}</td>-->
                                 <td>{{data.scan_ip}}</td>
                                 <td>{{data.port}}</td>
                                 <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>

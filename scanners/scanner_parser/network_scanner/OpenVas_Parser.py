@@ -175,18 +175,13 @@ def xml_parser(root, project_id, scan_id):
                                      )
         save_all.save()
 
-        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).\
-            values('name',
-                   'severity',
-                   'vuln_color',
-                   'threat',
-                   'host',
-                   'port').distinct()
-        total_vul = len(openvas_vul)
+        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id)
+
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
         total_low = len(openvas_vul.filter(threat="Low"))
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_high + total_medium + total_low
 
         scan_save_db.objects.filter(scan_id=scan_id).\
             update(total_vul=total_vul,
@@ -195,11 +190,3 @@ def xml_parser(root, project_id, scan_id):
                    low_total=total_low,
                    total_dup=total_duplicate,
                    )
-        if total_vul == total_duplicate:
-            scan_save_db.objects.filter(scan_id=scan_id). \
-                update(total_vul='0',
-                       high_total='0',
-                       medium_total='0',
-                       low_total='0',
-                       total_dup=total_duplicate,
-                       )

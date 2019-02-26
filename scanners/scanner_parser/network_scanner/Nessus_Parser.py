@@ -135,7 +135,6 @@ def nessus_parser(root, project_id, scan_id):
                 except:
                     plugin_output = "NA"
 
-
                 vul_id = uuid.uuid4()
                 
                 dup_data = scan_ip + plugin_name + severity + port
@@ -161,6 +160,9 @@ def nessus_parser(root, project_id, scan_id):
                     false_positive = 'Yes'
                 else:
                     false_positive = 'No'
+
+                if risk_factor == 'None':
+                    risk_factor = 'Informational'
 
                 all_data_save = nessus_report_db(project_id=project_id,
                                                  scan_id=scan_id,
@@ -202,6 +204,7 @@ def nessus_parser(root, project_id, scan_id):
                 total_high = len(ov_all_vul.filter(risk_factor="High"))
                 total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
                 total_low = len(ov_all_vul.filter(risk_factor="Low"))
+                total_info = len(ov_all_vul.filter(risk_factor="Informational"))
                 total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
 
                 nessus_scan_db.objects.filter(scan_id=scan_id) \
@@ -210,14 +213,6 @@ def nessus_parser(root, project_id, scan_id):
                             high_total=total_high,
                             medium_total=total_medium,
                             low_total=total_low,
+                            info_total=total_info,
                             total_dup=total_duplicate,
                             )
-                if total_vul == total_duplicate:
-                    nessus_scan_db.objects.filter(scan_id=scan_id) \
-                        .update(total_vul='0',
-                                critical_total='0',
-                                high_total='0',
-                                medium_total='0',
-                                low_total='0',
-                                total_dup=total_duplicate,
-                                )
