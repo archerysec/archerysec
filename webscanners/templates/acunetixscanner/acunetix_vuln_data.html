@@ -35,7 +35,7 @@
                         <h5>Vulnerability Name:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info">{{ data.name }}</span>
+                        <span class="label label-info">{{ data.VulnName }}</span>
 
                         <strong> </strong><br><br>
                         <strong> False Positive: </strong>
@@ -50,9 +50,10 @@
                         <strong> Severity: </strong> <span
                             class="badge badge-{{data.vuln_color}}"> {{ data.VulnSeverity }}</span><br><br>
                         <strong> ModuleName : </strong>{{data.ModuleName}}<br><br>
-                        <strong> Vulnerable URL : </strong><code><a href="{{data.VulnFullUrl}}">
-                        {{data.VulnFullUrl}}</a>
+                        <strong> Vulnerable URL : </strong><code><a href="{{data.VulnAffects}}">
+                        {{data.VulnAffects}}</a>
                     </code><br><br>
+                        <strong> Vulnerable Parameter : </strong>{{data.VulnParameter}}<br><br>
 
 
                     </div>

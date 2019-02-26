@@ -207,14 +207,7 @@ def xml_parser(root, project_id, scan_id):
                         vul_col = "info"
                         risk = "Informational"
 
-                for c_url in root.findall('.//SiteFile'):
-                    for vuln_url in c_url:
-                        if vuln_url.tag == 'Name':
-                            UriName = vuln_url.text
-                        if vuln_url.tag == 'URL':
-                            VulnUrl = vuln_url.text
-                        if vuln_url.tag == 'FullURL':
-                            FullURL = vuln_url.text
+
 
                 vuln_id = uuid.uuid4()
                 # print VulnName, ScanStartURL, VulnSeverity
@@ -243,7 +236,15 @@ def xml_parser(root, project_id, scan_id):
                 if VulnName is None:
                     print VulnName
                 else:
-
+                    for c_url in root.findall('.//SiteFile'):
+                        for vuln_url in c_url:
+                            if vuln_url.tag == 'Name':
+                                UriName = vuln_url.text
+                            if vuln_url.tag == 'URL':
+                                VulnUrl = vuln_url.text
+                            if vuln_url.tag == 'FullURL':
+                                FullURL = vuln_url.text
+                            print FullURL
                     dump_data = acunetix_scan_result_db(
                         scan_id=scan_id,
                         project_id=project_id,
