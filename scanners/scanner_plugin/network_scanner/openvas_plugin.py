@@ -267,14 +267,13 @@ def vuln_an_id(scan_id):
                 save_all.save()
 
                 openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id) \
-                    .values('name', 'severity',
-                            'vuln_color',
-                            'threat', 'host',
-                            'port').distinct()
+                    .values('name',
+                            'threat').distinct()
                 total_vul = len(openvas_vul)
                 total_high = len(openvas_vul.filter(threat="High"))
                 total_medium = len(openvas_vul.filter(threat="Medium"))
                 total_low = len(openvas_vul.filter(threat="Low"))
+                total_log = len(openvas_vul.filter(threat="Log"))
                 scan_status = str(scanner.get_progress(str(scan_id)))
 
                 scan_save_db.objects.filter(scan_id=scan_id) \
@@ -282,4 +281,5 @@ def vuln_an_id(scan_id):
                             high_total=total_high,
                             medium_total=total_medium,
                             low_total=total_low,
+                            log_total=total_log,
                             scan_status=scan_status)

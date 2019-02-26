@@ -68,6 +68,7 @@ class scan_save_db(models.Model):
     high_total = models.IntegerField(blank=True, null=True)
     medium_total = models.IntegerField(blank=True, null=True)
     low_total = models.IntegerField(blank=True, null=True)
+    log_total = models.IntegerField(blank=True, null=True)
     project_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
     total_dup = models.IntegerField(blank=True, null=True)
