@@ -4088,9 +4088,9 @@ a.thumbnail:hover, a.thumbnail:focus {
     border-radius:3px
 }
 .badge {
-    padding-right:0px;
-    padding-left:0px;
-    margin:0%;
+    padding-right:10px;
+    padding-left:10px;
+    margin:0 50%;
     -webkit-transform:translateX(-50%);
     transform:translateX(-50%);
     -webkit-border-radius:9px;
