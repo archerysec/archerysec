@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION, public=True, )),
     url(r'webscan/', views.WebScan.as_view()),
     url(r'networkscan/', views.NetworkScan.as_view()),
+    url(r'networkscanresult', views.NetworkScanResult.as_view()),
     url(r'project/', views.Project.as_view()),
     url(r'webscanresult/', views.WebScanResult.as_view()),
     url(r'zapscanstatus/', views.ZapScanStatus.as_view()),
