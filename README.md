@@ -52,7 +52,7 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 ## Demo Application
 
-**URL**: [https://archerysec-test.herokuapp.com/](https://archerysec-test.herokuapp.com/)
+**URL**: [https://archerysec-demo.herokuapp.com](https://archerysec-demo.herokuapp.com)
 
 * **Username**: archerysec
 * **Password**: archerysec@archerysec
