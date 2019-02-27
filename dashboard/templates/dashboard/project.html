@@ -455,10 +455,28 @@
                         <th>Low</th>
                     </tr>
                     </thead>
-                    <tbody>{% for data in network_dat %}
+                    <tbody>{% for data in openvas_dat %}
                     <tr data-target="#">
 
                         <td width="20%"><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
+                        <td width="20%">
+                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
+                            </div>
+                        </td>
+                        <td>{{data.date_time}}</td>
+                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
+                        <td><span class="badge badge-important">{{data.high_total}}</span></td>
+                        <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
+                        <td><span class="badge badge-info">{{data.low_total}}</span></td>
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tbody>{% for data in nessus_dat %}
+                    <tr data-target="#">
+
+                        <td width="20%"><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>

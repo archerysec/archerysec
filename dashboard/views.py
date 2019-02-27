@@ -605,7 +605,11 @@ def proj_data(request):
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
     static_scan = chain(dependency_check, findbugs)
-    network_dat = scan_save_db.objects.filter(project_id=project_id)
+    openvas_dat = scan_save_db.objects.filter(project_id=project_id)
+    nessus_dat = nessus_scan_db.objects.filter(project_id=project_id)
+
+    network_dat = chain(openvas_dat, nessus_dat)
+
 
     zap_false_positive = zap_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
     burp_false_positive = burp_scan_result_db.objects.filter(false_positive='Yes', project_id=project_id)
@@ -686,6 +690,9 @@ def proj_data(request):
                    'all_dependency_scan': all_dependency_scan,
                    'all_findbugs_scan': all_findbugs_scan,
                    'all_webinspect_scan': all_webinspect_scan,
+
+                   'openvas_dat': openvas_dat,
+                   'nessus_dat': nessus_dat,
 
                    'all_zap_high': all_zap_high,
                    'all_zap_low': all_zap_low,
