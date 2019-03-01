@@ -141,7 +141,7 @@ def xml_parser(root, project_id, scan_id):
                         VulnDetails = ReportItem.text
 
                     if ReportItem.tag == 'Affects':
-                        VulnAffects = ReportItem.text
+                        VulnAffects = ScanStartURL + ReportItem.text
 
                     if ReportItem.tag == 'Parameter':
                         VulnParameter = ReportItem.text
@@ -211,7 +211,7 @@ def xml_parser(root, project_id, scan_id):
 
                 vuln_id = uuid.uuid4()
                 # print VulnName, ScanStartURL, VulnSeverity
-                dup_data = str(VulnName) + str(ScanStartURL) + str(VulnSeverity)
+                dup_data = str(VulnName) + str(VulnAffects) + str(VulnSeverity)
                 duplicate_hash = hashlib.sha256(dup_data).hexdigest()
                 match_dup = acunetix_scan_result_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
@@ -244,7 +244,7 @@ def xml_parser(root, project_id, scan_id):
                                 VulnUrl = vuln_url.text
                             if vuln_url.tag == 'FullURL':
                                 FullURL = vuln_url.text
-                            print FullURL
+                            # print FullURL
                     dump_data = acunetix_scan_result_db(
                         scan_id=scan_id,
                         project_id=project_id,
