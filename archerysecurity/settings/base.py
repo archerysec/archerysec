@@ -69,6 +69,8 @@ INSTALLED_APPS = [
     'sitetree',
     'import_export',
     'vFeedgui',
+    'compliance',
+
 ]
 
 MIDDLEWARE = [

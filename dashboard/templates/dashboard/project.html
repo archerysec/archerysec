@@ -30,56 +30,7 @@
             <div class="row-fluid">
                 <div class="span12">
                     <div class="row-fluid">
-                        <!--<div class="span8">-->
-                            <!--<div class="widget-box">-->
-                                <!--<div class="widget-title"><span class="icon"><i-->
-                                        <!--class="icon-th"></i></span>-->
-                                    <!--<h5>Project List</h5>-->
-                                    <!--<div class="buttons"><a data-toggle="modal" href="/projects/create_form/"-->
-                                                            <!--class="btn btn-primary btn-mini"><i-->
-                                            <!--class="icon-plus icon-white"></i> Add new Project</a>-->
-                                    <!--</div>-->
 
-                                <!--</div>-->
-                                <!--<div class="widget-content nopadding">-->
-                                    <!--<table class="table table-bordered data-table">-->
-                                        <!--<thead>-->
-                                        <!--<tr>-->
-                                            <!--&lt;!&ndash;<th>Project ID</th>&ndash;&gt;-->
-                                            <!--<th>Project</th>-->
-                                            <!--<th>Start Date</th>-->
-                                            <!--<th>End Date</th>-->
-                                            <!--<th>Owner</th>-->
-                                            <!--<th>Status</th>-->
-                                        <!--</tr>-->
-                                        <!--</thead>-->
-                                        <!--<tbody>{% for data in all_project %}-->
-                                        <!--<tr data-target="#">-->
-                                            <!--&lt;!&ndash;<td>{{data.project_id}}</td>&ndash;&gt;-->
-
-                                            <!--<td>-->
-                                                <!--<a href="/proj_data/?project_id={{data.project_id}}">{{data.project_name}}</a>-->
-                                            <!--</td>-->
-                                            <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{data.project_start}}</span>-->
-                                            <!--</td>-->
-                                            <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{data.project_end}}</span>-->
-                                            <!--</td>-->
-                                            <!--<td><span-->
-                                                    <!--class="badge badge-important">{{data.project_owner}}</span>-->
-                                            <!--</td>-->
-                                            <!--<td><span-->
-                                                    <!--class="badge badge-warning">{{data.project_status}}</span>-->
-                                            <!--</td>-->
-
-                                        <!--</tr>-->
-                                        <!--{% endfor %}-->
-                                        <!--</tbody>-->
-                                    <!--</table>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
                         <div class="span12">
                             <div class="widget-box">
                                 <div class="widget-title"><span class="icon"><i
@@ -215,6 +166,19 @@
                                             </td>
                                             <!--<td><span-->
                                                     <!--class="badge badge-inverse">{{all_findbugs_scan.total_vuln__sum}}</span>-->
+                                            <!--</td>-->
+                                        </tr>
+                                        <tr>
+                                            <td><a href="/clair/clair_list">Clair</a></td>
+                                            <td><span class="badge badge-important">{{all_clair_high.SEVERITY_HIGH__sum}}</span>
+                                            </td>
+                                            <td><span class="badge badge-warning">{{all_clair_medium.SEVERITY_MEDIUM__sum}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-info">{{all_clair_low.SEVERITY_LOW__sum}}</span>
+                                            </td>
+                                            <!--<td><span-->
+                                                    <!--class="badge badge-inverse">{{all_clair_scan.total_vuln__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         </tbody>
@@ -419,6 +383,25 @@
                     <tr data-target="#">
                         <td width="20%">
                             <a href="/findbugs/findbugs_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                        </td>
+                        <td width="20%">
+                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
+                            </div>
+                        </td>
+                        <td>{{data.date_time}}</td>
+                        <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
+                        <td><span class="badge badge-important">{{data.SEVERITY_HIGH}}</span></td>
+                        <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
+                        <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tbody>{% for data in clair %}
+                    <tr data-target="#">
+                        <td width="20%">
+                            <a href="/clair/clair_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                         </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">

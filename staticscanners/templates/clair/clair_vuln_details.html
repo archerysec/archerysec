@@ -1,7 +1,7 @@
 {% extends 'header.html' %}
 {% block body %}
 
-<div id="content">{% for data in findbugs_vuln_details %}
+<div id="content">{% for data in clair_vuln_details %}
     <div id="content-header">
         <div id="breadcrumb"><a href="#" title="Go to Home"
                                 class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
@@ -24,7 +24,7 @@
                 </ul>
             </div>
 
-            <h1>{{ data.ShortDescription }}</h1>
+            <h1>{{ data.Name }}</h1>
         </div>
     </div>
     <div class="container-fluid">
@@ -35,31 +35,36 @@
                         <h5>Vulnerability Name:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info">{{ data.ShortDescription }}</span>
+                        <span class="label label-info">{{ data.Name }}</span>
 
                         <strong> </strong><br><br>
                         <strong> False Positive: </strong>
-                        <form method="POST" action="/findbugs/findbugs_vuln_data/">{% csrf_token %}
+                        <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
                             <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                             <input type="hidden" name="false" value="Yes">
                             <input type="hidden" name="status" value="Open">
-                            <input type="hidden" name="vuln_name" value="{{data.name}}">
+                            <input type="hidden" name="vuln_name" value="{{data.Name}}">
                             <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                             <button class="btn btn-info btn-mini">Yes</button>
                         </form>
                         <br>
-                        <strong> Severity: </strong> <span class="badge-{{data.vul_col}}"> {{ data.risk }}</span> <br>
+                        <strong> Severity: </strong> <span class="badge-{{data.vul_col}}"> {{ data.Severity }}</span> <br>
                         <br>
-                        <strong> Vulnerable File Name : </strong>
-                        <code><a href="{{data.classname}}">
-                            {{data.classname}}</a>
-                        </code>
-                        <br><br>
-                        <strong> Vulnerable File Path : </strong>
-                        <code><a href="{{data.sourcepath}}">
-                            {{data.sourcepath}}</a>
-                        </code>
-                        <br><br>
+                        <strong> Namespace Name : </strong>
+                            {{data.NamespaceName}}</a><br><br>
+                        <strong> Feature Name : </strong>
+                            {{data.FeatureName}}</a><br><br>
+                        <strong> Feature Version : </strong>
+                            {{data.FeatureVersion}}</a><br><br>
+                        <strong> Link: </strong>
+                            <a href="{{data.Link}}" target="_blank">{{data.Link}}</a>
+                        <!--</code>-->
+                        <!--<br><br>-->
+                        <!--<strong> Vulnerable File Path : </strong>-->
+                        <!--<code><a href="{{data.sourcepath}}">-->
+                            <!--{{data.sourcepath}}</a>-->
+                        <!--</code>-->
+                        <!--<br><br>-->
 
                     </div>
                 </div>
@@ -71,7 +76,17 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        {{data.Details | safe}}
+                        {{data.Description | safe}}
+
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Metadata:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        {{data.Metadata | safe}}
 
                     </div>
                 </div>

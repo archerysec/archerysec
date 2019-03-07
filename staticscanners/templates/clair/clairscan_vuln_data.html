@@ -18,7 +18,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/findbugs/findbugs_del_vuln',
+                url:'/clair/clair_del_vuln',
                 data:{
                    del_vuln: json_scanid,
                    scan_id: $('input[name=scan_id]').val(),
@@ -44,7 +44,7 @@
     <div class="container-fluid">
         <hr>
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Vulnerability List</h5>
@@ -58,17 +58,18 @@
                             <thead>
                             <tr>
                                 <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
-                                <th>Vulnerability</th>
-                                <th>Filename</th>
-                                <th>Risk</th>
-                                <th>JIRA Ticket</th>
+                                <th>Namespace Name</th>
+                                <th>Feature Name</th>
+                                <th>Feature Version</th>
+                                <th>Severity</th>
+                                <th>Link</th>
                                 <th>False Positive</th>
                                 <th>Status</th>
                                 <th></th>
                                 <th></th>
                             </tr>
                             </thead>
-                            <tbody>{% for data in findbugs_vuln_data %}
+                            <tbody>{% for data in clair_vuln_data %}
                             <tr data-target="#">
                                 <td>
                                     <form>
@@ -76,18 +77,20 @@
                                         </label>
                                     </form>
                                 </td>
-                                <td><a href="/findbugs/findbugs_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                <td><a href="/clair/clair_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
                                 </td>
-                                <td>{{data.sourcepath}}</td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.risk}}</span></td>
-                                <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
+                                <td>{{data.FeatureName}}</td>
+                                <td>{{data.FeatureVersion}}</span></td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.Severity}}</span></a>
+                                </td>
+                                <td><a href="#" target="_blank">{{data.Link}}</a>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/findbugs/findbugs_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="Yes">
                                         <input type="hidden" name="status" value="Open">
-                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.Name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">Yes</button>
                                     </form>
@@ -95,7 +98,7 @@
                                 <td>{{data.vuln_status}}</td>
                                 <td>
                                     <div>
-                                        <form action="/findbugs/findbugs_del_vuln" method="POST"
+                                        <form action="/clair/clair_del_vuln" method="POST"
                                               class="form-horizontal">
                                             {% csrf_token %}
                                             <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -105,11 +108,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/findbugs/findbugs_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
                                         <input type="hidden" name="status" value="Closed">
-                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.Name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">Close</button>
                                     </form>
@@ -124,7 +127,7 @@
         </div>
         <!--False Positive Vulnerability List-->
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>False Positive Vulnerability List</h5>
@@ -138,9 +141,9 @@
                             <thead>
                             <tr>
                                 <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
-                                <th>Vulnerability</th>
-                                <th>File</th>
-                                <th>Risk</th>
+                                <th>Namespace Name</th>
+                                <th>Feature Name</th>
+                                <th>Severity</th>
                                 <th>False Positive</th>
                                 <th></th>
                             </tr>
@@ -153,23 +156,23 @@
                                         </label>
                                     </form>
                                 </td>
-                                <td><a href="/findbugs/findbugs_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                <td><a href="/clair/clair_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
                                 </td>
-                                <td>{{data.sourcepath}}</td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.risk}}</span></td>
+                                <td>{{data.FeatureName}}</td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                                  <td>
-                                    <form method="POST" action="/findbugs/findbugs_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
                                         <input type="hidden" name="status" value="Open">
-                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.Name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">No</button>
                                     </form>
                                 </td>
                                 <td>
                                     <div>
-                                        <form action="/findbugs/findbugs_del_vuln" method="POST"
+                                        <form action="/clair/clair_del_vuln" method="POST"
                                               class="form-horizontal">
                                             {% csrf_token %}
                                             <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -188,7 +191,7 @@
         </div>
 
         <div class="row-fluid">
-            <div class="span9 offset1">
+            <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>Closed Vulnerabilities List</h5>
@@ -206,9 +209,9 @@
                             <thead>
                             <tr>
                                 <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
-                                <th>Vulnerability</th>
-                                <th>URL</th>
-                                <th>Risk</th>
+                                <th>Namespace Name</th>
+                                <th>Feature Name</th>
+                                <th>Severity</th>
                                 <th>False Positive</th>
                                 <th>Status</th>
                                 <th></th>
@@ -225,12 +228,12 @@
                                         <!--<button type="button" >Get Values</button>-->
                                     </form>
                                 </td>
-                                <td><a href="/findbugs/findbugs_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                <td><a href="/clair/clair_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
                                 </td>
-                                <td>{{data.sourcepath}}</td>
-                                <td><span class="badge badge-{{data.vuln_color}}">{{data.risk}}</span></td>
+                                <td>{{data.FeatureName}}</td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                                 <td>
-                                    <form method="POST" action="/findbugs/findbugs_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
                                         <input type="hidden" name="status" value="Open">
@@ -242,7 +245,7 @@
                                 <td>{{data.vuln_status}}</td>
                                 <td>
                                     <div>
-                                        <form action="/findbugs/findbugs_del_vuln" method="POST"
+                                        <form action="/clair/clair_del_vuln" method="POST"
                                               class="form-horizontal">
                                             {% csrf_token %}
                                             <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -252,11 +255,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/findbugs/findbugs_vuln_data/">{% csrf_token %}
+                                    <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                         <input type="hidden" name="false" value="No">
                                         <input type="hidden" name="status" value="Open">
-                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                        <input type="hidden" name="vuln_name" value="{{data.Name}}">
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                         <button class="btn btn-info btn-mini">Open</button>
                                     </form>

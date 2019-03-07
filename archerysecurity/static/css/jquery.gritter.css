@@ -1,10 +1,10 @@
 /* the norm */
 #gritter-notice-wrapper {
 	position:fixed;
-	top:50px;
-	right:10px;
+	top:20px;
+	right:20px;
 	width:301px;
-	z-index:989;
+	z-index:9999;
 }
 #gritter-notice-wrapper.top-left {
     left: 20px;
@@ -25,50 +25,61 @@
 .gritter-item-wrapper {
 	position:relative;
 	margin:0 0 10px 0;
+	background:url('../images/ie-spacer.gif'); /* ie7/8 fix */
 }
-
-.gritter-top, .gritter-bottom {
-	height: 0;
+.gritter-top {
+	background:url(../images/gritter.png) no-repeat left -30px;
+	height:10px;
 }
-
+.hover .gritter-top {
+	background-position:right -30px;
+}
+.gritter-bottom {
+	background:url(../images/gritter.png) no-repeat left bottom;
+	height:8px;
+	margin:0;
+}
+.hover .gritter-bottom {
+	background-position: bottom right;
+}
 .gritter-item {
 	display:block;
-	background: #f74d4d; /* Old browsers */
-	color:#2b2b2b; box-shadow:3px 3px 20px #000;
-	padding:7px 10px 10px;
-	font-size: 11px; color:#fff;
+	background:url(../images/gritter.png) no-repeat left -40px;
+	color:#eee;
+	padding:2px 11px 8px 11px;
+	font-size: 11px;
 	font-family:verdana;
 }
 .hover .gritter-item {
+	background-position:right -40px;
 }
 .gritter-item p {
 	padding:0;
 	margin:0;
 	word-wrap:break-word;
-	font-size: 10px;
-	line-height: 14px;
 }
 .gritter-close {
 	display:none;
 	position:absolute;
-	top:-7px;
-	right:-9px;
-	background:url(../img/gritter.png) no-repeat left top;
+	top:5px;
+	left:3px;
+	background:url(../images/gritter.png) no-repeat left top;
 	cursor:pointer;
 	width:30px;
 	height:30px;
+	text-indent:-9999em;
 }
 .gritter-title {
-	font-size:12px;
+	font-size:14px;
 	font-weight:bold;
 	padding:0 0 7px 0;
 	display:block;
+	text-shadow:1px 1px 0 #000; /* Not supported by IE :( */
 }
 .gritter-image {
-	width:32px;
-	height:32px;
+	width:48px;
+	height:48px;
 	float:left;
-	margin: 5px;
 }
 .gritter-with-image,
 .gritter-without-image {
@@ -83,7 +94,7 @@
 .gritter-light .gritter-bottom,
 .gritter-light .gritter-top,
 .gritter-light .gritter-close {
-    background-image: url(../img/gritter-light.png);
+    background-image: url(../images/gritter-light.png);
     color: #222;
 }
 .gritter-light .gritter-title {

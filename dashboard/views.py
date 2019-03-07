@@ -29,8 +29,13 @@ from webscanners.models import zap_scans_db, \
 
 from staticscanners.models import dependencycheck_scan_db, \
     bandit_scan_db, \
-    findbugs_scan_db, dependencycheck_scan_results_db, findbugs_scan_results_db
-from networkscanners.models import scan_save_db, nessus_scan_db, ov_scan_result_db, nessus_report_db
+    findbugs_scan_db, \
+    dependencycheck_scan_results_db, \
+    findbugs_scan_results_db, clair_scan_results_db , clair_scan_db
+from networkscanners.models import scan_save_db, \
+    nessus_scan_db, \
+    ov_scan_result_db, \
+    nessus_report_db
 from projects.models import project_db
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from itertools import chain
@@ -137,6 +142,9 @@ def proj_data(request):
     all_findbugs_scan = findbugs_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
+    all_clair_scan = clair_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('total_vuln'))
+
     all_bandit_scan = bandit_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
@@ -193,6 +201,12 @@ def proj_data(request):
         else:
             all_findbugs = value
 
+    for key, value in all_clair_scan.iteritems():
+        if value is None:
+            all_clair = '0'
+        else:
+            all_clair = value
+
     for key, value in all_bandit_scan.iteritems():
         if value is None:
             all_bandit = '0'
@@ -220,6 +234,7 @@ def proj_data(request):
                int(all_webinspect) + \
                int(all_dependency) + \
                int(all_findbugs) + \
+               int(all_clair) + \
                int(all_bandit)
 
     total_network = int(all_openvas) + int(all_nessus)
@@ -247,6 +262,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_findbugs_high = findbugs_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('SEVERITY_HIGH'))
+
+    all_clair_high = clair_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_bandit_high = bandit_scan_db.objects.filter(project_id=project_id). \
@@ -305,6 +323,12 @@ def proj_data(request):
         else:
             high_findbugs = value
 
+    for key, value in all_clair_high.iteritems():
+        if value is None:
+            high_clair = '0'
+        else:
+            high_clair = value
+
     for key, value in all_bandit_high.iteritems():
         if value is None:
             high_bandit = '0'
@@ -332,6 +356,7 @@ def proj_data(request):
                int(high_webinspect) + \
                int(high_dependency) + \
                int(high_findbugs) + \
+               int(high_clair) + \
                int(high_bandit) + \
                int(high_nessus)
 
@@ -369,6 +394,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_findbugs_medium = findbugs_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('SEVERITY_MEDIUM'))
+
+    all_clair_medium = clair_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_bandit_medium = bandit_scan_db.objects.filter(project_id=project_id). \
@@ -427,6 +455,12 @@ def proj_data(request):
         else:
             medium_findbugs = value
 
+    for key, value in all_clair_medium.iteritems():
+        if value is None:
+            medium_clair = '0'
+        else:
+            medium_clair = value
+
     for key, value in all_bandit_medium.iteritems():
         if value is None:
             medium_bandit = '0'
@@ -454,6 +488,7 @@ def proj_data(request):
                  int(medium_webinspect) + \
                  int(medium_dependency) + \
                  int(medium_findbugs) + \
+                 int(medium_clair) + \
                  int(medium_bandit) + \
                  int(medium_nessus)
 
@@ -491,6 +526,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_LOW'))
 
     all_findbugs_low = findbugs_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('SEVERITY_LOW'))
+
+    all_clair_low = clair_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_LOW'))
 
     all_bandit_low = bandit_scan_db.objects.filter(project_id=project_id). \
@@ -549,6 +587,12 @@ def proj_data(request):
         else:
             low_findbugs = value
 
+    for key, value in all_clair_low.iteritems():
+        if value is None:
+            low_clair = '0'
+        else:
+            low_clair = value
+
     for key, value in all_bandit_low.iteritems():
         if value is None:
             low_bandit = '0'
@@ -576,6 +620,7 @@ def proj_data(request):
               int(low_webinspect) + \
               int(low_dependency) + \
               int(low_findbugs) + \
+              int(low_clair) + \
               int(low_bandit) + \
               int(low_nessus)
 
@@ -602,6 +647,7 @@ def proj_data(request):
 
     dependency_check = dependencycheck_scan_db.objects.filter(project_id=project_id)
     findbugs = findbugs_scan_db.objects.filter(project_id=project_id)
+    clair = clair_scan_db.objects.filter(project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
     static_scan = chain(dependency_check, findbugs)
@@ -621,6 +667,7 @@ def proj_data(request):
     dependencycheck_false_positive = dependencycheck_scan_results_db.objects.filter(false_positive='Yes',
                                                                                     project_id=project_id)
     findbugs_false_positive = findbugs_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
+    clair_false_positive = clair_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
 
     openvas_false_positive = ov_scan_result_db.objects.filter(false_positive='Yes', project_id=project_id)
     nessus_false_positive = nessus_report_db.objects.filter(false_positive='Yes', project_id=project_id)
@@ -650,7 +697,8 @@ def proj_data(request):
                          int(len(nessus_false_positive)) + \
                          int(len(acunetix_false_positive)) + \
                          int(len(dependencycheck_false_positive)) + \
-                         int(len(findbugs_false_positive))
+                         int(len(findbugs_false_positive)) + \
+                         int(len(clair_false_positive))
 
     return render(request,
                   'dashboard/project.html',
@@ -679,6 +727,7 @@ def proj_data(request):
                    'acunetix': acunetix,
                    'dependency_check': dependency_check,
                    'findbugs': findbugs,
+                   'clair': clair,
                    'network_dat': network_dat,
                    'all_zap_scan': all_zap_scan,
                    'all_burp_scan': all_burp_scan,
@@ -689,6 +738,7 @@ def proj_data(request):
                    'all_nessus_scan': all_nessus_scan,
                    'all_dependency_scan': all_dependency_scan,
                    'all_findbugs_scan': all_findbugs_scan,
+                   'all_clair_scan': all_clair_scan,
                    'all_webinspect_scan': all_webinspect_scan,
 
                    'openvas_dat': openvas_dat,
@@ -733,6 +783,9 @@ def proj_data(request):
                    'all_findbugs_high': all_findbugs_high,
                    'all_findbugs_low': all_findbugs_low,
                    'all_findbugs_medium': all_findbugs_medium,
+                   'all_clair_high': all_clair_high,
+                   'all_clair_low': all_clair_low,
+                   'all_clair_medium': all_clair_medium,
                    'all_closed_vuln': all_closed_vuln,
                    'all_false_positive': all_false_positive
                    })
@@ -1203,6 +1256,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   severity='High')
         findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='High', project_id=project_id)
+        clair_all_high = clair_scan_results_db.objects.filter(risk='High', project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)
@@ -1227,6 +1281,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   severity='Medium')
         findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
+        clair_all_medium = clair_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(threat='Medium', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='Medium', project_id=project_id)
@@ -1250,6 +1305,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   severity='Low')
         findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Low', project_id=project_id)
+        clair_all_low = clair_scan_results_db.objects.filter(risk='Low', project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(threat='Low', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='Low', project_id=project_id)
@@ -1272,6 +1328,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   )
         findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id)
+        clair_all_high = clair_scan_results_db.objects.filter(project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(project_id=project_id)
@@ -1294,6 +1351,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   false_positive='Yes')
         findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
+        clair_all_high = clair_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
 
         openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, false_positive='Yes')
         nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, false_positive='Yes')
@@ -1316,6 +1374,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   vuln_status='Closed')
         findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
+        clair_all_high = clair_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
 
         openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, vuln_status='Closed')
         nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, vuln_status='Closed')
@@ -1333,6 +1392,7 @@ def all_high_vuln(request):
                    'burp_all_high': burp_all_high,
                    'dependencycheck_all_high': dependencycheck_all_high,
                    'findbugs_all_high': findbugs_all_high,
+                   'clair_all_high': findbugs_all_high,
                    'openvas_all_high': openvas_all_high,
                    'nessus_all_high': nessus_all_high,
                    'project_id': project_id,
@@ -1373,6 +1433,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       severity='High')
             findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='High', project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(risk='High', project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)
@@ -1385,6 +1446,7 @@ def export(request):
                              acunetix_all_high,
                              dependencycheck_all_high,
                              findbugs_all_high,
+                             clair_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high
@@ -1411,6 +1473,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       severity='Medium')
             findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(threat='Medium', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='Medium', project_id=project_id)
@@ -1423,6 +1486,7 @@ def export(request):
                              acunetix_all_high,
                              dependencycheck_all_high,
                              findbugs_all_high,
+                             clair_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high
@@ -1448,6 +1512,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       severity='Low')
             findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Low', project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(risk='Low', project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(threat='Low', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='Low', project_id=project_id)
@@ -1460,6 +1525,7 @@ def export(request):
                              acunetix_all_high,
                              dependencycheck_all_high,
                              findbugs_all_high,
+                             clair_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high
@@ -1486,6 +1552,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       )
             findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(project_id=project_id)
@@ -1498,6 +1565,7 @@ def export(request):
                              acunetix_all_high,
                              dependencycheck_all_high,
                              findbugs_all_high,
+                             clair_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high
@@ -1522,6 +1590,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       false_positive='Yes')
             findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
+            clair_all_high = clair_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
 
             openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, false_positive='Yes')
             nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, false_positive='Yes')
@@ -1534,6 +1603,7 @@ def export(request):
                              acunetix_all_high,
                              dependencycheck_all_high,
                              findbugs_all_high,
+                             clair_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high
@@ -1558,6 +1628,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       vuln_status='Closed')
             findbugs_all_high = findbugs_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
+            clair_all_high = clair_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
 
             openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, vuln_status='Closed')
             nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, vuln_status='Closed')
@@ -1570,6 +1641,7 @@ def export(request):
                              acunetix_all_high,
                              dependencycheck_all_high,
                              findbugs_all_high,
+                             clair_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high

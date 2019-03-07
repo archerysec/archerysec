@@ -52,9 +52,10 @@ from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import ba
 from django.contrib.auth.models import User
 from stronghold.decorators import public
 from webscanners.arachniscanner.views import launch_arachni_scan
-from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser
+from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, \
+    findbugs_report_parser, clair_json_report_parser
 from lxml import etree
-from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db
+from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db, clair_scan_db
 from tools.models import nikto_result_db
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 
@@ -595,6 +596,27 @@ class UpladScanResult(APIView):
                              "scan_id": scan_id,
                              "scanner": scanner
                              })
+        elif scanner == 'clair':
+            date_time = datetime.datetime.now()
+            scan_dump = clair_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            print xml_file
+            data = json.loads(xml_file)
+            clair_json_report_parser.clair_report_json(project_id=project_id,
+                                                       scan_id=scan_id,
+                                                       data=data)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
         elif scanner == 'nikto':
             date_time = datetime.datetime.now()
             scan_dump = nikto_result_db(
