@@ -1,0 +1,1473 @@
+{  
+   "platform":{  
+      "name":"alpine",
+      "release":"3.9.0"
+   },
+   "profiles":[  
+      {  
+         "name":"tests from Control_1_2_4.rb",
+         "sha256":"83c136ea0e025cea23656e452aaacd25387ab6c661e85afb9dc309a5182ff8f6",
+         "title":"tests from Control_1_2_4.rb",
+         "supports":[  
+
+         ],
+         "attributes":[  
+            {  
+               "name":"tomcat_home",
+               "options":{  
+                  "description":"location of tomcat home directory",
+                  "default":"/usr/local/tomcat"
+               }
+            },
+            {  
+               "name":"tomcat_service_name",
+               "options":{  
+                  "description":"Name of Tomcat service",
+                  "default":"tomcat"
+               }
+            },
+            {  
+               "name":"tomcat_extraneous_resource_list",
+               "options":{  
+                  "description":"List of extraneous resources that should not exist",
+                  "default":[  
+                     "webapps/docs",
+                     "webapps/examples",
+                     "webapps/host-manager",
+                     "webapps/manager"
+                  ]
+               }
+            },
+            {  
+               "name":"tomcat_base",
+               "options":{  
+                  "description":"location of tomcat home directory",
+                  "default":"/usr/local/tomcat"
+               }
+            },
+            {  
+               "name":"tomcat_group",
+               "options":{  
+                  "description":"group owner of files/directories",
+                  "default":"tomcat"
+               }
+            },
+            {  
+               "name":"tomcat_owner",
+               "options":{  
+                  "description":"user owner of files/directories",
+                  "default":"tomcat_admin"
+               }
+            },
+            {  
+               "name":"tomcat_server_built",
+               "options":{  
+                  "description":"server.built value",
+                  "default":"server.built=Oct 30 2017 10:21:55 UTC"
+               }
+            }
+         ],
+         "groups":[  
+            {  
+               "id":"Control_1_2_4.rb",
+               "controls":[  
+                  "M-1.1",
+                  "M-1.2",
+                  "M-2.1",
+                  "M-2.2",
+                  "M-2.3",
+                  "M-2.4",
+                  "M-2.5",
+                  "M-2.6",
+                  "M-4.1",
+                  "M-4.2",
+                  "M-4.3",
+                  "M-4.4",
+                  "M-4.5",
+                  "M-4.6",
+                  "M-4.7",
+                  "M-4.8",
+                  "M-4.9",
+                  "M-4.10",
+                  "M-4.11",
+                  "M-4.12",
+                  "M-4.13",
+                  "M-4.14"
+               ]
+            }
+         ],
+         "controls":[  
+            {  
+               "id":"M-1.1",
+               "title":"1.1 Remove extraneous files and directories (Scored)",
+               "desc":"The installation may provide example applications, documentation, and\nother directories which may not serve a production use. Removing sample\nresources is a defense in depth measure that reduces potential exposures\nintroduced by these resources.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The installation may provide example applications, documentation, and\nother directories which may not serve a production use. Removing sample\nresources is a defense in depth measure that reduces potential exposures\nintroduced by these resources."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"1.1",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":2,
+                  "audit text":"Perform the following to determine the existence of\nextraneous resources:\nList all files extraneous files. The following should yield no output:\n$ ls -l $CATALINA_HOME/webapps/docs \\\n$CATALINA_HOME/webapps/examples\n",
+                  "fix":"Perform the following to remove extraneous resources:\nThe following should yield no output:\n$ rm -rf $CATALINA_HOME/webapps/docs \\\n$CATALINA_HOME/webapps/examples\nIf the Manager application is not utilized, also remove the following\nresources:\n$ rm rf $CATALINA_HOME/webapps/host-manager \\\n$CATALINA_HOME/webapps/manager \\\n$CATALINA_HOME/conf/Catalina/localhost/manager.xml\n\n",
+                  "Default Value":"\"docs\", \"examples\", \"manager\" and\n\"host-manager\" are default web applications shipped\nwith Tomcat."
+               },
+               "code":"control \"M-1.1\" do\r\n  title \"1.1 Remove extraneous files and directories (Scored)\"\r\n  desc  \"The installation may provide example applications, documentation, and\r\nother directories which may not serve a production use. Removing sample\r\nresources is a defense in depth measure that reduces potential exposures\r\nintroduced by these resources. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"1.1\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 2\r\n  tag \"audit text\": \"Perform the following to determine the existence of\r\nextraneous resources:\r\nList all files extraneous files. The following should yield no output:\r\n$ ls -l $CATALINA_HOME/webapps/docs \\\\\r\n$CATALINA_HOME/webapps/examples\r\n\"\r\n  tag \"fix\": \"Perform the following to remove extraneous resources:\r\nThe following should yield no output:\r\n$ rm -rf $CATALINA_HOME/webapps/docs \\\\\r\n$CATALINA_HOME/webapps/examples\r\nIf the Manager application is not utilized, also remove the following\r\nresources:\r\n$ rm rf $CATALINA_HOME/webapps/host-manager \\\\\r\n$CATALINA_HOME/webapps/manager \\\\\r\n$CATALINA_HOME/conf/Catalina/localhost/manager.xml\r\n\r\n\"\r\n  tag \"Default Value\": \"\\\"docs\\\", \\\"examples\\\", \\\"manager\\\" and\r\n\\\"host-manager\\\" are default web applications shipped\\nwith Tomcat.\"\r\n\r\n  TOMCAT_EXTRANEOUS_RESOURCE_LIST.each do |app|\r\n    describe command(\"ls -l #{TOMCAT_HOME}/#{app}\") do\r\n      its('stdout.strip') { should eq '' }\r\n    end\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":50,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Command: `ls -l /usr/local/tomcat/webapps/docs` stdout.strip should eq \"\"",
+                     "run_time":0.34896381,
+                     "start_time":"2019-03-04T10:55:13+00:00",
+                     "message":"\nexpected: \"\"\n     got: \"total 1464\\n-rw-r--r--    1 root     root         19539 Feb  5 11:45 BUILDING.txt\\n-rw-r--r--    1 r...uth-howto.html\\n-rw-r--r--    1 root     root         23099 Feb  5 11:45 windows-service-howto.html\"\n\n(compared using ==)\n\nDiff:\n@@ -1 +1,58 @@\n+total 1464\n+-rw-r--r--    1 root     root         19539 Feb  5 11:45 BUILDING.txt\n+-rw-r--r--    1 root     root          7142 Feb  5 11:45 RELEASE-NOTES.txt\n+-rw-r--r--    1 root     root         16262 Feb  5 11:45 RUNNING.txt\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 WEB-INF\n+-rw-r--r--    1 root     root          9183 Feb  5 11:45 aio.html\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 api\n+drwxr-xr-x    3 root     root          4096 Feb  9 02:10 appdev\n+-rw-r--r--    1 root     root         12835 Feb  5 11:45 apr.html\n+drwxr-xr-x    4 root     root          4096 Feb  9 02:10 architecture\n+-rw-r--r--    1 root     root          7711 Feb  5 11:45 balancer-howto.html\n+-rw-r--r--    1 root     root         15888 Feb  5 11:45 building.html\n+-rw-r--r--    1 root     root         12567 Feb  5 11:45 cgi-howto.html\n+-rw-r--r--    1 root     root        341016 Feb  5 11:45 changelog.html\n+-rw-r--r--    1 root     root         19927 Feb  5 11:45 class-loader-howto.html\n+-rw-r--r--    1 root     root         44096 Feb  5 11:45 cluster-howto.html\n+-rw-r--r--    1 root     root         10254 Feb  5 11:45 comments.html\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 config\n+-rw-r--r--    1 root     root          8791 Feb  5 11:45 connectors.html\n+-rw-r--r--    1 root     root         18376 Feb  5 11:45 default-servlet.html\n+-rw-r--r--    1 root     root         22759 Feb  5 11:45 deployer-howto.html\n+-rw-r--r--    1 root     root          8716 Feb  5 11:45 developers.html\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 elapi\n+-rw-r--r--    1 root     root         10521 Feb  5 11:45 extras.html\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 funcspecs\n+-rw-r--r--    1 root     root         16501 Feb  5 11:45 host-manager-howto.html\n+-rw-r--r--    1 root     root         14321 Feb  5 11:45 html-host-manager-howto.html\n+-rw-r--r--    1 root     root         30207 Feb  5 11:45 html-manager-howto.html\n+drwxr-xr-x    3 root     root          4096 Feb  9 02:10 images\n+-rw-r--r--    1 root     root         17145 Feb  5 11:45 index.html\n+-rw-r--r--    1 root     root         17803 Feb  5 11:45 introduction.html\n+-rw-r--r--    1 root     root         23788 Feb  5 11:45 jasper-howto.html\n+-rw-r--r--    1 root     root         66847 Feb  5 11:45 jdbc-pool.html\n+-rw-r--r--    1 root     root         35581 Feb  5 11:45 jndi-datasource-examples-howto.html\n+-rw-r--r--    1 root     root         53922 Feb  5 11:45 jndi-resources-howto.html\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 jspapi\n+-rw-r--r--    1 root     root         25738 Feb  5 11:45 logging.html\n+-rw-r--r--    1 root     root         75405 Feb  5 11:45 manager-howto.html\n+-rw-r--r--    1 root     root          8238 Feb  5 11:45 maven-jars.html\n+-rw-r--r--    1 root     root          8516 Feb  5 11:45 mbeans-descriptors-howto.html\n+-rw-r--r--    1 root     root         10204 Feb  5 11:45 mbeans-descriptors.dtd\n+-rw-r--r--    1 root     root         39165 Feb  5 11:45 monitoring.html\n+-rw-r--r--    1 root     root         13289 Feb  5 11:45 proxy-howto.html\n+-rw-r--r--    1 root     root         63219 Feb  5 11:45 realm-howto.html\n+-rw-r--r--    1 root     root         35234 Feb  5 11:45 rewrite.html\n+-rw-r--r--    1 root     root         36072 Feb  5 11:45 security-howto.html\n+-rw-r--r--    1 root     root         30454 Feb  5 11:45 security-manager-howto.html\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 servletapi\n+-rw-r--r--    1 root     root         14469 Feb  5 11:45 setup.html\n+-rw-r--r--    1 root     root         17493 Feb  5 11:45 ssi-howto.html\n+-rw-r--r--    1 root     root         41152 Feb  5 11:45 ssl-howto.html\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 tribes\n+-rw-r--r--    1 root     root         12268 Feb  5 11:45 virtual-hosting-howto.html\n+-rw-r--r--    1 root     root         12605 Feb  5 11:45 web-socket-howto.html\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 websocketapi\n+-rw-r--r--    1 root     root         22512 Feb  5 11:45 windows-auth-howto.html\n+-rw-r--r--    1 root     root         23099 Feb  5 11:45 windows-service-howto.html\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Command: `ls -l /usr/local/tomcat/webapps/examples` stdout.strip should eq \"\"",
+                     "run_time":0.370312082,
+                     "start_time":"2019-03-04T10:55:13+00:00",
+                     "message":"\nexpected: \"\"\n     got: \"total 20\\ndrwxr-xr-x    7 root     root          4096 Feb  9 02:10 WEB-INF\\n-rw-r--r--    1 root    ...     4096 Feb  9 02:10 servlets\\ndrwxr-xr-x    2 root     root          4096 Feb  9 02:10 websocket\"\n\n(compared using ==)\n\nDiff:\n@@ -1 +1,7 @@\n+total 20\n+drwxr-xr-x    7 root     root          4096 Feb  9 02:10 WEB-INF\n+-rw-r--r--    1 root     root          1126 Feb  5 11:45 index.html\n+drwxr-xr-x   21 root     root          4096 Feb  9 02:10 jsp\n+drwxr-xr-x    4 root     root          4096 Feb  9 02:10 servlets\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 websocket\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Command: `ls -l /usr/local/tomcat/webapps/host-manager` stdout.strip should eq \"\"",
+                     "run_time":0.415491435,
+                     "start_time":"2019-03-04T10:55:14+00:00",
+                     "message":"\nexpected: \"\"\n     got: \"total 20\\ndrwxr-xr-x    2 root     root          4096 Feb  9 02:10 META-INF\\ndrwxr-xr-x    3 root   ...   913 Feb  5 11:45 index.jsp\\n-rw-r--r--    1 root     root          1021 Feb  5 11:45 manager.xml\"\n\n(compared using ==)\n\nDiff:\n@@ -1 +1,7 @@\n+total 20\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 META-INF\n+drwxr-xr-x    3 root     root          4096 Feb  9 02:10 WEB-INF\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 images\n+-rw-r--r--    1 root     root           913 Feb  5 11:45 index.jsp\n+-rw-r--r--    1 root     root          1021 Feb  5 11:45 manager.xml\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Command: `ls -l /usr/local/tomcat/webapps/manager` stdout.strip should eq \"\"",
+                     "run_time":0.406758113,
+                     "start_time":"2019-03-04T10:55:14+00:00",
+                     "message":"\nexpected: \"\"\n     got: \"total 32\\ndrwxr-xr-x    1 root     root          4096 Mar  1 06:51 META-INF\\ndrwxr-xr-x    3 root   ...   4374 Feb  5 11:45 status.xsd\\n-rw-r--r--    1 root     root          4615 Feb  5 11:45 xform.xsl\"\n\n(compared using ==)\n\nDiff:\n@@ -1 +1,8 @@\n+total 32\n+drwxr-xr-x    1 root     root          4096 Mar  1 06:51 META-INF\n+drwxr-xr-x    3 root     root          4096 Feb  9 02:10 WEB-INF\n+drwxr-xr-x    2 root     root          4096 Feb  9 02:10 images\n+-rw-r--r--    1 root     root           913 Feb  5 11:45 index.jsp\n+-rw-r--r--    1 root     root          4374 Feb  5 11:45 status.xsd\n+-rw-r--r--    1 root     root          4615 Feb  5 11:45 xform.xsl\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-1.2",
+               "title":"1.2 Disable Unused Connectors (Not Scored)",
+               "desc":"The default installation of Tomcat includes connectors with default\nsettings. These are traditionally set up for convenience. It is best to remove\nthese connectors and enable only what is needed. Improperly configured or\nunnecessarily installed Connectors may lead to a security exposure.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The default installation of Tomcat includes connectors with default\nsettings. These are traditionally set up for convenience. It is best to remove\nthese connectors and enable only what is needed. Improperly configured or\nunnecessarily installed Connectors may lead to a security exposure."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "ref":"1.\nhttp://tomcat.apache.org/tomcat-8.0-doc/config/http.html#Connector_Comparison",
+                  "severity":"medium",
+                  "cis_id":"1.2",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":2,
+                  "audit text":"Perform the following to identify configured Connectors:\nExecute the following command to find configured Connectors. Ensure only those\nrequired\nare present and not commented out:\n$ grep Connector $CATALINA_HOME/conf/server.xml\n",
+                  "fix":"Perform the following to disable unused Connectors: Within\n$CATALINA_HOME/conf/server.xml, remove or comment each unused Connector.\nFor example, to disable an instance of the HTTPConnector, remove the following:\n\n<Connector className='org.apache.catalina.connector.http.HttpConnector'\n...\nconnectionTimeout='60000'/>\n",
+                  "Default Value":"$CATALINA_HOME/conf/server.xml, has the following\nconnectors defined by default:\nA non-SSL Connector bound to port 8080\nAn AJP\n1.3 Connector bound to port 8009\n\n"
+               },
+               "code":"control \"M-1.2\" do\r\n  title \"1.2 Disable Unused Connectors (Not Scored)\"\r\n  desc  \"The default installation of Tomcat includes connectors with default\r\nsettings. These are traditionally set up for convenience. It is best to remove\r\nthese connectors and enable only what is needed. Improperly configured or\r\nunnecessarily installed Connectors may lead to a security exposure. \"\r\n  impact 0.5\r\n  tag \"ref\": \"1.\r\nhttp://tomcat.apache.org/tomcat-8.0-doc/config/http.html#Connector_Comparison\"\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"1.2\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 2\r\n  tag \"audit text\": \"Perform the following to identify configured Connectors:\r\nExecute the following command to find configured Connectors. Ensure only those\r\nrequired\r\nare present and not commented out:\r\n$ grep Connector $CATALINA_HOME/conf/server.xml\r\n\"\r\n  tag \"fix\": \"Perform the following to disable unused Connectors: Within\r\n$CATALINA_HOME/conf/server.xml, remove or comment each unused Connector.\r\nFor example, to disable an instance of the HTTPConnector, remove the following:\r\n\r\n<Connector className='org.apache.catalina.connector.http.HttpConnector'\r\n...\r\nconnectionTimeout='60000'/>\r\n\"\r\n  tag \"Default Value\": \"$CATALINA_HOME/conf/server.xml, has the following\r\nconnectors defined by default:\\nA non-SSL Connector bound to port 8080\\nAn AJP\r\n1.3 Connector bound to port 8009\\n\\n\"\r\n\r\n  # @TODO a resource needs to be created to be able to query more than just the\r\n  # port but also the full connector's information\r\n  ports = [\"8084\", \"8009\"]\r\n\r\n  tomcat_conf = xml(\"#{TOMCAT_HOME}/conf/server.xml\")\r\n\r\n  iter = 1\r\n  if tomcat_conf['Server/Service/Connector/@port'].is_a?(Array)\r\n    numConnectors = tomcat_conf['Server/Service/Connector'].count\r\n    until iter > numConnectors do\r\n       puts(\"Inside the loop i = #{iter}\" )\r\n       describe tomcat_conf[\"Server/Service/Connector[#{iter}]/@port\"] do\r\n         it { should be_in ports }\r\n       end\r\n       iter +=1;\r\n    end\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":93,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"[\"8080\"] should be in \"8084\" and \"8009\"",
+                     "run_time":0.000400408,
+                     "start_time":"2019-03-04T10:55:14+00:00",
+                     "message":"expected `[\"8080\"]` to be in the list: `[\"8084\", \"8009\"]` \nDiff:\n [\"8080\"]"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"8009\"] should be in \"8084\" and \"8009\"",
+                     "run_time":0.000247189,
+                     "start_time":"2019-03-04T10:55:14+00:00"
+                  }
+               ]
+            },
+            {  
+               "id":"M-2.1",
+               "title":"2.1 Alter the Advertised server.info String (Scored)",
+               "desc":"The server.info attribute contains the name of the application\nservice. This value is presented to Tomcat clients when clients connect to the\ntomcat server. Altering the server.info attribute may make it harder for\nattackers to determine which vulnerabilities affect the server platform.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The server.info attribute contains the name of the application\nservice. This value is presented to Tomcat clients when clients connect to the\ntomcat server. Altering the server.info attribute may make it harder for\nattackers to determine which vulnerabilities affect the server platform."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "ref":"1. http://www.owasp.org/index.php/Securing_tomcat",
+                  "severity":"medium",
+                  "cis_id":"2.1",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":2,
+                  "audit text":"Perform the following to determine if the server.info\nvalue has been changed: Extract the ServerInfo.properties file and examine the\nserver.info attribute.\n$ cd $CATALINA_HOME/lib\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties\n$ grep server.info org/apache/catalina/util/ServerInfo.properties\n",
+                  "fix":"Perform the following to alter the server platform string that\ngets displayed when clients\nconnect to the tomcat server. Extract the ServerInfo.properties file from the\ncatalina.jar file:\n$ cd $CATALINA_HOME/lib\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties Navigate\nto the util directory that was created\ncd org/apache/catalina/util Open ServerInfo.properties in an editor Update the\nserver.info attribute in the ServerInfo.properties file.\n\nserver.info=<SomeWebServer> Update the catalina.jar with the modified\nServerInfo.properties file.\n$ jar uf catalina.jar org/apache/catalina/util/ServerInfo.properties\n",
+                  "Default Value":"The default value for the server.info attribute is\nApache Tomcat/.. For example, Apache\nTomcat/7.0.\n"
+               },
+               "code":"control \"M-2.1\" do\r\n  title \"2.1 Alter the Advertised server.info String (Scored)\"\r\n  desc  \"The server.info attribute contains the name of the application\r\nservice. This value is presented to Tomcat clients when clients connect to the\r\ntomcat server. Altering the server.info attribute may make it harder for\r\nattackers to determine which vulnerabilities affect the server platform. \"\r\n  impact 0.5\r\n  tag \"ref\": \"1. http://www.owasp.org/index.php/Securing_tomcat\"\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"2.1\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 2\r\n  tag \"audit text\": \"Perform the following to determine if the server.info\r\nvalue has been changed: Extract the ServerInfo.properties file and examine the\r\nserver.info attribute.\r\n$ cd $CATALINA_HOME/lib\r\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties\r\n$ grep server.info org/apache/catalina/util/ServerInfo.properties\r\n\"\r\n  tag \"fix\": \"Perform the following to alter the server platform string that\r\ngets displayed when clients\r\nconnect to the tomcat server. Extract the ServerInfo.properties file from the\r\ncatalina.jar file:\r\n$ cd $CATALINA_HOME/lib\r\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties Navigate\r\nto the util directory that was created\r\ncd org/apache/catalina/util Open ServerInfo.properties in an editor Update the\r\nserver.info attribute in the ServerInfo.properties file.\r\n\r\nserver.info=<SomeWebServer> Update the catalina.jar with the modified\r\nServerInfo.properties file.\r\n$ jar uf catalina.jar org/apache/catalina/util/ServerInfo.properties\r\n\"\r\n  tag \"Default Value\": \"The default value for the server.info attribute is\r\nApache Tomcat/.. For example, Apache\\nTomcat/7.0.\\n\"\r\n\r\n  describe command(\"unzip -p #{TOMCAT_HOME}/lib/catalina.jar org/apache/catalina/util/ServerInfo.properties | grep server.info\") do\r\n    its('stdout.strip') { should eq \"#{TOMCAT_SERVER_INFO}\" }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":150,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Command: `unzip -p /usr/local/tomcat/lib/catalina.jar org/apache/catalina/util/ServerInfo.properties | grep server.info` stdout.strip ",
+                     "run_time":0.000149965,
+                     "start_time":"2019-03-04T10:55:14+00:00",
+                     "message":"uninitialized constant #<Class:#<#<Class:0x0000000005053e08>:0x0000000005053340>>::TOMCAT_SERVER_INFO",
+                     "exception":"NameError",
+                     "backtrace":[  
+                        "Control_1_2_4.rb:187:in `block (3 levels) in load_with_context'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:254:in `instance_exec'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:254:in `block in run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:500:in `block in with_around_and_singleton_context_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:457:in `block in with_around_example_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/hooks.rb:464:in `block in run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/hooks.rb:602:in `run_around_example_hooks_for'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/hooks.rb:464:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:457:in `with_around_example_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:500:in `with_around_and_singleton_context_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:251:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:629:in `block in run_examples'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:625:in `map'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:625:in `run_examples'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:591:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:592:in `block in run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:592:in `map'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:592:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:116:in `block (3 levels) in run_specs'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:116:in `map'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:116:in `block (2 levels) in run_specs'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/configuration.rb:1989:in `with_suite_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:111:in `block in run_specs'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/reporter.rb:74:in `report'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:110:in `run_specs'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/lib/inspec/runner_rspec.rb:77:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/lib/inspec/runner.rb:140:in `run_tests'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/lib/inspec/runner.rb:111:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/lib/inspec/cli.rb:251:in `exec'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/command.rb:27:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/invocation.rb:126:in `invoke_command'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor.rb:387:in `dispatch'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/base.rb:466:in `start'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/bin/inspec:12:in `<top (required)>'",
+                        "/usr/bin/inspec:122:in `load'",
+                        "/usr/bin/inspec:122:in `<main>'"
+                     ]
+                  }
+               ]
+            },
+            {  
+               "id":"M-2.2",
+               "title":"2.2 Alter the Advertised server.number String (Scored)",
+               "desc":"The server.number attribute represents the specific version of Tomcat\nthat is executing. This value is presented to Tomcat clients when connect.\nAdvertising a valid server version may provide attackers with information\nuseful for locating vulnerabilities that affect the server platform. Altering\nthe server version string may make it harder for attackers to determine which\nvulnerabilities affect the server platform.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The server.number attribute represents the specific version of Tomcat\nthat is executing. This value is presented to Tomcat clients when connect.\nAdvertising a valid server version may provide attackers with information\nuseful for locating vulnerabilities that affect the server platform. Altering\nthe server version string may make it harder for attackers to determine which\nvulnerabilities affect the server platform."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"2.2",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":2,
+                  "audit text":"Perform the following to determine if the server.number\nvalue has been changed: Extract the ServerInfo.properties file and examine the\nserver.number attribute.\n$ cd $CATALINA_HOME/lib\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties\n$ grep server.number org/apache/catalina/util/ServerInfo.properties\n",
+                  "fix":"Perform the following to alter the server version string that\ngets displayed when clients\nconnect to the server. Extract the ServerInfo.properties file from the\ncatalina.jar file:\n$ cd $CATALINA_HOME/lib\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties Navigate\nto the util directory that was created\n$ cd org/apache/Catalina/util Open ServerInfo.properties in an editor Update\nthe server.number attribute\nserver.number=<someversion> Update the catalina.jar with the modified\nServerInfo.properties file.\n\n$ jar uf catalina.jar org/apache/catalina/util/ServerInfo.properties\n",
+                  "Default Value":"The default value for the server.number attribute is a\nfour part version number, such as\n5.5.20.0."
+               },
+               "code":"control \"M-2.2\" do\r\n  title \"2.2 Alter the Advertised server.number String (Scored)\"\r\n  desc  \"The server.number attribute represents the specific version of Tomcat\r\nthat is executing. This value is presented to Tomcat clients when connect.\r\nAdvertising a valid server version may provide attackers with information\r\nuseful for locating vulnerabilities that affect the server platform. Altering\r\nthe server version string may make it harder for attackers to determine which\r\nvulnerabilities affect the server platform. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"2.2\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 2\r\n  tag \"audit text\": \"Perform the following to determine if the server.number\r\nvalue has been changed: Extract the ServerInfo.properties file and examine the\r\nserver.number attribute.\r\n$ cd $CATALINA_HOME/lib\r\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties\r\n$ grep server.number org/apache/catalina/util/ServerInfo.properties\r\n\"\r\n  tag \"fix\": \"Perform the following to alter the server version string that\r\ngets displayed when clients\r\nconnect to the server. Extract the ServerInfo.properties file from the\r\ncatalina.jar file:\r\n$ cd $CATALINA_HOME/lib\r\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties Navigate\r\nto the util directory that was created\r\n$ cd org/apache/Catalina/util Open ServerInfo.properties in an editor Update\r\nthe server.number attribute\r\nserver.number=<someversion> Update the catalina.jar with the modified\r\nServerInfo.properties file.\r\n\r\n$ jar uf catalina.jar org/apache/catalina/util/ServerInfo.properties\r\n\"\r\n  tag \"Default Value\": \"The default value for the server.number attribute is a\r\nfour part version number, such as\\n5.5.20.0.\"\r\n\r\n  describe command(\"unzip -p #{TOMCAT_HOME}/lib/catalina.jar org/apache/catalina/util/ServerInfo.properties | grep server.number\") do\r\n    its('stdout.strip') { should eq \"#{TOMCAT_SERVER_NUMBER}\" }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":198,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Command: `unzip -p /usr/local/tomcat/lib/catalina.jar org/apache/catalina/util/ServerInfo.properties | grep server.number` stdout.strip ",
+                     "run_time":0.000190105,
+                     "start_time":"2019-03-04T10:55:14+00:00",
+                     "message":"uninitialized constant #<Class:#<#<Class:0x0000000005053e08>:0x0000000005053340>>::TOMCAT_SERVER_NUMBER",
+                     "exception":"NameError",
+                     "backtrace":[  
+                        "Control_1_2_4.rb:236:in `block (3 levels) in load_with_context'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:254:in `instance_exec'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:254:in `block in run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:500:in `block in with_around_and_singleton_context_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:457:in `block in with_around_example_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/hooks.rb:464:in `block in run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/hooks.rb:602:in `run_around_example_hooks_for'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/hooks.rb:464:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:457:in `with_around_example_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:500:in `with_around_and_singleton_context_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example.rb:251:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:629:in `block in run_examples'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:625:in `map'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:625:in `run_examples'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:591:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:592:in `block in run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:592:in `map'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/example_group.rb:592:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:116:in `block (3 levels) in run_specs'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:116:in `map'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:116:in `block (2 levels) in run_specs'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/configuration.rb:1989:in `with_suite_hooks'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:111:in `block in run_specs'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/reporter.rb:74:in `report'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/rspec-core-3.8.0/lib/rspec/core/runner.rb:110:in `run_specs'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/lib/inspec/runner_rspec.rb:77:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/lib/inspec/runner.rb:140:in `run_tests'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/lib/inspec/runner.rb:111:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/lib/inspec/cli.rb:251:in `exec'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/command.rb:27:in `run'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/invocation.rb:126:in `invoke_command'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor.rb:387:in `dispatch'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/thor-0.20.3/lib/thor/base.rb:466:in `start'",
+                        "/opt/inspec/embedded/lib/ruby/gems/2.5.0/gems/inspec-3.2.6/bin/inspec:12:in `<top (required)>'",
+                        "/usr/bin/inspec:122:in `load'",
+                        "/usr/bin/inspec:122:in `<main>'"
+                     ]
+                  }
+               ]
+            },
+            {  
+               "id":"M-2.3",
+               "title":"2.3 Alter the Advertised server.built Date (Scored)",
+               "desc":"The server.built date represents the date which Tomcat was compiled\nand packaged. This value is presented to Tomcat clients when clients connect to\nthe server. Altering the server.built string may make it harder for attackers\nto fingerprint which vulnerabilities affect the server platform.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The server.built date represents the date which Tomcat was compiled\nand packaged. This value is presented to Tomcat clients when clients connect to\nthe server. Altering the server.built string may make it harder for attackers\nto fingerprint which vulnerabilities affect the server platform."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"2.3",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":2,
+                  "audit text":"Perform the following to determine if the server.built\nvalue has been changed: Extract the ServerInfo.properties file and examine the\nserver.built attribute.\n$ cd $CATALINA_HOME/lib\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties\n$ grep server.built org/apache/catalina/util/ServerInfo.properties\n",
+                  "fix":"Perform the following to alter the server version string that\ngets displayed when clients\nconnect to the server. Extract the ServerInfo.properties file from the\ncatalina.jar file:\n$ cd $CATALINA_HOME/lib\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties Navigate\nto the util directory that was created\n$ cd org/apache/Catalina/util Open ServerInfo.properties in an editor Update\nthe server.built attribute in the ServerInfo.properties file.\nserver.built= Update the catalina.jar with the modified ServerInfo.properties\nfile.\n$ jar uf catalina.jar org/apache/catalina/util/ServerInfo.properties\n\n",
+                  "Default Value":"The default value for the server.built attribute is\nbuild date and time. For example, Jul 8\n2008 11:40:35."
+               },
+               "code":"control \"M-2.3\" do\r\n  title \"2.3 Alter the Advertised server.built Date (Scored)\"\r\n  desc  \"The server.built date represents the date which Tomcat was compiled\r\nand packaged. This value is presented to Tomcat clients when clients connect to\r\nthe server. Altering the server.built string may make it harder for attackers\r\nto fingerprint which vulnerabilities affect the server platform. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"2.3\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 2\r\n  tag \"audit text\": \"Perform the following to determine if the server.built\r\nvalue has been changed: Extract the ServerInfo.properties file and examine the\r\nserver.built attribute.\r\n$ cd $CATALINA_HOME/lib\r\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties\r\n$ grep server.built org/apache/catalina/util/ServerInfo.properties\r\n\"\r\n  tag \"fix\": \"Perform the following to alter the server version string that\r\ngets displayed when clients\r\nconnect to the server. Extract the ServerInfo.properties file from the\r\ncatalina.jar file:\r\n$ cd $CATALINA_HOME/lib\r\n$ jar xf catalina.jar org/apache/catalina/util/ServerInfo.properties Navigate\r\nto the util directory that was created\r\n$ cd org/apache/Catalina/util Open ServerInfo.properties in an editor Update\r\nthe server.built attribute in the ServerInfo.properties file.\r\nserver.built= Update the catalina.jar with the modified ServerInfo.properties\r\nfile.\r\n$ jar uf catalina.jar org/apache/catalina/util/ServerInfo.properties\r\n\r\n\"\r\n  tag \"Default Value\": \"The default value for the server.built attribute is\r\nbuild date and time. For example, Jul 8\\n2008 11:40:35.\"\r\n\r\n  describe command(\"unzip -p #{TOMCAT_HOME}/lib/catalina.jar org/apache/catalina/util/ServerInfo.properties | grep server.built\") do\r\n    its('stdout.strip') { should eq \"#{TOMCAT_SERVER_BUILT}\" }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":247,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Command: `unzip -p /usr/local/tomcat/lib/catalina.jar org/apache/catalina/util/ServerInfo.properties | grep server.built` stdout.strip should eq \"server.built=Oct 30 2017 10:21:55 UTC\"",
+                     "run_time":0.398740914,
+                     "start_time":"2019-03-04T10:55:14+00:00",
+                     "message":"\nexpected: \"server.built=Oct 30 2017 10:21:55 UTC\"\n     got: \"server.built=Feb 5 2019 11:42:42 UTC\"\n\n(compared using ==)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-2.4",
+               "title":"2.4 Disable X-Powered-By HTTP Header and Rename the Server Value for\nall Connectors (Scored)",
+               "desc":"The xpoweredBy setting determines if Apache Tomcat will advertise its\npresence via the XPowered-By HTTP header. It is recommended that this value be\nset to false. The server attribute overrides the default value that is sent\ndown in the HTTP header further masking Apache Tomcat. Preventing Tomcat from\nadvertising its presence in this manner may make it harder for attackers to\ndetermine which vulnerabilities affect the server platform.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The xpoweredBy setting determines if Apache Tomcat will advertise its\npresence via the XPowered-By HTTP header. It is recommended that this value be\nset to false. The server attribute overrides the default value that is sent\ndown in the HTTP header further masking Apache Tomcat. Preventing Tomcat from\nadvertising its presence in this manner may make it harder for attackers to\ndetermine which vulnerabilities affect the server platform."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "ref":"1. http://tomcat.apache.org/tomcat-8.0-doc/config/http.html",
+                  "severity":"medium",
+                  "cis_id":"2.4",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":2,
+                  "audit text":"Perform the following to determine if the server platform,\nas advertised in the HTTP Server\nheader, has been changed: Locate all Connector elements in\n$CATALINA_HOME/conf/server.xml. Ensure each Connector has a server attribute\nand that the server attribute does not\nreflect Apache Tomcat. Also, make sure that the xpoweredBy attribute is NOT set\nto true.\n",
+                  "fix":"Perform the following to prevent Tomcat from advertising its\npresence via the XPoweredBy HTTP header. Add the xpoweredBy attribute to each\nConnector specified in\n$CATALINA_HOME/conf/server.xml. Set the xpoweredBy attributes value to false.\n<Connector\n...\nxpoweredBy='false' />\nAlternatively, ensure the xpoweredBy attribute for each Connector specified in\n\n$CATALINA_HOME/conf/server.xml is absent.\n Add the server attribute to each Connector specified in\n$CATALINA_HOME/conf/server.xml. Set the server attribute value to anything\nexcept a\nblank string.\n",
+                  "Default Value":"The default value is false.\n"
+               },
+               "code":"control \"M-2.4\" do\r\n  title \"2.4 Disable X-Powered-By HTTP Header and Rename the Server Value for\r\nall Connectors (Scored)\"\r\n  desc  \"The xpoweredBy setting determines if Apache Tomcat will advertise its\r\npresence via the XPowered-By HTTP header. It is recommended that this value be\r\nset to false. The server attribute overrides the default value that is sent\r\ndown in the HTTP header further masking Apache Tomcat. Preventing Tomcat from\r\nadvertising its presence in this manner may make it harder for attackers to\r\ndetermine which vulnerabilities affect the server platform. \"\r\n  impact 0.5\r\n  tag \"ref\": \"1. http://tomcat.apache.org/tomcat-8.0-doc/config/http.html\"\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"2.4\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 2\r\n  tag \"audit text\": \"Perform the following to determine if the server platform,\r\nas advertised in the HTTP Server\r\nheader, has been changed: Locate all Connector elements in\r\n$CATALINA_HOME/conf/server.xml. Ensure each Connector has a server attribute\r\nand that the server attribute does not\r\nreflect Apache Tomcat. Also, make sure that the xpoweredBy attribute is NOT set\r\nto true.\r\n\"\r\n  tag \"fix\": \"Perform the following to prevent Tomcat from advertising its\r\npresence via the XPoweredBy HTTP header. Add the xpoweredBy attribute to each\r\nConnector specified in\r\n$CATALINA_HOME/conf/server.xml. Set the xpoweredBy attributes value to false.\r\n<Connector\r\n...\r\nxpoweredBy='false' />\r\nAlternatively, ensure the xpoweredBy attribute for each Connector specified in\r\n\r\n$CATALINA_HOME/conf/server.xml is absent.\r\n Add the server attribute to each Connector specified in\r\n$CATALINA_HOME/conf/server.xml. Set the server attribute value to anything\r\nexcept a\r\nblank string.\r\n\"\r\n  tag \"Default Value\": \"The default value is false.\\n\"\r\n\r\n  tomcat_conf = xml(\"#{TOMCAT_HOME}/conf/server.xml\")\r\n\r\n  serverIter = 1\r\n  if tomcat_conf['Server/Service/Connector/@server'].is_a?(Array)\r\n    numConnectors = tomcat_conf['Server/Service/Connector'].count\r\n    until serverIter > numConnectors do\r\n       describe tomcat_conf[\"Server/Service/Connector[#{serverIter}]/@server\"] do\r\n         it { should_not eq [] }\r\n         it { should_not cmp 'Apache Tomcat' }\r\n       end\r\n       serverIter +=1\r\n     end\r\n  end\r\n\r\n  xpoweredByIter = 1\r\n  if tomcat_conf['Server/Service/Connector/@xpoweredBy'].is_a?(Array) && tomcat_conf['Server/Service/Connector/@xpoweredBy'].any?\r\n    numConnectors = tomcat_conf['Server/Service/Connector'].count\r\n    until xpoweredByIter > numConnectors do\r\n       describe.one do\r\n         describe tomcat_conf[\"Server/Service/Connector[#{xpoweredByIter}]/@xpoweredBy\"] do\r\n           it { should cmp 'false' }\r\n         end\r\n         describe tomcat_conf[\"Server/Service/Connector[#{xpoweredByIter}]/@xpoweredBy\"] do\r\n           it { should cmp [] }\r\n         end\r\n       end\r\n       xpoweredByIter +=1\r\n    end\r\n  end\r\n  if !tomcat_conf['Server/Service/Connector/@xpoweredBy'].any?\r\n    describe tomcat_conf[\"Server/Service/Connector/@xpoweredBy\"] do\r\n      it { should cmp [] }\r\n    end\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":292,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should not eq []",
+                     "run_time":0.001221424,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: value != []\n     got: []\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[] should not cmp == \"Apache Tomcat\"",
+                     "run_time":0.000510026,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should not eq []",
+                     "run_time":0.000909025,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: value != []\n     got: []\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[] should not cmp == \"Apache Tomcat\"",
+                     "run_time":0.000417458,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[] should cmp == []",
+                     "run_time":0.00090561,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  }
+               ]
+            },
+            {  
+               "id":"M-2.5",
+               "title":"2.5 Disable client facing Stack Traces (Scored)",
+               "desc":"When a runtime error occurs during request processing, Apache Tomcat\nwill display debugging information to the requestor. It is recommended that\nsuch debug information be withheld from the requestor. Debugging information,\nsuch as that found in call stacks, often contains sensitive information that\nmay useful to an attacker. By preventing Tomcat from providing this\ninformation, the risk of leaking sensitive information to a potential attacker\nis reduced.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"When a runtime error occurs during request processing, Apache Tomcat\nwill display debugging information to the requestor. It is recommended that\nsuch debug information be withheld from the requestor. Debugging information,\nsuch as that found in call stacks, often contains sensitive information that\nmay useful to an attacker. By preventing Tomcat from providing this\ninformation, the risk of leaking sensitive information to a potential attacker\nis reduced."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "ref":"1.\nhttps://tomcat.apache.org/tomcat-8.0doc/api/org/apache/tomcat/util/descriptor/web/ErrorPage.html",
+                  "severity":"medium",
+                  "cis_id":"2.5",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if Tomcat is configured\nto prevent sending debug\ninformation to the requestor Ensure an <error-page> element is defined in$\nCATALINA_HOME/conf/web.xml. Ensure the <error-page> element has an\n<exception-type> child element with a\nvalue of java.lang.Throwable. Ensure the <error-page> element has a <location>\nchild element.\nNote: Perform the above for each application hosted within Tomcat. Per\napplication\ninstances of web.xml can be found at\n$CATALINA_HOME/webapps/<APP_NAME>/WEBINF/web.xml\n",
+                  "fix":"Perform the following to prevent Tomcat from providing debug\ninformation to the\nrequestor during runtime errors: Create a web page that contains the logic or\nmessage you wish to invoke when\nencountering a runtime error. For example purposes, assume this page is located\nat\n/error.jsp. Add a child element, <error-page>, to the <web-app>element, in the\n\n$CATALINA_HOME/conf/web.xml file. Add a child element, <exception-type>, to the\n<error-page> element. Set the value of\nthe <exception-type> element to java.lang.Throwable.\n Add a child element, <location>, to the <error-page> element. Set the value of\nthe\n<location> element to the location of page created in #1.\nThe resulting entry will look as follows:\n<error-page>\n<exception-type>java.lang.Throwable</exception-type>\n<location>/error.jsp</location>\n</error-page>\n",
+                  "Default Value":"Tomcats default configuration does not include an\n<error-page> element in\n$CATALINA_HOME/conf/web.xml. Therefore, Tomcat will\nprovide debug information to\nthe requestor by default.\n"
+               },
+               "code":"control \"M-2.5\" do\r\n  title \"2.5 Disable client facing Stack Traces (Scored)\"\r\n  desc  \"When a runtime error occurs during request processing, Apache Tomcat\r\nwill display debugging information to the requestor. It is recommended that\r\nsuch debug information be withheld from the requestor. Debugging information,\r\nsuch as that found in call stacks, often contains sensitive information that\r\nmay useful to an attacker. By preventing Tomcat from providing this\r\ninformation, the risk of leaking sensitive information to a potential attacker\r\nis reduced. \"\r\n  impact 0.5\r\n  tag \"ref\": \"1.\r\nhttps://tomcat.apache.org/tomcat-8.0doc/api/org/apache/tomcat/util/descriptor/web/ErrorPage.html\"\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"2.5\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if Tomcat is configured\r\nto prevent sending debug\r\ninformation to the requestor Ensure an <error-page> element is defined in$\r\nCATALINA_HOME/conf/web.xml. Ensure the <error-page> element has an\r\n<exception-type> child element with a\r\nvalue of java.lang.Throwable. Ensure the <error-page> element has a <location>\r\nchild element.\r\nNote: Perform the above for each application hosted within Tomcat. Per\r\napplication\r\ninstances of web.xml can be found at\r\n$CATALINA_HOME/webapps/<APP_NAME>/WEBINF/web.xml\r\n\"\r\n  tag \"fix\": \"Perform the following to prevent Tomcat from providing debug\r\ninformation to the\r\nrequestor during runtime errors: Create a web page that contains the logic or\r\nmessage you wish to invoke when\r\nencountering a runtime error. For example purposes, assume this page is located\r\nat\r\n/error.jsp. Add a child element, <error-page>, to the <web-app>element, in the\r\n\r\n$CATALINA_HOME/conf/web.xml file. Add a child element, <exception-type>, to the\r\n<error-page> element. Set the value of\r\nthe <exception-type> element to java.lang.Throwable.\r\n Add a child element, <location>, to the <error-page> element. Set the value of\r\nthe\r\n<location> element to the location of page created in #1.\r\nThe resulting entry will look as follows:\r\n<error-page>\r\n<exception-type>java.lang.Throwable</exception-type>\r\n<location>/error.jsp</location>\r\n</error-page>\r\n\"\r\n  tag \"Default Value\": \"Tomcats default configuration does not include an\r\n<error-page> element in\\n$CATALINA_HOME/conf/web.xml. Therefore, Tomcat will\r\nprovide debug information to\\nthe requestor by default.\\n\"\r\n\r\n  # Query the main web.xml\r\n  web_conf = xml(\"#{TOMCAT_HOME}/conf/web.xml\")\r\n  errorIter = 1\r\n  if web_conf['web-app/error-page'].is_a?(Array)\r\n    numConnectors = web_conf['web-app/error-page'].count\r\n    until errorIter > numConnectors  do\r\n       describe web_conf[\"web-app/error-page[#{errorIter}]\"] do\r\n         it { should_not eq [] }\r\n       end\r\n       describe web_conf[\"web-app/error-page[#{errorIter}]/exception-type\"] do\r\n         it { should cmp \"java.lang.Throwable\"}\r\n       end\r\n       describe web_conf[\"web-app/error-page[#{errorIter}]/location\"] do\r\n         it { should_not eq [] }\r\n       end\r\n       errorIter +=1\r\n     end\r\n    if !web_conf['web-app/error-page'].any?\r\n     describe web_conf[\"web-app/error-page\"] do\r\n       it { should_not eq [] }\r\n     end\r\n   end\r\n  end\r\n\r\n  # Query the web.xml for each webapp\r\n  command(\"find #{TOMCAT_HOME}/webapps/ ! -path #{TOMCAT_HOME}/webapps/ -type d -maxdepth 1\").stdout.split.each do |webappname|\r\n    webapp_conf = xml(\"#{webappname}/WEB-INF/web.xml\")\r\n    webAppIter = 1\r\n    if webapp_conf['web-app/error-page'].is_a?(Array)\r\n      numConnectors = webapp_conf['web-app/error-page'].count\r\n      until webAppIter > numConnectors  do\r\n         describe webapp_conf[\"web-app/error-page[#{webAppIter}]\"] do\r\n           it { should_not eq [] }\r\n         end\r\n         describe webapp_conf[\"web-app/error-page[#{webAppIter}]/exception-type\"] do\r\n           it { should cmp \"java.lang.Throwable\"}\r\n         end\r\n         describe webapp_conf[\"web-app/error-page[#{webAppIter}]/location\"] do\r\n           it { should_not eq [] }\r\n         end\r\n         webAppIter +=1\r\n       end\r\n      if !webapp_conf['web-app/error-page'].any?\r\n       describe webapp_conf[\"web-app/error-page\"] do\r\n         it { should_not eq [] }\r\n       end\r\n     end\r\n    end\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":373,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should not eq []",
+                     "run_time":0.00023158,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: value != []\n     got: []\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should not eq []",
+                     "run_time":0.0006509,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: value != []\n     got: []\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should not eq []",
+                     "run_time":0.00020589,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: value != []\n     got: []\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"\\n    \"] should not eq []",
+                     "run_time":0.00014208,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should cmp == \"java.lang.Throwable\"",
+                     "run_time":0.00077428,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"java.lang.Throwable\"\n     got: []\n\n(compared using `cmp` matcher)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"/WEB-INF/jsp/401.jsp\"] should not eq []",
+                     "run_time":0.000145423,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"\\n    \"] should not eq []",
+                     "run_time":0.000145094,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should cmp == \"java.lang.Throwable\"",
+                     "run_time":0.000323693,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"java.lang.Throwable\"\n     got: []\n\n(compared using `cmp` matcher)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"/WEB-INF/jsp/403.jsp\"] should not eq []",
+                     "run_time":0.000143509,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"\\n    \"] should not eq []",
+                     "run_time":0.000143141,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should cmp == \"java.lang.Throwable\"",
+                     "run_time":0.000313091,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"java.lang.Throwable\"\n     got: []\n\n(compared using `cmp` matcher)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"/WEB-INF/jsp/404.jsp\"] should not eq []",
+                     "run_time":0.000561347,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should not eq []",
+                     "run_time":0.000205618,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: value != []\n     got: []\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"\\n    \"] should not eq []",
+                     "run_time":0.000153877,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should cmp == \"java.lang.Throwable\"",
+                     "run_time":0.000729655,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"java.lang.Throwable\"\n     got: []\n\n(compared using `cmp` matcher)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"/WEB-INF/jsp/401.jsp\"] should not eq []",
+                     "run_time":0.000145268,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"\\n    \"] should not eq []",
+                     "run_time":0.000147194,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should cmp == \"java.lang.Throwable\"",
+                     "run_time":0.000316005,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"java.lang.Throwable\"\n     got: []\n\n(compared using `cmp` matcher)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"/WEB-INF/jsp/403.jsp\"] should not eq []",
+                     "run_time":0.000144021,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"\\n    \"] should not eq []",
+                     "run_time":0.00014055,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"[] should cmp == \"java.lang.Throwable\"",
+                     "run_time":0.000309549,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"java.lang.Throwable\"\n     got: []\n\n(compared using `cmp` matcher)\n"
+                  },
+                  {  
+                     "status":"passed",
+                     "code_desc":"[\"/WEB-INF/jsp/404.jsp\"] should not eq []",
+                     "run_time":0.000142272,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  }
+               ]
+            },
+            {  
+               "id":"M-2.6",
+               "title":"2.6 Turn off TRACE (Scored)",
+               "desc":"The HTTP TRACE verb provides debugging and diagnostics information for\na given request. Diagnostic information, such as that found in the response to\na TRACE request, often contains sensitive information that may useful to an\nattacker. By preventing Tomcat from providing this information, the risk of\nleaking sensitive information to a potential attacker is reduced.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The HTTP TRACE verb provides debugging and diagnostics information for\na given request. Diagnostic information, such as that found in the response to\na TRACE request, often contains sensitive information that may useful to an\nattacker. By preventing Tomcat from providing this information, the risk of\nleaking sensitive information to a potential attacker is reduced."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "ref":"1. http://tomcat.apache.org/tomcat-8.0-doc/config/http.html",
+                  "severity":"medium",
+                  "cis_id":"2.6",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the server platform,\nas advertised in the HTTP Server\nheader, has been changed: Locate all Connector elements in\n$CATALINA_HOME/conf/server.xml. Ensure each Connector does not have a\nallowTrace attribute or if the allowTrace\nattribute is not set true.\nNote: Perform the above for each application hosted within Tomcat. Per\napplication\ninstances of web.xml can be found at\n$CATALINA_HOME/webapps/<APP_NAME>/WEBINF/web.xml\n",
+                  "fix":"Perform the following to prevent Tomcat from accepting a TRACE\nrequest: Set the allowTrace attributes to each Connector specified in\n$CATALINA_HOME/conf/server.xml to false.\n<Connector ... allowTrace='false' />\nAlternatively, ensure the allowTrace attribute for each Connector specified in\n\n$CATALINA_HOME/conf/server.xml is absent.\n\n",
+                  "Default Value":"Tomcat does not allow the TRACE HTTP verb by default.\nTomcat will only allow TRACE if\nthe allowTrace attribute is present and set to\ntrue.\n"
+               },
+               "code":"control \"M-2.6\" do\r\n  title \"2.6 Turn off TRACE (Scored)\"\r\n  desc  \"The HTTP TRACE verb provides debugging and diagnostics information for\r\na given request. Diagnostic information, such as that found in the response to\r\na TRACE request, often contains sensitive information that may useful to an\r\nattacker. By preventing Tomcat from providing this information, the risk of\r\nleaking sensitive information to a potential attacker is reduced. \"\r\n  impact 0.5\r\n  tag \"ref\": \"1. http://tomcat.apache.org/tomcat-8.0-doc/config/http.html\"\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"2.6\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the server platform,\r\nas advertised in the HTTP Server\r\nheader, has been changed: Locate all Connector elements in\r\n$CATALINA_HOME/conf/server.xml. Ensure each Connector does not have a\r\nallowTrace attribute or if the allowTrace\r\nattribute is not set true.\r\nNote: Perform the above for each application hosted within Tomcat. Per\r\napplication\r\ninstances of web.xml can be found at\r\n$CATALINA_HOME/webapps/<APP_NAME>/WEBINF/web.xml\r\n\"\r\n  tag \"fix\": \"Perform the following to prevent Tomcat from accepting a TRACE\r\nrequest: Set the allowTrace attributes to each Connector specified in\r\n$CATALINA_HOME/conf/server.xml to false.\r\n<Connector ... allowTrace='false' />\r\nAlternatively, ensure the allowTrace attribute for each Connector specified in\r\n\r\n$CATALINA_HOME/conf/server.xml is absent.\r\n\r\n\"\r\n  tag \"Default Value\": \"Tomcat does not allow the TRACE HTTP verb by default.\r\nTomcat will only allow TRACE if\\nthe allowTrace attribute is present and set to\r\ntrue.\\n\"\r\n\r\n  allowTraceIter = 1\r\n  tomcat_conf = xml(\"#{TOMCAT_HOME}/conf/server.xml\")\r\n  if tomcat_conf['Server/Service/Connector/@allowTrace'].is_a?(Array) && tomcat_conf['Server/Service/Connector/@allowTrace'].any?\r\n    numConnectors = tomcat_conf['Server/Service/Connector'].count\r\n    until allowTraceIter > numConnectors do\r\n       describe.one do\r\n         describe tomcat_conf[\"Server/Service/Connector[#{allowTraceIter}]/@allowTrace\"] do\r\n           it { should cmp 'false' }\r\n         end\r\n         describe tomcat_conf[\"Server/Service/Connector[#{allowTraceIter}]/@allowTrace\"] do\r\n           it { should cmp [] }\r\n         end\r\n       end\r\n       allowTraceIter +=1\r\n    end\r\n  end\r\n\r\n  if !tomcat_conf['Server/Service/Connector/@allowTrace'].any?\r\n    describe tomcat_conf['Server/Service/Connector/@allowTrace'] do\r\n      it { should cmp [] }\r\n    end\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":481,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"passed",
+                     "code_desc":"[] should cmp == []",
+                     "run_time":0.000658823,
+                     "start_time":"2019-03-04T10:55:15+00:00"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.1",
+               "title":"4.1 Restrict access to $CATALINA_HOME (Scored)",
+               "desc":"$CATALINA_HOME is the environment variable which holds the path to the\nroot Tomcat directory. It is important to protect access to this in order to\nprotect the Tomcat binaries and libraries from unauthorized modification. It is\nrecommended that the ownership of $CATALINA_HOME be tomcat_admin:tomcat. It is\nalso recommended that the permission on $CATALINA_HOME prevent read, write, and\nexecute for the world (o-rwx) and prevent write access to the group (g-w). The\nsecurity of processes and data that traverse or depend on Tomcat may become\ncompromised if the $CATALINA_HOME is not secured.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"$CATALINA_HOME is the environment variable which holds the path to the\nroot Tomcat directory. It is important to protect access to this in order to\nprotect the Tomcat binaries and libraries from unauthorized modification. It is\nrecommended that the ownership of $CATALINA_HOME be tomcat_admin:tomcat. It is\nalso recommended that the permission on $CATALINA_HOME prevent read, write, and\nexecute for the world (o-rwx) and prevent write access to the group (g-w). The\nsecurity of processes and data that traverse or depend on Tomcat may become\ncompromised if the $CATALINA_HOME is not secured."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.1",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to ensure the permission on the\n$CATALINA_HOME directory\nprevent unauthorized modification.\n$ cd $CATALINA_HOME\n$ find . -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user tomcat_admin -o !\n-group\ntomcat \\) -ls\nThe above command should not emit any output.\n",
+                  "fix":"Perform the following to establish the recommended state: Set the\nownership of the $CATALINA_HOME to tomcat_admin:tomcat. Remove read, write, and\nexecute permissions for the world Remove write permissions for the group.\n\n# chown tomcat_admin.tomcat $CATALINA_HOME\n# chmod g-w,o-rwx $CATALINA_HOME"
+               },
+               "code":"control \"M-4.1\" do\r\n  title \"4.1 Restrict access to $CATALINA_HOME (Scored)\"\r\n  desc  \"$CATALINA_HOME is the environment variable which holds the path to the\r\nroot Tomcat directory. It is important to protect access to this in order to\r\nprotect the Tomcat binaries and libraries from unauthorized modification. It is\r\nrecommended that the ownership of $CATALINA_HOME be tomcat_admin:tomcat. It is\r\nalso recommended that the permission on $CATALINA_HOME prevent read, write, and\r\nexecute for the world (o-rwx) and prevent write access to the group (g-w). The\r\nsecurity of processes and data that traverse or depend on Tomcat may become\r\ncompromised if the $CATALINA_HOME is not secured. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.1\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to ensure the permission on the\r\n$CATALINA_HOME directory\r\nprevent unauthorized modification.\r\n$ cd $CATALINA_HOME\r\n$ find . -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user tomcat_admin -o !\r\n-group\r\ntomcat \\\\) -ls\r\nThe above command should not emit any output.\r\n\"\r\n  tag \"fix\": \"Perform the following to establish the recommended state: Set the\r\nownership of the $CATALINA_HOME to tomcat_admin:tomcat. Remove read, write, and\r\nexecute permissions for the world Remove write permissions for the group.\r\n\r\n# chown tomcat_admin.tomcat $CATALINA_HOME\r\n# chmod g-w,o-rwx $CATALINA_HOME\"\r\n\r\n  describe directory(\"#{TOMCAT_HOME}\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":551,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat owner should eq \"tomcat_admin\"",
+                     "run_time":0.412234182,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat group should eq \"tomcat\"",
+                     "run_time":0.000543236,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat mode should cmp == \"0750\"",
+                     "run_time":0.000673591,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0755\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.2",
+               "title":"4.2 Restrict access to $CATALINA_BASE (Scored)",
+               "desc":"$CATALINA_BASE is the environment variable that specifies the base\ndirectory which most relative paths are resolved. $CATALINA_BASE is usually\nused when there is multiple instances of Tomcat running. It is important to\nprotect access to this in order to protect the Tomcat-related binaries and\nlibraries from unauthorized modification. It is recommended that the ownership\nof $CATALINA_BASE be tomcat_admin:tomcat. It is also recommended that the\npermission on $CATALINA_BASE prevent read, write, and execute for the world\n(orwx) and prevent write access to the group (g-w). The security of processes\nand data that traverse or depend on Tomcat may become compromised if the\n$CATALINA_BASE is not secured.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"$CATALINA_BASE is the environment variable that specifies the base\ndirectory which most relative paths are resolved. $CATALINA_BASE is usually\nused when there is multiple instances of Tomcat running. It is important to\nprotect access to this in order to protect the Tomcat-related binaries and\nlibraries from unauthorized modification. It is recommended that the ownership\nof $CATALINA_BASE be tomcat_admin:tomcat. It is also recommended that the\npermission on $CATALINA_BASE prevent read, write, and execute for the world\n(orwx) and prevent write access to the group (g-w). The security of processes\nand data that traverse or depend on Tomcat may become compromised if the\n$CATALINA_BASE is not secured."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.2",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to ensure the permission on the\n$CATALINA_BASE directory prevent\nunauthorized modification.\n$ cd $CATALINA_BASE\n$ find . -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user tomcat_admin -o !\n-group\ntomcat \\) -ls\nThe above command should not emit any output.\n",
+                  "fix":"Perform the following to establish the recommended state: Set the\nownership of the $CATALINA_BASE to tomcat_admin:tomcat. Remove read, write, and\nexecute permissions for the world Remove write permissions for the group.\n# chown tomcat_admin.tomcat $CATALINA_BASE\n# chmod g-w,o-rwx $CATALINA_BASE"
+               },
+               "code":"control \"M-4.2\" do\r\n  title \"4.2 Restrict access to $CATALINA_BASE (Scored)\"\r\n  desc  \"$CATALINA_BASE is the environment variable that specifies the base\r\ndirectory which most relative paths are resolved. $CATALINA_BASE is usually\r\nused when there is multiple instances of Tomcat running. It is important to\r\nprotect access to this in order to protect the Tomcat-related binaries and\r\nlibraries from unauthorized modification. It is recommended that the ownership\r\nof $CATALINA_BASE be tomcat_admin:tomcat. It is also recommended that the\r\npermission on $CATALINA_BASE prevent read, write, and execute for the world\r\n(orwx) and prevent write access to the group (g-w). The security of processes\r\nand data that traverse or depend on Tomcat may become compromised if the\r\n$CATALINA_BASE is not secured. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.2\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to ensure the permission on the\r\n$CATALINA_BASE directory prevent\r\nunauthorized modification.\r\n$ cd $CATALINA_BASE\r\n$ find . -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user tomcat_admin -o !\r\n-group\r\ntomcat \\\\) -ls\r\nThe above command should not emit any output.\r\n\"\r\n  tag \"fix\": \"Perform the following to establish the recommended state: Set the\r\nownership of the $CATALINA_BASE to tomcat_admin:tomcat. Remove read, write, and\r\nexecute permissions for the world Remove write permissions for the group.\r\n# chown tomcat_admin.tomcat $CATALINA_BASE\r\n# chmod g-w,o-rwx $CATALINA_BASE\"\r\n\r\n  describe directory(\"#{TOMCAT_BASE}\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":596,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat owner should eq \"tomcat_admin\"",
+                     "run_time":0.00049329,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat group should eq \"tomcat\"",
+                     "run_time":0.000991019,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat mode should cmp == \"0750\"",
+                     "run_time":0.000518896,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0755\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.3",
+               "title":"4.3 Restrict access to Tomcat configuration directory (Scored)",
+               "desc":"The Tomcat $CATALINA_HOME/conf/ directory contains Tomcat\nconfiguration files. It is recommended that the ownership of this directory be\ntomcat_admin:tomcat. It is also recommended that the permissions on this\ndirectory prevent read, write, and execute for the world (o-rwx) and prevent\nwrite access to the group (g-w). Restricting access to these directories will\nprevent local users from maliciously or inadvertently altering Tomcats\nconfiguration.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The Tomcat $CATALINA_HOME/conf/ directory contains Tomcat\nconfiguration files. It is recommended that the ownership of this directory be\ntomcat_admin:tomcat. It is also recommended that the permissions on this\ndirectory prevent read, write, and execute for the world (o-rwx) and prevent\nwrite access to the group (g-w). Restricting access to these directories will\nprevent local users from maliciously or inadvertently altering Tomcats\nconfiguration."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.3",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/conf are securely configured. Change to the location of the\n$CATALINA_HOME/conf and execute the following:\n# cd $CATALINA_HOME/conf\n# find . -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user tomcat_admin -o ! -group\ntomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to Tomcat configuration\nfiles: Set the ownership of the $CATALINA_HOME/conf to tomcat_admin:tomcat.\nRemove read, write, and execute permissions for the world Remove write\npermissions for the group.\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf\n# chmod g-w,o-rwx $CATALINA_HOME/conf\n\n",
+                  "Default Value":"The default permissions of the top-level directories is\n770."
+               },
+               "code":"control \"M-4.3\" do\r\n  title \"4.3 Restrict access to Tomcat configuration directory (Scored)\"\r\n  desc  \"The Tomcat $CATALINA_HOME/conf/ directory contains Tomcat\r\nconfiguration files. It is recommended that the ownership of this directory be\r\ntomcat_admin:tomcat. It is also recommended that the permissions on this\r\ndirectory prevent read, write, and execute for the world (o-rwx) and prevent\r\nwrite access to the group (g-w). Restricting access to these directories will\r\nprevent local users from maliciously or inadvertently altering Tomcats\r\nconfiguration. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.3\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/conf are securely configured. Change to the location of the\r\n$CATALINA_HOME/conf and execute the following:\r\n# cd $CATALINA_HOME/conf\r\n# find . -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user tomcat_admin -o ! -group\r\ntomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to Tomcat configuration\r\nfiles: Set the ownership of the $CATALINA_HOME/conf to tomcat_admin:tomcat.\r\nRemove read, write, and execute permissions for the world Remove write\r\npermissions for the group.\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf\r\n# chmod g-w,o-rwx $CATALINA_HOME/conf\r\n\r\n\"\r\n  tag \"Default Value\": \"The default permissions of the top-level directories is\r\n770.\"\r\n\r\n  describe directory(\"#{TOMCAT_HOME}/conf\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":644,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/conf owner should eq \"tomcat_admin\"",
+                     "run_time":0.400193969,
+                     "start_time":"2019-03-04T10:55:15+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/conf group should eq \"tomcat\"",
+                     "run_time":0.000351452,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/conf mode should cmp == \"0750\"",
+                     "run_time":0.000974641,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0755\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.4",
+               "title":"4.4 Restrict access to Tomcat logs directory (Scored)",
+               "desc":"The Tomcat $CATALINA_HOME/logs/ directory contains Tomcat logs. It is\nrecommended that the ownership of this directory be tomcat_admin:tomcat. It is\nalso recommended that the permissions on this directory prevent read, write,\nand execute for the world (o-rwx). Restricting access to these directories will\nprevent local users from maliciously or inadvertently altering Tomcats logs.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The Tomcat $CATALINA_HOME/logs/ directory contains Tomcat logs. It is\nrecommended that the ownership of this directory be tomcat_admin:tomcat. It is\nalso recommended that the permissions on this directory prevent read, write,\nand execute for the world (o-rwx). Restricting access to these directories will\nprevent local users from maliciously or inadvertently altering Tomcats logs."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.4",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/logs are securely configured. Change to the location of the\n$CATALINA_HOME/logs and execute the following:\n# cd $CATALINA_HOME\n# find logs -follow -maxdepth 0 \\( -perm /o+rwx -o ! -user tomcat_admin -o !\ngroup tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to Tomcat log files: Set\nthe ownership of the $CATALINA_HOME/logs to tomcat_admin:tomcat. Remove read,\nwrite, and execute permissions for the world\n# chown tomcat_admin:tomcat $CATALINA_HOME/logs\n# chmod o-rwx $CATALINA_HOME/logs\n",
+                  "Default Value":"The default permissions of the top-level directories is\n770."
+               },
+               "code":"control \"M-4.4\" do\r\n  title \"4.4 Restrict access to Tomcat logs directory (Scored)\"\r\n  desc  \"The Tomcat $CATALINA_HOME/logs/ directory contains Tomcat logs. It is\r\nrecommended that the ownership of this directory be tomcat_admin:tomcat. It is\r\nalso recommended that the permissions on this directory prevent read, write,\r\nand execute for the world (o-rwx). Restricting access to these directories will\r\nprevent local users from maliciously or inadvertently altering Tomcats logs. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.4\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/logs are securely configured. Change to the location of the\r\n$CATALINA_HOME/logs and execute the following:\r\n# cd $CATALINA_HOME\r\n# find logs -follow -maxdepth 0 \\\\( -perm /o+rwx -o ! -user tomcat_admin -o !\r\ngroup tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to Tomcat log files: Set\r\nthe ownership of the $CATALINA_HOME/logs to tomcat_admin:tomcat. Remove read,\r\nwrite, and execute permissions for the world\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/logs\r\n# chmod o-rwx $CATALINA_HOME/logs\r\n\"\r\n  tag \"Default Value\": \"The default permissions of the top-level directories is\r\n770.\"\r\n\r\n  describe directory(\"#{TOMCAT_HOME}/logs\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0770' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":695,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/logs owner should eq \"tomcat_admin\"",
+                     "run_time":0.401252978,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/logs group should eq \"tomcat\"",
+                     "run_time":0.000395508,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/logs mode should cmp == \"0770\"",
+                     "run_time":0.000981276,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"0770\"\n     got: \"0777\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.5",
+               "title":"4.5 Restrict access to Tomcat temp directory (Scored)",
+               "desc":"The Tomcat $CATALINA_HOME/temp/ directory is used by Tomcat to persist\ntemporary information to disk. It is recommended that the ownership of this\ndirectory be tomcat_admin:tomcat. It is also recommended that the permissions\non this directory prevent read, write, and execute for the world (o-rwx).\nRestricting access to these directories will prevent local users from\nmaliciously or inadvertently affecting the integrity of Tomcat processes.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The Tomcat $CATALINA_HOME/temp/ directory is used by Tomcat to persist\ntemporary information to disk. It is recommended that the ownership of this\ndirectory be tomcat_admin:tomcat. It is also recommended that the permissions\non this directory prevent read, write, and execute for the world (o-rwx).\nRestricting access to these directories will prevent local users from\nmaliciously or inadvertently affecting the integrity of Tomcat processes."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.5",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/temp are securely configured. Change to the location of the\n$CATALINA_HOME/temp and execute the following:\n# cd $CATALINA_HOME\n# find temp -follow -maxdepth 0 \\( -perm /o+rwx -o ! -user tomcat_admin -o !\ngroup tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to Tomcat temp\ndirectory: Set the ownership of the $CATALINA_HOME/temp to tomcat_admin:tomcat.\nRemove read, write, and execute permissions for the world\n# chown tomcat_admin:tomcat $CATALINA_HOME/temp\n# chmod o-rwx $CATALINA_HOME/temp\n",
+                  "Default Value":"The default permissions of the top-level directories is\n770."
+               },
+               "code":"control \"M-4.5\" do\r\n  title \"4.5 Restrict access to Tomcat temp directory (Scored)\"\r\n  desc  \"The Tomcat $CATALINA_HOME/temp/ directory is used by Tomcat to persist\r\ntemporary information to disk. It is recommended that the ownership of this\r\ndirectory be tomcat_admin:tomcat. It is also recommended that the permissions\r\non this directory prevent read, write, and execute for the world (o-rwx).\r\nRestricting access to these directories will prevent local users from\r\nmaliciously or inadvertently affecting the integrity of Tomcat processes. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.5\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/temp are securely configured. Change to the location of the\r\n$CATALINA_HOME/temp and execute the following:\r\n# cd $CATALINA_HOME\r\n# find temp -follow -maxdepth 0 \\\\( -perm /o+rwx -o ! -user tomcat_admin -o !\r\ngroup tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to Tomcat temp\r\ndirectory: Set the ownership of the $CATALINA_HOME/temp to tomcat_admin:tomcat.\r\nRemove read, write, and execute permissions for the world\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/temp\r\n# chmod o-rwx $CATALINA_HOME/temp\r\n\"\r\n  tag \"Default Value\": \"The default permissions of the top-level directories is\r\n770.\"\r\n\r\n  describe directory(\"#{TOMCAT_HOME}/temp\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0770' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":742,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/temp owner should eq \"tomcat_admin\"",
+                     "run_time":0.425562555,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/temp group should eq \"tomcat\"",
+                     "run_time":0.000427168,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/temp mode should cmp == \"0770\"",
+                     "run_time":0.001017645,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"0770\"\n     got: \"0755\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.6",
+               "title":"4.6 Restrict access to Tomcat binaries directory (Scored)",
+               "desc":"The Tomcat $CATALINA_HOME/bin/ directory contains executes that are\npart of the Tomcat run-time. It is recommended that the ownership of this\ndirectory be tomcat_admin:tomcat. It is also recommended that the permission on\n$CATALINA_HOME prevent read, write, and execute for the world (o-rwx) and\nprevent write access to the group (g-w). Restricting access to these\ndirectories will prevent local users from maliciously or inadvertently\naffecting the integrity of Tomcat processes.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The Tomcat $CATALINA_HOME/bin/ directory contains executes that are\npart of the Tomcat run-time. It is recommended that the ownership of this\ndirectory be tomcat_admin:tomcat. It is also recommended that the permission on\n$CATALINA_HOME prevent read, write, and execute for the world (o-rwx) and\nprevent write access to the group (g-w). Restricting access to these\ndirectories will prevent local users from maliciously or inadvertently\naffecting the integrity of Tomcat processes."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.6",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/bin are securely configured. Change to the location of the\n$CATALINA_HOME/bin and execute the following:\n# cd $CATALINA_HOME\n# find bin -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user tomcat_admin -o\n! -group\ntomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed\nwhen executing the above command.\n",
+                  "fix":"Perform the following to restrict access to Tomcat bin directory:\nSet the ownership of the $CATALINA_HOME/bin to tomcat_admin:tomcat. Remove\nread, write, and execute permissions for the world\n# chown tomcat_admin:tomcat $CATALINA_HOME/bin\n# chmod g-w,o-rwx $CATALINA_HOME/bin\n",
+                  "Default Value":"The default permissions of the top-level directories is\n770."
+               },
+               "code":"control \"M-4.6\" do\r\n  title \"4.6 Restrict access to Tomcat binaries directory (Scored)\"\r\n  desc  \"The Tomcat $CATALINA_HOME/bin/ directory contains executes that are\r\npart of the Tomcat run-time. It is recommended that the ownership of this\r\ndirectory be tomcat_admin:tomcat. It is also recommended that the permission on\r\n$CATALINA_HOME prevent read, write, and execute for the world (o-rwx) and\r\nprevent write access to the group (g-w). Restricting access to these\r\ndirectories will prevent local users from maliciously or inadvertently\r\naffecting the integrity of Tomcat processes. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.6\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/bin are securely configured. Change to the location of the\r\n$CATALINA_HOME/bin and execute the following:\r\n# cd $CATALINA_HOME\r\n# find bin -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user tomcat_admin -o\r\n! -group\r\ntomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed\r\nwhen executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to Tomcat bin directory:\r\nSet the ownership of the $CATALINA_HOME/bin to tomcat_admin:tomcat. Remove\r\nread, write, and execute permissions for the world\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/bin\r\n# chmod g-w,o-rwx $CATALINA_HOME/bin\r\n\"\r\n  tag \"Default Value\": \"The default permissions of the top-level directories is\r\n770.\"\r\n\r\n  describe directory(\"#{TOMCAT_HOME}/bin\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":790,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/bin owner should eq \"tomcat_admin\"",
+                     "run_time":0.395212254,
+                     "start_time":"2019-03-04T10:55:16+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/bin group should eq \"tomcat\"",
+                     "run_time":0.000405443,
+                     "start_time":"2019-03-04T10:55:17+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/bin mode should cmp == \"0750\"",
+                     "run_time":0.001023695,
+                     "start_time":"2019-03-04T10:55:17+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0755\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.7",
+               "title":"4.7 Restrict access to Tomcat web application directory (Scored)",
+               "desc":"The Tomcat $CATALINA_HOME/webapps directory contains web applications\nthat are deployed through Tomcat. It is recommended that the ownership of this\ndirectory be tomcat_admin:tomcat. It is also recommended that the permission on\n$CATALINA_HOME/webapps prevent read, write, and execute for the world (o-rwx)\nand prevent write access to the group (g-w). Restricting access to these\ndirectories will prevent local users from maliciously or inadvertently\naffecting the integrity of web applications.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The Tomcat $CATALINA_HOME/webapps directory contains web applications\nthat are deployed through Tomcat. It is recommended that the ownership of this\ndirectory be tomcat_admin:tomcat. It is also recommended that the permission on\n$CATALINA_HOME/webapps prevent read, write, and execute for the world (o-rwx)\nand prevent write access to the group (g-w). Restricting access to these\ndirectories will prevent local users from maliciously or inadvertently\naffecting the integrity of web applications."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.7",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/webapps are securely configured. Change to the location of the\n$CATALINA_HOME/webapps and execute the\nfollowing:\n# cd $CATALINA_HOME\n# find webapps -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user tomcat_admin\n\n-o ! -group tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to Tomcat webapps\ndirectory: Set the ownership of the $CATALINA_HOME/webapps to\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\n\n# chown tomcat_admin:tomcat $CATALINA_HOME/webapps\n# chmod g-w,o-rwx $CATALINA_HOME/webapps\n\n",
+                  "Default Value":"The default permissions of the top-level directories is\n770."
+               },
+               "code":"control \"M-4.7\" do\r\n  title \"4.7 Restrict access to Tomcat web application directory (Scored)\"\r\n  desc  \"The Tomcat $CATALINA_HOME/webapps directory contains web applications\r\nthat are deployed through Tomcat. It is recommended that the ownership of this\r\ndirectory be tomcat_admin:tomcat. It is also recommended that the permission on\r\n$CATALINA_HOME/webapps prevent read, write, and execute for the world (o-rwx)\r\nand prevent write access to the group (g-w). Restricting access to these\r\ndirectories will prevent local users from maliciously or inadvertently\r\naffecting the integrity of web applications. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.7\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/webapps are securely configured. Change to the location of the\r\n$CATALINA_HOME/webapps and execute the\r\nfollowing:\r\n# cd $CATALINA_HOME\r\n# find webapps -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user tomcat_admin\r\n\r\n-o ! -group tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to Tomcat webapps\r\ndirectory: Set the ownership of the $CATALINA_HOME/webapps to\r\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\r\n\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/webapps\r\n# chmod g-w,o-rwx $CATALINA_HOME/webapps\r\n\r\n\"\r\n  tag \"Default Value\": \"The default permissions of the top-level directories is\r\n770.\"\r\n\r\n  describe directory(\"#{TOMCAT_HOME}/webapps\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":841,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/webapps owner should eq \"tomcat_admin\"",
+                     "run_time":0.403171537,
+                     "start_time":"2019-03-04T10:55:17+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/webapps group should eq \"tomcat\"",
+                     "run_time":0.000310646,
+                     "start_time":"2019-03-04T10:55:17+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"Directory /usr/local/tomcat/webapps mode should cmp == \"0750\"",
+                     "run_time":0.00058636,
+                     "start_time":"2019-03-04T10:55:17+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0755\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.8",
+               "title":"4.8 Restrict access to Tomcat catalina.policy (Scored)",
+               "desc":"The catalina.policy file is used to configure security policies for\nTomcat. It is recommended that access to this file has the proper permissions\nto properly protect from unauthorized changes. Restricting access to this file\nwill prevent local users from maliciously or inadvertently altering Tomcats\nsecurity policy.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The catalina.policy file is used to configure security policies for\nTomcat. It is recommended that access to this file has the proper permissions\nto properly protect from unauthorized changes. Restricting access to this file\nwill prevent local users from maliciously or inadvertently altering Tomcats\nsecurity policy."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.8",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/conf/catalina.policy care securely configured. Change to the\nlocation of the $CATALINA_HOME/ and execute the following:\n# cd $CATALINA_HOME/conf/\n# find catalina.policy -follow -maxdepth 0 \\( -perm /o+rwx -o ! -user\ntomcat_admin -o ! -group tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to\n$CATALINA_HOME/conf/catalina.policy. Set the owner and group owner of the\ncontents of\n$CATALINA_HOME/conf/catalina.policy to tomcat_admin and tomcat, respectively.\n# chmod 770 $CATALINA_HOME/conf/catalina.policy\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/catalina.policy\n",
+                  "Default Value":"The default permissions of catalina.policy is 600."
+               },
+               "code":"control \"M-4.8\" do\r\n  title \"4.8 Restrict access to Tomcat catalina.policy (Scored)\"\r\n  desc  \"The catalina.policy file is used to configure security policies for\r\nTomcat. It is recommended that access to this file has the proper permissions\r\nto properly protect from unauthorized changes. Restricting access to this file\r\nwill prevent local users from maliciously or inadvertently altering Tomcats\r\nsecurity policy. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.8\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/conf/catalina.policy care securely configured. Change to the\r\nlocation of the $CATALINA_HOME/ and execute the following:\r\n# cd $CATALINA_HOME/conf/\r\n# find catalina.policy -follow -maxdepth 0 \\\\( -perm /o+rwx -o ! -user\r\ntomcat_admin -o ! -group tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to\r\n$CATALINA_HOME/conf/catalina.policy. Set the owner and group owner of the\r\ncontents of\r\n$CATALINA_HOME/conf/catalina.policy to tomcat_admin and tomcat, respectively.\r\n# chmod 770 $CATALINA_HOME/conf/catalina.policy\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/catalina.policy\r\n\"\r\n  tag \"Default Value\": \"The default permissions of catalina.policy is 600.\"\r\n\r\n  describe file(\"#{TOMCAT_HOME}/conf/catalina.policy\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0770' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":894,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/catalina.policy owner should eq \"tomcat_admin\"",
+                     "run_time":0.393208771,
+                     "start_time":"2019-03-04T10:55:17+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/catalina.policy group should eq \"tomcat\"",
+                     "run_time":0.000313294,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/catalina.policy mode should cmp == \"0770\"",
+                     "run_time":0.000460579,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"0770\"\n     got: \"0644\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.9",
+               "title":"4.9 Restrict access to Tomcat catalina.properties (Scored)",
+               "desc":"catalina.properties is a Java properties files that contains settings\nfor Tomcat including class loader information, security package lists, and\nperformance properties. It is recommended that access to this file has the\nproper permissions to properly protect from unauthorized changes. Restricting\naccess to this file will prevent local users from maliciously or inadvertently\naltering Tomcats security policy.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"catalina.properties is a Java properties files that contains settings\nfor Tomcat including class loader information, security package lists, and\nperformance properties. It is recommended that access to this file has the\nproper permissions to properly protect from unauthorized changes. Restricting\naccess to this file will prevent local users from maliciously or inadvertently\naltering Tomcats security policy."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.9",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/conf/catalina.properties care securely configured. Change to the\nlocation of the $CATALINA_HOME/ and execute the following:\n# cd $CATALINA_HOME/conf/\n# find catalina.properties -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user\n\ntomcat_admin -o ! -group tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to catalina.properties:\nSet the ownership of the $CATALINA_HOME/conf/catalina.properties to\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\nRemove write permissions for the group.\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/catalina.properties\n# chmod g-w,o-rwx $CATALINA_HOME/conf/catalina.properties\n\n",
+                  "Default Value":"The default permissions of the top-level directories is\n600."
+               },
+               "code":"control \"M-4.9\" do\r\n  title \"4.9 Restrict access to Tomcat catalina.properties (Scored)\"\r\n  desc  \"catalina.properties is a Java properties files that contains settings\r\nfor Tomcat including class loader information, security package lists, and\r\nperformance properties. It is recommended that access to this file has the\r\nproper permissions to properly protect from unauthorized changes. Restricting\r\naccess to this file will prevent local users from maliciously or inadvertently\r\naltering Tomcats security policy. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.9\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/conf/catalina.properties care securely configured. Change to the\r\nlocation of the $CATALINA_HOME/ and execute the following:\r\n# cd $CATALINA_HOME/conf/\r\n# find catalina.properties -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user\r\n\r\ntomcat_admin -o ! -group tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to catalina.properties:\r\nSet the ownership of the $CATALINA_HOME/conf/catalina.properties to\r\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\r\nRemove write permissions for the group.\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/catalina.properties\r\n# chmod g-w,o-rwx $CATALINA_HOME/conf/catalina.properties\r\n\r\n\"\r\n  tag \"Default Value\": \"The default permissions of the top-level directories is\r\n600.\"\r\n\r\n  describe file(\"#{TOMCAT_HOME}/conf/catalina.properties\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":941,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/catalina.properties owner should eq \"tomcat_admin\"",
+                     "run_time":0.404831305,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/catalina.properties group should eq \"tomcat\"",
+                     "run_time":0.000414308,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/catalina.properties mode should cmp == \"0750\"",
+                     "run_time":0.000393804,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0755\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.10",
+               "title":"4.10 Restrict access to Tomcat context.xml (Scored)",
+               "desc":"The context.xml file is loaded by all web applications and sets\ncertain configuration options. It is recommended that access to this file has\nthe proper permissions to properly protect from unauthorized changes.\nRestricting access to this file will prevent local users from maliciously or\ninadvertently altering Tomcats security policy.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"The context.xml file is loaded by all web applications and sets\ncertain configuration options. It is recommended that access to this file has\nthe proper permissions to properly protect from unauthorized changes.\nRestricting access to this file will prevent local users from maliciously or\ninadvertently altering Tomcats security policy."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.10",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/conf/context.xml care securely configured. Change to the\nlocation of the $CATALINA_HOME/conf and execute the following:\n# cd $CATALINA_HOME/conf\n# find context.xml -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user\ntomcat_admin -o ! -group tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to context.xml: Set the\nownership of the $CATALINA_HOME/conf/context.xml to\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\nRemove write permissions for the group.\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/context.xml\n# chmod g-w,o-rwx $CATALINA_HOME/conf/context.xml\n\n",
+                  "Default Value":"The default permissions of context.xml are 600."
+               },
+               "code":"control \"M-4.10\" do\r\n  title \"4.10 Restrict access to Tomcat context.xml (Scored)\"\r\n  desc  \"The context.xml file is loaded by all web applications and sets\r\ncertain configuration options. It is recommended that access to this file has\r\nthe proper permissions to properly protect from unauthorized changes.\r\nRestricting access to this file will prevent local users from maliciously or\r\ninadvertently altering Tomcats security policy. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.10\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/conf/context.xml care securely configured. Change to the\r\nlocation of the $CATALINA_HOME/conf and execute the following:\r\n# cd $CATALINA_HOME/conf\r\n# find context.xml -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user\r\ntomcat_admin -o ! -group tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to context.xml: Set the\r\nownership of the $CATALINA_HOME/conf/context.xml to\r\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\r\nRemove write permissions for the group.\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/context.xml\r\n# chmod g-w,o-rwx $CATALINA_HOME/conf/context.xml\r\n\r\n\"\r\n  tag \"Default Value\": \"The default permissions of context.xml are 600.\"\r\n\r\n  describe file(\"#{TOMCAT_HOME}/conf/context.xml\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":992,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/context.xml owner should eq \"tomcat_admin\"",
+                     "run_time":0.397109791,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/context.xml group should eq \"tomcat\"",
+                     "run_time":0.000338409,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/context.xml mode should cmp == \"0750\"",
+                     "run_time":0.000405265,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0644\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.11",
+               "title":"4.11 Restrict access to Tomcat logging.properties (Scored)",
+               "desc":"logging.properties is a Tomcat files which specifies the logging\nconfiguration. It is recommended that access to this file has the proper\npermissions to properly protect from unauthorized changes. Restricting access\nto this file will prevent local users from maliciously or inadvertently\naltering Tomcats security policy.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"logging.properties is a Tomcat files which specifies the logging\nconfiguration. It is recommended that access to this file has the proper\npermissions to properly protect from unauthorized changes. Restricting access\nto this file will prevent local users from maliciously or inadvertently\naltering Tomcats security policy."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.11",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/conf/logging.properties care securely configured. Change to the\nlocation of the $CATALINA_HOME/conf and execute the following:\n# cd $CATALINA_HOME/conf/\n# find logging.properties -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user\ntomcat_admin -o ! -group tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to logging.properties:\nSet the ownership of the $CATALINA_HOME/conf/logging.properties to\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\nRemove write permissions for the group.\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/logging.properties\n# chmod g-w,o-rwx $CATALINA_HOME/conf/logging.properties\n\n",
+                  "Default Value":"The default permissions are 600."
+               },
+               "code":"control \"M-4.11\" do\r\n  title \"4.11 Restrict access to Tomcat logging.properties (Scored)\"\r\n  desc  \"logging.properties is a Tomcat files which specifies the logging\r\nconfiguration. It is recommended that access to this file has the proper\r\npermissions to properly protect from unauthorized changes. Restricting access\r\nto this file will prevent local users from maliciously or inadvertently\r\naltering Tomcats security policy. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.11\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/conf/logging.properties care securely configured. Change to the\r\nlocation of the $CATALINA_HOME/conf and execute the following:\r\n# cd $CATALINA_HOME/conf/\r\n# find logging.properties -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user\r\ntomcat_admin -o ! -group tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to logging.properties:\r\nSet the ownership of the $CATALINA_HOME/conf/logging.properties to\r\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\r\nRemove write permissions for the group.\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/logging.properties\r\n# chmod g-w,o-rwx $CATALINA_HOME/conf/logging.properties\r\n\r\n\"\r\n  tag \"Default Value\": \"The default permissions are 600.\"\r\n\r\n  describe file(\"#{TOMCAT_HOME}/conf/logging.properties\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":1040,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/logging.properties owner should eq \"tomcat_admin\"",
+                     "run_time":0.430694539,
+                     "start_time":"2019-03-04T10:55:18+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/logging.properties group should eq \"tomcat\"",
+                     "run_time":0.000323876,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/logging.properties mode should cmp == \"0750\"",
+                     "run_time":0.000447565,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0644\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.12",
+               "title":"4.12 Restrict access to Tomcat server.xml (Scored)",
+               "desc":"server.xml contains Tomcat servlet definitions and configurations. It\nis recommended that access to this file has the proper permissions to properly\nprotect from unauthorized changes. Restricting access to this file will prevent\nlocal users from maliciously or inadvertently altering Tomcats security\npolicy.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"server.xml contains Tomcat servlet definitions and configurations. It\nis recommended that access to this file has the proper permissions to properly\nprotect from unauthorized changes. Restricting access to this file will prevent\nlocal users from maliciously or inadvertently altering Tomcats security\npolicy."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.12",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/conf/server.xml care securely configured. Change to the location\nof the $CATALINA_HOME/conf and execute the following:\n# cd $CATALINA_HOME/conf/\n# find server.xml -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user\ntomcat_admin -o ! -group tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to server.xml: Set the\nownership of the $CATALINA_HOME/conf/server.xml to\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\nRemove write permissions for the group.\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/server.xml\n# chmod g-w,o-rwx $CATALINA_HOME/conf/server.xml\n\n",
+                  "Default Value":"The default permissions of the top-level directories is\n600."
+               },
+               "code":"control \"M-4.12\" do\r\n  title \"4.12 Restrict access to Tomcat server.xml (Scored)\"\r\n  desc  \"server.xml contains Tomcat servlet definitions and configurations. It\r\nis recommended that access to this file has the proper permissions to properly\r\nprotect from unauthorized changes. Restricting access to this file will prevent\r\nlocal users from maliciously or inadvertently altering Tomcats security\r\npolicy. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.12\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/conf/server.xml care securely configured. Change to the location\r\nof the $CATALINA_HOME/conf and execute the following:\r\n# cd $CATALINA_HOME/conf/\r\n# find server.xml -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user\r\ntomcat_admin -o ! -group tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to server.xml: Set the\r\nownership of the $CATALINA_HOME/conf/server.xml to\r\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\r\nRemove write permissions for the group.\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/server.xml\r\n# chmod g-w,o-rwx $CATALINA_HOME/conf/server.xml\r\n\r\n\"\r\n  tag \"Default Value\": \"The default permissions of the top-level directories is\r\n600.\"\r\n\r\n  describe file(\"#{TOMCAT_HOME}/conf/server.xml\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":1088,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/server.xml owner should eq \"tomcat_admin\"",
+                     "run_time":0.000290574,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/server.xml group should eq \"tomcat\"",
+                     "run_time":0.000278742,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/server.xml mode should cmp == \"0750\"",
+                     "run_time":0.00041202,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0644\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.13",
+               "title":"4.13 Restrict access to Tomcat tomcat-users.xml (Scored)",
+               "desc":"tomcat-users.xml contains authentication information for Tomcat\napplications. It is recommended that access to this file has the proper\npermissions to properly protect from unauthorized changes. Restricting access\nto this file will prevent local users from maliciously or inadvertently\naltering Tomcats security policy.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"tomcat-users.xml contains authentication information for Tomcat\napplications. It is recommended that access to this file has the proper\npermissions to properly protect from unauthorized changes. Restricting access\nto this file will prevent local users from maliciously or inadvertently\naltering Tomcats security policy."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.13",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/conf/tomcat-users.xml care securely configured. Change to the\nlocation of the $CATALINA_HOME/conf and execute the following:\n# cd $CATALINA_HOME/conf/\n# find tomcat-users.xml -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user\ntomcat_admin -o ! -group tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to tomcat-users.xml: Set\nthe ownership of the $CATALINA_HOME/conf/tomcat-users.xml to\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\nRemove write permissions for the group.\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/tomcat-users.xml\n# chmod g-w,o-rwx $CATALINA_HOME/conf/tomcat-users.xml\n\n",
+                  "Default Value":"The default permissions of the top-level directories is\n600."
+               },
+               "code":"control \"M-4.13\" do\r\n  title \"4.13 Restrict access to Tomcat tomcat-users.xml (Scored)\"\r\n  desc  \"tomcat-users.xml contains authentication information for Tomcat\r\napplications. It is recommended that access to this file has the proper\r\npermissions to properly protect from unauthorized changes. Restricting access\r\nto this file will prevent local users from maliciously or inadvertently\r\naltering Tomcats security policy. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.13\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/conf/tomcat-users.xml care securely configured. Change to the\r\nlocation of the $CATALINA_HOME/conf and execute the following:\r\n# cd $CATALINA_HOME/conf/\r\n# find tomcat-users.xml -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user\r\ntomcat_admin -o ! -group tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to tomcat-users.xml: Set\r\nthe ownership of the $CATALINA_HOME/conf/tomcat-users.xml to\r\ntomcat_admin:tomcat. Remove read, write, and execute permissions for the world.\r\nRemove write permissions for the group.\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/tomcat-users.xml\r\n# chmod g-w,o-rwx $CATALINA_HOME/conf/tomcat-users.xml\r\n\r\n\"\r\n  tag \"Default Value\": \"The default permissions of the top-level directories is\r\n600.\"\r\n\r\n  describe file(\"#{TOMCAT_HOME}/conf/tomcat-users.xml\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":1137,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/tomcat-users.xml owner should eq \"tomcat_admin\"",
+                     "run_time":0.398761468,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/tomcat-users.xml group should eq \"tomcat\"",
+                     "run_time":0.000380933,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/tomcat-users.xml mode should cmp == \"0750\"",
+                     "run_time":0.000453351,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0644\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            },
+            {  
+               "id":"M-4.14",
+               "title":"4.14 Restrict access to Tomcat web.xml (Scored)",
+               "desc":"web.xml is a Tomcat configuration file that stores application\nconfiguration settings. It is recommended that access to this file has the\nproper permissions to properly protect from unauthorized changes. Restricting\naccess to this file will prevent local users from maliciously or inadvertently\naltering Tomcats security policy.",
+               "descriptions":[  
+                  {  
+                     "label":"default",
+                     "data":"web.xml is a Tomcat configuration file that stores application\nconfiguration settings. It is recommended that access to this file has the\nproper permissions to properly protect from unauthorized changes. Restricting\naccess to this file will prevent local users from maliciously or inadvertently\naltering Tomcats security policy."
+                  }
+               ],
+               "impact":0.5,
+               "refs":[  
+
+               ],
+               "tags":{  
+                  "severity":"medium",
+                  "cis_id":"4.14",
+                  "cis_control":[  
+                     "No CIS Control",
+                     "6.1"
+                  ],
+                  "cis_level":1,
+                  "audit text":"Perform the following to determine if the ownership and\npermissions on\n$CATALINA_HOME/conf/web.xml care securely configured. Change to the location of\nthe $CATALINA_HOME/conf and execute the following:\n# cd $CATALINA_HOME/conf/\n# find web.xml -follow -maxdepth 0 \\( -perm /o+rwx,g=w -o ! -user tomcat_admin\n\n-o ! -group tomcat \\) -ls\nNote: If the ownership and permission are set correctly, no output should be\ndisplayed when executing the above command.\n",
+                  "fix":"Perform the following to restrict access to web.xml: Set the\nownership of the $CATALINA_HOME/conf/web.xml to tomcat_admin:tomcat. Remove\nread, write, and execute permissions for the world. Remove write permissions\nfor the group.\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/web.xml\n# chmod g-w,o-rwx $CATALINA_HOME/conf/web.xml\n",
+                  "Default Value":"The default permissions of web.xml is 400."
+               },
+               "code":"control \"M-4.14\" do\r\n  title \"4.14 Restrict access to Tomcat web.xml (Scored)\"\r\n  desc  \"web.xml is a Tomcat configuration file that stores application\r\nconfiguration settings. It is recommended that access to this file has the\r\nproper permissions to properly protect from unauthorized changes. Restricting\r\naccess to this file will prevent local users from maliciously or inadvertently\r\naltering Tomcats security policy. \"\r\n  impact 0.5\r\n  tag \"severity\": \"medium\"\r\n  tag \"cis_id\": \"4.14\"\r\n  tag \"cis_control\": [\"No CIS Control\", \"6.1\"]\r\n  tag \"cis_level\": 1\r\n  tag \"audit text\": \"Perform the following to determine if the ownership and\r\npermissions on\r\n$CATALINA_HOME/conf/web.xml care securely configured. Change to the location of\r\nthe $CATALINA_HOME/conf and execute the following:\r\n# cd $CATALINA_HOME/conf/\r\n# find web.xml -follow -maxdepth 0 \\\\( -perm /o+rwx,g=w -o ! -user tomcat_admin\r\n\r\n-o ! -group tomcat \\\\) -ls\r\nNote: If the ownership and permission are set correctly, no output should be\r\ndisplayed when executing the above command.\r\n\"\r\n  tag \"fix\": \"Perform the following to restrict access to web.xml: Set the\r\nownership of the $CATALINA_HOME/conf/web.xml to tomcat_admin:tomcat. Remove\r\nread, write, and execute permissions for the world. Remove write permissions\r\nfor the group.\r\n# chown tomcat_admin:tomcat $CATALINA_HOME/conf/web.xml\r\n# chmod g-w,o-rwx $CATALINA_HOME/conf/web.xml\r\n\"\r\n  tag \"Default Value\": \"The default permissions of web.xml is 400.\"\r\n\r\n  describe file(\"#{TOMCAT_HOME}/conf/web.xml\") do\r\n    its('owner') { should eq \"#{TOMCAT_OWNER}\" }\r\n    its('group') { should eq \"#{TOMCAT_GROUP}\" }\r\n    its('mode') { should cmp '0750' }\r\n  end\r\nend\r\n",
+               "source_location":{  
+                  "line":1186,
+                  "ref":"Control_1_2_4.rb"
+               },
+               "results":[  
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/web.xml owner should eq \"tomcat_admin\"",
+                     "run_time":0.000326697,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"tomcat_admin\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/web.xml group should eq \"tomcat\"",
+                     "run_time":0.000270466,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"tomcat\"\n     got: \"root\"\n\n(compared using ==)\n"
+                  },
+                  {  
+                     "status":"failed",
+                     "code_desc":"File /usr/local/tomcat/conf/web.xml mode should cmp == \"0750\"",
+                     "run_time":0.000378062,
+                     "start_time":"2019-03-04T10:55:19+00:00",
+                     "message":"\nexpected: \"0750\"\n     got: \"0644\"\n\n(compared using `cmp` matcher)\n"
+                  }
+               ]
+            }
+         ],
+         "status":"loaded"
+      }
+   ],
+   "statistics":{  
+      "duration":6.463804157
+   },
+   "version":"3.2.6"
+}

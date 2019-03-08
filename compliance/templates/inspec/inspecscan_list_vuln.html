@@ -1,0 +1,70 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Controls Details</a></div>
+        <h1>Controls List</h1>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Controls List</h5>
+                    </div>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th>Controls ID</th>
+                                <th>Controls Descriptions</th>
+                                <th>Severity</th>
+                                <th>Audit Text</th>
+                                <th>Fix</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in inspec_all_vuln %}
+                            <tr data-target="#">
+                                <td>{{data.controls_id}}</td>
+                                <td>{{data.controls_title}}</td>
+                                <td>{{data.controls_tags_severity}}</td>
+                                <td>{{data.controls_tags_audit}}</td>
+                                <td>{{data.controls_tags_fix}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Audit List</h5>
+                    </div>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th>Audit</th>
+                                <th>Status</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in inspec_all_audit %}
+                            <tr data-target="#">
+                                <td><a href="/inspec/inspec_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.controls_results_code_desc}}</a></td>
+                                <td><span class="badge badge-{{data.vul_col}}">{{data.controls_results_status}}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

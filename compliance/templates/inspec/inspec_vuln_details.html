@@ -1,0 +1,150 @@
+{% extends 'header.html' %}
+{% block body %}
+
+<div id="content">{% for data in inspec_vuln_details %}
+    <div id="content-header">
+        <div id="breadcrumb"><a href="#" title="Go to Home"
+                                class="tip-bottom"><i class="icon-home"></i> Audit Details</a>
+            <a
+                    href="#" class="current">{{ data.controls_title }}</a></div>
+        <div>
+            <div class="btn-group">
+                <a class="btn btn-info"
+                   href="#"><i
+                        class="icon-edit icon-white"></i>
+                </a>
+                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span
+                        class="caret"></span></a>
+                <ul class="dropdown-menu">
+
+                    <li>
+                        <a href="/jira/submit_jira_ticket/?summary={{data.VulnName}}&description={{data.VulnName}}%0a%0a%0a Vulnerable URL: {{data.vuln_url}} %0a%0a Vulnerable Parameter: {{data.vector_input_values}} %0a%0a Solution: {{data.remedy_guidance}} %0a%0a Archery URL: {SERVERIP}/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.request_raw }}&scanner=acunetix&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "><i
+                                class="icon-random"></i> Jira Ticket</a>
+                    </li>
+                </ul>
+            </div>
+
+            <h1>{{ data.controls_title }}</h1>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Vulnerability Name:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info">{{ data.controls_title }}</span>
+                        <br><br>
+                        <strong>Controls Description </strong><br>
+                        {{data.controls_desc}}
+                        <br><br>
+                        {{data.controls_impact}}
+
+                        <br><br>
+
+                        {{data.controls_refs}}
+                        <br>
+                        <br><br>
+
+                        {{data.controls_tags_severity}}
+                        <br>
+                        <br><br>
+
+                        {{data.controls_tags_cis_id}}
+                        <br>
+                        <br><br>
+
+                        {{data.controls_tags_cis_control}}
+                        <br>
+                        <br><br>
+
+                        {{data.controls_tags_cis_level | safe}}
+                        <br>
+                        <br><br>
+
+                        <strong>Audit</strong><br>
+                        {{data.controls_tags_audit | safe}}
+                        <br>
+                        <br><br>
+
+                        <strong>Fix:</strong><br>
+                        {{data.controls_tags_fix | safe}}
+                        <br>
+
+                        <strong>Code:</strong><br>
+                        {{data.controls_code | safe}}
+                        <br>
+
+                        <strong>Sourc Location:</strong><br>
+                        {{data.controls_source_location | safe}}
+                        <br>
+
+                         <strong>Result Status:</strong><br>
+                        {{data.controls_results_status | safe}}
+                        <br>
+
+                         <strong>Result Code:</strong><br>
+                        {{data.controls_results_code_desc | safe}}
+                        <br>
+
+                         <strong>Run Time:</strong><br>
+                        {{data.controls_results_run_time | safe}}
+                        <br>
+
+                         <strong>Start Time:</strong><br>
+                        {{data.controls_results_start_time | safe}}
+                        <br>
+
+                         <strong>Message:</strong><br>
+                        {{data.controls_results_message | safe}}
+                        <br>
+
+                        <strong>Fix:</strong><br>
+                        {{data.controls_tags_audit_text | safe}}
+                        <br>
+
+
+                        <!--<strong> False Positive: </strong>-->
+                        <!--<form method="POST" action="/inspec/inspec_vuln_data/">{% csrf_token %}-->
+                            <!--<input type="hidden" name="vuln_id" value="{{data.vuln_id}}">-->
+                            <!--<input type="hidden" name="false" value="Yes">-->
+                            <!--<input type="hidden" name="status" value="Open">-->
+                            <!--<input type="hidden" name="vuln_name" value="{{data.Name}}">-->
+                            <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}">-->
+                            <!--<button class="btn btn-info btn-mini">Yes</button>-->
+                        <!--</form>-->
+                        <br>
+
+                    </div>
+                </div>
+
+                <!--<div class="span12">-->
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Issue Detail:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        {{data.Description | safe}}
+
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Metadata:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        {{data.Metadata | safe}}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

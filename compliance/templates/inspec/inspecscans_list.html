@@ -1,0 +1,152 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = [];
+            $.each($("input[name='del_scan_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/inspec/del_inspec',
+                data:{
+                   scan_id: json_scanid,
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+            setTimeout(location.reload(), 6000);
+        });
+
+    });
+
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">Inspec Check Scans List</a></div>
+
+        <h1>Inspec Scans</h1>
+    </div>
+
+    <div class="container-fluid">
+        <hr>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                        <h5>Inspec Audit Summary</h5>
+                        <div class="buttons">
+                            <a data-toggle="modal" href="/staticscanners/report_import/"
+                               class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
+                                Report</a>
+                        </div>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>Project Name</th>
+                                <th>Status</th>
+                                <th>Date Time</th>
+                                <th>Total Complained</th>
+                                <th>Failed</th>
+                                <th>Passed</th>
+                                <th>Skipped</th>
+                                <th>Duplicates</th>
+                                <th>Export</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in all_inspec_scan %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
+                                                      onClick="reload">
+
+                                        </label>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="/inspec/inspec_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                </td>
+                                <td width="20%">
+                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
+                                    </div>
+                                </td>
+                                <td>{{data.date_time}}</td>
+                                <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
+                                <td><span class="badge badge-important">{{data.inspec_failed}}</span></td>
+                                <td><span class="badge badge-warning">{{data.inspec_passed}}</span></td>
+                                <td><span class="badge badge-info">{{data.inspec_skipped}}</span></td>
+                                <td><span class="badge badge-important">{{data.total_dup}}</span></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <form action="/inspec/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="csv"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> CSV
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="btn-group">
+                                        <form action="/inspec/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="json"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> JSON
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="btn-group">
+                                        <form action="/inspec/export/" method="post" class="forms-sample">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                            <input type="hidden" name="type" value="yaml"/>
+                                            <button class="btn btn-info btn-mini"><i
+                                                    class="icon-save"></i> YAML
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form action="/inspec/del_inspec" method="post" class="forms-sample">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                        <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
+                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

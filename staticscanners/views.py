@@ -17,12 +17,14 @@ from staticscanners.models import retirejs_scan_results_db, \
     retirejs_scan_db, \
     bandit_scan_results_db, \
     bandit_scan_db, clair_scan_db
+from compliance.models import inspec_scan_db, inspec_scan_results_db
 import uuid
 from datetime import datetime
 import json
 from scanners.scanner_parser.staticscanner_parser.retirejss_json_parser import retirejs_report_json
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser import clair_report_json
+from scanners.scanner_parser.compliance_parser.inspec_json_parser import inspec_report_json
 
 
 # Create your views here.
@@ -92,6 +94,21 @@ def report_import(request):
                               project_id=project_id,
                               scan_id=scan_id)
 
-            return HttpResponseRedirect("/clair/clair_list")
+        if scanner == "inspec_scan":
+            date_time = datetime.now()
+            scan_dump = inspec_scan_db(project_name=project_name,
+                                       scan_id=scan_id,
+                                       date_time=date_time,
+                                       project_id=project_id,
+                                       scan_status=scan_status,
+                                       )
+            scan_dump.save()
+            j = json_file.read()
+            data = json.loads(j)
+            inspec_report_json(data=data,
+                               project_id=project_id,
+                               scan_id=scan_id)
+
+            return HttpResponseRedirect("/inspec/inspec_list")
 
     return render(request, 'report_import.html', {'all_project': all_project})

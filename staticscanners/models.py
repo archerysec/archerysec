@@ -224,5 +224,6 @@ class clair_scan_results_db(models.Model):
     Metadata = models.TextField(null=True, blank=True)
     FeatureName = models.TextField(null=True, blank=True)
     FeatureVersion = models.TextField(null=True, blank=True)
+    controls_tags_audit_text = models.TextField(null=True, blank=True)
 
     scanner = models.TextField(default='Clair', editable=False)
