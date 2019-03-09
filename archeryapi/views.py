@@ -58,6 +58,8 @@ from lxml import etree
 from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db, clair_scan_db
 from tools.models import nikto_result_db
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
+from scanners.scanner_parser.compliance_parser import inspec_json_parser
+from compliance.models import inspec_scan_db, inspec_scan_results_db
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -606,11 +608,30 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            print xml_file
             data = json.loads(xml_file)
             clair_json_report_parser.clair_report_json(project_id=project_id,
                                                        scan_id=scan_id,
                                                        data=data)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'inspec':
+            date_time = datetime.datetime.now()
+            scan_dump = inspec_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            data = json.loads(xml_file)
+            inspec_json_parser.inspec_report_json(project_id=project_id,
+                                                  scan_id=scan_id,
+                                                  data=data)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
