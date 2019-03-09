@@ -29,6 +29,10 @@ def inspec_list(request):
 
 
 def list_vuln(request):
+    all_failed = ''
+    all_passed = ''
+    all_skipped = ''
+
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
@@ -43,9 +47,13 @@ def list_vuln(request):
     ).distinct()
     inspec_all_audit = inspec_scan_results_db.objects.filter(scan_id=scan_id)
 
+    all_compliance = inspec_scan_db.objects.filter(scan_id=scan_id)
+
     return render(request, 'inspec/inspecscan_list_vuln.html',
                   {'inspec_all_vuln': inspec_all_vuln,
-                   'inspec_all_audit': inspec_all_audit
+                   'inspec_all_audit': inspec_all_audit,
+                   'all_compliance': all_compliance
+
                    }
                   )
 
@@ -134,7 +142,8 @@ def inspec_details(request):
     )
 
     return render(request, 'inspec/inspec_vuln_details.html',
-                  {'inspec_vuln_details': inspec_vuln_details}
+                  {'inspec_vuln_details': inspec_vuln_details,
+                   }
                   )
 
 

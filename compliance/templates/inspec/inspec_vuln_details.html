@@ -3,7 +3,7 @@
 
 <div id="content">{% for data in inspec_vuln_details %}
     <div id="content-header">
-        <div id="breadcrumb"><a href="#" title="Go to Home"
+        <div id="breadcrumb"><a href="/inspec/inspec_list/" title="Go to Home"
                                 class="tip-bottom"><i class="icon-home"></i> Audit Details</a>
             <a
                     href="#" class="current">{{ data.controls_title }}</a></div>
@@ -36,85 +36,44 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info">{{ data.controls_title }}</span>
-                        <br><br>
-                        <strong>Controls Description </strong><br>
-                        {{data.controls_desc}}
-                        <br><br>
-                        {{data.controls_impact}}
-
-                        <br><br>
-
-                        {{data.controls_refs}}
                         <br>
-                        <br><br>
-
-                        {{data.controls_tags_severity}}
-                        <br>
-                        <br><br>
-
-                        {{data.controls_tags_cis_id}}
-                        <br>
-                        <br><br>
-
-                        {{data.controls_tags_cis_control}}
-                        <br>
-                        <br><br>
-
-                        {{data.controls_tags_cis_level | safe}}
-                        <br>
-                        <br><br>
-
-                        <strong>Audit</strong><br>
-                        {{data.controls_tags_audit | safe}}
-                        <br>
-                        <br><br>
-
-                        <strong>Fix:</strong><br>
-                        {{data.controls_tags_fix | safe}}
                         <br>
 
                         <strong>Code:</strong><br>
-                        {{data.controls_code | safe}}
+                        {{data.controls_code}}
+                        <br>
                         <br>
 
+
                         <strong>Sourc Location:</strong><br>
-                        {{data.controls_source_location | safe}}
+                        {{data.controls_source_location}}
+                        <br>
                         <br>
 
                          <strong>Result Status:</strong><br>
-                        {{data.controls_results_status | safe}}
+                        {{data.controls_results_status}}
+                        <br>
                         <br>
 
                          <strong>Result Code:</strong><br>
-                        {{data.controls_results_code_desc | safe}}
+                        {{data.controls_results_code_desc}}
+                        <br>
                         <br>
 
                          <strong>Run Time:</strong><br>
-                        {{data.controls_results_run_time | safe}}
+                        {{data.controls_results_run_time}}
+                        <br>
                         <br>
 
                          <strong>Start Time:</strong><br>
-                        {{data.controls_results_start_time | safe}}
+                        {{data.controls_results_start_time}}
+                        <br>
                         <br>
 
                          <strong>Message:</strong><br>
-                        {{data.controls_results_message | safe}}
+                        {{data.controls_results_message}}
                         <br>
-
-                        <strong>Fix:</strong><br>
-                        {{data.controls_tags_audit_text | safe}}
                         <br>
-
-
-                        <!--<strong> False Positive: </strong>-->
-                        <!--<form method="POST" action="/inspec/inspec_vuln_data/">{% csrf_token %}-->
-                            <!--<input type="hidden" name="vuln_id" value="{{data.vuln_id}}">-->
-                            <!--<input type="hidden" name="false" value="Yes">-->
-                            <!--<input type="hidden" name="status" value="Open">-->
-                            <!--<input type="hidden" name="vuln_name" value="{{data.Name}}">-->
-                            <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}">-->
-                            <!--<button class="btn btn-info btn-mini">Yes</button>-->
-                        <!--</form>-->
                         <br>
 
                     </div>
@@ -123,28 +82,59 @@
                 <!--<div class="span12">-->
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Issue Detail:</h5>
+                        <h5>Controls Description:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info"></span>
-                        {{data.Description | safe}}
+                        {{data.controls_desc}}
 
                     </div>
                 </div>
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Metadata:</h5>
+                        <h5>Controls Impact:</h5>
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        {{data.Metadata | safe}}
+                       {{data.controls_impact}}
 
                     </div>
                 </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Controls Refs:</h5>
+                    </div>
+                    <div class="widget-content">
+                         {{data.controls_refs}}
+
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Audit:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        {{data.controls_tags_audit}}
+
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Fix:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        {{data.controls_tags_fix}}
+
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
 </div>
+
 {% endfor %}
 
 {% endblock %}

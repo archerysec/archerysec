@@ -16,6 +16,7 @@ import hashlib
 from datetime import datetime
 
 status = None
+controls_results_message = None
 
 def inspec_report_json(data, project_id, scan_id):
     """
@@ -25,6 +26,7 @@ def inspec_report_json(data, project_id, scan_id):
     :param scan_id:
     :return:
     """
+    global controls_results_message, status
     vul_col = 'info'
 
     for key, value in data.viewitems():
@@ -45,7 +47,7 @@ def inspec_report_json(data, project_id, scan_id):
                     controls_tags_audit = con['tags']['audit text']
                     controls_tags_fix = con['tags']['fix']
                     controls_code = con['code']
-                    controls_source_location = con['source_location']
+                    controls_source_location = con['source_location']['line']
                     for res in con['results']:
                         controls_results_status = res['status']
                         controls_results_code_desc = res['code_desc']
@@ -69,6 +71,8 @@ def inspec_report_json(data, project_id, scan_id):
                             status = "Skipped"
 
                         vul_id = uuid.uuid4()
+                        print vul_id
+                        print controls_results_message
 
                         save_all = inspec_scan_results_db(
                             scan_id=scan_id,
