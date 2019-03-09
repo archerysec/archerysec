@@ -31,11 +31,12 @@ from staticscanners.models import dependencycheck_scan_db, \
     bandit_scan_db, \
     findbugs_scan_db, \
     dependencycheck_scan_results_db, \
-    findbugs_scan_results_db, clair_scan_results_db , clair_scan_db
+    findbugs_scan_results_db, clair_scan_results_db, clair_scan_db
 from networkscanners.models import scan_save_db, \
     nessus_scan_db, \
     ov_scan_result_db, \
     nessus_report_db
+from compliance.models import inspec_scan_db, inspec_scan_results_db
 from projects.models import project_db
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from itertools import chain
@@ -656,6 +657,10 @@ def proj_data(request):
 
     network_dat = chain(openvas_dat, nessus_dat)
 
+    inspec = inspec_scan_db.objects.filter(project_id=project_id)
+    compliance_dat = chain(inspec)
+
+    all_compliance = inspec_scan_db.objects.filter(project_id=project_id)
 
     zap_false_positive = zap_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
     burp_false_positive = burp_scan_result_db.objects.filter(false_positive='Yes', project_id=project_id)
@@ -743,6 +748,10 @@ def proj_data(request):
 
                    'openvas_dat': openvas_dat,
                    'nessus_dat': nessus_dat,
+
+                   'all_compliance':all_compliance,
+
+                   'compliance_dat': compliance_dat,
 
                    'all_zap_high': all_zap_high,
                    'all_zap_low': all_zap_low,
@@ -1256,7 +1265,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   severity='High')
         findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='High', project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(risk='High', project_id=project_id)
+        clair_all_high = clair_scan_results_db.objects.filter(Severity='High', project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)
@@ -1281,7 +1290,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   severity='Medium')
         findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
-        clair_all_medium = clair_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
+        clair_all_high = clair_scan_results_db.objects.filter(Severity='Medium', project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(threat='Medium', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='Medium', project_id=project_id)
@@ -1305,7 +1314,7 @@ def all_high_vuln(request):
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                   severity='Low')
         findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Low', project_id=project_id)
-        clair_all_low = clair_scan_results_db.objects.filter(risk='Low', project_id=project_id)
+        clair_all_high = clair_scan_results_db.objects.filter(Severity='Low', project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(threat='Low', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='Low', project_id=project_id)
@@ -1392,7 +1401,7 @@ def all_high_vuln(request):
                    'burp_all_high': burp_all_high,
                    'dependencycheck_all_high': dependencycheck_all_high,
                    'findbugs_all_high': findbugs_all_high,
-                   'clair_all_high': findbugs_all_high,
+                   'clair_all_high': clair_all_high,
                    'openvas_all_high': openvas_all_high,
                    'nessus_all_high': nessus_all_high,
                    'project_id': project_id,
@@ -1433,7 +1442,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       severity='High')
             findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='High', project_id=project_id)
-            clair_all_high = clair_scan_results_db.objects.filter(risk='High', project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(Severity='High', project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)
@@ -1473,7 +1482,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       severity='Medium')
             findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
-            clair_all_high = clair_scan_results_db.objects.filter(risk='Medium', project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(Severity='Medium', project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(threat='Medium', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='Medium', project_id=project_id)
@@ -1512,7 +1521,7 @@ def export(request):
             dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
                                                                                       severity='Low')
             findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='Low', project_id=project_id)
-            clair_all_high = clair_scan_results_db.objects.filter(risk='Low', project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(Severity='Low', project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(threat='Low', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='Low', project_id=project_id)

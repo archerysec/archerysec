@@ -27,19 +27,23 @@
                                 <tbody>
                                 <tr>
                                     <td><a href="#">Total Nodes</a></td>
-                                    <td><span class="badge badge-inverse">{% for data in all_compliance %}{{data.total_vuln}}{% endfor %}</span></td>
+                                    <td><span class="badge badge-inverse">{% for data in all_compliance %}{{data.total_vuln}}{% endfor %}</span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Failed Nodes</a></td>
-                                    <td><span class="badge badge-important">{% for data in all_compliance %}{{data.inspec_failed}}{% endfor %}</span></td>
+                                    <td><span class="badge badge-important">{% for data in all_compliance %}{{data.inspec_failed}}{% endfor %}</span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Passed Nodes</a></td>
-                                    <td><span class="badge badge-warning">{% for data in all_compliance %}{{data.inspec_passed}}{% endfor %}</span></td>
+                                    <td><span class="badge badge-warning">{% for data in all_compliance %}{{data.inspec_passed}}{% endfor %}</span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Skipped Nodes</a></td>
-                                    <td><span class="badge badge-info">{% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %}</span></td>
+                                    <td><span class="badge badge-info">{% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %}</span>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -117,8 +121,9 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript" src="/static/js/Chart.js"></script>
-    <script type="text/javascript">
+</div>
+<script type="text/javascript" src="/static/js/Chart.js"></script>
+<script type="text/javascript">
     var ctx = document.getElementById("webscans").getContext('2d');
     var webscans = new Chart(ctx, {
         type: 'doughnut',
@@ -154,6 +159,7 @@
 
 
 
-    </script>
 
-    {% endblock %}
+</script>
+
+{% endblock %}

@@ -93,6 +93,7 @@ def report_import(request):
             clair_report_json(data=data,
                               project_id=project_id,
                               scan_id=scan_id)
+            return HttpResponseRedirect("/clair/clair_list")
 
         if scanner == "inspec_scan":
             date_time = datetime.now()

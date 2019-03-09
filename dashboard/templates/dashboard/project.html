@@ -28,6 +28,50 @@
         </div>
         <div class="widget-content">
             <div class="row-fluid">
+                <div class="span6">
+                    <div class="widget-box">
+                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
+                            <h5>Compliance Summary</h5>
+                        </div>
+
+                        <div class="widget-content nopadding">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Audit</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><a href="#">Total Nodes</a></td>
+                                    <td><span class="badge badge-inverse">{% for data in all_compliance %}{{data.total_vuln}}{% endfor %}</span></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">Failed Nodes</a></td>
+                                    <td><span class="badge badge-important">{% for data in all_compliance %}{{data.inspec_failed}}{% endfor %}</span></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">Passed Nodes</a></td>
+                                    <td><span class="badge badge-warning">{% for data in all_compliance %}{{data.inspec_passed}}{% endfor %}</span></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">Skipped Nodes</a></td>
+                                    <td><span class="badge badge-info">{% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %}</span></td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="span6">
+                    <canvas id="compliant"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="row-fluid">
                 <div class="span12">
                     <div class="row-fluid">
 
@@ -74,7 +118,7 @@
                                             <td><span class="badge badge-info">{{all_arachni_low.low_vul__sum}}</span>
                                             </td>
                                             <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{all_arachni_scan.total_vul__sum}}</span>-->
+                                            <!--class="badge badge-inverse">{{all_arachni_scan.total_vul__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         <tr>
@@ -87,7 +131,7 @@
                                             </td>
                                             <td><span class="badge badge-info">{{all_burp_low.low_vul__sum}}</span></td>
                                             <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{all_burp_scan.total_vul__sum}}</span>-->
+                                            <!--class="badge badge-inverse">{{all_burp_scan.total_vul__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         <tr>
@@ -100,7 +144,7 @@
                                                     class="badge badge-info">{{all_webinspect_low.low_vul__sum}}</span>
                                             </td>
                                             <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{all_webinspect_scan.total_vul__sum}}</span>-->
+                                            <!--class="badge badge-inverse">{{all_webinspect_scan.total_vul__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         <tr>
@@ -113,7 +157,7 @@
                                             <td><span class="badge badge-info">{{all_acunetix_low.low_vul__sum}}</span>
                                             </td>
                                             <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{all_acunetix_scan.total_vul__sum}}</span>-->
+                                            <!--class="badge badge-inverse">{{all_acunetix_scan.total_vul__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         <tr>
@@ -126,7 +170,7 @@
                                             <td><span class="badge badge-info">{{all_openvas_low.low_total__sum}}</span>
                                             </td>
                                             <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{all_openvas_scan.total_vul__sum}}</span>-->
+                                            <!--class="badge badge-inverse">{{all_openvas_scan.total_vul__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         <tr>
@@ -139,7 +183,7 @@
                                             <td><span class="badge badge-info">{{all_nessus_low.low_total__sum}}</span>
                                             </td>
                                             <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{all_nessus_scan.total_vul__sum}}</span>-->
+                                            <!--class="badge badge-inverse">{{all_nessus_scan.total_vul__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         <tr>
@@ -165,7 +209,7 @@
                                                     class="badge badge-info">{{all_findbugs_low.SEVERITY_LOW__sum}}</span>
                                             </td>
                                             <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{all_findbugs_scan.total_vuln__sum}}</span>-->
+                                            <!--class="badge badge-inverse">{{all_findbugs_scan.total_vuln__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         <tr>
@@ -178,7 +222,7 @@
                                                     class="badge badge-info">{{all_clair_low.SEVERITY_LOW__sum}}</span>
                                             </td>
                                             <!--<td><span-->
-                                                    <!--class="badge badge-inverse">{{all_clair_scan.total_vuln__sum}}</span>-->
+                                            <!--class="badge badge-inverse">{{all_clair_scan.total_vuln__sum}}</span>-->
                                             <!--</td>-->
                                         </tr>
                                         </tbody>
@@ -221,7 +265,8 @@
                     </thead>
                     <tbody>{% for data in zap %}
                     <tr data-target="#">
-                        <td width="20%"><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a></td>
+                        <td width="20%"><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
+                        </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
@@ -240,7 +285,8 @@
                     </tbody>
                     <tbody>{% for data in burp %}
                     <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                        </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
@@ -259,7 +305,8 @@
                     </tbody>
                     <tbody>{% for data in arachni %}
                     <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                        </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
@@ -278,7 +325,8 @@
                     </tbody>
                     <tbody>{% for data in webinspect %}
                     <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                        </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
@@ -297,7 +345,8 @@
                     </tbody>
                     <tbody>{% for data in netsparker %}
                     <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                        </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
@@ -316,7 +365,8 @@
                     </tbody>
                     <tbody>{% for data in acunetix %}
                     <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a></td>
+                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                        </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
@@ -441,7 +491,8 @@
                     <tbody>{% for data in openvas_dat %}
                     <tr data-target="#">
 
-                        <td width="20%"><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
+                        <td width="20%"><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                        </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
@@ -459,7 +510,8 @@
                     <tbody>{% for data in nessus_dat %}
                     <tr data-target="#">
 
-                        <td width="20%"><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
+                        <td width="20%"><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                        </td>
                         <td width="20%">
                             <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
                                 <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
@@ -475,6 +527,53 @@
                     {% endfor %}
                     </tbody>
                 </table>
+            </div>
+            <div class="widget-box">
+                <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
+                    <h5>Compliant List</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <table class="table table-bordered data-table">
+                        <thead>
+                        <tr>
+                            <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                            <th>Project Name</th>
+                            <th>Status</th>
+                            <th>Date Time</th>
+                            <th>Total Complained</th>
+                            <th>Failed</th>
+                            <th>Passed</th>
+                            <th>Skipped</th>
+                        </tr>
+                        </thead>
+                        <tbody>{% for data in compliance_dat %}
+                        <tr data-target="#">
+                            <td>
+                                <form>
+                                    <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
+                                                  onClick="reload">
+
+                                    </label>
+                                </form>
+                            </td>
+                            <td>
+                                <a href="/inspec/inspec_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                            </td>
+                            <td width="20%">
+                                <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                    <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
+                                </div>
+                            </td>
+                            <td>{{data.date_time}}</td>
+                            <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
+                            <td><span class="badge badge-important">{{data.inspec_failed}}</span></td>
+                            <td><span class="badge badge-warning">{{data.inspec_passed}}</span></td>
+                            <td><span class="badge badge-info">{{data.inspec_skipped}}</span></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -515,6 +614,7 @@
         var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
         barchart.draw(data, barchart_options);
       }
+
 
 
 
@@ -691,6 +791,39 @@ var testProChart2 = new Chart(ctx, {
 					}
     }
 });
+
+
+var ctx = document.getElementById("compliant").getContext('2d');
+    var cmpliant = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+                    datasets: [{
+                        data: [
+                           {% for data in all_compliance %}{{data.inspec_failed}}{% endfor %},
+                            {% for data in all_compliance %}{{data.inspec_passed}}{% endfor %},
+                            {% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %},
+
+                        ],
+                        backgroundColor: [
+                            '#f74d4d', '#f89406', '#3a87ad'
+
+                        ],
+                        label: 'Venerability'
+                    }],
+                    labels: [
+                        'Failed',
+                        'Passed',
+                        'Skipped',
+                    ]
+                },
+        options: {
+            responsive: true,
+            title: {
+                            display: true,
+                            text: 'Compliance Summary'
+                        }
+        }
+    });
 
 
 

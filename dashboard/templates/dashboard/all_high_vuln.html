@@ -191,6 +191,17 @@
                                     <td><span class="badge badge-{{data.vul_col}}">{{data.risk}}</span></td>
                                 </tr>
                                 {% endfor %}
+                                {% for data in clair_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="/clair/clair_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.NamespaceName}}</td>
+                                    <td><span class="badge badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
 
                                 <!--&lt;!&ndash;Bandit&ndash;&gt;-->
                                 {% for data in bandit_vuln_high %}
