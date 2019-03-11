@@ -14,7 +14,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-
 class zap_spider_db(models.Model):
     spider_url = models.TextField(blank=True)
     spider_scanid = models.TextField(blank=True)
@@ -274,7 +273,6 @@ class arachni_scan_result_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Arachni', editable=False)
-
 
 
 class task_schedule_db(models.Model):

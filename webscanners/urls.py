@@ -86,4 +86,7 @@ urlpatterns = [
     url(r'^excluded_url_list',
         web_views.exluded_url_list),
 
+    url(r'^del_notify',
+        web_views.del_notify),
+
 ]

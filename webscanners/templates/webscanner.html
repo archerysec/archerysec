@@ -5,213 +5,25 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
 
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
-
-<script type="text/javascript">
-
- $(document).on('submit', '#start_scan', function(e){
-        var opt = false;
-        e.preventDefault();
-        if ($('[name="optradio1"]').is(':checked')){
-            opt = true;
-            $.ajax({
-                type:'POST',
-                url:'/zapscanner/zap_scan/',
-                data:{
-
-                   url:$('#url').val(),
-                   project_id:$('#project_id').val(),
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-
-                }
-            });
-
-       }
-
-       if ($('[name="optradio2"]').is(':checked')){
-           opt = true;
-           $.ajax({
-                    type:'POST',
-                    url:'/burpscanner/burp_launch_scan/',
-                    data:{
-
-                       url:$('#url').val(),
-                       project_id:$('#project_id').val(),
-                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    sucess:function(){
-
-                    }
-           });
-       }
-
-       if ($('[name="optradio3"]').is(':checked')){
-           opt = true;
-           $.ajax({
-                    type:'POST',
-                    url:'/tools/sslscan/',
-                    data:{
-
-                       scan_url:$('#url').val(),
-                       project_id:$('#project_id').val(),
-                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    sucess:function(){
-
-                    }
-           });
-       }
-       if ($('[name="optradio4"]').is(':checked')){
-           opt = true;
-           $.ajax({
-                    type:'POST',
-                    url:'/tools/nikto/',
-                    data:{
-
-                       scan_url:$('#url').val(),
-                       project_id:$('#project_id').val(),
-                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    sucess:function(){
-
-                    }
-           });
-       }
-       if ($('[name="optradio5"]').is(':checked')){
-           opt = true;
-           $.ajax({
-                    type:'POST',
-                    url:'/arachniscanner/arachni_scan_launch/',
-                    data:{
-
-                       scan_url:$('#url').val(),
-                       project_id:$('#project_id').val(),
-                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    sucess:function(){
-
-                    }
-           });
-       }
-
-	if (opt) {
-		$('#status').text('Scan launched.').css	({'color': '#5bb75b', 'margin-left': '200px'});
-	} else {
-		$('#status').text("The scan can't launched: no scanner selected.").css({'color': '#b94a48', 'margin-left': '200px'});
-	}
-    });
-
-
-
-
-
-
-
-
-
-</script>
-
-<script>
-function myFunction() {
-    document.getElementById("start_scan").reset();
-}
-
-$(document).on('submit', '#open_login', function(e){
-        e.preventDefault();
-            $.ajax({
-                type:'POST',
-                url:'/webscanners/sel_login/',
-                data:{
-                   url_login:$('input[name=url_login]').val(),
-                   action:$('input[name=action]').val(),
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-
-                }
-            });
-        this.reset();
-    });
-
-$(document).on('submit', '#save_cookies', function(e){
-        e.preventDefault();
-            $.ajax({
-                type:'POST',
-                url:'/webscanners/sel_login/',
-                data:{
-                   url_login:$('input[name=url_login]').val(),
-                   action:$('input[name=action2]').val(),
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-
-                }
-            });
-        this.reset();
-    });
-
-$(document).on('submit', '#exclude_url', function(e){
-        e.preventDefault();
-            $.ajax({
-                type:'POST',
-                url:'/webscanners/exclude_url/',
-                data:{
-                   exclude_url:$('input[name=exclude_url]').val(),
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-
-                }
-            });
-        this.reset();
-    });
-
-
-
-
-
-
-
-
-
-</script>
-
-<script type="text/javascript">
- function autoRefresh_div()
- {
-      $("#result").load("/webscanners/scans_table");// a function which will load data from other file after x seconds
-  }
- setInterval('autoRefresh_div()', {{ settings.REFRESH_TIMER }}000);
-
-
-
-
-
-
-
-
-
-</script>
 
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
             Home</a></div>
     </div>
+
     <div class="row-fluid">
         <!--<div class="span3 offset1">-->
-            <!--{% if messages %}-->
+        <!--{% if messages %}-->
 
-            <!--{% for message in messages %}-->
-            <!--<div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"-->
-                                                            <!--href="#">×</a>-->
-                <!--<h2 class="alert-heading">{{ message }}</h2>-->
-            <!--</div>-->
-            <!--{% endfor %}-->
+        <!--{% for message in messages %}-->
+        <!--<div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"-->
+        <!--href="#">×</a>-->
+        <!--<h2 class="alert-heading">{{ message }}</h2>-->
+        <!--</div>-->
+        <!--{% endfor %}-->
 
-            <!--{% endif %}-->
+        <!--{% endif %}-->
         <!--</div>-->
         <div class="container-fluid">
             <div class="span12">
@@ -246,10 +58,10 @@ $(document).on('submit', '#exclude_url', function(e){
                             </div>
                             <div class="controls">
                                 <input type="submit"
-                                       class="btn btn-primary" value="Launch">
+                                       class="btn btn-primary" value="Launch" >
                                 <a href="/webscanners/web_scan_schedule" class="btn btn-success">Scan Schedule</a>
                             </div>
-			    <div id='status'></div>
+                            <div id='status'></div>
                         </form>
                     </div>
 
@@ -260,7 +72,7 @@ $(document).on('submit', '#exclude_url', function(e){
                     <h5>Scanners</h5>
                 </div>
                 <div class="widget-content">
-		    <p>Select your scanner(s) from the ones available:</p>
+                    <p>Select your scanner(s) from the ones available:</p>
                     <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                         <label>
                             <input name="optradio1" type="checkbox"><span>Zap Scanner</span>
@@ -377,6 +189,183 @@ $(document).on('submit', '#exclude_url', function(e){
         </div>
     </div>
 </div>
-</div>
+
+<script>
+     function my_special_notification_callback(data) {
+    for (var i=0; i < data.unread_list.length; i++) {
+        msg = data.unread_list[i];
+        console.log(msg);
+    }
+}
+
+
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+<script type="text/javascript">
+
+ $(document).on('submit', '#start_scan', function(e){
+        var opt = false;
+        e.preventDefault();
+        if ($('[name="optradio1"]').is(':checked')){
+            opt = true;
+            $.ajax({
+                type:'POST',
+                url:'/zapscanner/zap_scan/',
+                data:{
+
+                   url:$('#url').val(),
+                   project_id:$('#project_id').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                success:function(){
+
+                    setTimeout(function(){
+                    location.reload();
+                        }, 5000);
+                 }
+            });
+
+       }
+
+       if ($('[name="optradio2"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'/burpscanner/burp_launch_scan/',
+                    data:{
+
+                       url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+
+       if ($('[name="optradio3"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'/tools/sslscan/',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+       if ($('[name="optradio4"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'/tools/nikto/',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+       if ($('[name="optradio5"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'/arachniscanner/arachni_scan_launch/',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+
+	if (opt) {
+		$('#status').text('Scan launched.').css	({'color': '#5bb75b', 'margin-left': '200px'});
+	} else {
+		$('#status').text("The scan can't launched: no scanner selected.").css({'color': '#b94a48', 'margin-left': '200px'});
+	}
+    });
+
+
+
+</script>
+
+<script>
+function myFunction() {
+    document.getElementById("start_scan").reset();
+}
+
+$(document).on('submit', '#open_login', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'/webscanners/sel_login/',
+                data:{
+                   url_login:$('input[name=url_login]').val(),
+                   action:$('input[name=action]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
+$(document).on('submit', '#save_cookies', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'/webscanners/sel_login/',
+                data:{
+                   url_login:$('input[name=url_login]').val(),
+                   action:$('input[name=action2]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
+$(document).on('submit', '#exclude_url', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'/webscanners/exclude_url/',
+                data:{
+                   exclude_url:$('input[name=exclude_url]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
+
+
+
+</script>
+
 
 {% endblock %}

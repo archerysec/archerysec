@@ -1,6 +1,22 @@
 {% load static i18n %}<!DOCTYPE html>
 <html lang="en">
     <head>
+
+         <!--<meta charset="UTF-8"/>-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"/>-->
+    <!--<link rel="stylesheet" href="/static/css/bootstrap.min.css"/>-->
+    <!--<link rel="stylesheet" href="/static/css/bootstrap-responsive.min.css"/>-->
+    <!--<link rel="stylesheet" href="/static/css/fullcalendar.css"/>-->
+    <!--<link rel="stylesheet" href="/static/archerysecurity/css/style.css"/>-->
+    <!--<link rel="stylesheet" href="/static/archerysecurity/css/media.css"/>-->
+    <!--<link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet"/>-->
+    <!--<link rel="stylesheet" href="/static/css/jquery.gritter.css"/>-->
+    <!--<link rel="stylesheet" href="/static/css/slider.css"/>-->
+    <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>-->
+    <!--<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>-->
+
+
+
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title>{% block title %}{% endblock title %} » Archery</title>
@@ -15,6 +31,7 @@
         <link href="{% static "css/uniform.css" %}" rel="stylesheet" />
         <link href="{% static "css/select2.css" %}" rel="stylesheet" />
         <link href="{% static "css/jquery.gritter.css" %}" rel="stylesheet" />
+        <!--<link href="{% static "css/archery-style.css" %}" rel="stylesheet" />-->
 
         <link href="{% static "css/sitetree_bootstrap_submenu.css"%}" type="text/css" rel="stylesheet" media="screen">
         <link href="{% static "archerysecurity/css/fonts.css" %}" rel="stylesheet" />
@@ -53,6 +70,7 @@
 
         {% include '_footer.html' %}
 
+
         <script src="{% static "js/jquery.min.js" %}"></script>
         <script src="{% static "js/jquery.ui.custom.js" %}"></script>
         <script src="{% static "js/bootstrap.min.js" %}"></script>
@@ -60,18 +78,14 @@
         <script src="{% static "js/select2.min.js" %}"></script>
         <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
         <script src="{% static "js/jquery.gritter.min.js" %}"></script>
-        <script src="{% static "js/jquery.gritter.js" %}"></script>
-        <script src="{% static "js/jquery.flot.min.js" %}"></script>
-        <script src="{% static "js/jquery.flot.resize.min.js" %}"></script>
+        <!--<script src="{% static "js/jquery.flot.min.js" %}"></script>-->
+        <!--<script src="{% static "js/jquery.flot.resize.min.js" %}"></script>-->
         <script src="{% static "js/jquery.peity.min.js" %}"></script>
+        <script src="{% static "js/archery.interface.js" %}"></script>
 
         <script src="{% static "archerysecurity/js/base.js" %}"></script>
         <script src="{% static "archerysecurity/js/tables.js" %}"></script>
         <script src="{% static "archerysecurity/js/popover.js" %}"></script>
-
-        {% comment %}
-        <script src="{% static "js/archery.interface.js" %}"></script>
-        {% endcomment %}
 
         <script src="{% static "dashboard/js/base.js" %}"></script>
 

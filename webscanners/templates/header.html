@@ -15,35 +15,141 @@
     <link rel="stylesheet" href="/static/css/slider.css"/>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 <body>
-
 <!--Header-part-->
 <div id="header">
     <img src="/static/archery_logo.svg" style="max-width:200px; margin-top: 20px;">
 </div>
 <!--close-Header-part-->
+<style>
+    /* -----------------------------------------
+   Timeline
+----------------------------------------- */
+.timeline {
+  list-style: none;
+  padding-left: 0;
+  position: relative;
+}
+.timeline:after {
+  content: "";
+  height: auto;
+  width: 1px;
+  background: #e3e3e3;
+  position: absolute;
+  top: 5px;
+  left: 30px;
+  bottom: 25px;
+}
+.timeline.timeline-sm:after {
+  left: 12px;
+}
+.timeline-load-more-btn {
+  margin-left: 70px;
+}
+.timeline-load-more-btn i {
+  margin-right: 5px;
+}
 
 
+/* -----------------------------------------
+   Dropdown
+----------------------------------------- */
+.dropdown-menu{
+    padding:0 0 0 0;
+}
+a.dropdown-menu-header {
+    background: #f7f9fe;
+    font-weight: bold;
+    border-bottom: 1px solid #e3e3e3;
+}
+.dropdown-menu > li a {
+    padding: 10px 20px;
+}
+
+/* -----------------------------------------
+   Badge
+----------------------------------------- */
+
+.badge{
+    padding: 3px 5px 2px;
+    position: absolute;
+    top: 8px;
+    left: 5px;
+    display: inline-block;
+    min-width: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 1;
+    vertical-align: baseline;
+    white-space: nowrap;
+    text-align: center;
+    border-radius: 10px;
+}
+.badge-danger {
+    background-color: #db5565;
+}
+
+
+
+</style>
 <!--top-Header-menu-->
 <div id="user-nav" class="navbar navbar-inverse">
     <ul class="nav">
-        <!--<li class="dropdown" id="profile-messages"><a title="" href="#" data-toggle="dropdown"-->
-                                                      <!--data-target="#profile-messages" class="dropdown-toggle"><i-->
-                <!--class="icon icon-user"></i> <span class="text">Welcome User</span><b class="caret"></b></a>-->
-            <ul class="dropdown-menu">
-                <li><a href="#"><i class="icon-user"></i> My Profile</a></li>
-                <li class="divider"></li>
-                <li><a href="#"><i class="icon-check"></i> My Tasks</a></li>
-                <li class="divider"></li>
-                <li style="position: right: 100;"><a href="/logout/"><i class="icon-key"></i> Log Out</a></li>
+        <li class="dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages"
+                                                   class="dropdown-toggle"><i class="icon icon-bell"
+                                                                              style="font-size: 20px; float: left; color: white"></i><span
+                class="badge badge-danger">{% load notifications_tags %}{% live_notify_badge %}</span> <span
+                class="text"></span> <b class="caret"></b></a>
+            <ul class="dropdown-menu dropdown-menu-left pull-right" role="menu" aria-labelledby="dropdownMenu1">
+                <li role="presentation">
+                    <a href="#" class="dropdown-menu-header">Notifications</a>
+                </li>
+                <ul class="timeline timeline-icons timeline-sm" style="margin:10px;width:410px">
+                    {% for data in message %}
+                    <li>
+                        <div class="alert alert-info alert-block"><a class="close" data-dismiss="alert"
+                                                                     href="/webscanners/del_notify?notify_id={{data.id}}">×</a>
+                            <h8 class="">{{data.verb}}</h8>
+                        </div>
+                    </li>
+                    {% endfor %}
+
+                </ul>
+                <li role="presentation">
+                    <a href="#" class="dropdown-menu-header"></a>
+                </li>
             </ul>
+        </li>
+        <!--<li class="dropdown" id="profile-messages"><a title="" href="#" data-toggle="dropdown"-->
+        <!--data-target="#profile-messages" class="dropdown-toggle"><i-->
+        <!--class="icon icon-user"></i> <span class="text">Welcome User</span><b class="caret"></b></a>-->
+        <!--<ul class="dropdown-menu">-->
+        <!--<li><a href="#"><i class="icon-user"></i> My Profile</a></li>-->
+        <!--<li class="divider"></li>-->
+        <!--<li><a href="#"><i class="icon-check"></i> My Tasks</a></li>-->
+        <!--<li class="divider"></li>-->
+        <!--<li style="position: right: 100;"><a href="/logout/"><i class="icon-key"></i> Log Out</a></li>-->
+        <!--</ul>-->
+
         <!--</li>-->
+
+        <!--<div class="dropdown" style="float: left; padding: 13px">-->
+        <!--<a href="#" onclick="return false;" role="button" data-toggle="dropdown" id="menu-messages" data-target="#menu-messages" style="float: left" aria-expanded="true">-->
+        <!--<i class="icon icon-bell" style="font-size: 20px; float: left; color: black">-->
+        <!--</i>-->
+        <!--</a>-->
+        <!--<span class="badge badge-danger">6</span>-->
+
+        <!--</div>-->
+
         <li class=""><a title="" href="/projects/create_form/"><i class="icon-plus icon-white"></i> <span class="text">Add New Project</span></a>
         </li>
-        <li class=""><a title="" href="/webscanners/setting/"><i class="icon icon-cog"></i> <span class="text">Settings</span></a></li>
-        <li class=""><a title="" href="//developers.archerysec.info/"><i class="icon-link"></i> <span class="text">Archery API Doc</span></a></li>
+        <li class=""><a title="" href="/webscanners/setting/"><i class="icon icon-cog"></i> <span
+                class="text">Settings</span></a></li>
+        <li class=""><a title="" href="//developers.archerysec.info/"><i class="icon-link"></i> <span class="text">Archery API Doc</span></a>
+        </li>
         <li><a title="" href="/logout/"><i class="icon icon-share-alt"></i> <span class="text">Logout</span></a>
         </li>
 
@@ -51,38 +157,119 @@
 
 </div>
 
-{% extends 'sidebar.html' %}
-    {% block body %}
+<div id="sidebar">
+    <ul>
+        <li><a href="/dashboard/"><i class="icon-tasks"></i><span>Dashboard</span></a></li>
+        <!--<li><a href="/projects/"><i class="icon-tasks"></i><span>Projects</span></a></li>-->
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Scan</span> </a>
+            <ul>
+                <li><a href="/webscanners/">Domain</a></li>
+                <li><a href="/networkscanners/ip_scan">IP</a></li>
+            </ul>
+        </li>
+        <li><a href="/manual_scan/"><i class="icon-tasks"></i><span>Manual Scans</span></a></li>
+        <li class="submenu">
+            <a href="#">
+                <i class="icon icon-inbox"></i>
+                <span>Web Scans</span>
+            </a>
+            <ul>
+                <li><a href="/zapscanner/zap_scan_list/">Zap Scan</a></li>
+                <li><a href="/burpscanner/burp_scan_list">Burp Scan</a></li>
+                <li><a href="/arachniscanner/arachni_scan_list">Arachni</a></li>
+                <li><a href="/netsparkerscanner/netsparker_scan_list/">Netsparker</a></li>
+                <li><a href="/webinspectscanner/webinspect_scan_list/">Webinspect</a></li>
+                <li><a href="/acunetixscanner/acunetix_scan_list/">Acunetix</a></li>
 
-    {% endblock %}
+            </ul>
+        </li>
+        <li class="submenu">
+            <a href="#">
+                <i class="icon icon-inbox"></i>
+                <span>Tools</span>
+            </a>
+            <ul>
+                <li><a href="/tools/sslscan/">SSLScan</a></li>
+                <li><a href="/tools/nikto/">Nikto</a></li>
+                <!--<li><a href="/tools/nmap_scan/">Nmap</a></li>-->
+                <li><a href="/tools/nmap_vulners_scan/">Nmap Vulners</a></li>
+                <!--<li><a href="/webscanners/arachni_scan_list">Arachni</a></li>-->
+            </ul>
+        </li>
+        <!--<li><a href="/networkscanners/"><i class="icon icon-th"></i> <span>Network Scans</span></a></li>-->
+        <li class="submenu">
+            <a href="#">
+                <i class="icon icon-inbox"></i>
+                <span>Network Scans</span>
+            </a>
+            <ul>
+                <li><a href="/networkscanners/">OpenVAS</a></li>
+                <li><a href="/networkscanners/nessus_scan">Nessus</a></li>
+            </ul>
+        </li>
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Static Scans</span> <span
+                class="label label-important"></span></a>
+            <ul>
+                <li><a href="/banditscanner/banditscans_list"><i class="icon-tasks"></i> <span>Bandit Scan</span></a>
+                </li>
+                <!--<li><a href="/osintscan/domain_osint/"><i class="icon-tasks"></i> <span>Domain OSINT</span></a></li>-->
+                <li><a href="/dependencycheck/dependencycheck_list"><i
+                        class="icon-tasks"></i><span>Dependency Check</span></a></li>
+                <li><a href="/findbugs/findbugs_list"><i class="icon-tasks"></i><span>FindBugs</span></a></li>
+                <li><a href="/clair/clair_list"><i class="icon-tasks"></i><span>Clair</span></a></li>
+
+
+            </ul>
+        </li>
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Compliance</span> <span
+                class="label label-important"></span></a>
+            <ul>
+                <li><a href="/inspec/inspec_list"><i class="icon-tasks"></i> <span>Inspec</span></a>
+                </li>
+
+            </ul>
+        </li>
+        <!--<li><a href="/scanapi/"><i class="icon icon-th"></i> <span>API Scan</span></a></li>-->
+        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>OSINT Scan</span> </a>
+            <ul>
+                <li><a href="/osintscan/domain_list/"><i class="icon-tasks"></i> <span>Domain List</span></a></li>
+                <li><a href="/osintscan/domain_osint/"><i class="icon-tasks"></i> <span>Domain OSINT</span></a></li>
+
+            </ul>
+        </li>
+    </ul>
+</div>
+{% block body %}
+
+
+{% endblock %}
 
 <div class="row-fluid">
-    <div id="footer" class="span12">  <a href=""></a>
+    <div id="footer" class="span12"><a href=""></a>
     </div>
 </div>
 
-<!--end-Footer-part-->
 
-<script src="/static/js/excanvas.min.js"></script>
+<!--<script src="/static/js/excanvas.min.js"></script>-->
 <script src="/static/js/jquery.min.js"></script>
 <script src="/static/js/jquery.ui.custom.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/jquery.flot.min.js"></script>
-<script src="/static/js/jquery.flot.resize.min.js"></script>
+<!--<script src="/static/js/jquery.flot.min.js"></script>-->
+<!--<script src="/static/js/jquery.flot.resize.min.js"></script>-->
 <script src="/static/js/jquery.peity.min.js"></script>
-<script src="/static/js/fullcalendar.min.js"></script>
+<!--<script src="/static/js/fullcalendar.min.js"></script>-->
 <script src="/static/archerysecurity/js/base.js"></script>
-<script src="/static/dashboard/js/base.js"></script>
+<!--<script src="/static/dashboard/js/base.js"></script>-->
 <script src="/static/js/jquery.gritter.min.js"></script>
-<script src="/static/js/jquery.gritter.js"></script>
 <script src="/static/js/archery.interface.js"></script>
 <script src="/static/js/archery.chat.js"></script>
-<script src="/static/js/jquery.validate.js"></script>
-<script src="/static/js/archery.form_validation.js"></script>
-<script src="/static/js/jquery.wizard.js"></script>
-<script src="/static/js/jquery.uniform.js"></script>
-<script src="/static/js/select2.min.js"></script>
+<!--<script src="/static/js/jquery.validate.js"></script>-->
+<!--<script src="/static/js/archery.form_validation.js"></script>-->
+<!--<script src="/static/js/jquery.wizard.js"></script>-->
+<!--<script src="/static/js/jquery.uniform.js"></script>-->
+<script src="/static/js/select.min.js"></script>
 <script src="/static/archerysecurity/js/popover.js"></script>
+<script src="/static/js/notify.js"></script>
 
 
 <script type="text/javascript">
@@ -109,6 +296,33 @@ function resetMenu() {
    document.gomenu.selector.selectedIndex = 2;
 }
 
+
+$(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = [];
+            $.each($("input[name='del_notify_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/webscanners/',
+                data:{
+                   notify_id: json_scanid,
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+            setTimeout(location.reload(), 6000);
+        });
+
+    });
+
+
+
+
 </script>
-</body>
-</html>

@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'import_export',
     'vFeedgui',
     'compliance',
+    'notifications',
 
 ]
 
@@ -202,3 +203,7 @@ except ImportError:
     pass
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
+
+DJANGO_NOTIFICATIONS_CONFIG = { 'SOFT_DELETE': True}

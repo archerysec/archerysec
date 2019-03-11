@@ -53,12 +53,16 @@ def zap_connect():
                 proxies={
                     'http': zap_hosts + ':' + zap_ports,
                     'https': zap_hosts + ':' + zap_ports})
+
     return zap
 
 
 def zap_replacer(target_url):
     zap = zap_connect()
-    zap.replacer.remove_rule(description=target_url, apikey=zap_api_key)
+    try:
+        zap.replacer.remove_rule(description=target_url, apikey=zap_api_key)
+    except Exception as e:
+        print "ZAP Replacer error"
 
     return
 
@@ -202,7 +206,10 @@ class ZAPScanner:
 
         try:
             print "targets:-----", self.target_url
-            spider_id = self.zap.spider.scan(self.target_url)
+            try:
+                spider_id = self.zap.spider.scan(self.target_url)
+            except Exception as e:
+                print "Spider Error"
             time.sleep(5)
             # try:
             #     self.zap.ajaxSpider.scan(self.target_url)
@@ -232,7 +239,7 @@ class ZAPScanner:
             )
 
         except Exception as e:
-            print e
+            print "Spider Thread error"
 
         return thread
 
@@ -280,7 +287,7 @@ class ZAPScanner:
         try:
             scan_id = self.zap.ascan.scan(self.target_url)
         except Exception as e:
-            print e
+            print "ZAP SCAN ERROR"
 
         return scan_id
 
@@ -315,7 +322,10 @@ class ZAPScanner:
         The function return ZAP Scan Results.
         :return:
         """
-        all_vuln = self.zap.core.alerts(self.target_url)
+        try:
+            all_vuln = self.zap.core.alerts(self.target_url)
+        except Exception as e:
+            print "zap scan result error"
 
         return all_vuln
 

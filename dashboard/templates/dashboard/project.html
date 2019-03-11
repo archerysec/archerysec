@@ -11,6 +11,13 @@
         <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
             <h5>Project Analytics</h5>
         </div>
+        <!--<div class="widget-content notify-ui">-->
+            <!--<ul id="gritter-notify">-->
+                <!--&lt;!&ndash;<li class="normal">Standard notification</li>&ndash;&gt;-->
+                <!--<li class="sticky">Sticky notification</li>-->
+                <!--&lt;!&ndash;<li class="image" data-image="img/demo/envelope.png">Notification with image</li>&ndash;&gt;-->
+            <!--</ul>-->
+        <!--</div>-->
         <div class="widget-box">
             <div class="widget-content">
                 <div class="row-fluid">
@@ -45,19 +52,23 @@
                                 <tbody>
                                 <tr>
                                     <td><a href="#">Total Nodes</a></td>
-                                    <td><span class="badge badge-inverse">{% for data in all_compliance %}{{data.total_vuln}}{% endfor %}</span></td>
+                                    <td><span class="badge badge-inverse">{% for data in all_compliance %}{{data.total_vuln}}{% endfor %}</span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Failed Nodes</a></td>
-                                    <td><span class="badge badge-important">{% for data in all_compliance %}{{data.inspec_failed}}{% endfor %}</span></td>
+                                    <td><span class="badge badge-important">{% for data in all_compliance %}{{data.inspec_failed}}{% endfor %}</span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Passed Nodes</a></td>
-                                    <td><span class="badge badge-warning">{% for data in all_compliance %}{{data.inspec_passed}}{% endfor %}</span></td>
+                                    <td><span class="badge badge-warning">{% for data in all_compliance %}{{data.inspec_passed}}{% endfor %}</span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Skipped Nodes</a></td>
-                                    <td><span class="badge badge-info">{% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %}</span></td>
+                                    <td><span class="badge badge-info">{% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %}</span>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -622,6 +633,7 @@
 
 
 
+
 </script>
 
 
@@ -824,6 +836,7 @@ var ctx = document.getElementById("compliant").getContext('2d');
                         }
         }
     });
+
 
 
 

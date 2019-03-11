@@ -19,6 +19,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token
 from rest_framework_jwt.views import refresh_jwt_token
+import notifications.urls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -41,6 +42,7 @@ urlpatterns = [
     url(r'^api/', include('archeryapi.urls')),
     url(r'^scanapi/', include('APIScan.urls')),
     url(r'^vfeed/', include('vFeedgui.urls')),
+    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 
     # Default url
     url(r'', include('dashboard.urls')),
@@ -64,10 +66,11 @@ urlpatterns = [
 ]
 
 urlpatterns = urlpatterns + \
-    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+              static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+                      url(r'^__debug__/', include(debug_toolbar.urls)),
+                  ] + urlpatterns

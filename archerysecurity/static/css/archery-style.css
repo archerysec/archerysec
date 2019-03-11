@@ -94,7 +94,7 @@ hr{ border-top-color:#dadada;}
 /* Top user navigation */
 #user-nav {
 	position: absolute;
-	right: 0px;
+	left: 220px;
 	top:0px;
 	z-index: 20;
 	margin: 0;
@@ -165,7 +165,7 @@ hr{ border-top-color:#dadada;}
 	margin-right: 10px;
 }
 #sidebar > ul > li.active > a {
-	background: url("../img/menu-active.png") no-repeat scroll right center transparent !important;
+	background: url("/static/img/menu-active.png") no-repeat scroll right center transparent !important;
 	text-decoration:none;
 }
 #sidebar > ul > li > a > .label {
@@ -216,10 +216,6 @@ hr{ border-top-color:#dadada;}
 	text-shadow: 0 1px 0 #ffffff;
 	margin-left: 20px;
 	position: relative;
-}
-#content-header h2 {
-	font-size:12px;
-	margin-left: 20px;
 }
 #content-header .btn-group {
 	float: right;
@@ -1095,8 +1091,6 @@ div.dataTables_wrapper .ui-widget-header {
 	height: 8px;
 }
 .modal {
-    width: 70%;
-    margin-left:-30%;
 	z-index: 99999 !important;
 }
 .modal-backdrop {

@@ -40,6 +40,8 @@ from webscanners.resources import ZapResource, \
     NetsparkerResource, \
     AcunetixResource, \
     WebinspectResource
+from django.contrib.auth.models import User
+from notifications.signals import notify
 
 scans_status = None
 
@@ -51,6 +53,18 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     :param project_id: Project ID
     :return:
     """
+    user = User.objects.get(username='admin')
+
+    # Connection Test
+    zap_connect = zap_plugin.zap_connect()
+
+    try:
+        zap_connect.spider.scan(url=target_url)
+        notify.send(user, recipient=user, verb='ZAP Scan Started')
+    except Exception:
+        notify.send(user, recipient=user, verb='ZAP Conection Not Found')
+        print "ZAP Conection Not Found"
+        return HttpResponseRedirect('/webscanners/')
 
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
@@ -71,13 +85,14 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         )
 
         save_all_scan.save()
+        notify.send(user, recipient=user, verb='ZAP Scan URL %s Added' % target_url)
     except Exception as e:
         print e
     zap.zap_spider_thread(thread_value=30)
     spider_id = zap.zap_spider()
     zap.spider_status(spider_id=spider_id)
     zap.spider_result(spider_id=spider_id)
-    print "Spider Completed"
+    notify.send(user, recipient=user, verb='ZAP Scan Spider Completed')
     time.sleep(5)
     print 'Scanning Target %s' % target_url
     """ ZAP Scan trigger on target_url  """
@@ -97,6 +112,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         un_scanid=scan_id,
     )
     print save_all_vuln
+    notify.send(user, recipient=user, verb='ZAP Scan URL %s Completed' % target_url)
     # return HttpResponse(status=201)
 
 

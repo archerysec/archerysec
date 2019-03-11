@@ -57,6 +57,7 @@ from staticscanners.models import dependencycheck_scan_db,\
 from tools.models import nikto_result_db
 import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
+from notifications.models import Notification
 
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
@@ -193,6 +194,20 @@ def invalid_login():
     return render_to_response('invalid_login.html')
 
 
+def del_notify(request):
+    """
+
+    :return:
+    """
+    if request.method == 'GET':
+        notify_id = request.GET['notify_id']
+
+        notify_del = Notification.objects.filter(id=notify_id)
+        notify_del.delete()
+
+    return HttpResponseRedirect('/webscanners/')
+
+
 def index(request):
     """
     The function calling web scan Page.
@@ -207,6 +222,8 @@ def index(request):
 
     all_scans_db = project_db.objects.all()
 
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'webscanner.html',
                   {
@@ -218,7 +235,8 @@ def index(request):
                       'spider_alert': spider_alert,
                       'all_excluded_url': all_excluded_url,
                       'all_cookies': all_cookies,
-                      'all_scans_db': all_scans_db
+                      'all_scans_db': all_scans_db,
+                      'message': all_notify
                   }
                   )
 
