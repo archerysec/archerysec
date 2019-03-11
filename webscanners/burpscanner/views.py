@@ -23,6 +23,7 @@ from jiraticketing.models import jirasetting
 from archerysettings.models import burp_setting_db
 import hashlib
 from webscanners.resources import BurpResource
+from notifications.models import Notification
 
 
 def burp_setting(request):

@@ -19,6 +19,7 @@ from webscanners.models import webinspect_scan_db, \
     webinspect_scan_result_db
 import hashlib
 from webscanners.resources import WebinspectResource
+from notifications.models import Notification
 
 
 def webinspect_list_vuln(request):
@@ -54,9 +55,13 @@ def webinspect_scan_list(request):
     """
     all_webinspect_scan = webinspect_scan_db.objects.all()
 
+    all_notify = Notification.objects.unread()
+
+
     return render(request,
                   'webinspectscanner/webinspect_scan_lis.html',
-                  {'all_webinspect_scan': all_webinspect_scan})
+                  {'all_webinspect_scan': all_webinspect_scan,
+                   'message': all_notify})
 
 
 def webinspect_vuln_data(request):

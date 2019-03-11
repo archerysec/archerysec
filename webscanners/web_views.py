@@ -49,16 +49,15 @@ from webscanners.zapscanner.views import launch_zap_scan
 from archerysettings.models import zap_settings_db, \
     burp_setting_db, \
     nmap_vulners_setting_db, \
-    arachni_settings_db
+    arachni_settings_db, email_db
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser
 from lxml import etree
-from staticscanners.models import dependencycheck_scan_db,\
+from staticscanners.models import dependencycheck_scan_db, \
     findbugs_scan_db
 from tools.models import nikto_result_db
 import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from notifications.models import Notification
-
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -451,9 +450,8 @@ def setting(request):
     burp_port = settings.burp_port()
 
     # Loading Email Settings
-    email_subject = settings.email_subject()
-    email_from = settings.email_from()
-    to_email = settings.email_to()
+
+    all_email = email_db.objects.all()
 
     # Load JIRA Setting
     jira_setting = jirasetting.objects.all()
@@ -486,9 +484,7 @@ def setting(request):
                    'lod_ov_port': lod_ov_port,
                    'burp_path': burp_host,
                    'burp_port': burp_port,
-                   'email_subject': email_subject,
-                   'email_from': email_from,
-                   'to_email': to_email,
+                   'all_email':all_email,
                    'jira_server': jira_server,
                    'jira_username': jira_username,
                    'jira_password': jira_password,
@@ -506,19 +502,25 @@ def email_setting(request):
     :return:
     """
     # Load Email Setting function
-    save_email_setting = save_settings.SaveSettings(setting_file)
+    all_email = email_db.objects.all()
 
     if request.method == 'POST':
         subject = request.POST.get("email_subject")
-        from_email = request.POST.get("from_email")
+        from_message = request.POST.get("email_message")
         email_to = request.POST.get("to_email")
 
-        save_email_setting.save_email_settings(
-            email_subject=subject,
-            email_from=from_email,
-            email_to=email_to
+        print email_to
+
+        save_email = email_db(
+            subject=subject,
+            message=from_message,
+            recipient_list=email_to,
         )
-    return render(request, 'email_setting_form.html')
+        save_email.save()
+        return HttpResponseRedirect('/webscanners/setting/')
+
+    return render(request, 'email_setting_form.html', {'all_email': all_email}
+                  )
 
 
 def burp_setting(request):

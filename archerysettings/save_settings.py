@@ -17,7 +17,7 @@ from archerysettings.models import zap_settings_db,\
     burp_setting_db,\
     openvas_setting_db,\
     nmap_vulners_setting_db, \
-    arachni_settings_db
+    arachni_settings_db, email_db
 
 
 class SaveSettings:
@@ -171,3 +171,16 @@ class SaveSettings:
                                                    arachni_port=arachniport,
                                                    )
         save_arachnisettings.save()
+
+    def email_settings(self, subject, message, recipient_list):
+        """
+
+        :param arachnihost:
+        :param arachniport:
+        :return:
+        """
+        all_email = email_db.objects.all()
+        all_email.delete()
+
+        save_emailsettings = email_db(subject=subject, message=message, recipient_list=recipient_list)
+        save_emailsettings.save()

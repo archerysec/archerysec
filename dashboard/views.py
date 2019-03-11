@@ -42,7 +42,9 @@ from django.shortcuts import render, render_to_response, HttpResponse, HttpRespo
 from itertools import chain
 import datetime
 from webscanners.resources import AllResource
-
+from notifications.models import Notification
+from django.contrib.auth import user_logged_in
+from django.contrib.auth.models import User
 # Create your views here.
 chart = []
 all_high_stat = ""
@@ -71,10 +73,14 @@ def dashboard(request):
     scanners = 'vscanners'
     all_project = project_db.objects.all()
 
+    user = user_logged_in
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'dashboard/index.html',
                   {'all_project': all_project,
-                   'scanners': scanners
+                   'scanners': scanners,
+                   'message': all_notify
                    })
 
 
@@ -100,10 +106,13 @@ def project_dashboard(request):
     scanners = 'vscanners'
     all_project = project_db.objects.all()
 
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'dashboard/project.html',
                   {'all_project': all_project,
-                   'scanners': scanners
+                   'scanners': scanners,
+                   'message': all_notify
                    })
 
 
@@ -705,6 +714,8 @@ def proj_data(request):
                          int(len(findbugs_false_positive)) + \
                          int(len(clair_false_positive))
 
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'dashboard/project.html',
                   {'project_id': project_id,
@@ -796,7 +807,8 @@ def proj_data(request):
                    'all_clair_low': all_clair_low,
                    'all_clair_medium': all_clair_medium,
                    'all_closed_vuln': all_closed_vuln,
-                   'all_false_positive': all_false_positive
+                   'all_false_positive': all_false_positive,
+                   'message': all_notify
                    })
 
 

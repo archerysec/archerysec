@@ -18,6 +18,7 @@ from webscanners.models import burp_scan_result_db, \
 from jiraticketing.models import jirasetting
 import hashlib
 from webscanners.resources import AcunetixResource
+from notifications.models import Notification
 
 
 def acunetix_list_vuln(request):
@@ -55,9 +56,12 @@ def acunetix_scan_list(request):
     """
     all_acunetix_scan = acunetix_scan_db.objects.all()
 
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'acunetixscanner/acunetix_scan_lis.html',
-                  {'all_acunetix_scan': all_acunetix_scan})
+                  {'all_acunetix_scan': all_acunetix_scan,
+                   'message': all_notify})
 
 
 def acunetix_vuln_data(request):

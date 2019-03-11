@@ -47,3 +47,9 @@ class nmap_vulners_setting_db(models.Model):
     online = models.NullBooleanField(blank=False, null=False)
     # -T4 | Set timing template (higher is faster)
     timing = models.IntegerField(blank=False, null=False, default=0)
+
+
+class email_db(models.Model):
+    subject = models.TextField(blank=True, null=True)
+    message = models.TextField(blank=True, null=True)
+    recipient_list = models.TextField(blank=True, null=True)

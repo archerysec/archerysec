@@ -38,6 +38,15 @@ from jiraticketing.models import jirasetting
 import hashlib
 import json
 
+from django.contrib.auth.models import User
+from notifications.signals import notify
+from notifications.models import Notification
+from django.core.mail import send_mail
+from django.conf import settings
+from archerysettings.models import email_db
+
+from notifications.models import Notification
+
 api_data = os.getcwd() + '/' + 'apidata.json'
 
 status = ""
@@ -59,6 +68,20 @@ tags = ""
 banner = ""
 
 
+def email_notify(user, subject, message):
+    all_email = email_db.objects.all()
+    for email in all_email:
+        to_mail = email.recipient_list
+
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [to_mail]
+    try:
+        send_mail(subject, message, email_from, recipient_list)
+    except Exception as e:
+        notify.send(user, recipient=user, verb='Email Settings Not Configured')
+        pass
+
+
 def index(request):
     """
     Function calling network base html.
@@ -67,7 +90,9 @@ def index(request):
     """
     all_ip = scan_save_db.objects.all()
 
-    return render(request, 'index.html', {'all_ip': all_ip})
+    all_notify = Notification.objects.unread()
+
+    return render(request, 'index.html', {'all_ip': all_ip, 'message': all_notify})
 
 
 def scan_status(request):
@@ -165,7 +190,7 @@ def scan_vul_details(request):
                    })
 
 
-def openvas_scanner(scan_ip, project_id, sel_profile):
+def openvas_scanner(scan_ip, project_id, sel_profile, user):
     """
     The function is launch the OpenVAS scans.
     :param scan_ip:
@@ -174,7 +199,22 @@ def openvas_scanner(scan_ip, project_id, sel_profile):
     :return:
     """
     openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile)
-    scanner = openvas.connect()
+    try:
+        scanner = openvas.connect()
+    except Exception as e:
+        print 'OpenVAS Setting not configured '
+        notify.send(user, recipient=user, verb='OpenVAS Setting not configured')
+        subject = 'Archery Tool Notification'
+        message = 'OpenVAS Scanner failed due to setting not found '
+
+        email_notify(user=user, subject=subject, message=message)
+        return
+
+    notify.send(user, recipient=user, verb='OpenVAS Scan Started')
+    subject = 'Archery Tool Notification'
+    message = 'OpenVAS Scan Started'
+
+    email_notify(user=user, subject=subject, message=message)
     scan_id, target_id = openvas.scan_launch(scanner)
     date_time = datetime.now()
     save_all = scan_save_db(scan_id=str(scan_id),
@@ -188,6 +228,13 @@ def openvas_scanner(scan_ip, project_id, sel_profile):
     time.sleep(5)
     vuln_an_id(scan_id=scan_id)
 
+    notify.send(user, recipient=user, verb='OpenVAS Scan Completed')
+
+    subject = 'Archery Tool Notification'
+    message = 'OpenVAS Scan Completed'
+
+    email_notify(user=user, subject=subject, message=message)
+
     return HttpResponse(status=201)
 
 
@@ -198,6 +245,7 @@ def launch_scan(request):
     :return:
     """
     all_ip = scan_save_db.objects.all()
+    user = request.user
 
     if request.method == 'POST':
         all_ip = scan_save_db.objects.all()
@@ -211,7 +259,7 @@ def launch_scan(request):
         for i in range(0, split_length):
             target = target_split.__getitem__(i)
             print "Scan Launched IP:", target
-            thread = threading.Thread(target=openvas_scanner, args=(target, project_id, sel_profile))
+            thread = threading.Thread(target=openvas_scanner, args=(target, project_id, sel_profile, user))
             thread.daemon = True
             thread.start()
 
@@ -252,10 +300,14 @@ def ip_scan(request):
     all_scans = scan_save_db.objects.all()
     all_proj = project_db.objects.all()
 
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'ipscan.html',
                   {'all_scans': all_scans,
-                   'all_proj': all_proj})
+                   'all_proj': all_proj,
+                   'message': all_notify,
+                   })
 
 
 def ip_scan_table(request):

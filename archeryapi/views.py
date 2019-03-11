@@ -86,13 +86,15 @@ class WebScan(generics.ListCreateAPIView):
             project_id = request.data.get('project_id', )
             rescanid = None
             rescan = 'No'
+            user = request.user
             if scanner == 'zap_scan':
                 # run_s = launch_zap_scan
                 thread = threading.Thread(target=launch_zap_scan, args=(target_url,
                                                                         project_id,
                                                                         rescanid,
                                                                         rescan,
-                                                                        scan_id))
+                                                                        scan_id,
+                                                                        user))
                 thread.daemon = True
                 thread.start()
 

@@ -27,6 +27,7 @@ from scanners.scanner_parser.web_scanner import arachni_xml_parser
 import json
 import time
 from webscanners.resources import ArachniResource
+from notifications.models import Notification
 
 
 def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):

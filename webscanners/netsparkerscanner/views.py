@@ -18,6 +18,7 @@ from webscanners.models import netsparker_scan_db, \
     netsparker_scan_result_db
 import hashlib
 from webscanners.resources import NetsparkerResource
+from notifications.models import Notification
 
 
 def netsparker_list_vuln(request):

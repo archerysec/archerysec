@@ -28,26 +28,26 @@
                         <h5>Email Setting</h5>
                     </div>
                     <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/webscanners/email_setting">{% csrf_token %}
+                        <form class="form-horizontal" method="POST" action="/webscanners/email_setting/">{% csrf_token %}
                             <div class="control-group">
-                                <label class="control-label">Subject :</label>
+                                <label class="control-label">Email Message :</label>
                                 <div class="controls">
-                                    <input type="text" name="email_subject" value="{{ email_subject }}" class="span11"
-                                           placeholder="Email Subject"/>
+                                    <input type="text" name="email_message" class="span11"
+                                           />
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">From Email :</label>
+                                <label class="control-label">Email Subject:</label>
                                 <div class="controls">
-                                    <input type="email" name="from_email" value="{{ from_email }}" class="span11"
-                                           placeholder="From Email"/>
+                                    <input type="text" name="email_subject" class="span11"
+                                           />
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label">To Email :</label>
+                                <label class="control-label">To Email:</label>
                                 <div class="controls">
-                                    <input type="email" name="to_email" value="{{ to_email }}" class="span11"
-                                           placeholder="To Email"/>
+                                    <input type="text" name="to_email" value="{{ burp_port }}" class="span11"
+                                           />
                                 </div>
                             </div>
                             <div class="form-actions">

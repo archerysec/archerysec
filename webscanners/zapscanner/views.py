@@ -34,26 +34,38 @@ from background_task.models import Task
 from jiraticketing.models import jirasetting
 from archerysettings.models import zap_settings_db
 import hashlib
-from webscanners.resources import ZapResource, \
-    BurpResource, \
-    ArachniResource, \
-    NetsparkerResource, \
-    AcunetixResource, \
-    WebinspectResource
+from webscanners.resources import ZapResource
 from django.contrib.auth.models import User
 from notifications.signals import notify
+from notifications.models import Notification
+from django.core.mail import send_mail
+from django.conf import settings
+from archerysettings.models import email_db
 
 scans_status = None
 
 
-def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
+def email_notify(user, subject, message):
+    all_email = email_db.objects.all()
+    for email in all_email:
+        to_mail = email.recipient_list
+
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [to_mail]
+    try:
+        send_mail(subject, message, email_from, recipient_list)
+    except Exception as e:
+        notify.send(user, recipient=user, verb='Email Settings Not Configured')
+        pass
+
+
+def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     """
     The function Launch ZAP Scans.
     :param target_url: Target URL
     :param project_id: Project ID
     :return:
     """
-    user = User.objects.get(username='admin')
 
     # Connection Test
     zap_connect = zap_plugin.zap_connect()
@@ -61,8 +73,13 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     try:
         zap_connect.spider.scan(url=target_url)
         notify.send(user, recipient=user, verb='ZAP Scan Started')
+
     except Exception:
         notify.send(user, recipient=user, verb='ZAP Conection Not Found')
+        subject = 'ZAP Conection Not Found'
+        message = 'ZAP Scanner failed due to setting not found '
+
+        email_notify(user=user, subject=subject, message=message)
         print "ZAP Conection Not Found"
         return HttpResponseRedirect('/webscanners/')
 
@@ -113,6 +130,10 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     )
     print save_all_vuln
     notify.send(user, recipient=user, verb='ZAP Scan URL %s Completed' % target_url)
+    subject = 'Archery Tool Scan Status - ZAP Scan Completed'
+    message = 'ZAP Scanner has completed the scan  %s' % target_url
+
+    email_notify(user=user, subject=subject, message=message)
     # return HttpResponse(status=201)
 
 
@@ -123,6 +144,7 @@ def zap_scan(request):
     :return:
     """
     global scans_status
+    user = request.user
     if request.POST.get("url", ):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
@@ -138,7 +160,7 @@ def zap_scan(request):
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_zap_scan,
-                args=(target, project_id, rescan_id, rescan, scan_id))
+                args=(target, project_id, rescan_id, rescan, scan_id, user))
             thread.daemon = True
             thread.start()
 
@@ -340,11 +362,14 @@ def zap_scan_list(request):
     rescan_all_scans = zap_scans_db.objects.filter(rescan='Yes')
     zap_scan_result = zap_scan_results_db.objects.all()
 
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'zapscanner/zap_scan_list.html',
                   {'all_scans': all_scans,
                    'rescan_all_scans': rescan_all_scans,
-                   'zap_scan_result': zap_scan_result
+                   'zap_scan_result': zap_scan_result,
+                   'message': all_notify
                    })
 
 
