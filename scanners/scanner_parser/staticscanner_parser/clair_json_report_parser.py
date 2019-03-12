@@ -26,183 +26,196 @@ def clair_report_json(data, project_id, scan_id):
     """
 
     global vul_col
-    high = data['Vulnerabilities']['High']
-    for vuln in high:
-        vul_id = uuid.uuid4()
-        Name = vuln['Name']
-        NamespaceName = vuln['NamespaceName']
-        Description = vuln['Description']
-        Link = vuln['Link']
-        Severity = vuln['Severity']
-        Metadata = vuln['Metadata']
-        FeatureName = vuln['FeatureName']
-        FeatureVersion = vuln['FeatureVersion']
+    try:
+        high = data['Vulnerabilities']['High']
+        for vuln in high:
+            vul_id = uuid.uuid4()
+            Name = vuln['Name']
+            NamespaceName = vuln['NamespaceName']
+            Description = vuln['Description']
+            Link = vuln['Link']
+            Severity = vuln['Severity']
+            Metadata = vuln['Metadata']
+            FeatureName = vuln['FeatureName']
+            FeatureVersion = vuln['FeatureVersion']
 
-        if Severity == "High":
-            vul_col = "important"
+            if Severity == "High":
+                vul_col = "important"
 
-        dup_data = Name + Severity + NamespaceName
+            dup_data = Name + Severity + NamespaceName
 
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
-        match_dup = clair_scan_results_db.objects.filter(
-            dup_hash=duplicate_hash).values('dup_hash')
-        lenth_match = len(match_dup)
+            match_dup = clair_scan_results_db.objects.filter(
+                dup_hash=duplicate_hash).values('dup_hash')
+            lenth_match = len(match_dup)
 
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
-            duplicate_vuln = 'No'
-        else:
-            duplicate_vuln = 'None'
+            if lenth_match == 1:
+                duplicate_vuln = 'Yes'
+            elif lenth_match == 0:
+                duplicate_vuln = 'No'
+            else:
+                duplicate_vuln = 'None'
 
-        false_p = clair_scan_results_db.objects.filter(
-            false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
+            false_p = clair_scan_results_db.objects.filter(
+                false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
 
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        else:
-            false_positive = 'No'
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
 
-        save_all = clair_scan_results_db(
-            vuln_id=vul_id,
-            scan_id=scan_id,
-            project_id=project_id,
-            Name=Name,
-            NamespaceName=NamespaceName,
-            Description=Description,
-            Link=Link,
-            Severity=Severity,
-            Metadata=Metadata,
-            FeatureName=FeatureName,
-            FeatureVersion=FeatureVersion,
-            vuln_status='Open',
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            false_positive=false_positive,
-            vul_col=vul_col,
-        )
-        save_all.save()
+            save_all = clair_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                Name=Name,
+                NamespaceName=NamespaceName,
+                Description=Description,
+                Link=Link,
+                Severity=Severity,
+                Metadata=Metadata,
+                FeatureName=FeatureName,
+                FeatureVersion=FeatureVersion,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+                vul_col=vul_col,
+            )
+            save_all.save()
+    except Exception:
+        print "High Vulnerability Not Found"
+        pass
 
-    medium = data['Vulnerabilities']['Medium']
-    for vuln in medium:
-        vul_id = uuid.uuid4()
-        Name = vuln['Name']
-        NamespaceName = vuln['NamespaceName']
-        Description = vuln['Description']
-        Link = vuln['Link']
-        Severity = vuln['Severity']
-        Metadata = vuln['Metadata']
-        FeatureName = vuln['FeatureName']
-        FeatureVersion = vuln['FeatureVersion']
+    try:
 
-        if Severity == "Medium":
-            vul_col = "warning"
+        medium = data['Vulnerabilities']['Medium']
+        for vuln in medium:
+            vul_id = uuid.uuid4()
+            Name = vuln['Name']
+            NamespaceName = vuln['NamespaceName']
+            Description = vuln['Description']
+            Link = vuln['Link']
+            Severity = vuln['Severity']
+            Metadata = vuln['Metadata']
+            FeatureName = vuln['FeatureName']
+            FeatureVersion = vuln['FeatureVersion']
 
-        dup_data = Name + Severity + NamespaceName
+            if Severity == "Medium":
+                vul_col = "warning"
 
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+            dup_data = Name + Severity + NamespaceName
 
-        match_dup = clair_scan_results_db.objects.filter(
-            dup_hash=duplicate_hash).values('dup_hash')
-        lenth_match = len(match_dup)
+            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
-            duplicate_vuln = 'No'
-        else:
-            duplicate_vuln = 'None'
+            match_dup = clair_scan_results_db.objects.filter(
+                dup_hash=duplicate_hash).values('dup_hash')
+            lenth_match = len(match_dup)
 
-        false_p = clair_scan_results_db.objects.filter(
-            false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
+            if lenth_match == 1:
+                duplicate_vuln = 'Yes'
+            elif lenth_match == 0:
+                duplicate_vuln = 'No'
+            else:
+                duplicate_vuln = 'None'
 
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        else:
-            false_positive = 'No'
+            false_p = clair_scan_results_db.objects.filter(
+                false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
 
-        save_all = clair_scan_results_db(
-            vuln_id=vul_id,
-            scan_id=scan_id,
-            project_id=project_id,
-            Name=Name,
-            NamespaceName=NamespaceName,
-            Description=Description,
-            Link=Link,
-            Severity=Severity,
-            Metadata=Metadata,
-            FeatureName=FeatureName,
-            FeatureVersion=FeatureVersion,
-            vuln_status='Open',
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            false_positive=false_positive,
-            vul_col=vul_col,
-        )
-        save_all.save()
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
 
-    low = data['Vulnerabilities']['Low']
+            save_all = clair_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                Name=Name,
+                NamespaceName=NamespaceName,
+                Description=Description,
+                Link=Link,
+                Severity=Severity,
+                Metadata=Metadata,
+                FeatureName=FeatureName,
+                FeatureVersion=FeatureVersion,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+                vul_col=vul_col,
+            )
+            save_all.save()
+    except Exception:
+        print "Medium Vulnerability not found."
+        pass
 
-    for vuln in low:
-        vul_id = uuid.uuid4()
-        Name = vuln['Name']
-        NamespaceName = vuln['NamespaceName']
-        Description = vuln['Description']
-        Link = vuln['Link']
-        Severity = vuln['Severity']
-        Metadata = vuln['Metadata']
-        FeatureName = vuln['FeatureName']
-        FeatureVersion = vuln['FeatureVersion']
+    try:
+        low = data['Vulnerabilities']['Low']
 
-        if Severity == "Low":
-            vul_col = "info"
+        for vuln in low:
+            vul_id = uuid.uuid4()
+            Name = vuln['Name']
+            NamespaceName = vuln['NamespaceName']
+            Description = vuln['Description']
+            Link = vuln['Link']
+            Severity = vuln['Severity']
+            Metadata = vuln['Metadata']
+            FeatureName = vuln['FeatureName']
+            FeatureVersion = vuln['FeatureVersion']
 
-        dup_data = Name + Severity + NamespaceName
+            if Severity == "Low":
+                vul_col = "info"
 
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+            dup_data = Name + Severity + NamespaceName
 
-        match_dup = clair_scan_results_db.objects.filter(
-            dup_hash=duplicate_hash).values('dup_hash')
-        lenth_match = len(match_dup)
+            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
-            duplicate_vuln = 'No'
-        else:
-            duplicate_vuln = 'None'
+            match_dup = clair_scan_results_db.objects.filter(
+                dup_hash=duplicate_hash).values('dup_hash')
+            lenth_match = len(match_dup)
 
-        false_p = clair_scan_results_db.objects.filter(
-            false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
+            if lenth_match == 1:
+                duplicate_vuln = 'Yes'
+            elif lenth_match == 0:
+                duplicate_vuln = 'No'
+            else:
+                duplicate_vuln = 'None'
 
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        else:
-            false_positive = 'No'
+            false_p = clair_scan_results_db.objects.filter(
+                false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
 
-        save_all = clair_scan_results_db(
-            vuln_id=vul_id,
-            scan_id=scan_id,
-            project_id=project_id,
-            Name=Name,
-            NamespaceName=NamespaceName,
-            Description=Description,
-            Link=Link,
-            Severity=Severity,
-            Metadata=Metadata,
-            FeatureName=FeatureName,
-            FeatureVersion=FeatureVersion,
-            vuln_status='Open',
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            false_positive=false_positive,
-            vul_col=vul_col,
-        )
-        save_all.save()
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
+
+            save_all = clair_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                Name=Name,
+                NamespaceName=NamespaceName,
+                Description=Description,
+                Link=Link,
+                Severity=Severity,
+                Metadata=Metadata,
+                FeatureName=FeatureName,
+                FeatureVersion=FeatureVersion,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+                vul_col=vul_col,
+            )
+            save_all.save()
+    except Exception:
+        print "Low Vulnerability Not found"
+        pass
 
     all_clair_data = clair_scan_results_db.objects.filter(scan_id=scan_id)
 
