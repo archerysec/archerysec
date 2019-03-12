@@ -230,8 +230,21 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
 
     notify.send(user, recipient=user, verb='OpenVAS Scan Completed')
 
+    all_openvas = scan_save_db.objects.all()
+    all_vuln = ''
+    total_high = ''
+    total_medium = ''
+    total_low = ''
+    for openvas in all_openvas:
+        all_vuln = openvas.total_vul
+        total_high = openvas.high_total
+        total_medium = openvas.medium_total
+        total_low = openvas.low_total
+
     subject = 'Archery Tool Notification'
-    message = 'OpenVAS Scan Completed'
+    message = 'OpenVAS Scan Completed' \
+              'Total: %s Total High: %s ' \
+              'Total Medium: %s Total Low %s' % (all_vuln, total_high, total_medium, total_low)
 
     email_notify(user=user, subject=subject, message=message)
 

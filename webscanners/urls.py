@@ -89,4 +89,7 @@ urlpatterns = [
     url(r'^del_notify',
         web_views.del_notify),
 
+    url(r'^del_all_notify',
+        web_views.del_all_notify),
+
 ]

@@ -50,6 +50,7 @@ def email_notify(user, subject, message):
     for email in all_email:
         to_mail = email.recipient_list
 
+    print to_mail
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [to_mail]
     try:
@@ -129,9 +130,24 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         un_scanid=scan_id,
     )
     print save_all_vuln
+    all_zap_scan = zap_scans_db.objects.all()
+
+    total_vuln = ''
+    total_high = ''
+    total_medium = ''
+    total_low = ''
+    for data in all_zap_scan:
+        total_vuln = data.total_vul
+        total_high = data.high_vul
+        total_medium = data.medium_vul
+        total_low = data.low_vul
+
     notify.send(user, recipient=user, verb='ZAP Scan URL %s Completed' % target_url)
+
     subject = 'Archery Tool Scan Status - ZAP Scan Completed'
-    message = 'ZAP Scanner has completed the scan  %s' % target_url
+    message = 'ZAP Scanner has completed the scan' \
+              '  %s Total: %s Total High: %s ' \
+              'Total Medium: %s Total Low %s' % (target_url, total_vuln, total_high, total_medium, total_low)
 
     email_notify(user=user, subject=subject, message=message)
     # return HttpResponse(status=201)

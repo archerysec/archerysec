@@ -207,6 +207,19 @@ def del_notify(request):
     return HttpResponseRedirect('/webscanners/')
 
 
+def del_all_notify(request):
+    """
+
+    :return:
+    """
+    if request.method == 'GET':
+
+        notify_del = Notification.objects.all()
+        notify_del.delete()
+
+    return HttpResponseRedirect('/webscanners/')
+
+
 def index(request):
     """
     The function calling web scan Page.
@@ -484,7 +497,7 @@ def setting(request):
                    'lod_ov_port': lod_ov_port,
                    'burp_path': burp_host,
                    'burp_port': burp_port,
-                   'all_email':all_email,
+                   'all_email': all_email,
                    'jira_server': jira_server,
                    'jira_username': jira_username,
                    'jira_password': jira_password,
@@ -509,7 +522,7 @@ def email_setting(request):
         from_message = request.POST.get("email_message")
         email_to = request.POST.get("to_email")
 
-        print email_to
+        all_email.delete()
 
         save_email = email_db(
             subject=subject,
