@@ -164,6 +164,7 @@ class NetworkScan(generics.ListCreateAPIView):
            Current user's identity endpoint.
 
         """
+        user = request.user
         serializer = NetworkScanSerializer(data=request.data)
         if serializer.is_valid():
             target_ip = request.data.get('scan_ip', )
@@ -172,7 +173,7 @@ class NetworkScan(generics.ListCreateAPIView):
             # views.openvas_scanner(target_ip, project_id, profile)
             thread = threading.Thread(
                 target=views.openvas_scanner,
-                args=(target_ip, project_id, profile)
+                args=(target_ip, project_id, profile, user)
             )
             thread.daemon = True
             thread.start()
