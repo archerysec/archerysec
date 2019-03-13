@@ -52,22 +52,22 @@
                                 <tbody>
                                 <tr>
                                     <td><a href="#">Total Nodes</a></td>
-                                    <td><span class="badge badge-inverse">{% for data in all_compliance %}{{data.total_vuln}}{% endfor %}</span>
+                                    <td><span class="badge badge-inverse">{{total_compliance}}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Failed Nodes</a></td>
-                                    <td><span class="badge badge-important">{% for data in all_compliance %}{{data.inspec_failed}}{% endfor %}</span>
+                                    <td><span class="badge badge-important">{{all_compliance_failed}}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Passed Nodes</a></td>
-                                    <td><span class="badge badge-warning">{% for data in all_compliance %}{{data.inspec_passed}}{% endfor %}</span>
+                                    <td><span class="badge badge-warning">{{all_compliance_passed}}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><a href="#">Skipped Nodes</a></td>
-                                    <td><span class="badge badge-info">{% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %}</span>
+                                    <td><span class="badge badge-info">{{all_compliance_skipped}}</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -811,9 +811,9 @@ var ctx = document.getElementById("compliant").getContext('2d');
         data: {
                     datasets: [{
                         data: [
-                           {% for data in all_compliance %}{{data.inspec_failed}}{% endfor %},
-                            {% for data in all_compliance %}{{data.inspec_passed}}{% endfor %},
-                            {% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %},
+                           {{all_compliance_failed}},
+                            {{all_compliance_passed}},
+                            {{all_compliance_skipped}},
 
                         ],
                         backgroundColor: [

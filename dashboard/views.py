@@ -155,6 +155,9 @@ def proj_data(request):
     all_clair_scan = clair_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
+    all_inspec_scan = inspec_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('total_vuln'))
+
     all_bandit_scan = bandit_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
@@ -217,6 +220,12 @@ def proj_data(request):
         else:
             all_clair = value
 
+    for key, value in all_inspec_scan.iteritems():
+        if value is None:
+            all_inspec = '0'
+        else:
+            all_inspec = value
+
     for key, value in all_bandit_scan.iteritems():
         if value is None:
             all_bandit = '0'
@@ -251,6 +260,8 @@ def proj_data(request):
 
     total_web = int(all_zap) + int(all_burp)
 
+    total_compliance = int(all_inspec)
+
     all_zap_high = zap_scans_db.objects.filter(project_id=project_id). \
         aggregate(Sum('high_vul'))
     all_burp_high = burp_scan_db.objects.filter(project_id=project_id). \
@@ -276,6 +287,9 @@ def proj_data(request):
 
     all_clair_high = clair_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_HIGH'))
+
+    all_inspec_failed = inspec_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('inspec_failed'))
 
     all_bandit_high = bandit_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_HIGH'))
@@ -339,6 +353,12 @@ def proj_data(request):
         else:
             high_clair = value
 
+    for key, value in all_inspec_failed.iteritems():
+        if value is None:
+            failed_inspec = '0'
+        else:
+            failed_inspec = value
+
     for key, value in all_bandit_high.iteritems():
         if value is None:
             high_bandit = '0'
@@ -383,6 +403,8 @@ def proj_data(request):
 
     all_network_high = int(openvas_high) + int(high_nessus)
 
+    all_compliance_failed = int(failed_inspec)
+
     all_zap_medium = zap_scans_db.objects.filter(project_id=project_id). \
         aggregate(Sum('medium_vul'))
     all_burp_medium = burp_scan_db.objects.filter(project_id=project_id). \
@@ -408,6 +430,9 @@ def proj_data(request):
 
     all_clair_medium = clair_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_MEDIUM'))
+
+    all_inspec_passed = inspec_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('inspec_passed'))
 
     all_bandit_medium = bandit_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_MEDIUM'))
@@ -471,6 +496,12 @@ def proj_data(request):
         else:
             medium_clair = value
 
+    for key, value in all_inspec_passed.iteritems():
+        if value is None:
+            passed_inspec = '0'
+        else:
+            passed_inspec = value
+
     for key, value in all_bandit_medium.iteritems():
         if value is None:
             medium_bandit = '0'
@@ -515,6 +546,8 @@ def proj_data(request):
 
     all_network_medium = openvas_medium
 
+    all_compliance_passed = int(passed_inspec)
+
     all_zap_low = zap_scans_db.objects.filter(project_id=project_id). \
         aggregate(Sum('low_vul'))
     all_burp_low = burp_scan_db.objects.filter(project_id=project_id). \
@@ -540,6 +573,9 @@ def proj_data(request):
 
     all_clair_low = clair_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_LOW'))
+
+    all_inspec_skipped = inspec_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('inspec_skipped'))
 
     all_bandit_low = bandit_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_LOW'))
@@ -603,6 +639,13 @@ def proj_data(request):
         else:
             low_clair = value
 
+    for key, value in all_inspec_skipped.iteritems():
+        if value is None:
+            skipped_inspec = '0'
+        else:
+            skipped_inspec = value
+
+
     for key, value in all_bandit_low.iteritems():
         if value is None:
             low_bandit = '0'
@@ -646,6 +689,8 @@ def proj_data(request):
                      int(low_bandit)
 
     all_network_low = int(openvas_low) + int(low_nessus)
+
+    all_compliance_skipped = int(skipped_inspec)
 
     project_dat = project_db.objects.filter(project_id=project_id)
     burp = burp_scan_db.objects.filter(project_id=project_id)
@@ -756,6 +801,11 @@ def proj_data(request):
                    'all_findbugs_scan': all_findbugs_scan,
                    'all_clair_scan': all_clair_scan,
                    'all_webinspect_scan': all_webinspect_scan,
+
+                   'all_compliance_failed': all_compliance_failed,
+                   'all_compliance_passed': all_compliance_passed,
+                   'all_compliance_skipped': all_compliance_skipped,
+                   'total_compliance': total_compliance,
 
                    'openvas_dat': openvas_dat,
                    'nessus_dat': nessus_dat,
