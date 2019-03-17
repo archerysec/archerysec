@@ -1300,6 +1300,7 @@ def net_dash_data(request):
 
 
 def all_high_vuln(request):
+    all_notify = Notification.objects.unread()
     if request.GET['project_id']:
         project_id = request.GET['project_id']
         severity = request.GET['severity']
@@ -1467,7 +1468,8 @@ def all_high_vuln(request):
                    'openvas_all_high': openvas_all_high,
                    'nessus_all_high': nessus_all_high,
                    'project_id': project_id,
-                   'severity': severity
+                   'severity': severity,
+                   'message': all_notify,
                    })
 
 

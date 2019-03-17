@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="/static/css/jquery.gritter.css"/>
     <link rel="stylesheet" href="/static/css/slider.css"/>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
-    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="/static/js/jquery-1.9.1.min.js"></script>
+
 </head>
 <body>
 <!--Header-part-->
@@ -183,7 +184,7 @@ function resetMenu() {
 
 $(document).ready(function() {
         $("button").click(function(){
-            var scan_id = [];
+            var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
             $.each($("input[name='del_notify_id']:checked"), function(){
                 scan_id.push($(this).val());
             });

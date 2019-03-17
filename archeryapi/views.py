@@ -132,7 +132,8 @@ class WebScan(generics.ListCreateAPIView):
                                                                             project_id,
                                                                             rescanid,
                                                                             rescan,
-                                                                            scan_id))
+                                                                            scan_id,
+                                                                            user))
                 thread.daemon = True
                 thread.start()
 

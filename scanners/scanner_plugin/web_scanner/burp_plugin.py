@@ -74,9 +74,11 @@ class burp_scans(object):
         The function trigger the scans.
         """
 
-        settings = load_settings.ArcherySettings(setting_file)
+        settings = load_settings.ArcherySettings()
         burp_host = settings.burp_host()
         burp_port = settings.burp_port()
+
+        print burp_host
 
         global vuln_id, burp_status
         # try:

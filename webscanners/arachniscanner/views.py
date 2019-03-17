@@ -28,9 +28,10 @@ import json
 import time
 from webscanners.resources import ArachniResource
 from notifications.models import Notification
+from notifications.signals import notify
 
 
-def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
+def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     arachni_hosts = None
     arachni_ports = None
 
@@ -68,7 +69,17 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
     scan_launch = arachni.scan_launch(d)
     time.sleep(3)
 
-    print("Scan Launched !!!!!")
+    try:
+        scan_data = scan_launch.data
+
+        for key, value in scan_data.viewitems():
+            if key == 'id':
+                scan_run_id = value
+        notify.send(user, recipient=user, verb='Arachni Scan Started on URL %s' % target)
+    except Exception:
+        notify.send(user, recipient=user, verb='Arachni Connection Not found')
+        print "Arachni Connection Not found"
+        return
 
     date_time = datetime.now()
 
@@ -119,6 +130,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id):
         arachni_scan_db.objects.filter(scan_id=scan_id).update(scan_status='100')
         print("Data uploaded !!!!")
 
+    notify.send(user, recipient=user, verb='Arachni Scan Completed on URL %s' % target)
     print scan_run_id
 
 
@@ -128,6 +140,7 @@ def arachni_scan(request):
     :param request:
     :return:
     """
+    user = request.user
     if request.method == "POST":
         target_url = request.POST.get('scan_url')
         print target_url
@@ -144,7 +157,7 @@ def arachni_scan(request):
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_arachni_scan,
-                args=(target, project_id, rescan_id, rescan, scan_id))
+                args=(target, project_id, rescan_id, rescan, scan_id, user))
             thread.daemon = True
             thread.start()
 

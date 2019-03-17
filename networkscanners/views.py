@@ -242,9 +242,9 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
         total_low = openvas.low_total
 
     subject = 'Archery Tool Notification'
-    message = 'OpenVAS Scan Completed' \
-              'Total: %s Total High: %s ' \
-              'Total Medium: %s Total Low %s' % (all_vuln, total_high, total_medium, total_low)
+    message = 'OpenVAS Scan Completed  <br>' \
+              'Total: %s  <br>Total High: %s <br>' \
+              'Total Medium: %s  <br>Total Low %s' % (all_vuln, total_high, total_medium, total_low)
 
     email_notify(user=user, subject=subject, message=message)
 
