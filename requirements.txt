@@ -8,7 +8,7 @@ certifi==2019.3.9
 cffi==1.12.2
 chardet==3.0.4
 click==7.0
-configparser==3.5.0
+configparser==3.7.3
 coreapi==2.3.3
 coreapi-cli==1.0.6
 coreschema==0.0.4
