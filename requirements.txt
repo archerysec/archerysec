@@ -12,7 +12,7 @@ configparser==3.7.3
 coreapi==2.3.3
 coreapi-cli==1.0.9
 coreschema==0.0.4
-cryptography==2.3
+cryptography==2.6.1
 cssselect2==0.2.1
 defusedxml==0.5.0
 Django
