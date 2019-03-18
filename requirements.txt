@@ -57,7 +57,7 @@ pycparser==2.19
 PyJWT==1.7.1
 pylint==2.3.1
 PyPDF2==1.26.0
-Pyphen==0.9.4
+Pyphen==0.9.5
 python-nmap==0.6.1
 python-owasp-zap-v2.4==0.0.13
 python-taint==0.40
