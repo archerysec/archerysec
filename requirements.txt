@@ -54,7 +54,7 @@ Pillow==5.4.1
 psycopg2-binary==2.7.7
 PyBurprestapi==0.1
 pycparser==2.19
-PyJWT==1.6.1
+PyJWT==1.7.1
 pylint==1.9.3
 PyPDF2==1.26.0
 Pyphen==0.9.4
