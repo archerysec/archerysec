@@ -78,5 +78,5 @@ webencodings==0.5.1
 whitenoise==4.1.2
 wrapt==1.11.1
 xhtml2pdf==0.2.3
-beautifulsoup4
+beautifulsoup4==4.7.1
 django-import-export
