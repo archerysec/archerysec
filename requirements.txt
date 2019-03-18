@@ -36,7 +36,7 @@ gunicorn==19.9.0
 html5lib==1.0.1
 httplib2==0.12.1
 idna==2.8
-ipaddress==1.0.18
+ipaddress==1.0.22
 isort==4.3.4
 itypes==1.1.0
 Jinja2==2.10
