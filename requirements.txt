@@ -63,7 +63,7 @@ python-owasp-zap-v2.4==0.0.14
 python-taint==0.42
 python-whois==0.7.1
 pytz==2018.9
-reportlab==3.4.0
+reportlab==3.5.13
 requests==2.20.0
 requests-oauthlib==0.8.0
 requests-toolbelt==0.8.0
