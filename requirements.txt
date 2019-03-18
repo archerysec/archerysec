@@ -3,7 +3,7 @@ asn1crypto==0.24.0
 astroid==2.2.5
 backports.functools-lru-cache==1.5
 cairocffi==1.0.2
-CairoSVG==1.0.22
+CairoSVG==2.3.0
 certifi==2017.11.5
 cffi==1.11.2
 chardet==3.0.4
