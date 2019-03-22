@@ -1,0 +1,508 @@
+<?xml version="1.0"?><OWASPZAPReport version="2.7.0" generated="Wed, 7 Feb 2018 07:09:27">
+<site name="http://demo.testfire.net" host="demo.testfire.net" port="80" ssl="false"><alerts><alertitem>
+  <pluginid>10016</pluginid>
+  <alert>Web Browser XSS Protection Not Enabled</alert>
+  <name>Web Browser XSS Protection Not Enabled</name>
+  <riskcode>1</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>Low (Medium)</riskdesc>
+  <desc>&lt;p&gt;Web Browser XSS Protection is not enabled, or is disabled by the configuration of the &apos;X-XSS-Protection&apos; HTTP response header on the web server&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_press.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/high_yield_investments.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/disclaimer.htm?url=http://www.microsoft.com</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=pr/20060720.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=business_other.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/bank/login.aspx</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=business_insurance.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=privacy.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_executives.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=business_lending.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_jobs.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/search.aspx?txtSearch=ZAP</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_contact.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/images/icon_top.gif</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/bank/login.aspx</uri>
+  <method>POST</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=jobs/20061024.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_community.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=business_cards.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/security.htm</uri>
+  <method>GET</method>
+  <param>X-XSS-Protection</param>
+  </instance>
+  </instances>
+  <count>62</count>
+  <solution>&lt;p&gt;Ensure that the web browser&apos;s XSS filter is enabled, by setting the X-XSS-Protection HTTP response header to &apos;1&apos;.&lt;/p&gt;</solution>
+  <otherinfo>&lt;p&gt;The X-XSS-Protection HTTP response header allows the web server to enable or disable the web browser&apos;s XSS protection mechanism. The following values would attempt to enable it: &lt;/p&gt;&lt;p&gt;X-XSS-Protection: 1; mode=block&lt;/p&gt;&lt;p&gt;X-XSS-Protection: 1; report=http://www.example.com/xss&lt;/p&gt;&lt;p&gt;The following values would disable it:&lt;/p&gt;&lt;p&gt;X-XSS-Protection: 0&lt;/p&gt;&lt;p&gt;The X-XSS-Protection HTTP response header is currently supported on Internet Explorer, Chrome and Safari (WebKit).&lt;/p&gt;&lt;p&gt;Note that this alert is only raised if the response body could potentially contain an XSS payload (with a text-based content type, with a non-zero length).&lt;/p&gt;</otherinfo>
+  <reference>&lt;p&gt;https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet&lt;/p&gt;&lt;p&gt;https://blog.veracode.com/2014/03/guidelines-for-setting-security-headers/&lt;/p&gt;</reference>
+  <cweid>933</cweid>
+  <wascid>14</wascid>
+  <sourceid>3</sourceid>
+</alertitem>
+<alertitem>
+  <pluginid>10020</pluginid>
+  <alert>X-Frame-Options Header Not Set</alert>
+  <name>X-Frame-Options Header Not Set</name>
+  <riskcode>2</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>Medium (Medium)</riskdesc>
+  <desc>&lt;p&gt;X-Frame-Options header is not included in the HTTP response to protect against &apos;ClickJacking&apos; attacks.&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=privacy.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_community.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=pr/20061005.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=jobs/20061024.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=business_lending.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=jobs/20061026.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal_loans.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_press.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/bank/login.aspx</uri>
+  <method>POST</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=business_retirement.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal_investments.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=pr/20060720.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_jobs.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=business_deposit.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_trainee.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_investor.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=business_cards.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal_deposit.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_contact.htm</uri>
+  <method>GET</method>
+  <param>X-Frame-Options</param>
+  </instance>
+  </instances>
+  <count>56</count>
+  <solution>&lt;p&gt;Most modern Web browsers support the X-Frame-Options HTTP header. Ensure it&apos;s set on all web pages returned by your site (if you expect the page to be framed only by pages on your server (e.g. it&apos;s part of a FRAMESET) then you&apos;ll want to use SAMEORIGIN, otherwise if you never expect the page to be framed, you should use DENY. ALLOW-FROM allows specific websites to frame the web page in supported web browsers).&lt;/p&gt;</solution>
+  <reference>&lt;p&gt;http://blogs.msdn.com/b/ieinternals/archive/2010/03/30/combating-clickjacking-with-x-frame-options.aspx&lt;/p&gt;</reference>
+  <cweid>16</cweid>
+  <wascid>15</wascid>
+  <sourceid>3</sourceid>
+</alertitem>
+<alertitem>
+  <pluginid>10021</pluginid>
+  <alert>X-Content-Type-Options Header Missing</alert>
+  <name>X-Content-Type-Options Header Missing</name>
+  <riskcode>1</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>Low (Medium)</riskdesc>
+  <desc>&lt;p&gt;The Anti-MIME-Sniffing header X-Content-Type-Options was not set to &apos;nosniff&apos;. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared content type. Current (early 2014) and legacy versions of Firefox will use the declared content type (if one is set), rather than performing MIME-sniffing.&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net/survey_questions.aspx?step=a</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=pr/20060928.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/images/p_deposit.jpg</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/images/p_cards.jpg</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/survey_questions.aspx</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_about.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal_investments.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/images/inside6.jpg</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=pr/20060413.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_trainee.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/images/header_pic.jpg</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/style.css</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/images/pf_lock.gif</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=inside_internships.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal_deposit.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal_loans.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=pr/20060817.htm</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/disclaimer.htm?url=http://www.netscape.com</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/images/p_checking.jpg</uri>
+  <method>GET</method>
+  <param>X-Content-Type-Options</param>
+  </instance>
+  </instances>
+  <count>92</count>
+  <solution>&lt;p&gt;Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to &apos;nosniff&apos; for all web pages.&lt;/p&gt;&lt;p&gt;If possible, ensure that the end user uses a standards-compliant and modern web browser that does not perform MIME-sniffing at all, or that can be directed by the web application/web server to not perform MIME-sniffing.&lt;/p&gt;</solution>
+  <otherinfo>&lt;p&gt;This issue still applies to error type pages (401, 403, 500, etc) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.&lt;/p&gt;&lt;p&gt;At &quot;High&quot; threshold this scanner will not alert on client or server error responses.&lt;/p&gt;</otherinfo>
+  <reference>&lt;p&gt;http://msdn.microsoft.com/en-us/library/ie/gg622941%28v=vs.85%29.aspx&lt;/p&gt;&lt;p&gt;https://www.owasp.org/index.php/List_of_useful_HTTP_headers&lt;/p&gt;</reference>
+  <cweid>16</cweid>
+  <wascid>15</wascid>
+  <sourceid>3</sourceid>
+</alertitem>
+<alertitem>
+  <pluginid>10010</pluginid>
+  <alert>Cookie No HttpOnly Flag</alert>
+  <name>Cookie No HttpOnly Flag</name>
+  <riskcode>1</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>Low (Medium)</riskdesc>
+  <desc>&lt;p&gt;A cookie has been set without the HttpOnly flag, which means that the cookie can be accessed by JavaScript. If a malicious script can be run on this page then the cookie will be accessible and can be transmitted to another site. If this is a session cookie then session hijacking may be possible.&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net</uri>
+  <method>GET</method>
+  <param>amSessionId</param>
+  <evidence>Set-Cookie: amSessionId</evidence>
+  </instance>
+  </instances>
+  <count>1</count>
+  <solution>&lt;p&gt;Ensure that the HttpOnly flag is set for all cookies.&lt;/p&gt;</solution>
+  <reference>&lt;p&gt;http://www.owasp.org/index.php/HttpOnly&lt;/p&gt;</reference>
+  <cweid>16</cweid>
+  <wascid>13</wascid>
+  <sourceid>3</sourceid>
+</alertitem>
+<alertitem>
+  <pluginid>40012</pluginid>
+  <alert>Cross Site Scripting (Reflected)</alert>
+  <name>Cross Site Scripting (Reflected)</name>
+  <riskcode>3</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>High (Medium)</riskdesc>
+  <desc>&lt;p&gt;Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user&apos;s browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email client. The code itself is usually written in HTML/JavaScript, but may also extend to VBScript, ActiveX, Java, Flash, or any other browser-supported technology.&lt;/p&gt;&lt;p&gt;When an attacker gets a user&apos;s browser to execute his/her code, the code will run within the security context (or zone) of the hosting web site. With this level of privilege, the code has the ability to read, modify and transmit any sensitive data accessible by the browser. A Cross-site Scripted user could have his/her account hijacked (cookie theft), their browser redirected to another location, or possibly shown fraudulent content delivered by the web site they are visiting. Cross-site Scripting attacks essentially compromise the trust relationship between a user and the web site. Applications utilizing browser object instances which load content from the file system may execute code under the local machine zone allowing for system compromise.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;There are three types of Cross-site Scripting attacks: non-persistent, persistent and DOM-based.&lt;/p&gt;&lt;p&gt;Non-persistent attacks and DOM-based attacks require a user to either visit a specially crafted link laced with malicious code, or visit a malicious web page containing a web form, which when posted to the vulnerable site, will mount the attack. Using a malicious form will oftentimes take place when the vulnerable resource only accepts HTTP POST requests. In such a case, the form can be submitted automatically, without the victim&apos;s knowledge (e.g. by using JavaScript). Upon clicking on the malicious link or submitting the malicious form, the XSS payload will get echoed back and will get interpreted by the user&apos;s browser and execute. Another technique to send almost arbitrary requests (GET and POST) is by using an embedded client, such as Adobe Flash.&lt;/p&gt;&lt;p&gt;Persistent attacks occur when the malicious code is submitted to a web site where it&apos;s stored for a period of time. Examples of an attacker&apos;s favorite targets often include message board posts, web mail messages, and web chat software. The unsuspecting user is not required to interact with any additional site/link (e.g. an attacker site or a malicious link sent via email), just simply view the web page containing the code.&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net/search.aspx?txtSearch=%3C%2Fspan%3E%3Cscript%3Ealert%281%29%3B%3C%2Fscript%3E%3Cspan%3E</uri>
+  <method>GET</method>
+  <param>txtSearch</param>
+  <attack>&lt;/span&gt;&lt;script&gt;alert(1);&lt;/script&gt;&lt;span&gt;</attack>
+  <evidence>&lt;/span&gt;&lt;script&gt;alert(1);&lt;/script&gt;&lt;span&gt;</evidence>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/notfound.aspx?aspxerrorpath=%3C%2Fb%3E%3Cscript%3Ealert%281%29%3B%3C%2Fscript%3E%3Cb%3E</uri>
+  <method>GET</method>
+  <param>aspxerrorpath</param>
+  <attack>&lt;/b&gt;&lt;script&gt;alert(1);&lt;/script&gt;&lt;b&gt;</attack>
+  <evidence>&lt;/b&gt;&lt;script&gt;alert(1);&lt;/script&gt;&lt;b&gt;</evidence>
+  </instance>
+  </instances>
+  <count>2</count>
+  <solution>&lt;p&gt;Phase: Architecture and Design&lt;/p&gt;&lt;p&gt;Use a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.&lt;/p&gt;&lt;p&gt;Examples of libraries and frameworks that make it easier to generate properly encoded output include Microsoft&apos;s Anti-XSS library, the OWASP ESAPI Encoding module, and Apache Wicket.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Phases: Implementation; Architecture and Design&lt;/p&gt;&lt;p&gt;Understand the context in which your data will be used and the encoding that will be expected. This is especially important when transmitting data between different components, or when generating outputs that can contain multiple encodings at the same time, such as web pages or multi-part mail messages. Study all expected communication protocols and data representations to determine the required encoding strategies.&lt;/p&gt;&lt;p&gt;For any data that will be output to another web page, especially any data that was received from external inputs, use the appropriate encoding on all non-alphanumeric characters.&lt;/p&gt;&lt;p&gt;Consult the XSS Prevention Cheat Sheet for more details on the types of encoding and escaping that are needed.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Phase: Architecture and Design&lt;/p&gt;&lt;p&gt;For any security checks that are performed on the client side, ensure that these checks are duplicated on the server side, in order to avoid CWE-602. Attackers can bypass the client-side checks by modifying values after the checks have been performed, or by changing the client to remove the client-side checks entirely. Then, these modified values would be submitted to the server.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;If available, use structured mechanisms that automatically enforce the separation between data and code. These mechanisms may be able to provide the relevant quoting, encoding, and validation automatically, instead of relying on the developer to provide this capability at every point where output is generated.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Phase: Implementation&lt;/p&gt;&lt;p&gt;For every web page that is generated, use and specify a character encoding such as ISO-8859-1 or UTF-8. When an encoding is not specified, the web browser may choose a different encoding by guessing which encoding is actually being used by the web page. This can cause the web browser to treat certain sequences as special, opening up the client to subtle XSS attacks. See CWE-116 for more mitigations related to encoding/escaping.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;To help mitigate XSS attacks against the user&apos;s session cookie, set the session cookie to be HttpOnly. In browsers that support the HttpOnly feature (such as more recent versions of Internet Explorer and Firefox), this attribute can prevent the user&apos;s session cookie from being accessible to malicious client-side scripts that use document.cookie. This is not a complete solution, since HttpOnly is not supported by all browsers. More importantly, XMLHTTPRequest and other powerful browser technologies provide read access to HTTP headers, including the Set-Cookie header in which the HttpOnly flag is set.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Assume all input is malicious. Use an &quot;accept known good&quot; input validation strategy, i.e., use a whitelist of acceptable inputs that strictly conform to specifications. Reject any input that does not strictly conform to specifications, or transform it into something that does. Do not rely exclusively on looking for malicious or malformed inputs (i.e., do not rely on a blacklist). However, blacklists can be useful for detecting potential attacks or determining which inputs are so malformed that they should be rejected outright.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;When performing input validation, consider all potentially relevant properties, including length, type of input, the full range of acceptable values, missing or extra inputs, syntax, consistency across related fields, and conformance to business rules. As an example of business rule logic, &quot;boat&quot; may be syntactically valid because it only contains alphanumeric characters, but it is not valid if you are expecting colors such as &quot;red&quot; or &quot;blue.&quot;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Ensure that you perform input validation at well-defined interfaces within the application. This will help protect the application even if a component is reused or moved elsewhere.&lt;/p&gt;</solution>
+  <reference>&lt;p&gt;http://projects.webappsec.org/Cross-Site-Scripting&lt;/p&gt;&lt;p&gt;http://cwe.mitre.org/data/definitions/79.html&lt;/p&gt;</reference>
+  <cweid>79</cweid>
+  <wascid>8</wascid>
+  <sourceid>1</sourceid>
+</alertitem>
+<alertitem>
+  <pluginid>90022</pluginid>
+  <alert>Application Error Disclosure</alert>
+  <name>Application Error Disclosure</name>
+  <riskcode>2</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>Medium (Medium)</riskdesc>
+  <desc>&lt;p&gt;This page contains an error/warning message that may disclose sensitive information like the location of the file that produced the unhandled exception. This information can be used to launch further attacks against the web application. The alert could be a false positive if the error message is found inside a documentation page.&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal_savings.htm</uri>
+  <method>GET</method>
+  <evidence>HTTP/1.1 500 Internal Server Error</evidence>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/comment.aspx</uri>
+  <method>POST</method>
+  <evidence>HTTP/1.1 500 Internal Server Error</evidence>
+  </instance>
+  </instances>
+  <count>2</count>
+  <solution>&lt;p&gt;Review the source code of this page. Implement custom error pages. Consider implementing a mechanism to provide a unique error reference/identifier to the client (browser) while logging the details on the server side and not exposing them to the user.&lt;/p&gt;</solution>
+  <reference>&lt;p&gt;&lt;/p&gt;</reference>
+  <cweid>200</cweid>
+  <wascid>13</wascid>
+  <sourceid>3</sourceid>
+</alertitem>
+<alertitem>
+  <pluginid>0</pluginid>
+  <alert>Directory Browsing</alert>
+  <name>Directory Browsing</name>
+  <riskcode>2</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>Medium (Medium)</riskdesc>
+  <desc>&lt;p&gt;It is possible to view the directory listing.  Directory listing may reveal hidden scripts, include files , backup source files etc which can be accessed to read sensitive information.&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net/bank/</uri>
+  <method>GET</method>
+  <attack>Parent Directory</attack>
+  </instance>
+  <instance>
+  <uri>http://demo.testfire.net/pr/</uri>
+  <method>GET</method>
+  <attack>Parent Directory</attack>
+  </instance>
+  </instances>
+  <count>2</count>
+  <solution>&lt;p&gt;Disable directory browsing.  If this is required, make sure the listed files does not induce risks.&lt;/p&gt;</solution>
+  <reference>&lt;p&gt;http://httpd.apache.org/docs/mod/core.html#options&lt;/p&gt;&lt;p&gt;http://alamo.satlug.org/pipermail/satlug/2002-February/000053.html&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</reference>
+  <cweid>548</cweid>
+  <wascid>48</wascid>
+  <sourceid>1</sourceid>
+</alertitem>
+<alertitem>
+  <pluginid>10017</pluginid>
+  <alert>Cross-Domain JavaScript Source File Inclusion</alert>
+  <name>Cross-Domain JavaScript Source File Inclusion</name>
+  <riskcode>1</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>Low (Medium)</riskdesc>
+  <desc>&lt;p&gt;The page includes one or more script files from a third-party domain.&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net/default.aspx?content=personal_investments.htm</uri>
+  <method>GET</method>
+  <param>http://demo-analytics.testfire.net/urchin.js</param>
+  <evidence>&lt;script src=&quot;http://demo-analytics.testfire.net/urchin.js&quot; type=&quot;text/javascript&quot;&gt;	&lt;/script&gt;</evidence>
+  </instance>
+  </instances>
+  <count>1</count>
+  <solution>&lt;p&gt;Ensure JavaScript source files are loaded from only trusted sources, and the sources can&apos;t be controlled by end users of the application.&lt;/p&gt;</solution>
+  <reference>&lt;p&gt;&lt;/p&gt;</reference>
+  <cweid>829</cweid>
+  <wascid>15</wascid>
+  <sourceid>3</sourceid>
+</alertitem>
+<alertitem>
+  <pluginid>90030</pluginid>
+  <alert>WSDL File Passive Scanner</alert>
+  <name>WSDL File Passive Scanner</name>
+  <riskcode>0</riskcode>
+  <confidence>2</confidence>
+  <riskdesc>Informational (Medium)</riskdesc>
+  <desc>&lt;p&gt;A WSDL File has been detected.&lt;/p&gt;</desc>
+  <instances>
+  <instance>
+  <uri>http://demo.testfire.net/sitemap.xml</uri>
+  <method>GET</method>
+  <evidence>text/xml</evidence>
+  </instance>
+  </instances>
+  <count>1</count>
+  <solution>&lt;p&gt;Make your WSDL files visible only for technical issues (p.e. testing purposes).&lt;/p&gt;</solution>
+  <otherinfo>&lt;p&gt;A WSDL File has been detected.&lt;/p&gt;</otherinfo>
+  <reference>&lt;p&gt;No references.&lt;/p&gt;</reference>
+  <wascid>13</wascid>
+  <sourceid>3</sourceid>
+</alertitem>
+</alerts></site></OWASPZAPReport>
