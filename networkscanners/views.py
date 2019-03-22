@@ -226,7 +226,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     save_all.save()
     openvas.scan_status(scanner=scanner, scan_id=scan_id)
     time.sleep(5)
-    vuln_an_id(scan_id=scan_id, project_id=project_id)
+    vuln_an_id(scan_id=scan_id)
 
     notify.send(user, recipient=user, verb='OpenVAS Scan Completed')
 
