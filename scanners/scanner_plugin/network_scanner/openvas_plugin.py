@@ -273,6 +273,7 @@ def vuln_an_id(scan_id):
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
         total_low = len(openvas_vul.filter(threat="Low"))
+        log_total = len(openvas_vul.filter(threat="Log"))
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
 
@@ -280,6 +281,12 @@ def vuln_an_id(scan_id):
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,
+                   log_total=log_total,
                    low_total=total_low,
                    total_dup=total_duplicate,
+
                    )
+
+        for row in ov_scan_result_db.objects.all():
+            if ov_scan_result_db.objects.filter(name=row.name, port=row.port).count() > 1:
+                row.delete()
