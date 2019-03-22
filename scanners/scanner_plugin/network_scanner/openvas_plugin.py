@@ -103,7 +103,7 @@ class OpenVAS_Plugin:
         return status
 
 
-def vuln_an_id(scan_id):
+def vuln_an_id(scan_id, project_id):
     """
     The function is filtering all data from OpenVAS and dumping to Archery database.
     :param scan_id:
@@ -236,13 +236,28 @@ def vuln_an_id(scan_id):
         date_time = timezone.now()
         vul_id = uuid.uuid4()
 
-        s_data = scan_save_db.objects.filter(scan_id=scan_id)
-
-        # for data in s_data:
-        #     if data.scan_ip == host:
-        #
-        dup_data = name + host + severity
+        dup_data = name + host + severity + port
         duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+
+        match_dup = ov_scan_result_db.objects.filter(
+            dup_hash=duplicate_hash).values('dup_hash').distinct()
+        lenth_match = len(match_dup)
+
+        if lenth_match == 1:
+            duplicate_vuln = 'Yes'
+        elif lenth_match == 0:
+            duplicate_vuln = 'No'
+        else:
+            duplicate_vuln = 'None'
+
+        false_p = ov_scan_result_db.objects.filter(
+            false_positive_hash=duplicate_hash)
+        fp_lenth_match = len(false_p)
+
+        if fp_lenth_match == 1:
+            false_positive = 'Yes'
+        else:
+            false_positive = 'No'
 
         save_all = ov_scan_result_db(scan_id=scan_id,
                                      vul_id=vul_id,
@@ -262,9 +277,12 @@ def vuln_an_id(scan_id):
                                      tags=tags,
                                      banner=banner,
                                      date_time=date_time,
-                                     false_positive='No',
+                                     false_positive=false_positive,
                                      vuln_status='Open',
-                                     dup_hash=duplicate_hash
+                                     dup_hash=duplicate_hash,
+                                     vuln_duplicate=duplicate_vuln,
+                                     project_id=project_id,
+
                                      )
         save_all.save()
 
@@ -287,6 +305,6 @@ def vuln_an_id(scan_id):
 
                    )
 
-        for row in ov_scan_result_db.objects.all():
-            if ov_scan_result_db.objects.filter(name=row.name, port=row.port).count() > 1:
+        for row in openvas_vul.objects.all():
+            if openvas_vul.objects.filter(name=row.name, port=row.port).count() > 1:
                 row.delete()
