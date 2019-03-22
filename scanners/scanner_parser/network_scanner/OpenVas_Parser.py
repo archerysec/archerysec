@@ -130,7 +130,7 @@ def xml_parser(root, project_id, scan_id):
         duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
         match_dup = ov_scan_result_db.objects.filter(
-            dup_hash=duplicate_hash).values('dup_hash').distinct()
+            vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
         lenth_match = len(match_dup)
 
         if lenth_match == 1:

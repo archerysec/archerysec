@@ -240,7 +240,7 @@ def vuln_an_id(scan_id, project_id):
         duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
         match_dup = ov_scan_result_db.objects.filter(
-            dup_hash=duplicate_hash).values('dup_hash').distinct()
+            vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
         lenth_match = len(match_dup)
 
         if lenth_match == 1:
@@ -305,6 +305,6 @@ def vuln_an_id(scan_id, project_id):
 
                    )
 
-        for row in openvas_vul.objects.all():
-            if openvas_vul.objects.filter(name=row.name, port=row.port).count() > 1:
+        for row in ov_scan_result_db.objects.all():
+            if ov_scan_result_db.objects.filter(name=row.name, port=row.port, scan_id=scan_id).count() > 1:
                 row.delete()
