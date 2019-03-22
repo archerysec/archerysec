@@ -87,14 +87,12 @@ class OpenVAS_Plugin:
 
         previous = ''
         while float(scanner.get_progress(str(scan_id))) < 100.0:
-            current = str(scanner.get_scan_status(str(scan_id))) + str(scanner.get_progress(str(scan_id)))
+            current=str(scanner.get_scan_status(str(scan_id)))+str(scanner.get_progress(str(scan_id)))
             if current != previous:
-                print '[Scan ID ' + str(scan_id) + '](' + str(
-                    scanner.get_scan_status(str(scan_id))) + ') Scan progress: ' + str(
-                    scanner.get_progress(str(scan_id))) + ' %'
-                status = float(scanner.get_progress(str(scan_id)))
-                scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
-                previous = current
+                    print '[Scan ID '+str(scan_id)+']('+str(scanner.get_scan_status(str(scan_id)))+') Scan progress: ' + str(scanner.get_progress(str(scan_id)))+' %'
+                    status = float(scanner.get_progress(str(scan_id)))
+                    scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+                    previous = current
             time.sleep(5)
 
         status = "100"
@@ -236,52 +234,50 @@ def vuln_an_id(scan_id):
         date_time = timezone.now()
         vul_id = uuid.uuid4()
 
-        # s_data = scan_save_db.objects.filter(scan_id=scan_id)
-        #
-        # for data in s_data:
-        #     if data.scan_ip == host:
+        s_data = scan_save_db.objects.filter(scan_id=scan_id)
 
-        dup_data = name + host + severity
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        for data in s_data:
+            if data.scan_ip == host:
 
-        save_all = ov_scan_result_db(scan_id=scan_id,
-                                     vul_id=vul_id,
-                                     name=name,
-                                     creation_time=creation_time,
-                                     modification_time=modification_time,
-                                     host=host,
-                                     port=port,
-                                     threat=threat,
-                                     severity=severity,
-                                     description=description,
-                                     family=family,
-                                     cvss_base=cvss_base,
-                                     cve=cve,
-                                     bid=bid,
-                                     xref=xref,
-                                     tags=tags,
-                                     banner=banner,
-                                     date_time=date_time,
-                                     false_positive='No',
-                                     vuln_status='Open',
-                                     dup_hash=duplicate_hash
-                                     )
-        save_all.save()
+                dup_data = name + host + severity
+                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
 
-        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id) \
-            .values('name',
-                    'threat').distinct()
-        total_vul = len(openvas_vul)
-        total_high = len(openvas_vul.filter(threat="High"))
-        total_medium = len(openvas_vul.filter(threat="Medium"))
-        total_low = len(openvas_vul.filter(threat="Low"))
-        total_log = len(openvas_vul.filter(threat="Log"))
-        scan_status = str(scanner.get_progress(str(scan_id)))
+                save_all = ov_scan_result_db(scan_id=scan_id,
+                                             vul_id=vul_id,
+                                             name=name,
+                                             creation_time=creation_time,
+                                             modification_time=modification_time,
+                                             host=host,
+                                             port=port,
+                                             threat=threat,
+                                             severity=severity,
+                                             description=description,
+                                             family=family,
+                                             cvss_base=cvss_base,
+                                             cve=cve,
+                                             bid=bid,
+                                             xref=xref,
+                                             tags=tags,
+                                             banner=banner,
+                                             date_time=date_time,
+                                             false_positive='No',
+                                             vuln_status='Open',
+                                             dup_hash=duplicate_hash
+                                             )
+                save_all.save()
 
-        scan_save_db.objects.filter(scan_id=scan_id) \
-            .update(total_vul=total_vul,
-                    high_total=total_high,
-                    medium_total=total_medium,
-                    low_total=total_low,
-                    log_total=total_log,
-                    scan_status=scan_status)
+                openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id)
+
+                total_high = len(openvas_vul.filter(threat="High"))
+                total_medium = len(openvas_vul.filter(threat="Medium"))
+                total_low = len(openvas_vul.filter(threat="Low"))
+                total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
+                total_vul = total_high + total_medium + total_low
+
+                scan_save_db.objects.filter(scan_id=scan_id). \
+                    update(total_vul=total_vul,
+                           high_total=total_high,
+                           medium_total=total_medium,
+                           low_total=total_low,
+                           total_dup=total_duplicate,
+                           )
