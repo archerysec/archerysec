@@ -13,7 +13,6 @@
 Archery
 =================
 
-- [Demo Application](#demo-application)
 - [Overview of the tool](#overview-of-the-tool)
     - [Note](#note)
 - [Requirements](#requirements)
@@ -44,13 +43,6 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 * [Official Website & Documentation](https://archerysec.github.io/archerysec/)
 * [API Documentation](http://developers.archerysec.info/)
-
-## Demo Application
-
-**URL**: [https://archerysec-demo.herokuapp.com](https://archerysec-demo.herokuapp.com)
-
-* **Username**: archerysec
-* **Password**: archerysec@archerysec
 
 ![Demo](assets/archery-demo.gif)
 
