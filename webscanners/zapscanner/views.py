@@ -146,8 +146,8 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
 
     subject = 'Archery Tool Scan Status - ZAP Scan Completed'
     message = 'ZAP Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>Total High: %s <br>' \
-              'Total Medium: %s <br>Total Low %s' % (target_url, total_vuln, total_high, total_medium, total_low)
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (target_url, total_vuln, total_high, total_medium, total_low)
 
     email_notify(user=user, subject=subject, message=message)
     # return HttpResponse(status=201)

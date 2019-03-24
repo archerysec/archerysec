@@ -25,19 +25,54 @@ def clair_report_json(data, project_id, scan_id):
     :return:
     """
 
+    # d = data['Vulnerabilities']['Medium']
+    #
+    # for dd in d:
+    #     print dd['Name']
+
     global vul_col
     try:
         high = data['Vulnerabilities']['High']
         for vuln in high:
             vul_id = uuid.uuid4()
-            Name = vuln['Name']
-            NamespaceName = vuln['NamespaceName']
-            Description = vuln['Description']
-            Link = vuln['Link']
-            Severity = vuln['Severity']
-            Metadata = vuln['Metadata']
-            FeatureName = vuln['FeatureName']
-            FeatureVersion = vuln['FeatureVersion']
+            try:
+                Name = vuln['Name']
+            except Exception:
+                Name = "Not Found"
+
+            try:
+                NamespaceName = vuln['NamespaceName']
+            except Exception:
+                NamespaceName = "Not Found"
+
+            try:
+                Description = vuln['Description']
+            except Exception:
+                Description = "Not Found"
+
+            try:
+                Link = vuln['Link']
+            except Exception:
+                Link = "Not Found"
+
+            try:
+                Severity = vuln['Severity']
+            except Exception:
+                Severity = "Not Found"
+            try:
+                Metadata = vuln['Metadata']
+            except Exception:
+                Metadata = "Not Found"
+
+            try:
+                FeatureName = vuln['FeatureName']
+            except Exception:
+                FeatureName = "Not Found"
+
+            try:
+                FeatureVersion = vuln['FeatureVersion']
+            except Exception:
+                FeatureName = "Not Found"
 
             if Severity == "High":
                 vul_col = "important"
@@ -87,21 +122,51 @@ def clair_report_json(data, project_id, scan_id):
             save_all.save()
     except Exception:
         print "High Vulnerability Not Found"
-        pass
+        # pass
 
     try:
 
         medium = data['Vulnerabilities']['Medium']
         for vuln in medium:
             vul_id = uuid.uuid4()
-            Name = vuln['Name']
-            NamespaceName = vuln['NamespaceName']
-            Description = vuln['Description']
-            Link = vuln['Link']
-            Severity = vuln['Severity']
-            Metadata = vuln['Metadata']
-            FeatureName = vuln['FeatureName']
-            FeatureVersion = vuln['FeatureVersion']
+            try:
+                Name = vuln['Name']
+            except Exception:
+                Name = "Not Found"
+
+            try:
+                NamespaceName = vuln['NamespaceName']
+            except Exception:
+                NamespaceName = "Not Found"
+
+            try:
+                Description = vuln['Description']
+            except Exception:
+                Description = "Not Found"
+
+            try:
+                Link = vuln['Link']
+            except Exception:
+                Link = "Not Found"
+
+            try:
+                Severity = vuln['Severity']
+            except Exception:
+                Severity = "Not Found"
+            try:
+                Metadata = vuln['Metadata']
+            except Exception:
+                Metadata = "Not Found"
+
+            try:
+                FeatureName = vuln['FeatureName']
+            except Exception:
+                FeatureName = "Not Found"
+
+            try:
+                FeatureVersion = vuln['FeatureVersion']
+            except Exception:
+                FeatureName = "Not Found"
 
             if Severity == "Medium":
                 vul_col = "warning"
@@ -151,21 +216,51 @@ def clair_report_json(data, project_id, scan_id):
             save_all.save()
     except Exception:
         print "Medium Vulnerability not found."
-        pass
+        # pass
 
     try:
         low = data['Vulnerabilities']['Low']
 
         for vuln in low:
             vul_id = uuid.uuid4()
-            Name = vuln['Name']
-            NamespaceName = vuln['NamespaceName']
-            Description = vuln['Description']
-            Link = vuln['Link']
-            Severity = vuln['Severity']
-            Metadata = vuln['Metadata']
-            FeatureName = vuln['FeatureName']
-            FeatureVersion = vuln['FeatureVersion']
+            try:
+                Name = vuln['Name']
+            except Exception:
+                Name = "Not Found"
+
+            try:
+                NamespaceName = vuln['NamespaceName']
+            except Exception:
+                NamespaceName = "Not Found"
+
+            try:
+                Description = vuln['Description']
+            except Exception:
+                Description = "Not Found"
+
+            try:
+                Link = vuln['Link']
+            except Exception:
+                Link = "Not Found"
+
+            try:
+                Severity = vuln['Severity']
+            except Exception:
+                Severity = "Not Found"
+            try:
+                Metadata = vuln['Metadata']
+            except Exception:
+                Metadata = "Not Found"
+
+            try:
+                FeatureName = vuln['FeatureName']
+            except Exception:
+                FeatureName = "Not Found"
+
+            try:
+                FeatureVersion = vuln['FeatureVersion']
+            except Exception:
+                FeatureName = "Not Found"
 
             if Severity == "Low":
                 vul_col = "info"
@@ -215,7 +310,7 @@ def clair_report_json(data, project_id, scan_id):
             save_all.save()
     except Exception:
         print "Low Vulnerability Not found"
-        pass
+        # pass
 
     all_clair_data = clair_scan_results_db.objects.filter(scan_id=scan_id)
 
