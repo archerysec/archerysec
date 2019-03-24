@@ -349,7 +349,7 @@ class ZAPScanner:
             name = vuln['name']
             solution = vuln['solution']
             param = vuln['param']
-            evidence = vuln['evidence']
+            # evidence = vuln['evidence']
             sourceid = vuln['sourceid']
             pluginId = vuln['pluginId']
             other = vuln['other']
@@ -416,7 +416,7 @@ class ZAPScanner:
                 name=name,
                 solution=solution,
                 param=param,
-                evidence=evidence,
+                # evidence=evidence,
                 sourceid=sourceid,
                 pluginId=pluginId,
                 other=other,

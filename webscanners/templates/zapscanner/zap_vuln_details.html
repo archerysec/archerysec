@@ -66,7 +66,7 @@
                                 <tr>
                                     <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
                                     <th>Vulnerability</th>
-                                    <th>URL</th>
+                                    <!--<th>URL</th>-->
                                     <th>Risk</th>
                                     <th>JIRA Ticket</th>
                                     <th>False Positive</th>
@@ -88,7 +88,7 @@
                                     </td>
                                     <td><a href="/zapscanner/zap_vuln_check/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
-                                    <td>{{data.url}}</td>
+                                    <!--<td>{{data.url}}</td>-->
                                     <td><span class="badge badge-{{data.vuln_color}}">{{data.risk}}</span></td>
                                     <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                     </td>

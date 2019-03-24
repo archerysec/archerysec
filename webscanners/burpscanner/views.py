@@ -68,12 +68,6 @@ def burp_scan_launch(request):
             target = target__split.__getitem__(i)
             print "Targets", target
             scan_id = uuid.uuid4()
-            date_time = datetime.now()
-            scan_dump = burp_scan_db(scan_id=scan_id,
-                                     project_id=project_id,
-                                     url=target,
-                                     date_time=date_time)
-            scan_dump.save()
             try:
                 do_scan = burp_plugin.burp_scans(
                     project_id,

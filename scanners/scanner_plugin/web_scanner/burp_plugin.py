@@ -22,9 +22,11 @@ from django.shortcuts import HttpResponse
 from webscanners import email_notification
 from archerysettings import load_settings
 import hashlib
+from archerysettings.models import burp_setting_db
+from datetime import datetime
 
 # Setting file importing
-setting_file = os.getcwd() + '/' + 'apidata.json'
+# setting_file = os.getcwd() + '/' + 'apidata.json'
 
 project_id = None
 target_url = None
@@ -74,25 +76,37 @@ class burp_scans(object):
         The function trigger the scans.
         """
 
-        settings = load_settings.ArcherySettings()
-        burp_host = settings.burp_host()
-        burp_port = settings.burp_port()
+        all_burp_settings = burp_setting_db.objects.all()
+
+        for data in all_burp_settings:
+        # settings = load_settings.ArcherySettings()
+            burp_host = data.burp_url
+            burp_port = data.burp_port
 
         print burp_host
 
         global vuln_id, burp_status
-        # try:
-        #     with open(setting_file, 'r+') as f:
-        #         data = json.load(f)
-        #         burp_path = data['burp_path']
-        #         burp_port = data['burp_port']
-        # except Exception as e:
-        #     print e
-        print self.project_id
-        print self.scan_url
         time.sleep(15)
         host = 'http://' + burp_host + ':' + burp_port
+        print host
+
         bi = burpscanner.BurpApi(host)
+
+        try:
+            print bi.burp_scope_add(self.scan_url)
+        except Exception:
+            print "Scanner not found"
+            return
+
+        date_time = datetime.now()
+        scan_dump = burp_scan_db(scan_id=self.scan_id,
+                                 project_id=self.project_id,
+                                 url=self.scan_url,
+                                 date_time=date_time)
+        scan_dump.save()
+
+        bi = burpscanner.BurpApi(host)
+
         bi.burp_scope_add(self.scan_url)
         bi.burp_spider(self.scan_url)
         time.sleep(15)

@@ -57,7 +57,6 @@ def webinspect_scan_list(request):
 
     all_notify = Notification.objects.unread()
 
-
     return render(request,
                   'webinspectscanner/webinspect_scan_lis.html',
                   {'all_webinspect_scan': all_webinspect_scan,

@@ -553,6 +553,7 @@ def burp_setting(request):
     if request.method == 'POST':
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
+        all_burp_setting.delete()
         save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport)
         save_burp_settings.save()
 
