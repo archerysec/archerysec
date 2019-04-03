@@ -60,6 +60,21 @@ def email_notify(user, subject, message):
         pass
 
 
+def email_sch_notify(subject, message):
+    all_email = email_db.objects.all()
+    for email in all_email:
+        to_mail = email.recipient_list
+
+    print to_mail
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [to_mail]
+    try:
+        send_mail(subject, message, email_from, recipient_list)
+    except Exception as e:
+        print e
+        pass
+
+
 def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     """
     The function Launch ZAP Scans.
@@ -153,6 +168,92 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     # return HttpResponse(status=201)
 
 
+def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
+    """
+    The function Launch ZAP Scans.
+    :param target_url: Target URL
+    :param project_id: Project ID
+    :return:
+    """
+
+    # Connection Test
+    zap_connect = zap_plugin.zap_connect()
+
+    try:
+        zap_connect.spider.scan(url=target_url)
+
+    except Exception:
+        subject = 'ZAP Conection Not Found'
+        message = 'ZAP Scanner failed due to setting not found '
+
+        email_sch_notify(subject=subject, message=message)
+        print "ZAP Conection Not Found"
+        return HttpResponseRedirect('/webscanners/')
+
+    # Load ZAP Plugin
+    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
+    zap.exclude_url()
+    time.sleep(3)
+    zap.cookies()
+    time.sleep(3)
+    date_time = datetime.now()
+    try:
+        save_all_scan = zap_scans_db(
+            project_id=project_id,
+            scan_url=target_url,
+            scan_scanid=scan_id,
+            date_time=date_time,
+            rescan_id=rescan_id,
+            rescan=rescan,
+            vul_status='0'
+        )
+
+        save_all_scan.save()
+    except Exception as e:
+        print e
+    zap.zap_spider_thread(thread_value=30)
+    spider_id = zap.zap_spider()
+    zap.spider_status(spider_id=spider_id)
+    zap.spider_result(spider_id=spider_id)
+    time.sleep(5)
+    print 'Scanning Target %s' % target_url
+    """ ZAP Scan trigger on target_url  """
+    zap_scan_id = zap.zap_scan()
+    # un_scanid = uuid.uuid4()
+    zap.zap_scan_status(
+        scan_id=zap_scan_id,
+        un_scanid=scan_id
+    )
+    """ Save Vulnerability in database """
+    time.sleep(5)
+    all_vuln = zap.zap_scan_result()
+    time.sleep(5)
+    save_all_vuln = zap.zap_result_save(
+        all_vuln=all_vuln,
+        project_id=project_id,
+        un_scanid=scan_id,
+    )
+    print save_all_vuln
+    all_zap_scan = zap_scans_db.objects.all()
+
+    total_vuln = ''
+    total_high = ''
+    total_medium = ''
+    total_low = ''
+    for data in all_zap_scan:
+        total_vuln = data.total_vul
+        total_high = data.high_vul
+        total_medium = data.medium_vul
+        total_low = data.low_vul
+
+    subject = 'Archery Tool Scan Status - ZAP Scan Completed'
+    message = 'ZAP Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (target_url, total_vuln, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)
+
+
 def zap_scan(request):
     """
     The function trigger ZAP scan.
@@ -189,161 +290,6 @@ def zap_scan(request):
 
     return render(request,
                   'zapscanner/zap_scan.html')
-
-
-@background(schedule=60)
-def task(target_url, project_id, scanner):
-    """
-    :param target_url:
-    :param project_id:
-    :param scanner:
-    :return:
-    """
-    rescan_id = ''
-    rescan = 'No'
-    target__split = target_url.split(',')
-    split_length = target__split.__len__()
-    for i in range(0, split_length):
-        target = target__split.__getitem__(i)
-        if scanner == 'zap_scan':
-            scan_id = uuid.uuid4()
-            thread = threading.Thread(
-                target=launch_zap_scan,
-                args=(target, project_id, rescan_id, rescan, scan_id))
-            thread.daemon = True
-            thread.start()
-        elif scanner == 'burp_scan':
-            scan_id = uuid.uuid4()
-            do_scan = burp_plugin.burp_scans(
-                project_id,
-                target,
-                scan_id)
-            thread = threading.Thread(
-                target=do_scan.scan_launch,
-            )
-            thread.daemon = True
-            thread.start()
-
-        return HttpResponse(status=200)
-
-
-def zap_scan_task_launch(request):
-    """
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        task_time = request.GET['time']
-
-        t = Task.objects.all()
-        # t.delete()
-
-        for ta in t:
-            print ta.run_at
-            print ta.id
-
-    return HttpResponse(status=200)
-
-
-def zap_scan_schedule(request):
-    """
-
-    :param request:
-    :return:
-    """
-    all_scans_db = project_db.objects.all()
-    all_scheduled_scans = task_schedule_db.objects.all()
-
-    if request.method == 'POST':
-        scan_url = request.POST.get('url')
-        scan_schedule_time = request.POST.get('datetime')
-        project_id = request.POST.get('project_id')
-        scanner = request.POST.get('scanner')
-        # periodic_task = request.POST.get('periodic_task')
-        periodic_task_value = request.POST.get('periodic_task_value')
-        # periodic_task = 'Yes'
-        print 'scanner-', scanner
-
-        if periodic_task_value == 'HOURLY':
-            periodic_time = Task.HOURLY
-        elif periodic_task_value == 'DAILY':
-            periodic_time = Task.DAILY
-        elif periodic_task_value == 'WEEKLY':
-            periodic_time = Task.WEEKLY
-        elif periodic_task_value == 'EVERY_2_WEEKS':
-            periodic_time = Task.EVERY_2_WEEKS
-        elif periodic_task_value == 'EVERY_4_WEEKS':
-            periodic_time = Task.EVERY_4_WEEKS
-        else:
-            periodic_time = None
-
-        dt_str = scan_schedule_time
-        dt_obj = datetime.strptime(dt_str, '%d/%m/%Y %H:%M:%S %p')
-
-        print "scan_url", scan_url
-        print "schedule", scan_schedule_time
-
-        # task(scan_url, project_id, schedule=dt_obj)
-
-        target__split = scan_url.split(',')
-        split_length = target__split.__len__()
-        for i in range(0, split_length):
-            target = target__split.__getitem__(i)
-
-            if scanner == 'zap_scan':
-                if periodic_task_value == 'None':
-                    my_task = task(target, project_id, scanner, schedule=dt_obj)
-                    task_id = my_task.id
-
-                else:
-
-                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
-                    task_id = my_task.id
-
-            elif scanner == 'burp_scan':
-                if periodic_task_value == 'None':
-                    my_task = task(target, project_id, scanner, schedule=dt_obj)
-                    task_id = my_task.id
-                else:
-                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
-                    task_id = my_task.id
-
-            save_scheadule = task_schedule_db(task_id=task_id, target=target,
-                                              schedule_time=scan_schedule_time,
-                                              project_id=project_id,
-                                              scanner=scanner,
-                                              periodic_task=periodic_task_value)
-            save_scheadule.save()
-
-    return render(request, 'zapscanner/zap_scan_schedule.html',
-                  {'all_scans_db': all_scans_db,
-                   'all_scheduled_scans': all_scheduled_scans}
-                  )
-
-
-def del_zap_scan_schedule(request):
-    """
-
-    :param request:
-    :return:
-    """
-
-    if request.method == "POST":
-        task_id = request.POST.get('task_id')
-
-        scan_item = str(task_id)
-        taskid = scan_item.replace(" ", "")
-        target_split = taskid.split(',')
-        split_length = target_split.__len__()
-        print "split_length", split_length
-        for i in range(0, split_length):
-            task_id = target_split.__getitem__(i)
-            del_task = task_schedule_db.objects.filter(task_id=task_id)
-            del_task.delete()
-            del_task_schedule = Task.objects.filter(id=task_id)
-            del_task_schedule.delete()
-
-    return HttpResponseRedirect('/webscanners/web_scan_schedule')
 
 
 def zap_rescan(request):

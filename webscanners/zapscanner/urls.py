@@ -96,17 +96,17 @@ urlpatterns = [
     url(r'^excluded_url_list',
         views.exluded_url_list),
 
-    url(r'^zap_scan_task_launch',
-        views.zap_scan_task_launch,
-        name='zap_scan_task_launch'),
+    # url(r'^zap_scan_task_launch',
+    #     views.zap_scan_task_launch,
+    #     name='zap_scan_task_launch'),
 
-    url(r'^zap_scan_schedule',
-        views.zap_scan_schedule,
-        name='zap_scan_schedule'),
-
-    url(r'^del_zap_scan_schedule',
-        views.del_zap_scan_schedule,
-        name='del_zap_scan_schedule'),
+    # url(r'^zap_scan_schedule',
+    #     views.zap_scan_schedule,
+    #     name='zap_scan_schedule'),
+    #
+    # url(r'^del_zap_scan_schedule',
+    #     views.del_zap_scan_schedule,
+    #     name='del_zap_scan_schedule'),
 
     url(r'^export',
         views.export,

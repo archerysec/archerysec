@@ -45,7 +45,7 @@ import os
 from jiraticketing.models import jirasetting
 from webscanners.models import netsparker_scan_db, \
     webinspect_scan_db
-from webscanners.zapscanner.views import launch_zap_scan
+from webscanners.zapscanner.views import launch_schudle_zap_scan
 from archerysettings.models import zap_settings_db, \
     burp_setting_db, \
     nmap_vulners_setting_db, \
@@ -213,7 +213,6 @@ def del_all_notify(request):
     :return:
     """
     if request.method == 'GET':
-
         notify_del = Notification.objects.all()
         notify_del.delete()
 
@@ -261,10 +260,11 @@ def task(target_url, project_id, scanner):
     split_length = target__split.__len__()
     for i in range(0, split_length):
         target = target__split.__getitem__(i)
+        # noinspection PyInterpreter
         if scanner == 'zap_scan':
             scan_id = uuid.uuid4()
             thread = threading.Thread(
-                target=launch_zap_scan,
+                target=launch_schudle_zap_scan,
                 args=(target, project_id, rescan_id, rescan, scan_id))
             thread.daemon = True
             thread.start()
