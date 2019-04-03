@@ -17,9 +17,9 @@ class inspec_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
-    inspec_failed = models.TextField(blank=True, null=True)
-    inspec_passed = models.TextField(blank=True, null=True)
-    inspec_skipped = models.TextField(blank=True, null=True)
+    inspec_failed = models.IntegerField(blank=True, null=True)
+    inspec_passed = models.IntegerField(blank=True, null=True)
+    inspec_skipped = models.IntegerField(blank=True, null=True)
 
 
 class inspec_scan_results_db(models.Model):
