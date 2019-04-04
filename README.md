@@ -115,6 +115,10 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 
 ## Automated installation
 
+`export TIME_ZONE='Asia/Kolkata'`
+
+[https://en.wikipedia.org/wiki/List_of_tz_database_time_zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
@@ -130,6 +134,10 @@ $ python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Manual Installation
+
+`export TIME_ZONE='Asia/Kolkata'`
+
+[https://en.wikipedia.org/wiki/List_of_tz_database_time_zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
 ```
 $ git clone https://github.com/archerysec/archerysec.git
@@ -186,6 +194,12 @@ $ docker-compose up -d
 ### Environment variables for this project <!-- omit in toc -->
 
 The following environment variables are used to change behaviour of the container settings
+
+#### `TIME_ZONE` 
+
+`export TIME_ZONE='Asia/Kolkata'`
+
+[https://en.wikipedia.org/wiki/List_of_tz_database_time_zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
 #### `DB_PASSWORD` <!-- omit in toc -->
 
