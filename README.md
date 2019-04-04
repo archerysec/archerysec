@@ -231,6 +231,33 @@ This variable is used to tell the container it has to behave as a worker to proc
 and not as a web server running on port 8000. Set it to `True` if you want to run on
 this mode.
 
+#### `EMAIL_HOST`
+
+`export EMAIL_HOST='smtp.xxxxx.com'`
+
+#### `EMAIL_USE_TLS`
+
+`export EMAIL_USE_TLS=True`
+
+Set this variable to `True` or `False`
+
+#### `EMAIL_PORT`
+
+`export EMAIL_PORT=587`
+
+Set this variable to SMTP port.
+
+#### `EMAIL_HOST_PASSWORD`
+
+`export EMAIL_HOST_PASSWORD='password'`
+
+Set this variable to SMTP Password.
+
+#### `EMAIL_HOST_USER`
+
+`export EMAIL_HOST_USER='xxxxxxxxxxxxx@gmail.com'`
+
+Set this variable to SMTP Email.
 
 ## Setup third-party integrations
 
