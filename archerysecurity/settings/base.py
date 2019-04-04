@@ -139,9 +139,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+DEF_TIME_ZONE = 'UTC'
+
 USE_TZ = False
 
-TIME_ZONE = os.getenv("TIME_ZONE")
+TIME_ZONE = os.getenv("TIME_ZONE", DEF_TIME_ZONE)
 
 USE_I18N = True
 
