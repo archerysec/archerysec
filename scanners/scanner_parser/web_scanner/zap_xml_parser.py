@@ -12,6 +12,7 @@
 from webscanners.models import zap_scan_results_db, zap_scans_db
 import uuid
 import hashlib
+import ast
 
 spider_status = "0"
 scans_status = "0"
@@ -77,8 +78,8 @@ def xml_parser(root, project_id, scan_id):
         d = child.attrib
         scan_url = d['name']
 
-    inst = []
     for alert in root.iter('alertitem'):
+        inst = []
         for vuln in alert:
             vuln_id = uuid.uuid4()
             if vuln.tag == "pluginid":
@@ -170,6 +171,34 @@ def xml_parser(root, project_id, scan_id):
                                             evidence=inst,
                                             )
             dump_data.save()
+
+            vul_dat = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
+            full_data = []
+            for data in vul_dat:
+                evi = data.evidence
+                evi_data = ast.literal_eval(evi)
+                for evidence in evi_data:
+                    for key, value in evidence.viewitems():
+                        if key == 'evidence':
+                            key = 'Evidence'
+
+                        if key == 'attack':
+                            key = 'Attack'
+
+                        if key == 'uri':
+                            key = 'URI'
+
+                        if key == 'method':
+                            key = 'Method'
+
+                        if key == 'param':
+                            key = 'Parameter'
+
+                        instance = key + ': ' + value
+
+                        full_data.append(instance)
+            removed_list_data = ','.join(full_data)
+            zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(param=removed_list_data)
 
     zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id) \
         .values('name', 'risk').distinct()

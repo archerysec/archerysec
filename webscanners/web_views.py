@@ -631,9 +631,11 @@ def xml_upload(request):
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
-                                      root=root_xml)
+                                      root=root_xml_en)
             return HttpResponseRedirect("/zapscanner/zap_scan_list/")
         elif scanner == "burp_scan":
             date_time = datetime.now()

@@ -18,6 +18,8 @@ import json
 import ast
 from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
 import hashlib
+from scanners.scanner_parser.web_scanner import zap_xml_parser
+import defusedxml.ElementTree as ET
 
 # ZAP Database import
 
@@ -323,7 +325,7 @@ class ZAPScanner:
         :return:
         """
         try:
-            all_vuln = self.zap.core.alerts(self.target_url)
+            all_vuln = self.zap.core.xmlreport()
         except Exception as e:
             print "zap scan result error"
 
@@ -338,194 +340,12 @@ class ZAPScanner:
         :return:
         """
 
-        for vuln in all_vuln:
-            vuln_id = uuid.uuid4()
-            confidence = vuln['confidence']
-            wascid = vuln['wascid']
-            cweid = vuln['cweid']
-            risk = vuln['risk']
-            reference = vuln['reference']
-            url = vuln['url']
-            name = vuln['name']
-            solution = vuln['solution']
-            param = vuln['param']
-            # evidence = vuln['evidence']
-            sourceid = vuln['sourceid']
-            pluginId = vuln['pluginId']
-            other = vuln['other']
-            attack = vuln['attack']
-            messageId = vuln['messageId']
-            method = vuln['method']
-            alert = vuln['alert']
-            ids = vuln['id']
-            description = vuln['description']
-            status = 'Open'
+        root_xml = ET.fromstring(all_vuln)
+        en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+        root_xml_en = ET.fromstring(en_root_xml)
 
-            global vul_col
+        zap_xml_parser.xml_parser(project_id=project_id,
+                                  scan_id=un_scanid,
+                                  root=root_xml_en)
 
-            if risk == 'High':
-                vul_col = "important"
-            elif risk == 'Medium':
-                vul_col = "warning"
-            elif risk == 'Low':
-                vul_col = "info"
-            else:
-                vul_col = "info"
-
-            # date_time = datetime.datetime.now()
-
-            dup_data = name + url + risk
-            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
-
-            match_dup = zap_scan_results_db.objects.filter(
-                dup_hash=duplicate_hash).values('dup_hash').distinct()
-            lenth_match = len(match_dup)
-
-            if lenth_match == 1:
-                duplicate_vuln = 'Yes'
-            elif lenth_match == 0:
-                duplicate_vuln = 'No'
-            else:
-                duplicate_vuln = 'None'
-
-            false_p = zap_scan_results_db.objects.filter(
-                false_positive_hash=duplicate_hash)
-            fp_lenth_match = len(false_p)
-
-            global false_positive
-            if fp_lenth_match == 1:
-                false_positive = 'Yes'
-            elif lenth_match == 0:
-                false_positive = 'No'
-            else:
-                false_positive = 'No'
-
-            dump_all = zap_scan_results_db(
-                vuln_id=vuln_id,
-                vuln_color=vul_col,
-                scan_id=un_scanid,
-                rescan_id=self.rescan_id,
-                rescan=self.rescan,
-                project_id=project_id,
-                confidence=confidence,
-                wascid=wascid,
-                cweid=cweid,
-                risk=risk,
-                reference=reference,
-                url=url,
-                name=name,
-                solution=solution,
-                param=param,
-                # evidence=evidence,
-                sourceid=sourceid,
-                pluginId=pluginId,
-                other=other,
-                attack=attack,
-                messageId=messageId,
-                method=method,
-                alert=alert,
-                ids=ids,
-                description=description,
-                false_positive=false_positive,
-                vuln_status=status,
-                dup_hash=duplicate_hash,
-                vuln_duplicate=duplicate_vuln
-            )
-
-            dump_all.save()
-
-        time.sleep(5)
-
-        zap_all_vul = zap_scan_results_db.objects.filter(
-            scan_id=un_scanid).values(
-            'name',
-            'risk',
-            ).distinct()
-
-        total_vul = len(zap_all_vul)
-        total_high = len(zap_all_vul.filter(risk="High"))
-        total_medium = len(zap_all_vul.filter(risk="Medium"))
-        total_low = len(zap_all_vul.filter(risk="Low"))
-        total_info = len(zap_all_vul.filter(risk="Informational"))
-        total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
-
-        zap_scans_db.objects.filter(
-            scan_scanid=un_scanid
-        ).update(
-            total_vul=total_vul,
-            high_vul=total_high,
-            medium_vul=total_medium,
-            low_vul=total_low,
-            info_vul=total_info,
-            total_dup=total_duplicate
-        )
-        if total_vul == total_duplicate:
-            zap_scans_db.objects.filter(scan_scanid=un_scanid) \
-                .update(total_vul=total_vul,
-                        high_vul=total_high,
-                        medium_vul=total_medium,
-                        low_vul=total_low,
-                        total_dup=total_duplicate
-                        )
-
-        time.sleep(10)
-
-        zap_web_all = zap_scan_results_db.objects.filter(scan_id=un_scanid)
-        for m in zap_web_all:
-            msg_id = m.messageId
-            request_response = self.zap.core.message(id=msg_id)
-            ja_son = json.dumps(request_response)
-            ss = ast.literal_eval(ja_son)
-
-            for key, value in ss.viewitems():
-                global note
-                if key == "note":
-                    note = value
-                global rtt
-                if key == "rtt":
-                    rtt = value
-                global tags
-                if key == "tags":
-                    tags = value
-                global timestamp
-                if key == "timestamp":
-                    timestamp = value
-                global responseHeader
-                if key == "responseHeader":
-                    responseHeader = value
-                global requestBody
-                if key == "requestBody":
-                    requestBody = value
-                global responseBody
-                if key == "responseBody":
-                    responseBody = value
-                global requestHeader
-                if key == "requestHeader":
-                    requestHeader = value
-                global cookieParams
-                if key == "cookieParams":
-                    cookieParams = value
-                global res_type
-                if key == "type":
-                    res_type = value
-                global res_id
-                if key == "id":
-                    res_id = value
-
-            zap_scan_results_db.objects.filter(
-                messageId=msg_id
-            ).update(
-                note=note,
-                rtt=rtt,
-                tags=tags,
-                timestamp=timestamp,
-                responseHeader=responseHeader,
-                requestBody=requestBody,
-                responseBody=responseBody,
-                requestHeader=requestHeader,
-                cookieParams=cookieParams,
-                res_type=res_type,
-                res_id=res_id
-            )
-        status = "Scan Completed"
-        return status
+        self.zap.core.delete_all_alerts()

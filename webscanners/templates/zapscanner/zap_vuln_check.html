@@ -3,8 +3,8 @@
 
 <div id="content">{% for data in vul_dat %}
     <div id="content-header">
-        <div id="breadcrumb"><a href="/zapscanner/zap_vuln_list/?scan_id={{data.scan_id}}" title="Go to Home"
-                                class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
+        <div id="breadcrumb"><a href="/zapscanner/zap_vuln_details/?scan_id={{data.scan_id}}&scan_name={{data.name}}" title="Go to Home"
+                                class="tip-bottom"><i class="icon-home"></i> Vulnerabilities List</a>
             <a
                     href="#" class="current">{{ data.name }}</a></div>
         <div>
@@ -30,31 +30,6 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Vulnerability Name:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info">{{ data.name }} <br></span><span
-                            class="badge badge-{{data.vuln_color}}"> {{ data.risk }}</span>
-                        <br><br>
-
-                        <strong> Flase Positive : </strong>
-                        <form method="POST" action="/zapscanner/zap_vuln_details/">{% csrf_token %}
-                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                            <input type="hidden" name="false" value="Yes">
-                            <input type="hidden" name="status" value="{{data.vuln_status}}">
-                            <input type="hidden" name="vuln_name" value="{{data.name}}">
-                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                            <button class="btn btn-info btn-mini">Yes</button>
-                        </form>
-                        <br>
-                        <strong> Severity: </strong> <br><br>
-                        <strong> Sourceid :</strong>{{data.sourceid}}<br><br>
-                        <strong> Reference : </strong>{{data.reference | safe}}<br>
-                    </div>
-                </div>
-
                 <!--<div class="span12">-->
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
@@ -71,7 +46,16 @@
                     </div>
                     <div class="widget-content">
                         <span class="label label-info"></span>
-                        {% for da in evi %}{{da }}<br><br>{% endfor %}
+
+
+                        <table class="table table-bordered data-table table-fixed">
+                            {% for data in evi %}
+                            <tr>
+                                <td>{{data}}<br></td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+
                     </div>
                 </div>
                 <div class="widget-box">
@@ -83,50 +67,12 @@
                         <strong> Solutions : </strong>{{data.solution | safe}}<br><br>
                     </div>
                 </div>
-                <!--</div>-->
-                <!--<div class="span12 ">-->
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Request Header:</h5>
+                        <h5>Reference</h5><!--<h5><span class="badge badge-{{data.vuln_color}}"> {{ data.risk }}</span></h5>-->
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <pre
-                        >{{ data.requestHeader }} <br> {{ data.requestBody }}</pre>
-                    </div>
-                </div>
-                <!--</div>-->
-                <!--<div class="span12">-->
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Response Header:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <pre
-                        >{{ data.responseHeader }}</pre>
-                    </div>
-                </div>
-                <!--</div>-->
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Response Body:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <pre
-                        >{{ data.responseBody }}</pre>
-                    </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Response Body:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <!--<iframe src="{{data.url}}" height="900" width="1200"></iframe>-->
-                        <iframe src="data:text/html;charset=utf-8,{{data.responseBody}}" height="900" width="1200"/>
-                        </iframe>
+                        {{data.reference | safe}}
                     </div>
                 </div>
             </div>

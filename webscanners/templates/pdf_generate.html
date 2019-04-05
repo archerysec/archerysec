@@ -195,14 +195,14 @@
                     <td width="70%">{{ data.name}}</td>
 
                 </tr>
-                <tr>
-                    <td>
-                        <p>Method: </p>
-                    </td>
-                    <td>
-                        {{ data.method}}
-                    </td>
-                </tr>
+                <!--<tr>-->
+                    <!--<td>-->
+                        <!--<p>Method: </p>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ data.method}}-->
+                    <!--</td>-->
+                <!--</tr>-->
                 <tr>
                     <td width="30%">
                         <p>Severity:
@@ -213,22 +213,22 @@
                     <td width="70%"><span class="badge-{{ data.risk }}">{{ data.risk }}</span></td>
 
                 </tr>
-                <tr>
-                    <td>
-                        <p>Vulnerable URL: </p>
-                    </td>
-                    <td>
-                        {{ data.url}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Parameter: </p>
-                    </td>
-                    <td>
-                        {{ data.param}}
-                    </td>
-                </tr>
+                <!--<tr>-->
+                    <!--<td>-->
+                        <!--<p>Vulnerable URL: </p>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ data.url}}-->
+                    <!--</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td>-->
+                        <!--<p>Parameter: </p>-->
+                    <!--</td>-->
+                    <!--<td>-->
+                        <!--{{ data.param}}-->
+                    <!--</td>-->
+                <!--</tr>-->
                 <tr>
                     <td>
                         <p>Description: </p>
@@ -237,28 +237,28 @@
                         {{ data.description}}
                     </td>
                 </tr>
+
+                <tr>
+                    <td>
+                        <p>Instances: </p>
+                    </td>
+                    <td>
+                        <table class="table table-bordered data-table table-fixed">
+                            {% for data in evi %}
+                            <tr>
+                                <td>{{data}}<br></td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>
+
                 <tr>
                     <td>
                         <p>Solution: </p>
                     </td>
                     <td>
                         {{ data.solution}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Request Header: </p>
-                    </td>
-                    <td>
-                        <pre>{{ data.requestHeader}}</pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Response Header: </p>
-                    </td>
-                    <td>
-                        <pre>{{ data.responseHeader}}</pre>
                     </td>
                 </tr>
 

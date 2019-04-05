@@ -41,6 +41,7 @@ from notifications.models import Notification
 from django.core.mail import send_mail
 from django.conf import settings
 from archerysettings.models import email_db
+import ast
 
 scans_status = None
 
@@ -782,7 +783,35 @@ def zap_vuln_check(request):
         id_vul = ''
     vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
 
-    return render(request, 'zapscanner/zap_vuln_check.html', {'vul_dat': vul_dat})
+    full_data = []
+    for data in vul_dat:
+        evi = data.evidence
+        evi_data = ast.literal_eval(evi)
+        for evidence in evi_data:
+            for key, value in evidence.viewitems():
+                if key == 'evidence':
+                    key = 'Evidence'
+
+                if key == 'attack':
+                    key = 'Attack'
+
+                if key == 'uri':
+                    key = 'URI'
+
+                if key == 'method':
+                    key = 'Method'
+
+                if key == 'param':
+                    key = 'Parameter'
+
+                instance = key + ': ' + value
+
+                full_data.append(instance)
+
+    return render(request, 'zapscanner/zap_vuln_check.html',
+                  {'vul_dat': vul_dat,
+                   'evi': full_data
+                   })
 
 
 def edit_zap_vuln_check(request):
@@ -922,6 +951,13 @@ def zap_scan_pdf_gen(request):
                                                                                  'vuln_color',
                                                                                  'scan_id').distinct()
 
+        # all_pam = zap_scan_results_db.objects.filter(scan_id=scan_id)
+        # for para in all_pam:
+        #     evi_para = para.param
+        #     evi_list = ast.literal_eval(evi_para)
+        #     for e in evi_list:
+        #         print e
+
         return render_to_pdf_response(request,
                                       template=str('zapscanner/zap_scan_pdf_gen.html'),
                                       download_filename=None,
@@ -929,7 +965,10 @@ def zap_scan_pdf_gen(request):
                                       context={'all_scan': all_scan,
                                                'vuln_scan': vuln_scan,
                                                'scan_url': scan_url,
-                                               'zap_all_vul': zap_all_vul})
+                                               'zap_all_vul': zap_all_vul,
+                                               # 'evi': evi_list
+
+                                               })
 
 
 def export(request):
