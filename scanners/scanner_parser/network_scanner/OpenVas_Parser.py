@@ -3,7 +3,7 @@
 #   /  \   _ __ ___| |__   ___ _ __ _   _
 #  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
 # / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                    __/ |
 #                                   |___/
 # Copyright (C) 2017-2018 ArcherySec
@@ -13,6 +13,22 @@ from networkscanners.models import ov_scan_result_db, scan_save_db
 import datetime
 import uuid
 import hashlib
+
+name = ''
+creation_time = ''
+modification_time = ''
+host = ''
+port = ''
+threat = ''
+severity = ''
+description = ''
+family = ''
+cvss_base = ''
+cve = ''
+bid = ''
+xref = ''
+tags = ''
+banner = ''
 
 
 def xml_parser(root, project_id, scan_id):
@@ -183,7 +199,7 @@ def xml_parser(root, project_id, scan_id):
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
 
-        scan_save_db.objects.filter(scan_id=scan_id).\
+        scan_save_db.objects.filter(scan_id=scan_id). \
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,

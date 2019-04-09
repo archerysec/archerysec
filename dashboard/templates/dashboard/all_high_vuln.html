@@ -149,7 +149,7 @@
                                         <a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
-                                    <td>{{data.host}}{{data.location}}</td>
+                                    <td>{{data.host}}{{data.request_response_url}}</td>
                                     <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span></td>
                                 </tr>
                                 {% endfor %}

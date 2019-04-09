@@ -52,7 +52,7 @@ pbr==4.0.3
 pdfrw==0.4
 Pillow==5.1.0
 psycopg2-binary==2.7.5
-PyBurprestapi==0.1
+PyBurprestapi
 pycparser==2.18
 PyJWT==1.6.1
 pylint==1.9.3

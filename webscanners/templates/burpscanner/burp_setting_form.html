@@ -28,7 +28,16 @@
                         <h5>Burp Settings</h5>
                     </div>
                     <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/webscanners/burp_setting/">{% csrf_token %}
+                        <form class="form-horizontal" method="POST" action="/burpscanner/burp_setting/">{% csrf_token %}
+
+                            <div class="control-group">
+                                <label class="control-label">Burp API Key :</label>
+                                <div class="controls"><small><em>Burp API Key </em></small>
+                                    <input type="text" name="burpapikey" value="{{ burp_api_key }}" class="span11"
+                                           />
+                                </div>
+                            </div>
+
                             <div class="control-group">
                                 <label class="control-label">Burp API Host :</label>
                                 <div class="controls"><small><em>Burp API Host (Ex.127.0.0.1)</em></small>

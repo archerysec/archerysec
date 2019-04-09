@@ -17,13 +17,26 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from scanners.scanner_plugin.web_scanner import burp_plugin
-from webscanners.models import burp_scan_db, burp_scan_result_db
+from webscanners.models import burp_scan_db, burp_scan_result_db, burp_issue_definitions
 from datetime import datetime
 from jiraticketing.models import jirasetting
 from archerysettings.models import burp_setting_db
 import hashlib
 from webscanners.resources import BurpResource
 from notifications.models import Notification
+from PyBurprestapi import burpscanner
+import json
+from notifications.signals import notify
+
+burp_url = None
+burp_port = None
+burp_api_key = None
+remediation = None
+issue_type_id = None
+description = None
+name = None
+references = None
+vulnerability_classifications = None
 
 
 def burp_setting(request):
@@ -32,24 +45,73 @@ def burp_setting(request):
     :param request:
     :return:
     """
-    burp_url = None
-    burp_port = None
+    user = request.user
+
     all_burp_setting = burp_setting_db.objects.all()
 
     for data in all_burp_setting:
-        global burp_url, burp_port
+        global burp_url, burp_port, burp_api_key, \
+            remediation, issue_type_id, description, \
+            name, references, \
+            vulnerability_classifications
         burp_url = data.burp_url
         burp_port = data.burp_port
+        burp_api_key = data.burp_api_key
 
     if request.method == 'POST':
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
-        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport)
+        burpapikey = request.POST.get("burpapikey")
+        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport, burp_api_key=burpapikey)
         save_burp_settings.save()
 
-        return HttpResponseRedirect('/burpscanner/setting/')
+        host = 'http://' + burphost + ':' + burport + '/'
 
-    return render(request, 'burpscanner/burp_setting_form.html', {'burp_url': burp_url, 'burp_port': burp_port})
+        bi = burpscanner.BurpApi(host, burpapikey)
+
+        issue_list = bi.issue_definitions()
+
+        json_issue_data = json.dumps(issue_list.data)
+        issues = json.loads(json_issue_data)
+
+        all_data = burp_issue_definitions.objects.all()
+        all_data.delete()
+
+        try:
+            for issue_dat in issues:
+                for key, values in issue_dat.viewitems():
+                    if key == 'remediation':
+                        remediation = values
+                    if key == 'issue_type_id':
+                        issue_type_id = values
+                    if key == 'description':
+                        description = values
+                    if key == 'name':
+                        name = values
+                    if key == 'references':
+                        references = values
+                    if key == 'vulnerability_classifications':
+                        vulnerability_classifications = values
+
+                data_dump = burp_issue_definitions(remediation=remediation,
+                                                   issue_type_id=issue_type_id,
+                                                   description=description,
+                                                   reference=references,
+                                                   vulnerability_classifications=vulnerability_classifications,
+                                                   name=name
+                                                   )
+                data_dump.save()
+        except Exception as e:
+            print e
+            notify.send(user, recipient=user, verb='Burp Conection Not Found')
+
+        return HttpResponseRedirect('/webscanners/setting/')
+
+    return render(request, 'burpscanner/burp_setting_form.html',
+                  {'burp_url': burp_url,
+                   'burp_port': burp_port,
+                   'burp_api_key': burp_api_key
+                   })
 
 
 def burp_scan_launch(request):
@@ -58,6 +120,9 @@ def burp_scan_launch(request):
     :param request:
     :return:
     """
+
+    user = request.user
+
     global vuln_id, burp_status
     if request.POST.get("url"):
         target_url = request.POST.get('url')
@@ -72,10 +137,9 @@ def burp_scan_launch(request):
                 do_scan = burp_plugin.burp_scans(
                     project_id,
                     target,
-                    scan_id)
-                # do_scan.scan_lauch(project_id,
-                #                    target,
-                #                    scan_id)
+                    scan_id,
+                    user
+                )
 
                 thread = threading.Thread(
                     target=do_scan.scan_launch,
@@ -177,7 +241,7 @@ def burp_vuln_out(request):
             vuln_info = burp_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.name
-                location = vi.location
+                location = vi.request_response_url
                 severity = vi.severity
                 dup_data = name + location + severity
                 false_positive_hash = hashlib.sha256(dup_data).hexdigest()

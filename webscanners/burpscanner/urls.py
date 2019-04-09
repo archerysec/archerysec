@@ -50,4 +50,8 @@ urlpatterns = [
         views.export,
         name='export'),
 
+    url(r'^burp_setting',
+        views.burp_setting,
+        name='burp_setting'),
+
 ]

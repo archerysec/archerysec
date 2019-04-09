@@ -26,8 +26,8 @@ from stronghold.decorators import public
 from archerysettings import load_settings, save_settings
 from projects.models import project_db
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
-    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser
-from scanners.scanner_plugin.web_scanner import burp_plugin
+    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser, burp_xml_parser
+# from scanners.scanner_plugin.web_scanner import burp_plugin
 from scanners.scanner_plugin.web_scanner import zap_plugin
 from webscanners.models import \
     zap_scans_db, \
@@ -405,6 +405,9 @@ def setting(request):
     :param request:
     :return:
     """
+
+    all_notify = Notification.objects.unread()
+
     jira_url = None
     username = None
     password = None
@@ -461,6 +464,7 @@ def setting(request):
 
     burp_host = settings.burp_host()
     burp_port = settings.burp_port()
+    burp_api_key = settings.burp_api_key()
 
     # Loading Email Settings
 
@@ -497,6 +501,7 @@ def setting(request):
                    'lod_ov_port': lod_ov_port,
                    'burp_path': burp_host,
                    'burp_port': burp_port,
+                   'burp_api_key': burp_api_key,
                    'all_email': all_email,
                    'jira_server': jira_server,
                    'jira_username': jira_username,
@@ -505,6 +510,7 @@ def setting(request):
                    'nv_version': nv_version,
                    'nv_online': nv_online,
                    'nv_timing': nv_timing,
+                   'message': all_notify,
                    })
 
 
@@ -534,32 +540,6 @@ def email_setting(request):
 
     return render(request, 'email_setting_form.html', {'all_email': all_email}
                   )
-
-
-def burp_setting(request):
-    """
-    Load Burp Settings.
-    :param request:
-    :return:
-    """
-    burp_url = None
-    burp_port = None
-    all_burp_setting = burp_setting_db.objects.all()
-
-    for data in all_burp_setting:
-        burp_url = data.burp_url
-        burp_port = data.burp_port
-
-    if request.method == 'POST':
-        burphost = request.POST.get("burpath")
-        burport = request.POST.get("burport")
-        all_burp_setting.delete()
-        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport)
-        save_burp_settings.save()
-
-        return HttpResponseRedirect('/webscanners/setting/')
-
-    return render(request, 'burp_setting_form.html', {'burp_url': burp_url, 'burp_port': burp_port})
 
 
 def burp_scan_launch(request):
@@ -648,10 +628,12 @@ def xml_upload(request):
             # Burp scan XML parser
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            do_xml_data = burp_plugin.burp_scans(project_id,
-                                                 target_url,
-                                                 scan_id)
-            do_xml_data.burp_scan_data(root_xml)
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
+
+            burp_xml_parser.burp_scan_data(root_xml_en,
+                                           project_id,
+                                           scan_id)
             print("Save scan Data")
             return HttpResponseRedirect("/burpscanner/burp_scan_list")
 

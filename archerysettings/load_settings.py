@@ -84,6 +84,20 @@ class ArcherySettings:
         #     print "Error in setting file as", e
         return zaport
 
+    def burp_api_key(self):
+        """
+        Loading Burp Host address from setting file.
+        :return:
+        """
+        burpapikey = None
+
+        all_burp = burp_setting_db.objects.all()
+
+        for burp in all_burp:
+            burpapikey = burp.burp_api_key
+
+        return burpapikey
+
     def burp_host(self):
         """
         Loading Burp Host address from setting file.
@@ -95,13 +109,6 @@ class ArcherySettings:
 
         for burp in all_burp:
             burphost = burp.burp_url
-
-        # try:
-        #     with open(self.setting_file, 'r+') as f:
-        #         data = json.load(f)
-        #         burphost = data['burp_path']
-        # except Exception as e:
-        #     print "Error in setting file as", e
 
         return burphost
 
@@ -116,12 +123,6 @@ class ArcherySettings:
 
         for burp in all_burp:
             burport = burp.burp_port
-        # try:
-        #     with open(self.setting_file, 'r+') as f:
-        #         data = json.load(f)
-        #         burport = data['burp_port']
-        # except Exception as e:
-        #     print "Error in setting file as", e
 
         return burport
 

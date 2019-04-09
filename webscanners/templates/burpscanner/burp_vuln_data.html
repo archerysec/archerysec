@@ -3,7 +3,7 @@
 
 <div id="content">{% for data in vuln_data %}
     <div id="content-header">
-        <div id="breadcrumb"><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_id}}" title="Go to Home"
+        <div id="breadcrumb"><a href="/burpscanner/burp_vuln_out/?scan_id={{data.scan_id}}&scan_name={{data.name}}" title="Go to Home"
                                 class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
             <a
                     href="#" class="current">{{ data.name }}</a></div>
@@ -16,8 +16,8 @@
                 <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span
                         class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li><a href="/webscanners/edit_burp_vuln/?vuln_id={{data.vuln_id}}"><i
-                            class="icon-pencil"></i> Edit </a></li>
+                    <!--<li><a href="/webscanners/edit_burp_vuln/?vuln_id={{data.vuln_id}}"><i-->
+                            <!--class="icon-pencil"></i> Edit </a></li>-->
                     <!--<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i-->
                     <!--class="icon-trash"></i> Delete</a></li>-->
                     <li>
@@ -36,91 +36,64 @@
             <div class="span12">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Vulnerability Name:</h5>
+                        <h5>Description:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info">{{ data.name }}</span>
-
-                        <strong> </strong><br><br>
-                        <strong> False Positive: </strong>
-                        <form method="POST" action="/burpscanner/burp_vuln_out/">{% csrf_token %}
-                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                            <input type="hidden" name="false" value="Yes">
-                            <input type="hidden" name="status" value="Open">
-                            <input type="hidden" name="vuln_name" value="{{data.name}}">
-                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                            <button class="btn btn-info btn-mini">Yes</button>
-                        </form>
+                        <span class="label label-info"></span>
+                        {{data.description | safe}}
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Instance:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <span class="label label-info"></span>
+                        Vulnerable URL : {{data.request_response_url}}
                         <br>
-                        <strong> Severity: </strong><span class="badge badge-{{data.severity_color}}"> {{ data.severity }}</span>
-                        <br><br>
-                        <strong> Method : </strong>{{data.method}}<br><br>
-                        <strong> Vulnerable URL : </strong><code><a href="{{data.url}}">{{data.host}}</a>
-                    </code><br><br>
-                        <strong> Parameter : </strong>{{data.location}}<br><br>
-                        <strong> Location : </strong>{{data.location}}<br><br>
-                        <strong> Reference : </strong>{{data.vulnerabilityClassifications | safe}}<br><br>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row-fluid">
-            <div class="span12">
-                <!--<div class="span12">-->
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Issue Detail:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        {{data.issueDetail | safe}}
+                        Path : {{data.path}}
                     </div>
                 </div>
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Issue Background:</h5>
+                        <h5>Remediation:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info"></span>
-                        {{data.issueBackground | safe}}
+                        {{data.remediation | safe}}
                     </div>
                 </div>
-                <!--</div>-->
-                <!--<div class="span12">-->
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Solutions:</h5>
+                        <h5>Reference:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <strong> Solutions : </strong>{{data.remediationBackground | safe}}<br><br>
+                        {{data.reference | safe}}
                     </div>
                 </div>
-                <!--</div>-->
-                <!--<div class="span12 ">-->
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Request Header:</h5>
+                        <h5>Vulnerability Classifications:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <pre
-                        >{{ data.scan_request }} <br></pre>
+                        {{data.vulnerability_classifications | safe}}
                     </div>
                 </div>
-                <!--</div>-->
-                <!--<div class="span12">-->
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Response Header:</h5>
+                        <h5>Request:</h5>
                     </div>
                     <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <pre
-                        >{{ data.scan_response }}</pre>
+                        <pre>{{data.request_response_request_data }}</pre>
                     </div>
                 </div>
-                <!--</div>-->
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
+                        <h5>Response:</h5>
+                    </div>
+                    <div class="widget-content">
+                        <pre>{{data.request_response_response_data }}</pre>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

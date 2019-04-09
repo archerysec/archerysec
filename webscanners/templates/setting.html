@@ -12,23 +12,6 @@
             <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
                 <h5>Settings List</h5>
             </div>
-            <!--<div class="widget-content notify-ui">-->
-            <!--<ul id="gritter-notify">-->
-            <!--&lt;!&ndash;<li class="normal">Standard notification</li>&ndash;&gt;-->
-            <!--<li class="sticky">Sticky notification</li>-->
-            <!--&lt;!&ndash;<li class="image" data-image="img/demo/envelope.png">Notification with image</li>&ndash;&gt;-->
-            <!--</ul>-->
-            <!--</div>-->
-
-            <!--<div class="span6">-->
-
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-
             <div class="widget-content">
                 <div class="row-fluid">
                     <div class="span6">
@@ -105,7 +88,11 @@
                                 <div class="card-body">
                                     <div class="widget-content">
                                         <div>
-                                            <label>Burp API Host</label>
+                                            <label>Burp API Key</label>
+                                            <div class="form-group">
+                                                <pre>{{ burp_api_key }}</pre>
+                                            </div>
+                                            <label>Burp host</label>
                                             <div class="form-group">
                                                 <pre>{{ burp_path }}</pre>
                                             </div>
@@ -114,7 +101,7 @@
                                                 <pre>{{ burp_port }}</pre>
                                             </div>
 
-                                            <a class="btn btn-primary" href="/webscanners/burp_setting/"
+                                            <a class="btn btn-primary" href="/burpscanner/burp_setting/"
                                                role="button">Edit</a>
                                         </div>
                                     </div>

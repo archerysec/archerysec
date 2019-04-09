@@ -29,6 +29,7 @@ class arachni_settings_db(models.Model):
 class burp_setting_db(models.Model):
     burp_url = models.TextField(blank=True, null=True)
     burp_port = models.TextField(blank=True, null=True)
+    burp_api_key = models.TextField(blank=True, null=True)
 
 
 class openvas_setting_db(models.Model):

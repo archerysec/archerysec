@@ -80,7 +80,7 @@
                                 <th>Risk</th>
                                 <th>JIRA Ticket</th>
                                 <th>False Positive</th>
-                                <th></th>
+                                <!--<th></th>-->
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -97,7 +97,7 @@
                                 </td>
                                 <td><a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                 </td>
-                                <td>{{data.host}}{{data.location}}</td>
+                                <td>{{data.request_response_url}}</td>
                                 <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span></td>
                                 <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a></td>
                                 <td>
@@ -110,12 +110,12 @@
                                         <button class="btn btn-info btn-mini">Yes</button>
                                     </form>
                                 </td>
-                                <td>
-                                    <div><a href="/burpscanner/edit_burp_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"
-                                            data-original-title="Edit"><i
-                                            class="icon-pencil"></i></a>
-                                    </div>
-                                </td>
+                                <!--<td>-->
+                                    <!--<div><a href="/burpscanner/edit_burp_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"-->
+                                            <!--data-original-title="Edit"><i-->
+                                            <!--class="icon-pencil"></i></a>-->
+                                    <!--</div>-->
+                                <!--</td>-->
                                 <td>
                                     <div>
                                         <form action="/burpscanner/del_burp_vuln/" method="POST" class="form-horizontal">
@@ -168,7 +168,7 @@
                                 <th>URL</th>
                                 <th>Risk</th>
                                 <th>False Positive</th>
-                                <th></th>
+                                <!--<th></th>-->
                                 <th></th>
                             </tr>
                             </thead>
@@ -196,12 +196,12 @@
                                         <button class="btn btn-info btn-mini">No</button>
                                     </form>
                                 </td>
-                                <td>
-                                    <div><a href="/burpscanner/edit_burp_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"
-                                            data-original-title="Edit"><i
-                                            class="icon-pencil"></i></a>
-                                    </div>
-                                </td>
+                                <!--<td>-->
+                                    <!--<div><a href="/burpscanner/edit_burp_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"-->
+                                            <!--data-original-title="Edit"><i-->
+                                            <!--class="icon-pencil"></i></a>-->
+                                    <!--</div>-->
+                                <!--</td>-->
                                 <td>
                                     <div>
                                         <form action="/burpscanner/del_vuln/" method="POST" class="form-horizontal">
@@ -244,8 +244,8 @@
                                 <th>Vulnerability</th>
                                 <th>URL</th>
                                 <th>Risk</th>
-                                <th>False Positive</th>
-                                <th></th>
+                                <!--<th>False Positive</th>-->
+                                <!--<th></th>-->
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -264,21 +264,21 @@
                                 </td>
                                 <td>{{data.host}}{{data.location}}</td>
                                 <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span></td>
-                                <td>
-                                    <form method="POST" action="/burpscanner/burp_vuln_out/" >{% csrf_token %}
-                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                        <input type="hidden" name="false" value="No">
-                                        <input type="hidden" name="vuln_name" value="{{data.name}}">
-                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                        <button class="btn btn-info btn-mini">No</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <div><a href="/burpscanner/edit_burp_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"
-                                            data-original-title="Edit"><i
-                                            class="icon-pencil"></i></a>
-                                    </div>
-                                </td>
+                                <!--<td>-->
+                                    <!--<form method="POST" action="/burpscanner/burp_vuln_out/" >{% csrf_token %}-->
+                                        <!--<input type="hidden" name="vuln_id" value="{{data.vuln_id}}">-->
+                                        <!--<input type="hidden" name="false" value="No">-->
+                                        <!--<input type="hidden" name="vuln_name" value="{{data.name}}">-->
+                                        <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}">-->
+                                        <!--<button class="btn btn-info btn-mini">No</button>-->
+                                    <!--</form>-->
+                                <!--</td>-->
+                                <!--<td>-->
+                                    <!--<div><a href="/burpscanner/edit_burp_vuln/?vuln_id={{data.vuln_id}}" class="btn btn-primary"-->
+                                            <!--data-original-title="Edit"><i-->
+                                            <!--class="icon-pencil"></i></a>-->
+                                    <!--</div>-->
+                                <!--</td>-->
                                 <td>
                                     <div>
                                         <form action="/burpscanner/del_vuln/" method="POST" class="form-horizontal">

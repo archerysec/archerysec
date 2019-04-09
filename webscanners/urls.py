@@ -38,10 +38,6 @@ urlpatterns = [
         name='setting'),
 
 
-    # Burp Setting from path
-    url(r'^burp_setting',
-        web_views.burp_setting,
-        name='burp_setting'),
     # Burp scans
     url(r'^xml_upload',
         web_views.xml_upload,

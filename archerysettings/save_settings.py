@@ -66,7 +66,7 @@ class SaveSettings:
                                            )
         save_zapsettings.save()
 
-    def save_burp_settings(self, burphost, burport):
+    def save_burp_settings(self, burphost, burport, burpapikey):
         """
         Save Burp Settings into setting file.
         :param burphost:
@@ -78,20 +78,10 @@ class SaveSettings:
         all_burp.delete()
 
         save_burpsettings = burp_setting_db(burp_url=burphost,
-                                            burp_port=burport
+                                            burp_port=burport,
+                                            burp_api_key=burpapikey
                                             )
         save_burpsettings.save()
-        try:
-            with open(self.setting_file, 'r+') as f:
-                data = json.load(f)
-                data['burp_path'] = burphost
-                data['burp_port'] = burport
-                f.seek(0)
-                json.dump(data, f, indent=4)
-                f.truncate()
-        except Exception as e:
-            return e
-        return f.close()
 
     def openvas_settings(self, openvas_host, openvas_port, openvas_enabled, openvas_user, openvas_password):
         """
