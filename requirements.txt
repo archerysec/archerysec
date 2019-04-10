@@ -37,7 +37,7 @@ html5lib==1.0.1
 httplib2==0.11.3
 idna==2.6
 ipaddress==1.0.18
-isort==4.3.4
+isort==4.3.17
 itypes==1.1.0
 Jinja2==2.10
 jira==1.0.10
