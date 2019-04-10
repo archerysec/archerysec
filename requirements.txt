@@ -65,7 +65,7 @@ python-whois==0.6.2
 pytz==2017.3
 reportlab==3.4.0
 requests==2.20.0
-requests-oauthlib==0.8.0
+requests-oauthlib==1.2.0
 requests-toolbelt==0.8.0
 selenium==3.8.0
 singledispatch==3.4.0.3
