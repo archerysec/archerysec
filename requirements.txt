@@ -1,6 +1,6 @@
 django-notifications-hq
 asn1crypto==0.23.0
-astroid==1.6.5
+astroid==2.2.5
 backports.functools-lru-cache==1.5
 cairocffi==0.8.0
 CairoSVG==1.0.22
