@@ -72,7 +72,7 @@ singledispatch==3.4.0.3
 six==1.11.0
 tinycss2==1.0.2
 uritemplate==3.0.0
-urllib3
+urllib3==1.24.1
 WeasyPrint==46
 webencodings==0.5.1
 whitenoise==3.3.0
