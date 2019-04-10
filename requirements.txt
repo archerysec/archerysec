@@ -50,7 +50,7 @@ openvas_lib
 ordereddict==1.1
 pbr==4.0.3
 pdfrw==0.4
-Pillow==5.1.0
+Pillow==6.0.0
 psycopg2-binary==2.7.5
 PyBurprestapi
 pycparser==2.18
