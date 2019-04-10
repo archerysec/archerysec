@@ -17,7 +17,7 @@ cssselect2==0.2.1
 defusedxml==0.5.0
 Django==2.2
 django-appconf==1.0.2
-django-background-tasks==1.1.13
+django-background-tasks==1.2.0
 django-compat==1.0.15
 django-cryptography==0.2
 django-debug-toolbar==1.10.1
