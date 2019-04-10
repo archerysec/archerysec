@@ -16,6 +16,7 @@ from __future__ import unicode_literals
 import json
 from vFeed.lib.core.methods import *
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
+from notifications.signals import notify
 
 cve_summary = ''
 cve_url = ''
@@ -57,9 +58,19 @@ metasploit_title = ''
 snort_category = ''
 snort_id = ''
 snort_signature = ''
+cvss2_authentication = ''
+cvss2_availability = ''
+cvss2_base = ''
+cvss2_confidentiality = ''
+cvss2_exploitability = ''
+cvss2_impact = ''
+cvss2_integrity = ''
+cvss2_vector = ''
+cve_published = ''
 
 
 def cve_info(request):
+    user = request.user
     global cve_summary, cve_url, cve_id, cve_modified, cve_published, \
         cwe_id, cwe_title, cwe_url, cvss_accessComplexity, \
         cvss_accessVector, cvss_authentication, cvss_availability, \
@@ -70,12 +81,19 @@ def cve_info(request):
         nessus_file, nessus_id, nessus_name, ubuntu_json_data, \
         oval_json_data, oval_class, oval_id, oval_title, oval_url, \
         metasploit_json_data, metasploit_file, metasploit_id, \
-        metasploit_title, snort_category, snort_id, snort_signature, cve_dat
+        metasploit_title, snort_category, snort_id, snort_signature, cve_dat, cvss2_authentication, cvss2_availability, cvss2_base, cvss2_confidentiality, cvss2_exploitability, cvss2_impact, cvss2_integrity, cvss2_vector
     if request.GET['cve']:
         cve_dat = request.GET['cve']
     else:
         cve_dat = ''
     cve = cve_dat.replace(" ", "")
+
+    try:
+        print CveInfo(str(cve)).get_cve()
+    except Exception:
+        print ""
+        notify.send(user, recipient=user, verb='vFeed database not found')
+        return HttpResponseRedirect('/')
 
     info = CveInfo(str(cve)).get_cve()
     cwe = CveInfo(cve).get_cwe()
