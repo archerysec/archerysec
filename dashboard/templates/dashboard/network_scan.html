@@ -25,7 +25,6 @@
                                     <table class="table table-bordered data-table">
                                         <thead>
                                         <tr>
-                                            <!--<th>Project ID</th>-->
                                             <th>URL</th>
                                             <th>Date Time</th>
                                             <th>Total Vulnerability</th>
@@ -37,7 +36,6 @@
                                         </thead>
                                         <tbody>{% for data in all_network_data %}
                                         <tr data-target="#">
-                                            <!--<td>{{data.project_id}}</td>-->
                                             <td>
                                                 <a href="/net_dash_data/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
                                             </td>

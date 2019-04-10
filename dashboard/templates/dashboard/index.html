@@ -22,7 +22,6 @@
                 <table class="table table-bordered data-table">
                     <thead>
                     <tr>
-                        <!--<th>Project ID</th>-->
                         <th>Project</th>
                         <th>Start Date</th>
                         <th>End Date</th>
@@ -33,7 +32,6 @@
                     </thead>
                     <tbody>{% for data in all_project %}
                     <tr data-target="#">
-                        <!--<td>{{data.project_id}}</td>-->
 
                         <td>
                             <a href="/proj_data/?project_id={{data.project_id}}">{{data.project_name}}</a>

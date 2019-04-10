@@ -11,13 +11,6 @@
         <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
             <h5>Project Analytics</h5>
         </div>
-        <!--<div class="widget-content notify-ui">-->
-            <!--<ul id="gritter-notify">-->
-                <!--&lt;!&ndash;<li class="normal">Standard notification</li>&ndash;&gt;-->
-                <!--<li class="sticky">Sticky notification</li>-->
-                <!--&lt;!&ndash;<li class="image" data-image="img/demo/envelope.png">Notification with image</li>&ndash;&gt;-->
-            <!--</ul>-->
-        <!--</div>-->
         <div class="widget-box">
             <div class="widget-content">
                 <div class="row-fluid">
@@ -100,9 +93,6 @@
                                             <th>High</th>
                                             <th>Medium</th>
                                             <th>Low</th>
-                                            <!--<th>False Positive</th>-->
-                                            <!--<th>Closed</th>-->
-                                            <!--<th>Total</th>-->
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -115,8 +105,6 @@
                                                     class="badge badge-warning">{{all_zap_medium.medium_vul__sum}}</span>
                                             </td>
                                             <td><span class="badge badge-info">{{all_zap_low.low_vul__sum}}</span></td>
-                                            <!--<td><span class="badge badge-inverse">{{all_zap_scan.total_vul__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/arachniscanner/arachni_scan_list">Arachni</a></td>
@@ -128,9 +116,6 @@
                                             </td>
                                             <td><span class="badge badge-info">{{all_arachni_low.low_vul__sum}}</span>
                                             </td>
-                                            <!--<td><span-->
-                                            <!--class="badge badge-inverse">{{all_arachni_scan.total_vul__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/burpscanner/burp_scan_list">Burp Scan</a></td>
@@ -141,9 +126,6 @@
                                                     class="badge badge-warning">{{all_burp_medium.medium_vul__sum}}</span>
                                             </td>
                                             <td><span class="badge badge-info">{{all_burp_low.low_vul__sum}}</span></td>
-                                            <!--<td><span-->
-                                            <!--class="badge badge-inverse">{{all_burp_scan.total_vul__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/webinspectscanner/webinspect_scan_list/">Webinspect</a></td>
@@ -154,9 +136,6 @@
                                             <td><span
                                                     class="badge badge-info">{{all_webinspect_low.low_vul__sum}}</span>
                                             </td>
-                                            <!--<td><span-->
-                                            <!--class="badge badge-inverse">{{all_webinspect_scan.total_vul__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/acunetixscanner/acunetix_scan_list/">Acunetix</a></td>
@@ -167,9 +146,6 @@
                                             </td>
                                             <td><span class="badge badge-info">{{all_acunetix_low.low_vul__sum}}</span>
                                             </td>
-                                            <!--<td><span-->
-                                            <!--class="badge badge-inverse">{{all_acunetix_scan.total_vul__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/networkscanners/">OpenVAS</a></td>
@@ -180,9 +156,6 @@
                                             </td>
                                             <td><span class="badge badge-info">{{all_openvas_low.low_total__sum}}</span>
                                             </td>
-                                            <!--<td><span-->
-                                            <!--class="badge badge-inverse">{{all_openvas_scan.total_vul__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/networkscanners/nessus_scan">Nessus</a></td>
@@ -193,9 +166,6 @@
                                             </td>
                                             <td><span class="badge badge-info">{{all_nessus_low.low_total__sum}}</span>
                                             </td>
-                                            <!--<td><span-->
-                                            <!--class="badge badge-inverse">{{all_nessus_scan.total_vul__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/dependencycheck/dependencycheck_list">Dependency Check</a>
@@ -207,8 +177,6 @@
                                             <td><span
                                                     class="badge badge-info">{{all_dependency_low.SEVERITY_LOW__sum}}</span>
                                             </td>
-                                            <!--<td><span class="badge badge-inverse">{{all_dependency_scan.total_vuln__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/findbugs/findbugs_list">FindBugs</a></td>
@@ -219,9 +187,6 @@
                                             <td><span
                                                     class="badge badge-info">{{all_findbugs_low.SEVERITY_LOW__sum}}</span>
                                             </td>
-                                            <!--<td><span-->
-                                            <!--class="badge badge-inverse">{{all_findbugs_scan.total_vuln__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         <tr>
                                             <td><a href="/clair/clair_list">Clair</a></td>
@@ -232,9 +197,6 @@
                                             <td><span
                                                     class="badge badge-info">{{all_clair_low.SEVERITY_LOW__sum}}</span>
                                             </td>
-                                            <!--<td><span-->
-                                            <!--class="badge badge-inverse">{{all_clair_scan.total_vuln__sum}}</span>-->
-                                            <!--</td>-->
                                         </tr>
                                         </tbody>
                                     </table>
@@ -402,11 +364,6 @@
         <div class="widget-box">
             <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
                 <h5>Static Scans List</h5>
-                <!--<div class="buttons"><a data-toggle="modal"-->
-                <!--href="/webscanners/"-->
-                <!--class="btn btn-primary btn-mini"><i-->
-                <!--class="icon-plus icon-white"></i> Network Scans</a>-->
-                <!--</div>-->
             </div>
             <div class="widget-content nopadding">
                 <table class="table table-bordered data-table">
