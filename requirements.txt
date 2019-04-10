@@ -60,7 +60,7 @@ PyPDF2==1.26.0
 Pyphen==0.9.4
 python-nmap==0.6.1
 python-owasp-zap-v2.4==0.0.13
-python-taint==0.40
+python-taint==0.42
 python-whois==0.6.2
 pytz==2017.3
 reportlab==3.4.0
