@@ -73,7 +73,7 @@ six==1.11.0
 tinycss2==0.6.1
 uritemplate==3.0.0
 urllib3
-WeasyPrint==0.42
+WeasyPrint==46
 webencodings==0.5.1
 whitenoise==3.3.0
 wrapt==1.10.11
