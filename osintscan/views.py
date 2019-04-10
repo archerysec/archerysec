@@ -87,23 +87,21 @@ def sub_domain_search(request):
         subdomains = sublist3r.main(domain, False, 'subdomains.txt', ports=None, silent=False,
                                     verbose=False, enable_bruteforce=False, engines=None)
         for sdomain in subdomains:
-            print sdomain
             for a in mylist:
                 try:
                     # r = requests.get(a + sdomain)
-                    print "sasdfasdfasdf", a + sdomain
                     r = requests.head(a + sdomain, allow_redirects=False)
-                    print "status code", r.status_code
+
                     if r.status_code == 200:
                         final_url = a + sdomain
-                        print "final url", final_url
+
                         save_subdoamin = osint_domain_db(domains=domain,
                                                          sub_domains=final_url,
                                                          project_id=project_id)
                         save_subdoamin.save()
 
                 except:
-                    print "error as in subdomain"
+                    print("error as in subdomain")
         return HttpResponseRedirect('/osintscan/domain_list/')
 
     return render(request, 'sub_domains.html', {'all_domain': all_domain})
@@ -124,7 +122,6 @@ def del_sub_domain(request):
         value = domain_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
         for i in range(0, split_length):
             sub_domain = value_split.__getitem__(i)
             del_subdomain = osint_domain_db.objects.filter(sub_domains=sub_domain)
@@ -153,11 +150,10 @@ def osint_whois(request):
             for a in all_whois_info:
                 domain_z = a.domain
             if domain_s == domain_z:
-                print "Domain Already Existed", domain
                 return HttpResponseRedirect('/osintscan/domain_list/')
             else:
                 whois_info = whois.whois(domain_s)
-                for key, value in whois_info.viewitems():
+                for key, value in whois_info.items():
                     global updated_date
                     if key == 'updated_date':
                         updated_date = value

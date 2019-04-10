@@ -123,7 +123,7 @@ def xml_parser(root, project_id, scan_id):
                 risk = "Informational"
 
             dup_data = name + url + risk
-            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
             match_dup = zap_scan_results_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()
             lenth_match = len(match_dup)
@@ -145,7 +145,7 @@ def xml_parser(root, project_id, scan_id):
                 false_positive = 'No'
 
         if name == "None":
-            print name
+            print(name)
         else:
             dump_data = zap_scan_results_db(vuln_id=vuln_id,
                                             vuln_color=vul_col,
@@ -178,7 +178,7 @@ def xml_parser(root, project_id, scan_id):
                 evi = data.evidence
                 evi_data = ast.literal_eval(evi)
                 for evidence in evi_data:
-                    for key, value in evidence.viewitems():
+                    for key, value in evidence.items():
                         if key == 'evidence':
                             key = 'Evidence'
 

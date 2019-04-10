@@ -131,7 +131,7 @@ def burp_scan_data(root, project_id, scan_id):
                         res_dat = d.text
                         response_datas = base64.b64decode(res_dat)  # res_dat
 
-                    for key, items in met.iteritems():
+                    for key, items in met.items():
                         global methods
                         if key == "method":
                             methods = items
@@ -148,7 +148,7 @@ def burp_scan_data(root, project_id, scan_id):
         vuln_id = uuid.uuid4()
 
         dup_data = name + path + severity
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = burp_scan_result_db.objects.filter(
             dup_hash=duplicate_hash).values('dup_hash').distinct()
@@ -209,7 +209,7 @@ def burp_scan_data(root, project_id, scan_id):
             )
             data_dump.save()
         except Exception as e:
-            print e
+            print(e)
     burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity'
                                                                               ).distinct()
     total_vul = len(burp_all_vul)
@@ -230,5 +230,5 @@ def burp_scan_data(root, project_id, scan_id):
     try:
         email_notification.email_notify()
     except Exception as e:
-        print e
+        print(e)
     HttpResponse(status=201)

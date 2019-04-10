@@ -121,7 +121,7 @@ def xml_parser(root,
             vul_col = "info"
 
         dup_data = str(vuln_type) + str(vuln_url) + str(vuln_severity)
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
         match_dup = netsparker_scan_result_db.objects.filter(
             dup_hash=duplicate_hash).values('dup_hash').distinct()
         lenth_match = len(match_dup)

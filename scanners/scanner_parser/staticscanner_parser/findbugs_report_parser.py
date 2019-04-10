@@ -66,7 +66,7 @@ def xml_parser(root, project_id, scan_id):
 
                 dup_data = name + classname + priority
 
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                 match_dup = findbugs_scan_results_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash')

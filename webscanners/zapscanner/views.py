@@ -51,7 +51,7 @@ def email_notify(user, subject, message):
     for email in all_email:
         to_mail = email.recipient_list
 
-    print to_mail
+    print(to_mail)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [to_mail]
     try:
@@ -66,13 +66,13 @@ def email_sch_notify(subject, message):
     for email in all_email:
         to_mail = email.recipient_list
 
-    print to_mail
+    print(to_mail)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [to_mail]
     try:
         send_mail(subject, message, email_from, recipient_list)
     except Exception as e:
-        print e
+        print(e)
         pass
 
 
@@ -97,7 +97,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         message = 'ZAP Scanner failed due to setting not found '
 
         email_notify(user=user, subject=subject, message=message)
-        print "ZAP Conection Not Found"
+        print("ZAP Conection Not Found")
         return HttpResponseRedirect('/webscanners/')
 
     # Load ZAP Plugin
@@ -121,14 +121,14 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         save_all_scan.save()
         notify.send(user, recipient=user, verb='ZAP Scan URL %s Added' % target_url)
     except Exception as e:
-        print e
+        print(e)
     zap.zap_spider_thread(thread_value=30)
     spider_id = zap.zap_spider()
     zap.spider_status(spider_id=spider_id)
     zap.spider_result(spider_id=spider_id)
     notify.send(user, recipient=user, verb='ZAP Scan Spider Completed')
     time.sleep(5)
-    print 'Scanning Target %s' % target_url
+    # print 'Scanning Target %s' % target_url
     """ ZAP Scan trigger on target_url  """
     zap_scan_id = zap.zap_scan()
     # un_scanid = uuid.uuid4()
@@ -145,7 +145,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         project_id=project_id,
         un_scanid=scan_id,
     )
-    print save_all_vuln
+    print(save_all_vuln)
     all_zap_scan = zap_scans_db.objects.all()
 
     total_vuln = ''
@@ -188,7 +188,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         message = 'ZAP Scanner failed due to setting not found '
 
         email_sch_notify(subject=subject, message=message)
-        print "ZAP Conection Not Found"
+        print("ZAP Conection Not Found")
         return HttpResponseRedirect('/webscanners/')
 
     # Load ZAP Plugin
@@ -211,13 +211,13 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
 
         save_all_scan.save()
     except Exception as e:
-        print e
+        print(e)
     zap.zap_spider_thread(thread_value=30)
     spider_id = zap.zap_spider()
     zap.spider_status(spider_id=spider_id)
     zap.spider_result(spider_id=spider_id)
     time.sleep(5)
-    print 'Scanning Target %s' % target_url
+    # print 'Scanning Target %s' % target_url
     """ ZAP Scan trigger on target_url  """
     zap_scan_id = zap.zap_scan()
     # un_scanid = uuid.uuid4()
@@ -234,7 +234,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         project_id=project_id,
         un_scanid=scan_id,
     )
-    print save_all_vuln
+    # print save_all_vuln
     all_zap_scan = zap_scans_db.objects.all()
 
     total_vuln = ''
@@ -274,7 +274,7 @@ def zap_scan(request):
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
-            print "Targets -", target
+            # print "Targets -", target
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_zap_scan,
@@ -529,7 +529,7 @@ def del_zap_scan(request):
             ip = scan_item.replace(" ", "")
             target_split = ip.split(',')
             split_length = target_split.__len__()
-            print "split_length", split_length
+            # print "split_length", split_length
             for i in range(0, split_length):
                 target = target_split.__getitem__(i)
                 item_results = zap_scan_results_db.objects.filter(scan_id=target,
@@ -542,7 +542,7 @@ def del_zap_scan(request):
                 messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
             return HttpResponseRedirect('/zapscanner/zap_scan_list/')
     except Exception as e:
-        print "Error Got !!!"
+        print("Error Got !!!")
 
 
 def slem(driver, url):
@@ -557,7 +557,7 @@ def slem(driver, url):
     try:
         driver.get(url, )
     except Exception as e:
-        print "Error Got !!!"
+        print("Error Got !!!")
     return
 
 
@@ -597,7 +597,7 @@ def del_cookies(request):
         cooki_split = cookies_item.replace(" ", "")
         target_split = cooki_split.split(',')
         split_length = target_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             cookies_target = target_split.__getitem__(i)
             print(cookies_target)
@@ -752,7 +752,7 @@ def del_zap_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
@@ -788,7 +788,7 @@ def zap_vuln_check(request):
         evi = data.evidence
         evi_data = ast.literal_eval(evi)
         for evidence in evi_data:
-            for key, value in evidence.viewitems():
+            for key, value in evidence.items():
                 if key == 'evidence':
                     key = 'Evidence'
 

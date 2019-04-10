@@ -94,7 +94,7 @@ def xml_parser(data, project_id, scan_id):
                             vul_col = "info"
 
                         dup_data = name + fileName + severity
-                        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                         match_dup = dependencycheck_scan_results_db.objects.filter(
                             dup_hash=duplicate_hash).values('dup_hash')
@@ -151,7 +151,7 @@ def xml_parser(data, project_id, scan_id):
         total_medium = len(all_dependency_data.filter(severity="Medium"))
         total_low = len(all_dependency_data.filter(severity="Low"))
         total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
-        print "total duplicats", total_duplicate
+        print("total duplicats"), total_duplicate
 
         dependencycheck_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

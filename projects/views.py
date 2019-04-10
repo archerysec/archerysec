@@ -132,7 +132,7 @@ def projects_view(request):
     else:
         project_id = ''
 
-    print "pROJECT ID ", project_id
+    print("pROJECT ID "), project_id
 
     if request.POST.get("scan_id", ):
         project_id = request.GET['proj_id']

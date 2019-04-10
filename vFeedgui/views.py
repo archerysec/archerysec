@@ -89,9 +89,9 @@ def cve_info(request):
     cve = cve_dat.replace(" ", "")
 
     try:
-        print CveInfo(str(cve)).get_cve()
+        print(CveInfo(str(cve)).get_cve())
     except Exception:
-        print ""
+        print("")
         notify.send(user, recipient=user, verb='vFeed database not found')
         return HttpResponseRedirect('/')
 
@@ -106,7 +106,7 @@ def cve_info(request):
             cve_modified = j['modified']
             cve_published = j['published']
     except Exception as e:
-        print e
+        print(e)
 
     cwe_json_data = json.loads(cwe)
     try:
@@ -115,13 +115,13 @@ def cve_info(request):
             cwe_title = cwe_data['title']
             cwe_url = cwe_data['url']
     except Exception as e:
-        print e
+        print(e)
 
     cvss = CveRisk(cve).get_cvss()
     try:
         cvss_json_data = json.loads(cvss)
     except Exception as e:
-        print e
+        print(e)
     try:
         for cvss_data in cvss_json_data:
             cvss_accessComplexity = cvss_data['accessComplexity']
@@ -135,13 +135,13 @@ def cve_info(request):
             cvss_integrity = cvss_data['integrity']
             cvss_vector = cvss_data['vector']
     except Exception as e:
-        print e
+        print(e)
 
     severity = CveRisk(cve).get_severity()
     try:
         severity_json_data = json.loads(severity)
     except Exception as e:
-        print e
+        print(e)
     # print severity
     severity_id = {}
     severity_title = {}
@@ -167,14 +167,14 @@ def cve_info(request):
                 cvss2_integrity = cvss2_data['integrity']
                 cvss2_vector = cvss2_data['vector']
     except Exception as e:
-        print e
+        print(e)
 
     ubuntu = CvePatches(cve).get_ubuntu()
     # print(ubuntu)
     try:
         ubuntu_json_data = json.loads(ubuntu)
     except Exception as e:
-        print e
+        print(e)
     if ubuntu == None:
         ubuntu_id = ''
         ubuntu_url = ''
@@ -184,14 +184,14 @@ def cve_info(request):
                 ubuntu_id = ubuntu['id']
                 ubuntu_url = ubuntu['url']
         except Exception as e:
-            print e
+            print(e)
 
     nessus = CveScanners(cve).get_nessus()
     # print(nessus)
     try:
         nessus_json_data = json.loads(nessus)
     except Exception as e:
-        print e
+        print(e)
 
     if nessus == None:
         pass
@@ -207,14 +207,14 @@ def cve_info(request):
                 nessus_id[nessus['id']] = 'id'
                 nessus_name[nessus['name']] = 'name'
         except Exception as e:
-            print e
+            print(e)
 
     oval = CveScanners(cve).get_oval()
     # print(oval)
     try:
         oval_json_data = json.loads(oval)
     except Exception as e:
-        print e
+        print(e)
 
     if oval == 'null':
         pass
@@ -230,14 +230,14 @@ def cve_info(request):
                 oval_title[oval_data['title']] = 'title'
                 oval_url[oval_data['url']] = 'url'
         except Exception as e:
-            print e
+            print(e)
 
     metasploit = CveExploit(cve).get_msf()
 
     try:
         metasploit_json_data = json.loads(metasploit)
     except Exception as e:
-        print e
+        print(e)
 
     if metasploit == 'null':
         pass
@@ -248,7 +248,7 @@ def cve_info(request):
                 metasploit_id = metasploit_data['id']
                 metasploit_title = metasploit_data['title']
         except Exception as e:
-            print e
+            print(e)
 
     snort = CveRules(cve).get_snort()
     # print(snort)

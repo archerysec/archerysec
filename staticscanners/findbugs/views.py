@@ -166,7 +166,7 @@ def findbugs_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = findbugs_scan_results_db.objects.filter(vuln_id=vuln_id)
@@ -178,7 +178,7 @@ def findbugs_del_vuln(request):
         total_medium = len(all_findbugs_data.filter(priority="2"))
         total_low = len(all_findbugs_data.filter(priority="3"))
         total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
-        print "total duplicats", total_duplicate
+        print("total duplicats"), total_duplicate
 
         findbugs_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

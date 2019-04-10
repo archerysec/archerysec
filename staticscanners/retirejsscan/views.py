@@ -169,7 +169,7 @@ def retirejs_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = retirejs_scan_results_db.objects.filter(vuln_id=vuln_id)

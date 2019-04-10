@@ -143,7 +143,7 @@ def xml_parser(root, project_id, scan_id):
         vul_id = uuid.uuid4()
 
         dup_data = name + host + severity + port
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = ov_scan_result_db.objects.filter(
             vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()

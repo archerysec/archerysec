@@ -167,78 +167,78 @@ def proj_data(request):
     all_nessus_scan = nessus_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('total_vul'))
 
-    for key, value in all_zap_scan.iteritems():
+    for key, value in all_zap_scan.items():
         if value is None:
             all_zap = '0'
         else:
             all_zap = value
-    for key, value in all_burp_scan.iteritems():
+    for key, value in all_burp_scan.items():
         if value is None:
             all_burp = '0'
         else:
             all_burp = value
 
-    for key, value in all_arachni_scan.iteritems():
+    for key, value in all_arachni_scan.items():
         if value is None:
             all_arachni = '0'
         else:
             all_arachni = value
 
-    for key, value in all_netsparker_scan.iteritems():
+    for key, value in all_netsparker_scan.items():
         if value is None:
             all_netsparker = '0'
         else:
             all_netsparker = value
 
-    for key, value in all_acunetix_scan.iteritems():
+    for key, value in all_acunetix_scan.items():
         if value is None:
             all_acunetix = '0'
         else:
             all_acunetix = value
 
-    for key, value in all_webinspect_scan.iteritems():
+    for key, value in all_webinspect_scan.items():
         if value is None:
             all_webinspect = '0'
         else:
             all_webinspect = value
 
-    for key, value in all_dependency_scan.iteritems():
+    for key, value in all_dependency_scan.items():
         if value is None:
             all_dependency = '0'
         else:
             all_dependency = value
 
-    for key, value in all_findbugs_scan.iteritems():
+    for key, value in all_findbugs_scan.items():
         if value is None:
             all_findbugs = '0'
         else:
             all_findbugs = value
 
-    for key, value in all_clair_scan.iteritems():
+    for key, value in all_clair_scan.items():
         if value is None:
             all_clair = '0'
         else:
             all_clair = value
 
-    for key, value in all_inspec_scan.iteritems():
+    for key, value in all_inspec_scan.items():
         if value is None:
             all_inspec = '0'
         else:
             all_inspec = value
 
-    for key, value in all_bandit_scan.iteritems():
+    for key, value in all_bandit_scan.items():
         if value is None:
             all_bandit = '0'
         else:
             all_bandit = value
 
-    for key, value in all_nessus_scan.iteritems():
+    for key, value in all_nessus_scan.items():
         if value is None:
             all_nessus = '0'
         else:
             all_nessus = value
 
-    for key, value in all_openvas_scan.iteritems():
+    for key, value in all_openvas_scan.items():
         if value is None:
             all_openvas = '0'
         else:
@@ -300,78 +300,78 @@ def proj_data(request):
     all_openvas_high = scan_save_db.objects.filter(project_id=project_id). \
         aggregate(Sum('high_total'))
 
-    for key, value in all_zap_high.iteritems():
+    for key, value in all_zap_high.items():
         if value is None:
             zap_high = '0'
         else:
             zap_high = value
-    for key, value in all_burp_high.iteritems():
+    for key, value in all_burp_high.items():
         if value is None:
             burp_high = '0'
         else:
             burp_high = value
 
-    for key, value in all_arachni_high.iteritems():
+    for key, value in all_arachni_high.items():
         if value is None:
             high_arachni = '0'
         else:
             high_arachni = value
 
-    for key, value in all_netsparker_high.iteritems():
+    for key, value in all_netsparker_high.items():
         if value is None:
             high_netsparker = '0'
         else:
             high_netsparker = value
 
-    for key, value in all_acunetix_high.iteritems():
+    for key, value in all_acunetix_high.items():
         if value is None:
             high_acunetix = '0'
         else:
             high_acunetix = value
 
-    for key, value in all_webinspect_high.iteritems():
+    for key, value in all_webinspect_high.items():
         if value is None:
             high_webinspect = '0'
         else:
             high_webinspect = value
 
-    for key, value in all_dependency_high.iteritems():
+    for key, value in all_dependency_high.items():
         if value is None:
             high_dependency = '0'
         else:
             high_dependency = value
 
-    for key, value in all_findbugs_high.iteritems():
+    for key, value in all_findbugs_high.items():
         if value is None:
             high_findbugs = '0'
         else:
             high_findbugs = value
 
-    for key, value in all_clair_high.iteritems():
+    for key, value in all_clair_high.items():
         if value is None:
             high_clair = '0'
         else:
             high_clair = value
 
-    for key, value in all_inspec_failed.iteritems():
+    for key, value in all_inspec_failed.items():
         if value is None:
             failed_inspec = '0'
         else:
             failed_inspec = value
 
-    for key, value in all_bandit_high.iteritems():
+    for key, value in all_bandit_high.items():
         if value is None:
             high_bandit = '0'
         else:
             high_bandit = value
 
-    for key, value in all_nessus_high.iteritems():
+    for key, value in all_nessus_high.items():
         if value is None:
             high_nessus = '0'
         else:
             high_nessus = value
 
-    for key, value in all_openvas_high.iteritems():
+    for key, value in all_openvas_high.items():
         if value is None:
             openvas_high = '0'
         else:
@@ -443,78 +443,78 @@ def proj_data(request):
     all_openvas_medium = scan_save_db.objects.filter(project_id=project_id). \
         aggregate(Sum('medium_total'))
 
-    for key, value in all_zap_medium.iteritems():
+    for key, value in all_zap_medium.items():
         if value is None:
             zap_medium = '0'
         else:
             zap_medium = value
-    for key, value in all_burp_medium.iteritems():
+    for key, value in all_burp_medium.items():
         if value is None:
             burp_medium = '0'
         else:
             burp_medium = value
 
-    for key, value in all_arachni_medium.iteritems():
+    for key, value in all_arachni_medium.items():
         if value is None:
             medium_arachni = '0'
         else:
             medium_arachni = value
 
-    for key, value in all_netsparker_medium.iteritems():
+    for key, value in all_netsparker_medium.items():
         if value is None:
             medium_netsparker = '0'
         else:
             medium_netsparker = value
 
-    for key, value in all_acunetix_medium.iteritems():
+    for key, value in all_acunetix_medium.items():
         if value is None:
             medium_acunetix = '0'
         else:
             medium_acunetix = value
 
-    for key, value in all_webinspect_medium.iteritems():
+    for key, value in all_webinspect_medium.items():
         if value is None:
             medium_webinspect = '0'
         else:
             medium_webinspect = value
 
-    for key, value in all_dependency_medium.iteritems():
+    for key, value in all_dependency_medium.items():
         if value is None:
             medium_dependency = '0'
         else:
             medium_dependency = value
 
-    for key, value in all_findbugs_medium.iteritems():
+    for key, value in all_findbugs_medium.items():
         if value is None:
             medium_findbugs = '0'
         else:
             medium_findbugs = value
 
-    for key, value in all_clair_medium.iteritems():
+    for key, value in all_clair_medium.items():
         if value is None:
             medium_clair = '0'
         else:
             medium_clair = value
 
-    for key, value in all_inspec_passed.iteritems():
+    for key, value in all_inspec_passed.items():
         if value is None:
             passed_inspec = '0'
         else:
             passed_inspec = value
 
-    for key, value in all_bandit_medium.iteritems():
+    for key, value in all_bandit_medium.items():
         if value is None:
             medium_bandit = '0'
         else:
             medium_bandit = value
 
-    for key, value in all_nessus_medium.iteritems():
+    for key, value in all_nessus_medium.items():
         if value is None:
             medium_nessus = '0'
         else:
             medium_nessus = value
 
-    for key, value in all_openvas_medium.iteritems():
+    for key, value in all_openvas_medium.items():
         if value is None:
             openvas_medium = '0'
         else:
@@ -586,79 +586,79 @@ def proj_data(request):
     all_openvas_low = scan_save_db.objects.filter(project_id=project_id). \
         aggregate(Sum('low_total'))
 
-    for key, value in all_zap_low.iteritems():
+    for key, value in all_zap_low.items():
         if value is None:
             zap_low = '0'
         else:
             zap_low = value
-    for key, value in all_burp_low.iteritems():
+    for key, value in all_burp_low.items():
         if value is None:
             burp_low = '0'
         else:
             burp_low = value
 
-    for key, value in all_arachni_medium.iteritems():
+    for key, value in all_arachni_medium.items():
         if value is None:
             low_arachni = '0'
         else:
             low_arachni = value
 
-    for key, value in all_netsparker_low.iteritems():
+    for key, value in all_netsparker_low.items():
         if value is None:
             low_netsparker = '0'
         else:
             low_netsparker = value
 
-    for key, value in all_acunetix_low.iteritems():
+    for key, value in all_acunetix_low.items():
         if value is None:
             low_acunetix = '0'
         else:
             low_acunetix = value
 
-    for key, value in all_webinspect_low.iteritems():
+    for key, value in all_webinspect_low.items():
         if value is None:
             low_webinspect = '0'
         else:
             low_webinspect = value
 
-    for key, value in all_dependency_low.iteritems():
+    for key, value in all_dependency_low.items():
         if value is None:
             low_dependency = '0'
         else:
             low_dependency = value
 
-    for key, value in all_findbugs_low.iteritems():
+    for key, value in all_findbugs_low.items():
         if value is None:
             low_findbugs = '0'
         else:
             low_findbugs = value
 
-    for key, value in all_clair_low.iteritems():
+    for key, value in all_clair_low.items():
         if value is None:
             low_clair = '0'
         else:
             low_clair = value
 
-    for key, value in all_inspec_skipped.iteritems():
+    for key, value in all_inspec_skipped.items():
         if value is None:
             skipped_inspec = '0'
         else:
             skipped_inspec = value
 
 
-    for key, value in all_bandit_low.iteritems():
+    for key, value in all_bandit_low.items():
         if value is None:
             low_bandit = '0'
         else:
             low_bandit = value
 
-    for key, value in all_nessus_low.iteritems():
+    for key, value in all_nessus_low.items():
         if value is None:
             low_nessus = '0'
         else:
             low_nessus = value
 
-    for key, value in all_openvas_low.iteritems():
+    for key, value in all_openvas_low.items():
         if value is None:
             openvas_low = '0'
         else:
@@ -931,37 +931,37 @@ def web_dash_data(request):
     all_acunetix_scan = acunetix_scan_db.objects.filter(scan_id=scan_id) \
         .aggregate(Sum('total_vul'))
 
-    for key, value in all_zap_scan.iteritems():
+    for key, value in all_zap_scan.items():
         if value is None:
             all_zap = '0'
         else:
             all_zap = value
 
-    for key, value in all_burp_scan.iteritems():
+    for key, value in all_burp_scan.items():
         if value is None:
             all_burp = '0'
         else:
             all_burp = value
 
-    for key, value in all_netsparker_scan.iteritems():
+    for key, value in all_netsparker_scan.items():
         if value is None:
             all_netsparker = '0'
         else:
             all_netsparker = value
 
-    for key, value in all_webinspect_scan.iteritems():
+    for key, value in all_webinspect_scan.items():
         if value is None:
             all_webinspect = '0'
         else:
             all_webinspect = value
 
-    for key, value in all_arachni_scan.iteritems():
+    for key, value in all_arachni_scan.items():
         if value is None:
             all_arachni = '0'
         else:
             all_arachni = value
 
-    for key, value in all_acunetix_scan.iteritems():
+    for key, value in all_acunetix_scan.items():
         if value is None:
             all_acunetix = '0'
         else:
@@ -990,30 +990,30 @@ def web_dash_data(request):
     all_arachni_high = arachni_scan_db.objects.filter(scan_id=scan_id) \
         .aggregate(Sum('high_vul'))
 
-    for key, value in all_zap_high.iteritems():
+    for key, value in all_zap_high.items():
         if value is None:
             all_high_zap = '0'
         else:
             all_high_zap = value
-    for key, value in all_burp_high.iteritems():
+    for key, value in all_burp_high.items():
         if value is None:
             all_high_burp = '0'
         else:
             all_high_burp = value
 
-    for key, value in all_netsparker_high.iteritems():
+    for key, value in all_netsparker_high.items():
         if value is None:
             all_high_netsparker = '0'
         else:
             all_high_netsparker = value
 
-    for key, value in all_webinspect_high.iteritems():
+    for key, value in all_webinspect_high.items():
         if value is None:
             all_high_webinspect = '0'
         else:
             all_high_webinspect = value
 
-    for key, value in all_arachni_high.iteritems():
+    for key, value in all_arachni_high.items():
         if value is None:
             all_high_arachni = '0'
         else:
@@ -1039,30 +1039,30 @@ def web_dash_data(request):
     all_arachni_medium = arachni_scan_db.objects.filter(scan_id=scan_id) \
         .aggregate(Sum('medium_vul'))
 
-    for key, value in all_zap_medium.iteritems():
+    for key, value in all_zap_medium.items():
         if value is None:
             all_medium_zap = '0'
         else:
             all_medium_zap = value
-    for key, value in all_burp_medium.iteritems():
+    for key, value in all_burp_medium.items():
         if value is None:
             all_medium_burp = '0'
         else:
             all_medium_burp = value
 
-    for key, value in all_netsparker_medium.iteritems():
+    for key, value in all_netsparker_medium.items():
         if value is None:
             all_medium_netsparker = '0'
         else:
             all_medium_netsparker = value
 
-    for key, value in all_webinspect_medium.iteritems():
+    for key, value in all_webinspect_medium.items():
         if value is None:
             all_medium_webinspect = '0'
         else:
             all_medium_webinspect = value
 
-    for key, value in all_arachni_medium.iteritems():
+    for key, value in all_arachni_medium.items():
         if value is None:
             all_medium_arachni = '0'
         else:
@@ -1088,30 +1088,30 @@ def web_dash_data(request):
     all_arachni_low = arachni_scan_db.objects.filter(scan_id=scan_id) \
         .aggregate(Sum('low_vul'))
 
-    for key, value in all_zap_low.iteritems():
+    for key, value in all_zap_low.items():
         if value is None:
             all_low_zap = '0'
         else:
             all_low_zap = value
-    for key, value in all_burp_low.iteritems():
+    for key, value in all_burp_low.items():
         if value is None:
             all_low_burp = '0'
         else:
             all_low_burp = value
 
-    for key, value in all_netsparker_low.iteritems():
+    for key, value in all_netsparker_low.items():
         if value is None:
             all_low_netsparker = '0'
         else:
             all_low_netsparker = value
 
-    for key, value in all_webinspect_low.iteritems():
+    for key, value in all_webinspect_low.items():
         if value is None:
             all_low_webinspect = '0'
         else:
             all_low_webinspect = value
 
-    for key, value in all_arachni_low.iteritems():
+    for key, value in all_arachni_low.items():
         if value is None:
             all_low_arachni = '0'
         else:
@@ -1206,13 +1206,13 @@ def net_dash_data(request):
     all_openvas_scan = scan_save_db.objects.filter(scan_id=scan_id).aggregate(Sum('total_vul'))
     all_nessus_scan = nessus_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('total_vul'))
 
-    for key, value in all_openvas_scan.iteritems():
+    for key, value in all_openvas_scan.items():
         if value is None:
             all_openvas = '0'
         else:
             all_openvas = value
 
-    for key, value in all_nessus_scan.iteritems():
+    for key, value in all_nessus_scan.items():
         if value is None:
             all_nessus = '0'
         else:
@@ -1223,13 +1223,13 @@ def net_dash_data(request):
     all_openvas_high = scan_save_db.objects.filter(scan_id=scan_id).aggregate(Sum('high_total'))
     all_nessus_high = nessus_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('high_total'))
 
-    for key, value in all_openvas_high.iteritems():
+    for key, value in all_openvas_high.items():
         if value is None:
             openvas_high = '0'
         else:
             openvas_high = value
 
-    for key, value in all_nessus_high.iteritems():
+    for key, value in all_nessus_high.items():
         if value is None:
             nessus_high = '0'
         else:
@@ -1240,13 +1240,13 @@ def net_dash_data(request):
     all_openvas_medium = scan_save_db.objects.filter(scan_id=scan_id).aggregate(Sum('medium_total'))
     all_nessus_medium = nessus_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('medium_total'))
 
-    for key, value in all_openvas_medium.iteritems():
+    for key, value in all_openvas_medium.items():
         if value is None:
             openvas_medium = '0'
         else:
             openvas_medium = value
 
-    for key, value in all_nessus_medium.iteritems():
+    for key, value in all_nessus_medium.items():
         if value is None:
             nessus_medium = '0'
         else:
@@ -1257,13 +1257,13 @@ def net_dash_data(request):
     all_openvas_low = scan_save_db.objects.filter(scan_id=scan_id).aggregate(Sum('low_total'))
     all_nessus_low = nessus_scan_db.objects.filter(scan_id=scan_id).aggregate(Sum('low_total'))
 
-    for key, value in all_openvas_low.iteritems():
+    for key, value in all_openvas_low.items():
         if value is None:
             openvas_low = '0'
         else:
             openvas_low = value
 
-    for key, value in all_nessus_low.iteritems():
+    for key, value in all_nessus_low.items():
         if value is None:
             nessus_low = '0'
         else:

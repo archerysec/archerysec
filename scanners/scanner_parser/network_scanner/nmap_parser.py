@@ -69,20 +69,19 @@ def xml_parser(root, project_id, scan_id):
 
     for nmap in root:
         for scaninfo in nmap:
-            # print scaninfo.tag, scaninfo.attrib
             if scaninfo.tag == 'address':
                 ip = scaninfo.attrib
-                for key, value in ip.viewitems():
+                for key, value in ip.items():
                     if key == 'addrtype':
                         if value == 'ipv4':
-                            for key, value in ip.viewitems():
+                            for key, value in ip.items():
                                 if key == 'addr':
                                     ip_address = value
             for s in scaninfo:
                 # print s.tag
                 if s.tag == 'port':
                     p = s.attrib
-                    for key, value in p.viewitems():
+                    for key, value in p.items():
                         # print key
                         if key == 'portid':
                             port = value
@@ -92,7 +91,7 @@ def xml_parser(root, project_id, scan_id):
 
                 if s.tag == 'portused':
                     p = s.attrib
-                    for key, value in p.viewitems():
+                    for key, value in p.items():
                         # print key, value
                         if key == 'state':
                             used_state = value
@@ -103,7 +102,7 @@ def xml_parser(root, project_id, scan_id):
 
                 for ss in s:
                     sat = ss.attrib
-                    for key, value in sat.viewitems():
+                    for key, value in sat.items():
                         if key == 'state':
                             state = value
                         if key == 'reason':
@@ -165,10 +164,10 @@ def xml_parser(root, project_id, scan_id):
             # print scaninfo.tag, scaninfo.attrib
             if scaninfo.tag == 'address':
                 ip = scaninfo.attrib
-                for key, value in ip.viewitems():
+                for key, value in ip.items():
                     if key == 'addrtype':
                         if value == 'ipv4':
-                            for key, value in ip.viewitems():
+                            for key, value in ip.items():
                                 if key == 'addr':
                                     ip_address = value
 

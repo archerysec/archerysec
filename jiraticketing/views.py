@@ -108,7 +108,7 @@ def submit_jira_ticket(request):
             'issuetype': {'name': issue_type},
         }
         new_issue = jira_ser.create_issue(fields=issue_dict)
-        print new_issue
+        # print new_issue
 
         if scanner == 'zap':
             zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)

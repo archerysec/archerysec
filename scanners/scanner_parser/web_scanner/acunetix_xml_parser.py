@@ -96,12 +96,12 @@ def xml_parser(root, project_id, scan_id):
         for reports in scan:
             if reports.tag == 'Name':
                 ScanName = reports.text
-                print "scanname---", ScanName
+
             if reports.tag == 'ShortName':
                 ScanShortName = reports.text
             if reports.tag == 'StartURL':
                 ScanStartURL = reports.text
-                print 'scan_start_url-----', ScanStartURL
+
             if reports.tag == 'StartTime':
                 ScanStartTime = reports.text
             if reports.tag == 'FinishTime':
@@ -212,7 +212,7 @@ def xml_parser(root, project_id, scan_id):
                 vuln_id = uuid.uuid4()
                 # print VulnName, ScanStartURL, VulnSeverity
                 dup_data = str(VulnName) + str(VulnAffects) + str(VulnSeverity)
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 match_dup = acunetix_scan_result_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)
@@ -234,7 +234,7 @@ def xml_parser(root, project_id, scan_id):
                     false_positive = 'No'
 
                 if VulnName is None:
-                    print VulnName
+                    print(VulnName)
                 else:
                     for c_url in root.findall('.//SiteFile'):
                         for vuln_url in c_url:

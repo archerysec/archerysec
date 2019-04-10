@@ -73,7 +73,7 @@ def nikto_html_parser(data, project_id, scan_id):
         vuln_id = uuid.uuid4()
 
         dup_data = discription + hostname
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = nikto_vuln_db.objects.filter(
             dup_hash=duplicate_hash).values('dup_hash').distinct()

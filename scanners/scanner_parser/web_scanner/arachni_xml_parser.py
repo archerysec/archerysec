@@ -89,7 +89,7 @@ def xml_parser(root, project_id, scan_id):
                     if vuln.tag == "references":
                         for ref_vuln in vuln:
                             dat = ref_vuln.attrib
-                            for key, values in dat.iteritems():
+                            for key, values in dat.items():
 
                                 if key is None:
                                     ref_key = "NA"
@@ -106,7 +106,7 @@ def xml_parser(root, project_id, scan_id):
                             if vec_vuln.tag == 'inputs':
                                 for vec_input in vec_vuln:
                                     dat = vec_input.attrib
-                                    for key, values in dat.iteritems():
+                                    for key, values in dat.items():
 
                                         if key is None:
                                             vector_input_key = "NA"
@@ -120,7 +120,7 @@ def xml_parser(root, project_id, scan_id):
                             if vec_vuln.tag == 'source':
                                 for vec_source in vec_vuln:
                                     source_dat = vec_source.attrib
-                                    for key, values in source_dat.iteritems():
+                                    for key, values in source_dat.items():
                                         if key is None:
                                             vector_source_key = "NA"
                                         else:
@@ -218,7 +218,7 @@ def xml_parser(root, project_id, scan_id):
                                     body = extra_vuln.text
 
                 dup_data = name + url + severity
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                 match_dup = arachni_scan_result_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()

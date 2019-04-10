@@ -31,7 +31,7 @@ from webscanners import web_views
 from webscanners.zapscanner.views import launch_zap_scan
 from networkscanners import views
 from networkscanners.serializers import NetworkScanSerializer, NetworkScanResultSerializer
-from serializers import CreateUser
+from archeryapi.serializers import CreateUser
 from rest_framework import generics
 import uuid
 from projects.serializers import ProjectDataSerializers
@@ -126,7 +126,7 @@ class WebScan(generics.ListCreateAPIView):
                     thread.start()
                     # time.sleep(5)
                 except Exception as e:
-                    print e
+                    print(e)
             elif scanner == 'arachni':
                 thread = threading.Thread(target=launch_arachni_scan, args=(target_url,
                                                                             project_id,
@@ -416,7 +416,7 @@ class CreateUsers(generics.CreateAPIView):
 
     def post(self, request, format=None, **kwargs):
         """
-            Post request to get all vulnerability Data.
+            # Post request to get all vulnerability Data.
         """
         serializer = CreateUser(data=request.data)
         if serializer.is_valid():
@@ -441,8 +441,8 @@ class UpladScanResult(APIView):
         scan_url = request.data.get("scan_url")
         scan_id = uuid.uuid4()
         scan_status = "100"
-        print xml_file
-        print scanner
+        print(xml_file)
+        print(scanner)
         if scanner == "zap_scan":
             date_time = datetime.datetime.now()
             scan_dump = zap_scans_db(scan_url=scan_url,

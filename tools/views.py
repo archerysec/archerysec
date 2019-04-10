@@ -41,9 +41,8 @@ def sslscan(request):
                 sslscan_output = subprocess.check_output(['sslscan', '--no-colour', scans_url])
                 print(sslscan_output)
 
-
             except Exception as e:
-                print (e)
+                print(e)
 
             dump_scans = sslscan_result_db(scan_url=scans_url,
                                            scan_id=scan_id,
@@ -90,7 +89,7 @@ def sslcan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
@@ -121,7 +120,7 @@ def nikto(request):
             scans_url = value_split.__getitem__(i)
 
             nikto_res_path = os.getcwd() + '/nikto_result/' + str(scan_id) + '.html'
-            print nikto_res_path
+            print(nikto_res_path)
 
             try:
 
@@ -134,7 +133,7 @@ def nikto(request):
                 try:
                     nikto_html_parser(data, project_id, scan_id)
                 except Exception as e:
-                    print e
+                    print(e)
 
             except Exception as e:
                 print (e)
@@ -151,7 +150,7 @@ def nikto(request):
                     try:
                         nikto_html_parser(data, project_id, scan_id)
                     except Exception as e:
-                        print e
+                        print(e)
 
 
                 except Exception as e:
@@ -255,7 +254,7 @@ def nikto_vuln_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        print("split_length"), split_length
         for i in range(0, split_length):
             _vuln_id = value_split.__getitem__(i)
             delete_vuln = nikto_vuln_db.objects.filter(vuln_id=_vuln_id)
@@ -278,7 +277,7 @@ def nikto_scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+
         for i in range(0, split_length):
             _scan_id = value_split.__getitem__(i)
 
@@ -383,7 +382,7 @@ def nmap_scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 

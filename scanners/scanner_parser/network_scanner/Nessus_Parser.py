@@ -60,13 +60,13 @@ def nessus_parser(root, project_id, scan_id):
         for reportHost in data.iter('ReportHost'):
             ip = reportHost.attrib
             try:
-                for key, value in ip.viewitems():
+                for key, value in ip.items():
                     scan_ip = value
             except:
                 continue
 
             for ReportItem in reportHost.iter('ReportItem'):
-                for key, value in ReportItem.attrib.viewitems():
+                for key, value in ReportItem.attrib.items():
                     if key == 'pluginName':
                         pluginName = value
                     if key == 'pluginID':
@@ -138,7 +138,7 @@ def nessus_parser(root, project_id, scan_id):
                 vul_id = uuid.uuid4()
                 
                 dup_data = scan_ip + plugin_name + severity + port
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                 match_dup = nessus_report_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()

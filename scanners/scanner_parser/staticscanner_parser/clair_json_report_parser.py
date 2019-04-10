@@ -79,7 +79,7 @@ def clair_report_json(data, project_id, scan_id):
 
             dup_data = Name + Severity + NamespaceName
 
-            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
             match_dup = clair_scan_results_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash')
@@ -121,7 +121,7 @@ def clair_report_json(data, project_id, scan_id):
             )
             save_all.save()
     except Exception:
-        print "High Vulnerability Not Found"
+        print("High Vulnerability Not Found")
         # pass
 
     try:
@@ -173,7 +173,7 @@ def clair_report_json(data, project_id, scan_id):
 
             dup_data = Name + Severity + NamespaceName
 
-            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
             match_dup = clair_scan_results_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash')
@@ -215,7 +215,7 @@ def clair_report_json(data, project_id, scan_id):
             )
             save_all.save()
     except Exception:
-        print "Medium Vulnerability not found."
+        print("Medium Vulnerability not found.")
         # pass
 
     try:
@@ -267,7 +267,7 @@ def clair_report_json(data, project_id, scan_id):
 
             dup_data = Name + Severity + NamespaceName
 
-            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
             match_dup = clair_scan_results_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash')
@@ -309,7 +309,7 @@ def clair_report_json(data, project_id, scan_id):
             )
             save_all.save()
     except Exception:
-        print "Low Vulnerability Not found"
+        print("Low Vulnerability Not found")
         # pass
 
     all_clair_data = clair_scan_results_db.objects.filter(scan_id=scan_id)

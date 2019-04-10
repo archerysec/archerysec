@@ -185,7 +185,7 @@ def edit_scan(request):
 
     if request.POST.get("new_scan"):
         new_scans = request.POST.get("new_scan")
-        print new_scans
+        print(new_scans)
         if new_scans == 'Yes':
             scan_uuid = request.POST.get("scan_uuid")
             new_scan_url = request.POST.get("scan_url")
@@ -205,8 +205,8 @@ def edit_scan(request):
             scan_uuid = request.POST.get("scan_uuid")
             new_scan_url = request.POST.get("scan_url")
             scan_url = request.POST.get("old_url")
-            print new_scan_url
-            print scan_url
+            print(new_scan_url)
+            print(scan_url)
             req_header = request.POST.get("req_header")
             req_body = request.POST.get("req_body")
             method = request.POST.get("method")
@@ -236,19 +236,18 @@ def authenticate(request):
             auth_token_key = request.POST.get("auth_token_key")
             extra_val_in_auth = request.POST.get("extra_auth_value")
 
-            print scan_url
+
             p = json.loads(json.dumps(req_header))
-            print p
-            for key, value in p.iteritems():
-                print key, value
+            for key, value in p.items():
+                print(key, value)
 
             r = requests.post(scan_url, headers=req_header, data=req_body)
 
             data = json.loads(r.text)
-            for key, value in data.viewitems():
+            for key, value in data.items():
                 keyl = data[key]
                 api_token = extra_val_in_auth + " " + keyl
-                print api_token
+                print(api_token)
 
                 try:
                     with open(api_key_path, 'r+') as f:
@@ -258,17 +257,17 @@ def authenticate(request):
                         zapath = data['zap_path']
                         zap_port = data['zap_port']
                 except Exception as e:
-                    print e
+                    print(e)
 
                 zap = ZAPv2(apikey=apikey,
                             proxies={'http': 'http://127.0.0.1' + ':' + zap_port,
                                      'https': 'http://127.0.0.1' + ':' + zap_port})
                 try:
                     zap_scanner = zapscanner.start_zap()
-                    print "Status of zap scanner:", zap_scanner
+                    print("Status of zap scanner:"), zap_scanner
 
                 except Exception as e:
-                    print e
+                    print(e)
                     return HttpResponseRedirect("/webscanners/scans_list/")
 
                 time.sleep(10)
@@ -276,26 +275,26 @@ def authenticate(request):
                 """ Excluding URL from scanner """
 
                 remove_auth = zap.replacer.remove_rule(scan_url)
-                print "Remove Auth :", remove_auth
-                print "Auth token Key :", auth_token_key
+                print("Remove Auth :"), remove_auth
+                print("Auth token Key :"), auth_token_key
                 auth_token_add = zap.replacer.add_rule(apikey=apikey, description=scan_url, enabled="true",
                                                        matchtype='REQ_HEADER', matchregex="false",
                                                        replacement=api_token,
                                                        matchstring=auth_token_key, initiators="")
 
-                print "Auth Added :", auth_token_add
+                print("Auth Added :"), auth_token_add
 
                 p = json.loads(json.dumps(req_header))
-                print p
-                for key, value in p.iteritems():
-                    print key, value
+                print(p)
+                for key, value in p.items():
+                    print(key, value)
                 # remove_header = zap.replacer.remove_rule(target_url)
                 # print "Remove extra value header :", remove_header
                 header_add = zap.replacer.add_rule(apikey=apikey, description=scan_url, enabled="true",
                                                    matchtype='REQ_HEADER', matchregex="false",
                                                    replacement=value,
                                                    matchstring=key, initiators="")
-                print "Cookies Added :", header_add
+                print("Cookies Added :"), header_add
 
                 api_token_db.objects.filter(scan_url=scan_url).update(api_token=api_token)
 
@@ -313,7 +312,7 @@ def auth_token_list(request):
 def url_api_scan(request):
     if request.POST.get("auth_val"):
         auth_val = request.POST.get("auth_val")
-        print auth_val
+        print(auth_val)
         if auth_val == 'No':
             target_url = request.POST.get("scan_url")
             req_header = ast.literal_eval(request.POST.get("req_header"))
@@ -330,23 +329,23 @@ def url_api_scan(request):
                     zapath = data['zap_path']
                     zap_port = data['zap_port']
             except Exception as e:
-                print e
+                print(e)
 
             zap = ZAPv2(apikey=apikey,
                         proxies={'http': 'http://127.0.0.1' + ':' + zap_port,
                                  'https': 'http://127.0.0.1' + ':' + zap_port})
 
-            print target_url
+            print(target_url)
 
             """
                 ***Starting ZAP Scanner***
             """
             try:
                 zap_scanner = zapscanner.start_zap()
-                print "Status of zap scanner:", zap_scanner
+                print("Status of zap scanner:"), zap_scanner
 
             except Exception as e:
-                print e
+                print(e)
                 return HttpResponseRedirect("/webscanners/scans_list/")
 
             """
@@ -366,49 +365,49 @@ def url_api_scan(request):
                     # print 'Spider progress %:' + zap.spider.status(scanid)
                     global spider_status
                     spider_status = zap.spider.status(scanid)
-                    print "Spider progress", spider_status
+                    print("Spider progress"), spider_status
                     time.sleep(5)
             except Exception as e:
-                print e
+                print(e)
 
             spider_status = "100"
 
             spider_res_out = zap.spider.results(scanid)
             data_out = ("\n".join(map(str, spider_res_out)))
-            print data_out
+            print(data_out)
             total_spider = len(spider_res_out)
 
-            print 'Spider Completed------'
-            print 'Target :', target_url
+            print('Spider Completed------')
+            print('Target :', target_url)
             global spider_alert
             spider_alert = "Spider Completed"
 
             time.sleep(5)
 
-            print 'Scanning Target %s' % target_url
+            print('Scanning Target %s') % target_url
             scan_scanid = zap.ascan.scan(target_url)
             un_scanid = uuid.uuid4()
-            print "updated scanid :", un_scanid
+            print("updated scanid :"), un_scanid
             try:
                 save_all_scan = zap_scans_db(project_id=project_id, scan_url=target_url, scan_scanid=un_scanid)
                 save_all_scan.save()
             except Exception as e:
-                print e
+                print(e)
             # zap_scans_db.objects.filter(pk=some_value).update(field1='some value')
             try:
                 while (int(zap.ascan.status(scan_scanid)) < 100):
-                    print 'Scan progress from zap_scan_lauch function  %: ' + zap.ascan.status(scan_scanid)
+                    print('Scan progress from zap_scan_lauch function  %: ') + zap.ascan.status(scan_scanid)
                     global scans_status
                     scans_status = zap.ascan.status(scan_scanid)
                     zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
                     time.sleep(5)
             except Exception as e:
-                print e
+                print(e)
 
             # Save Vulnerability in database
             scans_status = "100"
             zap_scans_db.objects.filter(scan_scanid=un_scanid).update(vul_status=scans_status)
-            print target_url
+            print(target_url)
             time.sleep(5)
 
             all_vuln = zap.core.alerts(target_url)
@@ -476,7 +475,7 @@ def url_api_scan(request):
                 request_response = zap.core.message(id=msg_id)
                 ja_son = json.dumps(request_response)
                 ss = ast.literal_eval(ja_son)
-                for key, value in ss.viewitems():
+                for key, value in ss.items():
                     global note
                     if key == "note":
                         note = value
@@ -520,11 +519,10 @@ def url_api_scan(request):
                                                                             cookieParams=cookieParams,
                                                                             res_type=res_type,
                                                                             res_id=res_id)
-                print msg_id
-                print res_id
+
 
             # zap_scanner = zapscanner.stop_zap()
-            print "Status of zap scanner:", zap_scanner
+            print("Status of zap scanner:"), zap_scanner
 
             return HttpResponseRedirect('/scanapi/')
 

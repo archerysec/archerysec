@@ -29,7 +29,7 @@ def inspec_report_json(data, project_id, scan_id):
     global controls_results_message, status
     vul_col = 'info'
 
-    for key, value in data.viewitems():
+    for key, value in data.items():
         if key == 'profiles':
             for profile in value:
                 controls = profile['controls']
@@ -54,7 +54,7 @@ def inspec_report_json(data, project_id, scan_id):
                         controls_results_run_time = res['run_time']
                         controls_results_start_time = res['start_time']
                         # controls_results_message = res['message']
-                        for key, value in res.viewitems():
+                        for key, value in res.items():
                             if key == 'message':
                                 controls_results_message = value
 
@@ -71,8 +71,8 @@ def inspec_report_json(data, project_id, scan_id):
                             status = "Skipped"
 
                         vul_id = uuid.uuid4()
-                        print vul_id
-                        print controls_results_message
+                        print(vul_id)
+
 
                         save_all = inspec_scan_results_db(
                             scan_id=scan_id,

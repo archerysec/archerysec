@@ -55,13 +55,6 @@ class ArcherySettings:
         for zap in all_zap:
             zapath = zap.zap_url
 
-        # try:
-        #     with open(self.setting_file, 'r+') as f:
-        #         data = json.load(f)
-        #         zapath = data['zap_path']
-        #
-        # except Exception as e:
-        #     print e
         return zapath
 
     def zap_port(self):
@@ -75,13 +68,7 @@ class ArcherySettings:
 
         for zap in all_zap:
             zaport = zap.zap_port
-        # try:
-        #     with open(self.setting_file, 'r+') as f:
-        #         data = json.load(f)
-        #         zaport = data['zap_port']
-        #
-        # except Exception as e:
-        #     print "Error in setting file as", e
+
         return zaport
 
     def burp_api_key(self):
@@ -180,12 +167,6 @@ class ArcherySettings:
         for openvas in all_openvas:
             openvas_password = openvas.password
 
-        # try:
-        #     with open(self.setting_file, 'r+') as f:
-        #         data = json.load(f)
-        #         openvas_password = data['open_vas_pass']
-        # except Exception as e:
-        #     print "Error in setting file as", e
 
         return openvas_password
 
@@ -223,7 +204,7 @@ class ArcherySettings:
                 data = json.load(f)
                 email_sub = data['email_subject']
         except Exception as e:
-            print "Error in setting file as", e
+            print("Error in setting file as", e)
 
         return email_sub
 
@@ -240,7 +221,7 @@ class ArcherySettings:
                 data = json.load(f)
                 emails_from = data['from_email']
         except Exception as e:
-            print "Error in setting file as", e
+            print("Error in setting file as"), e
 
         return emails_from
 
@@ -255,7 +236,7 @@ class ArcherySettings:
                 data = json.load(f)
                 emails_to = data['to_email']
         except Exception as e:
-            print "Error in setting file as", e
+            print("Error in setting file as", e)
 
         return emails_to
 
@@ -266,7 +247,7 @@ class ArcherySettings:
 
         for nv in all_nv:
             nv_enabled = nv.enabled
-        print nv_enabled
+        print(nv_enabled)
         if not isinstance(nv_enabled, bool):
             nv_enabled=False
         return nv_enabled
@@ -278,7 +259,7 @@ class ArcherySettings:
 
         for nv in all_nv:
             nv_version = nv.version
-        print nv_version
+        print(nv_version)
         if not isinstance(nv_version, bool):
             nv_version=False
         return nv_version
@@ -290,7 +271,7 @@ class ArcherySettings:
 
         for nv in all_nv:
             nv_online = nv.online
-        print nv_online
+        print(nv_online)
         if not isinstance(nv_online, bool):
             nv_online=False
         return nv_online

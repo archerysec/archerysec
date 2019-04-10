@@ -3,7 +3,7 @@ from sitetree.utils import tree, item
 sitetrees = (
     tree('topnavbar', items=[
         item('API Docs',
-             'https://developers.archerysec.info',
+             'https://developers.archerysec.com',
              url_as_pattern=False,
              hint="icon-link"),
         item('Settings',
