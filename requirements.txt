@@ -79,4 +79,4 @@ whitenoise==3.3.0
 wrapt==1.10.11
 xhtml2pdf==0.2b1
 beautifulsoup4
-django-import-export
+django-import-export==1.2.0
