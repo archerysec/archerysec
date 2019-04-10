@@ -70,7 +70,7 @@ requests-toolbelt==0.8.0
 selenium==3.8.0
 singledispatch==3.4.0.3
 six==1.11.0
-tinycss2==0.6.1
+tinycss2==1.0.2
 uritemplate==3.0.0
 urllib3
 WeasyPrint==0.42
