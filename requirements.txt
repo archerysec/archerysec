@@ -7,7 +7,7 @@ CairoSVG==1.0.22
 certifi==2017.11.5
 cffi==1.11.2
 chardet==3.0.4
-click==6.7
+click==7.0
 configparser==3.5.0
 coreapi==2.3.3
 coreapi-cli==1.0.6
