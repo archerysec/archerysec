@@ -12,3 +12,4 @@ archerysecurity/local_settings.py
 dbdata
 static/*
 vfeed.db
+venv/*
