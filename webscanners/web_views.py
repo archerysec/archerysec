@@ -28,7 +28,7 @@ from projects.models import project_db
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
     arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser, burp_xml_parser
 # from scanners.scanner_plugin.web_scanner import burp_plugin
-from scanners.scanner_plugin.web_scanner import zap_plugin
+from scanners.scanner_plugin.web_scanner import zap_plugin, burp_plugin
 from webscanners.models import \
     zap_scans_db, \
     zap_spider_db, \
@@ -273,7 +273,7 @@ def task(target_url, project_id, scanner):
             do_scan = burp_plugin.burp_scans(
                 project_id,
                 target,
-                scan_id)
+                scan_id, user='admin')
             thread = threading.Thread(
                 target=do_scan.scan_launch,
             )

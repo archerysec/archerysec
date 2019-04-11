@@ -135,6 +135,32 @@ def burp_scan_data(root, project_id, scan_id):
                         global methods
                         if key == "method":
                             methods = items
+
+            if data.tag == "issueBackground":
+                global issue_description
+                if data.text is None:
+                    issue_description = "NA"
+                else:
+                    issue_description = data.text
+            if data.tag == "remediationBackground":
+                global issue_remediation
+                if data.text is None:
+                    issue_remediation = "NA"
+                else:
+                    issue_remediation = data.text
+            if data.tag == "references":
+                global issue_reference
+                if data.text is None:
+                    issue_reference = "NA"
+                else:
+                    issue_reference = data.text
+            if data.tag == "vulnerabilityClassifications":
+                global issue_vulnerability_classifications
+                if data.text is None:
+                    issue_vulnerability_classifications = "NA"
+                else:
+                    issue_vulnerability_classifications = data.text
+
         global vul_col
         if severity == 'High':
             vul_col = "important"
@@ -175,12 +201,12 @@ def burp_scan_data(root, project_id, scan_id):
 
         url = host + location
 
-        all_issue_definitions = burp_issue_definitions.objects.filter(issue_type_id=types)
-        for def_data in all_issue_definitions:
-            issue_description = def_data.description
-            issue_remediation = def_data.remediation
-            issue_vulnerability_classifications = def_data.vulnerability_classifications
-            issue_reference = def_data.reference
+        # all_issue_definitions = burp_issue_definitions.objects.filter(issue_type_id=types)
+        # for def_data in all_issue_definitions:
+        #     issue_description = def_data.description
+        #     issue_remediation = def_data.remediation
+        #     issue_vulnerability_classifications = def_data.vulnerability_classifications
+        #     issue_reference = def_data.reference
 
         try:
             data_dump = burp_scan_result_db(
