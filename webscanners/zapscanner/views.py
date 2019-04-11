@@ -44,9 +44,11 @@ from archerysettings.models import email_db
 import ast
 
 scans_status = None
+to_mail = ''
 
 
 def email_notify(user, subject, message):
+    global to_mail
     all_email = email_db.objects.all()
     for email in all_email:
         to_mail = email.recipient_list
@@ -62,6 +64,7 @@ def email_notify(user, subject, message):
 
 
 def email_sch_notify(subject, message):
+    global to_mail
     all_email = email_db.objects.all()
     for email in all_email:
         to_mail = email.recipient_list

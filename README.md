@@ -113,7 +113,7 @@ cd /usr/share/nmap/scripts/
 sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
 ```
 
-## Automated installation
+## installation
 
 `export TIME_ZONE='Asia/Kolkata'`
 
@@ -122,35 +122,9 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
-$ cp archerysecurity/local_settings.sample.py archerysecurity/local_settings.py
-$ ./install.sh
+$ ./setup.sh
+$ ./run.sh
 ```
-
-Starting background tasks and django built-in server with the following commands
-
-```
-$ python manage.py process_tasks &
-$ python manage.py runserver 0.0.0.0:8000
-```
-
-## Manual Installation
-
-`export TIME_ZONE='Asia/Kolkata'`
-
-[https://en.wikipedia.org/wiki/List_of_tz_database_time_zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-
-```
-$ git clone https://github.com/archerysec/archerysec.git
-$ cd archerysec
-$ cp archerysecurity/local_settings.sample.py archerysecurity/local_settings.py
-$ pip install -r requirements.txt
-$ python manage.py collectstatic
-$ python manage.py migrate
-$ python manage.py createsuperuser
-$ python manage.py runserver 0.0.0.0:8000
-```
-
-Note: Make sure these steps (except createsuperuser) should be perform after every git pull.
 
 ## Note on installation for developers and contributors
 
