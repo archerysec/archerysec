@@ -42,7 +42,7 @@ from django.utils import timezone
 import datetime
 import defusedxml.ElementTree as ET
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
-    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser
+    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, burp_xml_parser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import json
@@ -473,10 +473,12 @@ class UpladScanResult(APIView):
             # Burp scan XML parser
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            do_xml_data = burp_plugin.burp_scans(project_id,
-                                                 scan_url,
-                                                 scan_id)
-            do_xml_data.burp_scan_data(root_xml)
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
+
+            burp_xml_parser.burp_scan_data(root_xml_en,
+                                           project_id,
+                                           scan_id)
             return Response({"message": "Burp Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
