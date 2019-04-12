@@ -51,7 +51,7 @@ ordereddict==1.1
 pbr==4.0.3
 pdfrw==0.4
 Pillow==6.0.0
-psycopg2-binary==2.7.5
+psycopg2-binary==2.8.1
 PyBurprestapi
 pycparser==2.18
 PyJWT==1.6.1
