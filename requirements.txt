@@ -46,7 +46,7 @@ lxml==4.3.3
 MarkupSafe==1.0
 mccabe==0.6.1
 oauthlib==2.0.7
-openvas_lib
+openvas_lib==1.1.7
 ordereddict==1.1
 pbr==4.0.3
 pdfrw==0.4
