@@ -13,3 +13,5 @@ dbdata
 static/*
 vfeed.db
 venv/*
+.scannerwork
+sonar-project.properties
