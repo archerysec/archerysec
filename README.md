@@ -313,7 +313,6 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [x] SSL Analysis
     - [x] Nikto
     - [ ] WPScan
-    - [ ] OWASP JoomScan
 * Reporting
     - [ ] PDF
     - [ ] Docx
