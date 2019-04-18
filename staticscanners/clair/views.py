@@ -70,7 +70,7 @@ def clair_vuln_data(request):
                 NamespaceName = vi.NamespaceName
                 Severity = vi.Severity
                 dup_data = Name + Severity + NamespaceName
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 clair_scan_results_db.objects.filter(vuln_id=vuln_id,
                                                      scan_id=scan_id).update(false_positive=false_positive,
                                                                              vuln_status=status,

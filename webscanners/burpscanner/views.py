@@ -244,7 +244,7 @@ def burp_vuln_out(request):
                 location = vi.request_response_url
                 severity = vi.severity
                 dup_data = name + location + severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 burp_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                    scan_id=scan_id).update(false_positive=false_positive,
                                                                            vuln_status=vuln_status,

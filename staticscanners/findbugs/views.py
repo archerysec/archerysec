@@ -70,7 +70,7 @@ def findbugs_vuln_data(request):
                 classname = vi.classname
                 risk = vi.risk
                 dup_data = name + classname + risk
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 findbugs_scan_results_db.objects.filter(vuln_id=vuln_id,
                                                         scan_id=scan_id).update(false_positive=false_positive,
                                                                                 vuln_status=status,

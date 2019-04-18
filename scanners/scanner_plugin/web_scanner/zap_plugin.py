@@ -122,8 +122,6 @@ class ZAPScanner:
 
     """ Connect with ZAP scanner global variable """
 
-    # zap = zap_connect()
-
     def __init__(self, target_url, project_id, rescan_id, rescan):
         """
 

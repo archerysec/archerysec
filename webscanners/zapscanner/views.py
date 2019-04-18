@@ -404,7 +404,7 @@ def zap_vuln_details(request):
                 url = vi.url
                 risk = vi.risk
                 dup_data = name + url + risk
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 zap_scan_results_db.objects.filter(
                     vuln_id=vuln_id,
                     scan_id=scan_id).update(false_positive=false_positive,
@@ -532,7 +532,6 @@ def del_zap_scan(request):
             ip = scan_item.replace(" ", "")
             target_split = ip.split(',')
             split_length = target_split.__len__()
-            # print "split_length", split_length
             for i in range(0, split_length):
                 target = target_split.__getitem__(i)
                 item_results = zap_scan_results_db.objects.filter(scan_id=target,

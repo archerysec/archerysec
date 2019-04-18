@@ -142,7 +142,7 @@ def scan_vul_details(request):
                 severity = vi.severity
                 port = vi.port
                 dup_data = name + host + severity + port
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 ov_scan_result_db.objects.filter(
                     scan_id=scan_id,
                     vul_id=vuln_id).update(
@@ -785,7 +785,7 @@ def nessus_vuln_details(request):
                 severity = vi.severity
                 port = vi.port
                 dup_data = scan_ip + plugin_name + severity + port
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 nessus_report_db.objects.filter(scan_id=scan_id,
                                                 vul_id=vuln_id).update(false_positive=false_positive,
                                                                        vuln_status=status,

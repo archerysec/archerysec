@@ -80,7 +80,7 @@ def retirejsscan_vuln_data(request):
                 filename = vi.filename
                 Severity = vi.issue_severity
                 dup_data = name + filename + Severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 retirejs_scan_results_db.objects.filter(vuln_id=vuln_id,
                                                         scan_id=scan_id).update(false_positive=false_positive,
                                                                                 vuln_status=status,

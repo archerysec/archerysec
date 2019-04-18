@@ -210,7 +210,7 @@ def nikto_result_vul(request):
                 discription = vi.discription
                 hostname = vi.hostname
                 dup_data = discription + hostname
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 nikto_vuln_db.objects.filter(vuln_id=vuln_id,
                                              scan_id=scan_id).update(false_positive=false_positive,
                                                                      vuln_status=status,
