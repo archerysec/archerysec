@@ -1,0 +1,66 @@
+.fc-state-default {
+    text-shadow: none;
+    box-shadow: none;
+}
+
+.fc-basic-view .fc-body .fc-row {
+    min-height: 5rem;
+}
+
+.fc-toolbar .fc-button-group {
+    border: 1px solid #2961ff;
+    border-radius: 4px;
+}
+
+.fc-toolbar .fc-button {
+    background: #2961ff;
+    color: #fff;
+    border: none;
+}
+
+.fc-toolbar .fc-button:hover {
+    background: #2961ff;
+    opacity: 1;
+}
+
+.fc-toolbar .fc-button.fc-state-active {
+    background: #fff;
+    color: #2961ff;
+}
+
+
+.fc-widget-header {
+    border: 0px !important;
+}
+
+.fc-widget-content {
+    border-color: rgba(120, 130, 140, 0.13) !important;
+}
+
+.fc-widget-content tr {
+    border-bottom: none;
+}
+
+
+.fc-view {
+    margin-top: 0px;
+}
+
+.fc-toolbar {
+    margin: 0px;
+    padding: 24px 0px;
+}
+
+
+.fc-event {
+    border-radius: 0px;
+    border: none;
+    cursor: move;
+    color: #fff !important;
+    font-size: 13px;
+    margin: 1px -1px 0 -1px;
+
+    padding: 5px 5px;
+    text-align: center;
+    background: #40c4ff;
+}
