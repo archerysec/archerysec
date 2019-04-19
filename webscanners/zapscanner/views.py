@@ -95,12 +95,12 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         notify.send(user, recipient=user, verb='ZAP Scan Started')
 
     except Exception:
-        notify.send(user, recipient=user, verb='ZAP Conection Not Found')
-        subject = 'ZAP Conection Not Found'
+        notify.send(user, recipient=user, verb='ZAP Connection Not Found')
+        subject = 'ZAP Connection Not Found'
         message = 'ZAP Scanner failed due to setting not found '
 
         email_notify(user=user, subject=subject, message=message)
-        print("ZAP Conection Not Found")
+        print("ZAP Connection Not Found")
         return HttpResponseRedirect('/webscanners/')
 
     # Load ZAP Plugin
@@ -187,11 +187,11 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         zap_connect.spider.scan(url=target_url)
 
     except Exception:
-        subject = 'ZAP Conection Not Found'
+        subject = 'ZAP Connection Not Found'
         message = 'ZAP Scanner failed due to setting not found '
 
         email_sch_notify(subject=subject, message=message)
-        print("ZAP Conection Not Found")
+        print("ZAP Connection Not Found")
         return HttpResponseRedirect('/webscanners/')
 
     # Load ZAP Plugin

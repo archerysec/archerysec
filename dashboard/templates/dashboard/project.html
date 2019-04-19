@@ -231,13 +231,17 @@
                                                     href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span
                                                     class="badge badge-pill badge-dark">{{data.total_vul}}</span>
@@ -249,7 +253,6 @@
                                             <td><span
                                                     class="badge badge-pill badge-info">{{data.low_vul}}</span>
                                             </td>
-
                                         </tr>
                                         {% endfor %}
                                         {% for data in burp %}
@@ -258,13 +261,17 @@
                                                     href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span
                                                     class="badge badge-pill badge-dark">{{data.total_vul}}</span>
@@ -285,13 +292,17 @@
                                                     href="/arachniscanner/arachni_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span
                                                     class="badge badge-pill badge-dark">{{data.total_vul}}</span>
@@ -312,13 +323,17 @@
                                                     href="/webinspectscanner/webinspect_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span
                                                     class="badge badge-pill badge-dark">{{data.total_vul}}</span>
@@ -339,13 +354,17 @@
                                                     href="/netsparkerscanner/netsparker_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span
                                                     class="badge badge-pill badge-dark">{{data.total_vul}}</span>
@@ -366,13 +385,17 @@
                                                     href="/acunetixscanner/acunetix_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span
                                                     class="badge  badge-pill badge-dark">{{data.total_vul}}</span>
@@ -429,13 +452,17 @@
                                                 <a href="/dependencycheck/dependencycheck_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
                                             </td>
@@ -455,13 +482,17 @@
                                                 <a href="/findbugs/findbugs_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
                                             </td>
@@ -482,13 +513,17 @@
                                                 <a href="/clair/clair_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
                                             </td>
@@ -546,13 +581,17 @@
                                                     href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
                                             <td><span class="badge badge-pill badge-danger">{{data.high_total}}</span>
@@ -572,13 +611,17 @@
                                                     href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
                                             <td><span class="badge badge-important">{{data.high_total}}</span></td>
@@ -639,13 +682,17 @@
                                                 <a href="/inspec/inspec_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
-                                                <div class="progress m-t-15{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-cyan"
-                                                         style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                                         {{data.scan_status}}{{data.vul_status}} %
-                                                    </div>
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
                                                 </div>
-                                            </td>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
                                             <td>{{data.date_time}}</td>
                                             <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
                                             </td>

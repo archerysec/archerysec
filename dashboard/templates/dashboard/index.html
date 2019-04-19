@@ -9,10 +9,13 @@
                     <div class="card-body">
                         <div class="d-md-flex align-items-center">
                             <div>
-                                <h5>Project List</h5>
+                                <h1>Project List</h1>
                                 <h5 class="card-subtitle"></h5>
                             </div>
+
                         </div>
+                        <br>
+                        <br>
                         <div class="row">
                             <!-- column -->
                             <div class="col-lg-12">
@@ -24,7 +27,7 @@
                                             <th>Start Date</th>
                                             <th>End Date</th>
                                             <th>Owner</th>
-                                            <th>Status</th>
+                                            <!--<th>Status</th>-->
                                             <th></th>
                                         </tr>
                                         </thead>
@@ -43,9 +46,9 @@
                                             <td><span
                                                     class="badge badge-pill badge-info">{{data.project_owner}}</span>
                                             </td>
-                                            <td><span
-                                                    class="badge badge-pill badge-success">{{data.project_status}}</span>
-                                            </td>
+                                            <!--<td><span-->
+                                                    <!--class="badge badge-pill badge-success">{{data.project_status}}</span>-->
+                                            <!--</td>-->
 
                                             <td>
                                                 <form action="/projects/" method="POST">

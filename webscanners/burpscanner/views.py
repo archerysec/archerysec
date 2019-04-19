@@ -103,7 +103,7 @@ def burp_setting(request):
                 data_dump.save()
         except Exception as e:
             print(e)
-            notify.send(user, recipient=user, verb='Burp Conection Not Found')
+            notify.send(user, recipient=user, verb='Burp Connection Not Found')
 
         return HttpResponseRedirect('/webscanners/setting/')
 

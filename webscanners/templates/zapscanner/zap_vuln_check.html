@@ -1,78 +1,89 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
-
-<div id="content">{% for data in vul_dat %}
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/zapscanner/zap_vuln_details/?scan_id={{data.scan_id}}&scan_name={{data.name}}" title="Go to Home"
-                                class="tip-bottom"><i class="icon-home"></i> Vulnerabilities List</a>
-            <a
-                    href="#" class="current">{{ data.name }}</a></div>
-        <div>
-            <div class="btn-group">
-                <a class="btn btn-info"
-                   href="#"><i
-                        class="icon-edit icon-white"></i>
-                </a>
-                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span
-                        class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="/zapscanner/edit_zap_vuln_check/?vuln_id={{data.vuln_id}}"><i
-                            class="icon-pencil"></i> Edit </a></li>
-                    <li>
-                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description={{data.description}}%0a%0a%0a Vulnerable URL: {{data.url}} %0a%0a Vulnerable Parameter: {{data.param}} %0a%0a Solution: {{data.solution}} %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.requestHeader }}&scanner=zap&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "><i
-                                class="icon-random"></i> Jira Ticket</a>
-                    </li>
-                </ul>
-            </div>
-            <h1>{{ data.name }}</h1>
-        </div>
-    </div>
+{% for data in vul_dat %}
+<div class="page-wrapper">
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <!--<div class="span12">-->
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Description:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        {{data.description | safe}}
-                    </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Instance:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-
-
-                        <table class="table table-bordered data-table table-fixed">
-                            {% for data in evi %}
-                            <tr>
-                                <td>{{data}}<br></td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-
-                    </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Solutions:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <strong> Solutions : </strong>{{data.solution | safe}}<br><br>
-                    </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Reference</h5><!--<h5><span class="badge badge-{{data.vuln_color}}"> {{ data.risk }}</span></h5>-->
-                    </div>
-                    <div class="widget-content">
-                        {{data.reference | safe}}
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{data.name}}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Description</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.description | safe}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                                       aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Instance</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table class="table table-bordered data-table table-fixed">
+                                        {% for data in evi %}
+                                        <tr>
+                                            <td>{{data}}<br></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseThree"
+                                       aria-expanded="false" aria-controls="collapseThree">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Solutions</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.solution | safe}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="heading4">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapse4"
+                                       aria-expanded="false" aria-controls="collapse4">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Reference</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapse4" class="collapse" aria-labelledby="heading4"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.reference | safe}}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
