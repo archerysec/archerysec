@@ -74,7 +74,7 @@ a.dropdown-menu-header {
 <li class="nav-item dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages"
                                                     aria-haspopup="true" aria-expanded="false"
                                                     class="nav-link dropdown-toggle waves-effect waves-dark">
-    <i class="mdi mdi-bell font-24" style="font-size: 20px; float: left; color: white"></i><span
+    <i class="mdi mdi-bell font-24"></i><span
         class="notify-badge badge-danger">{% load notifications_tags %}{% live_notify_badge %}</span> <span
         class="text"></span> <b class="caret"></b></a>
     <ul class="dropdown-menu dropdown-menu-right pull-right" role="menu" aria-labelledby="navbarDropdown">
@@ -90,7 +90,6 @@ a.dropdown-menu-header {
                 </div>
             </li>
             {% endfor %}
-
         </ul>
         <li role="presentation">
             <a href="#" class="dropdown-menu-header"></a>

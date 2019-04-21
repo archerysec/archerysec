@@ -1,29 +1,12 @@
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-{% for data in vuln_data %}
+{% for data in vul_dat %}
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-auto">
-                    <div class="float-right">
-                        <!-- Large modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target=".bd-example-modal-lg">Jira Ticket
-                        </button>
-
-                        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <h1>{{ data.VulnName }}</h1>
+                <h1>{{ data.name }}</h1>
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
@@ -40,11 +23,12 @@
                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{data.VulnDescription | safe}}
+                                     {{data.description}}
+
                                     <br>
-                                    {{data.VulnDetailedInformation | safe}}
+                                    {{data.impact | safe}}
                                     <br>
-                                    {{data.VulnTechnicalDetails | safe}}
+
                                 </div>
                             </div>
                         </div>
@@ -62,33 +46,25 @@
                                  data-parent="#accordionExample">
                                 <div class="card-body">
                                     <div class="col-md-6">
-                                        <table class="table table-bordered data-table table-fixed">
-                                            <thead>
+                                    <table class="table table-bordered data-table table-fixed">
+                                        <thead>
                                             <tr>
-                                                <td>URL</td>
-                                                <td>Path</td>
-                                                <td>Module Name</td>
-                                                <td>Parameter</td>
+                                                <td>IP</td>
+                                                <td>Port</td>
                                             </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td>
-                                                    {{data.VulnFullUrl}}
-                                                </td>
-                                                <td>
-                                                    {{data.vector_source_values}}
-                                                </td>
-                                                <td>
-                                                    {{data.ModuleName}}
-                                                </td>
-                                                <td>
-                                                    {{data.VulnParameter}}
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                {{data.host}}
+                                            </td>
+                                            <td>
+                                                {{data.port}}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +81,7 @@
                             <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{data.VulnRecommendation | safe}}
+                                     <pre>{{data.tags | safe}}<pre>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +98,60 @@
                             <div id="collapse4" class="collapse" aria-labelledby="heading4"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{data.VulnReferences}}
+                                   {% for data in xref_list %} <a href="{{data}}" target="_blank">{{data}}</a> <br> {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="heading5">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapse5"
+                                       aria-expanded="false" aria-controls="collapse5">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>CVE</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapse5" class="collapse" aria-labelledby="heading5"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                      {% for data in cve_list %}
+                        <li><a href="/vfeed/cve_info/?cve={{data}}" target="_blank">{{data}}</a></li>
+                        {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="heading6">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapse6"
+                                       aria-expanded="false" aria-controls="collapse6">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Base Score</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapse6" class="collapse" aria-labelledby="heading6"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <pre>{{data.cvss_base}}</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="heading7">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapse7"
+                                       aria-expanded="false" aria-controls="collapse7">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Family</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapse7" class="collapse" aria-labelledby="heading7"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                     <pre>{{data.family}}}</pre>
                                 </div>
                             </div>
                         </div>
