@@ -115,7 +115,7 @@ def bandit_report_json(data, project_id, scan_id):
 
                 global vul_col
                 if issue_severity == "HIGH":
-                    vul_col = "important"
+                    vul_col = "danger"
 
                 elif issue_severity == "MEDIUM":
                     vul_col = 'warning'

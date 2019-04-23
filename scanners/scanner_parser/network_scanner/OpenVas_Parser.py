@@ -29,6 +29,7 @@ bid = ''
 xref = ''
 tags = ''
 banner = ''
+vuln_color = None
 
 
 def xml_parser(root, project_id, scan_id):
@@ -149,6 +150,17 @@ def xml_parser(root, project_id, scan_id):
             vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
         lenth_match = len(match_dup)
 
+        vuln_color = ''
+        if threat == 'High':
+            vuln_color = 'danger'
+        elif threat == 'Medium':
+            vuln_color = 'warning'
+        elif threat == 'Low':
+            vuln_color = 'info'
+        elif threat == 'Log':
+            vuln_color = 'info'
+
+
         if lenth_match == 1:
             duplicate_vuln = 'Yes'
         elif lenth_match == 0:
@@ -187,7 +199,8 @@ def xml_parser(root, project_id, scan_id):
                                      vuln_status='Open',
                                      dup_hash=duplicate_hash,
                                      vuln_duplicate=duplicate_vuln,
-                                     project_id=project_id
+                                     project_id=project_id,
+                                     vuln_color=vuln_color
                                      )
         save_all.save()
 

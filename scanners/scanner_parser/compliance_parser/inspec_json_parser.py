@@ -12,11 +12,10 @@
 
 from compliance.models import inspec_scan_db, inspec_scan_results_db
 import uuid
-import hashlib
-from datetime import datetime
 
 status = None
 controls_results_message = None
+
 
 def inspec_report_json(data, project_id, scan_id):
     """
@@ -53,13 +52,12 @@ def inspec_report_json(data, project_id, scan_id):
                         controls_results_code_desc = res['code_desc']
                         controls_results_run_time = res['run_time']
                         controls_results_start_time = res['start_time']
-                        # controls_results_message = res['message']
                         for key, value in res.items():
                             if key == 'message':
                                 controls_results_message = value
 
                         if controls_results_status == "failed":
-                            vul_col = "important"
+                            vul_col = "danger"
                             status = "Failed"
 
                         elif controls_results_status == 'passed':
@@ -72,7 +70,6 @@ def inspec_report_json(data, project_id, scan_id):
 
                         vul_id = uuid.uuid4()
                         print(vul_id)
-
 
                         save_all = inspec_scan_results_db(
                             scan_id=scan_id,
@@ -99,7 +96,6 @@ def inspec_report_json(data, project_id, scan_id):
                             controls_results_run_time=controls_results_run_time,
                             controls_results_start_time=controls_results_start_time,
                             controls_results_message=controls_results_message,
-                            # controls_results_backtrace=controls_results_backtrace,
 
                         )
                         save_all.save()

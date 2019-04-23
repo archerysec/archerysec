@@ -163,7 +163,7 @@ def burp_scan_data(root, project_id, scan_id):
 
         global vul_col
         if severity == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':

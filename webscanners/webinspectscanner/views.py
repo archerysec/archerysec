@@ -195,7 +195,7 @@ def edit_webinspect_vuln(request):
         vulnerabilityClassifications = request.POST.get("reference", )
         global vul_col
         if severity == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':

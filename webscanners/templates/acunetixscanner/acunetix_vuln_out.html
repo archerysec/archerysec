@@ -89,7 +89,7 @@
                                         <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
                                         </td>
                                         <td>{{data.VulnAffects}}</td>
-                                        <td><span class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
+                                        <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
                                         </td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
@@ -174,7 +174,7 @@
                                         <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
                                         </td>
                                         <td>{{data.vuln_url}}</td>
-                                        <td><span class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
+                                        <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
                                         </td>
                                         <td>
                                             <form method="POST" action="/acunetixscanner/acunetix_vuln_out/">{% csrf_token %}
@@ -248,7 +248,7 @@
                                         <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
                                         </td>
                                         <td>{{data.vuln_url}}</td>
-                                        <td><span class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
+                                        <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
                                         </td>
                                         <td>
                                             <form method="POST" action="/acunetixscanner/acunetix_vuln_out/">{% csrf_token %}

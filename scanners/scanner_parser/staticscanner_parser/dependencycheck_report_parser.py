@@ -85,7 +85,7 @@ def xml_parser(data, project_id, scan_id):
                         vul_id = uuid.uuid4()
 
                         if severity == "High":
-                            vul_col = "important"
+                            vul_col = "danger"
 
                         elif severity == 'Medium':
                             vul_col = "warning"

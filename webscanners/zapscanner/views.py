@@ -712,7 +712,7 @@ def edit_zap_vuln(request):
         reference = request.POST.get("reference", )
         global vul_col
         if risk == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif risk == 'Medium':
             vul_col = "warning"
         elif risk == 'Low':

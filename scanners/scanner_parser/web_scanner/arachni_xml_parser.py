@@ -185,7 +185,7 @@ def xml_parser(root, project_id, scan_id):
                             proof = vuln.text
 
                     if severity == "high":
-                        vul_col = "important"
+                        vul_col = "danger"
                         severity = "High"
 
                     elif severity == 'medium':

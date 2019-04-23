@@ -1,76 +1,83 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
 
-
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> {{ data.name }}</a>
-            <a
-                    href="#" class="current"></a></div>
-        <h1>{{ data.name }}</h1>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <div class="row-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Add Vulnerability</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <form class="form-vertical" action="/manual_scan/add_vuln_data/" method="POST">{%
+                                        csrf_token %}
+                                        <div class="card-body">
+                                            <div class="form-group row">
+                                                <label for="fname"
+                                                       class="col-sm-2 text-right control-label col-form-label">Name</label>
+                                                <div class="col-sm-6">
+                                                    <input name="vuln_name" class="form-control" id="fname"
+                                                           placeholder="Vulnerability Name">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-sm-2 text-right control-label col-form-label">Severity</label>
+                                                <div class="col-sm-8">
+                                                    <select name="vuln_severity"
+                                                            class="select2 form-control custom-select"
+                                                            style="width: 30%; height:36px;">
+                                                        <option value="High">High</option>
+                                                        <option value="Medium">Medium</option>
+                                                        <option value="Low">Low</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-sm-2 text-right control-label col-form-label">Description:</label>
+                                                <div class="col-sm-8">
+                                                    <textarea name="vuln_description" class="form-control"
+                                                              placeholder="Vulnerability Description"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-sm-2 text-right control-label col-form-label">Remediation</label>
+                                                <div class="col-sm-8">
+                                                    <textarea name="vuln_remediation" class="form-control"
+                                                              placeholder="Vulnerability Remediation"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-sm-2 text-right control-label col-form-label">References:</label>
+                                                <div class="col-sm-8">
+                                                    <textarea name="vuln_references" class="form-control"
+                                                              placeholder="Vulnerability References"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="float-right">
+                                                <div class="form-actions">
+                                                    <button type="submit" class="btn btn-success">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
 
-            <form class="form-vertical" action="/manual_scan/add_vuln/" method="POST">
-                {% csrf_token %}
-                <div>
-                    <input type="hidden" name="scan_id" value="{{scanid}}">
-                    <div class="form-group">
-                        <label>Name:</label>
-                        <textarea class="form-control" rows="1" name="vuln_name"
-                        ></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Severity</label>
-                        <select name="severity" class="selectpicker"
-                                data-live-search="true">
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>URL:</label>
-                        <textarea class="form-control" rows="1" style="min-width: 70%"
-                                  name="vuln_url"
-                        ></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Descriptoin:</label>
-                        <textarea class="form-control" rows="8" name="description"
-                                  style="min-width: 100%"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Solution:</label>
-                        <textarea class="form-control" rows="8" name="solution"
-                                  style="min-width: 100%"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Request Header:</label>
-                        <textarea class="form-control" name="request_header" rows="8" style="min-width: 30%"
-                        ></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Response Header:</label>
-                        <textarea class="form-control" name="response_header" rows="8" style="min-width: 30%"
-                        ></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>reference:</label>
-                        <textarea class="form-control" rows="5" style="min-width: 70%"
-                                  name="reference"
-                        ></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <!--<a class="btn btn-primary" aria-hidden="true"-->
-                       <!--href="/webscanners/web_vuln_list/?scan_id={{scan_id}}">Close-->
-                    <!--</a>-->
-                    <button class="btn btn-success">Save changes</button>
-                </div>
-            </form>
-
+            </div>
         </div>
     </div>
 </div>

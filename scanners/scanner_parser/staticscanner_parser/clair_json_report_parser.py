@@ -75,7 +75,7 @@ def clair_report_json(data, project_id, scan_id):
                 FeatureName = "Not Found"
 
             if Severity == "High":
-                vul_col = "important"
+                vul_col = "danger"
 
             dup_data = Name + Severity + NamespaceName
 

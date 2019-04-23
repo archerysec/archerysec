@@ -11,7 +11,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-md-flex align-items-center">
-                            <h5 class="card-title">Vulnerabilities Details</h5>
+                            <h1 class="card-title">{{ severity }} Vulnerability List</h1>
                         </div>
                         <br>
                         <div class="text-right">
@@ -75,7 +75,7 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.url}}</td>
-                                    <td><span class="badge badge-{{data.vuln_color}}">{{data.risk}}</span></td>
+                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.risk}}</span></td>
                                 </tr>
                                 {% endfor %}
 
@@ -87,7 +87,7 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.url}}</td>
-                                    <td><span class="badge badge-{{data.vuln_color}}">{{data.severity}}</span>
+                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -102,7 +102,7 @@
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.host}}</td>
                                     <td><span
-                                            class="badge badge-{{data.vuln_color}}">{{data.severity_name}}</span>
+                                            class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity_name}}</span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -116,7 +116,7 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td width="50%">{{data.vuln_url}}</td>
-                                    <td><span class="badge badge-{{data.vuln_color}}">{{data.severity}}</span>
+                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -131,7 +131,7 @@
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.host}}{{data.request_response_url}}</td>
                                     <td><span
-                                            class="badge badge-{{data.severity_color}}">{{data.severity}}</span>
+                                            class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -145,7 +145,7 @@
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.VulnFullUrl}}</td>
                                     <td><span
-                                            class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
+                                            class="badge badge-pill badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -159,7 +159,7 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.fileName}}</td>
-                                    <td><span class="badge badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
                                 </tr>
                                 {% endfor %}
 
@@ -172,7 +172,7 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.sourcepath}}</td>
-                                    <td><span class="badge badge-{{data.vul_col}}">{{data.risk}}</span></td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.risk}}</span></td>
                                 </tr>
                                 {% endfor %}
                                 {% for data in clair_all_high %}
@@ -183,7 +183,7 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.NamespaceName}}</td>
-                                    <td><span class="badge badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                                 </tr>
                                 {% endfor %}
 
@@ -197,7 +197,7 @@
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.filename}}</td>
                                     <td><span
-                                            class="badge badge-{{data.vul_col}}">{{data.issue_severity}}</span>
+                                            class="badge badge-pill badge-{{data.vul_col}}">{{data.issue_severity}}</span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -223,7 +223,7 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.host}}</td>
-                                    <td>{{data.threat}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.threat}}</span></td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>

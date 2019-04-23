@@ -81,7 +81,7 @@
                                 </td>
                                 <td>{{data.FeatureName}}</td>
                                 <td>{{data.FeatureVersion}}</span></td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.Severity}}</span></a>
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></a>
                                 </td>
                                 <td><a href="#" target="_blank">{{data.Link}}</a>
                                 </td>
@@ -159,7 +159,7 @@
                                 <td><a href="/inspec/inspec_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
                                 </td>
                                 <td>{{data.FeatureName}}</td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                                  <td>
                                     <form method="POST" action="/inspec/inspec_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
@@ -231,7 +231,7 @@
                                 <td><a href="/inspec/inspec_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
                                 </td>
                                 <td>{{data.FeatureName}}</td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                                 <td>
                                     <form method="POST" action="/inspec/inspec_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">

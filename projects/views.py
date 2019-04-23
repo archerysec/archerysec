@@ -120,7 +120,7 @@ def projects(request):
         openvas_result.delete()
 
         messages.success(request, "Deleted Project")
-        return HttpResponseRedirect("/projects/")
+        return HttpResponseRedirect("/")
 
     return render(request, 'projects.html', {'all_projects': all_projects})
 

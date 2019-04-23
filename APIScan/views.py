@@ -438,7 +438,7 @@ def url_api_scan(request):
                 global vul_col
 
                 if risk == 'High':
-                    vul_col = "important"
+                    vul_col = "danger"
                 elif risk == 'Medium':
                     vul_col = "warning"
                 elif risk == 'Low':

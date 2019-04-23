@@ -24,7 +24,7 @@
                                     <tbody>{% for data in netsparker_all_vul %}
                                     <tr data-target="#">
                                         <td><a href="/netsparkerscanner/netsparker_vuln_out/?scan_id={{data.scan_id}}&scan_name={{data.type}}">{{data.type}}</a>
-                                        <td><span class="badge badge-{{data.vuln_color}}">{{data.severity}}</span></td>
+                                        <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span></td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>

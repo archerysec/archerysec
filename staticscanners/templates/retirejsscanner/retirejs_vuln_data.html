@@ -98,7 +98,7 @@
                                 <td><a href="/retirejsscanner/retirejsscan_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.test_name}}</a>
                                 </td>
                                 <td>{{data.filename}}</td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
                                 <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                 </td>
                                 <td>
@@ -189,7 +189,7 @@
                                 <td><a href="/retirejsscanner/retirejsscan_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.test_name}}</a>
                                 </td>
                                 <td>{{data.filename}}</td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
                                  <td>
                                     <form method="POST" action="/retirejsscanner/retirejsscan_vuln_data/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
@@ -267,7 +267,7 @@
                                 <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
                                 </td>
                                 <td>{{data.vuln_url}}</td>
-                                <td><span class="badge badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span></td>
+                                <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span></td>
                                 <td>
                                     <form method="POST" action="/acunetixscanner/acunetix_vuln_out/">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">

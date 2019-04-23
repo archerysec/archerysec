@@ -195,7 +195,7 @@ def xml_parser(root, project_id, scan_id):
                         VulnReferences = ReportItem.text
 
                     if VulnSeverity == "high":
-                        vul_col = "important"
+                        vul_col = "danger"
                         risk = "High"
                     elif VulnSeverity == 'medium':
                         vul_col = "warning"

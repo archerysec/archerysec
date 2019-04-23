@@ -110,7 +110,7 @@ def xml_parser(root, project_id, scan_id):
                     inst.append(instance)
 
             if riskcode == "3":
-                vul_col = "important"
+                vul_col = "danger"
                 risk = "High"
             elif riskcode == '2':
                 vul_col = "warning"

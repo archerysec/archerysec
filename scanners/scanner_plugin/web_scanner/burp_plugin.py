@@ -222,7 +222,7 @@ class burp_scans(object):
             global vul_col
             if severity == 'high':
                 severity = 'High'
-                vul_col = "important"
+                vul_col = "danger"
             elif severity == 'medium':
                 severity = 'Medium'
                 vul_col = "warning"

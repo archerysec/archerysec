@@ -1,120 +1,140 @@
-{% extends 'tablehead.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
-                href="#" class="current">Controls Details</a></div>
-        <h1>Controls List</h1>
-    </div>
-    <div class="widget-box">
-        <div class="widget-content">
-            <div class="row-fluid">
-                <div class="span6">
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                            <h5>Audit List</h5>
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Compliance Summary</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
                         </div>
-
-                        <div class="widget-content nopadding">
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Audit</th>
-                                    <th>Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td><a href="#">Total Nodes</a></td>
-                                    <td><span class="badge badge-inverse">{% for data in all_compliance %}{{data.total_vuln}}{% endfor %}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><a href="#">Failed Nodes</a></td>
-                                    <td><span class="badge badge-important">{% for data in all_compliance %}{{data.inspec_failed}}{% endfor %}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><a href="#">Passed Nodes</a></td>
-                                    <td><span class="badge badge-warning">{% for data in all_compliance %}{{data.inspec_passed}}{% endfor %}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><a href="#">Skipped Nodes</a></td>
-                                    <td><span class="badge badge-info">{% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %}</span>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-sm-6 col-md-6">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Audit</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><a href="#">Total Nodes</a></td>
+                                            <td><span class="badge badge-pill badge-dark">{% for data in all_compliance %}{{data.total_vuln}}{% endfor %}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">Failed Nodes</a></td>
+                                            <td><span class="badge badge-pill badge-danger">{% for data in all_compliance %}{{data.inspec_failed}}{% endfor %}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">Passed Nodes</a></td>
+                                            <td><span class="badge badge-pill badge-success">{% for data in all_compliance %}{{data.inspec_passed}}{% endfor %}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">Skipped Nodes</a></td>
+                                            <td><span class="badge badge-pill badge-info">{% for data in all_compliance %}{{data.inspec_skipped}}{% endfor %}</span>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <canvas id="webscans"></canvas>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="span6">
-                    <canvas id="webscans"></canvas>
                 </div>
             </div>
         </div>
-
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span12">
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                            <h5>Controls List</h5>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Audit List</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
                         </div>
-
-                        <div class="widget-content nopadding">
-                            <table class="table table-bordered data-table table-fixed" width="100%">
-                                <thead>
-                                <tr>
-                                    <th>Controls ID</th>
-                                    <th>Controls Descriptions</th>
-                                    <th>Severity</th>
-                                    <th>Audit Text</th>
-                                    <th>Fix</th>
-                                </tr>
-                                </thead>
-                                <tbody>{% for data in inspec_all_vuln %}
-                                <tr data-target="#">
-                                    <td>{{data.controls_id}}</td>
-                                    <td>{{data.controls_title}}</td>
-                                    <td>{{data.controls_tags_severity}}</td>
-                                    <td>{{data.controls_tags_audit}}</td>
-                                    <td>{{data.controls_tags_fix}}</td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table id="zero_config" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Controls ID</th>
+                                            <th>Controls Descriptions</th>
+                                            <th>Severity</th>
+                                            <th>Audit Text</th>
+                                            <th>Fix</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in inspec_all_vuln %}
+                                        <tr data-target="#">
+                                            <td>{{data.controls_id}}</td>
+                                            <td>{{data.controls_title}}</td>
+                                            <td>{{data.controls_tags_severity}}</td>
+                                            <td>{{data.controls_tags_audit}}</td>
+                                            <td>{{data.controls_tags_fix}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                            <h5>Audit List</h5>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Audit List</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
                         </div>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table id="zero_config1" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Audit</th>
+                                            <th>Status</th>
 
-                        <div class="widget-content nopadding">
-                            <table class="table table-bordered data-table table-fixed" width="100%">
-                                <thead>
-                                <tr>
-                                    <th>Audit</th>
-                                    <th>Status</th>
-
-                                </tr>
-                                </thead>
-                                <tbody>{% for data in inspec_all_audit %}
-                                <tr data-target="#">
-                                    <td>
-                                        <a href="/inspec/inspec_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.controls_results_code_desc}}</a>
-                                    </td>
-                                    <td><span
-                                            class="badge badge-{{data.vul_col}}">{{data.controls_results_status}}</span>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in inspec_all_audit %}
+                                        <tr data-target="#">
+                                            <td>
+                                                <a href="/inspec/inspec_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.controls_results_code_desc}}</a>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-{{data.vul_col}}">{{data.controls_results_status}}</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,6 +142,8 @@
         </div>
     </div>
 </div>
+
+
 <script type="text/javascript" src="/static/js/Chart.js"></script>
 <script type="text/javascript">
     var ctx = document.getElementById("webscans").getContext('2d');
@@ -136,7 +158,7 @@
 
                         ],
                         backgroundColor: [
-                            '#f74d4d', '#f89406', '#3a87ad'
+                            '#db5565', '#28b779', '#3a87ad'
 
                         ],
                         label: 'Venerability'
@@ -155,6 +177,7 @@
                         }
         }
     });
+
 
 
 

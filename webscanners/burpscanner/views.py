@@ -366,7 +366,7 @@ def edit_burp_vuln(request):
         global vul_col
 
         if severity == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':

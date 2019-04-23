@@ -40,3 +40,13 @@ class manual_scan_results_db(models.Model):
     response_header = models.TextField(blank=True, null=True)
     reference = models.TextField(blank=True, null=True)
     vuln_fixed = models.TextField(null=True, blank=True)
+    project_id = models.UUIDField(null=True, blank=True)
+
+
+class VulnerabilityData(models.Model):
+    vuln_data_id = models.TextField(blank=True)
+    vuln_name = models.TextField(blank=True)
+    vuln_description = models.TextField(blank=True)
+    vuln_severity = models.TextField(blank=True)
+    vuln_remediation = models.TextField(blank=True)
+    vuln_references = models.TextField(blank=True)

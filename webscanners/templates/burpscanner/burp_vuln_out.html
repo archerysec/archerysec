@@ -86,7 +86,7 @@
                                         <td><a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                         </td>
                                         <td>{{data.request_response_url}}</td>
-                                        <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span>
+                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
                                         </td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
@@ -169,7 +169,7 @@
                                         </td>
                                         <td><a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                         </td>
-                                        <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span>
+                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
                                         </td>
                                         <td>
                                             <form method="POST" action="/burpscanner/burp_vuln_out/">{% csrf_token %}
@@ -239,7 +239,7 @@
                                         <td><a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                         </td>
                                         <!--<td>{{data.host}}{{data.location}}</td>-->
-                                        <td><span class="badge badge-{{data.severity_color}}">{{data.severity}}</span>
+                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
                                         </td>
                                         <td>
                                             <div>

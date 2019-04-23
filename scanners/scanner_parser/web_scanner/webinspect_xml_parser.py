@@ -100,7 +100,7 @@ def xml_parser(root,
 
             if Severity == "4":
                 severity_name = 'Critical'
-                vul_col = "important"
+                vul_col = "danger"
 
             elif Severity == "3":
                 severity_name = 'High'

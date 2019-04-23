@@ -103,13 +103,10 @@ def xml_parser(root,
             vuln_id = uuid.uuid4()
 
         if vuln_severity == "Critical":
-            vul_col = "important"
+            vul_col = "danger"
 
         elif vuln_severity == "High":
-            vul_col = 'important'
-
-        elif vuln_severity == "Important":
-            vul_col = "important"
+            vul_col = 'danger'
 
         elif vuln_severity == 'Medium':
             vul_col = "warning"

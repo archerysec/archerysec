@@ -52,7 +52,7 @@ def xml_parser(root, project_id, scan_id):
 
                 if priority == "1":
                     risk = 'High'
-                    vul_col = "important"
+                    vul_col = "danger"
 
                 elif priority == '2':
                     risk = 'Medium'

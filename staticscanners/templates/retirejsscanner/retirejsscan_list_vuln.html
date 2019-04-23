@@ -49,7 +49,7 @@
                                 <!--<td>{{data.project_id}}</td>-->
                                 <td><a href="/banditscanner/banditscan_vuln_data/?scan_id={{data.scan_id}}&test_name={{data.test_name}}">{{data.test_name}}</a>
                                 </td>
-                                <td><span class="badge badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
                             </tr>
                             {% endfor %}
                             </tbody>

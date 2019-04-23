@@ -29,4 +29,13 @@ urlpatterns = [
         views.add_list_scan,
         name='add_list_scan'),
 
+    url(r'^add_vuln_data/',
+        views.add_vuln_data,
+        name='add_vuln_data'),
+
+    url(r'^add_new_vuln/',
+        views.add_new_vuln,
+        name='add_new_vuln'),
+
+
 ]
