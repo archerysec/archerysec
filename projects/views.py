@@ -11,12 +11,10 @@
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
-from projects.models import project_db
+from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import messages
 import uuid
 from projects.models import project_db, project_scan_db
-from webscanners import web_views
 from webscanners.models import zap_scans_db, zap_scan_results_db, \
     burp_scan_db, burp_scan_result_db, \
     arachni_scan_db, arachni_scan_result_db, \
@@ -27,10 +25,9 @@ from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_
     findbugs_scan_db, findbugs_scan_results_db, \
     bandit_scan_db, bandit_scan_results_db, clair_scan_db, clair_scan_results_db
 from compliance.models import inspec_scan_results_db, inspec_scan_db
-from networkscanners.models import scan_save_db, ov_scan_result_db
+from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_report_db
 import datetime
 from manual_scan.models import manual_scan_results_db, manual_scans_db
-# from webscanners.models import burp_scan_db
 from itertools import chain
 
 project_dat = None
@@ -130,6 +127,12 @@ def projects(request):
         openvas.delete()
         openvas_result = ov_scan_result_db.objects.filter(project_id=project_id)
         openvas_result.delete()
+
+        nessus = nessus_scan_db.objects.filter(project_id=project_id)
+        nessus.delete()
+
+        nessus_result = nessus_report_db.objects.filter(project_id=project_id)
+        nessus_result.delete()
 
         pentest = manual_scan_results_db.objects.filter(project_id=project_id)
         pentest.delete()

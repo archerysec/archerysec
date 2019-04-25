@@ -289,7 +289,7 @@ def proj_data(request):
     total_network = int(all_openvas) + int(all_nessus) + int(pentest_net)
 
     total_web = int(all_zap) + int(all_burp) + int(pentest_web) + int(all_arachni) + \
-        int(all_netsparker) + int(all_webinspect) + int(all_acunetix)
+                int(all_netsparker) + int(all_webinspect) + int(all_acunetix)
 
     total_compliance = int(all_inspec)
 
@@ -449,7 +449,7 @@ def proj_data(request):
                int(high_clair) + \
                int(high_bandit) + \
                int(high_nessus) + \
-                int(pentest_high)
+               int(pentest_high)
 
     all_web_high = int(zap_high) + \
                    int(burp_high) + \
@@ -601,7 +601,7 @@ def proj_data(request):
                  int(medium_clair) + \
                  int(medium_bandit) + \
                  int(medium_nessus) + \
-                int(pentest_medium)
+                 int(pentest_medium)
 
     all_medium_pentest_web = manual_scans_db.objects.filter(pentest_type='web', project_id=project_id). \
         aggregate(Sum('medium_vul'))
@@ -688,7 +688,7 @@ def proj_data(request):
         else:
             burp_low = value
 
-    for key, value in all_arachni_medium.items():
+    for key, value in all_arachni_low.items():
         if value is None:
             low_arachni = '0'
         else:
@@ -772,7 +772,7 @@ def proj_data(request):
               int(low_clair) + \
               int(low_bandit) + \
               int(low_nessus) + \
-            int(pentest_low)
+              int(pentest_low)
 
     all_low_pentest_web = manual_scans_db.objects.filter(pentest_type='web', project_id=project_id). \
         aggregate(Sum('low_vul'))
@@ -879,9 +879,14 @@ def proj_data(request):
 
     all_notify = Notification.objects.unread()
 
+    total = all_high, all_medium, all_low
+
+    tota_vuln = sum(total)
+
     return render(request,
                   'dashboard/project.html',
                   {'project_id': project_id,
+                   'tota_vuln': tota_vuln,
                    'all_vuln': all_vuln,
                    'total_web': total_web,
                    'total_static': total_static,
@@ -1797,7 +1802,7 @@ def export(request):
             openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(project_id=project_id)
 
-            pentest_all_high = manual_scan_results_db.filter( project_id=project_id)
+            pentest_all_high = manual_scan_results_db.filter(project_id=project_id)
 
             all_data = chain(zap_all_high,
                              burp_all_high,

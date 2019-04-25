@@ -74,6 +74,11 @@ def vuln_list(request):
     :param request:
     :return:
     """
+    all_vuln = None
+    scan_id = None
+    vuln_id = None
+    project_id = None
+
     vuln_data = VulnerabilityData.objects.all()
 
     for vul in vuln_data:
