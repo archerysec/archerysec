@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-md-flex align-items-center">
-                            <h1 class="card-title">Create Scan</h1>
+                            <h1 class="card-title">Create</h1>
                         </div>
                         <br>
                         <div class="card">
@@ -31,6 +31,19 @@
                                                 {% for data in all_projects %}
                                                 <option value="{{data.project_id}}">{{data.project_name}}</option>
                                                 {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 m-t-5">Pentest Type</label>
+                                        <div class="col-md-9">
+                                            <select name="pentest_type"
+                                                    class="select2 form-control custom-select"
+                                                    style="width: 100%; height:36px;">
+
+                                                <option value="network">Network</option>
+                                                <option value="web">Web</option>
+
                                             </select>
                                         </div>
                                     </div>

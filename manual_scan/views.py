@@ -48,6 +48,7 @@ def add_list_scan(request):
     if request.method == 'POST':
         scan_url = request.POST.get('scan_url')
         project_id = request.POST.get('project_id')
+        pentest_type = request.POST.get('pentest_type')
         date_time = datetime.now()
         scanid = uuid.uuid4()
 
@@ -55,6 +56,7 @@ def add_list_scan(request):
             date_time=date_time,
             scan_url=scan_url,
             scan_id=scanid,
+            pentest_type=pentest_type,
             project_id=project_id,
         )
         dump_scan.save()
@@ -114,6 +116,7 @@ def add_vuln(request):
         solution = request.POST.get('vuln_solution')
         reference = request.POST.get('vuln_reference')
         scan_id = request.POST.get('scan_id')
+        project_id = request.POST.get('project_id')
         date_time = datetime.now()
         vuln_id = uuid.uuid4()
 

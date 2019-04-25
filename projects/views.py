@@ -26,8 +26,10 @@ from webscanners.models import zap_scans_db, zap_scan_results_db, \
 from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_results_db, \
     findbugs_scan_db, findbugs_scan_results_db, \
     bandit_scan_db, bandit_scan_results_db, clair_scan_db, clair_scan_results_db
+from compliance.models import inspec_scan_results_db, inspec_scan_db
 from networkscanners.models import scan_save_db, ov_scan_result_db
 import datetime
+from manual_scan.models import manual_scan_results_db, manual_scans_db
 # from webscanners.models import burp_scan_db
 from itertools import chain
 
@@ -55,7 +57,7 @@ def create(request):
 
         messages.success(request, "Project Created")
 
-        return HttpResponseRedirect("/projects/")
+        return HttpResponseRedirect("/")
 
     return render(request, 'project_create.html')
 
@@ -109,15 +111,31 @@ def projects(request):
         findbugs_result = findbugs_scan_results_db.objects.filter(project_id=project_id)
         findbugs_result.delete()
 
+        bandit = bandit_scan_db.objects.filter(project_id=project_id)
+        bandit.delete()
+        bandit_result = bandit_scan_results_db.objects.filter(project_id=project_id)
+        bandit_result.delete()
+
         clair = clair_scan_db.objects.filter(project_id=project_id)
         clair.delete()
         clair_result = clair_scan_results_db.objects.filter(project_id=project_id)
         clair_result.delete()
 
+        inspec = inspec_scan_db.objects.filter(project_id=project_id)
+        inspec.delete()
+        inspec_result = inspec_scan_results_db.objects.filter(project_id=project_id)
+        inspec_result.delete()
+
         openvas = scan_save_db.objects.filter(project_id=project_id)
         openvas.delete()
         openvas_result = ov_scan_result_db.objects.filter(project_id=project_id)
         openvas_result.delete()
+
+        pentest = manual_scan_results_db.objects.filter(project_id=project_id)
+        pentest.delete()
+
+        pentest_dat = manual_scans_db.objects.filter(project_id=project_id)
+        pentest_dat.delete()
 
         messages.success(request, "Deleted Project")
         return HttpResponseRedirect("/")
@@ -227,6 +245,6 @@ def add_scan(request):
         save_scan = project_scan_db(scan_type=scan_type, project_url=scan_target, project_id=project_id)
         save_scan.save()
         messages.success(request, "Scan Added")
-        return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
+        return HttpResponseRedirect("/")
 
     return render(request, 'project_view.html')

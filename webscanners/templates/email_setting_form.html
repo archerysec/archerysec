@@ -1,5 +1,57 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
+
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">ZAP Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form method="POST" action="/webscanners/email_setting/">{% csrf_token %}
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Email Message :</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="email_message" class="span11"
+                                           />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Email Subject:</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="email_subject" class="span11"
+                                           />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">To Email:</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="to_email" value="{{ burp_port }}" class="span11"
+                                           />
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="content">
     <!--breadcrumbs-->
@@ -28,32 +80,7 @@
                         <h5>Email Setting</h5>
                     </div>
                     <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/webscanners/email_setting/">{% csrf_token %}
-                            <div class="control-group">
-                                <label class="control-label">Email Message :</label>
-                                <div class="controls">
-                                    <input type="text" name="email_message" class="span11"
-                                           />
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Email Subject:</label>
-                                <div class="controls">
-                                    <input type="text" name="email_subject" class="span11"
-                                           />
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">To Email:</label>
-                                <div class="controls">
-                                    <input type="text" name="to_email" value="{{ burp_port }}" class="span11"
-                                           />
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
-                        </form>
+
                     </div>
                 </div>
             </div>

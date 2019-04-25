@@ -24,6 +24,7 @@ class manual_scans_db(models.Model):
     low_vul = models.IntegerField(blank=True, null=True)
     project_id = models.UUIDField(null=True)
     date_time = models.DateTimeField(null=True)
+    pentest_type = models.TextField(blank=True, null=True)
 
 
 class manual_scan_results_db(models.Model):
@@ -34,6 +35,7 @@ class manual_scan_results_db(models.Model):
     severity = models.TextField(blank=True, null=True)
     severity_color = models.TextField(blank=True, null=True)
     vuln_url = models.TextField(blank=True, null=True)
+    scan_url = models.TextField(blank=True)
     description = models.TextField(blank=True, null=True)
     solution = models.TextField(blank=True, null=True)
     request_header = models.TextField(blank=True, null=True)

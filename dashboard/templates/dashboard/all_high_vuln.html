@@ -175,6 +175,17 @@
                                     <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.risk}}</span></td>
                                 </tr>
                                 {% endfor %}
+                                {% for data in bandit_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="/banditscanner/banditscan_vuln_data/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}&test_name={{data.test_name}}">{{data.test_name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                                </tr>
+                                {% endfor %}
                                 {% for data in clair_all_high %}
                                 <tr data-target="#">
 
@@ -224,6 +235,17 @@
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.host}}</td>
                                     <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.threat}}</span></td>
+                                </tr>
+                                {% endfor %}
+                                {% for data in pentest_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                       <a href="/manual_scan/vuln_details/?vuln_id={{data.vuln_id}}">{{data.vuln_name}}</a>
+                                    </td>
+                                    <td>Pentest</td>
+                                    <td></td>
+                                    <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span></td>
                                 </tr>
                                 {% endfor %}
                                 </tbody>
