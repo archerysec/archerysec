@@ -19,23 +19,16 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from easy_pdf.views import render_to_pdf_response
 from selenium import webdriver
-from archerysettings.models import zap_settings_db
-from projects.models import project_db
-from scanners.scanner_plugin.web_scanner import burp_plugin
 from scanners.scanner_plugin.web_scanner import zap_plugin
 from webscanners.models import zap_scan_results_db, \
     zap_scans_db, \
     cookie_db, excluded_db, \
-    burp_scan_db, burp_scan_result_db, \
-    task_schedule_db
-from background_task import background
+    burp_scan_db, burp_scan_result_db
 from datetime import datetime
-from background_task.models import Task
 from jiraticketing.models import jirasetting
 from archerysettings.models import zap_settings_db
 import hashlib
 from webscanners.resources import ZapResource
-from django.contrib.auth.models import User
 from notifications.signals import notify
 from notifications.models import Notification
 from django.core.mail import send_mail
@@ -45,6 +38,8 @@ import ast
 
 scans_status = None
 to_mail = ''
+scan_id = None
+scan_name = None
 
 
 def email_notify(user, subject, message):
@@ -60,7 +55,6 @@ def email_notify(user, subject, message):
         send_mail(subject, message, email_from, recipient_list)
     except Exception as e:
         notify.send(user, recipient=user, verb='Email Settings Not Configured')
-        pass
 
 
 def email_sch_notify(subject, message):
@@ -76,7 +70,6 @@ def email_sch_notify(subject, message):
         send_mail(subject, message, email_from, recipient_list)
     except Exception as e:
         print(e)
-        pass
 
 
 def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
@@ -131,10 +124,8 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     zap.spider_result(spider_id=spider_id)
     notify.send(user, recipient=user, verb='ZAP Scan Spider Completed')
     time.sleep(5)
-    # print 'Scanning Target %s' % target_url
     """ ZAP Scan trigger on target_url  """
     zap_scan_id = zap.zap_scan()
-    # un_scanid = uuid.uuid4()
     zap.zap_scan_status(
         scan_id=zap_scan_id,
         un_scanid=scan_id
@@ -220,10 +211,8 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     zap.spider_status(spider_id=spider_id)
     zap.spider_result(spider_id=spider_id)
     time.sleep(5)
-    # print 'Scanning Target %s' % target_url
     """ ZAP Scan trigger on target_url  """
     zap_scan_id = zap.zap_scan()
-    # un_scanid = uuid.uuid4()
     zap.zap_scan_status(
         scan_id=zap_scan_id,
         un_scanid=scan_id
@@ -232,12 +221,11 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     time.sleep(5)
     all_vuln = zap.zap_scan_result()
     time.sleep(5)
-    save_all_vuln = zap.zap_result_save(
+    zap.zap_result_save(
         all_vuln=all_vuln,
         project_id=project_id,
         un_scanid=scan_id,
     )
-    # print save_all_vuln
     all_zap_scan = zap_scans_db.objects.all()
 
     total_vuln = ''
@@ -277,15 +265,12 @@ def zap_scan(request):
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
-            # print "Targets -", target
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_zap_scan,
                 args=(target, project_id, rescan_id, rescan, scan_id, user))
             thread.daemon = True
             thread.start()
-
-        # launch_zap_scan(target_url, project_id)
         if scans_status == '100':
             scans_status = "0"
         else:
@@ -313,7 +298,6 @@ def zap_rescan(request):
             args=(scan_url, project_id, rescan_id, rescan, scan_id))
         thread.daemon = True
         thread.start()
-        # messages.add_message(request, messages.SUCCESS, 'Re-Scan Launched')
 
     return HttpResponseRedirect('/zapscanner/zap_scan_list/')
 
@@ -379,6 +363,7 @@ def zap_vuln_details(request):
     :param request:
     :return:
     """
+    global scan_id, scan_name
     jira_url = None
     jira = jirasetting.objects.all()
     for d in jira:
@@ -462,7 +447,6 @@ def zap_settings(request):
 
     all_zap = zap_settings_db.objects.all()
     for zap in all_zap:
-        # global zap_api_key, zap_hosts, zap_ports
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
         zap_ports = zap.zap_port
@@ -483,9 +467,6 @@ def zap_setting_update(request):
     :param request:
     :return:
     """
-    # Load ZAP setting function
-    # save_setting = save_settings.SaveSettings(setting_file)
-
     if request.method == 'POST':
         apikey = request.POST.get("apikey", )
         zaphost = request.POST.get("zappath", )
@@ -527,7 +508,6 @@ def del_zap_scan(request):
     try:
         if request.method == 'POST':
             item_id = request.POST.get("scan_scanid")
-            scan_url = request.POST.get("scan_url")
             scan_item = str(item_id)
             ip = scan_item.replace(" ", "")
             target_split = ip.split(',')
@@ -593,13 +573,11 @@ def cookies_list(request):
 
 def del_cookies(request):
     if request.method == 'POST':
-        # cookie_id = request.POST.get('id')
         cookie_url = request.POST.get('url')
         cookies_item = str(cookie_url)
         cooki_split = cookies_item.replace(" ", "")
         target_split = cooki_split.split(',')
         split_length = target_split.__len__()
-        # print "split_length", split_length
         for i in range(0, split_length):
             cookies_target = target_split.__getitem__(i)
             print(cookies_target)
@@ -629,11 +607,7 @@ def sel_login(request):
         read_f = open('cookies.txt', 'r')
 
         for cookie_data in read_f:
-
-            # cookie_save = cookie_db(url=new_uri, cookie=cookie_data)
             # cookie_save.save()
-
-            # target_url = request.POST.get('url')
             # target_cookies = request.POST.get('cookies')
             print(cookie_data)
             all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri))
@@ -952,13 +926,6 @@ def zap_scan_pdf_gen(request):
                                                                                  'risk',
                                                                                  'vuln_color',
                                                                                  'scan_id').distinct()
-
-        # all_pam = zap_scan_results_db.objects.filter(scan_id=scan_id)
-        # for para in all_pam:
-        #     evi_para = para.param
-        #     evi_list = ast.literal_eval(evi_para)
-        #     for e in evi_list:
-        #         print e
 
         return render_to_pdf_response(request,
                                       template=str('zapscanner/zap_scan_pdf_gen.html'),

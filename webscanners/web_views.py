@@ -176,6 +176,11 @@ def signup(request):
                   'signup.html')
 
 
+def error_404_view(request):
+
+    return render(request, '404.html')
+
+
 def loggedin(request):
     """
     After login request.

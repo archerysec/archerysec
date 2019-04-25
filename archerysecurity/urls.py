@@ -20,7 +20,6 @@ from django.contrib import admin
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token
 from rest_framework_jwt.views import refresh_jwt_token
 import notifications.urls
-from django.urls import reverse
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

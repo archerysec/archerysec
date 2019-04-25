@@ -1668,7 +1668,7 @@ def export(request):
             openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)
 
-            pentest_all_high = manual_scan_results_db.filter(severity='High', project_id=project_id)
+            pentest_all_high = manual_scan_results_db.objects.filter(severity='High', project_id=project_id)
 
             all_data = chain(zap_all_high,
                              burp_all_high,
@@ -1685,8 +1685,6 @@ def export(request):
                              pentest_all_high,
                              bandit_all_high
                              )
-
-            # dataset = resource.export(all_data)
 
         elif severity == 'Medium':
             # All Medium
