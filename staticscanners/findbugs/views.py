@@ -178,7 +178,6 @@ def findbugs_del_vuln(request):
         total_medium = len(all_findbugs_data.filter(priority="2"))
         total_low = len(all_findbugs_data.filter(priority="3"))
         total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
-        print("total duplicats"), total_duplicate
 
         findbugs_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

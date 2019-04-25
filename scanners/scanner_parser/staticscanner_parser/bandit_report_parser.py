@@ -178,7 +178,7 @@ def bandit_report_json(data, project_id, scan_id):
         total_medium = len(all_bandit_data.filter(issue_severity="MEDIUM"))
         total_low = len(all_bandit_data.filter(issue_severity="LOW"))
         total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
-        print("total duplicats"), total_duplicate
+
 
         bandit_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

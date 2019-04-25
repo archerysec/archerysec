@@ -178,7 +178,6 @@ def clair_del_vuln(request):
         total_medium = len(all_clair_data.filter(Severity="Medium"))
         total_low = len(all_clair_data.filter(Severity="Low"))
         total_duplicate = len(all_clair_data.filter(vuln_duplicate='Yes'))
-        print("total duplicats"), total_duplicate
 
         clair_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

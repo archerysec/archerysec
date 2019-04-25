@@ -151,7 +151,7 @@ def xml_parser(data, project_id, scan_id):
         total_medium = len(all_dependency_data.filter(severity="Medium"))
         total_low = len(all_dependency_data.filter(severity="Low"))
         total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
-        print("total duplicats"), total_duplicate
+
 
         dependencycheck_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

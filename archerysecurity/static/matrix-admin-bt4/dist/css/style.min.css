@@ -4373,7 +4373,7 @@ input[type=submit].btn-block {
 	line-height: 1.5;
 	color: #4F5467;
 	vertical-align: middle;
-	background: #fff url(../../assets/images/custom-select.png) no-repeat right 0.75rem center;
+	background: #fff url() no-repeat right 0.75rem center;
 	background-size: 8px 10px;
 	border: 1px solid #e9ecef;
 	border-radius: 2px;

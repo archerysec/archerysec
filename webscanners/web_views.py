@@ -668,7 +668,7 @@ def xml_upload(request):
             netsparker_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/netsparkerscanner/netsparker_scan_list/")
         elif scanner == 'webinspect':
             date_time = datetime.now()
@@ -685,7 +685,7 @@ def xml_upload(request):
             webinspect_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/webinspectscanner/webinspect_scan_list/")
 
         elif scanner == 'acunetix':
@@ -703,7 +703,7 @@ def xml_upload(request):
             acunetix_xml_parser.xml_parser(project_id=project_id,
                                            scan_id=scan_id,
                                            root=root_xml)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/acunetixscanner/acunetix_scan_list/")
 
         elif scanner == 'dependencycheck':
@@ -720,7 +720,7 @@ def xml_upload(request):
             dependencycheck_report_parser.xml_parser(project_id=project_id,
                                                      scan_id=scan_id,
                                                      data=data)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/dependencycheck/dependencycheck_list")
 
         elif scanner == 'findbugs':
@@ -738,7 +738,7 @@ def xml_upload(request):
             findbugs_report_parser.xml_parser(project_id=project_id,
                                               scan_id=scan_id,
                                               root=root)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/findbugs/findbugs_list")
 
         elif scanner == 'nikto':
@@ -752,7 +752,7 @@ def xml_upload(request):
             scan_dump.save()
 
             nikto_html_parser(xml_file, project_id, scan_id)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/tools/nikto/")
 
     return render(request, 'upload_xml.html', {'all_project': all_project})

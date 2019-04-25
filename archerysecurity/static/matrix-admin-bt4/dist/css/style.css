@@ -3563,7 +3563,7 @@ input[type="button"].btn-block {
   line-height: 1.5;
   color: #4F5467;
   vertical-align: middle;
-  background: #fff url(../../assets/images/custom-select.png) no-repeat right 0.75rem center;
+  background: #fff url() no-repeat right 0.75rem center;
   background-size: 8px 10px;
   border: 1px solid #e9ecef;
   border-radius: 2px;
@@ -12574,7 +12574,7 @@ Padding margin property
       padding-left: 0.5rem; }
   html[dir="rtl"] .custom-select {
     padding: .375rem .75rem .375rem 1.75rem;
-    background: url(../../assets/images/custom-select.png) left 0.35rem center no-repeat #fff; }
+    background: url() left 0.35rem center no-repeat #fff; }
   html[dir="rtl"] .custom-control {
     padding-left: 0;
     padding-right: 1.5rem; }
