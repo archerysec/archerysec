@@ -7,7 +7,11 @@
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                     __/ |
 #                                    |___/
-# Copyright (C) 2017-2018 ArcherySec
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals

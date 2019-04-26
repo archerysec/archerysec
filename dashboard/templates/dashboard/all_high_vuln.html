@@ -1,3 +1,19 @@
+<!---*- coding: utf-8 -*- -->
+<!--                     _-->
+<!--      /\            | |-->
+<!--     /  \   _ __ ___| |__   ___ _ __ _   _-->
+<!--    / /\ \ | '__/ __| '_ \ / _ \ '__| | | |-->
+<!--   / ____ \| | | (__| | | |  __/ |  | |_| |-->
+<!--  /_/    \_\_|  \___|_| |_|\___|_|   \__, |-->
+<!--                                      __/ |-->
+<!--                                     |___/-->
+<!--  Copyright (C) 2017 Anand Tiwari-->
+<!---->
+<!--  Email:   anandtiwarics@gmail.com-->
+<!--  Twitter: @anandtiwarics-->
+<!---->
+<!--  This file is part of ArcherySec Project.-->
+
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
@@ -37,46 +53,6 @@
                             <h1 class="card-title">{{ severity }} Vulnerability List</h1>
                         </div>
                         <br>
-                            <!--<div class="text-right">-->
-                                <!--<div class="btn-group">-->
-                                    <!--<button type="button" class="btn btn-primary" data-toggle="dropdown"-->
-                                            <!--aria-haspopup="true" aria-expanded="false"><i class="m-r-10 mdi mdi-download"></i>Export-->
-                                    <!--</button>-->
-                                    <!--<div class="dropdown-menu">-->
-                                        <!--<div class="dropdown-item">-->
-                                            <!--<form action="/export/" method="post" class="forms-sample">-->
-                                                <!--{% csrf_token %}-->
-                                                <!--<input type="hidden" name="project_id" value="{{project_id}}"/>-->
-                                                <!--<input type="hidden" name="type" value="csv"/>-->
-                                                <!--<input type="hidden" name="severity" value="{{severity}}"/>-->
-                                                <!--<button class="btn btn-success btn-mini">CSV-->
-                                                <!--</button>-->
-                                            <!--</form>-->
-                                        <!--</div>-->
-                                        <!--<div class="dropdown-item">-->
-                                            <!--<form action="/export/" method="post" class="forms-sample">-->
-                                                <!--{% csrf_token %}-->
-                                                <!--<input type="hidden" name="project_id" value="{{project_id}}"/>-->
-                                                <!--<input type="hidden" name="type" value="json"/>-->
-                                                <!--<input type="hidden" name="severity" value="{{severity}}"/>-->
-                                                <!--<button class="btn btn-success btn-mini"> JSON-->
-                                                <!--</button>-->
-                                            <!--</form>-->
-                                        <!--</div>-->
-                                        <!--<div class="dropdown-item">-->
-                                            <!--<form action="/export/" method="post" class="forms-sample">-->
-                                                <!--{% csrf_token %}-->
-                                                <!--<input type="hidden" name="project_id" value="{{project_id}}"/>-->
-                                                <!--<input type="hidden" name="type" value="yaml"/>-->
-                                                <!--<input type="hidden" name="severity" value="{{severity}}"/>-->
-                                                <!--<button class="btn btn-success btn-mini">YAML-->
-                                                <!--</button>-->
-                                            <!--</form>-->
-                                        <!--</div>-->
-
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
                         <br>
                         <div class="row">
                             <div class="table-responsive">
@@ -244,7 +220,7 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.scan_ip}}</td>
-                                    <td>{{data.risk_factor}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.risk_factor}}</span></td>
                                 </tr>
                                 {% endfor %}
 

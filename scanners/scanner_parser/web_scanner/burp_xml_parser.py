@@ -1,21 +1,26 @@
-from PyBurprestapi import burpscanner
-import os
-import json
-import time
-import defusedxml.ElementTree as ET
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
+
 import base64
 from webscanners.models import burp_scan_db, burp_scan_result_db, burp_issue_definitions
 import uuid
 from django.shortcuts import HttpResponse
 # from django.core.mail import send_mail
 from webscanners import email_notification
-from archerysettings import load_settings
 import hashlib
-from archerysettings.models import burp_setting_db
-from datetime import datetime
-
-# Setting file importing
-# setting_file = os.getcwd() + '/' + 'apidata.json'
 
 project_id = None
 target_url = None

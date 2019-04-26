@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 import datetime
@@ -37,6 +42,7 @@ pluginFamily = "NA"
 port = "NA"
 ip = ''
 false_positive = None
+vuln_color = None
 
 
 def nessus_parser(root, project_id, scan_id):
@@ -54,7 +60,7 @@ def nessus_parser(root, project_id, scan_id):
         risk_factor, script_version, solution,\
         synopsis, plugin_output, see_also, scan_ip, \
         pluginName, pluginID, protocol, severity,\
-        svc_name, pluginFamily, port
+        svc_name, pluginFamily, port, vuln_color
 
     for data in root:
         for reportHost in data.iter('ReportHost'):
@@ -144,6 +150,17 @@ def nessus_parser(root, project_id, scan_id):
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)
 
+                if severity == '0':
+                    vuln_color = 'info'
+                if severity == '1':
+                    vuln_color = 'info'
+                if severity == '2':
+                    vuln_color = 'warning'
+                if severity == '3':
+                    vuln_color = 'danger'
+                if severity == '4':
+                    vuln_color = 'danger'
+
                 if lenth_match == 1:
                     duplicate_vuln = 'Yes'
                 elif lenth_match == 0:
@@ -191,7 +208,8 @@ def nessus_parser(root, project_id, scan_id):
                                                  false_positive=false_positive,
                                                  vuln_status='Open',
                                                  dup_hash=duplicate_hash,
-                                                 vuln_duplicate=duplicate_vuln
+                                                 vuln_duplicate=duplicate_vuln,
+                                                 severity_color=vuln_color
                                                  )
                 all_data_save.save()
 

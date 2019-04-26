@@ -1,15 +1,19 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
-from rest_framework.response import Response
 from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
     netsparker_scan_db, webinspect_scan_db, acunetix_scan_db
 from networkscanners.models import scan_save_db, ov_scan_result_db
@@ -27,7 +31,6 @@ from webscanners.serializers import WebScanSerializer, \
     findbugsStatusSerializer
 
 from rest_framework import status
-from webscanners import web_views
 from webscanners.zapscanner.views import launch_zap_scan
 from networkscanners import views
 from networkscanners.serializers import NetworkScanSerializer, NetworkScanResultSerializer
@@ -38,7 +41,6 @@ from projects.serializers import ProjectDataSerializers
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from itertools import chain
 import threading
-from django.utils import timezone
 import datetime
 import defusedxml.ElementTree as ET
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
@@ -99,32 +101,25 @@ class WebScan(generics.ListCreateAPIView):
                 thread.start()
 
             elif scanner == 'burp_scan':
+                user = request.user
                 date_time = datetime.datetime.now()
                 scan_dump = burp_scan_db(scan_id=scan_id,
                                          project_id=project_id,
                                          url=target_url,
                                          date_time=date_time)
                 scan_dump.save()
-                # do_scan = burp_plugin.burp_scans(project_id, target_url, scan_id)
-                # # o = ()
-                # thread = threading.Thread(target=do_scan.scan_launch(), args=(project_id, target_url, scan_id))
-                # thread.daemon = True
-                # thread.start()
                 try:
                     do_scan = burp_plugin.burp_scans(
                         project_id,
                         target_url,
-                        scan_id)
-                    # do_scan.scan_lauch(project_id,
-                    #                    target,
-                    #                    scan_id)
-
+                        scan_id,
+                        user
+                    )
                     thread = threading.Thread(
                         target=do_scan.scan_launch,
                     )
                     thread.daemon = True
                     thread.start()
-                    # time.sleep(5)
                 except Exception as e:
                     print(e)
             elif scanner == 'arachni':
@@ -248,7 +243,6 @@ class WebScanResult(generics.ListCreateAPIView):
         serializer = WebScanResultSerializer(data=request.data)
         if serializer.is_valid():
             scan_id = request.data.get('scan_id', )
-            # project_id = request.data.get('project_id',)
             zap_scan = zap_scan_results_db.objects.filter(scan_id=scan_id)
             burp_scan = burp_scan_result_db.objects.filter(scan_id=scan_id)
             all_scans = chain(zap_scan, burp_scan)
