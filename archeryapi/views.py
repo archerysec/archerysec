@@ -435,8 +435,6 @@ class UpladScanResult(APIView):
         scan_url = request.data.get("scan_url")
         scan_id = uuid.uuid4()
         scan_status = "100"
-        print(xml_file)
-        print(scanner)
         if scanner == "zap_scan":
             date_time = datetime.datetime.now()
             scan_dump = zap_scans_db(scan_url=scan_url,
@@ -446,8 +444,7 @@ class UpladScanResult(APIView):
                                      vul_status=scan_status,
                                      rescan='No')
             scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
+            root_xml = ET.fromstring(xml_file)
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml)
