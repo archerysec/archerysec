@@ -1,21 +1,26 @@
-from PyBurprestapi import burpscanner
-import os
-import json
-import time
-import defusedxml.ElementTree as ET
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
+
 import base64
 from webscanners.models import burp_scan_db, burp_scan_result_db, burp_issue_definitions
 import uuid
 from django.shortcuts import HttpResponse
 # from django.core.mail import send_mail
 from webscanners import email_notification
-from archerysettings import load_settings
 import hashlib
-from archerysettings.models import burp_setting_db
-from datetime import datetime
-
-# Setting file importing
-# setting_file = os.getcwd() + '/' + 'apidata.json'
 
 project_id = None
 target_url = None
@@ -163,7 +168,7 @@ def burp_scan_data(root, project_id, scan_id):
 
         global vul_col
         if severity == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':
@@ -201,6 +206,12 @@ def burp_scan_data(root, project_id, scan_id):
 
         url = host + location
 
+        # all_issue_definitions = burp_issue_definitions.objects.filter(issue_type_id=types)
+        # for def_data in all_issue_definitions:
+        #     issue_description = def_data.description
+        #     issue_remediation = def_data.remediation
+        #     issue_vulnerability_classifications = def_data.vulnerability_classifications
+        #     issue_reference = def_data.reference
 
         try:
             data_dump = burp_scan_result_db(
@@ -251,5 +262,4 @@ def burp_scan_data(root, project_id, scan_id):
         email_notification.email_notify()
     except Exception as e:
         print(e)
-        
     HttpResponse(status=201)
