@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
@@ -113,7 +118,7 @@ def acunetix_vuln_out(request):
                 url = vi.ScanStartURL
                 Severity = vi.VulnSeverity
                 dup_data = name + url + Severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 acunetix_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                        scan_id=scan_id).update(false_positive=false_positive,
                                                                                vuln_status=status,
@@ -196,14 +201,14 @@ def edit_acunetix_vuln(request):
         vulnerabilityClassifications = request.POST.get("reference", )
         global vul_col
         if severity == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':
             vul_col = "info"
         else:
             vul_col = "info"
-        print "edit_vul :", name
+        print("edit_vul :"), name
 
         acunetix_scan_result_db.objects.filter(vuln_id=vuln_id).update(
             name=name,
@@ -239,7 +244,7 @@ def acunetix_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = acunetix_scan_result_db.objects.filter(vuln_id=vuln_id)

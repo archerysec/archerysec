@@ -1,95 +1,106 @@
 {% extends 'dashboard/base.html' %}
 
-{% block header_title %}Dashboard{% endblock header_title %}
-{% block title %}Dashboard{% endblock title %}
+{% block body %}
 
 
-{% block content %}
-{% include "dashboard/_top_links.html" %}
-<div class="row-fluid">
-    <div class="widget-box">
-        <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
-            <h5>Project Analytics</h5>
-        </div>
-        <div class="widget-box">
-            <div class="widget-content">
-                <div class="row-fluid">
-                    <div class="span4">
-                        <canvas id="webscans"></canvas>
-                    </div>
-                    <div class="span4">
-                        <canvas id="networkscan"></canvas>
-                    </div>
-                    <div class="span4">
-                        <canvas id="testProChart2"></canvas>
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                {% include "dashboard/_top_links.html" %}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Project Analytics</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 col-md-4">
+                                <!--<canvas id="webscans"></canvas>-->
+                                <canvas id="webscans" width="100" height="100"></canvas>
+                            </div>
+                            <div class="col-sm-4 col-md-4">
+                                <canvas id="networkscan" width="100" height="100"></canvas>
+                            </div>
+                            <div class="col-sm-4 col-md-4">
+                                <canvas id="testProChart2" width="100" height="100"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="widget-content">
-            <div class="row-fluid">
-                <div class="span6">
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                            <h5>Compliance Summary</h5>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Compliance Summary</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
                         </div>
-
-                        <div class="widget-content nopadding">
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Audit</th>
-                                    <th>Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td><a href="#">Total Nodes</a></td>
-                                    <td><span class="badge badge-inverse">{{total_compliance}}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><a href="#">Failed Nodes</a></td>
-                                    <td><span class="badge badge-important">{{all_compliance_failed}}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><a href="#">Passed Nodes</a></td>
-                                    <td><span class="badge badge-warning">{{all_compliance_passed}}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><a href="#">Skipped Nodes</a></td>
-                                    <td><span class="badge badge-info">{{all_compliance_skipped}}</span>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="span6">
-                    <canvas id="compliant"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="widget-content">
-            <div class="row-fluid">
-                <div class="span12">
-                    <div class="row-fluid">
-
-                        <div class="span12">
-                            <div class="widget-box">
-                                <div class="widget-title"><span class="icon"><i
-                                        class="icon-th"></i></span>
-                                    <h5>Scanners List</h5>
-                                </div>
-                                <div class="widget-content nopadding">
-                                    <table class="table table-bordered data-table">
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-sm-6 col-md-6">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
                                         <thead>
                                         <tr>
-                                            <th>Scanners</th>
+                                            <th>Audit</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <td><a href="#">Total</a></td>
+                                        <td><span class="badge badge-pill badge-dark">{{total_compliance}}</span></td>
+                                        <tr>
+                                            <td><a href="#">Failed</a></td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_compliance_failed}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">Passed</a></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_compliance_passed}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#">Skipped</a></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_compliance_skipped}}</span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <canvas id="compliant"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Scanners List</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table id="zero_config" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Scanner</th>
                                             <th>High</th>
                                             <th>Medium</th>
                                             <th>Low</th>
@@ -97,503 +108,709 @@
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td><a href="/zapscanner/zap_scan_list/">OWASP ZAP</a></td>
-                                            <td><span
-                                                    class="badge badge-important">{{all_zap_high.high_vul__sum}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-warning">{{all_zap_medium.medium_vul__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-info">{{all_zap_low.low_vul__sum}}</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><a href="/arachniscanner/arachni_scan_list">Arachni</a></td>
-                                            <td><span
-                                                    class="badge badge-important">{{all_arachni_high.high_vul__sum}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-warning">{{all_arachni_medium.medium_vul__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-info">{{all_arachni_low.low_vul__sum}}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td><a href="/burpscanner/burp_scan_list">Burp Scan</a></td>
-                                            <td><span
-                                                    class="badge badge-important">{{all_burp_high.high_vul__sum}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-warning">{{all_burp_medium.medium_vul__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-info">{{all_burp_low.low_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_burp_high.high_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_burp_medium.medium_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_burp_low.low_vul__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/webinspectscanner/webinspect_scan_list/">Webinspect</a></td>
-                                            <td><span class="badge badge-important">{{all_webinspect_high.high_vul__sum}}</span>
+                                            <td>
+                                                <a href="/acunetixscanner/acunetix_scan_list/">Acunetix</a>
                                             </td>
-                                            <td><span class="badge badge-warning">{{all_webinspect_medium.medium_vul__sum}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-info">{{all_webinspect_low.low_vul__sum}}</span>
-                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_acunetix_high.high_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_acunetix_medium.medium_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_acunetix_low.low_vul__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/acunetixscanner/acunetix_scan_list/">Acunetix</a></td>
-                                            <td><span
-                                                    class="badge badge-important">{{all_acunetix_high.high_vul__sum}}</span>
+                                            <td><a href="/arachniscanner/arachni_scan_list">Arachni</a>
                                             </td>
-                                            <td><span class="badge badge-warning">{{all_acunetix_medium.medium_vul__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-info">{{all_acunetix_low.low_vul__sum}}</span>
-                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_arachni_high.high_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_arachni_medium.medium_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_arachni_low.low_vul__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/networkscanners/">OpenVAS</a></td>
-                                            <td><span
-                                                    class="badge badge-important">{{all_openvas_high.high_total__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-warning">{{all_openvas_medium.medium_total__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-info">{{all_openvas_low.low_total__sum}}</span>
-                                            </td>
+                                            <td><a href="/zapscanner/zap_scan_list/">OWASP ZAP</a></td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_zap_high.high_vul__sum}}</td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_zap_medium.medium_vul__sum}}</td>
+                                            <td><span class="badge badge-pill badge-info">{{all_zap_low.low_vul__sum}}</td>
                                         </tr>
                                         <tr>
                                             <td><a href="/networkscanners/nessus_scan">Nessus</a></td>
-                                            <td><span
-                                                    class="badge badge-important">{{all_nessus_high.high_total__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-warning">{{all_nessus_medium.medium_total__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-info">{{all_nessus_low.low_total__sum}}</span>
-                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_nessus_high.high_total__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_nessus_medium.medium_total__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_nessus_low.low_total__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/dependencycheck/dependencycheck_list">Dependency Check</a>
+                                            <td><a href="/dependencycheck/dependencycheck_list">Dependency
+                                                Check</a>
                                             </td>
-                                            <td><span class="badge badge-important">{{all_dependency_high.SEVERITY_HIGH__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-warning">{{all_dependency_medium.SEVERITY_MEDIUM__sum}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-info">{{all_dependency_low.SEVERITY_LOW__sum}}</span>
-                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_dependency_high.SEVERITY_HIGH__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_dependency_medium.SEVERITY_MEDIUM__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_dependency_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/findbugs/findbugs_list">FindBugs</a></td>
-                                            <td><span class="badge badge-important">{{all_findbugs_high.SEVERITY_HIGH__sum}}</span>
+                                            <td><a href="/networkscanners/">OpenVAS</a></td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_openvas_high.high_total__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_openvas_medium.medium_total__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_openvas_low.low_total__sum}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="/webinspectscanner/webinspect_scan_list/">Webinspect</a>
                                             </td>
-                                            <td><span class="badge badge-warning">{{all_findbugs_medium.SEVERITY_MEDIUM__sum}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-info">{{all_findbugs_low.SEVERITY_LOW__sum}}</span>
-                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_webinspect_high.high_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_webinspect_medium.medium_vul__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_webinspect_low.low_vul__sum}}</span></td>
                                         </tr>
                                         <tr>
                                             <td><a href="/clair/clair_list">Clair</a></td>
-                                            <td><span class="badge badge-important">{{all_clair_high.SEVERITY_HIGH__sum}}</span>
-                                            </td>
-                                            <td><span class="badge badge-warning">{{all_clair_medium.SEVERITY_MEDIUM__sum}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-info">{{all_clair_low.SEVERITY_LOW__sum}}</span>
-                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_clair_high.SEVERITY_HIGH__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_clair_medium.SEVERITY_MEDIUM__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_clair_low.SEVERITY_LOW__sum}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="/findbugs/findbugs_list">FindBugs</a></td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_findbugs_high.SEVERITY_HIGH__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_findbugs_medium.SEVERITY_MEDIUM__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_findbugs_low.SEVERITY_LOW__sum}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="/banditscanner/banditscans_list">Bandit</a></td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_bandit_high.SEVERITY_HIGH__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_bandit_medium.SEVERITY_MEDIUM__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_bandit_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="widget-content">
-            <div class="row-fluid">
-                <div class="span6">
-                    <canvas id="ProChart"></canvas>
-                </div>
-                <div class="span6">
-                    <canvas id="ProBar"></canvas>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6 col-md-6">
+                                <canvas id="ProChart"></canvas>
+                            </div>
+                            <div class="col-sm-6 col-md-6">
+                                <canvas id="ProBar"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="widget-box">
-            <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
-                <h5>Dynamic Scans List</h5>
-            </div>
-            <div class="widget-content nopadding">
-                <table class="table table-bordered data-table">
-                    <thead>
-                    <tr>
-                        <th>URL</th>
-                        <th>Status</th>
-                        <th>Date Time</th>
-                        <th>Total</th>
-                        <th>High</th>
-                        <th>Medium</th>
-                        <th>Low</th>
-
-                    </tr>
-                    </thead>
-                    <tbody>{% for data in zap %}
-                    <tr data-target="#">
-                        <td width="20%"><a href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                    {{data.scan_status}}{{data.vul_status}} %
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Pentest Activity</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table id="pentest_list" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>URL</th>
+                                            <th>Type</th>
+                                            <th>Date Time</th>
+                                            <th>Total</th>
+                                            <th>High</th>
+                                            <th>Medium</th>
+                                            <th>Low</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in pentest %}
+                                        <tr data-target="#">
+                                            <td width="20%"><a
+                                                    href="/manual_scan/vuln_list/?scan_id={{data.scan_id}}&project_id={{data.project_id}}">{{data.scan_url}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            {{data.pentest_type}}
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span
+                                                    class="badge badge-pill badge-dark">{{data.total_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-info">{{data.low_vul}}</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                        <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                        <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                        <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tbody>{% for data in burp %}
-                    <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                    {{data.scan_status}}{{data.vul_status}} %
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                        <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                        <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                        <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tbody>{% for data in arachni %}
-                    <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                    {{data.scan_status}}{{data.vul_status}} %
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                        <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                        <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                        <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tbody>{% for data in webinspect %}
-                    <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                    {{data.scan_status}}{{data.vul_status}} %
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                        <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                        <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                        <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tbody>{% for data in netsparker %}
-                    <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                    {{data.scan_status}}{{data.vul_status}} %
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                        <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                        <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                        <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tbody>{% for data in acunetix %}
-                    <tr data-target="#">
-                        <td width="20%"><a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">
-                                    {{data.scan_status}}{{data.vul_status}} %
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                        <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                        <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                        <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-
-                </table>
-            </div>
-        </div>
-
-        <div class="widget-box">
-            <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
-                <h5>Static Scans List</h5>
-            </div>
-            <div class="widget-content nopadding">
-                <table class="table table-bordered data-table">
-                    <thead>
-                    <tr>
-                        <th>Project Name</th>
-                        <th>Status</th>
-                        <th>Date Time</th>
-                        <th>Total Vulnerability</th>
-                        <th>HIGH</th>
-                        <th>MEDIUM</th>
-                        <th>LOW</th>
-                    </tr>
-                    </thead>
-                    <tbody>{% for data in dependency_check %}
-                    <tr data-target="#">
-                        <td width="20%">
-                            <a href="/dependencycheck/dependencycheck_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
-                        <td><span class="badge badge-important">{{data.SEVERITY_HIGH}}</span></td>
-                        <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
-                        <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tbody>{% for data in findbugs %}
-                    <tr data-target="#">
-                        <td width="20%">
-                            <a href="/findbugs/findbugs_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
-                        <td><span class="badge badge-important">{{data.SEVERITY_HIGH}}</span></td>
-                        <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
-                        <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tbody>{% for data in clair %}
-                    <tr data-target="#">
-                        <td width="20%">
-                            <a href="/clair/clair_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
-                        <td><span class="badge badge-important">{{data.SEVERITY_HIGH}}</span></td>
-                        <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
-                        <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="widget-box">
-            <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
-                <h5>Network Scans List</h5>
-            </div>
-            <div class="widget-content nopadding">
-                <table class="table table-bordered data-table">
-                    <thead>
-                    <tr>
-                        <th>IP</th>
-                        <th>Status</th>
-                        <th>Date Time</th>
-                        <th>Total</th>
-                        <th>High</th>
-                        <th>Medium</th>
-                        <th>Low</th>
-                    </tr>
-                    </thead>
-                    <tbody>{% for data in openvas_dat %}
-                    <tr data-target="#">
-
-                        <td width="20%"><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                        <td><span class="badge badge-important">{{data.high_total}}</span></td>
-                        <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
-                        <td><span class="badge badge-info">{{data.low_total}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tbody>{% for data in nessus_dat %}
-                    <tr data-target="#">
-
-                        <td width="20%"><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
-                        </td>
-                        <td width="20%">
-                            <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
-                            </div>
-                        </td>
-                        <td>{{data.date_time}}</td>
-                        <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                        <td><span class="badge badge-important">{{data.high_total}}</span></td>
-                        <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
-                        <td><span class="badge badge-info">{{data.low_total}}</span></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="widget-box">
-                <div class="widget-title"><span class="icon"> <i class="icon-th"></i> </span>
-                    <h5>Compliance Scan List</h5>
+                        </div>
+                    </div>
                 </div>
-                <div class="widget-content nopadding">
-                    <table class="table table-bordered data-table">
-                        <thead>
-                        <tr>
-                            <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
-                            <th>Project Name</th>
-                            <th>Status</th>
-                            <th>Date Time</th>
-                            <th>Total Complained</th>
-                            <th>Failed</th>
-                            <th>Passed</th>
-                            <th>Skipped</th>
-                        </tr>
-                        </thead>
-                        <tbody>{% for data in compliance_dat %}
-                        <tr data-target="#">
-                            <td>
-                                <form>
-                                    <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
-                                                  onClick="reload">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Dynamic Scan List</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table id="zero_config1" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>URL</th>
+                                            <th>Status</th>
+                                            <th>Date Time</th>
+                                            <th>Total</th>
+                                            <th>High</th>
+                                            <th>Medium</th>
+                                            <th>Low</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in zap %}
+                                        <tr data-target="#">
+                                            <td width="20%"><a
+                                                    href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span
+                                                    class="badge badge-pill badge-dark">{{data.total_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-info">{{data.low_vul}}</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% for data in burp %}
+                                        <tr data-target="#">
+                                            <td width="20%"><a
+                                                    href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span
+                                                    class="badge badge-pill badge-dark">{{data.total_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-info">{{data.low_vul}}</span>
+                                            </td>
 
-                                    </label>
-                                </form>
-                            </td>
-                            <td>
-                                <a href="/inspec/inspec_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
-                            </td>
-                            <td width="20%">
-                                <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                    <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
+                                        </tr>
+                                        {% endfor %}
+                                       {% for data in arachni %}
+                                        <tr data-target="#">
+                                            <td width="20%"><a
+                                                    href="/arachniscanner/arachni_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span
+                                                    class="badge badge-pill badge-dark">{{data.total_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-info">{{data.low_vul}}</span>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        {% for data in webinspect %}
+                                        <tr data-target="#">
+                                            <td width="20%"><a
+                                                    href="/webinspectscanner/webinspect_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span
+                                                    class="badge badge-pill badge-dark">{{data.total_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-info">{{data.low_vul}}</span>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        {% for data in netsparker %}
+                                        <tr data-target="#">
+                                            <td width="20%"><a
+                                                    href="/netsparkerscanner/netsparker_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span
+                                                    class="badge badge-pill badge-dark">{{data.total_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-info">{{data.low_vul}}</span>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        {% for data in acunetix %}
+                                        <tr data-target="#">
+                                            <td width="20%"><a
+                                                    href="/acunetixscanner/acunetix_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span
+                                                    class="badge  badge-pill badge-dark">{{data.total_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-info">{{data.low_vul}}</span>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </td>
-                            <td>{{data.date_time}}</td>
-                            <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
-                            <td><span class="badge badge-important">{{data.inspec_failed}}</span></td>
-                            <td><span class="badge badge-warning">{{data.inspec_passed}}</span></td>
-                            <td><span class="badge badge-info">{{data.inspec_skipped}}</span></td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Static Scan List</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table id="zero_config2" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Project Name</th>
+                                            <th>Status</th>
+                                            <th>Date Time</th>
+                                            <th>Total Vulnerability</th>
+                                            <th>HIGH</th>
+                                            <th>MEDIUM</th>
+                                            <th>LOW</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in dependency_check %}
+                                        <tr data-target="#">
+                                            <td width="20%">
+                                                <a href="/dependencycheck/dependencycheck_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-danger">{{data.SEVERITY_HIGH}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-warning">{{data.SEVERITY_MEDIUM}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% for data in findbugs %}
+                                        <tr data-target="#">
+                                            <td width="20%">
+                                                <a href="/findbugs/findbugs_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-danger">{{data.SEVERITY_HIGH}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-warning">{{data.SEVERITY_MEDIUM}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        {% for data in clair %}
+                                        <tr data-target="#">
+                                            <td width="20%">
+                                                <a href="/clair/clair_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-danger">{{data.SEVERITY_HIGH}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-warning">{{data.SEVERITY_MEDIUM}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        {% for data in bandit %}
+                                        <tr data-target="#">
+                                            <td width="20%">
+                                                <a href="/banditscanner/banditscan_list_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-danger">{{data.SEVERITY_HIGH}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-warning">{{data.SEVERITY_MEDIUM}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Infrastructure Scan List</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table id="zero_config4" class="table table-bordered data-table">
+                                        <thead>
+                                        <tr>
+                                            <th>IP</th>
+                                            <th>Status</th>
+                                            <th>Date Time</th>
+                                            <th>Total</th>
+                                            <th>High</th>
+                                            <th>Medium</th>
+                                            <th>Low</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in openvas_dat %}
+                                        <tr data-target="#">
+
+                                            <td width="20%"><a
+                                                    href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_total}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-warning">{{data.medium_total}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-info">{{data.low_total}}</span></td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                        <tbody>{% for data in nessus_dat %}
+                                        <tr data-target="#">
+
+                                            <td width="20%"><a
+                                                    href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
+                                            <td><span class="badge badge-pill badge-danger">{{data.high_total}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{data.medium_total}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{data.low_total}}</span></td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h5>Compliance Scan List</h5>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table id="zero_config5" class="table table-bordered data-table">
+                                        <thead>
+                                        <tr>
+                                            <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                            <th>Project Name</th>
+                                            <th>Status</th>
+                                            <th>Date Time</th>
+                                            <th>Total Complained</th>
+                                            <th>Failed</th>
+                                            <th>Passed</th>
+                                            <th>Skipped</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in compliance_dat %}
+                                        <tr data-target="#">
+                                            <td>
+                                                <form>
+                                                    <label><input type="checkbox" value="{{data.scan_id}}"
+                                                                  name="del_scan_id"
+                                                                  onClick="reload">
+
+                                                    </label>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <a href="/inspec/inspec_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                            </td>
+                                            <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                            <td>{{data.date_time}}</td>
+                                            <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-danger">{{data.inspec_failed}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-warning">{{data.inspec_passed}}</span>
+                                            </td>
+                                            <td><span class="badge badge-pill badge-info">{{data.inspec_skipped}}</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-{% endblock content %}
-
-{% block extra_body %}
-<script type="text/javascript" src="/static/js/google_chart.js"></script>
-<script type="text/javascript">
-    // Load Charts and the corechart and barchart packages.
-      google.charts.load('current', {'packages':['corechart']});
-
-      // Draw the pie chart and bar chart when Charts is loaded.
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-          ['High', {{all_high}}],
-          ['Medium', {{all_medium}}],
-          ['Low', {{all_low}}],
-        ]);
-
-        var piechart_options = {title:'Pie Chart: Vulnerability found in Project',
-                       width:700,
-                       height:400, colors: ['#bd3f3b', '#ff7800', '#1b7ec7',]};
-        var piechart = new google.visualization.PieChart(document.getElementById('piechart_div'));
-        piechart.draw(data, piechart_options);
-
-        var barchart_options = {title:'Barchart: Vulnerability Found in Project',
-                       width:600,
-                       height:400,
-                       legend: 'none'};
-        var barchart = new google.visualization.BarChart(document.getElementById('barchart_div'));
-        barchart.draw(data, barchart_options);
-      }
-
-
-
-
-
-
-
-
-
-</script>
-
-
 <script type="text/javascript" src="/static/js/Chart.js"></script>
 <script type="text/javascript">
     var ctx = document.getElementById("ProBar").getContext('2d');
@@ -735,9 +952,9 @@ var testProChart2 = new Chart(ctx, {
     data: {
 				datasets: [{
 					data: [
-						{{all_high}},
-						{{all_medium}},
-						{{all_low}},
+						{{all_static_high}},
+						{{all_static_medium}},
+						{{all_static_low}},
 
 					],
 					backgroundColor: [
@@ -798,6 +1015,5 @@ var ctx = document.getElementById("compliant").getContext('2d');
 
 
 
-
 </script>
-{% endblock extra_body %}
+{% endblock %}

@@ -1,0 +1,125 @@
+<aside class="left-sidebar" data-sidebarbg="skin5">
+    <div class="scroll-sidebar">
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav" class="p-t-30">
+                <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                            href="/dashboard/" aria-expanded="false"><i
+                        class="fas fa-tachometer-alt"></i><span class="hide-menu">Dashboard</span></a></li>
+
+                <!-- Manual Scans -->
+                <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                            href="/manual_scan/" aria-expanded="false"><i
+                        class="fas fa-laptop"></i><span class="hide-menu">Pentest Activity</span></a></li>
+
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="#" aria-expanded="false"><i
+                        class="far fa-paper-plane"></i><span class="hide-menu">Launch Scans</span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="/webscanners/" class="sidebar-link"><i
+                                class=" fas fa-play"></i><span class="hide-menu"> Dynamic Scans </span></a>
+                        </li>
+                        <li class="sidebar-item"><a href="/networkscanners/ip_scan" class="sidebar-link"><i
+                                class="fas fa-cubes"></i><span class="hide-menu"> Infrastructure Scans </span></a></li>
+                    </ul>
+                </li>
+
+                <!-- Dynamic Scans -->
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="javascript:void(0)" aria-expanded="false"><i
+                        class="far fa-list-alt"></i><span class="hide-menu">Dynamic Scans</span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="/zapscanner/zap_scan_list/" class="sidebar-link"><i
+                                class="fas fa-bolt"></i><span class="hide-menu"> ZAP Scans </span></a>
+                        </li>
+                        <li class="sidebar-item"><a href="/burpscanner/burp_scan_list" class="sidebar-link"><i
+                                class="
+ fas fa-sliders-h"></i><span class="hide-menu"> Burp Scans </span></a></li>
+                        <li class="sidebar-item"><a href="/arachniscanner/arachni_scan_list" class="sidebar-link"><i
+                                class="fas fa-list-alt"></i><span class="hide-menu"> Arachni </span></a></li>
+                        <li class="sidebar-item"><a href="/netsparkerscanner/netsparker_scan_list/"
+                                                    class="sidebar-link"><i
+                                class="fas fa-map-signs"></i><span class="hide-menu">Netsparker </span></a></li>
+                        <li class="sidebar-item"><a href="/webinspectscanner/webinspect_scan_list/"
+                                                    class="sidebar-link"><i
+                                class="fas fa-outdent"></i><span class="hide-menu"> Webinspect </span></a></li>
+                        <li class="sidebar-item"><a href="/acunetixscanner/acunetix_scan_list/" class="sidebar-link"><i
+                                class="fas fa-list"></i><span class="hide-menu"> Acunetix </span></a></li>
+                    </ul>
+                </li>
+
+                <!--Infrastructure Scan-->
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="javascript:void(0)" aria-expanded="false"><i
+                        class="fas fa-sitemap"></i><span class="hide-menu">Infrastructure Scans</span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="/networkscanners/" class="sidebar-link"><i
+                                class="fas fa-server"></i><span class="hide-menu"> OpenVAS Scans </span></a>
+                        </li>
+                        <li class="sidebar-item"><a href="/networkscanners/nessus_scan" class="sidebar-link"><i
+                                class="fas fa-assistive-listening-systems"></i><span
+                                class="hide-menu"> Nessus Scans </span></a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!--Static Scan-->
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="javascript:void(0)" aria-expanded="false"><i
+                        class="fas fa-file-code"></i><span class="hide-menu">Static Scan</span></a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item"><a href="/banditscanner/banditscans_list" class="sidebar-link"><i
+                                class="fas fa-dna"></i><span class="hide-menu"> Bandit Scans </span></a></li>
+                        <li class="sidebar-item"><a href="/dependencycheck/dependencycheck_list" class="sidebar-link"><i
+                                class="fas fa-random"></i><span class="hide-menu"> Dependency Check </span></a>
+                        <li class="sidebar-item"><a href="/findbugs/findbugs_list" class="sidebar-link"><i
+                                class="fas fa-bug"></i><span class="hide-menu">FindBugs </span></a>
+                        </li>
+                        <li class="sidebar-item"><a href="/clair/clair_list" class="sidebar-link"><i
+                                class="fas fa-code"></i><span class="hide-menu">Clair </span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="#" aria-expanded="false"><i
+                        class="fas fa-list-ul"></i><span class="hide-menu">Compliance Scans</span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="/inspec/inspec_list" class="sidebar-link"><i
+                                class="mdi mdi-note-plus"></i><span class="hide-menu"> Inspec </span></a></li>
+                    </ul>
+                </li>
+                <!--<li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"-->
+                <!--href="javascript:void(0)" aria-expanded="false"><i-->
+                <!--class="fas fa-wrench"></i><span class="hide-menu">Tools </span></a>-->
+                <!--<ul aria-expanded="false" class="collapse  first-level">-->
+                <!--<li class="sidebar-item"><a href="/tools/sslscan/" class="sidebar-link"><i-->
+                <!--class="mdi mdi-emoticon"></i><span class="hide-menu"> SSLScan </span></a>-->
+                <!--</li>-->
+                <!--<li class="sidebar-item"><a href="/tools/nmap_scan/" class="sidebar-link"><i-->
+                <!--class="fas fa-eraser"></i><span-->
+                <!--class="hide-menu"> Nikto </span></a></li>-->
+                <!--<li class="sidebar-item"><a href="/tools/nmap_vulners_scan/" class="sidebar-link"><i-->
+                <!--class="fas fa-shield-alt"></i><span-->
+                <!--class="hide-menu"> Nmap Vulners </span></a></li>-->
+
+                <!--</ul>-->
+                <!--</li>-->
+
+                <!--<li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"-->
+                <!--href="javascript:void(0)" aria-expanded="false"><i-->
+                <!--class="mdi mdi-move-resize-variant"></i><span class="hide-menu">OSINT Scan </span></a>-->
+                <!--<ul aria-expanded="false" class="collapse  first-level">-->
+                <!--<li class="sidebar-item"><a href="/osintscan/domain_list/" class="sidebar-link"><i-->
+                <!--class="mdi mdi-view-dashboard"></i><span class="hide-menu"> Domain List </span></a>-->
+                <!--</li>-->
+                <!--<li class="sidebar-item"><a href="/osintscan/domain_osint/" class="sidebar-link"><i-->
+                <!--class="mdi mdi-multiplication-box"></i><span class="hide-menu"> Domain OSINT </span></a>-->
+                <!--</li>-->
+
+                <!--</ul>-->
+                <!--</li>-->
+            </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+    </div>
+    <!-- End Sidebar scroll-->
+</aside>

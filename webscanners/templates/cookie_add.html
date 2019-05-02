@@ -1,57 +1,44 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
-
-<div id="content">
-    <!--breadcrumbs-->
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-            Home</a></div>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <hr>
-        <div class="span3 offset6">
-            {% if messages %}
-
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
-            </div>
-            {% endfor %}
-
-            {% endif %}
-        </div>
-        <div class="row-fluid">
-            <div class="span6 offset3">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>Cookies Add</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/webscanners/cookie_add/">{% csrf_token %}
-                            <div class="control-group">
-                                <label class="control-label">URL :</label>
-                                <div class="controls">
-                                    <input type="text" name="url" class="span11"
-                                           placeholder="URL"/>
+        <div class="row justify-content-md-center">
+           <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Add Cookies</h1>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <form class="form-horizontal" method="POST" action="/webscanners/cookie_add/">{% csrf_token %}
+                                <div class="form-group">
+                                    <label class="control-label">URL :</label>
+                                    <div class="controls">
+                                        <input type="text" name="url" class="form-control"
+                                               placeholder="URL"/>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Cookies :</label>
-                                <div class="controls">
+                                <div class="form-group">
+                                    <label class="control-label">Cookies :</label>
+                                    <div class="controls">
                                    <textarea class="form-control" rows="5" style="min-width: 70%"
                                              name="cookies"
                                    ></textarea>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
-                        </form>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
+                            </form>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}

@@ -1,60 +1,57 @@
-{% extends 'header.html' %}
+
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
-<div id="content">
-    <!--breadcrumbs-->
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a></div>
-    </div>
+
+<div class="page-wrapper">
     <div class="container-fluid">
-        <hr>
-        <div class="span3 offset6">
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
-            </div>
-            {% endfor %}
-            {% endif %}
-        </div>
-        <div class="row-fluid">
-            <div class="span6 offset3">
-                <div class="widget-box">
-                    <form class="form-horizontal" id="nv" method="POST" action="/networkscanners/nv_details/">{% csrf_token %}
-                        <div class="widget-title">
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">OpenVAS Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form id="nv" method="POST" action="/networkscanners/nv_details/">{% csrf_token %}
+                        <div class="form-group row">
                             <span class="icon"> <i class="icon-align-justify"></i></span>
-                            <h5>NMAP Vulners Settings</h5>
+                            <label class="col-sm-4 col-form-label">NMAP Vulners Settings Enable</label>
                             <span class="checkbox inline checkbox-slider--b-flat checkbox-slider--b" style="float: right;">
                                 <label>
-                                    <input name="nv_enabled" id="nv_enabled" {% if nv_enabled == "True" %} value="{{nv_enabled}}" checked="checked" {% endif %} type="checkbox"><span></span>
+                                    <input name="nv_enabled" id="nv_enabled" {% if nv_enabled == "True" %} value="on" checked="checked" {% endif %} type="checkbox"><span></span>
                                 </label>
                             </span>
                         </div>
                         <div class="widget-content nopadding">
-                            <div class="control-group">
-                                <label class="control-label">Version detection</label>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Version detection</label>
                                 <div class="controls">
                                     <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                                         <label>
-                                            <input name="nv_version" id="nv_version" {% if nv_version == "True" %} value="{{nv_version}}" checked="checked" {% endif %} type="checkbox"><span></span>
+                                            <input name="nv_version" id="nv_version" {% if nv_version == "True" %} value="on" checked="checked" {% endif %} type="checkbox"><span></span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">Treat all hosts as online<br/><small><em>Skip host discovery</em></small></label>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Treat all hosts as online<br/><small><em>Skip host discovery</em></small></label>
                                 <div class="controls">
                                     <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
                                         <label>
-                                            <input name="nv_online" id="nv_online" {% if nv_online == "True" %} value="{{nv_online}}" checked="checked" {% endif %} type="checkbox"><span></span>
+                                            <input name="nv_online" id="nv_online" {% if nv_online == "True" %} value="on" checked="checked" {% endif %} type="checkbox"><span></span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">Set timing template (higher is faster)<br/><small><em>Value between 0 and 5</em></small></label>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Set timing template (higher is faster)<br/><small><em>Value between 0 and 5</em></small></label>
                                 <div class="controls">
-                                    <select id="nv_timing" name="nv_timing" class="selectpicker" data-live-search="true">
+                                    <select id="nv_timing" name="nv_timing" class="select2 form-control custom-select" data-live-search="true">
                                         <option value="0"{% if nv_timing == 0 %} selected="selected"{% endif %}>0</option>
                                         <option value="1"{% if nv_timing == 1 %} selected="selected"{% endif %}>1</option>
                                         <option value="2"{% if nv_timing == 2 %} selected="selected"{% endif %}>2</option>
@@ -69,6 +66,11 @@
                             </div>
                         </div>
                     </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

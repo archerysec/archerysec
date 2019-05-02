@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from staticscanners.models import findbugs_scan_db, findbugs_scan_results_db
@@ -52,7 +57,7 @@ def xml_parser(root, project_id, scan_id):
 
                 if priority == "1":
                     risk = 'High'
-                    vul_col = "important"
+                    vul_col = "danger"
 
                 elif priority == '2':
                     risk = 'Medium'
@@ -66,7 +71,7 @@ def xml_parser(root, project_id, scan_id):
 
                 dup_data = name + classname + priority
 
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                 match_dup = findbugs_scan_results_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash')

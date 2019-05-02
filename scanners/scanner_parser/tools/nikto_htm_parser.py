@@ -1,3 +1,19 @@
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
+
 from bs4 import BeautifulSoup
 from tools.models import nikto_vuln_db
 import uuid
@@ -73,7 +89,7 @@ def nikto_html_parser(data, project_id, scan_id):
         vuln_id = uuid.uuid4()
 
         dup_data = discription + hostname
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = nikto_vuln_db.objects.filter(
             dup_hash=duplicate_hash).values('dup_hash').distinct()

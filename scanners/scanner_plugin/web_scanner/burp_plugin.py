@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from PyBurprestapi import burpscanner
@@ -133,7 +138,7 @@ class burp_scans(object):
             json_scan_data = json.dumps(scan_info.data)
             scan_info_data = json.loads(json_scan_data)
             scan_status = scan_info_data['scan_metrics']['crawl_and_audit_progress']
-            print "Burp Scan Status :", scan_status
+            print("Burp Scan Status :"), scan_status
             burp_scan_db.objects.filter(
                 scan_id=self.scan_id).update(
                 scan_status=scan_status)
@@ -162,7 +167,7 @@ class burp_scans(object):
             issue_remediation, issue_reference, issue_vulnerability_classifications
 
         for data in scan_data:
-            for key, value in data['issue'].viewitems():
+            for key, value in data['issue'].items():
                 if key == 'name':
                     name = value
 
@@ -173,14 +178,13 @@ class burp_scans(object):
                     confidence = value
 
                 if key == 'evidence':
-                    # print value
                     evidence = value
                     if evidence is None:
-                        print "Evidence not found"
+                        print("Evidence not found")
                     else:
                         try:
                             for e in evidence:
-                                for key, value in e.viewitems():
+                                for key, value in e.items():
                                     if key == 'request_response':
                                         url = value['url']
                                         was_redirect_followed = value['was_redirect_followed']
@@ -193,7 +197,7 @@ class burp_scans(object):
                                             response_type = request_data['type']
                                             response_datas = base64.b64decode(request_data['data'])
                         except Exception as e:
-                            print e
+                            print(e)
 
                 if key == 'caption':
                     caption = value
@@ -223,7 +227,7 @@ class burp_scans(object):
             global vul_col
             if severity == 'high':
                 severity = 'High'
-                vul_col = "important"
+                vul_col = "danger"
             elif severity == 'medium':
                 severity = 'Medium'
                 vul_col = "warning"
@@ -239,7 +243,7 @@ class burp_scans(object):
             vuln_id = uuid.uuid4()
 
             dup_data = name + path + severity
-            duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
             match_dup = burp_scan_result_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()
@@ -295,7 +299,7 @@ class burp_scans(object):
                 )
                 data_dump.save()
             except Exception as e:
-                print e
+                print(e)
         burp_all_vul = burp_scan_result_db.objects.filter(scan_id=self.scan_id).values('name', 'severity'
                                                                                        ).distinct()
         total_vul = len(burp_all_vul)
@@ -315,5 +319,5 @@ class burp_scans(object):
         try:
             email_notification.email_notify()
         except Exception as e:
-            print e
+            print(e)
         HttpResponse(status=201)

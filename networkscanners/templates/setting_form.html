@@ -1,5 +1,71 @@
-{% extends 'header.html' %}
+
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
+
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">OpenVAS Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="widget-box">
+                                        <form  id="openvas" method="POST" action="/networkscanners/openvas_details/">{% csrf_token %}
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label">Enable</label>
+                                                <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b" style="float: right;">
+                                                    <label>
+                                                        <input name="openvas_enabled" id="openvas_enabled" {% if openvas_enabled == "True" %} value="on" checked="checked" {% endif %} type="checkbox"><span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Host<br/><small><em>(OpenVAS Manager)</em></small></label>
+                                                    <div class="controls">
+                                                        <input type="text" name="openvas_host" value="{{ openvas_host }}" class="form-control" placeholder="Host"/>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Port</em></small></label>
+                                                    <div class="controls">
+                                                        <input type="text" name="openvas_port" value="{{ openvas_port }}" class="form-control" placeholder="Port"/>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">User</label>
+                                                    <div class="controls">
+                                                        <input type="text" name="openvas_user" value="{{ openvas_user }}" class="form-control" placeholder="User Id"/>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-form-label">Password</label>
+                                                    <div class="controls">
+                                                        <input type="password" name="openvas_password" value="{{ openvas_password }}" class="form-control" placeholder="Password"/>
+                                                    </div>
+                                                </div>
+                                                <div class="form-actions">
+                                                    <button type="submit" class="btn btn-success">Save</button>
+                                                </div>
+                                                </form>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="content">
     <!--breadcrumbs-->
     <div id="content-header">
@@ -19,48 +85,7 @@
         </div>
         <div class="row-fluid">
             <div class="span6 offset3">
-                <div class="widget-box">
-                    <form class="form-horizontal" id="openvas" method="POST" action="/networkscanners/openvas_details/">{% csrf_token %}
-                        <div class="widget-title">
-                            <span class="icon"> <i class="icon-align-justify"></i></span>
-                            <h5>OpenVAS Settings</h5>
-                            <span class="checkbox inline checkbox-slider--b-flat checkbox-slider--b" style="float: right;">
-                                <label>
-                                    <input name="openvas_enabled" id="openvas_enabled" {% if openvas_enabled == "True" %} value="{{openvas_enabled}}" checked="checked" {% endif %} type="checkbox"><span></span>
-                                </label>
-                            </span>
-                        </div>
-                        <div class="widget-content nopadding">
-                            <div class="control-group">
-                                <label class="control-label">Host<br/><small><em>(OpenVAS Manager)</em></small></label>
-                                <div class="controls">
-                                    <input type="text" name="openvas_host" value="{{ openvas_host }}" class="span11" placeholder="Host"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Port</em></small></label>
-                                <div class="controls">
-                                    <input type="text" name="openvas_port" value="{{ openvas_port }}" class="span11" placeholder="Port"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">User</label>
-                                <div class="controls">
-                                    <input type="text" name="openvas_user" value="{{ openvas_user }}" class="span11" placeholder="User Id"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Password</label>
-                                <div class="controls">
-                                    <input type="password" name="openvas_password" value="{{ openvas_password }}" class="span11" placeholder="Password"/>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+
             </div>
         </div>
     </div>

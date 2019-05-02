@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
-from projects.models import project_db
+from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import messages
 import uuid
 from projects.models import project_db, project_scan_db
-from webscanners import web_views
 from webscanners.models import zap_scans_db, zap_scan_results_db, \
     burp_scan_db, burp_scan_result_db, \
     arachni_scan_db, arachni_scan_result_db, \
@@ -26,9 +28,10 @@ from webscanners.models import zap_scans_db, zap_scan_results_db, \
 from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_results_db, \
     findbugs_scan_db, findbugs_scan_results_db, \
     bandit_scan_db, bandit_scan_results_db, clair_scan_db, clair_scan_results_db
-from networkscanners.models import scan_save_db, ov_scan_result_db
+from compliance.models import inspec_scan_results_db, inspec_scan_db
+from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_report_db
 import datetime
-# from webscanners.models import burp_scan_db
+from manual_scan.models import manual_scan_results_db, manual_scans_db
 from itertools import chain
 
 project_dat = None
@@ -55,7 +58,7 @@ def create(request):
 
         messages.success(request, "Project Created")
 
-        return HttpResponseRedirect("/projects/")
+        return HttpResponseRedirect("/")
 
     return render(request, 'project_create.html')
 
@@ -109,18 +112,40 @@ def projects(request):
         findbugs_result = findbugs_scan_results_db.objects.filter(project_id=project_id)
         findbugs_result.delete()
 
+        bandit = bandit_scan_db.objects.filter(project_id=project_id)
+        bandit.delete()
+        bandit_result = bandit_scan_results_db.objects.filter(project_id=project_id)
+        bandit_result.delete()
+
         clair = clair_scan_db.objects.filter(project_id=project_id)
         clair.delete()
         clair_result = clair_scan_results_db.objects.filter(project_id=project_id)
         clair_result.delete()
+
+        inspec = inspec_scan_db.objects.filter(project_id=project_id)
+        inspec.delete()
+        inspec_result = inspec_scan_results_db.objects.filter(project_id=project_id)
+        inspec_result.delete()
 
         openvas = scan_save_db.objects.filter(project_id=project_id)
         openvas.delete()
         openvas_result = ov_scan_result_db.objects.filter(project_id=project_id)
         openvas_result.delete()
 
+        nessus = nessus_scan_db.objects.filter(project_id=project_id)
+        nessus.delete()
+
+        nessus_result = nessus_report_db.objects.filter(project_id=project_id)
+        nessus_result.delete()
+
+        pentest = manual_scan_results_db.objects.filter(project_id=project_id)
+        pentest.delete()
+
+        pentest_dat = manual_scans_db.objects.filter(project_id=project_id)
+        pentest_dat.delete()
+
         messages.success(request, "Deleted Project")
-        return HttpResponseRedirect("/projects/")
+        return HttpResponseRedirect("/")
 
     return render(request, 'projects.html', {'all_projects': all_projects})
 
@@ -132,7 +157,7 @@ def projects_view(request):
     else:
         project_id = ''
 
-    print "pROJECT ID ", project_id
+    print("pROJECT ID "), project_id
 
     if request.POST.get("scan_id", ):
         project_id = request.GET['proj_id']
@@ -227,6 +252,6 @@ def add_scan(request):
         save_scan = project_scan_db(scan_type=scan_type, project_url=scan_target, project_id=project_id)
         save_scan.save()
         messages.success(request, "Scan Added")
-        return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
+        return HttpResponseRedirect("/")
 
     return render(request, 'project_view.html')

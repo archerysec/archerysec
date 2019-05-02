@@ -1,60 +1,115 @@
-{% extends 'header.html' %}
+
+
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
-
-<div id="content">{% for data in vul_dat %}
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/networkscanners/vul_details/?scan_id={{data.scan_id}}" title="Go to Home"
-                                class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
-            <a
-                    href="#" class="current">{{ data.plugin_name }}</a></div>
-        <div>
-            <div class="btn-group">
-                <a class="btn btn-info"
-                   href="#"><i
-                        class="icon-edit icon-white"></i>
-                </a>
-                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span
-                        class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="/networkscanners/edit_vuln/?vuln_id={{data.vul_id}}"><i
-                            class="icon-pencil"></i> Edit </a></li>
-                    <!--<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i-->
-                    <!--class="icon-trash"></i> Delete</a></li>-->
-                    <li>
-                        <a href="/jira/submit_jira_ticket/?summary={{ data.plugin_name }}&description={{data.description}}%0a%0a%0a Vulnerable Host: {{data.scan_ip}} %0a%0a Vulnerable Port: {{data.port}} %0a%0a Solution: {{data.solution}} %0a%0a Archery URL: {SERVERIP}/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}} %0a%0a Request Header: {{ data.request_raw }}&scanner=nessus&vuln_id={{data.vul_id}}&scan_id={{data.scan_id}} "><i
-                                class="icon-random"></i> Jira Ticket</a>
-                    </li>
-                </ul>
-            </div>
-
-            <h1>{{ data.plugin_name }}</h1>
-        </div>
-    </div>
+{% for data in vul_dat %}
+<div class="page-wrapper">
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Vulnerability Name: {{ data.plugin_name }}</h5>
-                    </div>
-                    <div class="widget-content">
-
-                        <strong> Name: </strong>{{ data.plugin_name }}<br><br>
-                        <strong> Severity: </strong> {{ data.risk_factor }}<br><br>
-                        <strong> Host : </strong>{{data.scan_ip}} <br><br>
-                        <strong> Port : </strong>{{data.port}}<br><br>
-                        <strong> Summary : </strong><br>
-                        {{data.description}}<br><br>
-                        <strong>Solution : </strong><br>{{data.solution}}<br><br>
-                        <strong> fname : </strong>{{data.fname}}<br><br>
-                        <strong> Plugin Modification Date : </strong>{{data.plugin_modification_date}}<br><br>
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{ data.plugin_name }}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Description</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                     {{data.description}}
+                                    <br>
+                                    <br>
+                                    <pre>{{data.plugin_output|safe}}</pre>
+                                    <br>
+                                    {{data.synopsis}}
+                                    <br>
+                                    <br>
+                                    <strong> Plugin Modification Date : </strong>{{data.plugin_modification_date}}<br><br>
                         <strong> Plugin Publication Date : </strong>{{data.plugin_publication_date}}<br><br>
-                        <strong> Threat :</strong>{{data.severity}}<br><br>
-                        <strong> Plugin Type : </strong><br><br>{{data.plugin_type}}<br><br>
-                        <strong>Synopsis : </strong><br><br>{{data.synopsis}}<br><br>
-                        <strong>Plugin Output : <br> </strong>{{data.plugin_output|safe}}<br><br>
-                        <strong>Protocol : </strong>{{data.protocol}}<br><br>
-                        <strong>svc_name : </strong><br><br>{{data.svc_name}}<br><br>
+                        <strong> Threat :</strong>{{data.severity}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                                       aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Instance</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="col-md-6">
+                                    <table class="table table-bordered data-table table-fixed">
+                                        <thead>
+                                            <tr>
+                                                <td>IP</td>
+                                                <td>Port</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                {{data.scan_ip}}
+                                            </td>
+                                            <td>
+                                                {{data.port}}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseThree"
+                                       aria-expanded="false" aria-controls="collapseThree">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Solutions</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                     <pre>{{data.solution}}</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="heading7">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapse7"
+                                       aria-expanded="false" aria-controls="collapse7">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Family</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapse7" class="collapse" aria-labelledby="heading7"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                     <pre>{{data.fname}}</pre>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

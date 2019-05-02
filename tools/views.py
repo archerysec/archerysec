@@ -1,4 +1,19 @@
 # -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
+
 from __future__ import unicode_literals
 from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nmap_scan_db, nikto_vuln_db
 from django.shortcuts import render, HttpResponseRedirect
@@ -41,9 +56,8 @@ def sslscan(request):
                 sslscan_output = subprocess.check_output(['sslscan', '--no-colour', scans_url])
                 print(sslscan_output)
 
-
             except Exception as e:
-                print (e)
+                print(e)
 
             dump_scans = sslscan_result_db(scan_url=scans_url,
                                            scan_id=scan_id,
@@ -90,7 +104,7 @@ def sslcan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
@@ -121,7 +135,7 @@ def nikto(request):
             scans_url = value_split.__getitem__(i)
 
             nikto_res_path = os.getcwd() + '/nikto_result/' + str(scan_id) + '.html'
-            print nikto_res_path
+            print(nikto_res_path)
 
             try:
 
@@ -134,7 +148,7 @@ def nikto(request):
                 try:
                     nikto_html_parser(data, project_id, scan_id)
                 except Exception as e:
-                    print e
+                    print(e)
 
             except Exception as e:
                 print (e)
@@ -151,7 +165,7 @@ def nikto(request):
                     try:
                         nikto_html_parser(data, project_id, scan_id)
                     except Exception as e:
-                        print e
+                        print(e)
 
 
                 except Exception as e:
@@ -211,7 +225,7 @@ def nikto_result_vul(request):
                 discription = vi.discription
                 hostname = vi.hostname
                 dup_data = discription + hostname
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 nikto_vuln_db.objects.filter(vuln_id=vuln_id,
                                              scan_id=scan_id).update(false_positive=false_positive,
                                                                      vuln_status=status,
@@ -255,7 +269,7 @@ def nikto_vuln_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        print("split_length"), split_length
         for i in range(0, split_length):
             _vuln_id = value_split.__getitem__(i)
             delete_vuln = nikto_vuln_db.objects.filter(vuln_id=_vuln_id)
@@ -278,7 +292,7 @@ def nikto_scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+
         for i in range(0, split_length):
             _scan_id = value_split.__getitem__(i)
 
@@ -383,7 +397,7 @@ def nmap_scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 

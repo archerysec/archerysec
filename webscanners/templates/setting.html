@@ -1,75 +1,55 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
 
-<div id="content">
-    <!--breadcrumbs-->
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-            Home</a></div>
-    </div>
-    <div class="row-fluid">
-        <div class="widget-box">
-            <div class="widget-title bg_lg"><span class="icon"><i class="icon-signal"></i></span>
-                <h5>Settings List</h5>
-            </div>
-            <div class="widget-content">
-                <div class="row-fluid">
-                    <div class="span6">
-                        <div class="widget-box">
-                            <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                                <h5>JIRA Setting</h5>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="widget-content">
-                                        <div>
-                                            <label>JIRA Server URL</label>
-                                            <div class="form-group">
-                                                <pre>{{ jira_server }}</pre>
-                                            </div>
-                                            <label>JIRA Username</label>
-                                            <div class="form-group">
-                                                <pre>{{ jira_username }}</pre>
-                                            </div>
-
-                                            <label>JIRA Password</label>
-                                            <label>Password</label>
-                                            <div class="form-group">
-                                                <input disabled value="{{ jira_password }}" type="password">
-                                            </div>
-
-                                            <a class="btn btn-primary" href="/jira/jira_setting/"
-                                               role="button">Edit</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">JIRA Setting</h1>
                         </div>
-                    </div>
-                    <div class="span6">
-                        <div class="widget-box">
-                            <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                                <h5>ZAP Setting</h5>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="widget-content">
-                                        <div>
-                                            <label>Zap API Key</label>
-                                            <div class="form-group">
-                                                <pre>{{ apikey }}</pre>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA Server URL</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ jira_server }}" placeholder="JIRA Endpoint">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA Username</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ jira_username }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA Password</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ jira_password }}">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="/jira/jira_setting/"
+                                                       role="button">Edit</a>
+                                                </form>
+
                                             </div>
-                                            <label>Zap API Host</label>
-                                            <div class="form-group">
-                                                <pre>{{ zapath }}</pre>
-                                            </div>
-                                            <label>Zap API Port</label>
-                                            <div class="form-group">
-                                                <pre>{{ zap_port }}</pre>
-                                            </div>
-                                            <a class="btn btn-primary" href="/zapscanner/zap_settings/"
-                                               role="button">Edit</a>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -77,58 +57,50 @@
                     </div>
                 </div>
             </div>
-            <div class="widget-content">
-                <div class="row-fluid">
-                    <div class="span6">
-                        <div class="widget-box">
-                            <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                                <h5>Burp Setting</h5>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="widget-content">
-                                        <div>
-                                            <label>Burp API Key</label>
-                                            <div class="form-group">
-                                                <pre>{{ burp_api_key }}</pre>
-                                            </div>
-                                            <label>Burp host</label>
-                                            <div class="form-group">
-                                                <pre>{{ burp_path }}</pre>
-                                            </div>
-                                            <label>Burp API Port</label>
-                                            <div class="form-group">
-                                                <pre>{{ burp_port }}</pre>
-                                            </div>
-
-                                            <a class="btn btn-primary" href="/burpscanner/burp_setting/"
-                                               role="button">Edit</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">ZAP Setting</h1>
                         </div>
-                    </div>
-                    <div class="span6">
-                        <div class="widget-box">
-                            <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                                <h5>Arachni Setting</h5>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="widget-content">
-                                        <div>
-                                            <label>Arachni API Host</label>
-                                            <div class="form-group">
-                                                <pre>{{ arachni_hosts }}</pre>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Zap API Key</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ apikey }}" placeholder="ZAP API KEY">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Zap API Host</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ zapath }}" placeholder="ZAP API Endpoint Host">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Zap API Port</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ zap_port }}" placeholder="ZAP API Endpoint Port">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="/zapscanner/zap_settings/"
+                                                       role="button">Edit</a>
+                                                </form>
                                             </div>
-                                            <label>Arachni API Port</label>
-                                            <div class="form-group">
-                                                <pre>{{ arachni_ports }}</pre>
-                                            </div>
-                                            <a class="btn btn-primary" href="/arachniscanner/arachni_settings/"
-                                               role="button">Edit</a>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -136,77 +108,51 @@
                     </div>
                 </div>
             </div>
-            <div class="widget-content">
-                <div class="row-fluid">
-                    <div class="span6">
-                        <div class="widget-box">
-                            <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                                <h5>OpenVAS</h5>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="widget-content">
-                                        <div>
-                                            <label>Host</label>
-                                            <div class="form-group">
-                                                <pre>{{ lod_ov_host }}</pre>
-                                            </div>
-                                            <label>Port</label>
-                                            <div class="form-group">
-                                                <pre>{{ lod_ov_port }}</pre>
-                                            </div>
-                                            <label>User</label>
-                                            <div class="form-group">
-                                                <pre>{{ lod_ov_user }}</pre>
-                                            </div>
-                                            <label>Password</label>
-                                            <div class="form-group">
-                                                <input disabled value="{{ lod_ov_pass }}" type="password">
-                                            </div>
-                                            <label>Enabled</label>
-                                            <div class="form-group">
-                                                <pre>{{ lod_ov_enabled }}</pre>
-                                            </div>
-                                            <a class="btn btn-primary" href="/networkscanners/openvas_setting"
-                                               role="button">Edit</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Burp Setting</h1>
                         </div>
-                    </div>
-                    <div class="span6">
-                        <div class="widget-box">
-                            <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                                <h5>NMAP Vulners</h5>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="widget-content">
-                                        <div>
-                                            <label>Enabled</label>
-                                            <div class="form-group">
-                                                <pre>{{ nv_enabled }}</pre>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Burp API Key</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ burp_api_key }}" placeholder="Enter Burp API KEY">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Burp host</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ burp_path }}" placeholder="Enter Burp API Endpoint">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Burp API Port</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ burp_port }}" placeholder="Enter Burp API Port">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="/burpscanner/burp_setting/"
+                                                       role="button">Edit</a>
+                                                </form>
+
                                             </div>
-                                            <label>Version detection</label>
-                                            <div class="form-group">
-                                                <pre>{{ nv_version }}</pre>
-                                            </div>
-                                            <label>Treat all hosts as online<br/>
-                                                <small><em>Skip host discovery</em></small>
-                                            </label>
-                                            <div class="form-group">
-                                                <pre>{{ nv_online }}</pre>
-                                            </div>
-                                            <label>Set timing template (higher is faster)<br/>
-                                                <small><em>Value between 0 and 5</em></small>
-                                            </label>
-                                            <div class="form-group">
-                                                <pre>{{ nv_timing }}</pre>
-                                            </div>
-                                            <a class="btn btn-primary" href="/networkscanners/nv_setting"
-                                               role="button">Edit</a>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -214,88 +160,234 @@
                     </div>
                 </div>
             </div>
-            <div class="widget-content">
-                <div class="row-fluid">
-                    <div class="span6">
-                        <div class="widget-box">
-                            <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                                <h5>Email Setting</h5>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="widget-content">
-                                        <div>
-                                            <label>Email Subject</label>
-                                            <div class="form-group">
-                                                <pre>{% for data in all_email %}{{ data.subject }}{% endfor %}</pre>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Arachni Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Host</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ arachni_hosts }}" placeholder="Enter Arachni API Endpoint">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Port</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ arachni_ports }}" placeholder="Enter Arachni API Endpoint Port">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="/arachniscanner/arachni_settings/"
+                                                       role="button">Edit</a>
+                                                </form>
+
                                             </div>
-                                            <label>From Email</label>
-                                            <div class="form-group">
-                                                <pre>{% for data in all_email %}{{ data.message }}{% endfor %}</pre>
-                                            </div>
-                                            <label>To Email</label>
-                                            <div class="form-group">
-                                                <pre>{% for data in all_email %}{{ data.recipient_list }}{% endfor %}</pre>
-                                            </div>
-                                            <a class="btn btn-primary" href="/webscanners/email_setting/"
-                                               role="button">Edit</a>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">OpenVAS</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Host</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ lod_ov_host }}" placeholder="Enter OpenVAS Endpoint Host">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Port</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ lod_ov_port }}" placeholder="Enter OpenVAS Endpoint Port">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Username</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ lod_ov_user }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Password</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ lod_ov_pass }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Enabled</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ lod_ov_enabled }}">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="/networkscanners/openvas_setting"
+                                                       role="button">Edit</a>
+                                                </form>
 
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">NMAP Vulners</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Enabled</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ nv_enabled }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Version detection</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ nv_version }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Treat all hosts as online <small><em>Skip host discovery</em></small></label>
+
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ nv_online }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Set timing template (higher is faster)<small><em>Value between 0 and 5</em></small></label>
+
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ nv_timing }}">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="/networkscanners/nv_setting"
+                                                       role="button">Edit</a>
+                                                </form>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Email Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Email Subject</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{% for data in all_email %}{{ data.subject }}{% endfor %}" placeholder="Type Email Subject">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">From Email</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{% for data in all_email %}{{ data.message }}{% endfor %}" placeholder="Enter Email ID">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">To Email</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{% for data in all_email %}{{ data.recipient_list }}{% endfor %}" PLACEHOLDER="Enter Email ID">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="/webscanners/email_setting"
+                                                       role="button">Edit</a>
+                                                </form>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!--<div class="widget-content">-->
-<!--<div class="row-fluid">-->
-<!--<div class="span6">-->
-
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<!--<div class="widget-content">-->
-<!--<div class="row-fluid">-->
-<!--<div class="span6">-->
-
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<!--<div class="widget-content">-->
-<!--<div class="row-fluid">-->
-<!--<div class="span6">-->
-
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<!--<div class="widget-content">-->
-<!--<div class="row-fluid">-->
-<!--<div class="span6">-->
-
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
 
 {% endblock %}

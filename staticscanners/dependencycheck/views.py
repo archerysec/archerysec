@@ -1,14 +1,18 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
-# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
-# This file is part of ArcherySec Project.
 # -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
 
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from staticscanners.models import dependencycheck_scan_results_db, dependencycheck_scan_db
@@ -70,7 +74,7 @@ def dependencycheck_vuln_data(request):
                 filename = vi.fileName
                 Severity = vi.severity
                 dup_data = name + filename + Severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 dependencycheck_scan_results_db.objects.filter(vuln_id=vuln_id,
                                                                scan_id=scan_id).update(false_positive=false_positive,
                                                                                        vuln_status=status,
@@ -161,7 +165,6 @@ def dependencycheck_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = dependencycheck_scan_results_db.objects.filter(vuln_id=vuln_id)
@@ -174,7 +177,6 @@ def dependencycheck_del_vuln(request):
         total_medium = len(all_dependency_data.filter(severity="Medium"))
         total_low = len(all_dependency_data.filter(severity="Low"))
         total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
-        print "total duplicats", total_duplicate
 
         dependencycheck_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

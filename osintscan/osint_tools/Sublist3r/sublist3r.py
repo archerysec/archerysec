@@ -18,7 +18,8 @@ import json
 from collections import Counter
 
 # external modules
-from subbrute import subbrute
+# from subbrute import subbrute
+from osintscan.osint_tools.Sublist3r.subbrute import subbrute
 import dns.resolver
 import requests
 

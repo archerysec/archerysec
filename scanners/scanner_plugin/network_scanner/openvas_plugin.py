@@ -1,3 +1,19 @@
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
+
 from openvas_lib import VulnscanManager, VulnscanException
 from networkscanners.models import scan_save_db, ov_scan_result_db
 from django.utils import timezone
@@ -89,9 +105,9 @@ class OpenVAS_Plugin:
         while float(scanner.get_progress(str(scan_id))) < 100.0:
             current = str(scanner.get_scan_status(str(scan_id))) + str(scanner.get_progress(str(scan_id)))
             if current != previous:
-                print '[Scan ID ' + str(scan_id) + '](' + str(
+                print('[Scan ID ' + str(scan_id) + '](' + str(
                     scanner.get_scan_status(str(scan_id))) + ') Scan progress: ' + str(
-                    scanner.get_progress(str(scan_id))) + ' %'
+                    scanner.get_progress(str(scan_id))) + ' %')
                 status = float(scanner.get_progress(str(scan_id)))
                 scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
                 previous = current
@@ -237,7 +253,7 @@ def vuln_an_id(scan_id, project_id):
         vul_id = uuid.uuid4()
 
         dup_data = name + host + severity + port
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = ov_scan_result_db.objects.filter(
             vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()

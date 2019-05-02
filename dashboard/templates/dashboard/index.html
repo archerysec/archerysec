@@ -1,73 +1,79 @@
 {% extends 'dashboard/base.html' %}
 
-{% block header_title %}Dashboard{% endblock header_title %}
-{% block title %}Dashboard{% endblock title %}
+{% block body %}
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="/projects/create_form/" class="btn btn-primary btn-mini"><i
+                                        class="icon-upload-alt"></i>Create New Project</a>
+                            </div>
+                        </div>
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h1>Project List</h1>
+                                <h5 class="card-subtitle"></h5>
+                            </div>
 
-{% block content %}
-<div class="row-fluid">
+                        </div>
+                        <br>
+                        <br>
+                        <div class="row">
+                            <!-- column -->
 
-    <div class="span12">
+                                <div class="table-responsive">
+                                    <table id="zero_config" class="table table-bordered data-table">
+                                        <thead>
+                                        <tr>
+                                            <th>Project</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Owner</th>
+                                            <!--<th>Status</th>-->
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in all_project %}
+                                        <tr data-target="#">
 
-        <div class="widget-box">
-            <div class="widget-title"><span class="icon"><i
-                    class="icon-th"></i></span>
-                <h5>Project List</h5>
-                <div class="buttons"><a data-toggle="modal" href="/projects/create_form/"
-                                        class="btn btn-primary btn-mini"><i
-                        class="icon-plus icon-white"></i> Add new Project</a>
+                                            <td>
+                                                <a href="/proj_data/?project_id={{data.project_id}}">{{data.project_name}}</a>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-primary">{{data.project_start}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-warning">{{data.project_end}}</span>
+                                            </td>
+                                            <td><span
+                                                    class="badge badge-pill badge-info">{{data.project_owner}}</span>
+                                            </td>
+                                            <!--<td><span-->
+                                                    <!--class="badge badge-pill badge-success">{{data.project_status}}</span>-->
+                                            <!--</td>-->
+
+                                            <td>
+                                                <form action="/projects/" method="POST">
+                                                    <input type="hidden" name="proj_id" value="{{data.project_id}}"/>
+                                                    {% csrf_token %}
+                                                    <button class="btn btn-danger"><i class="m-r-0 mdi mdi-delete"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                        </div>
+                    </div>
                 </div>
-
             </div>
-            <div class="widget-content nopadding">
-                <table class="table table-bordered data-table">
-                    <thead>
-                    <tr>
-                        <th>Project</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Owner</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>{% for data in all_project %}
-                    <tr data-target="#">
-
-                        <td>
-                            <a href="/proj_data/?project_id={{data.project_id}}">{{data.project_name}}</a>
-                        </td>
-                        <td><span
-                                class="badge badge-inverse">{{data.project_start}}</span>
-                        </td>
-                        <td><span
-                                class="badge badge-inverse">{{data.project_end}}</span>
-                        </td>
-                        <td><span
-                                class="badge badge-important">{{data.project_owner}}</span>
-                        </td>
-                        <td><span
-                                class="badge badge-warning">{{data.project_status}}</span>
-                        </td>
-
-                        <td>
-                            <form action="/projects/" method="POST">
-                                <input type="hidden" name="proj_id" value="{{data.project_id}}"/>{% csrf_token %}
-                                <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
         </div>
     </div>
-
 </div>
 
-{% endblock content %}
-
-{% block extra_body %}
-
-{% endblock extra_body %}
+{% endblock %}

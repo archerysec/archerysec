@@ -69,29 +69,55 @@ a.dropdown-menu-header {
 
 
 
+
+
 </style>
-<li class="dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages"
-                                           class="dropdown-toggle"><i class="icon icon-bell"
-                                                                      style="font-size: 20px; float: left; color: white"></i><span
-        class="notify-badge badge-danger">{% load notifications_tags %}{% live_notify_badge %}</span> <span
+
+<li class="nav-item dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages"
+                                                    aria-haspopup="true" aria-expanded="false"
+                                                    class="nav-link dropdown-toggle waves-effect waves-dark">
+    <i class="mdi mdi-bell font-24"></i><span
+        class="notify-badge badge-pill badge-danger">{% load notifications_tags %}{% live_notify_badge %}</span> <span
         class="text"></span> <b class="caret"></b></a>
-    <ul class="dropdown-menu dropdown-menu-left pull-right" role="menu" aria-labelledby="dropdownMenu1">
-        <li role="presentation">
+    <ul class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown" aria-labelledby="2">
+        <ul class="list-style-none" style="margin:20px;width:410px">
+            <li role="presentation">
             <a href="/webscanners/del_all_notify" class="dropdown-menu-header">Clear All</a>
         </li>
-        <ul class="timeline timeline-icons timeline-sm" style="margin:10px;width:410px">
             {% for data in message %}
             <li>
-                <div class="alert alert-info alert-block"><a class="close" data-dismiss="alert"
-                                                             href="/webscanners/del_notify?notify_id={{data.id}}">×</a>
-                    <h8 class="">{{data.verb}}</h8>
+                <div class="alert alert-info alert-block">
+                    <a class="close" data-dismiss="alert" href="/webscanners/del_notify?notify_id={{data.id}}"><i class="mdi mdi-close"></i></a>
+                    <br>
+                    {{data.verb}}
+                    <!--<a href="/webscanners/del_notify?notify_id={{data.id}}"> <i class="mdi mdi-close"></i></a>-->
                 </div>
             </li>
             {% endfor %}
-
         </ul>
-        <li role="presentation">
-            <a href="#" class="dropdown-menu-header"></a>
-        </li>
     </ul>
 </li>
+
+
+<!--<li class="nav-item dropdown">-->
+    <!--<a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2" data-toggle="dropdown"-->
+       <!--aria-haspopup="true" aria-expanded="false"> <i class="font-24 mdi mdi-comment-processing"></i>-->
+    <!--</a>-->
+    <!--<div class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown" aria-labelledby="2">-->
+        <!--<ul class="list-style-none">-->
+            <!--<li>-->
+                <!--<ul class="timeline timeline-icons timeline-sm" style="margin:10px;width:410px">-->
+            <!--{% for data in message %}-->
+            <!--<li>-->
+                <!--<div class="alert alert-info alert-block"><a class="close" data-dismiss="alert"-->
+                                                             <!--href="/webscanners/del_notify?notify_id={{data.id}}">×</a>-->
+                    <!--<h8 class="">{{data.verb}}</h8>-->
+                <!--</div>-->
+            <!--</li>-->
+            <!--{% endfor %}-->
+        <!--</ul>-->
+
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+<!--</li>-->

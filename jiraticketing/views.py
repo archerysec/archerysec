@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 # -*- coding: utf-8 -*-
@@ -108,7 +112,7 @@ def submit_jira_ticket(request):
             'issuetype': {'name': issue_type},
         }
         new_issue = jira_ser.create_issue(fields=issue_dict)
-        print new_issue
+        # print new_issue
 
         if scanner == 'zap':
             zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)

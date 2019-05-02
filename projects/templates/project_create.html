@@ -1,67 +1,80 @@
-{% extends 'header.html' %}
+
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
 
-<div id="content">
-    <!--breadcrumbs-->
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-            Home</a></div>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <hr>
-        <div class="row-fluid">
-            <div class="span5 offset3">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>Create Project</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/projects/create/">{% csrf_token %}
-                            <div class="control-group">
-                                <label class="control-label">Project Name :</label>
-                                <div class="controls">
-                                    <input type="text" name="projectname" value="{{ projectname }}" class="span11"
-                                           placeholder="Project Name"/>
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Create Project</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="col-md-12">
+                                    <form class="form-horizontal" method="POST" action="/projects/create/">
+                                        {% csrf_token %}
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Project Name :</label>
+                                            <div class="form-group row">
+                                                <input type="text" name="projectname" value="{{ projectname }}"
+                                                       class="form-control"
+                                                       placeholder="Project Name"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Project Start Date :</label>
+                                            <div class="form-group row">
+                                                <input type="date" name="projectstart" value="{{ projectstart }}"
+                                                       class="form-control"
+                                                       placeholder="Project Start Date"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Project End date :</label>
+                                            <div class="form-group row">
+                                                <input type="date" name="projectend" value="{{ projectend }}"
+                                                       class="form-control"
+                                                       placeholder="Project End date"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Project Owner :</label>
+                                            <div class="form-group row">
+                                                <input type="text" name="projectowner" value="{{ projectowner }}"
+                                                       class="form-control"
+                                                       placeholder="Project Owner"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Pentester :</label>
+                                            <div class="form-group row">
+                                                <input type="text" name="pentester" value="{{ pentester }}"
+                                                       class="form-control"
+                                                       placeholder="Pentester"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-form-label">Project Summary :</label>
+                                            <div class="form-group row">
+                                                <textarea name="project_disc" value="{{ project_disc }}"
+                                                          class="form-control"
+                                                          placeholder="Project Summary"/></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="submit" class="btn btn-success">Save</button>
+                                        </div>
+                                    </form>
+                                    <div class="card">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">Project Start Date :</label>
-                                <div class="controls">
-                                    <input type="date" name="projectstart" value="{{ projectstart }}" class="span11"
-                                           placeholder="Project Start Date"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Project End date :</label>
-                                <div class="controls">
-                                    <input type="date" name="projectend" value="{{ projectend }}" class="span11"
-                                           placeholder="Project End date"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Project Owner :</label>
-                                <div class="controls">
-                                    <input type="text" name="projectowner" value="{{ projectowner }}" class="span11"
-                                           placeholder="Project Owner"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Pentester :</label>
-                                <div class="controls">
-                                    <input type="text" name="pentester" value="{{ pentester }}" class="span11"
-                                           placeholder="Pentester"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Project Summary :</label>
-                                <div class="controls">
-                                    <textarea type="" name="project_disc" value="{{ project_disc }}" class="span11" placeholder="Project Summary"/></textarea>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

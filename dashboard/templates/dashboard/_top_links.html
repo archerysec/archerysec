@@ -1,49 +1,57 @@
-<div class="center">
-    <div class="container-fluid">
-        <div class="quick-actions_homepage">
-            <ul class="quick-actions">
-                <li class="bg_lo">
-                    <a href="/all_high_vuln/?project_id={{project_id}}&severity=High">
-                        <span class="label label-important"></span>
-                        <h2>{{all_high}}</h2>
-                        High
-                    </a>
-                </li>
-                <li class="bg_ly">
-                    <a href="/all_high_vuln/?project_id={{project_id}}&severity=Medium">
-                        <h2>{{all_medium}}</h2>
-                        Medium
-                    </a>
-                </li>
-                <li class="bg_lb">
-                    <a href="/all_high_vuln/?project_id={{project_id}}&severity=Low">
-                        <span class="label label-success"></span>
-                        <h2>{{all_low}}</h2>
-                        Low
-                    </a>
-                </li>
-                <li class="bg_ls">
-                    <a href="/all_high_vuln/?project_id={{project_id}}&severity=Total">
-                        <span class="label label-important"></span>
-                        <h2>{{all_vuln}}</h2>
-                        Total
-                    </a>
-                </li>
-                <li class="bg_lg">
-                    <a href="/all_high_vuln/?project_id={{project_id}}&severity=Close">
-                        <span class="label label-important"></span>
-                        <h2>{{all_closed_vuln}}</h2>
-                        Closed
-                    </a>
-                </li>
-                <li class="bg_lr">
-                    <a href="/all_high_vuln/?project_id={{project_id}}&severity=False">
-                        <span class="label label-important"></span>
-                        <h2>{{all_false_positive}}</h2>
-                        False Positive
-                    </a>
-                </li>
-            </ul>
+<div class="row">
+    <!-- Column -->
+    <div class="col-md-6 col-lg-2 col-xlg-3">
+        <div class="card card-hover">
+            <div class="box bg-danger text-center">
+                <h1 class="font-light text-white">{{all_high}}</h1>
+                <a href="/all_high_vuln/?project_id={{project_id}}&severity=High"><h6 class="text-white"> High</h6></a>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+    <div class="col-md-6 col-lg-2 col-xlg-3">
+        <div class="card card-hover">
+            <div class="box bg-warning text-center">
+                <h1 class="font-light text-white">{{all_medium}}</i></h1>
+                <a href="/all_high_vuln/?project_id={{project_id}}&severity=Medium"><h6 class="text-white">Medium</h6></a>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+    <div class="col-md-6 col-lg-2 col-xlg-3">
+        <div class="card card-hover">
+            <div class="box bg-cyan text-center">
+                <h1 class="font-light text-white">{{all_low}}</h1>
+                <a href="/all_high_vuln/?project_id={{project_id}}&severity=Low"><h6 class="text-white">Low</h6></a>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+    <div class="col-md-6 col-lg-2 col-xlg-3">
+        <div class="card card-hover">
+            <div class="box bg-info text-center">
+                <h1 class="font-light text-white">{{tota_vuln}}</h1>
+                <a href="/all_high_vuln/?project_id={{project_id}}&severity=Total"><h6 class="text-white">Total</h6></a>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+    <div class="col-md-6 col-lg-2 col-xlg-3">
+        <div class="card card-hover">
+            <div class="box bg-success text-center">
+                <h1 class="font-light text-white">{{all_closed_vuln}}</h1>
+                <a href="/all_high_vuln/?project_id={{project_id}}&severity=Close"> <h6 class="text-white">Closed</h6></a>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+    <!-- Column -->
+    <div class="col-md-6 col-lg-2 col-xlg-3">
+        <div class="card card-hover">
+            <div class="box bg-danger text-center">
+                <h1 class="font-light text-white">{{all_false_positive}}</h1>
+                <a href="/all_high_vuln/?project_id={{project_id}}&severity=False"><h6 class="text-white">False Positive</h6></a>
+            </div>
         </div>
     </div>
 </div>

@@ -1,4 +1,6 @@
-{% extends 'tablehead.html' %}
+
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -32,116 +34,100 @@
 
     });
 
+
 </script>
-
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
-                href="#" class="current">IP Scan List</a></div>
-        <h1>Nessus Scans</h1>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <hr>
-        <div class="span3 offset6">
-    {% if messages %}
-
-    {% for message in messages %}
-    <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                    href="#">×</a>
-        <p class="alert-heading">{{ message }}</p>
-    </div>
-    {% endfor %}
-
-    {% endif %}
-    </div>
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                        <h5>IP Scan List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/networkscanners/OpenVAS_xml_upload/"
-                                                class="btn btn-primary btn-mini"><i class="icon-upload-alt"></i> Upload
-                            XML</a>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="/networkscanners/OpenVAS_xml_upload/" class="btn btn-primary btn-mini"><i
+                                        class="icon-upload-alt"></i> Upload XML</a>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
-                        <div class="buttons">
-                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Nessus Scan List</h1>
                         </div>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <table class="table table-bordered data-table">
-                            <thead>
-                            <tr>
-                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
-                                <th>IP</th>
-                                <th>Date Time</th>
-                                <th>Status</th>
-                                <th>Total</th>
-                                <th>Critical</th>
-                                <th>High</th>
-                                <th>Medium</th>
-                                <th>Low</th>
-                                <th>Info</th>
-                                <th>Duplicates</th>
-                                <th>Action</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>{% for data in all_scan %}
-                            <tr data-target="#">
-                                <td>
-                                    <form>
-                                        <label><input type="checkbox" value="{{data.scan_id}}" name="del_scan_id"
-                                                      onClick="reload">
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="nessus_scans_list" class="table table-bordered data-table">
+                                    <thead>
+                                    <tr>
+                                        <th><label class="customcheckbox m-b-20">
+                                            <input type="checkbox" id="mainCheckbox">
+                                            <span class="checkmark"></span>
+                                        </label></th>
+                                        <th>IP</th>
+                                        <th>Date Time</th>
+                                        <th>Status</th>
+                                        <th>Total</th>
+                                        <th>Critical</th>
+                                        <th>High</th>
+                                        <th>Medium</th>
+                                        <th>Low</th>
+                                        <th>Info</th>
+                                        <th>Duplicates</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>{% for data in all_scan %}
+                                    <tr data-target="#">
+                                        <td>
+                                            <form>
+                                                <label class="customcheckbox">
+                                                    <input type="checkbox" class="listCheckbox"
+                                                           value="{{data.scan_id}}"
+                                                           name="del_scan_id"
+                                                           onClick="reload">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                        <td><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                                        </td>
+                                        <td>{{data.date_time}}</td>
+                                        <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%"
+                                                         aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
+                                        <td><span class="badge badge-pill badge-danger">{{data.critical_total}}</span></td>
+                                        <td><span class="badge badge-pill badge-danger">{{data.high_total}}</span></td>
+                                        <td><span class="badge badge-pill badge-warning">{{data.medium_total}}</span></td>
+                                        <td><span class="badge badge-pill badge-info">{{data.low_total}}</span></td>
+                                        <td><span class="badge badge-pill badge-info">{{data.info_total}}</span></td>
+                                        <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span></td>
+                                        <td>
+                                            <form action="/networkscanners/delete_nessus_scan/" method="post"
+                                                  class="forms-sample">
 
-                                        </label>
-                                        <!--<br>-->
-                                        <!--<button type="button" >Get Values</button>-->
-                                    </form>
-                                </td>
-                                <td><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a></td>
-                                <td>{{data.date_time}}</td>
-                                <td width="30%">
-                                    <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                        <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
-                                    </div>
-                                </td>
-                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                                <td><span class="badge badge-important">{{data.critical_total}}</span></td>
-                                <td><span class="badge badge-important">{{data.high_total}}</span></td>
-                                <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
-                                <td><span class="badge badge-info">{{data.low_total}}</span></td>
-                                <td><span class="badge badge-info">{{data.info_total}}</span></td>
-                                <td><span class="badge badge-important">{{data.total_dup}}</span></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn btn-primary"
-                                           href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}"><i
-                                                class="icon-tasks icon-white"></i>
-                                        </a>
-                                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span
-                                                class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}"><i
-                                                    class="icon-pencil"></i> View </a></li>
-                                            <!--<li><a href="/networkscanners/scan_del/?scan_scanid={{data.scan_id}}"><i-->
-                                                    <!--class="icon-trash"></i> Delete</a></li>-->
-                                        </ul>
-                                    </div>
+                                                {% csrf_token %}
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
 
-                                </td>
-                                <td>
-                                    <form action="/networkscanners/delete_nessus_scan/" method="post" class="forms-sample">
-
-                                        {% csrf_token %}
-                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
-
-                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                                <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

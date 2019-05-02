@@ -1,14 +1,18 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
-
 
 from staticscanners.models import bandit_scan_db, bandit_scan_results_db
 import json
@@ -45,10 +49,10 @@ def bandit_report_json(data, project_id, scan_id):
     :return:
     """
 
-    for key, items in data.iteritems():
+    for key, items in data.items():
         if key == 'results':
             for res in items:
-                for key, value in res.iteritems():
+                for key, value in res.items():
                     if key == 'line_number':
                         global line_number
                         if value is None:
@@ -115,7 +119,7 @@ def bandit_report_json(data, project_id, scan_id):
 
                 global vul_col
                 if issue_severity == "HIGH":
-                    vul_col = "important"
+                    vul_col = "danger"
 
                 elif issue_severity == "MEDIUM":
                     vul_col = 'warning'
@@ -124,7 +128,7 @@ def bandit_report_json(data, project_id, scan_id):
                     vul_col = "info"
 
                 dup_data = test_name + filename + issue_severity
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                 match_dup = bandit_scan_results_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
@@ -178,7 +182,7 @@ def bandit_report_json(data, project_id, scan_id):
         total_medium = len(all_bandit_data.filter(issue_severity="MEDIUM"))
         total_low = len(all_bandit_data.filter(issue_severity="LOW"))
         total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
-        print "total duplicats", total_duplicate
+
 
         bandit_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,

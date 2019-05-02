@@ -1,96 +1,135 @@
-{% load static i18n %}<!DOCTYPE html>
-<html lang="en">
-    <head>
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
 
-         <!--<meta charset="UTF-8"/>-->
-    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"/>-->
-    <!--<link rel="stylesheet" href="/static/css/bootstrap.min.css"/>-->
-    <!--<link rel="stylesheet" href="/static/css/bootstrap-responsive.min.css"/>-->
-    <!--<link rel="stylesheet" href="/static/css/fullcalendar.css"/>-->
-    <!--<link rel="stylesheet" href="/static/archerysecurity/css/style.css"/>-->
-    <!--<link rel="stylesheet" href="/static/archerysecurity/css/media.css"/>-->
-    <!--<link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet"/>-->
-    <!--<link rel="stylesheet" href="/static/css/jquery.gritter.css"/>-->
-    <!--<link rel="stylesheet" href="/static/css/slider.css"/>-->
-    <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>-->
-    <!--<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/logo.png">
+    <title>ArcherySec</title>
+    <link href="/static/matrix-admin-bt4/dist/css/style.min.css" rel="stylesheet">
+    <link href="/static/matrix-admin-bt4/dist/css/slider.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/matrix-admin-bt4/assets/libs/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/matrix-admin-bt4/assets/extra-libs/multicheck/multicheck.css">
+    <link href="/static/matrix-admin-bt4/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
+</head>
 
-
-
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>{% block title %}{% endblock title %} » Archery</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <link rel="icon" href="{% static "logo.png" %}" type="image/x-icon" />
-
-        <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" />
-        <link href="{% static "css/bootstrap-responsive.min.css" %}" rel="stylesheet" />
-        <link href="{% static "font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
-        <link href="{% static "css/uniform.css" %}" rel="stylesheet" />
-        <link href="{% static "css/select2.css" %}" rel="stylesheet" />
-        <link href="{% static "css/jquery.gritter.css" %}" rel="stylesheet" />
-        <!--<link href="{% static "css/archery-style.css" %}" rel="stylesheet" />-->
-
-        <link href="{% static "css/sitetree_bootstrap_submenu.css"%}" type="text/css" rel="stylesheet" media="screen">
-        <link href="{% static "archerysecurity/css/fonts.css" %}" rel="stylesheet" />
-        <link href="{% static "archerysecurity/css/style.css" %}" rel="stylesheet" />
-        <link href="{% static "archerysecurity/css/media.css" %}" rel="stylesheet" />
-
-        {% block extra_head %}{% endblock extra_head %}
-    </head>
-
-    <body class="{% block body_class %}{% endblock %}">
+<body>
+<div class="preloader">
+    <div class="lds-ripple">
+        <div class="lds-pos"></div>
+        <div class="lds-pos"></div>
+    </div>
+</div>
+<div id="main-wrapper">
+    {% include 'base/head.html' %}
+    {% include 'base/aside.html' %}
     {% block body %}
-        <div id="header">
-            <img src="/static/archery_logo.svg" style="max-width:200px; margin-top: 20px;">
-        </div>
-        {% include '_top_menu.html' %}
-
-        {% comment %}
-        {% include '_search.html' %}
-        {% endcomment %}
-
-        {% include '_sidebar.html' %}
-
-        <div id="content">
-            <div id="content-header">
-                {% include '_breadcrumbs.html' %}
-                <h1>{% block header_title %}{% endblock  %}</h1>
-            </div>
-            <div class="container-fluid">
-                <div class="row-fluid">
-                    <div class="span12">
-                        {% block content %}{% endblock content %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {% include '_footer.html' %}
+    {% endblock %}
+</div>
 
 
-        <script src="{% static "js/jquery.min.js" %}"></script>
-        <script src="{% static "js/jquery.ui.custom.js" %}"></script>
-        <script src="{% static "js/bootstrap.min.js" %}"></script>
-        <script src="{% static "js/jquery.uniform.js" %}"></script>
-        <script src="{% static "js/select2.min.js" %}"></script>
-        <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
-        <script src="{% static "js/jquery.gritter.min.js" %}"></script>
-        <!--<script src="{% static "js/jquery.flot.min.js" %}"></script>-->
-        <!--<script src="{% static "js/jquery.flot.resize.min.js" %}"></script>-->
-        <script src="{% static "js/jquery.peity.min.js" %}"></script>
-        <script src="{% static "js/archery.interface.js" %}"></script>
+<script src="/static/matrix-admin-bt4/assets/libs/jquery/dist/jquery.min.js"></script>
+<script src="/static/matrix-admin-bt4/assets/libs/popper.js/dist/umd/popper.min.js"></script>
+<script src="/static/matrix-admin-bt4/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/static/matrix-admin-bt4/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+<script src="/static/matrix-admin-bt4/assets/extra-libs/sparkline/sparkline.js"></script>
+<script src="/static/matrix-admin-bt4/dist/js/waves.js"></script>
+<script src="/static/matrix-admin-bt4/dist/js/sidebarmenu.js"></script>
+<script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>
+<script src="/static/matrix-admin-bt4/assets/extra-libs/multicheck/datatable-checkbox-init.js"></script>
+<script src="/static/matrix-admin-bt4/assets/extra-libs/multicheck/jquery.multicheck.js"></script>
+<script src="/static/matrix-admin-bt4/assets/extra-libs/DataTables/datatables.min.js"></script>
+<script src="/static/matrix-admin-bt4/assets/libs/select2/dist/js/select2.full.min.js"></script>
+<script src="/static/matrix-admin-bt4/assets/libs/select2/dist/js/select2.full.min.js"></script>
 
-        <script src="{% static "archerysecurity/js/base.js" %}"></script>
-        <script src="{% static "archerysecurity/js/tables.js" %}"></script>
-        <script src="{% static "archerysecurity/js/popover.js" %}"></script>
+<!--<script src="/static/matrix-admin-bt4/dist/js/jquery-1.9.1.min.js"></script>-->
+<script>
+        /****************************************
+         *       Basic Table                   *
+         ****************************************/
+        $('#zero_config').DataTable();
+        $('#zero_config1').DataTable();
+        $('#zero_config2').DataTable();
+        $('#zero_config3').DataTable();
+        $('#zero_config4').DataTable();
+        $('#zero_config5').DataTable();
+        $('#vuln_details').DataTable();
+        $('#zap_scans_list').DataTable();
+        $('#zap_scans_list_false').DataTable();
+        $('#zap_scans_list_close').DataTable();
+        $('#burp_scan_list').DataTable();
+        $('#burp_scans_list').DataTable();
+        $('#burp_scans_false').DataTable();
+        $('#burp_scans_close').DataTable();
 
-        <script src="{% static "dashboard/js/base.js" %}"></script>
+        $('#acunetix_scans_list').DataTable();
+        $('#acunetix_scans_false').DataTable();
+        $('#acunetix_scans_close').DataTable();
 
-        {% block extra_body %}{% endblock extra_body %}
+        $('#netspaker_scans_list').DataTable();
+        $('#netspaker_scans_false').DataTable();
+        $('#netspaker_scans_close').DataTable();
 
-    {% endblock body %}
-    </body>
+        $('#arachni_scans_list').DataTable();
+        $('#arachni_scans_false').DataTable();
+        $('#arachni_scans_close').DataTable();
+
+        $('#webinspect_scans_list').DataTable();
+        $('#webinspect_scans_false').DataTable();
+        $('#webinspect_scans_close').DataTable();
+
+        $('#acunetix_scans_list').DataTable();
+        $('#acunetix_scans_false').DataTable();
+        $('#acunetix_scans_close').DataTable();
+
+        $('#excluded_url').DataTable();
+        $('#cookies_list').DataTable();
+        $('#excluded_url').DataTable();
+
+        $('#openvas_scan_list').DataTable();
+        $('#openvas_scan_false').DataTable();
+        $('#openvas_scan_close').DataTable();
+
+        $('#nessus_scans_list').DataTable();
+        $('#nessus_scans_false').DataTable();
+        $('#nessus_scans_close').DataTable();
+
+        $('#dependencycheck_scans_list').DataTable();
+        $('#dependencycheck_scans_false').DataTable();
+        $('#dependencycheck_scans_close').DataTable();
+
+        $('#findbugs_scans_list').DataTable();
+        $('#findbugs_scans_false').DataTable();
+        $('#findbugs_scans_close').DataTable();
+
+        $('#clair_scans_list').DataTable();
+        $('#clair_scans_false').DataTable();
+        $('#clair_scans_false').DataTable();
+
+        $('#bandit_scan_list').DataTable();
+        $('#bandit_scan_false').DataTable();
+        $('#bandit_scan_close').DataTable();
+
+        $('#netsparker_scans_list').DataTable();
+
+        $('#inspec_scans_list').DataTable();
+        $('#pentest_list').DataTable();
+
+
+
+        $('#nikto_scan_list').DataTable();
+
+        $('#manual_scans_list').DataTable();
+
+
+$(".select2").select2();
+</script>
+</body>
+<footer class="footer text-center">
+    All Rights Reserved by Anand Tiwari. Designed and Developed by <a href="https://github.com/anandtiwarics/">Anand Tiwari</a>.<br>
+                                        ArcherySec v2.0
+</footer>
 </html>

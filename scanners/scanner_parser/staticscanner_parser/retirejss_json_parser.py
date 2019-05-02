@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 
@@ -55,7 +60,7 @@ def retirejs_report_json(data, project_id, scan_id):
         for vuln in data:
             global identifires
             identifires = vuln["results"][0]["vulnerabilities"][0]["identifiers"]
-            for key, value in identifires.iteritems():
+            for key, value in identifires.items():
                 if key == 'CVE':
                     for cve_v in value:
                         global cve
@@ -82,7 +87,7 @@ def retirejs_report_json(data, project_id, scan_id):
 
         global vul_col
         if severity == "HIGH":
-            vul_col = "important"
+            vul_col = "danger"
 
         elif severity == "MEDIUM":
             vul_col = 'warning'
@@ -91,7 +96,7 @@ def retirejs_report_json(data, project_id, scan_id):
             vul_col = "info"
 
         dup_data = files + component + severity
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = retirejs_scan_results_db.objects.filter(
             dup_hash=duplicate_hash).values('dup_hash').distinct()

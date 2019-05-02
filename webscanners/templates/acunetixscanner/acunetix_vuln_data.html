@@ -1,108 +1,133 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
-
-<div id="content">{% for data in vuln_data %}
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/acunetixscanner/web_vuln_list/?scan_id={{data.scan_id}}" title="Go to Home"
-                                class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
-            <a
-                    href="#" class="current">{{ data.VulnName }}</a></div>
-        <div>
-            <div class="btn-group">
-                <a class="btn btn-info"
-                   href="#"><i
-                        class="icon-edit icon-white"></i>
-                </a>
-                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span
-                        class="caret"></span></a>
-                <ul class="dropdown-menu">
-
-                    <li>
-                        <a href="/jira/submit_jira_ticket/?summary={{data.VulnName}}&description={{data.VulnName}}%0a%0a%0a Vulnerable URL: {{data.vuln_url}} %0a%0a Vulnerable Parameter: {{data.vector_input_values}} %0a%0a Solution: {{data.remedy_guidance}} %0a%0a Archery URL: {SERVERIP}/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.request_raw }}&scanner=acunetix&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "><i
-                                class="icon-random"></i> Jira Ticket</a>
-                    </li>
-                </ul>
-            </div>
-
-            <h1>{{ data.VulnName }}</h1>
-        </div>
-    </div>
+{% for data in vuln_data %}
+<div class="page-wrapper">
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Vulnerability Name:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info">{{ data.VulnName }}</span>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-auto">
+                    <div class="float-right">
+                        <!-- Large modal -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target=".bd-example-modal-lg">Jira Ticket
+                        </button>
 
-                        <strong> </strong><br><br>
-                        <strong> False Positive: </strong>
-                        <form method="POST" action="/acunetixscanner/acunetix_vuln_out/">{% csrf_token %}
-                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                            <input type="hidden" name="false" value="Yes">
-                            <input type="hidden" name="vuln_name" value="{{data.VulnName}}">
-                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                            <button class="btn btn-info btn-mini">YES</button>
-                        </form>
-                        <br>
-                        <strong> Severity: </strong> <span
-                            class="badge badge-{{data.vuln_color}}"> {{ data.VulnSeverity }}</span><br><br>
-                        <strong> ModuleName : </strong>{{data.ModuleName}}<br><br>
-                        <strong> Vulnerable URL : </strong><code><a href="{{data.VulnAffects}}">
-                        {{data.VulnAffects}}</a>
-                    </code><br><br>
-                        <strong> Vulnerable Parameter : </strong>{{data.VulnParameter}}<br><br>
+                        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
 
-
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <!--<div class="span12">-->
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Issue Detail:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        {{data.VulnDescription | safe}}
-                        {{data.VulnDetailedInformation | safe}}
+                <h1>{{ data.VulnName }}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Description</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.VulnDescription | safe}}
+                                    <br>
+                                    {{data.VulnDetailedInformation | safe}}
+                                    <br>
+                                    {{data.VulnTechnicalDetails | safe}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                                       aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Instance</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered data-table table-fixed">
+                                            <thead>
+                                            <tr>
+                                                <td>URL</td>
+                                                <td>Path</td>
+                                                <td>Module Name</td>
+                                                <td>Parameter</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    {{data.VulnFullUrl}}
+                                                </td>
+                                                <td>
+                                                    {{data.vector_source_values}}
+                                                </td>
+                                                <td>
+                                                    {{data.ModuleName}}
+                                                </td>
+                                                <td>
+                                                    {{data.VulnParameter}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseThree"
+                                       aria-expanded="false" aria-controls="collapseThree">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Solutions</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.VulnRecommendation | safe}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="heading4">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapse4"
+                                       aria-expanded="false" aria-controls="collapse4">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Reference</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapse4" class="collapse" aria-labelledby="heading4"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.VulnReferences}}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Impact:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <strong> </strong>{{data.VulnImpact | safe}}
-                        <br><br>
-                    </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Solutions:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <strong> Solutions : </strong>{{data.actionsToTake | safe}} <br><br>
-                        {{data.VulnRecommendation | safe}}
-                        <br><br>
-                    </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>Technical Details:</h5>
-                    </div>
-                    <div class="widget-content">
-                        <span class="label label-info"></span>
-                        <strong> Technical Details : </strong><br>
-                        {{data.VulnTechnicalDetails | safe}}
-                        <br><br>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>

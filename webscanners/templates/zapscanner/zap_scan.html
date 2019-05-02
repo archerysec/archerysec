@@ -55,7 +55,6 @@ $("#checkAll").change(function () {
             <!--{% endif %}-->
         <!--</div>-->
         <div class="row-fluid">
-
                     <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
                         <h5>ZAP Scanner Scan List</h5>
                         <div class="buttons">
@@ -66,7 +65,6 @@ $("#checkAll").change(function () {
                         <div class="buttons">
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
-
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-bordered data-table">
@@ -107,11 +105,11 @@ $("#checkAll").change(function () {
                                     </div>
                                 </td>
                                 <td>{{data.date_time}}</td>
-                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                                <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                                <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                                <td><span class="badge badge-info">{{data.low_vul}}</span></td>
-                                <td><span class="badge badge-important">{{data.total_dup}}</span></td>
+                                <td><span class="badge badge-pill badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.total_dup}}</span></td>
                                 <td>
                                     <form action="/webscanners/get_scan_pdf/" method="post" class="forms-sample">
 
@@ -215,10 +213,10 @@ $("#checkAll").change(function () {
                                     </div>
                                 </td>
                                 <td>{{data.date_time}}</td>
-                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                                <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                                <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                                <td><span class="badge badge-info">{{data.low_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>
                                 <td>
                                     <form action="/webscanners/get_scan_pdf/" method="post" class="forms-sample">
 

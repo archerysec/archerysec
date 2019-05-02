@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #                    _
 #     /\            | |
 #    /  \   _ __ ___| |__   ___ _ __ _   _
@@ -6,7 +7,11 @@
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
 #                                     __/ |
 #                                    |___/
-# Copyright (C) 2017-2018 ArcherySec
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 """
@@ -46,7 +51,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'webscanners',
     'projects',
-    'APIScan',
     'archerysettings',
     'networkscanners',
     'staticscanners',
@@ -199,6 +203,8 @@ SETTINGS_EXPORT = [
     'REFRESH_TIMER',
 ]
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
+
 try:
     from archerysecurity.local_settings import *
 except ImportError:
@@ -206,7 +212,7 @@ except ImportError:
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-DJANGO_NOTIFICATIONS_CONFIG = {'USE_JSONFIELD': True}
+# DJANGO_NOTIFICATIONS_CONFIG = {'USE_JSONFIELD': True}
 
 DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 

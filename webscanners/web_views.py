@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 import threading
@@ -28,7 +33,7 @@ from projects.models import project_db
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
     arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser, burp_xml_parser
 # from scanners.scanner_plugin.web_scanner import burp_plugin
-from scanners.scanner_plugin.web_scanner import zap_plugin
+from scanners.scanner_plugin.web_scanner import zap_plugin, burp_plugin
 from webscanners.models import \
     zap_scans_db, \
     zap_spider_db, \
@@ -176,6 +181,11 @@ def signup(request):
                   'signup.html')
 
 
+def error_404_view(request):
+
+    return render(request, '404.html')
+
+
 def loggedin(request):
     """
     After login request.
@@ -273,7 +283,7 @@ def task(target_url, project_id, scanner):
             do_scan = burp_plugin.burp_scans(
                 project_id,
                 target,
-                scan_id)
+                scan_id, user='admin')
             thread = threading.Thread(
                 target=do_scan.scan_launch,
             )
@@ -668,7 +678,7 @@ def xml_upload(request):
             netsparker_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/netsparkerscanner/netsparker_scan_list/")
         elif scanner == 'webinspect':
             date_time = datetime.now()
@@ -685,7 +695,7 @@ def xml_upload(request):
             webinspect_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/webinspectscanner/webinspect_scan_list/")
 
         elif scanner == 'acunetix':
@@ -703,7 +713,7 @@ def xml_upload(request):
             acunetix_xml_parser.xml_parser(project_id=project_id,
                                            scan_id=scan_id,
                                            root=root_xml)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/acunetixscanner/acunetix_scan_list/")
 
         elif scanner == 'dependencycheck':
@@ -720,7 +730,7 @@ def xml_upload(request):
             dependencycheck_report_parser.xml_parser(project_id=project_id,
                                                      scan_id=scan_id,
                                                      data=data)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/dependencycheck/dependencycheck_list")
 
         elif scanner == 'findbugs':
@@ -738,7 +748,7 @@ def xml_upload(request):
             findbugs_report_parser.xml_parser(project_id=project_id,
                                               scan_id=scan_id,
                                               root=root)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/findbugs/findbugs_list")
 
         elif scanner == 'nikto':
@@ -752,7 +762,7 @@ def xml_upload(request):
             scan_dump.save()
 
             nikto_html_parser(xml_file, project_id, scan_id)
-            print("Saved scan data")
+
             return HttpResponseRedirect("/tools/nikto/")
 
     return render(request, 'upload_xml.html', {'all_project': all_project})

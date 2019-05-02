@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
@@ -27,7 +32,6 @@ from scanners.scanner_parser.web_scanner import arachni_xml_parser
 import json
 import time
 from webscanners.resources import ArachniResource
-from notifications.models import Notification
 from notifications.signals import notify
 
 
@@ -57,7 +61,6 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         "directory_listing",
     ]
 
-    # data = {"url": target, "checks": check}
     data = {
         "url": target,
         "checks": check,
@@ -72,13 +75,13 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     try:
         scan_data = scan_launch.data
 
-        for key, value in scan_data.viewitems():
+        for key, value in scan_data.items():
             if key == 'id':
                 scan_run_id = value
         notify.send(user, recipient=user, verb='Arachni Scan Started on URL %s' % target)
     except Exception:
         notify.send(user, recipient=user, verb='Arachni Connection Not found')
-        print "Arachni Connection Not found"
+        print("Arachni Connection Not found")
         return
 
     date_time = datetime.now()
@@ -96,16 +99,16 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         save_all_scan.save()
 
     except Exception as e:
-        print e
+        print(e)
 
     scan_data = scan_launch.data
 
-    for key, value in scan_data.viewitems():
+    for key, value in scan_data.items():
         if key == 'id':
             scan_run_id = value
 
     scan_sum = arachni.scan_summary(id=scan_run_id).data
-    for key, value in scan_sum.viewitems():
+    for key, value in scan_sum.items():
         if key == 'status':
             scan_status = value
     while scan_status != 'done':
@@ -116,11 +119,10 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
                      scan_sum['statistics']['browser_cluster']['total_job_time']
         arachni_scan_db.objects.filter(scan_id=scan_id).update(scan_status=status)
         scan_sum = arachni.scan_summary(id=scan_run_id).data
-        for key, value in scan_sum.viewitems():
+        for key, value in scan_sum.items():
             if key == 'status':
                 scan_status = value
         time.sleep(3)
-    print "scan_di", scan_run_id
     if scan_status == 'done':
         xml_report = arachni.scan_xml_report(id=scan_run_id).data
         root_xml = ET.fromstring(xml_report)
@@ -131,7 +133,6 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         print("Data uploaded !!!!")
 
     notify.send(user, recipient=user, verb='Arachni Scan Completed on URL %s' % target)
-    print scan_run_id
 
 
 def arachni_scan(request):
@@ -143,7 +144,6 @@ def arachni_scan(request):
     user = request.user
     if request.method == "POST":
         target_url = request.POST.get('scan_url')
-        print target_url
         project_id = request.POST.get('project_id')
         rescan_id = None
         rescan = 'No'
@@ -153,7 +153,6 @@ def arachni_scan(request):
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
-            print "Targets -", target
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_arachni_scan,
@@ -257,7 +256,8 @@ def arachni_vuln_out(request):
                 url = vi.url
                 severity = vi.severity
                 dup_data = name + url + severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                print(dup_data)
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 arachni_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                       scan_id=scan_id).update(false_positive=false_positive,
                                                                               vuln_status=status,
@@ -268,7 +268,8 @@ def arachni_vuln_out(request):
                              messages.SUCCESS,
                              'Vulnerability Status Changed')
         return HttpResponseRedirect(
-            '/arachniscanner/arachni_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+            '/arachniscanner/arachni_vuln_out/?scan_id=%(scan_id)s&scan_name=%(vuln_name)s' % {'scan_id': scan_id,
+                                                                                               'vuln_name': vuln_name})
 
     vuln_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
                                                       name=name,
@@ -347,14 +348,13 @@ def edit_arachni_vuln(request):
         vulnerabilityClassifications = request.POST.get("reference", )
         global vul_col
         if severity == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':
             vul_col = "info"
         else:
             vul_col = "info"
-        print "edit_vul :", name
 
         burp_scan_result_db.objects.filter(vuln_id=vuln_id).update(
             name=name,
@@ -390,7 +390,6 @@ def arachni_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
@@ -401,9 +400,9 @@ def arachni_del_vuln(request):
             'vuln_color'
         ).distinct()
         total_vul = len(arachni_all_vul)
-        total_high = len(arachni_all_vul.filter(severity="high"))
-        total_medium = len(arachni_all_vul.filter(severity="medium"))
-        total_low = len(arachni_all_vul.filter(severity="low"))
+        total_high = len(arachni_all_vul.filter(severity="High"))
+        total_medium = len(arachni_all_vul.filter(severity="Medium"))
+        total_low = len(arachni_all_vul.filter(severity="Low"))
         arachni_scan_db.objects.filter(scan_id=un_scanid).update(
             total_vul=total_vul,
             high_vul=total_high,

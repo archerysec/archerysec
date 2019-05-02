@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
@@ -79,7 +84,7 @@ def burp_setting(request):
 
         try:
             for issue_dat in issues:
-                for key, values in issue_dat.viewitems():
+                for key, values in issue_dat.items():
                     if key == 'remediation':
                         remediation = values
                     if key == 'issue_type_id':
@@ -102,8 +107,8 @@ def burp_setting(request):
                                                    )
                 data_dump.save()
         except Exception as e:
-            print e
-            notify.send(user, recipient=user, verb='Burp Conection Not Found')
+            print(e)
+            notify.send(user, recipient=user, verb='Burp Connection Not Found')
 
         return HttpResponseRedirect('/webscanners/setting/')
 
@@ -131,7 +136,7 @@ def burp_scan_launch(request):
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
-            print "Targets", target
+            print("Targets"), target
             scan_id = uuid.uuid4()
             try:
                 do_scan = burp_plugin.burp_scans(
@@ -148,7 +153,7 @@ def burp_scan_launch(request):
                 thread.start()
                 time.sleep(5)
             except Exception as e:
-                print e
+                print(e)
 
     return render(request, 'burpscanner/burp_scan_list.html')
 
@@ -244,7 +249,7 @@ def burp_vuln_out(request):
                 location = vi.request_response_url
                 severity = vi.severity
                 dup_data = name + location + severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 burp_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                    scan_id=scan_id).update(false_positive=false_positive,
                                                                            vuln_status=vuln_status,
@@ -293,7 +298,7 @@ def del_burp_scan(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
             item = burp_scan_db.objects.filter(scan_id=scan_id)
@@ -317,7 +322,7 @@ def del_burp_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
@@ -366,7 +371,7 @@ def edit_burp_vuln(request):
         global vul_col
 
         if severity == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':
@@ -374,7 +379,7 @@ def edit_burp_vuln(request):
         else:
             vul_col = "info"
 
-        print "edit_vul :", name
+        print("edit_vul :"), name
 
         burp_scan_result_db.objects.filter(
             vuln_id=vuln_id).update(name=name,

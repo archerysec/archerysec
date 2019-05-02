@@ -1,3 +1,4 @@
+
 {% extends 'tablehead.html' %}
 {% block body %}
 
@@ -123,10 +124,10 @@
                                         <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">{{data.scan_status}}{{data.vul_status}} %</div>
                                     </div>
                                 </td>
-                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                                <td><span class="badge badge-important">{{data.high_vul}}</span></td>
-                                <td><span class="badge badge-warning">{{data.medium_vul}}</span></td>
-                                <td><span class="badge badge-info">{{data.low_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>
 
                             </tr>
                             {% endfor %}
@@ -160,10 +161,10 @@
                                         <div class="bar" style="width: {{data.scan_status}}{{data.vul_status}}%">{{data.scan_status}}{{data.vul_status}} %</div>
                                     </div>
                                 </td>
-                                <td><span class="badge badge-inverse">{{data.total_vuln}}</span></td>
-                                <td><span class="badge badge-important">{{data.SEVERITY_HIGH}}</span></td>
-                                <td><span class="badge badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
-                                <td><span class="badge badge-info">{{data.SEVERITY_LOW}}</span></td>
+                                <td><span class="badge badge-pill badge-inverse">{{data.total_vuln}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.SEVERITY_HIGH}}</span></td>
+                                <td><span class="badge badge-pill badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
+                                <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span></td>
 
                             </tr>
                             {% endfor %}
@@ -202,10 +203,10 @@
                                         <div class="bar" style="width: {{data.scan_status}}%">{{data.scan_status}} %</div>
                                     </div>
                                 </td>
-                                <td><span class="badge badge-inverse">{{data.total_vul}}</span></td>
-                                <td><span class="badge badge-important">{{data.high_total}}</span></td>
-                                <td><span class="badge badge-warning">{{data.medium_total}}</span></td>
-                                <td><span class="badge badge-info">{{data.low_total}}</span></td>
+                                <td><span class="badge badge-pill badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.high_total}}</span></td>
+                                <td><span class="badge badge-pill badge-warning">{{data.medium_total}}</span></td>
+                                <td><span class="badge badge-pill badge-info">{{data.low_total}}</span></td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn btn-primary"

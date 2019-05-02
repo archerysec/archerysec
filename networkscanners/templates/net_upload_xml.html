@@ -1,80 +1,73 @@
-{% extends 'header.html' %}
+
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-            Home</a></div>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <hr>
-        <div class="span3 offset6">
-            {% if messages %}
-
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
-            </div>
-            {% endfor %}
-
-            {% endif %}
-        </div>
-        <div class="row-fluid">
-            <div class="span6 offset3">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>Scan Upload</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="/networkscanners/OpenVAS_xml_upload/">{% csrf_token %}
-                            <div>
-                                <label class="control-label">
-                                    <bold>Project :</bold>
-                                </label>
-                                <div class="controls">
-                                    <select id="project_id" name="project_id" class="selectpicker"
-                                            data-live-search="true">
-                                        {% for data in all_project %}
-                                        <option value="{{data.project_id}}">{{data.project_name}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="control-label">
-                                    <bold>Scanner :</bold>
-                                </label>
-                                <div class="controls">
-                                    <select id="scanner" name="scanner" class="selectpicker"
-                                            data-live-search="true">
-                                        <option value="openvas">OpenVAS</option>
-                                        <option value="nessus">Nessus</option>
-                                        <option value="nmap">Nmap</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Scan URL/IP:</label>
-                                <div class="controls">
-                                    <input type="text" name="scan_url" class="span6"
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Upload Reports</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="form-group">
+                                <form class="form-horizontal" method="POST" enctype="multipart/form-data"
+                                      action="/networkscanners/OpenVAS_xml_upload/">{% csrf_token %}
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 m-t-15">Project</label>
+                                            <div class="col-md-9">
+                                                <select id="project_id" name="project_id"
+                                                        class="select2 form-control custom-select"
+                                                        style="width: 100%; height:36px;">
+                                                    {% for data in all_project %}
+                                                    <option value="{{data.project_id}}">{{data.project_name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 m-t-15">Scanner</label>
+                                            <div class="col-md-9">
+                                                <select id="scanner" name="scanner"
+                                                        class="select2 form-control custom-select"
+                                                        style="width: 100%; height:36px;">
+                                                    <option value="openvas">OpenVAS</option>
+                                                    <option value="nessus">Nessus</option>
+                                                    <option value="nmap">Nmap</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 control-label col-form-label">Scan URL/IP:</label>
+                                            <div class="col-sm-9">
+                                               <input type="text" name="scan_url" class="form-control"
                                            placeholder="Scan URL/IP"/>
-                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3">XML/HTML File :</label>
+                                            <div class="col-md-9">
+                                                 <input type="file" name="xmlfile">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-success">Save</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">XML File :</label>
-                                <div class="controls">
-                                    <input type="file" name="xmlfile">
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

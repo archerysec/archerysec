@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from zapv2 import ZAPv2
@@ -64,7 +69,7 @@ def zap_replacer(target_url):
     try:
         zap.replacer.remove_rule(description=target_url, apikey=zap_api_key)
     except Exception as e:
-        print "ZAP Replacer error"
+        print("ZAP Replacer error")
 
     return
 
@@ -122,8 +127,6 @@ class ZAPScanner:
 
     """ Connect with ZAP scanner global variable """
 
-    # zap = zap_connect()
-
     def __init__(self, target_url, project_id, rescan_id, rescan):
         """
 
@@ -150,9 +153,9 @@ class ZAPScanner:
             )
             for data in all_excluded:
                 excluded_url = data.exclude_url
-                print "excluded url ", excluded_url
+                print("excluded url "), excluded_url
         except Exception as e:
-            print e
+            print(e)
 
         try:
             self.zap.spider.exclude_from_scan(
@@ -160,7 +163,7 @@ class ZAPScanner:
 
             )
         except Exception as e:
-            print e
+            print(e)
 
         return excluded_url
 
@@ -181,9 +184,9 @@ class ZAPScanner:
                 all_cookies = da.cookie
 
         except Exception as e:
-            print e
-        print "All cookies", all_cookies
-        print "Target URL---", self.target_url
+            print(e)
+        print("All cookies"), all_cookies
+        print("Target URL---"), self.target_url
 
         try:
             self.zap.replacer.add_rule(
@@ -197,7 +200,7 @@ class ZAPScanner:
                 initiators=""
             )
         except Exception as e:
-            print e
+            print(e)
 
     def zap_spider(self):
         """
@@ -207,16 +210,12 @@ class ZAPScanner:
         spider_id = ""
 
         try:
-            print "targets:-----", self.target_url
+            print("targets:-----"), self.target_url
             try:
                 spider_id = self.zap.spider.scan(self.target_url)
             except Exception as e:
-                print "Spider Error"
+                print("Spider Error")
             time.sleep(5)
-            # try:
-            #     self.zap.ajaxSpider.scan(self.target_url)
-            # except Exception as e:
-            #     print e
 
             save_all = zap_spider_db(
                 spider_url=self.target_url,
@@ -224,7 +223,7 @@ class ZAPScanner:
             )
             save_all.save()
         except Exception as e:
-            print e
+            print(e)
 
         return spider_id
 
@@ -241,7 +240,7 @@ class ZAPScanner:
             )
 
         except Exception as e:
-            print "Spider Thread error"
+            print("Spider Thread error")
 
         return thread
 
@@ -256,10 +255,10 @@ class ZAPScanner:
             while int(self.zap.spider.status(spider_id)) < 100:
                 global spider_status
                 spider_status = self.zap.spider.status(spider_id)
-                # print "Spider progress", spider_status
+
                 time.sleep(5)
         except Exception as e:
-            print e
+            print(e)
 
         spider_status = "100"
         return spider_status
@@ -275,7 +274,7 @@ class ZAPScanner:
             spider_res_out = self.zap.spider.results(spider_id)
             data_out = ("\n".join(map(str, spider_res_out)))
         except Exception as e:
-            print e
+            print(e)
 
         return data_out
 
@@ -289,7 +288,7 @@ class ZAPScanner:
         try:
             scan_id = self.zap.ascan.scan(self.target_url)
         except Exception as e:
-            print "ZAP SCAN ERROR"
+            print("ZAP SCAN ERROR")
 
         return scan_id
 
@@ -303,13 +302,13 @@ class ZAPScanner:
         try:
             while int(self.zap.ascan.status(scan_id)) < 100:
                 scan_status = self.zap.ascan.status(scan_id)
-                print "ZAP Scan Status:", scan_status
+                print("ZAP Scan Status:"), scan_status
                 time.sleep(10)
                 zap_scans_db.objects.filter(
                     scan_scanid=un_scanid
                 ).update(vul_status=scan_status)
         except Exception as e:
-            print e
+            print(e)
 
         scan_status = 100
         zap_scans_db.objects.filter(
@@ -327,7 +326,7 @@ class ZAPScanner:
         try:
             all_vuln = self.zap.core.xmlreport()
         except Exception as e:
-            print "zap scan result error"
+            print("zap scan result error")
 
         return all_vuln
 

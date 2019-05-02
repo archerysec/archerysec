@@ -1,46 +1,60 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
-
-<div id="content">
-    <!--breadcrumbs-->
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-            Home</a></div>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <hr>
-        <div class="span3 offset6">
-            {% if messages %}
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Create</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="form-group">
+                                <form class="form-horizontal" method="POST" action="/manual_scan/add_list_scan/">
+                                    {% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="col-md-3 m-t-5">Target</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" name="scan_url" class="form-control"
+                                                   value="" placeholder="Target URL or Host">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 m-t-5">Project</label>
+                                        <div class="col-md-9">
+                                            <select id="project_id" name="project_id"
+                                                    class="select2 form-control custom-select"
+                                                    style="width: 100%; height:36px;">
+                                                {% for data in all_projects %}
+                                                <option value="{{data.project_id}}">{{data.project_name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 m-t-5">Pentest Type</label>
+                                        <div class="col-md-9">
+                                            <select name="pentest_type"
+                                                    class="select2 form-control custom-select"
+                                                    style="width: 100%; height:36px;">
 
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
-            </div>
-            {% endfor %}
+                                                <option value="network">Network</option>
+                                                <option value="web">Web</option>
 
-            {% endif %}
-        </div>
-        <div class="row-fluid">
-            <div class="span5 offset3">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>Create Scan</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/manual_scan/add_list_scan/">{% csrf_token %}
-                            <div class="control-group">
-                                <label class="control-label">URL or IP :</label>
-                                <div class="controls">
-                                    <input type="text" name="scan_url" class="span11"
-                                           placeholder="URL or IP"/>
-                                </div>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="float-right">
+                                        <div class="form-actions">
+                                            <button type="submit" class="btn btn-success">Save</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

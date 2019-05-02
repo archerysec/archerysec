@@ -1,5 +1,64 @@
-{% extends 'tablehead.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h5 class="card-title">Cookies Sessions List</h5>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="cookies_list" class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
+                                <th>URL</th>
+                                <th>Cookies</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in all_cookies %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label><input type="checkbox" value="{{data.url}}" name="del_scan_id"
+                                                      onClick="reload">
+
+                                        </label>
+                                    </form>
+                                </td>
+                                <td>{{ data.url }}
+                                </td>
+                                <td>
+                                    {{ data.cookie }}
+                                </td>
+                                <td>
+                                    <form action="/webscanners/cookies_del" method="post" class="forms-sample">
+
+                                        {% csrf_token %}
+                                        <input type="hidden" name="url" value="{{data.url}}"/>
+                                        <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i>
+                                                </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script type="text/javascript">
@@ -35,82 +94,4 @@
 
 </script>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
-                href="#" class="current">Cookies List</a></div>
-
-        <h1>Cookies list</h1>
-    </div>
-
-    <div class="container-fluid">
-        <hr>
-        <div class="span3 offset6">
-            {% if messages %}
-
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
-            </div>
-            {% endfor %}
-
-            {% endif %}
-        </div>
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                        <h5>Cookies List</h5>
-                        <div class="buttons"><a data-toggle="modal" href="/webscanners/cookie_add/"
-                                            class="btn btn-primary btn-mini"><i
-                            class="icon-plus icon-white"></i> Add Cookies</a>
-                    </div>
-                        <div class="buttons">
-                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
-                        </div>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <table class="table table-bordered data-table">
-                            <thead>
-                            <tr>
-                                <th><p><label><input type="checkbox" id="checkAll"/></label></p></th>
-                                <th>URL</th>
-                                <th>Cookies</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>{% for data in all_cookies %}
-                            <tr data-target="#">
-                                <td>
-                                    <form>
-                                        <label><input type="checkbox" value="{{data.url}}" name="del_scan_id"
-                                                      onClick="reload">
-
-                                        </label>
-                                    </form>
-                                </td>
-                                <td>{{ data.url }}
-                                </td>
-                                <td>
-                                    {{ data.cookie }}
-                                </td>
-                                <td>
-                                    <form action="/webscanners/cookies_del" method="post" class="forms-sample">
-
-                                        {% csrf_token %}
-                                        <input type="hidden" name="url" value="{{data.url}}"/>
-                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
