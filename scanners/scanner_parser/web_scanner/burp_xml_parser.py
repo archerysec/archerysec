@@ -251,4 +251,5 @@ def burp_scan_data(root, project_id, scan_id):
         email_notification.email_notify()
     except Exception as e:
         print(e)
+        
     HttpResponse(status=201)
