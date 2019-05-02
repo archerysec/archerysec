@@ -47,8 +47,8 @@ def xml_parser(data, project_id, scan_id):
     vul_col = None
 
     pt = data.xpath('namespace-uri(.)')
-    root = data.getroot()
-    for scan in root:
+    # root = data.getroot()
+    for scan in data:
         for dependencies in scan:
             for dependency in dependencies:
                 if dependency.tag == '{%s}fileName' % pt:

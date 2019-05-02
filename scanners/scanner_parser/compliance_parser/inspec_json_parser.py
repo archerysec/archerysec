@@ -74,7 +74,6 @@ def inspec_report_json(data, project_id, scan_id):
                             status = "Skipped"
 
                         vul_id = uuid.uuid4()
-                        print(vul_id)
 
                         save_all = inspec_scan_results_db(
                             scan_id=scan_id,

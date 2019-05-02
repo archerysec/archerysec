@@ -203,6 +203,8 @@ SETTINGS_EXPORT = [
     'REFRESH_TIMER',
 ]
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
+
 try:
     from archerysecurity.local_settings import *
 except ImportError:

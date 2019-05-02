@@ -431,7 +431,7 @@ class UpladScanResult(APIView):
 
         project_id = request.data.get("project_id")
         scanner = request.data.get("scanner")
-        xml_file = request.data.get("filename")
+        file = request.data.get("filename")
         scan_url = request.data.get("scan_url")
         scan_id = uuid.uuid4()
         scan_status = "100"
@@ -444,7 +444,7 @@ class UpladScanResult(APIView):
                                      vul_status=scan_status,
                                      rescan='No')
             scan_dump.save()
-            root_xml = ET.fromstring(xml_file)
+            root_xml = ET.fromstring(file)
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml)
@@ -462,8 +462,7 @@ class UpladScanResult(APIView):
                                      scan_status=scan_status)
             scan_dump.save()
             # Burp scan XML parser
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
+            root_xml = ET.fromstring(file)
             en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
             root_xml_en = ET.fromstring(en_root_xml)
 
@@ -484,8 +483,7 @@ class UpladScanResult(APIView):
                                         project_id=project_id,
                                         scan_status=scan_status)
             scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
+            root_xml = ET.fromstring(file)
             arachni_xml_parser.xml_parser(project_id=project_id,
                                           scan_id=scan_id,
                                           root=root_xml)
@@ -505,8 +503,7 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
+            root_xml = ET.fromstring(file)
             netsparker_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
@@ -525,8 +522,7 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
+            root_xml = ET.fromstring(file)
             webinspect_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
@@ -546,7 +542,7 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            data = json.loads(xml_file)
+            data = json.loads(file)
             bandit_report_json(data=data,
                                project_id=project_id,
                                scan_id=scan_id)
@@ -566,7 +562,7 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            data = etree.parse(xml_file)
+            data = etree.fromstring(file)
             dependencycheck_report_parser.xml_parser(project_id=project_id,
                                                      scan_id=scan_id,
                                                      data=data)
@@ -585,8 +581,7 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
+            root_xml = ET.fromstring(file)
             findbugs_report_parser.xml_parser(project_id=project_id,
                                               scan_id=scan_id,
                                               root=root_xml)
@@ -605,7 +600,7 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            data = json.loads(xml_file)
+            data = json.loads(file)
             clair_json_report_parser.clair_report_json(project_id=project_id,
                                                        scan_id=scan_id,
                                                        data=data)
@@ -625,7 +620,7 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            data = json.loads(xml_file)
+            data = json.loads(file)
             inspec_json_parser.inspec_report_json(project_id=project_id,
                                                   scan_id=scan_id,
                                                   data=data)
@@ -645,7 +640,7 @@ class UpladScanResult(APIView):
             )
             scan_dump.save()
 
-            nikto_html_parser(xml_file, project_id, scan_id)
+            nikto_html_parser(file, project_id, scan_id)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
