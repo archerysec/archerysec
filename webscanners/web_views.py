@@ -727,9 +727,10 @@ def xml_upload(request):
             )
             scan_dump.save()
             data = etree.parse(xml_file)
+            root = data.getroot()
             dependencycheck_report_parser.xml_parser(project_id=project_id,
                                                      scan_id=scan_id,
-                                                     data=data)
+                                                     data=root)
 
             return HttpResponseRedirect("/dependencycheck/dependencycheck_list")
 
