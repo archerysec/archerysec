@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: ascii -*-
 #                    _
 #     /\            | |
 #    /  \   _ __ ___| |__   ___ _ __ _   _
@@ -564,11 +564,11 @@ class UpladScanResult(APIView):
             scan_dump.save()
             data = etree.fromstring(file)
 
-            en_root_xml = etree.tostring(data, encoding='utf8').decode('ascii', 'ignore')
-            root_xml_en = etree.fromstring(en_root_xml)
+            # en_root_xml = etree.tostring(data, encoding='utf8').decode('ascii', 'ignore')
+            #root_xml_en = etree.fromstring(data)
             dependencycheck_report_parser.xml_parser(project_id=project_id,
                                                      scan_id=scan_id,
-                                                     data=root_xml_en)
+                                                     data=data)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
