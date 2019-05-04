@@ -18,6 +18,7 @@ from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_
 import uuid
 import hashlib
 from datetime import datetime
+from django.shortcuts import HttpResponse
 
 
 def xml_parser(data, project_id, scan_id):
@@ -165,3 +166,4 @@ def xml_parser(data, project_id, scan_id):
             SEVERITY_LOW=total_low,
             total_dup=total_duplicate
         )
+    return HttpResponse(status=201)
