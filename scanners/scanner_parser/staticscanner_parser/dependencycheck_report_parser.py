@@ -13,6 +13,7 @@
 # Twitter: @anandtiwarics
 #
 # This file is part of ArcherySec Project.
+from builtins import len
 
 from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_results_db
 import uuid
@@ -49,6 +50,7 @@ def xml_parser(data, project_id, scan_id):
 
     pt = data.xpath('namespace-uri(.)')
     # root = data.getroot()
+    inst = []
     for scan in data:
         for dependencies in scan:
             for dependency in dependencies:
@@ -60,7 +62,28 @@ def xml_parser(data, project_id, scan_id):
                     evidenceCollected = dependency.text
                 for vuln in dependency:
                     if vuln.tag == '{%s}vulnerability' % pt:
-                        if pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.1.8.xsd':
+                        if pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.0.xsd':
+                            for vulner in vuln:
+                                if vulner.tag == '{%s}name' % pt:
+                                    name = vulner.text
+                                if vulner.tag == '{%s}description' % pt:
+                                    description = vulner.text
+                                if vulner.tag == '{%s}references' % pt:
+                                    references = vulner.text
+                                if vulner.tag == '{%s}vulnerableSoftware' % pt:
+                                    vulnerableSoftware = vulner.text
+                                for vuln_dat in vulner:
+                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                        cwe = vuln_dat.text
+                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                        severity_dat = vuln_dat.text
+                                        if severity_dat == 'HIGH':
+                                            severity = 'High'
+                                        elif severity_dat == 'MEDIUM':
+                                            severity = 'Medium'
+                                        elif severity_dat == 'LOW':
+                                            severity = 'Low'
+                        else:
                             for vulner in vuln:
                                 if vulner.tag == '{%s}name' % pt:
                                     name = vulner.text
@@ -88,27 +111,6 @@ def xml_parser(data, project_id, scan_id):
                                     references = vulner.text
                                 if vulner.tag == '{%s}vulnerableSoftware' % pt:
                                     vulnerableSoftware = vulner.text
-                        elif pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.0.xsd':
-                            for vulner in vuln:
-                                if vulner.tag == '{%s}name' % pt:
-                                    name = vulner.text
-                                if vulner.tag == '{%s}description' % pt:
-                                    description = vulner.text
-                                if vulner.tag == '{%s}references' % pt:
-                                    references = vulner.text
-                                if vulner.tag == '{%s}vulnerableSoftware' % pt:
-                                    vulnerableSoftware = vulner.text
-                                for vuln_dat in vulner:
-                                    if vuln_dat.tag == '{%s}cwe' % pt:
-                                        cwe = vuln_dat.text
-                                    if vuln_dat.tag == '{%s}severity' % pt:
-                                        severity_dat = vuln_dat.text
-                                        if severity_dat == 'HIGH':
-                                            severity = 'High'
-                                        elif severity_dat == 'MEDIUM':
-                                            severity = 'Medium'
-                                        elif severity_dat == 'LOW':
-                                            severity = 'Low'
 
                         date_time = datetime.now()
                         vul_id = uuid.uuid4()
