@@ -16,7 +16,7 @@
 
 from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
     netsparker_scan_db, webinspect_scan_db, acunetix_scan_db
-from networkscanners.models import scan_save_db, ov_scan_result_db
+from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_report_db, nessus_scan_db
 from projects.models import project_db
 from webscanners.serializers import WebScanSerializer, \
     WebScanResultSerializer, \
@@ -44,7 +44,11 @@ import threading
 import datetime
 import defusedxml.ElementTree as ET
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
-    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, burp_xml_parser
+    arachni_xml_parser,\
+    netsparker_xml_parser,\
+    webinspect_xml_parser,\
+    burp_xml_parser, \
+    acunetix_xml_parser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import json
@@ -62,6 +66,7 @@ from tools.models import nikto_result_db
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from scanners.scanner_parser.compliance_parser import inspec_json_parser
 from compliance.models import inspec_scan_db, inspec_scan_results_db
+from scanners.scanner_parser.network_scanner import Nessus_Parser, OpenVas_Parser
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -445,9 +450,12 @@ class UpladScanResult(APIView):
                                      rescan='No')
             scan_dump.save()
             root_xml = ET.fromstring(file)
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
+
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
-                                      root=root_xml)
+                                      root=root_xml_en)
             return Response({"message": "ZAP Scan Data Uploaded",
                              "scanner": scanner,
                              "project_id": project_id,
@@ -487,6 +495,28 @@ class UpladScanResult(APIView):
             arachni_xml_parser.xml_parser(project_id=project_id,
                                           scan_id=scan_id,
                                           root=root_xml)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == "acunetix":
+            date_time = datetime.datetime.now()
+            scan_dump = acunetix_scan_db(
+                url=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            root_xml = ET.fromstring(file)
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
+            acunetix_xml_parser.xml_parser(project_id=project_id,
+                                           scan_id=scan_id,
+                                           root=root_xml_en)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
@@ -625,6 +655,49 @@ class UpladScanResult(APIView):
             inspec_json_parser.inspec_report_json(project_id=project_id,
                                                   scan_id=scan_id,
                                                   data=data)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'nessus':
+            date_time = datetime.datetime.now()
+            scan_dump = nessus_scan_db(
+                scan_ip=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            root_xml = ET.fromstring(file)
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
+            Nessus_Parser.nessus_parser(root=root_xml_en,
+                                        scan_id=scan_id,
+                                        project_id=project_id,
+                                        )
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'openvas':
+            date_time = datetime.datetime.now()
+            scan_dump = scan_save_db(scan_ip=scan_url,
+                                     scan_id=scan_id,
+                                     date_time=date_time,
+                                     project_id=project_id,
+                                     scan_status=scan_status)
+            scan_dump.save()
+            root_xml = ET.fromstring(file)
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
+            OpenVas_Parser.xml_parser(project_id=project_id,
+                                      scan_id=scan_id,
+                                      root=root_xml_en)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
