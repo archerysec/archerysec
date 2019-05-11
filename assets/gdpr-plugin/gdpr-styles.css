@@ -1,0 +1,21 @@
+.gdpr-block {
+    padding: 10px 0;
+    font-size: 14px;
+    display: block;
+    text-align: center;
+}
+.gdpr-block.covert {
+	display: none;
+}
+.gdpr-block label input {
+    width: 15px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.gdpr-block label {
+    color: #a7a7a7;
+    vertical-align: middle;
+    user-select: none;
+    margin-bottom: 0;
+    display: inline;
+}
