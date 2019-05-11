@@ -190,7 +190,8 @@ figure[mbr-media-size] {
 
 .card-img {
   text-align: center;
-  flex-shrink: 0; }
+  flex-shrink: 0;
+  -webkit-flex-shrink: 0; }
 
 .media {
   max-width: 100%;
@@ -414,6 +415,59 @@ nav .mbr-section-btn {
     display: -webkit-flex; }
   .menu .navbar-toggleable-sm .navbar-collapse {
     display: -webkit-flex !important; } }
+@media (max-width: 767px) {
+  .menu .navbar-collapse {
+    overflow-y: auto;
+    max-height: 80vh; }
+  .menu .dropdown-menu {
+    max-height: 60vh;
+    overflow-y: auto; } }
+
+.navbar {
+  display: -webkit-flex;
+  -webkit-flex-wrap: wrap;
+  -webkit-align-items: center;
+  -webkit-justify-content: space-between; }
+
+.navbar-collapse {
+  -webkit-flex-basis: 100%;
+  -webkit-flex-grow: 1;
+  -webkit-align-items: center; }
+
+.nav-dropdown .link {
+  padding: .667em 1.667em !important;
+  margin: 0 !important; }
+
+.nav {
+  display: -webkit-flex;
+  -webkit-flex-wrap: wrap; }
+
+.row {
+  display: -webkit-flex;
+  -webkit-flex-wrap: wrap; }
+
+.justify-content-center {
+  -webkit-justify-content: center; }
+
+.form-inline {
+  display: -webkit-flex;
+  -webkit-flex-flow: row wrap;
+  -webkit-align-items: center; }
+
+.card-wrapper {
+  -webkit-flex: 1; }
+
+.carousel-control {
+  z-index: 10;
+  display: -webkit-flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center; }
+
+.carousel-controls {
+  display: -webkit-flex; }
+
+.media {
+  display: -webkit-flex; }
 
 /*# sourceMappingURL=style.css.map */
 .engine {
