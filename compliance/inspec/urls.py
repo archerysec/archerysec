@@ -17,6 +17,8 @@
 from django.conf.urls import url
 from compliance.inspec import views
 
+app_name = 'inspec'
+
 urlpatterns = [
     # Bandit scan list
 

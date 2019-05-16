@@ -60,7 +60,7 @@ def create(request):
 
         return HttpResponseRedirect("/")
 
-    return render(request, 'project_create.html')
+    return render(request, 'dashboard/project.html')
 
 
 def projects(request):
@@ -145,58 +145,10 @@ def projects(request):
         pentest_dat.delete()
 
         messages.success(request, "Deleted Project")
+
         return HttpResponseRedirect("/")
 
-    return render(request, 'projects.html', {'all_projects': all_projects})
-
-
-def projects_view(request):
-    if request.method == 'GET':
-        project_id = request.GET['proj_id']
-
-    else:
-        project_id = ''
-
-    print("pROJECT ID "), project_id
-
-    if request.POST.get("scan_id", ):
-        project_id = request.GET['proj_id']
-        scan_ids = request.POST.get("scan_id", )
-
-        del_scans = project_scan_db.objects.filter(id=scan_ids)
-        del_scans.delete()
-
-        messages.success(request, "Deleted scan")
-        return HttpResponseRedirect("/projects/projects_view/?proj_id=%s" % project_id)
-
-    if request.POST.get("project_status", ):
-        project_status = request.POST.get("project_status", )
-        project_id = request.POST.get("project_id", )
-
-        project_db.objects.filter(project_id=project_id).update(project_status=project_status)
-
-    project_dat = project_db.objects.filter(project_id=project_id)
-    burp = burp_scan_db.objects.filter(project_id=project_id)
-    zap = zap_scans_db.objects.filter(project_id=project_id)
-    arachni = arachni_scan_db.objects.filter(project_id=project_id)
-    webinspect = webinspect_scan_db.objects.filter(project_id=project_id)
-    netsparker = netsparker_scan_db.objects.filter(project_id=project_id)
-    acunetix = acunetix_scan_db.objects.filter(project_id=project_id)
-
-    dependency_check = dependencycheck_scan_db.objects.filter(project_id=project_id)
-    findbugs = findbugs_scan_db.objects.filter(project_id=project_id)
-
-    scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
-    static_scan = chain(dependency_check, findbugs)
-    network_dat = scan_save_db.objects.filter(project_id=project_id)
-
-    return render(request, 'project_view.html',
-                  {'project_dat': project_dat,
-                   'scan_dat': scan_dat,
-                   'project_id': project_id,
-                   'network_dat': network_dat,
-                   'static_scan': static_scan
-                   })
+    return render(request, 'dashboard/project.html', {'all_projects': all_projects})
 
 
 def project_edit(request):
@@ -232,26 +184,3 @@ def project_edit(request):
                   'project_edit.html',
                   {'project_dat': project_dat}
                   )
-
-
-def add_scan_v(request):
-    if request.method == 'GET':
-        project_id = request.GET['proj_id']
-
-    else:
-        project_id = ''
-
-    return render(request, 'add_scan.html', {'project_id': project_id})
-
-
-def add_scan(request):
-    if request.method == 'POST':
-        scan_type = request.POST.get("scan_type", )
-        project_id = request.POST.get("project_id", )
-        scan_target = request.POST.get("scan_target", )
-        save_scan = project_scan_db(scan_type=scan_type, project_url=scan_target, project_id=project_id)
-        save_scan.save()
-        messages.success(request, "Scan Added")
-        return HttpResponseRedirect("/")
-
-    return render(request, 'project_view.html')

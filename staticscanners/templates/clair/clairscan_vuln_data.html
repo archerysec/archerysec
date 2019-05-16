@@ -52,7 +52,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="/clair/clair_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
+                                            <a href="{% url 'clair:clair_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
                                         </td>
                                         <td>{{data.FeatureName}}</td>
                                         <td>{{data.FeatureVersion}}</span></td>
@@ -61,7 +61,7 @@
                                         <td><a href="#" target="_blank">{{data.Link}}</a>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'clair:clair_vuln_data' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="Yes">
                                                 <input type="hidden" name="status" value="Open">
@@ -73,7 +73,7 @@
                                         <td>{{data.vuln_status}}</td>
                                         <td>
                                             <div>
-                                                <form action="/clair/clair_del_vuln" method="POST"
+                                                <form action="{% url 'clair:clair_del_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -83,7 +83,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'clair:clair_vuln_data' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Closed">
@@ -138,13 +138,13 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="/clair/clair_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">
+                                            <a href="{% url 'clair:clair_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">
                                                 {{data.Name}}</a>
                                         </td>
                                         <td>{{data.FeatureName}}</td>
                                         <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                                         <td>
-                                            <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'clair:clair_vuln_data' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Open">
@@ -155,7 +155,7 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <form action="/clair/clair_del_vuln" method="POST"
+                                                <form action="{% url 'clair:clair_del_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -212,14 +212,14 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="/clair/clair_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
+                                            <a href="{% url 'clair:clair_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
                                         </td>
                                         <td>{{data.FeatureName}}</td>
                                         <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                                         <td>{{data.vuln_status}}</td>
                                         <td>
                                             <div>
-                                                <form action="/clair/clair_del_vuln" method="POST"
+                                                <form action="{% url 'clair:clair_del_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -229,7 +229,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/clair/clair_vuln_data/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'clair:clair_vuln_data' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Open">
@@ -268,7 +268,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/clair/clair_del_vuln',
+                url:'{% url 'clair:clair_del_vuln' %}',
                 data:{
                    del_vuln: json_scanid,
                    scan_id: $('input[name=scan_id]').val(),

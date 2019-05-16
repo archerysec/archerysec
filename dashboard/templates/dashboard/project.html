@@ -108,40 +108,40 @@
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td><a href="/burpscanner/burp_scan_list">Burp Scan</a></td>
+                                            <td><a href="{% url 'burpscanner:burp_scan_list' %}">Burp Scan</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_burp_high.high_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_burp_medium.medium_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_burp_low.low_vul__sum}}</span></td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <a href="/acunetixscanner/acunetix_scan_list/">Acunetix</a>
+                                                <a href="{% url 'acunetixscanner:acunetix_scan_list' %}">Acunetix</a>
                                             </td>
                                             <td><span class="badge badge-pill badge-danger">{{all_acunetix_high.high_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_acunetix_medium.medium_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_acunetix_low.low_vul__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/arachniscanner/arachni_scan_list">Arachni</a>
+                                            <td><a href="{% url 'arachniscanner:arachni_scan_list' %}">Arachni</a>
                                             </td>
                                             <td><span class="badge badge-pill badge-danger">{{all_arachni_high.high_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_arachni_medium.medium_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_arachni_low.low_vul__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/zapscanner/zap_scan_list/">OWASP ZAP</a></td>
+                                            <td><a href="{% url 'zapscanner:zap_scan_list' %}">OWASP ZAP</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_zap_high.high_vul__sum}}</td>
                                             <td><span class="badge badge-pill badge-warning">{{all_zap_medium.medium_vul__sum}}</td>
                                             <td><span class="badge badge-pill badge-info">{{all_zap_low.low_vul__sum}}</td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/networkscanners/nessus_scan">Nessus</a></td>
+                                            <td><a href="{% url 'networkscanners:nessus_scan' %}">Nessus</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_nessus_high.high_total__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_nessus_medium.medium_total__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_nessus_low.low_total__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/dependencycheck/dependencycheck_list">Dependency
+                                            <td><a href="{% url 'dependencycheck:dependencycheck_list' %}">Dependency
                                                 Check</a>
                                             </td>
                                             <td><span class="badge badge-pill badge-danger">{{all_dependency_high.SEVERITY_HIGH__sum}}</span></td>
@@ -149,32 +149,32 @@
                                             <td><span class="badge badge-pill badge-info">{{all_dependency_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/networkscanners/">OpenVAS</a></td>
+                                            <td><a href="{% url 'networkscanners:index' %}">OpenVAS</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_openvas_high.high_total__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_openvas_medium.medium_total__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_openvas_low.low_total__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/webinspectscanner/webinspect_scan_list/">Webinspect</a>
+                                            <td><a href="{% url 'webinspectscanner:webinspect_scan_list' %}">Webinspect</a>
                                             </td>
                                             <td><span class="badge badge-pill badge-danger">{{all_webinspect_high.high_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_webinspect_medium.medium_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_webinspect_low.low_vul__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/clair/clair_list">Clair</a></td>
+                                            <td><a href="{% url 'clair:clair_list' %}">Clair</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_clair_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_clair_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_clair_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/findbugs/findbugs_list">FindBugs</a></td>
+                                            <td><a href="{% url 'findbugs:findbugs_list' %}">FindBugs</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_findbugs_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_findbugs_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_findbugs_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
                                         <tr>
-                                            <td><a href="/banditscanner/banditscans_list">Bandit</a></td>
+                                            <td><a href="{% url 'banditscanner:banditscans_list' %}">Bandit</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_bandit_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_bandit_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_bandit_low.SEVERITY_LOW__sum}}</span></td>
@@ -234,7 +234,7 @@
                                         <tbody>{% for data in pentest %}
                                         <tr data-target="#">
                                             <td width="20%"><a
-                                                    href="/manual_scan/vuln_list/?scan_id={{data.scan_id}}&project_id={{data.project_id}}">{{data.scan_url}}</a>
+                                                    href="{% url 'manual_scan:vuln_list' %}?scan_id={{data.scan_id}}&project_id={{data.project_id}}">{{data.scan_url}}</a>
                                             </td>
                                             <td width="20%">
                                             {{data.pentest_type}}
@@ -291,7 +291,7 @@
                                         <tbody>{% for data in zap %}
                                         <tr data-target="#">
                                             <td width="20%"><a
-                                                    href="/zapscanner/zap_list_vuln/?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
+                                                    href="{% url 'zapscanner:zap_list_vuln' %}?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -321,7 +321,7 @@
                                         {% for data in burp %}
                                         <tr data-target="#">
                                             <td width="20%"><a
-                                                    href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                                    href="{% url 'burpscanner:burp_vuln_list' %}?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -352,7 +352,7 @@
                                        {% for data in arachni %}
                                         <tr data-target="#">
                                             <td width="20%"><a
-                                                    href="/arachniscanner/arachni_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                                    href="{% url 'arachniscanner:arachni_list_vuln' %}?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -383,7 +383,7 @@
                                         {% for data in webinspect %}
                                         <tr data-target="#">
                                             <td width="20%"><a
-                                                    href="/webinspectscanner/webinspect_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                                    href="{% url 'webinspectscanner:webinspect_list_vuln' %}?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -414,7 +414,7 @@
                                         {% for data in netsparker %}
                                         <tr data-target="#">
                                             <td width="20%"><a
-                                                    href="/netsparkerscanner/netsparker_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                                    href="{% url 'netsparkerscanner:netsparker_list_vuln' %}?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -445,7 +445,7 @@
                                         {% for data in acunetix %}
                                         <tr data-target="#">
                                             <td width="20%"><a
-                                                    href="/acunetixscanner/acunetix_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                                    href="{% url 'acunetixscanner:acunetix_list_vuln' %}?scan_id={{data.scan_id}}">{{data.url}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -512,7 +512,7 @@
                                         <tbody>{% for data in dependency_check %}
                                         <tr data-target="#">
                                             <td width="20%">
-                                                <a href="/dependencycheck/dependencycheck_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                                <a href="{% url 'dependencycheck:dependencycheck_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -542,7 +542,7 @@
                                         {% for data in findbugs %}
                                         <tr data-target="#">
                                             <td width="20%">
-                                                <a href="/findbugs/findbugs_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                                <a href="{% url 'findbugs:findbugs_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -573,7 +573,7 @@
                                         {% for data in clair %}
                                         <tr data-target="#">
                                             <td width="20%">
-                                                <a href="/clair/clair_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                                <a href="{% url 'clair:clair_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -604,7 +604,7 @@
                                         {% for data in bandit %}
                                         <tr data-target="#">
                                             <td width="20%">
-                                                <a href="/banditscanner/banditscan_list_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                                <a href="{% url 'banditscanner:banditscan_list_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -672,7 +672,7 @@
                                         <tr data-target="#">
 
                                             <td width="20%"><a
-                                                    href="/networkscanners/vul_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                                                    href="{% url 'networkscanners:vul_details' %}?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -702,7 +702,7 @@
                                         <tr data-target="#">
 
                                             <td width="20%"><a
-                                                    href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                                                    href="{% url 'networkscanners:nessus_vuln_details' %}?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>
@@ -773,7 +773,7 @@
                                                 </form>
                                             </td>
                                             <td>
-                                                <a href="/inspec/inspec_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                                <a href="{% url 'inspec:inspec_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td width="20%">
                                             <div>

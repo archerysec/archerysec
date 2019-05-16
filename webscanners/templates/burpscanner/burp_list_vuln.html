@@ -26,7 +26,7 @@
                                     <tbody>{% for data in burp_all_vul %}
                                     <tr data-target="#">
                                         <td>
-                                            <a href="/burpscanner/burp_vuln_out/?scan_id={{data.scan_id}}&scan_name={{data.name}}">{{data.name}}</a>
+                                            <a href="{% url 'burpscanner:burp_vuln_out' %}?scan_id={{data.scan_id}}&scan_name={{data.name}}">{{data.name}}</a>
                                         </td>
                                         <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
                                         </td>

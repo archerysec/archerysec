@@ -592,7 +592,7 @@ def burp_scan_launch(request):
             except Exception as e:
                 print(e)
 
-    return render(request, 'scan_list.html')
+    return render(request, 'burpscanner/burp_scan_list.html')
 
 
 def xml_upload(request):

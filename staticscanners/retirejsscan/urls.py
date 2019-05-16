@@ -17,6 +17,9 @@
 from django.conf.urls import url
 from staticscanners.retirejsscan import views
 
+
+app_name = 'retirejsscan'
+
 urlpatterns = [
     # retirejs scan list
     url(r'^retirejsscans_list',

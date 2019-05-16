@@ -2,8 +2,6 @@ django-notifications-hq==1.5.0
 asn1crypto==0.23.0
 astroid
 backports.functools-lru-cache==1.5
-cairocffi
-CairoSVG==1.0.22
 certifi==2019.3.9
 cffi==1.11.2
 chardet==3.0.4
@@ -79,3 +77,4 @@ wrapt==1.10.11
 xhtml2pdf==0.2.3
 beautifulsoup4==4.7.1
 django-import-export==1.2.0
+django-s3-storage==0.12.4

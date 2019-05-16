@@ -44,7 +44,7 @@
                                                                    value="{{ jira_password }}">
                                                         </div>
                                                     </div>
-                                                    <a class="btn btn-primary" href="/jira/jira_setting/"
+                                                    <a class="btn btn-primary" href="{% url 'jiraticketing:jira_setting' %}"
                                                        role="button">Edit</a>
                                                 </form>
 
@@ -96,7 +96,7 @@
                                                                    value="{{ zap_port }}" placeholder="ZAP API Endpoint Port">
                                                         </div>
                                                     </div>
-                                                    <a class="btn btn-primary" href="/zapscanner/zap_settings/"
+                                                    <a class="btn btn-primary" href="{% url 'zapscanner:zap_settings' %}"
                                                        role="button">Edit</a>
                                                 </form>
                                             </div>
@@ -147,7 +147,7 @@
                                                                    value="{{ burp_port }}" placeholder="Enter Burp API Port">
                                                         </div>
                                                     </div>
-                                                    <a class="btn btn-primary" href="/burpscanner/burp_setting/"
+                                                    <a class="btn btn-primary" href="{% url 'burpscanner:burp_setting' %}"
                                                        role="button">Edit</a>
                                                 </form>
 
@@ -190,7 +190,7 @@
                                                                    value="{{ arachni_ports }}" placeholder="Enter Arachni API Endpoint Port">
                                                         </div>
                                                     </div>
-                                                    <a class="btn btn-primary" href="/arachniscanner/arachni_settings/"
+                                                    <a class="btn btn-primary" href="{% url 'arachniscanner:arachni_settings' %}"
                                                        role="button">Edit</a>
                                                 </form>
 
@@ -260,7 +260,7 @@
                                                                    value="{{ lod_ov_enabled }}">
                                                         </div>
                                                     </div>
-                                                    <a class="btn btn-primary" href="/networkscanners/openvas_setting"
+                                                    <a class="btn btn-primary" href="{% url 'networkscanners:openvas_setting' %}"
                                                        role="button">Edit</a>
                                                 </form>
 
@@ -323,7 +323,7 @@
                                                                    value="{{ nv_timing }}">
                                                         </div>
                                                     </div>
-                                                    <a class="btn btn-primary" href="/networkscanners/nv_setting"
+                                                    <a class="btn btn-primary" href="{% url 'networkscanners:nv_setting' %}"
                                                        role="button">Edit</a>
                                                 </form>
                                             </div>
@@ -374,7 +374,7 @@
                                                                    value="{% for data in all_email %}{{ data.recipient_list }}{% endfor %}" PLACEHOLDER="Enter Email ID">
                                                         </div>
                                                     </div>
-                                                    <a class="btn btn-primary" href="/webscanners/email_setting"
+                                                    <a class="btn btn-primary" href="{% url 'webscanners:email_setting' %}"
                                                        role="button">Edit</a>
                                                 </form>
                                             </div>

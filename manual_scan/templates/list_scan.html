@@ -13,7 +13,7 @@
                             <!--<a href="/webscanners/xml_upload" class="btn btn-primary btn-mini"><i-->
                             <!--class="icon-upload-alt"></i> Upload XML</a>-->
                             <!--</div>-->
-                            <div class="btn-group"><a href="/manual_scan/add_list_scan/"
+                            <div class="btn-group"><a href="{% url 'manual_scan:add_list_scan' %}"
                                                       class="btn btn-primary btn-mini"><i
                                     class="icon-plus icon-white"></i> Add</a>
                             </div>
@@ -58,7 +58,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="/manual_scan/vuln_list/?scan_id={{data.scan_id}}&project_id={{data.project_id}}">{{data.scan_url}}</a>
+                                            <a href="{% url 'manual_scan:vuln_list' %}?scan_id={{data.scan_id}}&project_id={{data.project_id}}">{{data.scan_url}}</a>
                                         </td>
                                         <td>{{data.date_time}}</td>
                                         <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
@@ -103,7 +103,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/manual_scan/del_scan/',
+                url:'{% url 'manual_scan:del_scan' %}',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()

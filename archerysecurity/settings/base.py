@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'archerysettings',
     'networkscanners',
     'staticscanners',
-    'osintscan',
     'jiraticketing',
     'tools',
     'manual_scan',

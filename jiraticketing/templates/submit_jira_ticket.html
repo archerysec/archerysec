@@ -17,7 +17,7 @@
                         <h5>JIRA Ticket</h5>
                     </div>
                     <div class="widgext-content nopadding">
-                        <form action="/jira/submit_jira_ticket/" method="POST" class="form-horizontal">
+                        <form action="{% url 'jira:submit_jira_ticket' %}" method="POST" class="form-horizontal">
                             {% csrf_token %}
                             <input name="vuln_id" value="{{vuln_id}}" type="hidden">
                             <input name="scanner" value="{{scanner}}" type="hidden">

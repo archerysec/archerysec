@@ -17,6 +17,8 @@
 from django.conf.urls import url
 from staticscanners.findbugs import views
 
+app_name = 'findbugs'
+
 urlpatterns = [
     # Bandit scan list
 

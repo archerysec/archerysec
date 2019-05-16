@@ -21,7 +21,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/clair/del_clair',
+                url:'{% url 'clair:del_clair' %}',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -47,7 +47,7 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/staticscanners/report_import/" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'staticscanners:report_import' %}" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i> Upload XML</a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
@@ -55,7 +55,7 @@
                         <br>
                         <br>
                         <div class="float-right">
-                            <form action="/clair/export/" method="post"
+                            <form action="{% url 'clair:export' %}" method="post"
                                   class="forms-sample">
                                 {% csrf_token %}
                                 <div class="form-row align-items-center">
@@ -117,7 +117,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="/clair/clair_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                            <a href="{% url 'clair:clair_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                         </td>
                                         <td width="20%">
                                             <div>
@@ -141,7 +141,7 @@
                                         <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span>
                                         </td>
                                         <td>
-                                            <form action="/clair/del_clair" method="post"
+                                            <form action="{% url 'clair:del_clair' %}" method="post"
                                                   class="forms-sample">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>

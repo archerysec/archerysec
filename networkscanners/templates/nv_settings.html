@@ -1,4 +1,3 @@
-
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
@@ -17,7 +16,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="card">
-                                        <form id="nv" method="POST" action="/networkscanners/nv_details/">{% csrf_token %}
+                                        <form id="nv" method="POST" action="{% url 'networkscanners:nv_details' %}">{% csrf_token %}
                         <div class="form-group row">
                             <span class="icon"> <i class="icon-align-justify"></i></span>
                             <label class="col-sm-4 col-form-label">NMAP Vulners Settings Enable</label>

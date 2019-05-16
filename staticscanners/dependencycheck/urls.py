@@ -17,6 +17,8 @@
 from django.conf.urls import url
 from staticscanners.dependencycheck import views
 
+app_name = 'dependencycheck'
+
 urlpatterns = [
     # Bandit scan list
     url(r'^dependencycheck_list',

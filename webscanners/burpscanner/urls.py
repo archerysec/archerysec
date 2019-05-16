@@ -17,11 +17,13 @@
 from django.conf.urls import url
 from webscanners.burpscanner import views
 
+app_name = 'burpscanner'
+
 urlpatterns = [
     # Burp scans
     url(r'^burp_launch_scan',
         views.burp_scan_launch,
-        name='burp_scan_launch'),
+        name='burp_launch_scan'),
 
     url(r'^burp_scan_list',
         views.burp_scan_list,
@@ -46,10 +48,6 @@ urlpatterns = [
     url(r'^del_burp_vuln',
         views.del_burp_vuln,
         name='del_burp_vuln'),
-
-    url(r'^edit_burp_vuln',
-        views.edit_burp_vuln,
-        name='edit_burp_vuln'),
 
     url(r'^export',
         views.export,

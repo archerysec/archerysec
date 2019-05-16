@@ -25,7 +25,7 @@
                                     <tbody>{% for data in acunetix_all_vul %}
                                     <tr data-target="#">
                                         <td>
-                                            <a href="/acunetixscanner/acunetix_vuln_out/?scan_id={{data.scan_id}}&scan_name={{data.VulnName}}">{{data.VulnName}}</a>
+                                            <a href="{% url 'acunetixscanner:acunetix_vuln_out' %}?scan_id={{data.scan_id}}&scan_name={{data.VulnName}}">{{data.VulnName}}</a>
                                         </td>
                                         <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
                                         </td>
