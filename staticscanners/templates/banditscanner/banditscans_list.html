@@ -21,7 +21,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/banditscanner/del_bandit_scan',
+                url:'{% url 'banditscanner:del_bandit_scan' %}',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -44,35 +44,13 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/staticscanners/report_import/" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'staticscanners:report_import' %}" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i> Upload XML</a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
                         <br>
                         <br>
-                        <!--<div class="float-right">-->
-                            <!--<form action="/dependencycheck/export/" method="post"-->
-                                  <!--class="forms-sample">-->
-                                <!--{% csrf_token %}-->
-                                <!--<div class="form-row align-items-center">-->
-                                    <!--<div class="col-auto my-1">-->
-                                        <!--<select name="type" class="custom-select mr-sm-2" id="inlineFormCustomSelect">-->
-                                            <!--<option value="csv" selected>CSV</option>-->
-                                            <!--<option value="json">JSON</option>-->
-                                            <!--<option value="yaml">YAML</option>-->
-                                        <!--</select>-->
-                                    <!--</div>-->
-                                    <!--<div class="col-auto my-1">-->
-                                        <!--<input type="hidden" name="scan_id"-->
-                                               <!--value="{% for data in all_dependencycheck_scan %}{{data.scan_id}}{% endfor %}"/>-->
-                                        <!--<button type="submit" class="btn btn-primary"><i-->
-                                                <!--class="fas fa-arrow-alt-circle-down"></i></button>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</form>-->
-
-                        <!--</div>-->
                         <br>
                         <div class="d-md-flex align-items-center">
                             <h1 class="card-title">Bandit Scan List</h1>
@@ -112,7 +90,7 @@
                                             </form>
                                         </td>
                                 <td>
-                                    <a href="/banditscanner/banditscan_list_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                    <a href="{% url 'banditscanner:banditscan_list_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                 </td>
                                 <td width="20%">
                                             <div>
@@ -133,7 +111,7 @@
                                 <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span></td>
                                 <td><span class="badge badge-pill badge-danger">{{data.total_dup}}</span></td>
                                 <td>
-                                    <form action="/banditscanner/del_bandit_scan" method="post" class="forms-sample">
+                                    <form action="{% url 'banditscanner:del_bandit_scan' %}" method="post" class="forms-sample">
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
                                         <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->

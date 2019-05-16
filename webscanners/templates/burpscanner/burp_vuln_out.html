@@ -19,7 +19,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/burpscanner/del_burp_vuln/',
+                url:'{% url 'burpscanner:del_burp_vuln' %}',
                 data:{
                    del_vuln: json_scanid,
                    scan_id: $('input[name=scan_id]').val(),
@@ -83,7 +83,7 @@
                                                 </label>
                                             </form>
                                         </td>
-                                        <td><a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        <td><a href="{% url 'burpscanner:burp_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                         </td>
                                         <td>{{data.request_response_url}}</td>
                                         <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
@@ -91,7 +91,7 @@
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/burpscanner/burp_vuln_out/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'burpscanner:burp_vuln_out' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="Yes">
                                                 <input type="hidden" name="status" value="Open">
@@ -102,7 +102,7 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <form action="/burpscanner/del_burp_vuln/" method="POST"
+                                                <form action="{% url 'burpscanner:del_burp_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -112,7 +112,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/burpscanner/burp_vuln_out/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'burpscanner:burp_vuln_out' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Closed">
@@ -167,7 +167,7 @@
                                                 </label>
                                             </form>
                                         </td>
-                                        <td><a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        <td><a href="{% url 'burpscanner:burp_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                         </td>
                                         <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
                                         </td>
@@ -183,7 +183,7 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <form action="/burpscanner/del_vuln/" method="POST"
+                                                <form action="{% url 'burpscanner:del_burp_scan' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -236,14 +236,14 @@
                                                 </label>
                                             </form>
                                         </td>
-                                        <td><a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        <td><a href="{% url 'burpscanner:burp_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                         </td>
                                         <!--<td>{{data.host}}{{data.location}}</td>-->
                                         <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
                                         </td>
                                         <td>
                                             <div>
-                                                <form action="/burpscanner/del_vuln/" method="POST"
+                                                <form action="{% url 'burpscanner:del_burp_scan' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -253,7 +253,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/burpscanner/burp_vuln_out/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'burpscanner:burp_vuln_out' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Open">

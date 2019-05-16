@@ -17,7 +17,7 @@
                                 <div class="col-md-12">
                                     <div class="card">
                                         <form class="form-horizontal" method="POST"
-                                              action="/arachniscanner/arachni_setting_update/">{% csrf_token %}
+                                              action="{% url 'arachniscanner:arachni_setting_update' %}">{% csrf_token %}
                                             <div class="card-body">
                                                 <form>
                                                     <div class="form-group row">

@@ -14,7 +14,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'POST',
             <!--contentType: 'application/json; charset=utf-8',-->
-            url: '/webscanners/del_web_scan_schedule/',
+            url: '{% url 'webscanners:del_web_scan_schedule' %}',
             data: {
                 task_id: json_scanid,
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
@@ -47,7 +47,7 @@ $(document).ready(function() {
         <hr>
         <div class="row-fluid">
             <div class="span12">
-                <form class="form-horizontal" method="POST" action="/webscanners/web_scan_schedule">
+                <form class="form-horizontal" method="POST" action="{% url 'webscanners:web_scan_schedule' %}">
                     {% csrf_token %}
                     <div class="widget-box">
                         <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
@@ -176,7 +176,7 @@ $(document).ready(function() {
                                 </td>
                                 <td>{{data.periodic_task}}</td>
                                 <td>
-                                    <form action="/webscanners/del_web_scan_schedule/" method="post"
+                                    <form action="{% url 'webscanners:del_web_scan_schedule' %}" method="post"
                                           class="forms-sample">
 
                                         {% csrf_token %}

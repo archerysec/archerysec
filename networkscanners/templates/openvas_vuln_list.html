@@ -1,5 +1,3 @@
-
-
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
@@ -21,7 +19,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/networkscanners/del_vuln/',
+                url:'{% url 'networkscanners:del_vuln' %}',
                 data:{
                    del_vuln: json_scanid,
                    scan_id: $('input[name=scan_id]').val(),
@@ -84,7 +82,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="/networkscanners/vuln_check/?vuln_id={{data.vul_id}}">{{data.name}}</a>
+                                            <a href="{% url 'networkscanners:vuln_check' %}?vuln_id={{data.vul_id}}">{{data.name}}</a>
                                         </td>
                                         <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.threat}}</span></td>
 
@@ -93,7 +91,7 @@
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/networkscanners/vul_details/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'networkscanners:vul_details' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                                 <input type="hidden" name="scan_id" value="{{scan_id}}">
                                                 <input type="hidden" name="false" value="Yes">
@@ -106,7 +104,7 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <form action="/networkscanners/del_vuln/" method="POST"
+                                                <form action="{% url 'networkscanners:del_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vul_id}}">
@@ -116,7 +114,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/networkscanners/vul_details/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'networkscanners:vul_details' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                                 <input type="hidden" name="scan_id" value="{{scan_id}}">
                                                 <input type="hidden" name="false" value="No">
@@ -170,14 +168,14 @@
                                                 <!--<button type="button" >Get Values</button>-->
                                             </form>
                                         </td>
-                                        <td width="40%"><a href="/networkscanners/vuln_check/?vuln_id={{data.vul_id}}">{{data.name}}</a>
+                                        <td width="40%"><a href="{% url 'networkscanners:vuln_check' %}?vuln_id={{data.vul_id}}">{{data.name}}</a>
                                         </td>
                                         <td>{{data.threat}}</td>
                                         <td>{{data.severity}}</td>
                                         <td>{{data.host}}</td>
                                         <td>{{data.port}}</td>
                                         <td>
-                                            <form method="POST" action="/networkscanners/vul_details/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'networkscanners:vul_details' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                                 <input type="hidden" name="scan_id" value="{{scan_id}}">
                                                 <input type="hidden" name="false" value="No">
@@ -188,7 +186,7 @@
 
                                         <td>
                                             <div>
-                                                <form action="/networkscanners/del_vuln/" method="POST"
+                                                <form action="{% url 'networkscanners:del_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vul_id}}">
@@ -246,14 +244,14 @@
                                         <!--<button type="button" >Get Values</button>-->
                                     </form>
                                 </td>
-                                <td><a href="/networkscanners/vuln_check/?vuln_id={{data.vul_id}}">{{data.name}}</a>
+                                <td><a href="{% url 'networkscanners:vuln_check' %}?vuln_id={{data.vul_id}}">{{data.name}}</a>
                                 </td>
                                 <td>{{data.threat}}</td>
                                 <td>{{data.severity}}</td>
                                 <td>{{data.host}}</td>
                                 <td>{{data.port}}</td>
                                 <td>
-                                    <form method="POST" action="/networkscanners/vul_details/">{% csrf_token %}
+                                    <form method="POST" action="{% url 'networkscanners:vul_details' %}">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                         <input type="hidden" name="scan_id" value="{{scan_id}}">
                                         <input type="hidden" name="false" value="No">
@@ -265,7 +263,7 @@
 
                                 <td>
                                     <div>
-                                        <form action="/networkscanners/del_vuln/" method="POST" class="form-horizontal">
+                                        <form action="{% url 'networkscanners:del_vuln' %}" method="POST" class="form-horizontal">
                                             {% csrf_token %}
                                             <input type="hidden" name="del_vuln" value="{{data.vul_id}}">
                                             <input type="hidden" name="scan_id" value="{{scan_id}}">
@@ -274,7 +272,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/networkscanners/vul_details/">{% csrf_token %}
+                                    <form method="POST" action="{% url 'networkscanners:vul_details' %}">{% csrf_token %}
                                         <input type="hidden" name="vuln_id" value="{{data.vul_id}}">
                                         <input type="hidden" name="scan_id" value="{{scan_id}}">
                                         <input type="hidden" name="false" value="No">

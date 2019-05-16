@@ -16,7 +16,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="card">
-                                        <form class="form-horizontal" method="POST" action="/burpscanner/burp_setting/">
+                                        <form class="form-horizontal" method="POST" action="{% url 'burpscanner:burp_setting' %}">
                                             {% csrf_token %}
                                             <div class="form-group row">
                                                 <label

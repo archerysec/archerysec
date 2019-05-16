@@ -1,8 +1,8 @@
 {% extends 'dashboard/base.html' %}
-
+{% load static %}
 {% block body %}
 
-<script src="/static/matrix-admin-bt4/dist/js/jquery-1.9.1.min.js"></script>
+<script src="{% static 'matrix-admin-bt4/dist/js/jquery-1.9.1.min.js' %}"></script>
 
 <div class="page-wrapper">
     <div class="container-fluid">
@@ -51,7 +51,7 @@
                                             <div class="card-body">
                                                 <div class="controls">
                                                     <input type="submit" class="btn btn-primary" value="Launch">
-                                                    <a href="/webscanners/web_scan_schedule" class="btn btn-success">Scan
+                                                    <a href="{% url 'webscanners:web_scan_schedule' %}" class="btn btn-success">Scan
                                                         Schedule</a>
                                                 </div>
                                                 <div id='status'></div>
@@ -109,11 +109,11 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/webscanners/cookie_add/" target="_blank" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'webscanners:cookie_add' %}" target="_blank" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i> Add Cookies</a>
                             </div>
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/webscanners/cookies_list/" target="_blank" class="btn btn-secondary btn-mini"><i
+                                <a href="{% url 'zapscanner:cookies_list' %}" target="_blank" class="btn btn-secondary btn-mini"><i
                                         class="icon-upload-alt"></i>Cookies List</a>
                             </div>
                         </div>
@@ -146,7 +146,7 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/webscanners/excluded_url_list" target="_blank" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'zapscanner:excluded_url_list' %}" target="_blank" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i>Exclude URL List</a>
                             </div>
                         </div>
@@ -239,7 +239,7 @@
             opt = true;
             $.ajax({
                 type:'POST',
-                url:'/zapscanner/zap_scan/',
+                url:'{% url 'zapscanner:zap_scan' %}',
                 data:{
 
                    url:$('#url').val(),
@@ -260,7 +260,7 @@
            opt = true;
            $.ajax({
                     type:'POST',
-                    url:'/burpscanner/burp_launch_scan/',
+                    url:'{% url 'burpscanner:burp_launch_scan' %}',
                     data:{
 
                        url:$('#url').val(),
@@ -277,7 +277,7 @@
            opt = true;
            $.ajax({
                     type:'POST',
-                    url:'/tools/sslscan/',
+                    url:'{% url 'tools:sslscan' %}',
                     data:{
 
                        scan_url:$('#url').val(),
@@ -293,7 +293,7 @@
            opt = true;
            $.ajax({
                     type:'POST',
-                    url:'/tools/nikto/',
+                    url:'{% url 'tools:nikto' %}',
                     data:{
 
                        scan_url:$('#url').val(),
@@ -309,7 +309,7 @@
            opt = true;
            $.ajax({
                     type:'POST',
-                    url:'/arachniscanner/arachni_scan_launch/',
+                    url:'{% url 'arachniscanner:arachni_scan_launch' %}',
                     data:{
 
                        scan_url:$('#url').val(),
@@ -352,7 +352,7 @@ $(document).on('submit', '#open_login', function(e){
         e.preventDefault();
             $.ajax({
                 type:'POST',
-                url:'/webscanners/sel_login/',
+                url:'{% url 'zapscanner:sel_login' %}',
                 data:{
                    url_login:$('input[name=url_login]').val(),
                    action:$('input[name=action]').val(),
@@ -369,7 +369,7 @@ $(document).on('submit', '#save_cookies', function(e){
         e.preventDefault();
             $.ajax({
                 type:'POST',
-                url:'/webscanners/sel_login/',
+                url:'{% url 'zapscanner:sel_login' %}',
                 data:{
                    url_login:$('input[name=url_login]').val(),
                    action:$('input[name=action2]').val(),
@@ -386,7 +386,7 @@ $(document).on('submit', '#exclude_url', function(e){
         e.preventDefault();
             $.ajax({
                 type:'POST',
-                url:'/webscanners/exclude_url/',
+                url:'{% url 'webscanners:exclude_url' %}',
                 data:{
                    exclude_url:$('input[name=exclude_url]').val(),
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()

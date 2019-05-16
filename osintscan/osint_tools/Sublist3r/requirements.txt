@@ -1,3 +1,0 @@
-argparse==1.4.0
-dnspython
-requests==2.21.0

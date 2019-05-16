@@ -1,9 +1,8 @@
-
 {% extends 'dashboard/base.html' %}
-
+{% load static %}
 {% block body %}
 
-<script src="/static/matrix-admin-bt4/dist/js/jquery-1.9.1.min.js"></script>
+<script src="{% static 'matrix-admin-bt4/dist/js/jquery-1.9.1.min.js' %}"></script>
 
 <div class="page-wrapper">
     <div class="container-fluid">
@@ -51,7 +50,7 @@
                                             <div class="card-body">
                                                 <div class="controls">
                                                     <input type="submit" class="btn btn-primary" value="Launch">
-                                                    <a href="/networkscanners/net_scan_schedule"
+                                                    <a href="{% url 'networkscanners:net_scan_schedule' %}"
                                                        class="btn btn-success">Scan
                                                         Schedule</a>
                                                 </div>
@@ -97,9 +96,6 @@
 
 
 <script type="text/javascript">
-function autoRefresh_div() {
-    $("#result").load("/networkscanners/ip_table/");// a function which will load data from other file after x seconds
-}
 setInterval('autoRefresh_div()', {{ settings.REFRESH_TIMER }}000);
 
 $(document).on('submit', '#start_scan', function(e){
@@ -109,7 +105,7 @@ $(document).on('submit', '#start_scan', function(e){
         opt = true;
         $.ajax({
             type:'POST',
-            url:'/networkscanners/launch_scan/',
+            url:'{% url 'networkscanners:launch_scan' %}',
             data:{
                 ip:$('#ip').val(),
                 project_id:$('#project_id').val(),
@@ -124,7 +120,7 @@ $(document).on('submit', '#start_scan', function(e){
         opt = true;
         $.ajax({
             type:'POST',
-            url:'/tools/nmap/',
+            url:'{% url 'tools:nmap' %}',
             data:{
                 ip:$('#ip').val(),
                 project_id:$('#project_id').val(),
@@ -138,7 +134,7 @@ $(document).on('submit', '#start_scan', function(e){
         opt = true;
         $.ajax({
             type:'POST',
-            url:'/tools/nmap_vulners/',
+            url:'{% url 'tools:nmap_vulners' %}',
             data:{
                 ip:$('#ip').val(),
                 project_id:$('#project_id').val(),

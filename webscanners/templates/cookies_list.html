@@ -39,7 +39,7 @@
                                     {{ data.cookie }}
                                 </td>
                                 <td>
-                                    <form action="/webscanners/cookies_del" method="post" class="forms-sample">
+                                    <form action="{% url 'webscanners:cookies_del' %}" method="post" class="forms-sample">
 
                                         {% csrf_token %}
                                         <input type="hidden" name="url" value="{{data.url}}"/>
@@ -77,7 +77,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/webscanners/cookies_del/',
+                url:'{% url 'webscanners:cookies_del' %}',
                 data:{
                    url: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()

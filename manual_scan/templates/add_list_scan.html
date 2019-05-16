@@ -13,7 +13,7 @@
                         <br>
                         <div class="card">
                             <div class="form-group">
-                                <form class="form-horizontal" method="POST" action="/manual_scan/add_list_scan/">
+                                <form class="form-horizontal" method="POST" action="{% url 'manual_scan:add_list_scan' %}">
                                     {% csrf_token %}
                                     <div class="form-group row">
                                         <label class="col-md-3 m-t-5">Target</label>

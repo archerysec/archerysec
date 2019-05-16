@@ -20,7 +20,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/burpscanner/del_burp_scan/',
+                url:'{% url 'burpscanner:del_burp_scan' %}',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -48,7 +48,7 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/webscanners/xml_upload" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'webscanners:xml_upload' %}" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i> Upload XML</a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
@@ -56,7 +56,7 @@
                         <br>
                         <br>
                         <div class="float-right">
-                            <form action="/burpscanner/export/" method="post"
+                            <form action="{% url 'burpscanner:export' %}" method="post"
                                   class="forms-sample">
                                 {% csrf_token %}
                                 <div class="form-row align-items-center">
@@ -118,7 +118,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="/burpscanner/burp_vuln_list?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                            <a href="{% url 'burpscanner:burp_vuln_list' %}?scan_id={{data.scan_id}}">{{data.url}}</a>
                                         </td>
                                         <td width="20%">
                                             <div>

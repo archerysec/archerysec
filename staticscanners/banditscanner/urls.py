@@ -17,6 +17,8 @@
 from django.conf.urls import url
 from staticscanners.banditscanner import views
 
+app_name = 'banditscanner'
+
 urlpatterns = [
     # Bandit scan list
     url(r'^banditscans_list',

@@ -12,7 +12,7 @@
                     <div class="card-body">
                         <br>
                         <div class="float-right">
-                            <form action="/export/" method="post"
+                            <form action="{% url 'dashboard:export' %}" method="post"
                                   class="forms-sample">
                                 {% csrf_token %}
                                 <div class="form-row align-items-center">
@@ -54,7 +54,7 @@
                                 <tbody>{% for data in zap_all_high %}
                                 <tr>
                                     <td>
-                                        <a href="/zapscanner/zap_vuln_check/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        <a href="{% url 'zapscanner:zap_vuln_check' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.url}}</td>
@@ -66,7 +66,7 @@
                                 {% for data in arachni_all_high %}
                                 <tr data-target="#">
 
-                                    <td><a href="/arachniscanner/arachni_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    <td><a href="{% url 'arachniscanner:arachni_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.url}}</td>
@@ -80,7 +80,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/webinspectscanner/webinspect_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        <a href="{% url 'webinspectscanner:webinspect_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.host}}</td>
@@ -95,7 +95,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/netsparkerscanner/netsparker_vuln_data/?vuln_id={{data.vuln_id}}">{{data.type}}</a>
+                                        <a href="{% url 'netsparkerscanner:netsparker_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.type}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td width="50%">{{data.vuln_url}}</td>
@@ -109,7 +109,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/burpscanner/burp_vuln_data/?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        <a href="{% url 'burpscanner:burp_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.host}}{{data.request_response_url}}</td>
@@ -123,7 +123,7 @@
                                 {% for data in acunetix_all_high %}
                                 <tr data-target="#">
 
-                                    <td><a href="/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
+                                    <td><a href="{% url 'acunetixscanner:acunetix_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.VulnFullUrl}}</td>
@@ -138,7 +138,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/dependencycheck/dependencycheck_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        <a href="{% url 'dependencycheck:dependencycheck_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.fileName}}</td>
@@ -151,7 +151,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/findbugs/findbugs_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        <a href="{% url 'findbugs:findbugs_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.sourcepath}}</td>
@@ -162,7 +162,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/banditscanner/banditscan_vuln_data/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}&test_name={{data.test_name}}">{{data.test_name}}</a>
+                                        <a href="{% url 'banditscanner:banditscan_vuln_data' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}&test_name={{data.test_name}}">{{data.test_name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.filename}}</td>
@@ -173,7 +173,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/clair/clair_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
+                                        <a href="{% url 'clair:clair_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.NamespaceName}}</td>
@@ -186,7 +186,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/banditscanner/banditscan_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.test_name}}</a>
+                                        <a href="{% url 'banditscanner:banditscan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.test_name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.filename}}</td>
@@ -200,7 +200,7 @@
                                 {% for data in nessus_all_high %}
                                 <tr data-target="#">
 
-                                    <td><a href="/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
+                                    <td><a href="{% url 'networkscanners:nessus_vuln_check' %}?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.scan_ip}}</td>
@@ -213,7 +213,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                        <a href="/networkscanners/vuln_check/?vuln_id={{data.vul_id}}">{{data.name}}</a>
+                                        <a href="{% url 'networkscanners:vuln_check' %}?vuln_id={{data.vul_id}}">{{data.name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.host}}</td>
@@ -224,7 +224,7 @@
                                 <tr data-target="#">
 
                                     <td>
-                                       <a href="/manual_scan/vuln_details/?vuln_id={{data.vuln_id}}">{{data.vuln_name}}</a>
+                                       <a href="{% url 'manual_scan:vuln_details' %}?vuln_id={{data.vuln_id}}">{{data.vuln_name}}</a>
                                     </td>
                                     <td>Pentest</td>
                                     <td></td>

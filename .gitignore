@@ -15,3 +15,4 @@ vfeed.db
 venv/*
 .scannerwork
 sonar-project.properties
+.DS_Store

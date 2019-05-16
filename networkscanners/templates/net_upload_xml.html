@@ -1,4 +1,3 @@
-
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
@@ -16,7 +15,7 @@
                         <div class="card">
                             <div class="form-group">
                                 <form class="form-horizontal" method="POST" enctype="multipart/form-data"
-                                      action="/networkscanners/OpenVAS_xml_upload/">{% csrf_token %}
+                                      action="{% url 'networkscanners:OpenVAS_xml_upload' %}">{% csrf_token %}
                                     <div class="card-body">
                                         <h5 class="card-title"></h5>
                                         <div class="form-group row">

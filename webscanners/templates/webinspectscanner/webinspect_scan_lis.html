@@ -20,7 +20,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/webinspectscanner/del_webinspect_scan/',
+                url:'{% url 'webinspectscanner:del_webinspect_scan' %}',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -46,7 +46,7 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/webscanners/xml_upload" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'webscanners:xml_upload' %}" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i> Upload XML</a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
@@ -54,7 +54,7 @@
                         <br>
                         <br>
                         <div class="float-right">
-                            <form action="/webinspectscanner/export/" method="post"
+                            <form action="{% url 'webinspectscanner:export' %}" method="post"
                                   class="forms-sample">
                                 {% csrf_token %}
                                 <div class="form-row align-items-center">
@@ -113,7 +113,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="/webinspectscanner/webinspect_list_vuln?scan_id={{data.scan_id}}">{{data.url}}</a>
+                                            <a href="{% url 'webinspectscanner:webinspect_list_vuln' %}?scan_id={{data.scan_id}}">{{data.url}}</a>
                                         </td>
                                         <td width="20%">
                                             <div>
@@ -134,16 +134,6 @@
                                         <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>
                                         <td><span class="badge badge-pill badge-info">{{data.info_vul}}</span></td>
                                         <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span></td>
-                                        <!--<td>-->
-                                            <!--<form action="/webinspectscanner/del_webinspect_scan/" method="post"-->
-                                                  <!--class="forms-sample">-->
-
-                                                <!--{% csrf_token %}-->
-                                                <!--<input type="hidden" name="scan_id" value="{{data.scan_id}}"/>-->
-                                                <!--<input type="hidden" name="scan_url" value="{{data.url}}"/>-->
-                                                <!--<button class="btn btn-danger"><i class="icon-remove"></i></button>-->
-                                            <!--</form>-->
-                                        <!--</td>-->
                                     </tr>
                                     {% endfor %}
                                     </tbody>
@@ -175,7 +165,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/webinspectscanner/del_webinspect_scan/',
+                url:'{% url 'webinspectscanner:del_webinspect_scan' %}',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()

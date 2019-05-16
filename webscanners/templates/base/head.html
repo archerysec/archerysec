@@ -1,3 +1,4 @@
+{% load static %}
 <header class="topbar" data-navbarbg="skin5">
     <nav class="navbar top-navbar navbar-expand-md navbar-dark">
         <div class="navbar-header" data-logobg="skin5">
@@ -11,11 +12,11 @@
             </style>
             <a class="navbar-brand" href="/">
                 <b class="logo-icon p-l-6">
-                    <img src="/static/logo.png" class="light-logo" style="height: 3.1rem;"/>
+                    <img src="{% static 'logo.png' %}" class="light-logo" style="height: 3.1rem;"/>
 
                 </b>
                 <span class="logo-text">
-                             <img src="/static/archery.png" class="light-logo" style="height: 3.6rem;"/>
+                             <img src="{% static 'archery.png' %}" class="light-logo" style="height: 3.6rem;"/>
 
                         </span>
             </a>
@@ -35,10 +36,10 @@
                         <span class="d-block d-md-none"><i class="fa fa-plus"></i></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/webscanners/">Domain Scans</a>
-                        <a class="dropdown-item" href="/networkscanners/ip_scan">Network Scans</a>
+                        <a class="dropdown-item" href="{% url 'webscanners:index' %}">Domain Scans</a>
+                        <a class="dropdown-item" href="{% url 'networkscanners:ip_scan' %}">Network Scans</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/projects/create_form/">Projects</a>
+                        <a class="dropdown-item" href="{% url 'projects:create' %}">Projects</a>
                     </div>
                 </li>
             </ul>
@@ -47,16 +48,16 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href=""
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img
-                            src="/static/matrix-admin-bt4/assets/images/users/1.jpg" alt="user"
+                            src="{% static 'matrix-admin-bt4/assets/images/users/1.jpg' %}" alt="user"
                             class="rounded-circle" width="31"></a>
                     <div class="dropdown-menu dropdown-menu-right user-dd animated">
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/webscanners/setting/"><i class="ti-settings m-r-5 m-l-5"></i>
+                        <a class="dropdown-item" href="{% url 'webscanners:setting' %}"><i class="ti-settings m-r-5 m-l-5"></i>
                             Setting</a>
                         <a class="dropdown-item" href="/api/docs/"><i class="fas fa-cog m-r-5 m-l-5"></i>
                             API</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/logout/"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+                        <a class="dropdown-item" href="{% url 'webscanners:logout' %}"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
                         <div class="dropdown-divider"></div>
                     </div>
                 </li>
