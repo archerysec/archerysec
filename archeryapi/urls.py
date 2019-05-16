@@ -33,6 +33,8 @@ API_DESCRIPTION = 'Archery is an opensource vulnerability' \
 
 router = routers.DefaultRouter()
 
+app_name = 'archeryapi'
+
 urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION, public=True, )),

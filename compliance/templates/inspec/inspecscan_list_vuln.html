@@ -124,7 +124,7 @@
                                         <tbody>{% for data in inspec_all_audit %}
                                         <tr data-target="#">
                                             <td>
-                                                <a href="/inspec/inspec_details/?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.controls_results_code_desc}}</a>
+                                                <a href="{% url 'inspec:inspec_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.controls_results_code_desc}}</a>
                                             </td>
                                             <td><span
                                                     class="badge badge-pill badge-{{data.vul_col}}">{{data.controls_results_status}}</span>

@@ -82,7 +82,7 @@ a.dropdown-menu-header {
     <ul class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown" aria-labelledby="2">
         <ul class="list-style-none" style="margin:20px;width:410px">
             <li role="presentation">
-            <a href="/webscanners/del_all_notify" class="dropdown-menu-header">Clear All</a>
+            <a href="{% url 'webscanners:del_all_notify' %}" class="dropdown-menu-header">Clear All</a>
         </li>
             {% for data in message %}
             <li>
@@ -97,27 +97,3 @@ a.dropdown-menu-header {
         </ul>
     </ul>
 </li>
-
-
-<!--<li class="nav-item dropdown">-->
-    <!--<a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2" data-toggle="dropdown"-->
-       <!--aria-haspopup="true" aria-expanded="false"> <i class="font-24 mdi mdi-comment-processing"></i>-->
-    <!--</a>-->
-    <!--<div class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown" aria-labelledby="2">-->
-        <!--<ul class="list-style-none">-->
-            <!--<li>-->
-                <!--<ul class="timeline timeline-icons timeline-sm" style="margin:10px;width:410px">-->
-            <!--{% for data in message %}-->
-            <!--<li>-->
-                <!--<div class="alert alert-info alert-block"><a class="close" data-dismiss="alert"-->
-                                                             <!--href="/webscanners/del_notify?notify_id={{data.id}}">×</a>-->
-                    <!--<h8 class="">{{data.verb}}</h8>-->
-                <!--</div>-->
-            <!--</li>-->
-            <!--{% endfor %}-->
-        <!--</ul>-->
-
-            <!--</li>-->
-        <!--</ul>-->
-    <!--</div>-->
-<!--</li>-->

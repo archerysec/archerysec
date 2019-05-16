@@ -326,17 +326,6 @@ def ip_scan(request):
                    })
 
 
-def ip_scan_table(request):
-    """
-    Network scan Table.
-    :param request:
-    :return:
-    """
-    all_scans = scan_save_db.objects.all()
-
-    return render(request, 'ip_scan_table.html', {'all_scans': all_scans})
-
-
 def openvas_details(request):
     """
     OpenVAS tool settings.
@@ -435,54 +424,6 @@ def del_vuln(request):
         return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % un_scanid)
 
 
-def edit_vuln(request):
-    """
-    Edit Network scan vulnerabilities.
-    :param request:
-    :return:
-    """
-    if request.method == 'POST':
-        scan_id = request.POST.get("scan_id")
-        vul_id = request.POST.get("vuln_id")
-        name = request.POST.get("name")
-        creation_time = request.POST.get("creation_time")
-        modification_time = request.POST.get("modification_time")
-        host = request.POST.get("host")
-        port = request.POST.get("port")
-        threat = request.POST.get("threat")
-        severity = request.POST.get("severity")
-        description = request.POST.get("description")
-        family = request.POST.get("family")
-        cvss_base = request.POST.get("cvss_base")
-        cve = request.POST.get("cve")
-        # bid = request.POST.get("bid")
-        xref = request.POST.get("xref")
-        tags = request.POST.get("tags")
-        banner = request.POST.get("banner")
-
-        ov_scan_result_db.objects.filter(vul_id=vul_id).update(name=name,
-                                                               creation_time=creation_time,
-                                                               modification_time=modification_time,
-                                                               host=host, port=port,
-                                                               threat=threat,
-                                                               severity=severity,
-                                                               description=description, family=family,
-                                                               cvss_base=cvss_base, cve=cve,
-                                                               xref=xref, tags=tags, banner=banner)
-
-        messages.success(request, "Vulnerability Edited")
-
-        return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % scan_id)
-
-    if request.method == 'GET':
-        id_vul = request.GET['vuln_id']
-    else:
-        id_vul = ''
-    edit_vul_dat = ov_scan_result_db.objects.filter(vul_id=id_vul).order_by('vul_id')
-
-    return render(request, 'ov_edit_vuln_data.html', {'edit_vul_dat': edit_vul_dat})
-
-
 def vuln_check(request):
     """
     Get the detailed vulnerability information.
@@ -507,62 +448,6 @@ def vuln_check(request):
                                                  'xref_list': xref_list
 
                                                  })
-
-
-def add_vuln(request):
-    """
-    Add network vulnerability.
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        scan_id = request.GET['scan_id']
-    else:
-        scan_id = ''
-
-    if request.method == 'POST':
-        vuln_id = uuid.uuid4()
-        scan_id = request.POST.get("scan_id")
-        name = request.POST.get("name")
-        creation_time = request.POST.get("creation_time")
-        modification_time = request.POST.get("modification_time")
-        host = request.POST.get("host")
-        port = request.POST.get("port", )
-        threat = request.POST.get("threat", )
-        severity = request.POST.get("severity", )
-        description = request.POST.get("description", )
-        family = request.POST.get("family", )
-        cvss_base = request.POST.get("cvss_base", )
-        cve = request.POST.get("cve", )
-        # bid = request.POST.get("bid")
-        xref = request.POST.get("xref", )
-        tags = request.POST.get("tags", )
-        banner = request.POST.get("banner", )
-
-        save_vuln = ov_scan_result_db(name=name,
-                                      vul_id=vuln_id,
-                                      scan_id=scan_id,
-                                      creation_time=creation_time,
-                                      modification_time=modification_time,
-                                      host=host, port=port,
-                                      threat=threat,
-                                      severity=severity,
-                                      description=description,
-                                      family=family,
-                                      cvss_base=cvss_base,
-                                      cve=cve,
-                                      xref=xref,
-                                      tags=tags,
-                                      banner=banner,
-                                      false_positive='No',
-                                      )
-        save_vuln.save()
-
-        messages.success(request, "Vulnerability Added")
-        return HttpResponseRedirect("/networkscanners/?scan_id=%s" % scan_id)
-
-    return render(request, 'ov_add_vuln.html', {'scan_id': scan_id})
-
 
 def OpenVAS_xml_upload(request):
     """

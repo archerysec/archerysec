@@ -9,7 +9,7 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/projects/create_form/" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'projects:create_form' %}" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i>Create New Project</a>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                                         <tr data-target="#">
 
                                             <td>
-                                                <a href="/proj_data/?project_id={{data.project_id}}">{{data.project_name}}</a>
+                                                <a href="{% url 'dashboard:proj_data' %}?project_id={{data.project_id}}">{{data.project_name}}</a>
                                             </td>
                                             <td><span
                                                     class="badge badge-pill badge-primary">{{data.project_start}}</span>
@@ -57,7 +57,7 @@
                                             <!--</td>-->
 
                                             <td>
-                                                <form action="/projects/" method="POST">
+                                                <form action="{% url 'projects:projects' %}" method="POST">
                                                     <input type="hidden" name="proj_id" value="{{data.project_id}}"/>
                                                     {% csrf_token %}
                                                     <button class="btn btn-danger"><i class="m-r-0 mdi mdi-delete"></i></button>

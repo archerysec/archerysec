@@ -19,7 +19,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/inspec/del_inspec',
+                url:'{% url 'inspec:del_inspec' %}',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -45,7 +45,7 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/staticscanners/report_import/" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'staticscanners:report_import' %}" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i> Upload XML</a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
@@ -53,7 +53,7 @@
                         <br>
                         <br>
                         <div class="float-right">
-                            <form action="/inspec/export/" method="post"
+                            <form action="{% url 'inspec:export' %}" method="post"
                                   class="forms-sample">
                                 {% csrf_token %}
                                 <div class="form-row align-items-center">
@@ -113,7 +113,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                    <a href="/inspec/inspec_all_vuln/?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                    <a href="{% url 'inspec:inspec_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                 </td>
                                 <td width="20%">
                                             <div>
@@ -134,7 +134,7 @@
                                 <td><span class="badge badge-pill badge-info">{{data.inspec_skipped}}</span></td>
                                 <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span></td>
                                 <td>
-                                    <form action="/inspec/del_inspec" method="post" class="forms-sample">
+                                    <form action="{% url 'inspec:del_inspec' %}" method="post" class="forms-sample">
                                         {% csrf_token %}
                                         <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
                                         <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->

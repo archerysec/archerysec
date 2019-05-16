@@ -20,7 +20,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/networkscanners/delete_nessus_scan/',
+                url:'{% url 'networkscanners:delete_nessus_scan' %}',
                 data:{
                    scan_id: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
@@ -44,7 +44,7 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="/networkscanners/OpenVAS_xml_upload/" class="btn btn-primary btn-mini"><i
+                                <a href="{% url 'networkscanners:OpenVAS_xml_upload' %}" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i> Upload XML</a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
@@ -89,7 +89,7 @@
                                                 </label>
                                             </form>
                                         </td>
-                                        <td><a href="/networkscanners/nessus_vuln_details/?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
+                                        <td><a href="{% url 'networkscanners:nessus_vuln_details' %}?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
                                         </td>
                                         <td>{{data.date_time}}</td>
                                         <td width="20%">
@@ -113,7 +113,7 @@
                                         <td><span class="badge badge-pill badge-info">{{data.info_total}}</span></td>
                                         <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span></td>
                                         <td>
-                                            <form action="/networkscanners/delete_nessus_scan/" method="post"
+                                            <form action="{% url 'networkscanners:delete_nessus_scan' %}" method="post"
                                                   class="forms-sample">
 
                                                 {% csrf_token %}

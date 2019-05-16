@@ -19,7 +19,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/netsparkerscanner/netsparker_del_vuln/',
+                url:'{% url 'netsparkerscanner:netsparker_del_vuln' %}',
                 data:{
                    del_vuln: json_scanid,
                    scan_id: $('input[name=scan_id]').val(),
@@ -87,14 +87,14 @@
                                                 </label>
                                             </form>
                                         </td>
-                                        <td><a href="/netsparkerscanner/netsparker_vuln_data/?vuln_id={{data.vuln_id}}">{{data.type}}</a>
+                                        <td><a href="{% url 'netsparkerscanner:netsparker_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.type}}</a>
                                         </td>
                                         <td width="50%">{{data.vuln_url}}</td>
                                         <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span></td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/netsparkerscanner/netsparker_vuln_out/">
+                                            <form method="POST" action="{% url 'netsparkerscanner:netsparker_vuln_out' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="Yes">
@@ -107,7 +107,7 @@
                                         <td>{{data.vuln_status}}</td>
                                         <td>
                                             <div>
-                                                <form action="/netsparkerscanner/netsparker_del_vuln/" method="POST"
+                                                <form action="{% url 'netsparkerscanner:netsparker_del_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -117,7 +117,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/netsparkerscanner/netsparker_vuln_out/">
+                                            <form method="POST" action="{% url 'netsparkerscanner:netsparker_vuln_out' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
@@ -174,12 +174,12 @@
                                                 </label>
                                             </form>
                                         </td>
-                                        <td><a href="/netsparkerscanner/netsparker_vuln_data/?vuln_id={{data.vuln_id}}">{{data.type}}</a>
+                                        <td><a href="{% url 'netsparkerscanner:netsparker_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.type}}</a>
                                         </td>
                                         <td width="50%">{{data.vuln_url}}</td>
                                         <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span></td>
                                         <td>
-                                            <form method="POST" action="/netsparkerscanner/netsparker_vuln_out/">
+                                            <form method="POST" action="{% url 'netsparkerscanner:netsparker_vuln_out' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
@@ -192,7 +192,7 @@
 
                                         <td>
                                             <div>
-                                                <form action="/netsparkerscanner/netsparker_del_vuln/" method="POST"
+                                                <form action="{% url 'netsparkerscanner:netsparker_del_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -248,13 +248,13 @@
                                                 </label>
                                             </form>
                                         </td>
-                                        <td><a href="/netsparkerscanner/netsparker_vuln_data/?vuln_id={{data.vuln_id}}">{{data.type}}</a>
+                                        <td><a href="{% url 'netsparkerscanner:netsparker_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.type}}</a>
                                         </td>
                                         <td width="50%">{{data.vuln_url}}</td>
                                         <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span></td>
                                         <td>
                                             <div>
-                                                <form action="/netsparkerscanner/netsparker_del_vuln/" method="POST"
+                                                <form action="{% url 'netsparkerscanner:netsparker_del_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
@@ -264,7 +264,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <form method="POST" action="/netsparkerscanner/netsparker_vuln_out/">
+                                            <form method="POST" action="{% url 'netsparkerscanner:netsparker_vuln_out' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">

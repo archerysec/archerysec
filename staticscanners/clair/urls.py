@@ -17,6 +17,8 @@
 from django.conf.urls import url
 from staticscanners.clair import views
 
+app_name = 'clair'
+
 urlpatterns = [
     # Bandit scan list
 

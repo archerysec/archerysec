@@ -283,7 +283,7 @@ def zap_scan(request):
         return HttpResponse(status=200)
 
     return render(request,
-                  'zapscanner/zap_scan.html')
+                  'zapscanner/zap_scan_list.html')
 
 
 def zap_rescan(request):
@@ -493,17 +493,6 @@ def zap_setting_update(request):
                   'zapscanner/zap_settings_form.html')
 
 
-def zap_scan_table(request):
-    """
-    Scan Table.
-    :param request:
-    :return:
-    """
-    all_scans = zap_scans_db.objects.all()
-
-    return render(request, 'zapscanner/zap_scan_table.html', {'all_scans': all_scans})
-
-
 def del_zap_scan(request):
     """
     The function deleting scans from ZAP scans.
@@ -672,53 +661,6 @@ def exluded_url_list(request):
     return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})
 
 
-def edit_zap_vuln(request):
-    """
-    Edit vulnerability.
-    :param request:
-    :return:
-    """
-    if request.method == 'POST':
-        vuln_id = request.POST.get("vuln_id", )
-        name = request.POST.get("name", )
-        risk = request.POST.get("risk", )
-        url = request.POST.get("url", )
-        description = request.POST.get("description", )
-        solution = request.POST.get("solution", )
-        param = request.POST.get("param", )
-        sourceid = request.POST.get("sourceid", )
-        attack = request.POST.get("attack", )
-        reference = request.POST.get("reference", )
-        global vul_col
-        if risk == 'High':
-            vul_col = "danger"
-        elif risk == 'Medium':
-            vul_col = "warning"
-        elif risk == 'Low':
-            vul_col = "info"
-        else:
-            vul_col = "info"
-        zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(name=name,
-                                                                   vuln_color=vul_col,
-                                                                   risk=risk,
-                                                                   url=url,
-                                                                   description=description,
-                                                                   solution=solution,
-                                                                   param=param,
-                                                                   sourceid=sourceid,
-                                                                   attack=attack,
-                                                                   reference=reference)
-
-        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
-        return HttpResponseRedirect("/zapscanner/zap_vuln_check/?vuln_id=%s" % vuln_id)
-    if request.method == 'GET':
-        id_vul = request.GET['vuln_id']
-    else:
-        id_vul = ''
-    edit_vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
-
-    return render(request, 'zapscanner/edit_zap_vuln.html', {'edit_vul_dat': edit_vul_dat})
-
 
 def del_zap_vuln(request):
     """
@@ -793,127 +735,6 @@ def zap_vuln_check(request):
                   {'vul_dat': vul_dat,
                    'evi': full_data
                    })
-
-
-def edit_zap_vuln_check(request):
-    """
-    Editing vulnerability data.
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        id_vul = request.GET['vuln_id']
-    else:
-        id_vul = ''
-    edit_vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
-
-    return render(request, 'zapscanner/edit_zap_vuln_check.html', {'edit_vul_dat': edit_vul_dat})
-
-
-def add_zap_vuln(request):
-    """
-    Adding vulnerability in Databse.
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        scan_id = request.GET['scan_id']
-        scanners = request.GET['scanner']
-    else:
-        scan_id = ''
-        scanners = ''
-    if request.method == 'POST':
-        vuln_id = uuid.uuid4()
-        scan_id = request.POST.get("scan_id")
-        scanners = request.POST.get("scanners")
-        vuln_name = request.POST.get("vuln_name")
-        risk = request.POST.get("risk")
-        url = request.POST.get("url")
-        param = request.POST.get("param")
-        sourceid = request.POST.get("sourceid")
-        attack = request.POST.get("attack")
-        ref = request.POST.get("ref")
-        description = request.POST.get("description")
-        solution = request.POST.get("solution")
-        req_header = request.POST.get("req_header")
-        res_header = request.POST.get("res_header")
-        vuln_col = request.POST.get("vuln_color")
-
-        if scanners == 'zap':
-            save_vuln = zap_scan_results_db(scan_id=scan_id,
-                                            vuln_color=vuln_col,
-                                            risk=risk, url=url,
-                                            param=param,
-                                            sourceid=sourceid,
-                                            attack=attack,
-                                            vuln_id=vuln_id,
-                                            name=vuln_name,
-                                            description=description,
-                                            reference=ref,
-                                            solution=solution,
-                                            requestHeader=req_header,
-                                            responseHeader=res_header,
-                                            vuln_status='Open'
-                                            )
-            save_vuln.save()
-            messages.success(request, "Vulnerability Added")
-            zap_all_vul = zap_scan_results_db.objects.filter(
-                scan_id=scan_id).values('name',
-                                        'risk',
-                                        'vuln_color').distinct()
-            total_vul = len(zap_all_vul)
-            total_high = len(zap_all_vul.filter(risk="High"))
-            total_medium = len(zap_all_vul.filter(risk="Medium"))
-            total_low = len(zap_all_vul.filter(risk="Low"))
-
-            zap_scans_db.objects.filter(
-                scan_scanid=scan_id).update(total_vul=total_vul,
-                                            high_vul=total_high,
-                                            medium_vul=total_medium,
-                                            low_vul=total_low)
-            return HttpResponseRedirect("/zapscanner/zap_list_vuln/?scan_id=%s" % scan_id)
-
-        elif scanners == 'burp':
-            save_burp_vuln = burp_scan_result_db(scan_id=scan_id,
-                                                 severity_color=vuln_col,
-                                                 severity=risk,
-                                                 host=url,
-                                                 location=param,
-                                                 vuln_id=vuln_id,
-                                                 name=vuln_name,
-                                                 issueBackground=description,
-                                                 references=ref,
-                                                 remediationBackground=solution,
-                                                 scan_request=req_header,
-                                                 scan_response=res_header)
-            save_burp_vuln.save()
-
-            burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id)
-
-            total_vul = len(burp_all_vul)
-            total_high = len(burp_all_vul.filter(severity="High"))
-            total_medium = len(burp_all_vul.filter(severity="Medium"))
-            total_low = len(burp_all_vul.filter(severity="Low"))
-
-            burp_scan_db.objects.filter(
-                scan_id=scan_id).update(total_vul=total_vul,
-                                        high_vul=total_high,
-                                        medium_vul=total_medium,
-                                        low_vul=total_low)
-
-            return HttpResponseRedirect("/zapscanner/burp_vuln_list?scan_id=%s" % scan_id)
-
-    return render(request, 'zapscanner/add_zap_vuln.html', {'scan_id': scan_id, 'scanners': scanners})
-
-
-def create_zap_vuln(request):
-    """
-    Add vulnerabilities.
-    :param request:
-    :return:
-    """
-    return render(request, 'zapscanner/add_zap_vuln.html')
-
 
 def zap_scan_pdf_gen(request):
     """

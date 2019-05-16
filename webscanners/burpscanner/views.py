@@ -341,63 +341,6 @@ def del_burp_vuln(request):
         return HttpResponseRedirect("/burpscanner/burp_vuln_list?scan_id=%s" % un_scanid)
 
 
-def edit_burp_vuln(request):
-    """
-    Edit Burp vulnerability.
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        id_vul = request.GET['vuln_id']
-
-    else:
-        id_vul = ''
-
-    edit_vul_dat = burp_scan_result_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
-
-    if request.method == 'POST':
-        vuln_id = request.POST.get("vuln_id", )
-        scan_id = request.POST.get("scan_id", )
-        name = request.POST.get("name", )
-        severity = request.POST.get("severity", )
-        host = request.POST.get("host", )
-        path = request.POST.get("path", )
-        issuedetail = request.POST.get("issuedetail")
-        description = request.POST.get("description", )
-        solution = request.POST.get("solution", )
-        location = request.POST.get("location", )
-        vulnClass = request.POST.get("reference", )
-
-        global vul_col
-
-        if severity == 'High':
-            vul_col = "danger"
-        elif severity == 'Medium':
-            vul_col = "warning"
-        elif severity == 'Low':
-            vul_col = "info"
-        else:
-            vul_col = "info"
-
-        print("edit_vul :"), name
-
-        burp_scan_result_db.objects.filter(
-            vuln_id=vuln_id).update(name=name,
-                                    severity_color=vul_col,
-                                    severity=severity,
-                                    host=host, path=path,
-                                    location=location,
-                                    issueDetail=issuedetail,
-                                    issueBackground=description,
-                                    remediationBackground=solution,
-                                    vulnerabilityClassifications=vulnClass)
-        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
-
-        return HttpResponseRedirect("/burpscanner/burp_vuln_data/?vuln_id=%s" % vuln_id)
-
-    return render(request, 'burpscanner/edit_burp_vuln.html', {'edit_vul_dat': edit_vul_dat})
-
-
 def export(request):
     """
     :param request:

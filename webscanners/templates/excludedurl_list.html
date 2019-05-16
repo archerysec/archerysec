@@ -36,7 +36,7 @@
                                         <td>{{ data.exclude_url }}
                                         </td>
                                         <td>
-                                            <form action="/webscanners/excluded_url_list" method="post"
+                                            <form action="{% url 'webscanners:excluded_url_list' %}" method="post"
                                                   class="forms-sample">
 
                                                 {% csrf_token %}
@@ -75,7 +75,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'/webscanners/excluded_url_list',
+                url:'{% url 'webscanners:excluded_url_list' %}',
                 data:{
                    exclude_url: json_scanid,
                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()

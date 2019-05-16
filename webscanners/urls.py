@@ -52,7 +52,7 @@ urlpatterns = [
         name='email_setting', ),
     url(r'^cookie_add',
         web_views.add_cookies,
-        name='add_cookies', ),
+        name='cookie_add', ),
 
     url(r'^web_task_launch',
         web_views.web_task_launch,
@@ -79,18 +79,24 @@ urlpatterns = [
         name='exclude_url'),
 
     url(r'^cookies_list',
-        web_views.cookies_list),
+        web_views.cookies_list,
+        name='cookies_list'),
 
     url(r'^cookies_del',
-        web_views.del_cookies),
+        web_views.del_cookies,
+        name='cookies_del'),
 
     url(r'^excluded_url_list',
-        web_views.exluded_url_list),
+        web_views.exluded_url_list,
+        name='excluded_url_list'),
 
     url(r'^del_notify',
-        web_views.del_notify),
+        web_views.del_notify,
+        name='del_notify'),
+
 
     url(r'^del_all_notify',
-        web_views.del_all_notify),
+        web_views.del_all_notify,
+        name='del_all_notify'),
 
 ]

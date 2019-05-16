@@ -17,6 +17,8 @@
 from django.conf.urls import url
 from webscanners.netsparkerscanner import views
 
+app_name = 'netsparkerscanner'
+
 urlpatterns = [
     # All netsparker URL's
     url(r'^netsparker_list_vuln',

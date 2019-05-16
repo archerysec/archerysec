@@ -19,17 +19,14 @@
                                 <table id="bandit_scan_list" class="table table-bordered data-table table-fixed" width="100%">
                             <thead>
                             <tr>
-                                <!--<th>Project ID</th>-->
                                 <th>Vulnerability</th>
                                 <th>Risk</th>
-                                <!--<th></th>-->
-                                <!--<th></th>-->
                             </tr>
                             </thead>
                             <tbody>{% for data in bandit_all_vuln %}
                             <tr data-target="#">
                                 <!--<td>{{data.project_id}}</td>-->
-                                <td><a href="/banditscanner/banditscan_vuln_data/?scan_id={{data.scan_id}}&test_name={{data.test_name}}">{{data.test_name}}</a>
+                                <td><a href="{% url 'banditscanner:banditscan_vuln_data' %}?scan_id={{data.scan_id}}&test_name={{data.test_name}}">{{data.test_name}}</a>
                                 </td>
                                 <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
                             </tr>

@@ -1,4 +1,3 @@
-
 {% extends 'header.html' %}
 {% block body %}
 
@@ -17,7 +16,7 @@
                         <h5>Edit Project</h5>
                     </div>
                     <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/projects/project_edit/">{% csrf_token %}
+                        <form class="form-horizontal" method="POST" action="{% url 'projects:project_edit' %}">{% csrf_token %}
                             <input type="hidden" name="project_id" value="{{ data.project_id }}"/>
                             <div class="control-group">
                                 <label class="control-label">Project Name :</label>

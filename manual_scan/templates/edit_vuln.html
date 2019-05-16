@@ -16,7 +16,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card">
-                                    <form class="form-vertical" action="/manual_scan/edit_vuln/?vuln_id={{ vuln_id }}&project_id={{ project_id }}" method="POST">
+                                    <form class="form-vertical" action="{% url 'manual_scan:edit_vuln' %}?vuln_id={{ vuln_id }}&project_id={{ project_id }}" method="POST">
                                         {% csrf_token %}
                                         <div class="card-body">{% for data in vuln_data %}
                                             <input type="hidden" name="vuln_id" value="{{ vuln_id }}">

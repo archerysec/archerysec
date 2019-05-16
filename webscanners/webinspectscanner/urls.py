@@ -17,6 +17,8 @@
 from django.conf.urls import url
 from webscanners.webinspectscanner import views
 
+app_name = 'webinspectscanner'
+
 urlpatterns = [
 
     # All webinspect URL's
