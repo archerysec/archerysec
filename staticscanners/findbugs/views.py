@@ -18,6 +18,7 @@ from django.shortcuts import render, render_to_response, HttpResponse, HttpRespo
 from staticscanners.models import findbugs_scan_results_db, findbugs_scan_db
 import hashlib
 from staticscanners.resources import FindbugResource
+from django.urls import reverse
 
 
 def findbugs_list(request):
@@ -82,12 +83,7 @@ def findbugs_vuln_data(request):
                                                                                 )
 
         return HttpResponseRedirect(
-            '/findbugs/findbugs_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
-
-    # findbugs_vuln_data = findbugs_scan_results_db.objects.filter(
-    #     scan_id=scan_id,
-    #     name=test_name
-    # )
+            reverse('findbugs:findbugs_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     findbugs_vuln_data = findbugs_scan_results_db.objects.filter(scan_id=scan_id,
                                                                  name=test_name,
@@ -154,7 +150,7 @@ def del_findbugs(request):
             item_results = findbugs_scan_results_db.objects.filter(scan_id=scan_id)
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/findbugs/findbugs_list')
+        return HttpResponseRedirect(reverse('findbugs:findbugs_list'))
 
 
 def findbugs_del_vuln(request):
@@ -191,7 +187,7 @@ def findbugs_del_vuln(request):
             total_dup=total_duplicate
         )
 
-        return HttpResponseRedirect("/findbugs/findbugs_all_vuln/?scan_id=%s" % scan_id)
+        return HttpResponseRedirect(reverse('findbugs:findbugs_all_vuln') + '?scan_id=%s' % scan_id)
 
 def export(request):
     """

@@ -25,6 +25,7 @@ from webscanners.models import webinspect_scan_db, \
 import hashlib
 from webscanners.resources import WebinspectResource
 from notifications.models import Notification
+from django.urls import reverse
 
 
 def webinspect_list_vuln(request):
@@ -125,7 +126,7 @@ def webinspect_vuln_out(request):
                                                                                  )
 
         return HttpResponseRedirect(
-            '/webinspectscanner/webinspect_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+            reverse('webinspectscanner:webinspect_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
     vuln_data = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
                                                          name=name,
@@ -171,8 +172,7 @@ def del_webinspect_scan(request):
             item.delete()
             item_results = webinspect_scan_result_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/webinspectscanner/webinspect_scan_list/')
+        return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
 
 
 def edit_webinspect_vuln(request):
@@ -222,9 +222,7 @@ def edit_webinspect_vuln(request):
             vulnerabilityClassifications=vulnerabilityClassifications,
         )
 
-        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
-
-        return HttpResponseRedirect("/webinspectscanner/webinspect_vuln_data/?vuln_id=%s" % vuln_id)
+        return HttpResponseRedirect(reverse('webinspectscanner:webinspect_vuln_data') + '?vuln_id=%s' % vuln_id)
 
     return render(request, 'webinspectscanner/edit_webinspect_vuln.html', {'edit_vul_dat': edit_vul_dat})
 
@@ -265,9 +263,8 @@ def webinspect_del_vuln(request):
             low_vul=total_low,
             info_vul=total_info
         )
-        messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/webinspectscanner/webinspect_list_vuln?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('webinspectscanner:webinspect_list_vuln') + '?scan_id=%s' % un_scanid)
 
 def export(request):
     """

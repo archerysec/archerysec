@@ -63,6 +63,7 @@ from tools.models import nikto_result_db
 import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from notifications.models import Notification
+from django.urls import reverse
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -146,9 +147,9 @@ def auth_view(request):
 
     if user is not None:
         auth.login(request, user)
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('dashboard:dashboard'))
     else:
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('webscanners:login'))
 
 
 @public
@@ -175,7 +176,7 @@ def signup(request):
         email = request.POST.get('email')
         user = User.objects.create_user(username, email, password)
         user.save()
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('webscanners:login'))
 
     return render(request,
                   'signup.html')
@@ -214,7 +215,7 @@ def del_notify(request):
         notify_del = Notification.objects.filter(id=notify_id)
         notify_del.delete()
 
-    return HttpResponseRedirect('/webscanners/')
+    return HttpResponseRedirect(reverse('dashboard:dashboard'))
 
 
 def del_all_notify(request):
@@ -226,7 +227,7 @@ def del_all_notify(request):
         notify_del = Notification.objects.all()
         notify_del.delete()
 
-    return HttpResponseRedirect('/webscanners/')
+    return HttpResponseRedirect(reverse('dashboard:dashboard'))
 
 
 def index(request):
@@ -406,7 +407,7 @@ def del_web_scan_schedule(request):
             del_task_schedule = Task.objects.filter(id=task_id)
             del_task_schedule.delete()
 
-    return HttpResponseRedirect('/webscanners/web_scan_schedule')
+    return HttpResponseRedirect(reverse('webscanners:web_scan_schedule'))
 
 
 def setting(request):
@@ -546,7 +547,7 @@ def email_setting(request):
             recipient_list=email_to,
         )
         save_email.save()
-        return HttpResponseRedirect('/webscanners/setting/')
+        return HttpResponseRedirect(reverse('webscanners:setting'))
 
     return render(request, 'email_setting_form.html', {'all_email': all_email}
                   )
@@ -558,7 +559,7 @@ def burp_scan_launch(request):
     :param request:
     :return:
     """
-    # global vuln_id, burp_status
+
     if request.POST.get("url"):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
@@ -626,7 +627,7 @@ def xml_upload(request):
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml_en)
-            return HttpResponseRedirect("/zapscanner/zap_scan_list/")
+            return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
         elif scanner == "burp_scan":
             date_time = datetime.now()
             scan_dump = burp_scan_db(url=scan_url,
@@ -645,7 +646,7 @@ def xml_upload(request):
                                            project_id,
                                            scan_id)
             print("Save scan Data")
-            return HttpResponseRedirect("/burpscanner/burp_scan_list")
+            return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
 
         elif scanner == "arachni":
             date_time = datetime.now()
@@ -661,7 +662,7 @@ def xml_upload(request):
                                           scan_id=scan_id,
                                           root=root_xml)
             print("Save scan Data")
-            return HttpResponseRedirect("/arachniscanner/arachni_scan_list")
+            return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
 
         elif scanner == 'netsparker':
             date_time = datetime.now()
@@ -679,7 +680,7 @@ def xml_upload(request):
                                              scan_id=scan_id,
                                              root=root_xml)
 
-            return HttpResponseRedirect("/netsparkerscanner/netsparker_scan_list/")
+            return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
         elif scanner == 'webinspect':
             date_time = datetime.now()
             scan_dump = webinspect_scan_db(
@@ -696,7 +697,7 @@ def xml_upload(request):
                                              scan_id=scan_id,
                                              root=root_xml)
 
-            return HttpResponseRedirect("/webinspectscanner/webinspect_scan_list/")
+            return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
 
         elif scanner == 'acunetix':
             date_time = datetime.now()
@@ -714,7 +715,7 @@ def xml_upload(request):
                                            scan_id=scan_id,
                                            root=root_xml)
 
-            return HttpResponseRedirect("/acunetixscanner/acunetix_scan_list/")
+            return HttpResponseRedirect(reverse('acunetixscanner:acunetix_scan_list'))
 
         elif scanner == 'dependencycheck':
             date_time = datetime.now()
@@ -732,7 +733,7 @@ def xml_upload(request):
                                                      scan_id=scan_id,
                                                      data=root)
 
-            return HttpResponseRedirect("/dependencycheck/dependencycheck_list")
+            return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
 
         elif scanner == 'findbugs':
             date_time = datetime.now()
@@ -750,7 +751,7 @@ def xml_upload(request):
                                               scan_id=scan_id,
                                               root=root)
 
-            return HttpResponseRedirect("/findbugs/findbugs_list")
+            return HttpResponseRedirect(reverse('findbugs:findbugs_list'))
 
         elif scanner == 'nikto':
             date_time = datetime.now()
@@ -764,7 +765,7 @@ def xml_upload(request):
 
             nikto_html_parser(xml_file, project_id, scan_id)
 
-            return HttpResponseRedirect("/tools/nikto/")
+            return HttpResponseRedirect(reverse('tools:nikto'))
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
 
@@ -785,12 +786,12 @@ def add_cookies(request):
 
         if cookies == target_url:
             cookie_db.objects.filter(Q(url__icontains=target_url)).update(cookie=target_cookies)
-            return HttpResponseRedirect("/webscanners/")
+            return HttpResponseRedirect(reverse('webscanners:index'))
         else:
             data_dump = cookie_db(url=target_url,
                                   cookie=target_cookies)
             data_dump.save()
-            return HttpResponseRedirect("/webscanners/")
+            return HttpResponseRedirect(reverse('webscanners:index'))
 
     return render(request, 'cookie_add.html')
 
@@ -825,7 +826,7 @@ def save_cookie(driver):
     f.close()
     driver.close()
 
-    return HttpResponseRedirect('/zapscanner/')
+    return HttpResponseRedirect(reverse('webscanners:index'))
 
 
 def cookies_list(request):
@@ -841,7 +842,6 @@ def cookies_list(request):
 
 def del_cookies(request):
     if request.method == 'POST':
-        # cookie_id = request.POST.get('id')
         cookie_url = request.POST.get('url')
         cookies_item = str(cookie_url)
         cooki_split = cookies_item.replace(" ", "")
@@ -854,7 +854,7 @@ def del_cookies(request):
             del_cookie = cookie_db.objects.filter(url=cookies_target)
             del_cookie.delete()
             zap_plugin.zap_replacer(target_url=cookies_target)
-        return HttpResponseRedirect('/webscanners/cookies_list/')
+        return HttpResponseRedirect(reverse('webscanners:cookies_list'))
 
     return render(request, 'cookies_list.html')
 
@@ -885,15 +885,15 @@ def sel_login(request):
 
             if cookies == new_uri:
                 cookie_db.objects.filter(Q(url__icontains=new_uri)).update(cookie=cookie_data)
-                return HttpResponseRedirect("/zapscanner/")
+                return HttpResponseRedirect(reverse('webscanners:index'))
             else:
                 data_dump = cookie_db(url=new_uri,
                                       cookie=cookie_data)
                 data_dump.save()
-                return HttpResponseRedirect("/zapscanner/")
+                return HttpResponseRedirect(reverse('webscanners:index'))
         messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
-        return HttpResponseRedirect('/zapscanner/')
+        return HttpResponseRedirect(reverse('webscanners:index'))
     return render(request, 'webscanner.html')
 
 
@@ -930,6 +930,6 @@ def exluded_url_list(request):
             del_excluded = excluded_db.objects.filter(exclude_url=exclude_target)
             del_excluded.delete()
 
-        return HttpResponseRedirect('/zapscanner/excluded_url_list')
+            return HttpResponseRedirect(reverse('zapscanner:excluded_url_list'))
 
     return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})

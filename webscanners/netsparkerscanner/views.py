@@ -24,6 +24,7 @@ from webscanners.models import netsparker_scan_db, \
 import hashlib
 from webscanners.resources import NetsparkerResource
 from notifications.models import Notification
+from django.urls import reverse
 
 
 def netsparker_list_vuln(request):
@@ -116,7 +117,7 @@ def netsparker_vuln_out(request):
                                                                                  )
 
         return HttpResponseRedirect(
-            '/netsparkerscanner/netsparker_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+            reverse('netsparkerscanner:netsparker_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
     vuln_data = netsparker_scan_result_db.objects.filter(scan_id=scan_id,
                                                          type=name,
@@ -165,8 +166,7 @@ def del_netsparker_scan(request):
             item.delete()
             item_results = netsparker_scan_result_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-        # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/netsparkerscanner/netsparker_scan_list/')
+        return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
 
 
 def edit_netsparker_vuln(request):
@@ -216,9 +216,7 @@ def edit_netsparker_vuln(request):
             vulnerabilityClassifications=vulnerabilityClassifications,
         )
 
-        # messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
-
-        return HttpResponseRedirect("/netsparkerscanner/netsparker_vuln_data/?vuln_id=%s" % vuln_id)
+        return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_vuln_data') + '?vuln_id=%s' % vuln_id)
 
     return render(request, 'netsparkerscanner/edit_netsparker_vuln.html', {'edit_vul_dat': edit_vul_dat})
 
@@ -259,9 +257,8 @@ def netsparker_del_vuln(request):
             low_vul=total_low,
             info_vul=total_info
         )
-        # messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/netsparkerscanner/netsparker_list_vuln?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_list_vuln') + '?scan_id=%s' % un_scanid)
 
 
 def export(request):

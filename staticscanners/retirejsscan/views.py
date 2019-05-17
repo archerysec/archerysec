@@ -17,6 +17,7 @@
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from staticscanners.models import retirejs_scan_results_db, retirejs_scan_db
 import hashlib
+from django.urls import reverse
 
 
 def retirejsscans_list(request):
@@ -92,7 +93,7 @@ def retirejsscan_vuln_data(request):
                                                                                 )
 
         return HttpResponseRedirect(
-            '/retirejsscanner/retirejsscan_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
+            reverse('/retirejsscanner/retirejsscan_vuln_data/') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     retirejs_vuln_data = retirejs_scan_results_db.objects.filter(scan_id=scan_id,
                                                                  test_name=test_name,
@@ -157,7 +158,7 @@ def del_retirejs_scan(request):
             item_results = retirejs_scan_results_db.objects.filter(scan_id=scan_id)
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/retirejsscanner/retirejsscans_list')
+        return HttpResponseRedirect(reverse('retirejsscanner:retirejsscans_list'))
 
 
 def retirejs_del_vuln(request):
@@ -192,4 +193,4 @@ def retirejs_del_vuln(request):
             SEVERITY_LOW=total_low
         )
 
-        return HttpResponseRedirect("/retirejsscanner/retirejsscan_list_vuln/?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('retirejsscanner:retirejsscan_list_vuln') + '?scan_id=%s' % un_scanid)

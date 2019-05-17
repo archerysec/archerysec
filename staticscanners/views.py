@@ -30,6 +30,7 @@ from scanners.scanner_parser.staticscanner_parser.retirejss_json_parser import r
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser import clair_report_json
 from scanners.scanner_parser.compliance_parser.inspec_json_parser import inspec_report_json
+from django.urls import reverse
 
 
 # Create your views here.
@@ -65,7 +66,7 @@ def report_import(request):
                                project_id=project_id,
                                scan_id=scan_id)
 
-            return HttpResponseRedirect("/banditscanner/banditscans_list")
+            return HttpResponseRedirect(reverse('banditscanner:banditscans_list'))
 
         if scanner == "retirejs_scan":
             date_time = datetime.now()
@@ -82,7 +83,7 @@ def report_import(request):
                                  project_id=project_id,
                                  scan_id=scan_id)
 
-            return HttpResponseRedirect("/retirejsscanner/retirejsscans_list")
+            return HttpResponseRedirect(reverse('retirejsscanner:retirejsscans_list'))
 
         if scanner == "clair_scan":
             date_time = datetime.now()
@@ -98,7 +99,7 @@ def report_import(request):
             clair_report_json(data=data,
                               project_id=project_id,
                               scan_id=scan_id)
-            return HttpResponseRedirect("/clair/clair_list")
+            return HttpResponseRedirect(reverse('clair:clair_list'))
 
         if scanner == "inspec_scan":
             date_time = datetime.now()
@@ -115,6 +116,6 @@ def report_import(request):
                                project_id=project_id,
                                scan_id=scan_id)
 
-            return HttpResponseRedirect("/inspec/inspec_list")
+            return HttpResponseRedirect(reverse('inspec:inspec_list'))
 
     return render(request, 'report_import.html', {'all_project': all_project})

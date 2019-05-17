@@ -32,6 +32,7 @@ from notifications.models import Notification
 from PyBurprestapi import burpscanner
 import json
 from notifications.signals import notify
+from django.urls import reverse
 
 burp_url = None
 burp_port = None
@@ -110,7 +111,7 @@ def burp_setting(request):
             print(e)
             notify.send(user, recipient=user, verb='Burp Connection Not Found')
 
-        return HttpResponseRedirect('/webscanners/setting/')
+        return HttpResponseRedirect(reverse('webscanners:setting'))
 
     return render(request, 'burpscanner/burp_setting_form.html',
                   {'burp_url': burp_url,
@@ -255,12 +256,8 @@ def burp_vuln_out(request):
                                                                            vuln_status=vuln_status,
                                                                            false_positive_hash=false_positive_hash
                                                                            )
-
-        messages.add_message(request,
-                             messages.SUCCESS,
-                             'Vulnerability Status Changed')
         return HttpResponseRedirect(
-            '/burpscanner/burp_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id,
+            reverse('burpscanner:burp_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id,
                                                                      vuln_name))
     vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
                                                    name=name,
@@ -305,8 +302,7 @@ def del_burp_scan(request):
             item.delete()
             item_results = burp_scan_result_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-            messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/burpscanner/burp_scan_list/')
+        return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
 
 
 def del_burp_vuln(request):
@@ -336,9 +332,8 @@ def del_burp_vuln(request):
 
         burp_scan_db.objects.filter(scan_id=un_scanid).update(total_vul=total_vul, high_vul=total_high,
                                                               medium_vul=total_medium, low_vul=total_low)
-        messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/burpscanner/burp_vuln_list?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('burpscanner:burp_vuln_list') + '?scan_id=%s' % un_scanid)
 
 
 def export(request):

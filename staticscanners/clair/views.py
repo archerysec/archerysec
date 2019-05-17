@@ -18,6 +18,7 @@ from django.shortcuts import render, render_to_response, HttpResponse, HttpRespo
 from staticscanners.models import clair_scan_results_db, clair_scan_db
 import hashlib
 from staticscanners.resources import ClairResource
+from django.urls import reverse
 
 
 def clair_list(request):
@@ -82,12 +83,8 @@ def clair_vuln_data(request):
                                                                              )
 
         return HttpResponseRedirect(
-            '/clair/clair_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
+            reverse('clair:clair_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
-    # clair_vuln_data = clair_scan_results_db.objects.filter(
-    #     scan_id=scan_id,
-    #     name=test_name
-    # )
 
     clair_vuln_data = clair_scan_results_db.objects.filter(scan_id=scan_id,
                                                            Name=test_name,
@@ -154,7 +151,7 @@ def del_clair(request):
             item_results = clair_scan_results_db.objects.filter(scan_id=scan_id)
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/clair/clair_list')
+        return HttpResponseRedirect(reverse('clair:clair_list'))
 
 
 def clair_del_vuln(request):
@@ -191,7 +188,7 @@ def clair_del_vuln(request):
             total_dup=total_duplicate
         )
 
-        return HttpResponseRedirect("/clair/clair_all_vuln/?scan_id=%s" % scan_id)
+        return HttpResponseRedirect(reverse('clair:clair_all_vuln') + '?scan_id=%s' % scan_id)
 
 
 def export(request):

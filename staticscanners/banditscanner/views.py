@@ -17,6 +17,7 @@
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from staticscanners.models import bandit_scan_results_db, bandit_scan_db
 import hashlib
+from django.urls import reverse
 
 
 def banditscans_list(request):
@@ -92,12 +93,7 @@ def banditscan_vuln_data(request):
                                                                               )
 
         return HttpResponseRedirect(
-            '/banditscanner/banditscan_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
-
-    # bandit_vuln_data = bandit_scan_results_db.objects.filter(
-    #     scan_id=scan_id,
-    #     test_name=test_name
-    # )
+            reverse('banditscanner:banditscan_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     bandit_vuln_data = bandit_scan_results_db.objects.filter(scan_id=scan_id,
                                                              test_name=test_name,
@@ -161,8 +157,7 @@ def del_bandit_scan(request):
             item.delete()
             item_results = bandit_scan_results_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-        # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/banditscanner/banditscans_list')
+        return HttpResponseRedirect(reverse('banditscanner:banditscans_list'))
 
 
 def bandit_del_vuln(request):
@@ -197,4 +192,4 @@ def bandit_del_vuln(request):
             SEVERITY_LOW=total_low
         )
 
-        return HttpResponseRedirect("/banditscanner/banditscan_list_vuln/?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('banditscanner:banditscan_list_vuln/') + '?scan_id=%s' % un_scanid)
