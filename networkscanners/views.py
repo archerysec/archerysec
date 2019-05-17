@@ -49,6 +49,7 @@ from django.conf import settings
 from archerysettings.models import email_db
 
 from notifications.models import Notification
+from django.urls import reverse
 
 api_data = os.getcwd() + '/' + 'apidata.json'
 
@@ -155,7 +156,7 @@ def scan_vul_details(request):
                 )
 
         return HttpResponseRedirect(
-            '/networkscanners/vul_details/?scan_id=%s' % scan_id)
+            reverse('networkscanners:vul_details') + '?scan_id=%s' % scan_id)
 
     all_vuln = ov_scan_result_db.objects.filter(scan_id=scanid,
                                                 false_positive='No', vuln_status='Open').values('name', 'severity',
@@ -304,7 +305,7 @@ def scan_del(request):
             vuln_data = ov_scan_result_db.objects.filter(scan_id=scan_id)
             vuln_data.delete()
 
-    return HttpResponseRedirect("/networkscanners/")
+    return HttpResponseRedirect(reverse('networkscanners:index'))
 
 
 def ip_scan(request):
@@ -351,11 +352,7 @@ def openvas_details(request):
             openvas_password=openvas_password,
         )
 
-        return HttpResponseRedirect('/webscanners/setting/')
-
-    messages.add_message(request,
-                         messages.SUCCESS,
-                         'Openvas Setting Updated ')
+        return HttpResponseRedirect(reverse('webscanners:setting'))
 
     return render(request, 'setting_form.html', )
 
@@ -419,9 +416,8 @@ def del_vuln(request):
                     high_total=total_high,
                     medium_total=total_medium,
                     low_total=total_low)
-        # messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/networkscanners/vul_details/?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('networkscanners:vul_details') + '?scan_id=%s' % un_scanid)
 
 
 def vuln_check(request):
@@ -476,7 +472,7 @@ def OpenVAS_xml_upload(request):
             OpenVas_Parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml)
-            return HttpResponseRedirect("/networkscanners/")
+            return HttpResponseRedirect(reverse('networkscanners:index'))
         elif scanner == "nessus":
             date_time = datetime.now()
             scan_dump = nessus_scan_db(
@@ -494,24 +490,15 @@ def OpenVAS_xml_upload(request):
                                         scan_id=scan_id,
                                         project_id=project_id,
                                         )
-            return HttpResponseRedirect("/networkscanners/nessus_scan")
+            return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
         elif scanner == "nmap":
-            # date_time = datetime.now()
-            # scan_dump = nessus_scan_db(
-            #     scan_ip=scan_ip,
-            #     scan_id=scan_id,
-            #     date_time=date_time,
-            #     project_id=project_id,
-            #     scan_status=scan_status
-            # )
-            # scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
             nmap_parser.xml_parser(root=root_xml,
                                    scan_id=scan_id,
                                    project_id=project_id,
                                    )
-            return HttpResponseRedirect("/tools/nmap_scan/")
+            return HttpResponseRedirect(reverse('tools:nmap_scan'))
 
     return render(request,
                   'net_upload_xml.html',
@@ -550,9 +537,7 @@ def net_scan_schedule(request):
         scan_schedule_time = request.POST.get('datetime')
         project_id = request.POST.get('project_id')
         scanner = request.POST.get('scanner')
-        # periodic_task = request.POST.get('periodic_task')
         periodic_task_value = request.POST.get('periodic_task_value')
-        # periodic_task = 'Yes'
 
 
         if periodic_task_value == 'HOURLY':
@@ -623,7 +608,7 @@ def del_net_scan_schedule(request):
             del_task_schedule = Task.objects.filter(id=task_id)
             del_task_schedule.delete()
 
-    return HttpResponseRedirect('/networkscanners/net_scan_schedule')
+    return HttpResponseRedirect(reverse('networkscanners:net_scan_schedule'))
 
 
 def nessus_scan(request):
@@ -680,7 +665,7 @@ def nessus_vuln_details(request):
                                                                        false_positive_hash=false_positive_hash)
 
         return HttpResponseRedirect(
-            '/networkscanners/nessus_vuln_details/?scan_id=%s' % scan_id)
+            reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % scan_id)
 
     all_vuln = nessus_report_db.objects.filter(scan_id=scanid,
                                                false_positive='No')
@@ -718,7 +703,7 @@ def delete_nessus_scan(request):
             del_scan = nessus_scan_db.objects.filter(scan_id=task_id)
             del_scan.delete()
 
-    return HttpResponseRedirect('/networkscanners/nessus_scan')
+    return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
 
 
 def delete_nessus_vuln(request):
@@ -749,9 +734,8 @@ def delete_nessus_vuln(request):
                     high_total=total_high,
                     medium_total=total_medium,
                     low_total=total_low)
-        # messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/networkscanners/nessus_vuln_details/?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % un_scanid)
 
 
 def nessus_vuln_check(request):
@@ -825,11 +809,7 @@ def nv_details(request):
             timing=nv_timing
         )
 
-        return HttpResponseRedirect('/webscanners/setting/')
-
-    messages.add_message(request,
-                         messages.SUCCESS,
-                         'NMAP Vulners Setting Updated ')
+        return HttpResponseRedirect(reverse('webscanners:setting'))
 
     return render(request,
                   'nv_settings.html',

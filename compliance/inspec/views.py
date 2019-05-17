@@ -18,6 +18,7 @@ from django.shortcuts import render, render_to_response, HttpResponse, HttpRespo
 from compliance.models import inspec_scan_db, inspec_scan_results_db
 import hashlib
 from staticscanners.resources import InspecResource
+from django.urls import reverse
 
 
 def inspec_list(request):
@@ -98,12 +99,7 @@ def inspec_vuln_data(request):
                                                                               )
 
         return HttpResponseRedirect(
-            '/inspec/inspec_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_id))
-
-    # inspec_vuln_data = inspec_scan_results_db.objects.filter(
-    #     scan_id=scan_id,
-    #     name=test_name
-    # )
+            reverse('inspec:inspec_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_id))
 
     inspec_vuln_data = inspec_scan_results_db.objects.filter(scan_id=scan_id,
                                                              vuln_id=vuln_id,
@@ -171,7 +167,7 @@ def del_inspec(request):
             item_results = inspec_scan_results_db.objects.filter(scan_id=scan_id)
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/inspec/inspec_list')
+        return HttpResponseRedirect(reverse('inspec:inspec_list'))
 
 
 def inspec_del_vuln(request):
@@ -208,7 +204,7 @@ def inspec_del_vuln(request):
             total_dup=total_duplicate
         )
 
-        return HttpResponseRedirect("/inspec/inspec_all_vuln/?scan_id=%s" % scan_id)
+        return HttpResponseRedirect(reverse('inspec:inspec_all_vuln' + '?scan_id=%s' % scan_id))
 
 
 def export(request):

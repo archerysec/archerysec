@@ -40,6 +40,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from archerysettings.models import email_db
 import ast
+from django.urls import reverse
 
 scans_status = None
 to_mail = ''
@@ -99,7 +100,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
 
         email_notify(user=user, subject=subject, message=message)
         print("ZAP Connection Not Found")
-        return HttpResponseRedirect('/webscanners/')
+        return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
 
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
@@ -188,7 +189,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
 
         email_sch_notify(subject=subject, message=message)
         print("ZAP Connection Not Found")
-        return HttpResponseRedirect('/webscanners/')
+        return HttpResponseRedirect(reverse('webscanners:index'))
 
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
@@ -304,7 +305,7 @@ def zap_rescan(request):
         thread.daemon = True
         thread.start()
 
-    return HttpResponseRedirect('/zapscanner/zap_scan_list/')
+    return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
 
 
 def zap_scan_list(request):
@@ -406,7 +407,7 @@ def zap_vuln_details(request):
                              messages.SUCCESS,
                              'Vulnerability Status Changed')
         return HttpResponseRedirect(
-            '/zapscanner/zap_vuln_details/?scan_id=%s&scan_name=%s' % (
+            reverse('zapscanner:zap_vuln_details') + '?scan_id=%s&scan_name=%s' % (
                 scan_id,
                 vuln_name
             )
@@ -483,7 +484,7 @@ def zap_setting_update(request):
         )
         save_data.save()
 
-        return HttpResponseRedirect('/webscanners/setting/')
+        return HttpResponseRedirect(reverse('webscanners:setting'))
 
     messages.add_message(request,
                          messages.SUCCESS,
@@ -516,7 +517,7 @@ def del_zap_scan(request):
                                                    )
                 item.delete()
                 messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-            return HttpResponseRedirect('/zapscanner/zap_scan_list/')
+            return HttpResponseRedirect(reverse('webscanners:index'))
     except Exception as e:
         print("Error Got !!!")
 
@@ -551,7 +552,7 @@ def save_cookie(driver):
     f.close()
     driver.close()
 
-    return HttpResponseRedirect('/zapscanner/')
+    return HttpResponseRedirect(reverse('webscanners:index'))
 
 
 def cookies_list(request):
@@ -578,7 +579,7 @@ def del_cookies(request):
             del_cookie = cookie_db.objects.filter(url=cookies_target)
             del_cookie.delete()
             zap_plugin.zap_replacer(target_url=cookies_target)
-        return HttpResponseRedirect('/zapscanner/')
+        return HttpResponseRedirect(reverse('webscanners:index'))
 
     return render(request, 'cookies_list.html')
 
@@ -611,15 +612,15 @@ def sel_login(request):
 
             if cookies == new_uri:
                 cookie_db.objects.filter(Q(url__icontains=new_uri)).update(cookie=cookie_data)
-                return HttpResponseRedirect("/zapscanner/")
+                return HttpResponseRedirect(reverse('webscanners:index'))
             else:
                 data_dump = cookie_db(url=new_uri,
                                       cookie=cookie_data)
                 data_dump.save()
-                return HttpResponseRedirect("/zapscanner/")
+                return HttpResponseRedirect(reverse('webscanners:index'))
         messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
-        return HttpResponseRedirect('/zapscanner/')
+        return HttpResponseRedirect(reverse('webscanners:index'))
     return render(request, 'webscanner.html')
 
 
@@ -656,7 +657,7 @@ def exluded_url_list(request):
             del_excluded = excluded_db.objects.filter(exclude_url=exclude_target)
             del_excluded.delete()
 
-        return HttpResponseRedirect('/zapscanner/excluded_url_list')
+        return HttpResponseRedirect(reverse('zapscanner:excluded_url_list'))
 
     return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})
 
@@ -691,7 +692,7 @@ def del_zap_vuln(request):
                                                                   medium_vul=total_medium, low_vul=total_low)
         messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/zapscanner/zap_list_vuln/?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('zapscanner:zap_list_vuln') + '?scan_id=%s' % un_scanid)
 
 
 def zap_vuln_check(request):

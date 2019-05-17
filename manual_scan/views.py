@@ -25,6 +25,7 @@ from manual_scan.models import VulnerabilityData
 import uuid
 
 from django.shortcuts import render, HttpResponseRedirect
+from django.urls import reverse
 
 
 def list_scan(request):
@@ -64,7 +65,7 @@ def add_list_scan(request):
             project_id=project_id,
         )
         dump_scan.save()
-        return HttpResponseRedirect('/manual_scan/')
+        return HttpResponseRedirect(reverse('manual_scan:list_scan'))
 
     return render(request,
                   'add_list_scan.html',
@@ -167,7 +168,7 @@ def add_vuln(request):
             low_vul=total_low,
         )
 
-        return HttpResponseRedirect('/manual_scan/')
+        return HttpResponseRedirect(reverse('manual_scan:list_scan'))
 
     return render(request,
                   'add_manual_vuln.html',
@@ -250,7 +251,7 @@ def edit_vuln(request):
             low_vul=total_low,
         )
         return HttpResponseRedirect(
-            '/manual_scan/vuln_list/?scan_id=%(scan_id)s&project_id=%(project_id)s' % {'scan_id': scan_id,
+            reverse('manual_scan:vuln_list') + '?scan_id=%(scan_id)s&project_id=%(project_id)s' % {'scan_id': scan_id,
                                                                                        'project_id': project_id})
 
     return render(request, 'edit_vuln.html',
@@ -295,7 +296,7 @@ def del_vuln(request):
             low_vul=total_low,
         )
 
-        return HttpResponseRedirect('/manual_scan/vuln_list/?scan_id=%s&project_id=%s' % (scan_id, project_id))
+        return HttpResponseRedirect(reverse('manual_scan:vuln_list') + '?scan_id=%s&project_id=%s' % (scan_id, project_id))
 
 
 def del_scan(request):
@@ -321,7 +322,7 @@ def del_scan(request):
             del_scan_info = manual_scans_db.objects.filter(scan_id=scan_id)
             del_scan_info.delete()
 
-        return HttpResponseRedirect('/manual_scan/')
+        return HttpResponseRedirect(reverse('manual_scan:list_scan'))
 
 
 def add_vuln_data(request):
@@ -349,7 +350,7 @@ def add_vuln_data(request):
         )
         dump_data.save()
 
-        return HttpResponseRedirect('/manual_scan/')
+        return HttpResponseRedirect(reverse('manual_scan:list_scan'))
     return render(request, 'manual_vuln_data.html')
 
 

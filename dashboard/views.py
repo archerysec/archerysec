@@ -51,6 +51,7 @@ from webscanners.resources import AllResource
 from notifications.models import Notification
 from django.contrib.auth import user_logged_in
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Create your views here.
 chart = []
@@ -1173,7 +1174,7 @@ def all_high_vuln(request):
         pentest_all_high = ''
 
     else:
-        return HttpResponseRedirect('/proj_data/?project_id=%s' % project_id)
+        return HttpResponseRedirect(reverse('dashboard:proj_data' + '?project_id=%s' % project_id))
 
     return render(request,
                   'dashboard/all_high_vuln.html',
@@ -1463,7 +1464,7 @@ def export(request):
                              )
 
         else:
-            return HttpResponseRedirect('/proj_data/?project_id=%s' % project_id)
+            return HttpResponseRedirect(reverse('dashboard:proj_data' + '?project_id=%s' % project_id))
 
         dataset = resource.export(all_data)
 

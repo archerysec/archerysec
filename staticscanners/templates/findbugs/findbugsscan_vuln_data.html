@@ -21,7 +21,7 @@
             $.ajax({
                 type:'POST',
                 <!--contentType: 'application/json; charset=utf-8',-->
-                url:'{% url 'findbugsscanner:findbugs_del_vuln' %}',
+                url:'{% url 'findbugs:findbugs_del_vuln' %}',
                 data:{
                    del_vuln: json_scanid,
                    scan_id: $('input[name=scan_id]').val(),

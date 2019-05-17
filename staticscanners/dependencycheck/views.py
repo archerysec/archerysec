@@ -18,6 +18,7 @@ from django.shortcuts import render, render_to_response, HttpResponse, HttpRespo
 from staticscanners.models import dependencycheck_scan_results_db, dependencycheck_scan_db
 import hashlib
 from staticscanners.resources import DependencyResource
+from django.urls import reverse
 
 
 def dependencycheck_list(request):
@@ -82,7 +83,7 @@ def dependencycheck_vuln_data(request):
                                                                                        )
 
         return HttpResponseRedirect(
-            '/dependencycheck/dependencycheck_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
+            reverse('dependencycheck:dependencycheck_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     dependencycheck_vuln_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id,
                                                                                name=test_name,
@@ -148,8 +149,7 @@ def del_dependencycheck(request):
             item.delete()
             item_results = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-        # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/dependencycheck/dependencycheck_list')
+        return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
 
 
 def dependencycheck_del_vuln(request):
@@ -186,7 +186,7 @@ def dependencycheck_del_vuln(request):
             total_dup=total_duplicate
         )
 
-        return HttpResponseRedirect("/dependencycheck/dependencycheck_all_vuln/?scan_id=%s" % scan_id)
+        return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_all_vuln') + '?scan_id=%s' % scan_id)
 
 
 def export(request):

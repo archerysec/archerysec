@@ -33,6 +33,7 @@ import json
 import time
 from webscanners.resources import ArachniResource
 from notifications.signals import notify
+from django.urls import reverse
 
 
 def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
@@ -263,12 +264,8 @@ def arachni_vuln_out(request):
                                                                               vuln_status=status,
                                                                               false_positive_hash=false_positive_hash
                                                                               )
-
-        messages.add_message(request,
-                             messages.SUCCESS,
-                             'Vulnerability Status Changed')
         return HttpResponseRedirect(
-            '/arachniscanner/arachni_vuln_out/?scan_id=%(scan_id)s&scan_name=%(vuln_name)s' % {'scan_id': scan_id,
+            reverse('arachniscanner:arachni_vuln_out') + '?scan_id=%(scan_id)s&scan_name=%(vuln_name)s' % {'scan_id': scan_id,
                                                                                                'vuln_name': vuln_name})
 
     vuln_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
@@ -319,8 +316,7 @@ def del_arachni_scan(request):
             item.delete()
             item_results = arachni_scan_result_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/arachniscanner/arachni_scan_list/')
+        return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
 
 
 def arachni_del_vuln(request):
@@ -356,9 +352,8 @@ def arachni_del_vuln(request):
             medium_vul=total_medium,
             low_vul=total_low
         )
-        messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/arachniscanner/arachni_list_vuln?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('arachniscanner:arachni_list_vuln') + '?scan_id=%s' % un_scanid)
 
 
 def arachni_settings(request):
@@ -401,11 +396,7 @@ def arachni_setting_update(request):
         )
         save_data.save()
 
-        return HttpResponseRedirect('/webscanners/setting/')
-
-    messages.add_message(request,
-                         messages.SUCCESS,
-                         'arachni Setting Updated ')
+        return HttpResponseRedirect(reverse('webscanners:setting'))
 
     return render(request,
                   'arachniscanner/arachni_settings_form.html')

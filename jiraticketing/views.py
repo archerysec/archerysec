@@ -23,6 +23,7 @@ from django.core import signing
 from jira import JIRA
 from webscanners.models import zap_scan_results_db, burp_scan_result_db, arachni_scan_result_db
 from networkscanners.models import ov_scan_result_db, nessus_report_db
+from django.urls import reverse
 
 jira_url = ''
 username = ''
@@ -58,7 +59,7 @@ def jira_setting(request):
                                 jira_password=password)
         save_data.save()
 
-        return HttpResponseRedirect('/webscanners/setting/')
+        return HttpResponseRedirect(reverse('webscanners:setting'))
 
     return render(request, 'jira_setting_form.html', {'jira_server': jira_server,
                                                       'jira_username': jira_username,
@@ -116,26 +117,24 @@ def submit_jira_ticket(request):
 
         if scanner == 'zap':
             zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect('/webscanners/zap_vul_details/?scan_id=%s&scan_name=%s' % (
+            return HttpResponseRedirect(reverse('webscanners:zap_vul_details') + '?scan_id=%s&scan_name=%s' % (
                 scan_id,
                 summary
             )
         )
         elif scanner == 'burp':
             burp_scan_result_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect('/webscanners/burp_vuln_out/?scan_id=%s&scan_name=%s' % (
+            return HttpResponseRedirect(reverse('webscanners:burp_vuln_out') + '?scan_id=%s&scan_name=%s' % (
                 scan_id,
                 summary
             )
         )
         elif scanner == 'arachni':
             arachni_scan_result_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect('/webscanners/arachni_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, summary))
+            return HttpResponseRedirect(reverse('webscanners:arachni_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, summary))
         elif scanner == 'open_vas':
             ov_scan_result_db.objects.filter(vul_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect('/networkscanners/vul_details/?scan_id=%s' % scan_id)
+            return HttpResponseRedirect(reverse('networkscanners:vul_details') + '?scan_id=%s' % scan_id)
         elif scanner == 'nessus':
             nessus_report_db.objects.filter(vul_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect('/networkscanners/nessus_vuln_details/?scan_id=%s' % scan_id)
-
-            # return render(request, 'submit_jira_ticket.html')
+            return HttpResponseRedirect(reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % scan_id)

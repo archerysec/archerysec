@@ -33,6 +33,7 @@ from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_
 import datetime
 from manual_scan.models import manual_scan_results_db, manual_scans_db
 from itertools import chain
+from django.urls import reverse
 
 project_dat = None
 
@@ -58,7 +59,7 @@ def create(request):
 
         messages.success(request, "Project Created")
 
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(reverse('dashboard:dashboard'))
 
     return render(request, 'dashboard/project.html')
 
@@ -146,7 +147,7 @@ def projects(request):
 
         messages.success(request, "Deleted Project")
 
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(reverse('dashboard:dashboard'))
 
     return render(request, 'dashboard/project.html', {'all_projects': all_projects})
 
@@ -179,7 +180,7 @@ def project_edit(request):
             project_owner=project_owner,
             project_disc=project_disc
         )
-        return HttpResponseRedirect('/projects/projects_view/?proj_id=%s' % project_id)
+        return HttpResponseRedirect(reverse('projects:projects') + '?proj_id=%s' % project_id)
     return render(request,
                   'project_edit.html',
                   {'project_dat': project_dat}

@@ -24,6 +24,7 @@ from jiraticketing.models import jirasetting
 import hashlib
 from webscanners.resources import AcunetixResource
 from notifications.models import Notification
+from django.urls import reverse
 
 
 def acunetix_list_vuln(request):
@@ -126,7 +127,7 @@ def acunetix_vuln_out(request):
                                                                                )
 
         return HttpResponseRedirect(
-            '/acunetixscanner/acunetix_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+            reverse('acunetixscanner:acunetix_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
     vuln_data = acunetix_scan_result_db.objects.filter(scan_id=scan_id,
                                                        VulnName=name,
@@ -172,8 +173,7 @@ def del_acunetix_scan(request):
             item.delete()
             item_results = acunetix_scan_result_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/acunetixscanner/acunetix_scan_list/')
+        return HttpResponseRedirect(reverse('acunetixscanner:acunetix_scan_list'))
 
 
 def edit_acunetix_vuln(request):
@@ -223,9 +223,7 @@ def edit_acunetix_vuln(request):
             vulnerabilityClassifications=vulnerabilityClassifications,
         )
 
-        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
-
-        return HttpResponseRedirect("/acunetixscanner/acunetix_vuln_data/?vuln_id=%s" % vuln_id)
+        return HttpResponseRedirect(reverse('acunetixscanner:acunetix_vuln_data') + '?vuln_id=%s' % vuln_id)
 
     return render(request, 'acunetixscanner/edit_acunetix_vuln.html', {'edit_vul_dat': edit_vul_dat})
 
@@ -266,9 +264,8 @@ def acunetix_del_vuln(request):
             low_vul=total_low,
             info_vul=total_info
         )
-        messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/acunetixscanner/acunetix_list_vuln?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('acunetixscanner:acunetix_list_vuln') + '?scan_id=%s' % un_scanid)
 
 def export(request):
     """
