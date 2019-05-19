@@ -1,8 +1,8 @@
 [![Follow Archery on Twitter](https://img.shields.io/twitter/follow/archerysec.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/user?screen_name=archerysec "Follow Archery on Twitter")
 
-[![PyPI - License](assets/django.svg)](https://github.com/archerysec/archerysec/blob/master/LICENSE) ![PyPI - Django Version](assets/djangorestframework.svg) ![Python - Python Version](assets/python-2.7-red.svg) ![Travis-ci](https://api.travis-ci.com/archerysec/archerysec.svg?branch=master)
+[![PyPI - License](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/django.svg)](https://github.com/archerysec/archerysec/blob/master/LICENSE) ![PyPI - Django Version](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/djangorestframework.svg) ![Python - Python Version](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/python-2.7-red.svg) ![Travis-ci](https://api.travis-ci.com/archerysec/archerysec.svg?branch=master)
 
-[![Road Map](assets/roadmap-orange.svg)](https://github.com/archerysec/archerysec/projects/1) [![BlackHat USA Arsenal 2018sd](assets/blackhat-usa-2018.svg)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/) [![BlackHat Asia Arsenal 2018](assets/blackhat-asia-2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837) [![DEFCON 26 Demolabs](assets/defcon-26-demo-labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
+[![Road Map](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/roadmap-orange.svg)](https://github.com/archerysec/archerysec/projects/1) [![BlackHat USA Arsenal 2018](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/blackhat-usa-2018.svg)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/) [![BlackHat Asia Arsenal 2018](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/blackhat-asia-2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837) [![DEFCON 26 Demolabs](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/defcon-26-demo-labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
 
 [![Rawsec's CyberSecurity Inventory](https://inventory.rawsec.ml/img/badges/Rawsec-inventoried-FF5050_flat.svg)](https://inventory.rawsec.ml/tools.html#Archery)
 
@@ -49,9 +49,9 @@ Archery is an opensource vulnerability assessment and management tool which help
 * [Official Website & Documentation](https://archerysec.github.io/archerysec/)
 * [API Documentation](http://developers.archerysec.com/)
 
-![Demo](assets/archery-demo.gif)
+![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery-demo.gif)
 
-![Overview](assets/itegrate_archery_devsecops.png)
+![Overview](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/itegrate_archery_devsecops.png)
 
 ## Overview of the tool
 
