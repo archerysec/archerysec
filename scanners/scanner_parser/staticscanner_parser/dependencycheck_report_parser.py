@@ -30,23 +30,23 @@ def xml_parser(data, project_id, scan_id):
     :param scan_id:
     :return:
     """
-    fileName = None,
-    filePath = None
-    evidenceCollected = None
-    name = None
-    cvssScore = None
-    cvssAccessVector = None
-    cvssAccessComplexity = None
-    cvssAuthenticationr = None
-    cvssConfidentialImpact = None
-    cvssIntegrityImpact = None
-    cvssAvailabilityImpact = None
-    severity = None
-    cwe = None
-    description = None
-    references = None
-    vulnerableSoftware = None
-    vul_col = None
+    fileName = 'Na'
+    filePath = 'Na'
+    evidenceCollected = 'Na'
+    name = 'Na'
+    cvssScore = 'Na'
+    cvssAccessVector = 'Na'
+    cvssAccessComplexity = 'Na'
+    cvssAuthenticationr = 'Na'
+    cvssConfidentialImpact = 'Na'
+    cvssIntegrityImpact = 'Na'
+    cvssAvailabilityImpact = 'Na'
+    severity = 'Na'
+    cwe = 'Na'
+    description = 'Na'
+    references = 'Na'
+    vulnerableSoftware = 'Na'
+    vul_col = 'Na'
 
     pt = data.xpath('namespace-uri(.)')
     # root = data.getroot()
