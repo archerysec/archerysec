@@ -1,4 +1,5 @@
 {% extends 'dashboard/base.html' %}
+{% load static %}
 
 {% block body %}
 
@@ -144,7 +145,7 @@
 </div>
 
 
-<script type="text/javascript" src="/static/js/Chart.js"></script>
+<script type="text/javascript" src="{% static 'js/Chart.js' %}"></script>
 <script type="text/javascript">
     var ctx = document.getElementById("webscans").getContext('2d');
     var webscans = new Chart(ctx, {
