@@ -1,5 +1,5 @@
 {% extends 'dashboard/base.html' %}
-
+{% load static %}
 {% block body %}
 
 
@@ -811,7 +811,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="/static/js/Chart.js"></script>
+<script type="text/javascript" src="{% static 'js/Chart.js' %}"></script>
 <script type="text/javascript">
     var ctx = document.getElementById("ProBar").getContext('2d');
 var ProBar = new Chart(ctx, {
