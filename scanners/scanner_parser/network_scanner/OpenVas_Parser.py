@@ -222,4 +222,5 @@ def xml_parser(root, project_id, scan_id):
                    medium_total=total_medium,
                    low_total=total_low,
                    total_dup=total_duplicate,
+                   scan_ip=host,
                    )

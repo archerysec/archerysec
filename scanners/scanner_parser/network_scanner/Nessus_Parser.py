@@ -233,4 +233,5 @@ def nessus_parser(root, project_id, scan_id):
                             low_total=total_low,
                             info_total=total_info,
                             total_dup=total_duplicate,
+                            scan_ip=scan_ip,
                             )
