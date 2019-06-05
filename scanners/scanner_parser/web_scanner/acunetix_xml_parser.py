@@ -330,5 +330,6 @@ def xml_parser(root, project_id, scan_id):
                 medium_vul=total_medium,
                 low_vul=total_low,
                 info_vul=total_info,
-                total_dup=total_duplicate
+                total_dup=total_duplicate,
+                url=ScanStartURL
                 )

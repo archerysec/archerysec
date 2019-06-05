@@ -49,7 +49,12 @@ def xml_parser(root,
         externalReferences, remedyReferences, proofOfConcept, proofs
 
     for data in root:
+        if data.tag == "target":
+            for url in data:
+                if url.tag == 'url':
+                    target = url.text
         for vuln in data:
+
             if vuln.tag == 'url':
                 vuln_url = vuln.text
 
@@ -190,7 +195,8 @@ def xml_parser(root,
                                                               low_vul=total_low,
                                                               critical_vul=total_critical,
                                                               info_vul=total_info,
-                                                              total_dup=total_duplicate
+                                                              total_dup=total_duplicate,
+                                                              url=target
                                                               )
 
     if total_vul == total_duplicate:
@@ -200,5 +206,6 @@ def xml_parser(root,
                                                                   low_vul=total_low,
                                                                   critical_vul=total_critical,
                                                                   info_vul=total_info,
-                                                                  total_dup=total_duplicate
+                                                                  total_dup=total_duplicate,
+                                                                  url=target
                                                                   )
