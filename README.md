@@ -170,6 +170,10 @@ Running the following command will get you all the services up, creates a postgr
 $ docker-compose up -d
 ```
 
+## Configure Serverless on AWS
+
+[Deploy ArcherySec as a Serverless on AWS using Zappa](https://blog.archerysec.com/Deploy-ArcherySec-as-a-Serverless-on-AWS-using-Zappa/)
+
 ### Environment variables for this project <!-- omit in toc -->
 
 The following environment variables are used to change behaviour of the container settings
