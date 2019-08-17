@@ -205,8 +205,7 @@ def xml_parser(root, project_id, scan_id):
             removed_list_data = ','.join(full_data)
             zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(param=removed_list_data)
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id) \
-        .values('name', 'risk').distinct()
+    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
     total_high = len(zap_all_vul.filter(risk="High"))
     total_medium = len(zap_all_vul.filter(risk="Medium"))

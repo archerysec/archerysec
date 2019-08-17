@@ -112,6 +112,7 @@ def xml_parser(root,
             vuln_id = uuid.uuid4()
 
         if vuln_severity == "Critical":
+            vuln_severity = "High"
             vul_col = "danger"
 
         elif vuln_severity == "High":
@@ -179,7 +180,7 @@ def xml_parser(root,
                                               )
         dump_data.save()
 
-    netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=scan_id)
+    netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
 
     total_critical = len(netsparker_all_vul.filter(severity='Critical'))
     total_high = len(netsparker_all_vul.filter(severity="High"))
