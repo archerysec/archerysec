@@ -241,8 +241,7 @@ def burp_scan_data(root, project_id, scan_id):
             data_dump.save()
         except Exception as e:
             print(e)
-    burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity'
-                                                                              ).distinct()
+    burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
     total_vul = len(burp_all_vul)
     total_high = len(burp_all_vul.filter(severity="High"))
     total_medium = len(burp_all_vul.filter(severity="Medium"))

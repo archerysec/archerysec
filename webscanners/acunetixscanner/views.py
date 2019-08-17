@@ -116,7 +116,7 @@ def acunetix_vuln_out(request):
             vuln_info = acunetix_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.VulnName
-                url = vi.ScanStartURL
+                url = vi.VulnFullUrl
                 Severity = vi.VulnSeverity
                 dup_data = name + url + Severity
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
@@ -125,6 +125,24 @@ def acunetix_vuln_out(request):
                                                                                vuln_status=status,
                                                                                false_positive_hash=false_positive_hash
                                                                                )
+
+            acunetix_all_vul = acunetix_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+
+            total_high = len(acunetix_all_vul.filter(VulnSeverity="High"))
+            total_medium = len(acunetix_all_vul.filter(VulnSeverity="Medium"))
+            total_low = len(acunetix_all_vul.filter(VulnSeverity="Low"))
+            total_info = len(acunetix_all_vul.filter(VulnSeverity="Informational"))
+            total_duplicate = len(acunetix_all_vul.filter(vuln_duplicate='Yes'))
+            total_vul = total_high + total_medium + total_low + total_info
+
+            acunetix_scan_db.objects.filter(scan_id=scan_id) \
+                .update(total_vul=total_vul,
+                        high_vul=total_high,
+                        medium_vul=total_medium,
+                        low_vul=total_low,
+                        info_vul=total_info,
+                        total_dup=total_duplicate,
+                        )
 
         return HttpResponseRedirect(
             reverse('acunetixscanner:acunetix_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))

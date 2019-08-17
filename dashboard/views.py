@@ -1017,9 +1017,9 @@ def all_high_vuln(request):
         zap_all_high = zap_scan_results_db.objects.filter(project_id=project_id,
                                                           risk='High')
         arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
-                                                                 severity='high')
+                                                                 severity='High')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
-                                                                       severity_name__in=[
+                                                                       severity__in=[
                                                                            'Critical', 'High'])
 
         netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
@@ -1049,7 +1049,7 @@ def all_high_vuln(request):
         arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
                                                                  severity='Medium')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
-                                                                       severity_name__in=[
+                                                                       severity__in=[
                                                                            'Medium'])
         netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
                                                                        severity='Medium')
@@ -1076,7 +1076,7 @@ def all_high_vuln(request):
         arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
                                                                  severity='Low')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
-                                                                       severity_name__in=[
+                                                                       severity__in=[
                                                                            'Low'])
         netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
                                                                        severity='Low')
@@ -1219,7 +1219,7 @@ def export(request):
             arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
                                                                      severity='high')
             webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
-                                                                           severity_name__in=[
+                                                                           severity__in=[
                                                                                'Critical', 'High'])
             netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
                                                                            severity='High')
@@ -1263,7 +1263,7 @@ def export(request):
             arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
                                                                      severity='Medium')
             webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
-                                                                           severity_name__in=[
+                                                                           severity__in=[
                                                                                'Medium'])
             netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
                                                                            severity='Medium')
@@ -1307,7 +1307,7 @@ def export(request):
             arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
                                                                      severity='Low')
             webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
-                                                                           severity_name__in=[
+                                                                           severity__in=[
                                                                                'Low'])
             netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
                                                                            severity='Low')

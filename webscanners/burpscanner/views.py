@@ -247,7 +247,7 @@ def burp_vuln_out(request):
             vuln_info = burp_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.name
-                location = vi.request_response_url
+                location = vi.path
                 severity = vi.severity
                 dup_data = name + location + severity
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
@@ -256,9 +256,25 @@ def burp_vuln_out(request):
                                                                            vuln_status=vuln_status,
                                                                            false_positive_hash=false_positive_hash
                                                                            )
+            burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+            total_vul = len(burp_all_vul)
+            total_high = len(burp_all_vul.filter(severity="High"))
+            total_medium = len(burp_all_vul.filter(severity="Medium"))
+            total_low = len(burp_all_vul.filter(severity="Low"))
+            total_info = len(burp_all_vul.filter(severity="Information"))
+            total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
+            burp_scan_db.objects.filter(scan_id=scan_id).update(
+                total_vul=total_vul,
+                high_vul=total_high,
+                medium_vul=total_medium,
+                low_vul=total_low,
+                info_vul=total_info,
+                total_dup=total_duplicate
+            )
+
         return HttpResponseRedirect(
             reverse('burpscanner:burp_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id,
-                                                                     vuln_name))
+                                                                                 vuln_name))
     vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
                                                    name=name,
                                                    false_positive='No',
