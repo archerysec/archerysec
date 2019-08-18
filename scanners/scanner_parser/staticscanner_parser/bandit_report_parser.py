@@ -175,7 +175,7 @@ def bandit_report_json(data, project_id, scan_id):
                 )
                 save_all.save()
 
-        all_bandit_data = bandit_scan_results_db.objects.filter(scan_id=scan_id)
+        all_bandit_data = bandit_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
         total_vul = len(all_bandit_data)
         total_high = len(all_bandit_data.filter(issue_severity="HIGH"))

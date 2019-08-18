@@ -69,7 +69,7 @@ def xml_parser(root, project_id, scan_id):
 
                 vul_id = uuid.uuid4()
 
-                dup_data = name + classname + priority
+                dup_data = name + classname + risk
 
                 duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
@@ -125,7 +125,7 @@ def xml_parser(root, project_id, scan_id):
                     Details=Details,
                 )
 
-        all_findbugs_data = findbugs_scan_results_db.objects.filter(scan_id=scan_id)
+        all_findbugs_data = findbugs_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
         total_vul = len(all_findbugs_data)
         total_high = len(all_findbugs_data.filter(priority="1"))
