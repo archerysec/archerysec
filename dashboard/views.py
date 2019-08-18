@@ -851,6 +851,7 @@ def proj_data(request):
                                                                                     project_id=project_id)
     findbugs_false_positive = findbugs_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
     clair_false_positive = clair_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
+    bandit_false_positive = bandit_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
 
     openvas_false_positive = ov_scan_result_db.objects.filter(false_positive='Yes', project_id=project_id)
     nessus_false_positive = nessus_report_db.objects.filter(false_positive='Yes', project_id=project_id)
@@ -881,7 +882,8 @@ def proj_data(request):
                          int(len(acunetix_false_positive)) + \
                          int(len(dependencycheck_false_positive)) + \
                          int(len(findbugs_false_positive)) + \
-                         int(len(clair_false_positive))
+                         int(len(clair_false_positive)) + \
+                         int(len(bandit_false_positive))
 
     all_notify = Notification.objects.unread()
 
@@ -1015,28 +1017,40 @@ def all_high_vuln(request):
     if severity == 'High':
 
         zap_all_high = zap_scan_results_db.objects.filter(project_id=project_id,
-                                                          risk='High')
+                                                          risk='High',
+                                                          false_positive='No')
         arachni_all_high = arachni_scan_result_db.objects.filter(project_id=project_id,
-                                                                 severity='High')
+                                                                 severity='High',
+                                                                 false_positive='No')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(project_id=project_id,
                                                                        severity__in=[
-                                                                           'Critical', 'High'])
+                                                                           'Critical', 'High'],
+                                                                       false_positive='No')
 
         netsparker_all_high = netsparker_scan_result_db.objects.filter(project_id=project_id,
-                                                                       severity='High')
+                                                                       severity='High',
+                                                                       false_positive='No')
         acunetix_all_high = acunetix_scan_result_db.objects.filter(project_id=project_id,
-                                                                   VulnSeverity='High')
+                                                                   VulnSeverity='High',
+                                                                   false_positive='No')
         burp_all_high = burp_scan_result_db.objects.filter(project_id=project_id,
-                                                           severity='High')
+                                                           severity='High',
+                                                           false_positive='No')
 
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(project_id=project_id,
-                                                                                  severity='High')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='High', project_id=project_id)
-        bandit_all_high = bandit_scan_results_db.objects.filter(issue_severity='HIGH', project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(Severity='High', project_id=project_id)
+                                                                                  severity='High',
+                                                                                  false_positive='No')
+        findbugs_all_high = findbugs_scan_results_db.objects.filter(risk='High', project_id=project_id,
+                                                                    false_positive='No')
+        bandit_all_high = bandit_scan_results_db.objects.filter(issue_severity='HIGH', project_id=project_id,
+                                                                false_positive='No')
+        clair_all_high = clair_scan_results_db.objects.filter(Severity='High', project_id=project_id,
+                                                              false_positive='No')
 
-        openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
-        nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)
+        openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id,
+                                                            false_positive='No')
+        nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id,
+                                                          false_positive='No')
 
         pentest_all_high = manual_scan_results_db.objects.filter(severity='High', project_id=project_id)
 

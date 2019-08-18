@@ -82,6 +82,22 @@ def clair_vuln_data(request):
                                                                              false_positive_hash=false_positive_hash
                                                                              )
 
+            all_clair_data = clair_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+
+            total_vul = len(all_clair_data)
+            total_high = len(all_clair_data.filter(Severity='High'))
+            total_medium = len(all_clair_data.filter(Severity='Medium'))
+            total_low = len(all_clair_data.filter(Severity='Low'))
+            total_duplicate = len(all_clair_data.filter(vuln_duplicate='Yes'))
+
+            clair_scan_db.objects.filter(scan_id=scan_id).update(
+                total_vuln=total_vul,
+                SEVERITY_HIGH=total_high,
+                SEVERITY_MEDIUM=total_medium,
+                SEVERITY_LOW=total_low,
+                total_dup=total_duplicate
+            )
+
         return HttpResponseRedirect(
             reverse('clair:clair_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 

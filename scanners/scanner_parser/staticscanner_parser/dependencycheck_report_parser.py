@@ -147,6 +147,9 @@ def xml_parser(data, project_id, scan_id):
                         else:
                             false_positive = 'No'
 
+                        if cwe == 'Na':
+                            cwe = name
+
                         save_all = dependencycheck_scan_results_db(
                             # date_time=date_time,
                             vuln_id=vul_id,
@@ -175,7 +178,7 @@ def xml_parser(data, project_id, scan_id):
                             false_positive=false_positive
                         )
                         save_all.save()
-        all_dependency_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id)
+        all_dependency_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
         total_vul = len(all_dependency_data)
         total_high = len(all_dependency_data.filter(severity="High"))

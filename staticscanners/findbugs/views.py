@@ -82,6 +82,22 @@ def findbugs_vuln_data(request):
                                                                                 false_positive_hash=false_positive_hash
                                                                                 )
 
+            all_findbugs_data = findbugs_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+
+            total_vul = len(all_findbugs_data)
+            total_high = len(all_findbugs_data.filter(priority="1"))
+            total_medium = len(all_findbugs_data.filter(priority="2"))
+            total_low = len(all_findbugs_data.filter(priority="3"))
+            total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
+
+            findbugs_scan_db.objects.filter(scan_id=scan_id).update(
+                total_vuln=total_vul,
+                SEVERITY_HIGH=total_high,
+                SEVERITY_MEDIUM=total_medium,
+                SEVERITY_LOW=total_low,
+                total_dup=total_duplicate
+            )
+
         return HttpResponseRedirect(
             reverse('findbugs:findbugs_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 

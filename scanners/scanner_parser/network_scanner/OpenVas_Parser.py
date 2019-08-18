@@ -208,7 +208,7 @@ def xml_parser(root, project_id, scan_id):
                                      )
         save_all.save()
 
-        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id)
+        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
 
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
