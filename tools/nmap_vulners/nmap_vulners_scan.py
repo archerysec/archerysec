@@ -127,4 +127,4 @@ def run_nmap_vulners(ip_addr='', project_id=''):
                                  )
         save_scan.save()
 
-    print('[NMAP_VULNERS][] - END - scan of domain %s' % (scan_id, format(ip_addr)))
+    # print('[NMAP_VULNERS][] - END - scan of domain %s' % (scan_id, format(ip_addr)))

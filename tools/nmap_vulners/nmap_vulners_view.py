@@ -20,6 +20,7 @@ from django.shortcuts import render, HttpResponseRedirect
 
 from tools.models import nmap_vulners_port_result_db, nmap_scan_db
 from tools.nmap_vulners.nmap_vulners_scan import run_nmap_vulners
+from notifications.signals import notify
 
 
 def nmap_vulners_scan(request):
@@ -42,6 +43,7 @@ def nmap_vulners(request):
 
     :return:
     """
+    user = request.user
 
     if request.method == 'POST':
         ip_address = request.POST.get('ip')
@@ -49,6 +51,7 @@ def nmap_vulners(request):
 
         try:
             run_nmap_vulners(ip_addr=ip_address, project_id=project_id)
+            notify.send(user, recipient=user, verb='NMAP Scan Completed')
         except Exception as e:
             print('Error in nmap_vulners scan:', e)
 
