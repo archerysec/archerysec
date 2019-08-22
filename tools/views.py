@@ -25,6 +25,9 @@ import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 import hashlib
 import os
+from datetime import datetime
+from notifications.signals import notify
+from django.urls import reverse
 
 # NOTE[gmedian]: in order to be more portable we just import everything rather than add anything in this very script
 from tools.nmap_vulners.nmap_vulners_view import nmap_vulners, nmap_vulners_port, nmap_vulners_scan
@@ -40,6 +43,8 @@ def sslscan(request):
     global sslscan_output
     all_sslscan = sslscan_result_db.objects.all()
 
+    user = request.user
+
     if request.method == 'POST':
         scan_url = request.POST.get('scan_url')
         project_id = request.POST.get('project_id')
@@ -54,7 +59,7 @@ def sslscan(request):
 
             try:
                 sslscan_output = subprocess.check_output(['sslscan', '--no-colour', scans_url])
-                print(sslscan_output)
+                notify.send(user, recipient=user, verb='SSLScan Completed')
 
             except Exception as e:
                 print(e)
@@ -65,6 +70,7 @@ def sslscan(request):
                                            sslscan_output=sslscan_output)
 
             dump_scans.save()
+            return HttpResponseRedirect(reverse('tools:sslscan'))
 
     return render(request,
                   'sslscan_list.html',
@@ -122,6 +128,8 @@ def nikto(request):
     global nikto_output
     all_nikto = nikto_result_db.objects.all()
 
+    user = request.user
+
     if request.method == 'POST':
         scan_url = request.POST.get('scan_url')
         project_id = request.POST.get('project_id')
@@ -131,6 +139,7 @@ def nikto(request):
         value_split = value.split(',')
         split_length = value_split.__len__()
         for i in range(0, split_length):
+            date_time = datetime.now()
             scan_id = uuid.uuid4()
             scans_url = value_split.__getitem__(i)
 
@@ -151,7 +160,7 @@ def nikto(request):
                     print(e)
 
             except Exception as e:
-                print (e)
+                print(e)
 
                 try:
                     print("New command running......")
@@ -164,6 +173,7 @@ def nikto(request):
                     data = f.read()
                     try:
                         nikto_html_parser(data, project_id, scan_id)
+                        notify.send(user, recipient=user, verb='Nikto Scan Completed')
                     except Exception as e:
                         print(e)
 
@@ -174,6 +184,7 @@ def nikto(request):
             dump_scans = nikto_result_db(scan_url=scan_url,
                                          scan_id=scan_id,
                                          project_id=project_id,
+                                         date_time=date_time,
                                          nikto_scan_output=nikto_output)
 
             dump_scans.save()
