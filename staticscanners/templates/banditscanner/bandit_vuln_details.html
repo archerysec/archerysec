@@ -6,21 +6,12 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <div class="col-md-auto">
+                  <div class="col-md-auto">
                     <div class="float-right">
                         <!-- Large modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target=".bd-example-modal-lg">Jira Ticket
-                        </button>
+                        <a href="/jira/submit_jira_ticket/?summary={{ data.test_name }}&description={{data.issue_text }}%0a%0a%0a Vulnerable File: {{data.filename}} %0a%0a Vulnerable Code: {{data.code }} %0a%0a Solution:  %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=bandit&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+               class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
 
-                        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <h1>{{ data.test_name }}</h1>

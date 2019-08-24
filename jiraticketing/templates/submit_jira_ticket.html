@@ -1,65 +1,76 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
 {% block body %}
 
-
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb"><a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> {{ data.name }}</a>
-            <a
-                    href="#" class="current"></a></div>
-        <h1>{{ data.name }}</h1>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span6 offset3">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>JIRA Ticket</h5>
-                    </div>
-                    <div class="widgext-content nopadding">
-                        <form action="{% url 'jira:submit_jira_ticket' %}" method="POST" class="form-horizontal">
-                            {% csrf_token %}
-                            <input name="vuln_id" value="{{vuln_id}}" type="hidden">
-                            <input name="scanner" value="{{scanner}}" type="hidden">
-                            <input name="scan_id" value="{{scan_id}}" type="hidden">
-                            <div class="control-group">
-                                <label class="control-label">Select Project</label>
-                                <div class="controls">
-                                    <select name="project_id" class="selectpicker"
-                                            data-live-search="true">
-                                        {% for jira_data in jira_projects %}<option value="{{jira_data.id}}">{{ jira_data.name }}</option>{% endfor %}
-                                    </select>
-                                    <p class="help-block">Select JIRA Project</p>
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">JIRA Ticket</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal" method="POST"
+                                              action="{% url 'jiraticketing:submit_jira_ticket' %}">{% csrf_token %}
+                                            <input name="vuln_id" value="{{vuln_id}}" type="hidden">
+                                            <input name="scanner" value="{{scanner}}" type="hidden">
+                                            <input name="scan_id" value="{{scan_id}}" type="hidden">
+                                            <div class="card-body">
+                                                <div class="form-group row">
+                                                    <label
+                                                            class="col-sm-4 col-form-label">Select Project</label>
+                                                    <div class="col-sm-6">
+                                                        <select id="project_id" name="project_id"
+                                                                class="select2 form-control custom-select"
+                                                                style="width: 100%; height:36px;">
+                                                            {% for jira_data in jira_projects %}
+                                                            <option value="{{jira_data.id}}">{{ jira_data.name }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label
+                                                            class="col-sm-4 col-form-label">Issue Type</label>
+                                                    <div class="col-sm-6">
+                                                        <select name="issue_type"
+                                                                class="select2 form-control custom-select"
+                                                                style="width: 100%; height:36px;">
+                                                            <option>Bug</option>
+                                                            <option>Story</option>
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label
+                                                            class="col-sm-4 col-form-label">Summary</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" name="summary"
+                                                               class="form-control"
+                                                               value="{{summary}}">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label
+                                                            class="col-sm-4 col-form-label">Description</label>
+                                                    <div class="col-sm-6">
+                                                        <textarea name="description" class="form-control">{{description}}</textarea>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-success">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">Issue Type</label>
-                                <div class="controls">
-                                    <select id="selectbasic" name="issue_type">
-                                        <option>Bug</option>
-                                        <option>Story</option>
-                                    </select>
-                                    <p class="help-block">Select issue type</p>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Summary</label>
-                                <div class="controls">
-                                    <input id="textinput" name="summary" type="text" value="{{summary}}" placeholder="Vulnerability name"
-                                           class="span11 m-wrap">
-                                    <p class="help-block">Vulnerability Summary</p>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Description</label>
-                                <div class="controls">
-                                    <textarea id="textarea" name="description" class="span11 m-wrap">{{description}}</textarea>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-success">Submit</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

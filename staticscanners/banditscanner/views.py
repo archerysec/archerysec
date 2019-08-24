@@ -18,6 +18,7 @@ from django.shortcuts import render, render_to_response, HttpResponse, HttpRespo
 from staticscanners.models import bandit_scan_results_db, bandit_scan_db
 import hashlib
 from django.urls import reverse
+from jiraticketing.models import jirasetting
 
 
 def banditscans_list(request):
@@ -38,6 +39,10 @@ def banditscan_list_vuln(request):
     :param request:
     :return:
     """
+    jira_url = ''
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
 
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
@@ -53,7 +58,9 @@ def banditscan_list_vuln(request):
     ).distinct()
 
     return render(request, 'banditscanner/banditscan_list_vuln.html',
-                  {'bandit_all_vuln': bandit_all_vuln})
+                  {'bandit_all_vuln': bandit_all_vuln,
+                   'jira_url': jira_url
+                   })
 
 
 def banditscan_vuln_data(request):
@@ -61,6 +68,11 @@ def banditscan_vuln_data(request):
     :param request:
     :return:
     """
+    jira_url = ''
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         test_name = request.GET['test_name']
@@ -126,7 +138,8 @@ def banditscan_vuln_data(request):
     return render(request, 'banditscanner/banditscan_vuln_data.html',
                   {'bandit_vuln_data': bandit_vuln_data,
                    'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed
+                   'vuln_data_closed': vuln_data_closed,
+                   'jira_url': jira_url
                    })
 
 
@@ -136,6 +149,10 @@ def banditscan_details(request):
     :param request:
     :return:
     """
+    jira_url = ''
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
 
     if request.method == 'GET':
         scan_id = request.GET['scan_id']

@@ -67,6 +67,7 @@ class bandit_scan_results_db(models.Model):
     false_positive_hash = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Bandit', editable=False)
+    jira_ticket = models.TextField(null=True, blank=True)
 
 
 class dependencycheck_scan_db(models.Model):
@@ -96,7 +97,7 @@ class dependencycheck_scan_results_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
-
+    jira_ticket = models.TextField(null=True, blank=True)
     name = models.TextField(blank=True, null=True)
     cvssScore = models.TextField(blank=True, null=True)
     cvssAccessVector = models.TextField(blank=True, null=True)
@@ -155,6 +156,7 @@ class retirejs_scan_results_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     issue = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='RetireJs', editable=False)
+    jira_ticket = models.TextField(null=True, blank=True)
 
 
 class findbugs_scan_db(models.Model):
@@ -201,6 +203,7 @@ class findbugs_scan_results_db(models.Model):
     priority = models.TextField(blank=True)
     risk = models.TextField(blank=True)
     scanner = models.TextField(default='Findbugs', editable=False)
+    jira_ticket = models.TextField(null=True, blank=True)
 
 
 class clair_scan_db(models.Model):
@@ -240,5 +243,5 @@ class clair_scan_results_db(models.Model):
     FeatureName = models.TextField(null=True, blank=True)
     FeatureVersion = models.TextField(null=True, blank=True)
     controls_tags_audit_text = models.TextField(null=True, blank=True)
-
+    jira_ticket = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Clair', editable=False)

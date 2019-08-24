@@ -4,23 +4,17 @@
 {% for data in vuln_data %}
 <div class="page-wrapper">
     <div class="container-fluid">
+        <div class="float-right">
+
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="col-md-auto">
                     <div class="float-right">
                         <!-- Large modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target=".bd-example-modal-lg">Jira Ticket
-                        </button>
+                        <a href="/jira/submit_jira_ticket/?summary={{data.VulnName}}&description={{data.VulnName}}%0a%0a%0a Vulnerable URL: {{data.vuln_url}} %0a%0a Vulnerable Parameter: {{data.vector_input_values}} %0a%0a Solution: {{data.remedy_guidance}} %0a%0a Archery URL: {SERVERIP}/acunetixscanner/acunetix_vuln_data/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.request_raw }}&scanner=acunetix&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}}"
+               class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
 
-                        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <h1>{{ data.VulnName }}</h1>
