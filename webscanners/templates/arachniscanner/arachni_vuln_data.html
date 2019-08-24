@@ -4,8 +4,19 @@
 {% for data in vuln_data %}
 <div class="page-wrapper">
     <div class="container-fluid">
+        <div class="float-right">
+
+        </div>
         <div class="row">
             <div class="col-md-12">
+                 <div class="col-md-auto">
+                    <div class="float-right">
+                        <!-- Large modal -->
+                         <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description={{data.description}}%0a%0a%0a Vulnerable URL: {{data.url}} %0a%0a Vulnerable Parameter: {{data.vector_input_values}} %0a%0a Solution: {{data.remedy_guidance}} %0a%0a Archery URL: {SERVERIP}/arachniscanner/arachni_vuln_data/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.request_raw }}&scanner=arachni&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+               class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
+
+                    </div>
+                </div>
                 <h1>{{data.name}}</h1>
                 <br>
                 <div class="card">

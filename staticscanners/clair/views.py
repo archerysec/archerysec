@@ -19,6 +19,7 @@ from staticscanners.models import clair_scan_results_db, clair_scan_db
 import hashlib
 from staticscanners.resources import ClairResource
 from django.urls import reverse
+from jiraticketing.models import jirasetting
 
 
 def clair_list(request):
@@ -51,6 +52,11 @@ def clair_vuln_data(request):
     :param request:
     :return:
     """
+    jira_url = ''
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         test_name = request.GET['test_name']
@@ -119,7 +125,8 @@ def clair_vuln_data(request):
     return render(request, 'clair/clairscan_vuln_data.html',
                   {'clair_vuln_data': clair_vuln_data,
                    'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed
+                   'vuln_data_closed': vuln_data_closed,
+                   'jira_url': jira_url
                    })
 
 
