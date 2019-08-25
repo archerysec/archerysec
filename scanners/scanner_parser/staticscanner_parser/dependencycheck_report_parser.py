@@ -83,6 +83,35 @@ def xml_parser(data, project_id, scan_id):
                                             severity = 'Medium'
                                         elif severity_dat == 'LOW':
                                             severity = 'Low'
+
+                        elif pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.2.xsd':
+                            for dc22 in vuln:
+
+                                if dc22.tag == '{%s}name' % pt:
+                                    name = dc22.text
+
+                                if dc22.tag == '{%s}description' % pt:
+                                    description = dc22.text
+
+                                if dc22.tag == '{%s}vulnerableSoftware' % pt:
+                                    vulnerableSoftware = dc22.text
+
+                                for vuln_dat in dc22:
+                                    for d in vuln_dat:
+                                        if d.tag == '{%s}url' % pt:
+                                            references = d.text
+
+                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                        cwe = vuln_dat.text
+                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                        severity_dat = vuln_dat.text
+                                        if severity_dat == 'HIGH':
+                                            severity = 'High'
+                                        elif severity_dat == 'MEDIUM':
+                                            severity = 'Medium'
+                                        elif severity_dat == 'LOW':
+                                            severity = 'Low'
+
                         else:
                             for vulner in vuln:
                                 if vulner.tag == '{%s}name' % pt:
