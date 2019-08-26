@@ -73,6 +73,7 @@ banner = ""
 
 
 def email_notify(user, subject, message):
+    to_mail = ''
     all_email = email_db.objects.all()
     for email in all_email:
         to_mail = email.recipient_list
