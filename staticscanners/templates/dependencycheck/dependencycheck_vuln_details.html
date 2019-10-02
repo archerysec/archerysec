@@ -14,7 +14,7 @@
 
                     </div>
                 </div>
-                <h1>{{data.cwe | safe}}</h1>
+                <h1>{{data.name | safe}}</h1>
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
@@ -37,7 +37,7 @@
                                     <br>
                                     {{data.vulnerableSoftware | safe}}
                                     <br>
-                                    <strong>CVE: </strong><a href="/vfeed/cve_info/?cve={{data.name}}">{{data.name}}</a><br><br>
+                                    <strong>CVE: </strong><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name={{data.name}}" target="_blank">{{data.name}}</a><br><br>
                                 </div>
                             </div>
                         </div>

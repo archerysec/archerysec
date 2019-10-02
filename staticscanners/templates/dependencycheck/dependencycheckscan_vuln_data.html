@@ -87,7 +87,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'dependencycheck:dependencycheck_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.cwe}}</a>
+                                            <a href="{% url 'dependencycheck:dependencycheck_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
                                         </td>
                                         <td>{{data.fileName}}</td>
                                         <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
