@@ -10,7 +10,7 @@ RUN \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install --quiet --yes --fix-missing \
     make \
-    postgresql-client-10 \
+    default-jre \
     sslscan \
     nikto \
     nmap \
@@ -42,6 +42,15 @@ WORKDIR /home/archerysec/app
 COPY . .
 
 RUN mkdir nikto_result
+
+RUN wget https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAP_2.7.0_Linux.tar.gz
+
+RUN tar -xvzf ZAP_2.7.0_Linux.tar.gz
+
+RUN mkdir zap
+
+RUN cp -r ZAP_2.7.0/* /home/archerysec/app/zap
+
 
 # Install requirements
 RUN pip install --no-cache-dir -r requirements.txt && \

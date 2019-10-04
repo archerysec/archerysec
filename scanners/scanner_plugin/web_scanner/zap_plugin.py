@@ -25,6 +25,9 @@ from archerysettings.models import zap_settings_db, burp_setting_db, openvas_set
 import hashlib
 from scanners.scanner_parser.web_scanner import zap_xml_parser
 import defusedxml.ElementTree as ET
+import platform
+import subprocess
+import sys
 
 # ZAP Database import
 
@@ -39,22 +42,48 @@ from archerysettings import load_settings
 # Global Variables
 setting_file = os.getcwd() + '/apidata.json'
 zap_setting = load_settings.ArcherySettings(setting_file)
-zap_api_key = ''
-zap_hosts = '127.0.0.1'
+zap_api_key = 'dwed23wdwedwwefw4rwrfw'
+zap_hosts = '0.0.0.0'
 zap_ports = '8080'
+
+
+def zap_local():
+
+    zap_path = '/home/archerysec/app/zap/'
+    executable = 'zap.sh'
+    executable_path = os.path.join(zap_path, executable)
+
+    zap_command = [executable_path, '-daemon', '-config', 'api.disablekey=false', '-config', 'api.key=' + zap_api_key,
+                   '-port', zap_ports, '-host', zap_hosts]
+
+    log_path = os.getcwd() + '/' + 'zap.log'
+
+    with open(log_path, 'w+') as log_file:
+        subprocess.Popen(zap_command, cwd=zap_path, stdout=log_file, stderr=subprocess.STDOUT)
+
+    return zap_local
 
 
 def zap_connect():
     all_zap = zap_settings_db.objects.all()
 
-    zap_api_key = ''
+    zap_api_key = 'dwed23wdwedwwefw4rwrfw'
     zap_hosts = '127.0.0.1'
     zap_ports = '8080'
+    zap_enabled = False
 
     for zap in all_zap:
-        zap_api_key = zap.zap_api
-        zap_hosts = zap.zap_url
-        zap_ports = zap.zap_port
+        zap_enabled = zap.enabled
+
+    if zap_enabled is False:
+        zap_api_key = 'dwed23wdwedwwefw4rwrfw'
+        zap_hosts = '127.0.0.1'
+        zap_ports = '8080'
+    elif zap_enabled is True:
+        for zap in all_zap:
+            zap_api_key = zap.zap_api
+            zap_hosts = zap.zap_url
+            zap_ports = zap.zap_port
 
     zap = ZAPv2(apikey=zap_api_key,
                 proxies={
@@ -348,3 +377,10 @@ class ZAPScanner:
                                   root=root_xml_en)
 
         self.zap.core.delete_all_alerts()
+
+    def zap_shutdown(self):
+        """
+
+        :return:
+        """
+        self.zap.core.shutdown(apikey=zap_api_key)
