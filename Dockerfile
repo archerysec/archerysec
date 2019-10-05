@@ -56,6 +56,9 @@ COPY zap_config/policies /home/archerysec/app/zap
 
 COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascanrulesBeta-beta-24.zap
 
+RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
+    rm -rf ZAP_2.7.0
+
 # Install requirements
 RUN pip install --no-cache-dir -r requirements.txt && \
     rm -rf /home/archerysec/.cache
