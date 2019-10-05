@@ -44,7 +44,7 @@ setting_file = os.getcwd() + '/apidata.json'
 zap_setting = load_settings.ArcherySettings(setting_file)
 zap_api_key = 'dwed23wdwedwwefw4rwrfw'
 zap_hosts = '0.0.0.0'
-zap_ports = '8080'
+zap_ports = '8090'
 
 
 def zap_local():
@@ -69,7 +69,7 @@ def zap_connect():
 
     zap_api_key = 'dwed23wdwedwwefw4rwrfw'
     zap_hosts = '127.0.0.1'
-    zap_ports = '8080'
+    zap_ports = '8090'
     zap_enabled = False
 
     for zap in all_zap:
@@ -78,7 +78,7 @@ def zap_connect():
     if zap_enabled is False:
         zap_api_key = 'dwed23wdwedwwefw4rwrfw'
         zap_hosts = '127.0.0.1'
-        zap_ports = '8080'
+        zap_ports = '8090'
     elif zap_enabled is True:
         for zap in all_zap:
             zap_api_key = zap.zap_api
