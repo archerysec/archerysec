@@ -52,6 +52,9 @@ RUN mkdir zap
 
 RUN cp -r ZAP_2.7.0/* /home/archerysec/app/zap
 
+COPY zap_config/policies /home/archerysec/app/zap
+
+COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascanrulesBeta-beta-24.zap
 
 # Install requirements
 RUN pip install --no-cache-dir -r requirements.txt && \

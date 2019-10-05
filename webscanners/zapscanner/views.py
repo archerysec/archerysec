@@ -118,6 +118,12 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         print("ZAP Connection Not Found")
         return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
 
+    zap_plugin.zap_spider_thread(count=20)
+    zap_plugin.zap_spider_setOptionMaxDepth(count=5)
+
+    zap_plugin.zap_scan_thread(count=30)
+    zap_plugin.zap_scan_setOptionHostPerScan(count=3)
+
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
     zap.exclude_url()

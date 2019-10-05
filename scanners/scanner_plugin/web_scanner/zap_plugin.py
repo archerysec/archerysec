@@ -103,6 +103,38 @@ def zap_replacer(target_url):
     return
 
 
+def zap_spider_thread(count):
+    zap = zap_connect()
+
+    zap.spider.set_option_thread_count(count, apikey=zap_api_key)
+
+    return
+
+
+def zap_scan_thread(count):
+    zap = zap_connect()
+
+    zap.ascan.set_option_thread_per_host(count, apikey=zap_api_key)
+
+    return
+
+
+def zap_spider_setOptionMaxDepth(count):
+    zap = zap_connect()
+
+    zap.spider.set_option_max_depth(count, apikey=zap_api_key)
+
+    return
+
+
+def zap_scan_setOptionHostPerScan(count):
+    zap = zap_connect()
+
+    zap.ascan.set_option_host_per_scan(count, apikey=zap_api_key)
+
+    return
+
+
 class ZAPScanner:
     """
     ZAP Scanner Plugin. Interacting with ZAP Scanner API.
