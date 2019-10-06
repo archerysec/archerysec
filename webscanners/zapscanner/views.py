@@ -99,7 +99,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     if zap_enabled is False:
         print("started local instence")
         zap_plugin.zap_local()
-        time.sleep(10)
+        time.sleep(20)
 
 
     # Connection Test
