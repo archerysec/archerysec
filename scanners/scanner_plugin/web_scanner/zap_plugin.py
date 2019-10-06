@@ -54,7 +54,7 @@ def zap_local():
     executable_path = os.path.join(zap_path, executable)
 
     zap_command = [executable_path, '-daemon', '-config', 'api.disablekey=false', '-config', 'api.key=' + zap_api_key,
-                   '-port', zap_ports, '-host', zap_hosts]
+                   '-port', zap_ports, '-config', 'api.addrs.addr.name=.*', '-config', 'api.addrs.addr.regex=true']
 
     log_path = os.getcwd() + '/' + 'zap.log'
 

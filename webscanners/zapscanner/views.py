@@ -88,11 +88,6 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     zap_enabled = False
 
     all_zap = zap_settings_db.objects.all()
-
-    for zap in all_zap:
-        zap_enabled = zap.enabled
-
-    all_zap = zap_settings_db.objects.all()
     for zap in all_zap:
         zap_enabled = zap.enabled
 
