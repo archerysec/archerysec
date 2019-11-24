@@ -53,10 +53,11 @@ urlpatterns = [
     url(r'^dependencycheck/', include('staticscanners.dependencycheck.urls')),
     url(r'^findbugs/', include('staticscanners.findbugs.urls')),
     url(r'^clair/', include('staticscanners.clair.urls')),
+    url(r'^trivy/', include('staticscanners.trivy.urls')),
     url(r'^inspec/', include('compliance.inspec.urls')),
     url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     url(r'^api/', include('archeryapi.urls')),
-    #url(r'^scanapi/', include('APIScan.urls')),
+    # url(r'^scanapi/', include('APIScan.urls')),
     url(r'^vfeed/', include('vFeedgui.urls')),
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 

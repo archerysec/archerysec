@@ -245,3 +245,46 @@ class clair_scan_results_db(models.Model):
     controls_tags_audit_text = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Clair', editable=False)
+
+
+
+class trivy_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+
+
+class trivy_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    Target = models.TextField(null=True, blank=True)
+    Vulnerabilities = models.TextField(null=True, blank=True)
+    VulnerabilityID = models.TextField(null=True, blank=True)
+    PkgName = models.TextField(null=True, blank=True)
+    InstalledVersion = models.TextField(null=True, blank=True)
+    FixedVersion = models.TextField(null=True, blank=True)
+    Title = models.TextField(null=True, blank=True)
+    Description = models.TextField(null=True, blank=True)
+    Severity = models.TextField(null=True, blank=True)
+    References = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='Trivy', editable=False)
