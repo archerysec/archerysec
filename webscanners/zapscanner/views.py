@@ -85,6 +85,17 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     :param project_id: Project ID
     :return:
     """
+    zap_enabled = False
+
+    all_zap = zap_settings_db.objects.all()
+    for zap in all_zap:
+        zap_enabled = zap.enabled
+
+    if zap_enabled is False:
+        print("started local instence")
+        zap_plugin.zap_local()
+        time.sleep(20)
+
 
     # Connection Test
     zap_connect = zap_plugin.zap_connect()
@@ -101,6 +112,12 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         email_notify(user=user, subject=subject, message=message)
         print("ZAP Connection Not Found")
         return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
+
+    zap_plugin.zap_spider_thread(count=20)
+    zap_plugin.zap_spider_setOptionMaxDepth(count=5)
+
+    zap_plugin.zap_scan_thread(count=30)
+    zap_plugin.zap_scan_setOptionHostPerScan(count=3)
 
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
@@ -158,6 +175,9 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         total_medium = data.medium_vul
         total_low = data.low_vul
 
+    if zap_enabled is False:
+        zap.zap_shutdown()
+
     notify.send(user, recipient=user, verb='ZAP Scan URL %s Completed' % target_url)
 
     subject = 'Archery Tool Scan Status - ZAP Scan Completed'
@@ -166,7 +186,6 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
               'Medium: %s <br>Low %s' % (target_url, total_vuln, total_high, total_medium, total_low)
 
     email_notify(user=user, subject=subject, message=message)
-    # return HttpResponse(status=201)
 
 
 def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
@@ -468,12 +487,19 @@ def zap_settings(request):
     zap_api_key = ''
     zap_hosts = None
     zap_ports = None
+    zap_enabled = False
 
     all_zap = zap_settings_db.objects.all()
     for zap in all_zap:
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
         zap_ports = zap.zap_port
+        zap_enabled = zap.enabled
+
+    if zap_enabled:
+        zap_enabled = 'True'
+    else:
+        zap_enabled = 'False'
 
     return render(request,
                   'zapscanner/zap_settings_form.html',
@@ -481,6 +507,7 @@ def zap_settings(request):
                       'zap_apikey': zap_api_key,
                       'zap_host': zap_hosts,
                       'zap_port': zap_ports,
+                      'zap_enabled': zap_enabled
                   }
                   )
 
@@ -492,13 +519,23 @@ def zap_setting_update(request):
     :return:
     """
     if request.method == 'POST':
+
+        all_zap = zap_settings_db.objects.all()
+        all_zap.delete()
+
+        if request.POST.get("zap_enabled") == 'on':
+            zap_enabled = True
+        else:
+            zap_enabled = False
+
         apikey = request.POST.get("apikey", )
         zaphost = request.POST.get("zappath", )
         port = request.POST.get("port", )
         save_data = zap_settings_db(
             zap_url=zaphost,
             zap_port=port,
-            zap_api=apikey
+            zap_api=apikey,
+            enabled=zap_enabled
         )
         save_data.save()
 
@@ -680,7 +717,6 @@ def exluded_url_list(request):
     return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})
 
 
-
 def del_zap_vuln(request):
     """
     Delete Vulnerability from database.
@@ -754,6 +790,7 @@ def zap_vuln_check(request):
                   {'vul_dat': vul_dat,
                    'evi': full_data
                    })
+
 
 def zap_scan_pdf_gen(request):
     """

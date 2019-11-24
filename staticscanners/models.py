@@ -60,7 +60,7 @@ class bandit_scan_results_db(models.Model):
     issue_text = models.TextField(blank=True)
     test_name = models.TextField(blank=True)
     filename = models.TextField(blank=True)
-    more_info = models.TextField(blank=True)
+    more_info = models.TextField(blank=True, null=True)
     vul_col = models.TextField(blank=True)
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
