@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'matrix-admin-bt4/assets/libs/select2/dist/css/select2.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'matrix-admin-bt4/assets/extra-libs/multicheck/multicheck.css' %}">
     <link href="{% static 'matrix-admin-bt4/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.css' %}" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="{% static 'matrix-admin-bt4/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
 </head>
 
 <body>
@@ -45,6 +46,7 @@
 <script src="{% static 'matrix-admin-bt4/assets/extra-libs/DataTables/datatables.min.js' %}"></script>
 <script src="{% static 'matrix-admin-bt4/assets/libs/select2/dist/js/select2.full.min.js' %}"></script>
 <script src="{% static 'matrix-admin-bt4/assets/libs/select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
 
 <!--<script src="{% static 'matrix-admin-bt4/dist/js/jquery-1.9.1.min.js' %}"></script>-->
 <script>
@@ -132,6 +134,8 @@
         $('#nmap_scans_list').DataTable();
 
         $('#manual_scans_list').DataTable();
+
+        $('#scan_schedule').DataTable();
 
 
 $(".select2").select2();
