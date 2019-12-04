@@ -118,6 +118,18 @@ cd /usr/share/nmap/scripts/
 sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulners.nse
 ```
 
+## ********* DO NOT EXPOSE PUBLICLY, INTERNAL USE ONLY **********
+
+#### Restrict ArcherySec signup page on production.
+
+- Edit file webscanners/web_views.py
+- Search def signup function and comment @public decorator
+- Edit file archeryapi/views.py
+- Search def class CreateUsers and comment @public decorator
+- Edit file archerysecurity/settings/base.py
+- Search STRONGHOLD_PUBLIC_URLS
+- Comment r'^/api/createuser/$',
+
 ## installation
 
 `export TIME_ZONE='Asia/Kolkata'`
