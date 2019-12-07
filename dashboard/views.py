@@ -1311,7 +1311,7 @@ def export(request):
             bandit_all_high = bandit_scan_results_db.objects.filter(issue_severity='High', project_id=project_id)
             clair_all_high = clair_scan_results_db.objects.filter(Severity='High', project_id=project_id)
 
-            trivy_all_high = trivy_scan_results_db.objects.filter(Severity='High', project_id=project_id)
+            trivy_all_high = trivy_scan_results_db.objects.filter(Severity='HIGH', project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)

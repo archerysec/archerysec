@@ -181,6 +181,18 @@
                                 </tr>
                                 {% endfor %}
 
+                                {% for data in trivy_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'trivy:trivy_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.VulnerabilityID}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.Target}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
                                 <!--&lt;!&ndash;Bandit&ndash;&gt;-->
                                 {% for data in bandit_vuln_high %}
                                 <tr data-target="#">

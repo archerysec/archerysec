@@ -89,12 +89,15 @@ def trivy_report_json(data, project_id, scan_id):
                     print(e)
 
                 if Severity == "HIGH":
+                    Severity = 'High'
                     vul_col = "danger"
 
                 elif Severity == 'MEDIUM':
+                    Severity = 'Medium'
                     vul_col = "warning"
 
                 elif Severity == 'LOW':
+                    Severity = 'Low'
                     vul_col = "info"
 
                 vul_id = uuid.uuid4()
@@ -147,9 +150,9 @@ def trivy_report_json(data, project_id, scan_id):
         all_findbugs_data = trivy_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
         total_vul = len(all_findbugs_data)
-        total_high = len(all_findbugs_data.filter(Severity="HIGH"))
-        total_medium = len(all_findbugs_data.filter(Severity="MEDIUM"))
-        total_low = len(all_findbugs_data.filter(Severity="LOW"))
+        total_high = len(all_findbugs_data.filter(Severity="High"))
+        total_medium = len(all_findbugs_data.filter(Severity="Medium"))
+        total_low = len(all_findbugs_data.filter(Severity="Low"))
         total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
 
         trivy_scan_db.objects.filter(scan_id=scan_id).update(
