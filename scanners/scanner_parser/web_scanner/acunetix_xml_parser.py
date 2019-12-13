@@ -223,32 +223,6 @@ def xml_parser(root, project_id, scan_id):
                         vul_col = "info"
                         risk = "Informational"
 
-
-
-                vuln_id = uuid.uuid4()
-                # print VulnName, ScanStartURL, VulnSeverity
-                dup_data = str(VulnName) + str(VulnAffects) + str(VulnSeverity)
-                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                match_dup = acunetix_scan_result_db.objects.filter(
-                    dup_hash=duplicate_hash).values('dup_hash').distinct()
-                lenth_match = len(match_dup)
-
-                if lenth_match == 1:
-                    duplicate_vuln = 'Yes'
-                elif lenth_match == 0:
-                    duplicate_vuln = 'No'
-                else:
-                    duplicate_vuln = 'None'
-
-                false_p = acunetix_scan_result_db.objects.filter(
-                    false_positive_hash=duplicate_hash)
-                fp_lenth_match = len(false_p)
-
-                if fp_lenth_match == 1:
-                    false_positive = 'Yes'
-                else:
-                    false_positive = 'No'
-
                 if VulnName is None:
                     print(VulnName)
                 else:
@@ -260,7 +234,31 @@ def xml_parser(root, project_id, scan_id):
                                 VulnUrl = vuln_url.text
                             if vuln_url.tag == 'FullURL':
                                 FullURL = vuln_url.text
-                            # print FullURL
+
+                    vuln_id = uuid.uuid4()
+                    dup_data = VulnName + FullURL + risk
+                    duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+
+                    match_dup = acunetix_scan_result_db.objects.filter(
+                        dup_hash=duplicate_hash).values('dup_hash').distinct()
+                    lenth_match = len(match_dup)
+
+                    if lenth_match == 1:
+                        duplicate_vuln = 'Yes'
+                    elif lenth_match == 0:
+                        duplicate_vuln = 'No'
+                    else:
+                        duplicate_vuln = 'None'
+
+                    false_p = acunetix_scan_result_db.objects.filter(
+                        false_positive_hash=duplicate_hash)
+                    fp_lenth_match = len(false_p)
+
+                    if fp_lenth_match == 1:
+                        false_positive = 'Yes'
+                    else:
+                        false_positive = 'No'
+
                     dump_data = acunetix_scan_result_db(
                         scan_id=scan_id,
                         project_id=project_id,
@@ -312,8 +310,7 @@ def xml_parser(root, project_id, scan_id):
                     )
                     dump_data.save()
 
-    acunetix_all_vul = acunetix_scan_result_db.objects.filter(scan_id=scan_id) \
-        .values('VulnName').distinct()
+    acunetix_all_vul = acunetix_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
 
     total_high = len(acunetix_all_vul.filter(VulnSeverity="High"))
     total_medium = len(acunetix_all_vul.filter(VulnSeverity="Medium"))

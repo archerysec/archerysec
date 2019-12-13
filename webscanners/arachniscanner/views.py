@@ -177,10 +177,10 @@ def arachni_list_vuln(request):
         scan_id = None
 
     arachni_all_vul = arachni_scan_result_db.objects.filter(
-        scan_id=scan_id, vuln_status='Open').values('name',
-                                                    'severity',
-                                                    'vuln_color',
-                                                    'scan_id').distinct()
+        scan_id=scan_id).values('name',
+                                'severity',
+                                'vuln_color',
+                                'scan_id').distinct()
 
     arachni_all_vul_close = arachni_scan_result_db.objects.filter(
         scan_id=scan_id, vuln_status='Closed').values('name',
@@ -264,9 +264,29 @@ def arachni_vuln_out(request):
                                                                               vuln_status=status,
                                                                               false_positive_hash=false_positive_hash
                                                                               )
+
+            arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+
+            total_high = len(arachni_all_vul.filter(severity="High"))
+            total_medium = len(arachni_all_vul.filter(severity="Medium"))
+            total_low = len(arachni_all_vul.filter(severity="Low"))
+            total_info = len(arachni_all_vul.filter(severity="Informational"))
+            total_duplicate = len(arachni_all_vul.filter(vuln_duplicate='Yes'))
+            total_vul = total_high + total_medium + total_low + total_info
+
+            arachni_scan_db.objects.filter(scan_id=scan_id).update(
+                total_vul=total_vul,
+                high_vul=total_high,
+                medium_vul=total_medium,
+                low_vul=total_low,
+                info_vul=total_info,
+                total_dup=total_duplicate,
+            )
+
         return HttpResponseRedirect(
-            reverse('arachniscanner:arachni_vuln_out') + '?scan_id=%(scan_id)s&scan_name=%(vuln_name)s' % {'scan_id': scan_id,
-                                                                                               'vuln_name': vuln_name})
+            reverse('arachniscanner:arachni_vuln_out') + '?scan_id=%(scan_id)s&scan_name=%(vuln_name)s' % {
+                'scan_id': scan_id,
+                'vuln_name': vuln_name})
 
     vuln_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
                                                       name=name,

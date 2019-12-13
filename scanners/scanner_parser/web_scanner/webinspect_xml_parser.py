@@ -104,26 +104,26 @@ def xml_parser(root,
                 vuln_id = uuid.uuid4()
 
             if Severity == "4":
-                severity_name = 'Critical'
+                Severity = 'Critical'
                 vul_col = "danger"
 
             elif Severity == "3":
-                severity_name = 'High'
-                vul_col = 'important'
+                Severity = 'High'
+                vul_col = 'danger'
 
             elif Severity == "2":
-                severity_name = 'Medium'
+                Severity = 'Medium'
                 vul_col = "warning"
 
             elif Severity == '1':
-                severity_name = 'Low'
+                Severity = 'Low'
                 vul_col = "info"
 
             elif Severity == '0':
-                severity_name = 'Information'
+                Severity = 'Information'
                 vul_col = "info"
 
-            dup_data = Name + url + severity_name
+            dup_data = Name + url + Severity
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
             match_dup = webinspect_scan_result_db.objects.filter(
@@ -177,16 +177,14 @@ def xml_parser(root,
                                                       )
                 dump_data.save()
 
-        webinspect_all_vul = webinspect_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity_name'
-                                                                                              ).distinct()
+        webinspect_all_vul = webinspect_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
 
-
-        total_critical = len(webinspect_all_vul.filter(severity_name='Critical'))
-        total_high = len(webinspect_all_vul.filter(severity_name="High"))
-        total_medium = len(webinspect_all_vul.filter(severity_name="Medium"))
-        total_low = len(webinspect_all_vul.filter(severity_name="Low"))
-        total_info = len(webinspect_all_vul.filter(severity_name="Information"))
-        total_duplicate = len(webinspect_all_vul.filter(vuln_duplicate='Yes'))
+        total_critical = len(webinspect_all_vul.filter(severity='Critical'))
+        total_high = len(webinspect_all_vul.filter(severity="High"))
+        total_medium = len(webinspect_all_vul.filter(severity="Medium"))
+        total_low = len(webinspect_all_vul.filter(severity="Low"))
+        total_info = len(webinspect_all_vul.filter(severity="Information"))
+        total_duplicate = len(webinspect_all_vul.filter(severity='Yes'))
         total_vul = total_critical + total_high + total_medium + total_low + total_info
 
         webinspect_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,

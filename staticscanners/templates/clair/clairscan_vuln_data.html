@@ -31,6 +31,7 @@
                                         <th>Feature Name</th>
                                         <th>Feature Version</th>
                                         <th>Severity</th>
+                                        <th>JIRA Ticket</th>
                                         <th>Link</th>
                                         <th>False Positive</th>
                                         <th>Status</th>
@@ -58,6 +59,7 @@
                                         <td>{{data.FeatureVersion}}</span></td>
                                         <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></a>
                                         </td>
+                                        <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         <td><a href="#" target="_blank">{{data.Link}}</a>
                                         </td>
                                         <td>

@@ -181,6 +181,9 @@ def nessus_parser(root, project_id, scan_id):
                 if risk_factor == 'None':
                     risk_factor = 'Informational'
 
+                if risk_factor == 'Critical':
+                    risk_factor = 'High'
+
                 all_data_save = nessus_report_db(project_id=project_id,
                                                  scan_id=scan_id,
                                                  scan_ip=scan_ip,
@@ -216,7 +219,7 @@ def nessus_parser(root, project_id, scan_id):
                 del_na = nessus_report_db.objects.filter(plugin_name='NA')
                 del_na.delete()
 
-                ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+                ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_id, false_positive='No')
                 total_vul = len(ov_all_vul)
                 total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
                 total_high = len(ov_all_vul.filter(risk_factor="High"))

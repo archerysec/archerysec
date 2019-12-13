@@ -19,6 +19,7 @@ import uuid
 import hashlib
 from datetime import datetime
 
+vul_col = ''
 
 def clair_report_json(data, project_id, scan_id):
     """
@@ -41,6 +42,7 @@ def clair_report_json(data, project_id, scan_id):
             vul_id = uuid.uuid4()
             try:
                 Name = vuln['Name']
+                print(Name)
             except Exception:
                 Name = "Not Found"
 
@@ -314,9 +316,108 @@ def clair_report_json(data, project_id, scan_id):
             save_all.save()
     except Exception:
         print("Low Vulnerability Not found")
+        low = data['vulnerabilities']
+
+        for vuln in low:
+            vul_id = uuid.uuid4()
+            try:
+                Name = vuln['vulnerability']
+            except Exception:
+                Name = "Not Found"
+
+            try:
+                NamespaceName = vuln['namespace']
+            except Exception:
+                NamespaceName = "Not Found"
+
+            try:
+                Description = vuln['description']
+            except Exception:
+                Description = "Not Found"
+
+            try:
+                Link = vuln['link']
+            except Exception:
+                Link = "Not Found"
+
+            try:
+                Severity = vuln['severity']
+            except Exception:
+                Severity = "Not Found"
+            try:
+                Metadata = vuln['Metadata']
+            except Exception:
+                Metadata = "Not Found"
+
+            try:
+                FeatureName = vuln['featurename']
+            except Exception:
+                FeatureName = "Not Found"
+
+            try:
+                FeatureVersion = vuln['featureversion']
+            except Exception:
+                FeatureName = "Not Found"
+
+            if Severity == "Low":
+                vul_col = "info"
+
+            if Severity == "Critical":
+                Severity = "High"
+                vul_col = "danger"
+
+            if Severity == "High":
+                vul_col = "danger"
+
+            if Severity == "Medium":
+                vul_col = "warning"
+
+            dup_data = Name + Severity + NamespaceName
+
+            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+
+            match_dup = clair_scan_results_db.objects.filter(
+                dup_hash=duplicate_hash).values('dup_hash')
+            lenth_match = len(match_dup)
+
+            if lenth_match == 1:
+                duplicate_vuln = 'Yes'
+            elif lenth_match == 0:
+                duplicate_vuln = 'No'
+            else:
+                duplicate_vuln = 'None'
+
+            false_p = clair_scan_results_db.objects.filter(
+                false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
+
+            save_all = clair_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                Name=Name,
+                NamespaceName=NamespaceName,
+                Description=Description,
+                Link=Link,
+                Severity=Severity,
+                Metadata=Metadata,
+                FeatureName=FeatureName,
+                FeatureVersion=FeatureVersion,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+                vul_col=vul_col,
+            )
+            save_all.save()
         # pass
 
-    all_clair_data = clair_scan_results_db.objects.filter(scan_id=scan_id)
+    all_clair_data = clair_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
     total_vul = len(all_clair_data)
     total_high = len(all_clair_data.filter(Severity='High'))

@@ -85,7 +85,7 @@
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.host}}</td>
                                     <td><span
-                                            class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity_name}}</span>
+                                            class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -177,6 +177,18 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.NamespaceName}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in trivy_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'trivy:trivy_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.VulnerabilityID}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.Target}}</td>
                                     <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                                 </tr>
                                 {% endfor %}

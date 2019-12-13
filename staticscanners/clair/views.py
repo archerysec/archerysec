@@ -19,6 +19,7 @@ from staticscanners.models import clair_scan_results_db, clair_scan_db
 import hashlib
 from staticscanners.resources import ClairResource
 from django.urls import reverse
+from jiraticketing.models import jirasetting
 
 
 def clair_list(request):
@@ -51,6 +52,11 @@ def clair_vuln_data(request):
     :param request:
     :return:
     """
+    jira_url = ''
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         test_name = request.GET['test_name']
@@ -82,6 +88,22 @@ def clair_vuln_data(request):
                                                                              false_positive_hash=false_positive_hash
                                                                              )
 
+            all_clair_data = clair_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+
+            total_vul = len(all_clair_data)
+            total_high = len(all_clair_data.filter(Severity='High'))
+            total_medium = len(all_clair_data.filter(Severity='Medium'))
+            total_low = len(all_clair_data.filter(Severity='Low'))
+            total_duplicate = len(all_clair_data.filter(vuln_duplicate='Yes'))
+
+            clair_scan_db.objects.filter(scan_id=scan_id).update(
+                total_vuln=total_vul,
+                SEVERITY_HIGH=total_high,
+                SEVERITY_MEDIUM=total_medium,
+                SEVERITY_LOW=total_low,
+                total_dup=total_duplicate
+            )
+
         return HttpResponseRedirect(
             reverse('clair:clair_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
@@ -103,7 +125,8 @@ def clair_vuln_data(request):
     return render(request, 'clair/clairscan_vuln_data.html',
                   {'clair_vuln_data': clair_vuln_data,
                    'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed
+                   'vuln_data_closed': vuln_data_closed,
+                   'jira_url': jira_url
                    })
 
 

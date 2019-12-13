@@ -20,9 +20,10 @@ from django.db import models
 
 
 class zap_settings_db(models.Model):
-    zap_url = models.TextField(blank=True, null=True)
-    zap_api = models.TextField(blank=True, null=True)
-    zap_port = models.TextField(blank=True, null=True)
+    zap_url = models.TextField(blank=False, null=False, default='127.0.0.1')
+    zap_api = models.TextField(blank=False, null=False, default='dwed23wdwedwwefw4rwrfw')
+    zap_port = models.IntegerField(blank=False, null=False, default=8090)
+    enabled = models.NullBooleanField(blank=False, null=False)
 
 
 class arachni_settings_db(models.Model):

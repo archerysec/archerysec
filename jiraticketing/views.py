@@ -21,14 +21,22 @@ from django.shortcuts import render, render_to_response, HttpResponseRedirect
 from jiraticketing.models import jirasetting
 from django.core import signing
 from jira import JIRA
-from webscanners.models import zap_scan_results_db, burp_scan_result_db, arachni_scan_result_db
+from webscanners.models import zap_scan_results_db,\
+    burp_scan_result_db, arachni_scan_result_db, netsparker_scan_result_db,\
+    acunetix_scan_result_db, \
+    webinspect_scan_result_db
+from staticscanners.models import bandit_scan_results_db,\
+    findbugs_scan_results_db,\
+    retirejs_scan_results_db, clair_scan_results_db, dependencycheck_scan_results_db
 from networkscanners.models import ov_scan_result_db, nessus_report_db
 from django.urls import reverse
+from notifications.signals import notify
 
 jira_url = ''
 username = ''
 
 password = ''
+
 
 def jira_setting(request):
     """
@@ -69,6 +77,7 @@ def jira_setting(request):
 
 def submit_jira_ticket(request):
     jira_setting = jirasetting.objects.all()
+    user = request.user
 
     for jira in jira_setting:
         jira_url = jira.jira_server
@@ -79,8 +88,12 @@ def submit_jira_ticket(request):
     jira_password = signing.loads(password)
 
     options = {'server': jira_server}
-    jira_ser = JIRA(options, basic_auth=(jira_username, jira_password))
-    jira_projects = jira_ser.projects()
+    try:
+        jira_ser = JIRA(options, basic_auth=(jira_username, jira_password))
+        jira_projects = jira_ser.projects()
+    except Exception as e:
+        print(e)
+        notify.send(user, recipient=user, verb='Jira settings not found')
 
     if request.method == 'GET':
         summary = request.GET['summary']
@@ -117,21 +130,53 @@ def submit_jira_ticket(request):
 
         if scanner == 'zap':
             zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(reverse('webscanners:zap_vul_details') + '?scan_id=%s&scan_name=%s' % (
+            return HttpResponseRedirect(reverse('zapscanner:zap_vuln_details') + '?scan_id=%s&scan_name=%s' % (
                 scan_id,
                 summary
             )
-        )
+                                        )
         elif scanner == 'burp':
             burp_scan_result_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(reverse('webscanners:burp_vuln_out') + '?scan_id=%s&scan_name=%s' % (
+            return HttpResponseRedirect(reverse('burpscanner:burp_vuln_out') + '?scan_id=%s&scan_name=%s' % (
                 scan_id,
                 summary
             )
-        )
+                                        )
         elif scanner == 'arachni':
             arachni_scan_result_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(reverse('webscanners:arachni_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, summary))
+            return HttpResponseRedirect(
+                reverse('arachniscanner:arachni_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, summary))
+
+        elif scanner == 'netsparker':
+            netsparker_scan_result_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
+            return HttpResponseRedirect(
+                reverse('netsparkerscanner:netsparker_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, summary))
+
+        elif scanner == 'webinspect':
+            webinspect_scan_result_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
+            return HttpResponseRedirect(
+                reverse('webinspectscanner:webinspect_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, summary))
+
+        elif scanner == 'bandit':
+            bandit_scan_results_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
+            return HttpResponseRedirect(
+                reverse('banditscanner:banditscan_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, summary))
+
+        elif scanner == 'dependencycheck':
+            dependencycheck_scan_results_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
+            return HttpResponseRedirect(
+                reverse('dependencycheck:dependencycheck_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, summary))
+
+        elif scanner == 'findbugs':
+            findbugs_scan_results_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
+            return HttpResponseRedirect(
+                reverse('findbugs:findbugs_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, summary))
+
+        elif scanner == 'clair':
+            clair_scan_results_db.objects.filter(vuln_id=vuln_id).update(jira_ticket=new_issue)
+            return HttpResponseRedirect(
+                reverse('clair:clair_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, summary))
+
         elif scanner == 'open_vas':
             ov_scan_result_db.objects.filter(vul_id=vuln_id).update(jira_ticket=new_issue)
             return HttpResponseRedirect(reverse('networkscanners:vul_details') + '?scan_id=%s' % scan_id)

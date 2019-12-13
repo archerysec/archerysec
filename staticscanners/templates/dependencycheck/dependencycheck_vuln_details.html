@@ -9,21 +9,12 @@
                 <div class="col-md-auto">
                     <div class="float-right">
                         <!-- Large modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target=".bd-example-modal-lg">Jira Ticket
-                        </button>
+                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description={{data.description | safe}}%0a%0a%0a {{data.evidenceCollected | safe}} %0a%0a {{data.vulnerableSoftware | safe}} %0a%0a File Name: {{data.fileName}} %0a%0a File Path: {{data.filePath}} Solution: {{data.more_info }} {{data.references }} %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=dependencycheck&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+               class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
 
-                        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
-                <h1>{{data.cwe | safe}}</h1>
+                <h1>{{data.name | safe}}</h1>
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
@@ -46,7 +37,7 @@
                                     <br>
                                     {{data.vulnerableSoftware | safe}}
                                     <br>
-                                    <strong>CVE: </strong><a href="/vfeed/cve_info/?cve={{data.name}}">{{data.name}}</a><br><br>
+                                    <strong>CVE: </strong><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name={{data.name}}" target="_blank">{{data.name}}</a><br><br>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +107,7 @@
                             <div id="collapse4" class="collapse" aria-labelledby="heading4"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    <pre>{{data.references | safe}}</pre>
+                                    {{data.references }}
                                 </div>
                             </div>
                         </div>

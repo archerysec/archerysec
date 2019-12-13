@@ -435,12 +435,14 @@ def setting(request):
     zap_api_key = ''
     zap_hosts = ''
     zap_ports = ''
+    zap_enable = False
 
     all_zap = zap_settings_db.objects.all()
     for zap in all_zap:
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
         zap_ports = zap.zap_port
+        zap_enable = zap.enabled
 
     lod_apikey = zap_api_key
     zap_host = zap_hosts
@@ -503,6 +505,7 @@ def setting(request):
                   {'apikey': lod_apikey,
                    'zapath': zap_host,
                    'zap_port': zap_port,
+                   'zap_enable': zap_enable,
                    'arachni_hosts': arachni_hosts,
                    'arachni_ports': arachni_ports,
                    'lod_ov_user': lod_ov_user,

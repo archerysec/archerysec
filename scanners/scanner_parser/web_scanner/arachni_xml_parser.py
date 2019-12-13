@@ -281,8 +281,7 @@ def xml_parser(root, project_id, scan_id):
                                                    )
                 dump_data.save()
 
-    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity',
-                                                                                    ).distinct()
+    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
 
     total_high = len(arachni_all_vul.filter(severity="High"))
     total_medium = len(arachni_all_vul.filter(severity="Medium"))

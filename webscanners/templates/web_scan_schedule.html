@@ -1,4 +1,5 @@
-{% extends 'tablehead.html' %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
 {% block body %}
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script>
@@ -28,6 +29,13 @@ $(document).ready(function() {
     });
 
 });
+
+
+
+
+
+
+
 </script>
 
 <link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
@@ -37,164 +45,207 @@ $(document).ready(function() {
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
 
-<div id="content">
-    <!--breadcrumbs-->
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-            Home</a></div>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <hr>
-        <div class="row-fluid">
-            <div class="span12">
-                <form class="form-horizontal" method="POST" action="{% url 'webscanners:web_scan_schedule' %}">
-                    {% csrf_token %}
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                            <h5>Web Scan Schedule</h5>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Scan Schedule </h1>
                         </div>
-                        <div class="widget-content nopadding">
-
-                            <div class="control-group">
-                                <label class="control-label">URL's :</label>
-                                <div class="controls">
-                                    <textarea class="span4" type="text" name="url" id="url"
-                                              value="{{ url }}"
-                                              placeholder="http://website.com,http://website2.com,http://website3.com"
-                                              style="margin: 0px; width: 458px; height: 86px;"></textarea>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Scan Start Date & Time :</label>
-                                <div class="controls input-append date form_datetime"
-                                     data-date-format="d/mm/yyyy h:ii:ss P" data-link-field="dtp_input1" style="">
-                                    <input name="datetime" type="text" value="">
-                                    <span class="add-on"><i class="icon-remove"></i></span>
-                                    <span class="add-on"><i class="icon-th"></i></span>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Periodic Scan :</label>
-                                <div class="controls">
-                                    <select name="periodic_task_value" class=""
-                                            data-live-search="true" style="margin: 0px; width: 458px; height: 86px;">
-                                        <option value="None">None</option>
-                                        <option value="HOURLY">Task Hourly</option>
-                                        <option value="DAILY">Task Daily</option>
-                                        <option value="WEEKLY">Task Weekly</option>
-                                        <option value="EVERY_2_WEEKS">Task Every 2 Weeks</option>
-                                        <option value="EVERY_4_WEEKS">Task Every 4 Weeks</option>
-
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label">Project</label>
-                                <div class="controls">
-                                    <select id="project_id" name="project_id" class=""
-                                            data-live-search="true" style="margin: 0px; width: 458px; height: 86px;">
-                                        {% for data in all_scans_db %}
-                                        <option value="{{data.project_id}}">{{data.project_name}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                            <h5>Scanners:</h5>
-                        </div>
-                        <div class="widget-content">
-                            <p>Select Scanner</p>
-                            <p>The following scanners are available :</p>
-                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
-                                <label>
-                                    <input name="scanner" value="zap_scan" type="checkbox"><span>Zap Scanner</span>
-                                </label>
-                            </div>
-                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b">
-                                <label>
-                                    <input name="scanner" value="burp_scan" type="checkbox"><span>Burp Scanner</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-success">Save</button>
-                    </div>
-                </form>
-
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"><i class="icon-th"></i></span>
-                        <h5>Scan Scheduled List</h5>
-
-                        <div class="buttons">
-                            <button type="button" class="btn btn-danger btn-mini" id="btn1"
-                                    >
-                                Delete Selected
-                            </button>
-                        </div>
-
-                    </div>
-                    <div class="widget-content nopadding">
-                        <table class="table table-bordered data-table">
-                            <thead>
-                            <tr>
-                                <th><p><label><input type="checkbox"/></label></p></th>
-                                <th>Target</th>
-                                <th>Schedule Time</th>
-                                <th>Project</th>
-                                <th>Scanner</th>
-                                <th>Periodic Task</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>{% for data in all_scheduled_scans %}
-                            <tr data-target="#">
-                                <td>
-                                    <form>
-                                        <label><input type="checkbox" value="{{data.task_id}}" name="task_id"
-                                                      >
-
-                                        </label>
-                                        <!--<br>-->
-                                        <!--<button type="button" >Get Values</button>-->
-                                    </form>
-                                </td>
-                                <td>
-                                    <a href="#">{{data.target}}</a>
-                                </td>
-                                <td>
-                                    {{data.schedule_time}}
-                                </td>
-                                <td>{{data.project_id}}</td>
-                                <td>
-                                    {{data.scanner}}
-                                </td>
-                                <td>{{data.periodic_task}}</td>
-                                <td>
-                                    <form action="{% url 'webscanners:del_web_scan_schedule' %}" method="post"
-                                          class="forms-sample">
-
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <form class="form-horizontal" method="POST"
+                                          action="{% url 'webscanners:web_scan_schedule' %}">
                                         {% csrf_token %}
-                                        <input type="hidden" name="task_id" value="{{data.task_id}}"/>
-                                        <button class="btn btn-danger"><i class="icon-remove"></i></button>
-                                    </form>
-                                </td>
+                                        <div class="widget-box">
+                                            <!--<div class="widget-content nopadding">-->
 
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                            <div class="card-body">
+                                                <h4 class="card-title"></h4>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 text-right control-label col-form-label">URL's</label>
+                                                    <div class="col-sm-9">
+                                                    <textarea class="form-control" type="text" name="url" id="url"
+                                                              value="{{ url }}"
+                                                              placeholder="http://website.com,http://website2.com,http://website3.com"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <h4 class="card-title"></h4>
+                                                <div class="form-group row">
+                                                    <label class="control-label">Date & Time :</label>
+                                                    <div class="col-sm-6">
+                                                        <div class="float-right">
+                                                            <div class="controls input-append date form_datetime"
+                                                                 data-date-format="d/mm/yyyy h:ii:ss P"
+                                                                 data-link-field="dtp_input1">
+                                                                <input name="datetime" type="text" value="">
+                                                                <span class="add-on"><i
+                                                                        class="fa fa-calendar"></i></span>
+                                                                <span class="add-on"><i class="icon-th"></i></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <!--<h5 class="card-title"></h5>-->
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 text-right control-label col-form-label">Periodic
+                                                    Scan :</label>
+                                                <div class="col-md-9">
+                                                    <select name="periodic_task_value"
+                                                            class="select2 form-control custom-select"
+                                                            style="width: 100%; height:36px;">
+                                                        <option value="None">None</option>
+                                                        <option value="HOURLY">Task Hourly</option>
+                                                        <option value="DAILY">Task Daily</option>
+                                                        <option value="WEEKLY">Task Weekly</option>
+                                                        <option value="EVERY_2_WEEKS">Task Every 2 Weeks
+                                                        </option>
+                                                        <option value="EVERY_4_WEEKS">Task Every 4 Weeks
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title"></h5>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 text-right control-label col-form-label">Projects</label>
+                                                <div class="col-md-9">
+                                                    <select id="project_id" name="project_id"
+                                                            class="select2 form-control custom-select"
+                                                            style="width: 100%; height:36px;">
+                                                        {% for data in all_scans_db %}
+                                                        <option value="{{data.project_id}}">
+                                                            {{data.project_name}}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-md-flex align-items-center">
+                                            <h5 class="card-title">Scanners </h5>
+                                        </div>
+                                        <br>
+                                        <p>Select your scanner(s) from the ones available:</p>
+                                        <div class="custom-control custom-control-inline">
+                                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                                 style="width: 200px;">
+                                                <label>
+                                                    <input name="scanner" value="zap_scan"
+                                                           type="checkbox"><span>Zap Scanner</span>
+                                                </label>
+                                            </div>
+                                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                                 style="width: 200px;">
+                                                <label>
+                                                    <input name="scanner" value="burp_scan" type="checkbox"><span>Burp Scanner</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+     <div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <br>
+                    <div class="d-md-flex align-items-center">
+                        <h5 class="card-title">Scan Scheduled List</h5>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table id="scan_schedule" class="table table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    <th><label class="customcheckbox m-b-20">
+                                        <input type="checkbox" id="mainCheckbox">
+                                        <span class="checkmark"></span>
+                                    </label></th>
+                                    <th>Target</th>
+                                    <th>Schedule Time</th>
+                                    <th>Project</th>
+                                    <th>Scanner</th>
+                                    <th>Periodic Task</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in all_scheduled_scans %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label class="customcheckbox">
+                                                <input type="checkbox" class="listCheckbox"
+                                                       value="{{data.scan_scanid}}"
+                                                       name="del_scan_id"
+                                                       onClick="reload">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="#">{{data.target}}</a>
+                                    </td>
+                                    <td>
+                                        {{data.schedule_time}}
+                                    </td>
+                                    <td>{{data.project_id}}</td>
+                                    <td>
+                                        {{data.scanner}}
+                                    </td>
+                                    <td>{{data.periodic_task}}</td>
+                                    <td>
+                                        <form action="{% url 'webscanners:del_web_scan_schedule' %}" method="post"
+                                              class="forms-sample">
+
+                                            {% csrf_token %}
+                                            <input type="hidden" name="task_id" value="{{data.task_id}}"/>
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
+
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+     </div>
 </div>
+</div>
+
 
 <!--<script type="text/javascript" src="/static/js/jquery-1.8.3.min.js" charset="UTF-8"></script>-->
 
@@ -233,10 +284,6 @@ $(document).ready(function() {
 		maxView: 1,
 		forceParse: 0
     });
-
-
-
-
 
 
 </script>
