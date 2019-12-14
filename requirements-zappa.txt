@@ -68,7 +68,7 @@ mysqlclient==1.4.2.post1
 oauthlib==2.0.7
 odfpy==1.4.0
 openpyxl==2.6.2
-openvas-lib==1.1.4
+openvas-lib
 ordereddict==1.1
 pbr==4.0.3
 pdfrw==0.4
