@@ -17,7 +17,7 @@ if [[ "$unamestr" == 'Darwin' ]]; then
   export CFLAGS="-I/usr/local/opt/openssl/include"  
 fi
 echo '[INSTALL] Installing Requirements'
-pip install -r requirements.txt
+pip install -r requirements_setup.txt
 echo 'Collect static files'
 python manage.py collectstatic
 echo '[INSTALL] Migrating Database'
