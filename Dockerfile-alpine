@@ -1,0 +1,42 @@
+FROM python:3.7.6-alpine3.11
+
+LABEL MAINTAINER="Anand Tiwari"
+
+ENV DJANGO_SETTINGS_MODULE=archerysecurity.settings.base
+
+# Set archerysec as a work directory.
+WORKDIR /home/archerysec/app
+
+# Copy all file to archerysec folder.
+COPY . .
+
+ADD ./docker-files/init.sh /home/archerysec/app/init.sh
+
+RUN echo "http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories &&\
+    apk add --update --no-cache bash netcat-openbsd && \
+    adduser -h  /home/archerysec/app -s /bin/bash archerysec -D archerysec && \
+    rm -rf /var/cache/apk/* && \
+    chown archerysec /home/archerysec/app && \
+    chgrp archerysec /home/archerysec/app && \
+    chown -R archerysec:archerysec /home/archerysec/app
+
+RUN apk add --update --no-cache --virtual .build-deps \
+        g++ \
+        python-dev \
+        libxml2 \
+        bash \
+        libxml2-dev && \
+    apk add libxslt-dev && \
+    apk del .build-deps
+
+RUN apk add --no-cache --virtual .build-deps \
+    ca-certificates gcc postgresql-dev linux-headers musl-dev \
+    libffi-dev jpeg-dev zlib-dev 
+RUN pip install --no-cache-dir -r requirements_setup.txt
+
+#Change to the archerysec user so things get done as the right person (apart from copy)
+USER archerysec
+
+EXPOSE 8000
+
+CMD ["/home/archerysec/app/init.sh"]
