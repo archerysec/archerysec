@@ -167,6 +167,10 @@ ArcherySec Docker is available from [ArcherySec Docker](https://hub.docker.com/r
 $ docker pull archerysec/archerysec
 $ docker run -it -p 8000:8000 archerysec/archerysec:latest
 
+# Docker Alpine image 
+$ docker pull archerysec/archerysec:alpine
+$ docker run -it -p 8000:8000 archerysec/archerysec:alpine
+
 # For persistence
 
 docker run -it -p 8000:8000 -v <your_local_dir>:/archerysec archerysec/archerysec:latest
