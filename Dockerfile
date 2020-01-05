@@ -1,40 +1,8 @@
-#Ubuntu base OS
-FROM ubuntu:18.04
+FROM python:3.7.6-alpine3.11
+
 LABEL MAINTAINER="Anand Tiwari"
 
 ENV DJANGO_SETTINGS_MODULE=archerysecurity.settings.base
-
-# Update & Upgrade Ubuntu. Install packages
-RUN \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install --quiet --yes --fix-missing \
-    make \
-    default-jre \
-    postgresql-client-10 \
-    sslscan \
-    nikto \
-    nmap \
-    python \
-    wget \
-    curl \
-    unzip \
-    git \
-    python-pip \
-    && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get autoremove --purge -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Create archerysec user and group
-RUN groupadd -r archerysec && useradd -r -m -g archerysec archerysec
-
-# Set user to archerysec to execute rest of commands
-USER archerysec
-
-# Create archerysec folder.
-RUN mkdir /home/archerysec/app
 
 # Set archerysec as a work directory.
 WORKDIR /home/archerysec/app
@@ -42,32 +10,33 @@ WORKDIR /home/archerysec/app
 # Copy all file to archerysec folder.
 COPY . .
 
-RUN mkdir nikto_result
+ADD ./docker-files/init.sh /home/archerysec/app/init.sh
 
-RUN wget https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAP_2.7.0_Linux.tar.gz
+RUN echo "http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories &&\
+    apk add --update --no-cache bash netcat-openbsd && \
+    adduser -h  /home/archerysec/app -s /bin/bash archerysec -D archerysec && \
+    rm -rf /var/cache/apk/* && \
+    chown archerysec /home/archerysec/app && \
+    chgrp archerysec /home/archerysec/app && \
+    chown -R archerysec:archerysec /home/archerysec/app
 
-RUN tar -xvzf ZAP_2.7.0_Linux.tar.gz
+RUN apk add --update --no-cache --virtual .build-deps \
+        g++ \
+        python-dev \
+        libxml2 \
+        bash \
+        libxml2-dev && \
+    apk add libxslt-dev && \
+    apk del .build-deps
 
-RUN mkdir zap
+RUN apk add --no-cache --virtual .build-deps \
+    ca-certificates gcc postgresql-dev linux-headers musl-dev \
+    libffi-dev jpeg-dev zlib-dev 
+RUN pip install --no-cache-dir -r requirements_setup.txt
 
-RUN cp -r ZAP_2.7.0/* /home/archerysec/app/zap
+#Change to the archerysec user so things get done as the right person (apart from copy)
+USER archerysec
 
-COPY zap_config/policies /home/archerysec/app/zap
-
-COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascanrulesBeta-beta-24.zap
-
-RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
-    rm -rf ZAP_2.7.0
-
-# Install requirements
-RUN pip install --no-cache-dir -r requirements.txt && \
-    rm -rf /home/archerysec/.cache
-
-# Exposing port.
 EXPOSE 8000
 
-# Include init script
-ADD ./docker-files/init.sh /usr/local/bin/init.sh
-
-# UP & RUN application.
-CMD ["/usr/local/bin/init.sh"]
+CMD ["/home/archerysec/app/init.sh"]
