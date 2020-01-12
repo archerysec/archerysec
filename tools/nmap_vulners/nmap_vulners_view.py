@@ -18,7 +18,7 @@ from itertools import starmap
 
 from django.shortcuts import render, HttpResponseRedirect
 
-from tools.models import nmap_vulners_port_result_db, nmap_scan_db
+from tools.models import nmap_vulners_port_result_db, nmap_scan_db, nmap_result_db
 from tools.nmap_vulners.nmap_vulners_scan import run_nmap_vulners
 from notifications.signals import notify
 
@@ -60,7 +60,7 @@ def nmap_vulners(request):
     elif request.method == 'GET':
         ip_address = request.GET.get('ip')
 
-        all_nmap = nmap_vulners_port_result_db.objects.filter(ip_address=ip_address)
+        all_nmap = nmap_result_db.objects.filter(ip_address=ip_address)
 
     return render(request,
                   'nmap_vulners_list.html',
