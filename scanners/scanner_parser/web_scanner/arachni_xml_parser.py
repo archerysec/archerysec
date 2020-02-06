@@ -19,6 +19,8 @@ from webscanners.models import arachni_scan_db, arachni_scan_result_db
 import uuid
 import hashlib
 
+from webscanners.zapscanner.views import email_sch_notify
+
 name = ""
 description = ""
 remedy_guidance = ""
@@ -308,3 +310,10 @@ def xml_parser(root, project_id, scan_id):
             low_vul=total_low,
             total_dup=total_duplicate,
         )
+
+    subject = 'Archery Tool Scan Status - Arachni Report Uploaded'
+    message = 'Arachni Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (url, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

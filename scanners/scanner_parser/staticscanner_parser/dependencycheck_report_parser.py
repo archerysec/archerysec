@@ -21,6 +21,8 @@ import hashlib
 from datetime import datetime
 from django.shortcuts import HttpResponse
 
+from webscanners.zapscanner.views import email_sch_notify
+
 
 def xml_parser(data, project_id, scan_id):
     """
@@ -249,4 +251,12 @@ def xml_parser(data, project_id, scan_id):
             SEVERITY_LOW=total_low,
             total_dup=total_duplicate
         )
+
+    subject = 'Archery Tool Scan Status - DependencyCheck Report Uploaded'
+    message = 'DependencyCheck Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (name, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)
+
     return HttpResponse(status=201)

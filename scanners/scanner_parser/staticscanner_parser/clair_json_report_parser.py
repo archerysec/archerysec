@@ -19,6 +19,8 @@ import uuid
 import hashlib
 from datetime import datetime
 
+from webscanners.zapscanner.views import email_sch_notify
+
 vul_col = ''
 
 def clair_report_json(data, project_id, scan_id):
@@ -432,3 +434,10 @@ def clair_report_json(data, project_id, scan_id):
         SEVERITY_LOW=total_low,
         total_dup=total_duplicate
     )
+
+    subject = 'Archery Tool Scan Status - Clair Report Uploaded'
+    message = 'Clair Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (Name, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

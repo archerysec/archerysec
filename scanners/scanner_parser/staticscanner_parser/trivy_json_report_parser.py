@@ -20,6 +20,8 @@ import hashlib
 from datetime import datetime
 import json
 
+from webscanners.zapscanner.views import email_sch_notify
+
 vul_col = ''
 Target = ''
 VulnerabilityID = ''
@@ -162,6 +164,9 @@ def trivy_report_json(data, project_id, scan_id):
             SEVERITY_LOW=total_low,
             total_dup=total_duplicate
         )
+    subject = 'Archery Tool Scan Status - Trivy Report Uploaded'
+    message = 'Trivy Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (Target, total_vul, total_high, total_medium, total_low)
 
-
-
+    email_sch_notify(subject=subject, message=message)

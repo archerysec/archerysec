@@ -18,6 +18,8 @@ from webscanners.models import acunetix_scan_db, acunetix_scan_result_db
 import uuid
 import hashlib
 
+from webscanners.zapscanner.views import email_sch_notify
+
 ScanName = None
 ScanShortName = None
 ScanStartURL = None
@@ -330,3 +332,10 @@ def xml_parser(root, project_id, scan_id):
                 total_dup=total_duplicate,
                 url=ScanStartURL
                 )
+
+    subject = 'Archery Tool Scan Status - Acunetix Report Uploaded'
+    message = 'Acunetix Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (ScanStartURL, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

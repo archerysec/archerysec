@@ -18,6 +18,8 @@
 from compliance.models import inspec_scan_db, inspec_scan_results_db
 import uuid
 
+from webscanners.zapscanner.views import email_sch_notify
+
 status = None
 controls_results_message = None
 
@@ -115,7 +117,13 @@ def inspec_report_json(data, project_id, scan_id):
             inspec_scan_db.objects.filter(scan_id=scan_id).update(
                 total_vuln=total_vul,
                 inspec_failed=inspec_failed,
-                inspec_passed=inspec_passed,
+                inspec_passed=inspec_failed,
                 inspec_skipped=inspec_skipped,
                 total_dup=total_duplicate
             )
+            subject = 'Archery Tool Scan Status - Inspec Report Uploaded'
+            message = 'Inspec Scanner has completed the scan ' \
+                      '  %s <br> Total: %s <br>Failed: %s <br>' \
+                      'failed: %s <br>Skipped %s' % (scan_id, total_vul, inspec_failed, inspec_failed, inspec_skipped)
+
+            email_sch_notify(subject=subject, message=message)

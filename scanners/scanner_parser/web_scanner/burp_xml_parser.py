@@ -22,6 +22,8 @@ from django.shortcuts import HttpResponse
 from webscanners import email_notification
 import hashlib
 
+from webscanners.zapscanner.views import email_sch_notify
+
 project_id = None
 target_url = None
 scan_ip = None
@@ -257,6 +259,13 @@ def burp_scan_data(root, project_id, scan_id):
         info_vul=total_info,
         total_dup=total_duplicate
     )
+    subject = 'Archery Tool Scan Status - Burp Report Uploaded'
+    message = 'Burp Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (host, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)
+
     try:
         email_notification.email_notify()
     except Exception as e:

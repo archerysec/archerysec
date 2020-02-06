@@ -19,6 +19,8 @@ import uuid
 from networkscanners.models import nessus_report_db, nessus_scan_db
 import hashlib
 
+from webscanners.zapscanner.views import email_sch_notify
+
 agent = "NA"
 description = "NA"
 fname = "NA"
@@ -54,12 +56,12 @@ def nessus_parser(root, project_id, scan_id):
     :return:
     """
 
-    global agent, description, fname,\
-        plugin_modification_date, plugin_name,\
-        plugin_publication_date, plugin_type,\
-        risk_factor, script_version, solution,\
+    global agent, description, fname, \
+        plugin_modification_date, plugin_name, \
+        plugin_publication_date, plugin_type, \
+        risk_factor, script_version, solution, \
         synopsis, plugin_output, see_also, scan_ip, \
-        pluginName, pluginID, protocol, severity,\
+        pluginName, pluginID, protocol, severity, \
         svc_name, pluginFamily, port, vuln_color
 
     for data in root:
@@ -142,7 +144,7 @@ def nessus_parser(root, project_id, scan_id):
                     plugin_output = "NA"
 
                 vul_id = uuid.uuid4()
-                
+
                 dup_data = scan_ip + plugin_name + severity + port
                 duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
@@ -238,3 +240,9 @@ def nessus_parser(root, project_id, scan_id):
                             total_dup=total_duplicate,
                             scan_ip=scan_ip,
                             )
+    subject = 'Archery Tool Scan Status - Nessus Report Uploaded'
+    message = 'Nessus Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (scan_id, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)
