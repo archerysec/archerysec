@@ -2,8 +2,8 @@
 FROM ubuntu:18.04
 LABEL MAINTAINER="Anand Tiwari"
 
-ENV DJANGO_SETTINGS_MODULE=archerysecurity.settings.base
-ENV DJANGO_WSGI_MODULE=archerysecurity.wsgi
+ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
+    DJANGO_WSGI_MODULE="archerysecurity.wsgi"
 
 # Update & Upgrade Ubuntu. Install packages
 RUN \
@@ -35,6 +35,14 @@ RUN \
 
 # Create archerysec user and group
 RUN groupadd -r archerysec && useradd -r -m -g archerysec archerysec
+
+# Include init script
+ADD ./docker-files/init.sh /usr/local/bin/init.sh
+
+RUN chmod +x /usr/local/bin/init.sh
+
+# Set user to archerysec to execute rest of commands
+USER archerysec
 
 # Create archerysec folder.
 RUN mkdir /home/archerysec/app
@@ -72,14 +80,6 @@ RUN . venv/bin/activate && python3 /home/archerysec/app/manage.py collectstatic 
 
 # Exposing port.
 EXPOSE 8000
-
-# Include init script
-ADD ./docker-files/init.sh /usr/local/bin/init.sh
-
-RUN chmod +x /usr/local/bin/init.sh
-
-# Set user to archerysec to execute rest of commands
-USER archerysec
 
 # UP & RUN application.
 CMD ["/usr/local/bin/init.sh"]
