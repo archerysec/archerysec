@@ -3,6 +3,7 @@ FROM ubuntu:18.04
 LABEL MAINTAINER="Anand Tiwari"
 
 ENV DJANGO_SETTINGS_MODULE=archerysecurity.settings.base
+ENV DJANGO_WSGI_MODULE=archerysecurity.wsgi
 
 # Update & Upgrade Ubuntu. Install packages
 RUN \
@@ -15,12 +16,17 @@ RUN \
     sslscan \
     nikto \
     nmap \
-    python \
     wget \
     curl \
     unzip \
     git \
-    python-pip \
+    python3-pip \
+    virtualenv \
+    gunicorn \
+    postgresql \
+    python-psycopg2 \
+    postgresql-server-dev-all \
+    python3-dev \
     && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get autoremove --purge -y && \
@@ -30,14 +36,13 @@ RUN \
 # Create archerysec user and group
 RUN groupadd -r archerysec && useradd -r -m -g archerysec archerysec
 
-# Set user to archerysec to execute rest of commands
-USER archerysec
-
 # Create archerysec folder.
 RUN mkdir /home/archerysec/app
 
 # Set archerysec as a work directory.
 WORKDIR /home/archerysec/app
+
+RUN virtualenv -p python3 /home/archerysec/app/venv
 
 # Copy all file to archerysec folder.
 COPY . .
@@ -60,14 +65,21 @@ RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
     rm -rf ZAP_2.7.0
 
 # Install requirements
-RUN pip install --no-cache-dir -r requirements.txt && \
+RUN . venv/bin/activate && pip3 install --no-cache-dir -r requirements_setup.txt && \
     rm -rf /home/archerysec/.cache
+
+RUN . venv/bin/activate && python3 /home/archerysec/app/manage.py collectstatic --noinput
 
 # Exposing port.
 EXPOSE 8000
 
 # Include init script
 ADD ./docker-files/init.sh /usr/local/bin/init.sh
+
+RUN chmod +x /usr/local/bin/init.sh
+
+# Set user to archerysec to execute rest of commands
+USER archerysec
 
 # UP & RUN application.
 CMD ["/usr/local/bin/init.sh"]

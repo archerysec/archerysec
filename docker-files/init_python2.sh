@@ -2,7 +2,7 @@
 
 export DJANGO_DEBUG=1
 
-source /home/archerysec/app/venv/bin/activate
+python manage.py collectstatic --noinput
 
 # wait for Postgres to be available
 if [ -z "$DB_HOST" ]
@@ -18,6 +18,14 @@ else
   exec $cmd
 fi
 
-python3 manage.py migrate --noinput
+python manage.py migrate sitetree --noinput
+python manage.py migrate --noinput
+python manage.py initadmin
 
-gunicorn -b 0.0.0.0:8000 archerysecurity.wsgi:application --workers=1 --threads=10 --timeout=1800
+if [ "$ARCHERY_WORKER" = "True" ]
+then
+    python manage.py process_tasks
+else
+    python manage.py sitetree_resync_apps
+    python manage.py runserver 0.0.0.0:8000
+fi
