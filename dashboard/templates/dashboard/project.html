@@ -167,6 +167,12 @@
                                             <td><span class="badge badge-pill badge-warning">{{all_clair_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_clair_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                         <tr>
+                                            <td><a href="{% url 'trivy:trivy_list' %}">Trivy</a></td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_trivy_high.SEVERITY_HIGH__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_trivy_medium.SEVERITY_MEDIUM__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_trivy_low.SEVERITY_LOW__sum}}</span></td>
+                                        </tr>
                                         <tr>
                                             <td><a href="{% url 'findbugs:findbugs_list' %}">FindBugs</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_findbugs_high.SEVERITY_HIGH__sum}}</span></td>

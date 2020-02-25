@@ -30,7 +30,7 @@ from scanners.scanner_parser.staticscanner_parser.retirejss_json_parser import r
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser import clair_report_json
 from scanners.scanner_parser.compliance_parser.inspec_json_parser import inspec_report_json
-from scanners.scanner_parser.staticscanner_parser.trivy_json_report_parser import trivy_report_json
+from scanners.scanner_parser.staticscanner_parser import trivy_json_report_parser
 from django.urls import reverse
 
 
@@ -113,11 +113,10 @@ def report_import(request):
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
-            trivy_report_json(data=data,
-                              project_id=project_id,
-                              scan_id=scan_id)
+            trivy_json_report_parser.trivy_report_json(project_id=project_id,
+                                                       scan_id=scan_id,
+                                                       data=data)
             return HttpResponseRedirect(reverse('trivy:trivy_list'))
-
 
         if scanner == "inspec_scan":
             date_time = datetime.now()

@@ -48,106 +48,109 @@ def trivy_report_json(data, project_id, scan_id):
 
         for vuln in data:
             vulnerbilities = vuln['Vulnerabilities']
-            for dat_vuln in vulnerbilities:
-                try:
-                    VulnerabilityID = dat_vuln['VulnerabilityID']
-                except Exception as e:
-                    VulnerabilityID = "Not Found"
-                    print(e)
-                try:
-                    PkgName = dat_vuln['PkgName']
-                except Exception as e:
-                    PkgName = "Not Found"
-                    print(e)
-                try:
-                    InstalledVersion = dat_vuln['InstalledVersion']
-                except Exception as e:
-                    InstalledVersion = "Not Found"
-                    print(e)
-                try:
-                    FixedVersion = dat_vuln['FixedVersion']
-                except Exception as e:
-                    FixedVersion = "Not Found"
-                    print(e)
-                try:
-                    Title = dat_vuln['Title']
-                except Exception as e:
-                    Title = "Not Found"
-                    print(e)
-                try:
-                    Description = dat_vuln['Description']
-                except Exception as e:
-                    Description = "Not Found"
-                    print(e)
-                try:
-                    Severity = dat_vuln['Severity']
-                except Exception as e:
-                    Severity = "Not Found"
-                    print(e)
-                try:
-                    References = dat_vuln['References']
-                except Exception as e:
-                    References = "Not Found"
-                    print(e)
+            try:
+                for dat_vuln in vulnerbilities:
+                    try:
+                        VulnerabilityID = dat_vuln['VulnerabilityID']
+                    except Exception as e:
+                        VulnerabilityID = "Not Found"
+                        print(e)
+                    try:
+                        PkgName = dat_vuln['PkgName']
+                    except Exception as e:
+                        PkgName = "Not Found"
+                        print(e)
+                    try:
+                        InstalledVersion = dat_vuln['InstalledVersion']
+                    except Exception as e:
+                        InstalledVersion = "Not Found"
+                        print(e)
+                    try:
+                        FixedVersion = dat_vuln['FixedVersion']
+                    except Exception as e:
+                        FixedVersion = "Not Found"
+                        print(e)
+                    try:
+                        Title = dat_vuln['Title']
+                    except Exception as e:
+                        Title = "Not Found"
+                        print(e)
+                    try:
+                        Description = dat_vuln['Description']
+                    except Exception as e:
+                        Description = "Not Found"
+                        print(e)
+                    try:
+                        Severity = dat_vuln['Severity']
+                    except Exception as e:
+                        Severity = "Not Found"
+                        print(e)
+                    try:
+                        References = dat_vuln['References']
+                    except Exception as e:
+                        References = "Not Found"
+                        print(e)
 
-                if Severity == "HIGH":
-                    Severity = 'High'
-                    vul_col = "danger"
+                    if Severity == "HIGH":
+                        Severity = 'High'
+                        vul_col = "danger"
 
-                elif Severity == 'MEDIUM':
-                    Severity = 'Medium'
-                    vul_col = "warning"
+                    elif Severity == 'MEDIUM':
+                        Severity = 'Medium'
+                        vul_col = "warning"
 
-                elif Severity == 'LOW':
-                    Severity = 'Low'
-                    vul_col = "info"
+                    elif Severity == 'LOW':
+                        Severity = 'Low'
+                        vul_col = "info"
 
-                vul_id = uuid.uuid4()
+                    vul_id = uuid.uuid4()
 
-                dup_data = VulnerabilityID + Severity
+                    dup_data = VulnerabilityID + Severity
 
-                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+                    duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-                match_dup = trivy_scan_results_db.objects.filter(
-                    dup_hash=duplicate_hash).values('dup_hash')
-                lenth_match = len(match_dup)
+                    match_dup = trivy_scan_results_db.objects.filter(
+                        dup_hash=duplicate_hash).values('dup_hash')
+                    lenth_match = len(match_dup)
 
-                if lenth_match == 1:
-                    duplicate_vuln = 'Yes'
-                elif lenth_match == 0:
-                    duplicate_vuln = 'No'
-                else:
-                    duplicate_vuln = 'None'
+                    if lenth_match == 1:
+                        duplicate_vuln = 'Yes'
+                    elif lenth_match == 0:
+                        duplicate_vuln = 'No'
+                    else:
+                        duplicate_vuln = 'None'
 
-                false_p = trivy_scan_results_db.objects.filter(
-                    false_positive_hash=duplicate_hash)
-                fp_lenth_match = len(false_p)
+                    false_p = trivy_scan_results_db.objects.filter(
+                        false_positive_hash=duplicate_hash)
+                    fp_lenth_match = len(false_p)
 
-                if fp_lenth_match == 1:
-                    false_positive = 'Yes'
-                else:
-                    false_positive = 'No'
+                    if fp_lenth_match == 1:
+                        false_positive = 'Yes'
+                    else:
+                        false_positive = 'No'
 
-                save_all = trivy_scan_results_db(
-                    vuln_id=vul_id,
-                    scan_id=scan_id,
-                    project_id=project_id,
-                    Target=Target,
-                    VulnerabilityID=VulnerabilityID,
-                    PkgName=PkgName,
-                    InstalledVersion=InstalledVersion,
-                    FixedVersion=FixedVersion,
-                    Title=Title,
-                    Description=Description,
-                    Severity=Severity,
-                    References=References,
-                    vul_col=vul_col,
-                    vuln_status='Open',
-                    dup_hash=duplicate_hash,
-                    vuln_duplicate=duplicate_vuln,
-                    false_positive=false_positive,
-                )
-                save_all.save()
+                    save_all = trivy_scan_results_db(
+                        vuln_id=vul_id,
+                        scan_id=scan_id,
+                        project_id=project_id,
+                        Target=Target,
+                        VulnerabilityID=VulnerabilityID,
+                        PkgName=PkgName,
+                        InstalledVersion=InstalledVersion,
+                        FixedVersion=FixedVersion,
+                        Title=Title,
+                        Description=Description,
+                        Severity=Severity,
+                        References=References,
+                        vul_col=vul_col,
+                        vuln_status='Open',
+                        dup_hash=duplicate_hash,
+                        vuln_duplicate=duplicate_vuln,
+                        false_positive=false_positive,
+                    )
+                    save_all.save()
+            except Exception as e:
+                print(e)
 
         all_findbugs_data = trivy_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
