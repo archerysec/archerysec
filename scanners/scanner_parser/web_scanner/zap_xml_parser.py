@@ -18,8 +18,6 @@ from webscanners.models import zap_scan_results_db, zap_scans_db
 import uuid
 import hashlib
 import ast
-from django.core.mail import send_mail
-from webscanners.zapscanner.views import email_sch_notify
 
 spider_status = "0"
 scans_status = "0"
@@ -233,10 +231,3 @@ def xml_parser(root, project_id, scan_id):
                     low_vul=total_low,
                     total_dup=total_duplicate
                     )
-
-    subject = 'Archery Tool Scan Status - ZAP Report Uploaded'
-    message = 'ZAP Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % (target_url, total_vul, total_high, total_medium, total_low)
-
-    email_sch_notify(subject=subject, message=message)
