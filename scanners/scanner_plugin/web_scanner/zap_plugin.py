@@ -46,15 +46,36 @@ zap_api_key = 'dwed23wdwedwwefw4rwrfw'
 zap_hosts = '0.0.0.0'
 zap_ports = '8090'
 
+risk = ''
+name = ''
+attack = ''
+confidence = ''
+wascid = ''
+description = ''
+reference = ''
+sourceid = ''
+solution = ''
+param = ''
+method = ''
+url = ''
+pluginId = ''
+other = ''
+alert = ''
+messageId = ''
+evidence = ''
+cweid = ''
+risk = ''
+vul_col = ''
+
 
 def zap_local():
-
     zap_path = '/home/archerysec/app/zap/'
     executable = 'zap.sh'
     executable_path = os.path.join(zap_path, executable)
 
     zap_command = [executable_path, '-daemon', '-config', 'api.disablekey=false', '-config', 'api.key=' + zap_api_key,
-                   '-port', zap_ports, '-host', zap_hosts, '-config', 'api.addrs.addr.name=.*', '-config', 'api.addrs.addr.regex=true']
+                   '-port', zap_ports, '-host', zap_hosts, '-config', 'api.addrs.addr.name=.*', '-config',
+                   'api.addrs.addr.regex=true']
 
     log_path = os.getcwd() + '/' + 'zap.log'
 
@@ -379,13 +400,14 @@ class ZAPScanner:
         )
         return scan_status
 
-    def zap_scan_result(self):
+    def zap_scan_result(self, target_url):
         """
         The function return ZAP Scan Results.
         :return:
         """
         try:
-            all_vuln = self.zap.core.xmlreport()
+            # all_vuln = self.zap.core.xmlreport()
+            all_vuln = self.zap.core.alerts(baseurl=target_url)
         except Exception as e:
             print("zap scan result error")
 
@@ -399,16 +421,151 @@ class ZAPScanner:
         :param un_scanid:
         :return:
         """
+        global name, attack, wascid, description, reference, \
+            reference, sourceid, \
+            solution, \
+            param, \
+            method, url, messageId, alert, pluginId, other, evidence, cweid, risk, vul_col
+        for data in all_vuln:
+            for key, value in data.items():
+                if key == 'name':
+                    name = value
 
-        root_xml = ET.fromstring(all_vuln)
-        en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
-        root_xml_en = ET.fromstring(en_root_xml)
+                if key == 'attack':
+                    attack = value
 
-        zap_xml_parser.xml_parser(project_id=project_id,
-                                  scan_id=un_scanid,
-                                  root=root_xml_en)
+                if key == 'wascid':
+                    wascid = value
 
-        # self.zap.core.delete_all_alerts()
+                if key == 'description':
+                    description = value
+
+                if key == 'reference':
+                    reference = value
+
+                if key == 'sourceid':
+                    sourceid = value
+
+                if key == 'solution':
+                    solution = value
+
+                if key == 'param':
+                    param = value
+
+                if key == 'method':
+                    method = value
+
+                if key == 'url':
+                    url = value
+
+                if key == 'pluginId':
+                    pluginId = value
+
+                if key == 'other':
+                    other = value
+
+                if key == 'alert':
+                    alert = value
+
+                if key == 'attack':
+                    attack = value
+
+                if key == 'messageId':
+                    messageId = value
+
+                if key == 'evidence':
+                    evidence = value
+
+                if key == 'cweid':
+                    cweid = value
+
+                if key == 'risk':
+                    risk = value
+            if risk == "High":
+                vul_col = "danger"
+                risk = "High"
+            elif risk == 'Medium':
+                vul_col = "warning"
+                risk = "Medium"
+            elif risk == 'info':
+                vul_col = "info"
+                risk = "Low"
+            elif risk == 'Informational':
+                vul_col = "info"
+                risk = "Informational"
+
+            dup_data = name + risk
+            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+            match_dup = zap_scan_results_db.objects.filter(
+                dup_hash=duplicate_hash).values('dup_hash').distinct()
+            lenth_match = len(match_dup)
+
+            if lenth_match == 1:
+                duplicate_vuln = 'Yes'
+            elif lenth_match == 0:
+                duplicate_vuln = 'No'
+            else:
+                duplicate_vuln = 'None'
+
+            false_p = zap_scan_results_db.objects.filter(
+                false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
+
+            vuln_id = uuid.uuid4()
+            dump_data = zap_scan_results_db(vuln_id=vuln_id,
+                                            vuln_color=vul_col,
+                                            scan_id=un_scanid,
+                                            project_id=project_id,
+                                            confidence=confidence,
+                                            wascid=wascid,
+                                            risk=risk,
+                                            reference=reference,
+                                            url=url,
+                                            name=name,
+                                            solution=solution,
+                                            param=url,
+                                            sourceid=sourceid,
+                                            pluginId=pluginId,
+                                            alert=alert,
+                                            description=description,
+                                            false_positive=false_positive,
+                                            rescan='No',
+                                            vuln_status='Open',
+                                            dup_hash=duplicate_hash,
+                                            vuln_duplicate=duplicate_vuln,
+                                            evidence=evidence,
+                                            )
+            dump_data.save()
+            full_data = []
+            key = 'Evidence'
+            instance = key + ': ' + "NA"
+
+            full_data.append(instance)
+            removed_list_data = ','.join(full_data)
+            zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(param=removed_list_data)
+
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid, false_positive='No')
+
+        total_high = len(zap_all_vul.filter(risk="High"))
+        total_medium = len(zap_all_vul.filter(risk="Medium"))
+        total_low = len(zap_all_vul.filter(risk="Low"))
+        total_info = len(zap_all_vul.filter(risk="Informational"))
+        total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_high + total_medium + total_low + total_info
+
+        zap_scans_db.objects.filter(scan_scanid=un_scanid) \
+            .update(total_vul=total_vul,
+                    high_vul=total_high,
+                    medium_vul=total_medium,
+                    low_vul=total_low,
+                    info_vul=total_info,
+                    total_dup=total_duplicate,
+                    )
 
     def zap_shutdown(self):
         """

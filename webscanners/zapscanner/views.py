@@ -155,7 +155,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     )
     """ Save Vulnerability in database """
     time.sleep(5)
-    all_vuln = zap.zap_scan_result()
+    all_vuln = zap.zap_scan_result(target_url=target_url)
     time.sleep(5)
     save_all_vuln = zap.zap_result_save(
         all_vuln=all_vuln,
@@ -244,7 +244,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     )
     """ Save Vulnerability in database """
     time.sleep(5)
-    all_vuln = zap.zap_scan_result()
+    all_vuln = zap.zap_scan_result(target_url=target_url)
     time.sleep(5)
     zap.zap_result_save(
         all_vuln=all_vuln,
@@ -764,27 +764,31 @@ def zap_vuln_check(request):
     full_data = []
     for data in vul_dat:
         evi = data.evidence
-        evi_data = ast.literal_eval(evi)
-        for evidence in evi_data:
-            for key, value in evidence.items():
-                if key == 'evidence':
-                    key = 'Evidence'
+        try:
+            evi_data = ast.literal_eval(evi)
+            for evidence in evi_data:
+                for key, value in evidence.items():
+                    if key == 'evidence':
+                        key = 'Evidence'
 
-                if key == 'attack':
-                    key = 'Attack'
+                    if key == 'attack':
+                        key = 'Attack'
 
-                if key == 'uri':
-                    key = 'URI'
+                    if key == 'uri':
+                        key = 'URI'
 
-                if key == 'method':
-                    key = 'Method'
+                    if key == 'method':
+                        key = 'Method'
 
-                if key == 'param':
-                    key = 'Parameter'
+                    if key == 'param':
+                        key = 'Parameter'
 
-                instance = key + ': ' + value
+                    instance = key + ': ' + value
 
-                full_data.append(instance)
+                    full_data.append(instance)
+        except Exception as e:
+            full_data = 'NA'
+            print(e)
 
     return render(request, 'zapscanner/zap_vuln_check.html',
                   {'vul_dat': vul_dat,
