@@ -28,7 +28,8 @@ from webscanners.serializers import WebScanSerializer, \
     AcunetixStatusSerializer, \
     WebinspectScanStatusSerializer, \
     DependencycheckStatusSerializer, \
-    findbugsStatusSerializer
+    findbugsStatusSerializer, \
+    ZapScanStatusDataSerializers
 
 from rest_framework import status
 from webscanners.zapscanner.views import launch_zap_scan
@@ -44,9 +45,9 @@ import threading
 import datetime
 import defusedxml.ElementTree as ET
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
-    arachni_xml_parser,\
-    netsparker_xml_parser,\
-    webinspect_xml_parser,\
+    arachni_xml_parser, \
+    netsparker_xml_parser, \
+    webinspect_xml_parser, \
     burp_xml_parser, \
     acunetix_xml_parser
 from rest_framework.response import Response
@@ -429,6 +430,21 @@ class CreateUsers(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UpdateZapStatus(generics.CreateAPIView):
+    queryset = zap_scans_db.objects.all()
+
+    def post(self, request, format=None, **kwargs):
+        _scan_id = None
+        _scan_status = None
+        serializer = ZapScanStatusDataSerializers(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get("scan_id")
+            scan_status = request.data.get("scan_status")
+            zap_scans_db.objects.filter(scan_scanid=scan_id).update(vul_status=scan_status)
+            return Response({"message": "ZAP Scanner status updated %s", "Scan Status": scan_status})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class UpladScanResult(APIView):
     parser_classes = (MultiPartParser,)
 
@@ -455,7 +471,7 @@ class UpladScanResult(APIView):
 
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
-                                      root=root_xml_en)
+                                      root=root_xml_en, source='parser')
             return Response({"message": "ZAP Scan Data Uploaded",
                              "scanner": scanner,
                              "project_id": project_id,
@@ -592,7 +608,7 @@ class UpladScanResult(APIView):
                 scan_status=scan_status
             )
             scan_dump.save()
-            xml_dat = bytes(bytearray(file, encoding = 'utf-8'))
+            xml_dat = bytes(bytearray(file, encoding='utf-8'))
             data = etree.XML(xml_dat)
             dependencycheck_report_parser.xml_parser(project_id=project_id,
                                                      scan_id=scan_id,

@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'webinspectscanstatus/', views.WebinspectScanStatus.as_view()),
     url(r'acunetixscanresult/', views.AcunetixScanStatus.as_view()),
     url(r'uploadscan/', views.UpladScanResult.as_view()),
+    url(r'zapstatusupdate/', views.UpdateZapStatus.as_view()),
     url(r'createuser/', views.CreateUsers.as_view())
 
 ]

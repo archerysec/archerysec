@@ -226,3 +226,9 @@ class findbugsStatusSerializer(serializers.Serializer):
     SEVERITY_HIGH = serializers.IntegerField(read_only=True)
     SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
     SEVERITY_LOW = serializers.IntegerField(read_only=True)
+
+
+class ZapScanStatusDataSerializers(serializers.Serializer):
+
+    scan_id = serializers.UUIDField(read_only=True)
+    scan_status = serializers.CharField(required=True)

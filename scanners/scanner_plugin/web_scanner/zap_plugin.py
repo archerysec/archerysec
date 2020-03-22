@@ -408,7 +408,7 @@ class ZAPScanner:
                                   scan_id=un_scanid,
                                   root=root_xml_en)
 
-        self.zap.core.delete_all_alerts()
+        # self.zap.core.delete_all_alerts()
 
     def zap_shutdown(self):
         """
