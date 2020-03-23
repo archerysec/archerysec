@@ -299,7 +299,7 @@ def zap_scan(request):
                 args=(target, project_id, rescan_id, rescan, scan_id, user))
             thread.daemon = True
             thread.start()
-            time.sleep(10)
+            time.sleep(20)
         if scans_status == '100':
             scans_status = "0"
         else:
