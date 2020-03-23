@@ -96,7 +96,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         print("started local instence")
         random_port = zap_plugin.zap_local()
         print(random_port)
-        time.sleep(20)
+        time.sleep(60)
 
 
     # Connection Test
@@ -299,7 +299,7 @@ def zap_scan(request):
                 args=(target, project_id, rescan_id, rescan, scan_id, user))
             thread.daemon = True
             thread.start()
-            time.sleep(20)
+            time.sleep(10)
         if scans_status == '100':
             scans_status = "0"
         else:

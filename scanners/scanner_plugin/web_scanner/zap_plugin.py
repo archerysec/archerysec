@@ -81,7 +81,7 @@ def get_free_tcp_port():
 
 def zap_local():
     random_port = str(get_free_tcp_port())
-    zap_path = '/home/archerysec/app/zap/'
+    zap_path = '/Applications/OWASP ZAP.app/Contents/Java/'
     executable = 'zap.sh'
     executable_path = os.path.join(zap_path, executable)
 
