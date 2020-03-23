@@ -96,24 +96,18 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         print("started local instence")
         random_port = zap_plugin.zap_local()
         print(random_port)
-        time.sleep(60)
 
-
-    # Connection Test
-    zap_connect = zap_plugin.zap_connect(random_port)
-
-    try:
-        zap_connect.spider.scan(url=target_url)
-        notify.send(user, recipient=user, verb='ZAP Scan Started')
-
-    except Exception:
-        notify.send(user, recipient=user, verb='ZAP Connection Not Found')
-        subject = 'ZAP Connection Not Found'
-        message = 'ZAP Scanner failed due to setting not found '
-
-        email_notify(user=user, subject=subject, message=message)
-        print("ZAP Connection Not Found")
-        return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
+    for i in range(0, 100):
+        while True:
+            try:
+                # Connection Test
+                zap_connect = zap_plugin.zap_connect(random_port)
+                zap_connect.spider.scan(url=target_url)
+            except Exception as e:
+                print("ZAP Connection Not Found, re-try after 5 sec")
+                time.sleep(5)
+                continue
+            break
 
     zap_plugin.zap_spider_thread(count=20, random_port=random_port)
     zap_plugin.zap_spider_setOptionMaxDepth(count=5, random_port=random_port)
@@ -143,6 +137,8 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         notify.send(user, recipient=user, verb='ZAP Scan URL %s Added' % target_url)
     except Exception as e:
         print(e)
+
+    notify.send(user, recipient=user, verb='ZAP Scan Started')
     zap.zap_spider_thread(thread_value=30)
     spider_id = zap.zap_spider()
     zap.spider_status(spider_id=spider_id)
