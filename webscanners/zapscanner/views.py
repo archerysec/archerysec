@@ -86,6 +86,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     :return:
     """
     zap_enabled = False
+    random_port = '8090'
 
     all_zap = zap_settings_db.objects.all()
     for zap in all_zap:
@@ -93,12 +94,13 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
 
     if zap_enabled is False:
         print("started local instence")
-        zap_plugin.zap_local()
+        random_port = zap_plugin.zap_local()
+        print(random_port)
         time.sleep(20)
 
 
     # Connection Test
-    zap_connect = zap_plugin.zap_connect()
+    zap_connect = zap_plugin.zap_connect(random_port)
 
     try:
         zap_connect.spider.scan(url=target_url)
@@ -113,14 +115,14 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         print("ZAP Connection Not Found")
         return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
 
-    zap_plugin.zap_spider_thread(count=20)
-    zap_plugin.zap_spider_setOptionMaxDepth(count=5)
+    zap_plugin.zap_spider_thread(count=20, random_port=random_port)
+    zap_plugin.zap_spider_setOptionMaxDepth(count=5, random_port=random_port)
 
-    zap_plugin.zap_scan_thread(count=30)
-    zap_plugin.zap_scan_setOptionHostPerScan(count=3)
+    zap_plugin.zap_scan_thread(count=30, random_port=random_port)
+    zap_plugin.zap_scan_setOptionHostPerScan(count=3, random_port=random_port)
 
     # Load ZAP Plugin
-    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
+    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan, random_port=random_port)
     zap.exclude_url()
     time.sleep(3)
     zap.cookies()
@@ -195,9 +197,10 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     :param project_id: Project ID
     :return:
     """
+    random_port = '8090'
 
     # Connection Test
-    zap_connect = zap_plugin.zap_connect()
+    zap_connect = zap_plugin.zap_connect(random_port)
 
     try:
         zap_connect.spider.scan(url=target_url)
@@ -211,7 +214,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         return HttpResponseRedirect(reverse('webscanners:index'))
 
     # Load ZAP Plugin
-    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan)
+    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan, random_port=random_port)
     zap.exclude_url()
     time.sleep(3)
     zap.cookies()
@@ -296,6 +299,7 @@ def zap_scan(request):
                 args=(target, project_id, rescan_id, rescan, scan_id, user))
             thread.daemon = True
             thread.start()
+            time.sleep(10)
         if scans_status == '100':
             scans_status = "0"
         else:
@@ -633,7 +637,7 @@ def del_cookies(request):
             print(cookies_target)
             del_cookie = cookie_db.objects.filter(url=cookies_target)
             del_cookie.delete()
-            zap_plugin.zap_replacer(target_url=cookies_target)
+            zap_plugin.zap_replacer(target_url=cookies_target, random_port='8090')
         return HttpResponseRedirect(reverse('webscanners:index'))
 
     return render(request, 'cookies_list.html')
