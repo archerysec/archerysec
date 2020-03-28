@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
@@ -55,6 +59,7 @@ class ov_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.TextField( default='OpenVAS', editable=False)
 
 
 class scan_save_db(models.Model):
@@ -63,13 +68,14 @@ class scan_save_db(models.Model):
     scan_ip = models.TextField(blank=True)
     target_id = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
-    total_vul = models.TextField(blank=True)
-    high_total = models.TextField(blank=True)
-    medium_total = models.TextField(blank=True)
-    low_total = models.TextField(blank=True)
+    total_vul = models.IntegerField(blank=True, null=True)
+    high_total = models.IntegerField(blank=True, null=True)
+    medium_total = models.IntegerField(blank=True, null=True)
+    low_total = models.IntegerField(blank=True, null=True)
+    log_total = models.IntegerField(blank=True, null=True)
     project_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
-    total_dup = models.TextField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
 
 
 class task_schedule_db(models.Model):
@@ -103,6 +109,7 @@ class nessus_report_db(models.Model):
     pluginID = models.TextField(blank=True, null=True)
     protocol = models.TextField(blank=True, null=True)
     severity = models.TextField(blank=True, null=True)
+    severity_color = models.TextField(blank=True, null=True)
     svc_name = models.TextField(blank=True, null=True)
     pluginFamily = models.TextField(blank=True, null=True)
     port = models.TextField(blank=True, null=True)
@@ -112,6 +119,7 @@ class nessus_report_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.TextField( default='Nessus', editable=False)
 
 
 class nessus_scan_db(models.Model):
@@ -120,11 +128,12 @@ class nessus_scan_db(models.Model):
     scan_ip = models.TextField(blank=True)
     target_id = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
-    total_vul = models.TextField(blank=True)
-    critical_total = models.TextField(blank=True)
-    high_total = models.TextField(blank=True)
-    medium_total = models.TextField(blank=True)
-    low_total = models.TextField(blank=True)
+    total_vul = models.IntegerField(blank=True, null=True)
+    critical_total = models.IntegerField(blank=True, null=True)
+    high_total = models.IntegerField(blank=True, null=True)
+    medium_total = models.IntegerField(blank=True, null=True)
+    low_total = models.IntegerField(blank=True, null=True)
+    info_total = models.IntegerField(blank=True, null=True)
     project_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
-    total_dup = models.TextField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)

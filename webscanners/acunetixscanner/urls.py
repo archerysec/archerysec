@@ -1,16 +1,23 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from django.conf.urls import url
 from webscanners.acunetixscanner import views
+
+app_name = 'acunetixscanner'
 
 urlpatterns = [
     # All acunetix URL's
@@ -32,5 +39,8 @@ urlpatterns = [
     url(r'^acunetix_del_vuln',
         views.acunetix_del_vuln,
         name='acunetix_del_vuln'),
+    url(r'^export',
+        views.export,
+        name='export'),
 
 ]

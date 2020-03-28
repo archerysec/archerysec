@@ -1,18 +1,24 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
-
 
 from webscanners.models import netsparker_scan_result_db, netsparker_scan_db
 import uuid
 import hashlib
+
+from webscanners.zapscanner.views import email_sch_notify
 
 vuln_url = None
 vuln_type = None
@@ -45,7 +51,12 @@ def xml_parser(root,
         externalReferences, remedyReferences, proofOfConcept, proofs
 
     for data in root:
+        if data.tag == "target":
+            for url in data:
+                if url.tag == 'url':
+                    target = url.text
         for vuln in data:
+
             if vuln.tag == 'url':
                 vuln_url = vuln.text
 
@@ -103,13 +114,11 @@ def xml_parser(root,
             vuln_id = uuid.uuid4()
 
         if vuln_severity == "Critical":
-            vul_col = "important"
+            vuln_severity = "High"
+            vul_col = "danger"
 
         elif vuln_severity == "High":
-            vul_col = 'important'
-
-        elif vuln_severity == "Important":
-            vul_col = "important"
+            vul_col = 'danger'
 
         elif vuln_severity == 'Medium':
             vul_col = "warning"
@@ -121,7 +130,7 @@ def xml_parser(root,
             vul_col = "info"
 
         dup_data = str(vuln_type) + str(vuln_url) + str(vuln_severity)
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
         match_dup = netsparker_scan_result_db.objects.filter(
             dup_hash=duplicate_hash).values('dup_hash').distinct()
         lenth_match = len(match_dup)
@@ -173,15 +182,15 @@ def xml_parser(root,
                                               )
         dump_data.save()
 
-    netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=scan_id)
+    netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
 
-    total_vul = len(netsparker_all_vul)
     total_critical = len(netsparker_all_vul.filter(severity='Critical'))
     total_high = len(netsparker_all_vul.filter(severity="High"))
     total_medium = len(netsparker_all_vul.filter(severity="Medium"))
     total_low = len(netsparker_all_vul.filter(severity="Low"))
     total_info = len(netsparker_all_vul.filter(severity="Information"))
     total_duplicate = len(netsparker_all_vul.filter(vuln_duplicate='Yes'))
+    total_vul = total_critical + total_high + total_medium + total_low + total_info
 
     netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
                                                               high_vul=total_high,
@@ -189,15 +198,23 @@ def xml_parser(root,
                                                               low_vul=total_low,
                                                               critical_vul=total_critical,
                                                               info_vul=total_info,
-                                                              total_dup=total_duplicate
+                                                              total_dup=total_duplicate,
+                                                              url=target
                                                               )
 
     if total_vul == total_duplicate:
-        netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul='0',
-                                                                  high_vul='0',
-                                                                  medium_vul='0',
-                                                                  low_vul='0',
-                                                                  critical_vul='0',
-                                                                  info_vul='0',
-                                                                  total_dup=total_duplicate
+        netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
+                                                                  high_vul=total_high,
+                                                                  medium_vul=total_medium,
+                                                                  low_vul=total_low,
+                                                                  critical_vul=total_critical,
+                                                                  info_vul=total_info,
+                                                                  total_dup=total_duplicate,
+                                                                  url=target
                                                                   )
+    subject = 'Archery Tool Scan Status - Netsparker Report Uploaded'
+    message = 'Netsparker Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (target, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

@@ -1,0 +1,361 @@
+{% extends 'tablehead.html' %}
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $("button").click(function(){
+            var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+            $.each($("input[name='del_scan_id']:checked"), function(){
+                scan_id.push($(this).val());
+            });
+
+            var json_scanid = scan_id.join(", ");
+            $.ajax({
+                type:'POST',
+                <!--contentType: 'application/json; charset=utf-8',-->
+                url:'/burpscanner/del_burp_scan/',
+                data:{
+                   scan_id: json_scanid,
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+            setTimeout(function(){location.reload();},1000);
+        });
+
+    });
+
+
+
+
+</script>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a
+                href="#" class="current">vFeed CVE Details</a></div>
+
+        <h1>vFeed CVE Details</h1>
+    </div>
+
+    <div class="container-fluid">
+
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>CVE Basic Details</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td>URL</td>
+                                <td><a href="{{cve_url}}" target="_blank">{{cve_url}}</a></td>
+                            </tr>
+                            <tr>
+                                <td>Summary</td>
+                                <td>{{cve_summary}}</td>
+                            </tr>
+                            <tr>
+                                <td>ID</td>
+                                <td>{{cve_id}}</td>
+                            </tr>
+                            <tr>
+                                <td>modified</td>
+                                <td>{{cve_modified}}</td>
+                            </tr>
+                            <tr>
+                                <td>published</td>
+                                <td>{{cve_published}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="span6">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>CWE Details</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td>ID</td>
+                                <td>{{cwe_id}}</td>
+                            </tr>
+                            <tr>
+                                <td>Title</td>
+                                <td>{{cwe_title}}</td>
+                            </tr>
+                            <tr>
+                                <td>URL</td>
+                                <td><a href="{{cwe_url}}" target="_blank">{{cwe_url}}</a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="span6">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>Ubuntu patches</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td>ID</td>
+                                <td>{{ubuntu_id}}</td>
+                            </tr>
+                            <tr>
+                                <td>URL</td>
+                                <td><a href="{{ubuntu_url}}" target="_blank">{{ubuntu_url}}</a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>CVSS Details</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td>accessComplexity</td>
+                                <td>{{cvss_accessComplexity}}</td>
+                            </tr>
+                            <tr>
+                                <td>accessVector</td>
+                                <td>{{cvss_accessVector}}</td>
+                            </tr>
+                            <tr>
+                                <td>authentication</td>
+                                <td>{{cvss_authentication}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss_availability</td>
+                                <td>{{cvss_availability}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss_base</td>
+                                <td>{{cvss_base}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss_confidentiality</td>
+                                <td>{{cvss_confidentiality}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss_exploitability</td>
+                                <td>{{cvss_exploitability}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss_impact</td>
+                                <td>{{cvss_impact}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss_integrity</td>
+                                <td>{{cvss_integrity}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss_vector</td>
+                                <td>{{cvss_vector}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="span6">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>CVSS2 Details</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td>ID</td>
+                                <td>{% for data in severity_id %}{{data}}<br>{% endfor %}</td>
+                            </tr>
+                            <tr>
+                                <td>Title</td>
+                                <td>{% for data in severity_title %}{{data}}<br>{% endfor %}</td>
+                            </tr>
+                            <tr>
+                                <td>accessComplexity</td>
+                                <td>{{cvss2_accessComplexity}}</td>
+                            </tr>
+                            <tr>
+                                <td>accessVector</td>
+                                <td>{{cvss2_accessVector}}</td>
+                            </tr>
+                            <tr>
+                                <td>authentication</td>
+                                <td>{{cvss2_authentication}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss2_availability</td>
+                                <td>{{cvss2_availability}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss2_base</td>
+                                <td>{{cvss2_base}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss2_confidentiality</td>
+                                <td>{{cvss2_confidentiality}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss2_exploitability</td>
+                                <td>{{cvss2_exploitability}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss2_impact</td>
+                                <td>{{cvss2_impact}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss2_integrity</td>
+                                <td>{{cvss2_integrity}}</td>
+                            </tr>
+                            <tr>
+                                <td>cvss2_vector</td>
+                                <td>{{cvss2_vector}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>Nessus Details</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <td>Id</td>
+                                <td>Family</td>
+                                <td>File</td>
+                                <td>Name</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{% for data in nessus_id %}{{data}}<br>{% endfor %}</td>
+                                <td>{% for data in nessus_family %}{{data}}<br>{% endfor %}</td>
+                                <td>{% for data in nessus_file %}{{data}}<br>{% endfor %}</td>
+                                <td>{% for data in nessus_name %}{{data}}<br>{% endfor %}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>OVAL Information</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <td>Class</td>
+                                <td>ID</td>
+                                <td>Title</td>
+                                <td>URL</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{% for data in oval_class %}{{data}}<br>{% endfor %}</td>
+                                <td>{% for data in oval_id %}{{data}}<br>{% endfor %}</td>
+                                <td>{% for data in oval_title %}{{data}}<br>{% endfor %}</td>
+                                <td>{% for data in oval_url %}<a href="{{data}}">{{data}}</a><br>{% endfor %}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>Metasploit Information</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <td>File</td>
+                                <td>ID</td>
+                                <td>Title</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{metasploit_file}}</td>
+                                <td>{{metasploit_id}}</td>
+                                <td>{{metasploit_title}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <i class="icon-eye-open"></i> </span>
+                        <h5>Snort Information</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <td>Category</td>
+                                <td>ID</td>
+                                <td>signature</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{% for data in snort_category %}{{data}}<br>{% endfor %}</td>
+                                <td>{% for data in snort_id %}{{data}}<br>{% endfor %}</td>
+                                <td>{% for data in snort_signature %}{{data}}<br>{% endfor %}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    {% endblock %}

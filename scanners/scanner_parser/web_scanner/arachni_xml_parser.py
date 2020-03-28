@@ -1,18 +1,25 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 
 from webscanners.models import arachni_scan_db, arachni_scan_result_db
 import uuid
 import hashlib
+
+from webscanners.zapscanner.views import email_sch_notify
 
 name = ""
 description = ""
@@ -89,7 +96,7 @@ def xml_parser(root, project_id, scan_id):
                     if vuln.tag == "references":
                         for ref_vuln in vuln:
                             dat = ref_vuln.attrib
-                            for key, values in dat.iteritems():
+                            for key, values in dat.items():
 
                                 if key is None:
                                     ref_key = "NA"
@@ -106,7 +113,7 @@ def xml_parser(root, project_id, scan_id):
                             if vec_vuln.tag == 'inputs':
                                 for vec_input in vec_vuln:
                                     dat = vec_input.attrib
-                                    for key, values in dat.iteritems():
+                                    for key, values in dat.items():
 
                                         if key is None:
                                             vector_input_key = "NA"
@@ -120,7 +127,7 @@ def xml_parser(root, project_id, scan_id):
                             if vec_vuln.tag == 'source':
                                 for vec_source in vec_vuln:
                                     source_dat = vec_source.attrib
-                                    for key, values in source_dat.iteritems():
+                                    for key, values in source_dat.items():
                                         if key is None:
                                             vector_source_key = "NA"
                                         else:
@@ -185,15 +192,19 @@ def xml_parser(root, project_id, scan_id):
                             proof = vuln.text
 
                     if severity == "high":
-                        vul_col = "important"
+                        vul_col = "danger"
+                        severity = "High"
 
                     elif severity == 'medium':
                         vul_col = "warning"
+                        severity = "Medium"
 
                     elif severity == 'low':
+                        severity = "Low"
                         vul_col = "info"
 
                     elif severity == 'informational':
+                        severity = "Informational"
                         vul_col = "info"
 
                     for extra_data in vuln:
@@ -218,7 +229,7 @@ def xml_parser(root, project_id, scan_id):
                                     body = extra_vuln.text
 
                 dup_data = name + url + severity
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                 match_dup = arachni_scan_result_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
@@ -238,10 +249,10 @@ def xml_parser(root, project_id, scan_id):
                 global false_positive
                 if fp_lenth_match == 1:
                     false_positive = 'Yes'
-                elif lenth_match == 0:
+                elif fp_lenth_match == 0:
                     false_positive = 'No'
                 else:
-                    false_positive = 'No'
+                    false_positive = "No"
 
                 dump_data = arachni_scan_result_db(vuln_id=vuln_id, scan_id=scan_id, vuln_color=vul_col,
                                                    project_id=project_id,
@@ -249,8 +260,10 @@ def xml_parser(root, project_id, scan_id):
                                                    remedy_guidance=remedy_guidance,
                                                    severity=severity,
                                                    proof=proof,
-                                                   url=url, action=action,
-                                                   body=body, ref_key=ref_key,
+                                                   url=url,
+                                                   action=action,
+                                                   body=body,
+                                                   ref_key=ref_key,
                                                    ref_value=ref_values,
                                                    vector_input_values=vector_input_values,
                                                    vector_source_key=vector_source_key,
@@ -270,25 +283,37 @@ def xml_parser(root, project_id, scan_id):
                                                    )
                 dump_data.save()
 
-    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id).values('name', 'severity',
-                                                                                    'vuln_color').distinct()
+    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
 
-    total_vul = len(arachni_all_vul)
-    total_high = len(arachni_all_vul.filter(severity="high"))
-    total_medium = len(arachni_all_vul.filter(severity="medium"))
-    total_low = len(arachni_all_vul.filter(severity="low"))
+    total_high = len(arachni_all_vul.filter(severity="High"))
+    total_medium = len(arachni_all_vul.filter(severity="Medium"))
+    total_low = len(arachni_all_vul.filter(severity="Low"))
+    total_info = len(arachni_all_vul.filter(severity="Informational"))
     total_duplicate = len(arachni_all_vul.filter(vuln_duplicate='Yes'))
+    total_vul = total_high + total_medium + total_low + total_info
 
-    arachni_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
-                                                           high_vul=total_high,
-                                                           medium_vul=total_medium,
-                                                           low_vul=total_low,
-                                                           total_dup=total_duplicate,
-                                                           )
+    arachni_scan_db.objects.filter(scan_id=scan_id).update(
+        url=url,
+        total_vul=total_vul,
+        high_vul=total_high,
+        medium_vul=total_medium,
+        low_vul=total_low,
+        info_vul=total_info,
+        total_dup=total_duplicate,
+    )
     if total_vul == total_duplicate:
-        arachni_scan_db.objects.filter(scan_id=scan_id).update(total_vul='0',
-                                                               high_vul='0',
-                                                               medium_vul='0',
-                                                               low_vul='0',
-                                                               total_dup=total_duplicate,
-                                                               )
+        arachni_scan_db.objects.filter(scan_id=scan_id).update(
+            url=url,
+            total_vul=total_vul,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            total_dup=total_duplicate,
+        )
+
+    subject = 'Archery Tool Scan Status - Arachni Report Uploaded'
+    message = 'Arachni Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (url, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

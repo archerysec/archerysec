@@ -1,18 +1,25 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 import datetime
 import uuid
 from networkscanners.models import nessus_report_db, nessus_scan_db
 import hashlib
+
+from webscanners.zapscanner.views import email_sch_notify
 
 agent = "NA"
 description = "NA"
@@ -37,6 +44,7 @@ pluginFamily = "NA"
 port = "NA"
 ip = ''
 false_positive = None
+vuln_color = None
 
 
 def nessus_parser(root, project_id, scan_id):
@@ -48,25 +56,25 @@ def nessus_parser(root, project_id, scan_id):
     :return:
     """
 
-    global agent, description, fname,\
-        plugin_modification_date, plugin_name,\
-        plugin_publication_date, plugin_type,\
-        risk_factor, script_version, solution,\
+    global agent, description, fname, \
+        plugin_modification_date, plugin_name, \
+        plugin_publication_date, plugin_type, \
+        risk_factor, script_version, solution, \
         synopsis, plugin_output, see_also, scan_ip, \
-        pluginName, pluginID, protocol, severity,\
-        svc_name, pluginFamily, port
+        pluginName, pluginID, protocol, severity, \
+        svc_name, pluginFamily, port, vuln_color
 
     for data in root:
         for reportHost in data.iter('ReportHost'):
             ip = reportHost.attrib
             try:
-                for key, value in ip.viewitems():
+                for key, value in ip.items():
                     scan_ip = value
             except:
                 continue
 
             for ReportItem in reportHost.iter('ReportItem'):
-                for key, value in ReportItem.attrib.viewitems():
+                for key, value in ReportItem.attrib.items():
                     if key == 'pluginName':
                         pluginName = value
                     if key == 'pluginID':
@@ -135,15 +143,25 @@ def nessus_parser(root, project_id, scan_id):
                 except:
                     plugin_output = "NA"
 
-
                 vul_id = uuid.uuid4()
-                
+
                 dup_data = scan_ip + plugin_name + severity + port
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                 match_dup = nessus_report_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)
+
+                if severity == '0':
+                    vuln_color = 'info'
+                if severity == '1':
+                    vuln_color = 'info'
+                if severity == '2':
+                    vuln_color = 'warning'
+                if severity == '3':
+                    vuln_color = 'danger'
+                if severity == '4':
+                    vuln_color = 'danger'
 
                 if lenth_match == 1:
                     duplicate_vuln = 'Yes'
@@ -161,6 +179,12 @@ def nessus_parser(root, project_id, scan_id):
                     false_positive = 'Yes'
                 else:
                     false_positive = 'No'
+
+                if risk_factor == 'None':
+                    risk_factor = 'Informational'
+
+                if risk_factor == 'Critical':
+                    risk_factor = 'High'
 
                 all_data_save = nessus_report_db(project_id=project_id,
                                                  scan_id=scan_id,
@@ -189,19 +213,21 @@ def nessus_parser(root, project_id, scan_id):
                                                  false_positive=false_positive,
                                                  vuln_status='Open',
                                                  dup_hash=duplicate_hash,
-                                                 vuln_duplicate=duplicate_vuln
+                                                 vuln_duplicate=duplicate_vuln,
+                                                 severity_color=vuln_color
                                                  )
                 all_data_save.save()
 
                 del_na = nessus_report_db.objects.filter(plugin_name='NA')
                 del_na.delete()
 
-                ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+                ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_id, false_positive='No')
                 total_vul = len(ov_all_vul)
                 total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
                 total_high = len(ov_all_vul.filter(risk_factor="High"))
                 total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
                 total_low = len(ov_all_vul.filter(risk_factor="Low"))
+                total_info = len(ov_all_vul.filter(risk_factor="Informational"))
                 total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
 
                 nessus_scan_db.objects.filter(scan_id=scan_id) \
@@ -210,14 +236,13 @@ def nessus_parser(root, project_id, scan_id):
                             high_total=total_high,
                             medium_total=total_medium,
                             low_total=total_low,
+                            info_total=total_info,
                             total_dup=total_duplicate,
+                            scan_ip=scan_ip,
                             )
-                if total_vul == total_duplicate:
-                    nessus_scan_db.objects.filter(scan_id=scan_id) \
-                        .update(total_vul='0',
-                                critical_total='0',
-                                high_total='0',
-                                medium_total='0',
-                                low_total='0',
-                                total_dup=total_duplicate,
-                                )
+    subject = 'Archery Tool Scan Status - Nessus Report Uploaded'
+    message = 'Nessus Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (scan_id, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
@@ -14,14 +19,30 @@ import threading
 import time
 import uuid
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from scanners.scanner_plugin.web_scanner import burp_plugin
-from webscanners.models import burp_scan_db, burp_scan_result_db
+from webscanners.models import burp_scan_db, burp_scan_result_db, burp_issue_definitions
 from datetime import datetime
 from jiraticketing.models import jirasetting
 from archerysettings.models import burp_setting_db
 import hashlib
+from webscanners.resources import BurpResource
+from notifications.models import Notification
+from PyBurprestapi import burpscanner
+import json
+from notifications.signals import notify
+from django.urls import reverse
+
+burp_url = None
+burp_port = None
+burp_api_key = None
+remediation = None
+issue_type_id = None
+description = None
+name = None
+references = None
+vulnerability_classifications = None
 
 
 def burp_setting(request):
@@ -30,24 +51,73 @@ def burp_setting(request):
     :param request:
     :return:
     """
-    burp_url = None
-    burp_port = None
+    user = request.user
+
     all_burp_setting = burp_setting_db.objects.all()
 
     for data in all_burp_setting:
-        global burp_url, burp_port
+        global burp_url, burp_port, burp_api_key, \
+            remediation, issue_type_id, description, \
+            name, references, \
+            vulnerability_classifications
         burp_url = data.burp_url
         burp_port = data.burp_port
+        burp_api_key = data.burp_api_key
 
     if request.method == 'POST':
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
-        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport)
+        burpapikey = request.POST.get("burpapikey")
+        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport, burp_api_key=burpapikey)
         save_burp_settings.save()
 
-        return HttpResponseRedirect('/burpscanner/setting/')
+        host = 'http://' + burphost + ':' + burport + '/'
 
-    return render(request, 'burpscanner/burp_setting_form.html', {'burp_url': burp_url, 'burp_port': burp_port})
+        bi = burpscanner.BurpApi(host, burpapikey)
+
+        issue_list = bi.issue_definitions()
+
+        json_issue_data = json.dumps(issue_list.data)
+        issues = json.loads(json_issue_data)
+
+        all_data = burp_issue_definitions.objects.all()
+        all_data.delete()
+
+        try:
+            for issue_dat in issues:
+                for key, values in issue_dat.items():
+                    if key == 'remediation':
+                        remediation = values
+                    if key == 'issue_type_id':
+                        issue_type_id = values
+                    if key == 'description':
+                        description = values
+                    if key == 'name':
+                        name = values
+                    if key == 'references':
+                        references = values
+                    if key == 'vulnerability_classifications':
+                        vulnerability_classifications = values
+
+                data_dump = burp_issue_definitions(remediation=remediation,
+                                                   issue_type_id=issue_type_id,
+                                                   description=description,
+                                                   reference=references,
+                                                   vulnerability_classifications=vulnerability_classifications,
+                                                   name=name
+                                                   )
+                data_dump.save()
+        except Exception as e:
+            print(e)
+            notify.send(user, recipient=user, verb='Burp Connection Not Found')
+
+        return HttpResponseRedirect(reverse('webscanners:setting'))
+
+    return render(request, 'burpscanner/burp_setting_form.html',
+                  {'burp_url': burp_url,
+                   'burp_port': burp_port,
+                   'burp_api_key': burp_api_key
+                   })
 
 
 def burp_scan_launch(request):
@@ -56,6 +126,9 @@ def burp_scan_launch(request):
     :param request:
     :return:
     """
+
+    user = request.user
+
     global vuln_id, burp_status
     if request.POST.get("url"):
         target_url = request.POST.get('url')
@@ -64,22 +137,15 @@ def burp_scan_launch(request):
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
-            print "Targets", target
+            print("Targets"), target
             scan_id = uuid.uuid4()
-            date_time = datetime.now()
-            scan_dump = burp_scan_db(scan_id=scan_id,
-                                     project_id=project_id,
-                                     url=target,
-                                     date_time=date_time)
-            scan_dump.save()
             try:
                 do_scan = burp_plugin.burp_scans(
                     project_id,
                     target,
-                    scan_id)
-                # do_scan.scan_lauch(project_id,
-                #                    target,
-                #                    scan_id)
+                    scan_id,
+                    user
+                )
 
                 thread = threading.Thread(
                     target=do_scan.scan_launch,
@@ -88,7 +154,7 @@ def burp_scan_launch(request):
                 thread.start()
                 time.sleep(5)
             except Exception as e:
-                print e
+                print(e)
 
     return render(request, 'burpscanner/burp_scan_list.html')
 
@@ -181,22 +247,34 @@ def burp_vuln_out(request):
             vuln_info = burp_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.name
-                location = vi.location
+                location = vi.path
                 severity = vi.severity
                 dup_data = name + location + severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 burp_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                    scan_id=scan_id).update(false_positive=false_positive,
                                                                            vuln_status=vuln_status,
                                                                            false_positive_hash=false_positive_hash
                                                                            )
+            burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+            total_vul = len(burp_all_vul)
+            total_high = len(burp_all_vul.filter(severity="High"))
+            total_medium = len(burp_all_vul.filter(severity="Medium"))
+            total_low = len(burp_all_vul.filter(severity="Low"))
+            total_info = len(burp_all_vul.filter(severity="Information"))
+            total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
+            burp_scan_db.objects.filter(scan_id=scan_id).update(
+                total_vul=total_vul,
+                high_vul=total_high,
+                medium_vul=total_medium,
+                low_vul=total_low,
+                info_vul=total_info,
+                total_dup=total_duplicate
+            )
 
-        messages.add_message(request,
-                             messages.SUCCESS,
-                             'Vulnerability Status Changed')
         return HttpResponseRedirect(
-            '/burpscanner/burp_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id,
-                                                                     vuln_name))
+            reverse('burpscanner:burp_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id,
+                                                                                 vuln_name))
     vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
                                                    name=name,
                                                    false_positive='No',
@@ -213,10 +291,10 @@ def burp_vuln_out(request):
                                                     false_positive='Yes')
 
     return render(request, 'burpscanner/burp_vuln_out.html', {'vuln_data': vuln_data,
-                                                  'false_data': false_data,
-                                                  'jira_url': jira_url,
-                                                  'vuln_close_data': vuln_close_data
-                                                  })
+                                                              'false_data': false_data,
+                                                              'jira_url': jira_url,
+                                                              'vuln_close_data': vuln_close_data
+                                                              })
 
 
 def del_burp_scan(request):
@@ -233,15 +311,14 @@ def del_burp_scan(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
             item = burp_scan_db.objects.filter(scan_id=scan_id)
             item.delete()
             item_results = burp_scan_result_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-            messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/burpscanner/burp_scan_list/')
+        return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
 
 
 def del_burp_vuln(request):
@@ -257,7 +334,7 @@ def del_burp_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
@@ -271,63 +348,32 @@ def del_burp_vuln(request):
 
         burp_scan_db.objects.filter(scan_id=un_scanid).update(total_vul=total_vul, high_vul=total_high,
                                                               medium_vul=total_medium, low_vul=total_low)
-        messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/burpscanner/burp_vuln_list?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('burpscanner:burp_vuln_list') + '?scan_id=%s' % un_scanid)
 
 
-def edit_burp_vuln(request):
+def export(request):
     """
-    Edit Burp vulnerability.
     :param request:
     :return:
     """
-    if request.method == 'GET':
-        id_vul = request.GET['vuln_id']
-
-    else:
-        id_vul = ''
-
-    edit_vul_dat = burp_scan_result_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
 
     if request.method == 'POST':
-        vuln_id = request.POST.get("vuln_id", )
-        scan_id = request.POST.get("scan_id", )
-        name = request.POST.get("name", )
-        severity = request.POST.get("severity", )
-        host = request.POST.get("host", )
-        path = request.POST.get("path", )
-        issuedetail = request.POST.get("issuedetail")
-        description = request.POST.get("description", )
-        solution = request.POST.get("solution", )
-        location = request.POST.get("location", )
-        vulnClass = request.POST.get("reference", )
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
 
-        global vul_col
-
-        if severity == 'High':
-            vul_col = "important"
-        elif severity == 'Medium':
-            vul_col = "warning"
-        elif severity == 'Low':
-            vul_col = "info"
-        else:
-            vul_col = "info"
-
-        print "edit_vul :", name
-
-        burp_scan_result_db.objects.filter(
-            vuln_id=vuln_id).update(name=name,
-                                    severity_color=vul_col,
-                                    severity=severity,
-                                    host=host, path=path,
-                                    location=location,
-                                    issueDetail=issuedetail,
-                                    issueBackground=description,
-                                    remediationBackground=solution,
-                                    vulnerabilityClassifications=vulnClass)
-        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
-
-        return HttpResponseRedirect("/burpscanner/burp_vuln_data/?vuln_id=%s" % vuln_id)
-
-    return render(request, 'burpscanner/edit_burp_vuln.html', {'edit_vul_dat': edit_vul_dat})
+        zap_resource = BurpResource()
+        queryset = burp_scan_result_db.objects.filter(scan_id=scan_id)
+        dataset = zap_resource.export(queryset)
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == 'yaml':
+            response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            return response

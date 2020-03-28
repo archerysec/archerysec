@@ -1,0 +1,122 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+{% for data in dependencycheck_vuln_details %}
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-auto">
+                    <div class="float-right">
+                        <!-- Large modal -->
+                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description={{data.description | safe}}%0a%0a%0a {{data.evidenceCollected | safe}} %0a%0a {{data.vulnerableSoftware | safe}} %0a%0a File Name: {{data.fileName}} %0a%0a File Path: {{data.filePath}} Solution: {{data.more_info }} {{data.references }} %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=dependencycheck&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+               class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
+
+                    </div>
+                </div>
+                <h1>{{data.name | safe}}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Description</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.description | safe}}
+                                    <br>
+                                    {{data.evidenceCollected | safe}}
+                                    <br>
+                                    {{data.vulnerableSoftware | safe}}
+                                    <br>
+                                    <strong>CVE: </strong><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name={{data.name}}" target="_blank">{{data.name}}</a><br><br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                                       aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Instance</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered data-table table-fixed">
+                                            <thead>
+                                            <tr>
+                                                <td>File Name</td>
+                                                <td>File Path</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    {{data.fileName}}
+                                                </td>
+                                                <td>
+                                                    {{data.filePath}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseThree"
+                                       aria-expanded="false" aria-controls="collapseThree">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Solutions</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                   <a href="{{data.more_info | safe}}">{{data.more_info | safe}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="heading4">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapse4"
+                                       aria-expanded="false" aria-controls="collapse4">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Reference</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapse4" class="collapse" aria-labelledby="heading4"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.references }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

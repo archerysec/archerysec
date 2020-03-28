@@ -1,59 +1,51 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
 
-<div id="content">
-    <!--breadcrumbs-->
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-            Home</a></div>
-    </div>
+<div class="page-wrapper">
     <div class="container-fluid">
-        <hr>
-        <div class="span3 offset6">
-            {% if messages %}
-
-            {% for message in messages %}
-            <div class="alert alert-success alert-block"><a class="close" data-dismiss="alert"
-                                                            href="#">×</a>
-                <p class="alert-heading">{{ message }}</p>
-            </div>
-            {% endfor %}
-
-            {% endif %}
-        </div>
-        <div class="row-fluid">
-            <div class="span6 offset3">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-align-justify"></i> </span>
-                        <h5>Email Setting</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="POST" action="/webscanners/email_setting">{% csrf_token %}
-                            <div class="control-group">
-                                <label class="control-label">Subject :</label>
-                                <div class="controls">
-                                    <input type="text" name="email_subject" value="{{ email_subject }}" class="span11"
-                                           placeholder="Email Subject"/>
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Email Setting Form</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form method="POST" action="{% url 'webscanners:email_setting' %}">{% csrf_token %}
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Email Message :</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="email_message" class="span11"
+                                           />
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">From Email :</label>
-                                <div class="controls">
-                                    <input type="email" name="from_email" value="{{ from_email }}" class="span11"
-                                           placeholder="From Email"/>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Email Subject:</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="email_subject" class="span11"
+                                           />
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">To Email :</label>
-                                <div class="controls">
-                                    <input type="email" name="to_email" value="{{ to_email }}" class="span11"
-                                           placeholder="To Email"/>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">To Email:</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="to_email" value="{{ burp_port }}" class="span11"
+                                           />
                                 </div>
                             </div>
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-success">Save</button>
                             </div>
                         </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

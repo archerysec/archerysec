@@ -1,16 +1,19 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
-
-import os
 import threading
 import time
 import uuid
@@ -22,40 +25,45 @@ from django.core import signing
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, render_to_response, HttpResponse
-from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect
-from easy_pdf.views import render_to_pdf_response
 from selenium import webdriver
 from stronghold.decorators import public
 from archerysettings import load_settings, save_settings
-from networkscanners.models import scan_save_db
 from projects.models import project_db
 from scanners.scanner_parser.web_scanner import zap_xml_parser, \
-    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser
-from scanners.scanner_plugin.web_scanner import burp_plugin
-from scanners.scanner_plugin.web_scanner import zap_plugin
-from webscanners.models import zap_scan_results_db, \
+    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser, burp_xml_parser
+# from scanners.scanner_plugin.web_scanner import burp_plugin
+from scanners.scanner_plugin.web_scanner import zap_plugin, burp_plugin
+from webscanners.models import \
     zap_scans_db, \
     zap_spider_db, \
     zap_spider_results, \
     cookie_db, excluded_db, \
-    burp_scan_db, burp_scan_result_db, \
-    arachni_scan_db, arachni_scan_result_db, \
+    burp_scan_db, \
+    arachni_scan_db, \
     task_schedule_db, \
-    acunetix_scan_db, acunetix_scan_result_db
+    acunetix_scan_db
 from background_task import background
 from datetime import datetime
 from background_task.models import Task
 import os
 from jiraticketing.models import jirasetting
 from webscanners.models import netsparker_scan_db, \
-    netsparker_scan_result_db, \
-    webinspect_scan_db, \
-    webinspect_scan_result_db
-from webscanners.zapscanner.views import launch_zap_scan
-
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
-import hashlib
+    webinspect_scan_db
+from webscanners.zapscanner.views import launch_schudle_zap_scan
+from archerysettings.models import zap_settings_db, \
+    burp_setting_db, \
+    nmap_vulners_setting_db, \
+    arachni_settings_db, email_db
+from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser
+from lxml import etree
+from staticscanners.models import dependencycheck_scan_db, \
+    findbugs_scan_db
+from tools.models import nikto_result_db
+import codecs
+from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
+from notifications.models import Notification
+from django.urls import reverse
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -82,9 +90,9 @@ res_type = ""
 res_id = ""
 alert = ""
 project_id = None
-target_url = None
+# target_url = None
 scan_ip = None
-burp_status = 0
+# burp_status = 0
 serialNumber = ""
 types = ""
 name = ""
@@ -99,7 +107,7 @@ references = ""
 vulnerabilityClassifications = ""
 issueDetail = ""
 requestresponse = ""
-vuln_id = ""
+# vuln_id = ""
 methods = ""
 dec_res = ""
 dec_req = ""
@@ -139,9 +147,9 @@ def auth_view(request):
 
     if user is not None:
         auth.login(request, user)
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('dashboard:dashboard'))
     else:
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('webscanners:login'))
 
 
 @public
@@ -168,10 +176,15 @@ def signup(request):
         email = request.POST.get('email')
         user = User.objects.create_user(username, email, password)
         user.save()
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('webscanners:login'))
 
     return render(request,
                   'signup.html')
+
+
+def error_404_view(request):
+
+    return render(request, '404.html')
 
 
 def loggedin(request):
@@ -191,6 +204,32 @@ def invalid_login():
     return render_to_response('invalid_login.html')
 
 
+def del_notify(request):
+    """
+
+    :return:
+    """
+    if request.method == 'GET':
+        notify_id = request.GET['notify_id']
+
+        notify_del = Notification.objects.filter(id=notify_id)
+        notify_del.delete()
+
+    return HttpResponseRedirect(reverse('dashboard:dashboard'))
+
+
+def del_all_notify(request):
+    """
+
+    :return:
+    """
+    if request.method == 'GET':
+        notify_del = Notification.objects.all()
+        notify_del.delete()
+
+    return HttpResponseRedirect(reverse('dashboard:dashboard'))
+
+
 def index(request):
     """
     The function calling web scan Page.
@@ -205,6 +244,8 @@ def index(request):
 
     all_scans_db = project_db.objects.all()
 
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'webscanner.html',
                   {
@@ -216,7 +257,8 @@ def index(request):
                       'spider_alert': spider_alert,
                       'all_excluded_url': all_excluded_url,
                       'all_cookies': all_cookies,
-                      'all_scans_db': all_scans_db
+                      'all_scans_db': all_scans_db,
+                      'message': all_notify
                   }
                   )
 
@@ -229,10 +271,12 @@ def task(target_url, project_id, scanner):
     split_length = target__split.__len__()
     for i in range(0, split_length):
         target = target__split.__getitem__(i)
+        # noinspection PyInterpreter
         if scanner == 'zap_scan':
+            scan_id = uuid.uuid4()
             thread = threading.Thread(
-                target=launch_zap_scan,
-                args=(target, project_id, rescan_id, rescan))
+                target=launch_schudle_zap_scan,
+                args=(target, project_id, rescan_id, rescan, scan_id))
             thread.daemon = True
             thread.start()
         elif scanner == 'burp_scan':
@@ -240,7 +284,7 @@ def task(target_url, project_id, scanner):
             do_scan = burp_plugin.burp_scans(
                 project_id,
                 target,
-                scan_id)
+                scan_id, user='admin')
             thread = threading.Thread(
                 target=do_scan.scan_launch,
             )
@@ -363,7 +407,7 @@ def del_web_scan_schedule(request):
             del_task_schedule = Task.objects.filter(id=task_id)
             del_task_schedule.delete()
 
-    return HttpResponseRedirect('/webscanners/web_scan_schedule')
+    return HttpResponseRedirect(reverse('webscanners:web_scan_schedule'))
 
 
 def setting(request):
@@ -372,16 +416,15 @@ def setting(request):
     :param request:
     :return:
     """
+
+    all_notify = Notification.objects.unread()
+
     jira_url = None
     username = None
     password = None
     # Loading settings
     settings = load_settings.ArcherySettings(setting_file)
 
-    # Loading OpenVAS Settings
-    # ov_user = settings.openvas_username()
-    # ov_pass = settings.openvas_pass()
-    # ov_ip = settings.openvas_host()
     lod_ov_user = settings.openvas_username()
     lod_ov_pass = settings.openvas_pass()
     lod_ov_host = settings.openvas_host()
@@ -392,16 +435,30 @@ def setting(request):
     zap_api_key = ''
     zap_hosts = ''
     zap_ports = ''
+    zap_enable = False
 
     all_zap = zap_settings_db.objects.all()
     for zap in all_zap:
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
         zap_ports = zap.zap_port
+        zap_enable = zap.enabled
 
     lod_apikey = zap_api_key
     zap_host = zap_hosts
     zap_port = zap_ports
+
+    # Loading Arachni Settings
+    arachni_hosts = ''
+    arachni_ports = ''
+
+    all_arachni = arachni_settings_db.objects.all()
+    for arachni in all_arachni:
+        arachni_hosts = arachni.arachni_url
+        arachni_ports = arachni.arachni_port
+
+    arachni_hosts = arachni_hosts
+    arachni_ports = arachni_ports
 
     # Loading NMAP Vulners Settings
     nv_enabled = False
@@ -420,11 +477,11 @@ def setting(request):
 
     burp_host = settings.burp_host()
     burp_port = settings.burp_port()
+    burp_api_key = settings.burp_api_key()
 
     # Loading Email Settings
-    email_subject = settings.email_subject()
-    email_from = settings.email_from()
-    to_email = settings.email_to()
+
+    all_email = email_db.objects.all()
 
     # Load JIRA Setting
     jira_setting = jirasetting.objects.all()
@@ -448,6 +505,9 @@ def setting(request):
                   {'apikey': lod_apikey,
                    'zapath': zap_host,
                    'zap_port': zap_port,
+                   'zap_enable': zap_enable,
+                   'arachni_hosts': arachni_hosts,
+                   'arachni_ports': arachni_ports,
                    'lod_ov_user': lod_ov_user,
                    'lod_ov_pass': lod_ov_pass,
                    'lod_ov_host': lod_ov_host,
@@ -455,9 +515,8 @@ def setting(request):
                    'lod_ov_port': lod_ov_port,
                    'burp_path': burp_host,
                    'burp_port': burp_port,
-                   'email_subject': email_subject,
-                   'email_from': email_from,
-                   'to_email': to_email,
+                   'burp_api_key': burp_api_key,
+                   'all_email': all_email,
                    'jira_server': jira_server,
                    'jira_username': jira_username,
                    'jira_password': jira_password,
@@ -465,6 +524,7 @@ def setting(request):
                    'nv_version': nv_version,
                    'nv_online': nv_online,
                    'nv_timing': nv_timing,
+                   'message': all_notify,
                    })
 
 
@@ -475,45 +535,25 @@ def email_setting(request):
     :return:
     """
     # Load Email Setting function
-    save_email_setting = save_settings.SaveSettings(setting_file)
+    all_email = email_db.objects.all()
 
     if request.method == 'POST':
         subject = request.POST.get("email_subject")
-        from_email = request.POST.get("from_email")
+        from_message = request.POST.get("email_message")
         email_to = request.POST.get("to_email")
 
-        save_email_setting.save_email_settings(
-            email_subject=subject,
-            email_from=from_email,
-            email_to=email_to
+        all_email.delete()
+
+        save_email = email_db(
+            subject=subject,
+            message=from_message,
+            recipient_list=email_to,
         )
-    return render(request, 'email_setting_form.html')
+        save_email.save()
+        return HttpResponseRedirect(reverse('webscanners:setting'))
 
-
-def burp_setting(request):
-    """
-    Load Burp Settings.
-    :param request:
-    :return:
-    """
-    burp_url = None
-    burp_port = None
-    all_burp_setting = burp_setting_db.objects.all()
-
-    for data in all_burp_setting:
-        global burp_url, burp_port
-        burp_url = data.burp_url
-        burp_port = data.burp_port
-
-    if request.method == 'POST':
-        burphost = request.POST.get("burpath")
-        burport = request.POST.get("burport")
-        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport)
-        save_burp_settings.save()
-
-        return HttpResponseRedirect('/webscanners/setting/')
-
-    return render(request, 'burp_setting_form.html', {'burp_url': burp_url, 'burp_port': burp_port})
+    return render(request, 'email_setting_form.html', {'all_email': all_email}
+                  )
 
 
 def burp_scan_launch(request):
@@ -522,7 +562,7 @@ def burp_scan_launch(request):
     :param request:
     :return:
     """
-    global vuln_id, burp_status
+
     if request.POST.get("url"):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
@@ -556,7 +596,7 @@ def burp_scan_launch(request):
             except Exception as e:
                 print(e)
 
-    return render(request, 'scan_list.html')
+    return render(request, 'burpscanner/burp_scan_list.html')
 
 
 def xml_upload(request):
@@ -585,10 +625,12 @@ def xml_upload(request):
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
-                                      root=root_xml)
-            return HttpResponseRedirect("/zapscanner/zap_scan_list/")
+                                      root=root_xml_en)
+            return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
         elif scanner == "burp_scan":
             date_time = datetime.now()
             scan_dump = burp_scan_db(url=scan_url,
@@ -600,12 +642,14 @@ def xml_upload(request):
             # Burp scan XML parser
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            do_xml_data = burp_plugin.burp_scans(project_id,
-                                                 target_url,
-                                                 scan_id)
-            do_xml_data.burp_scan_data(root_xml)
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
+
+            burp_xml_parser.burp_scan_data(root_xml_en,
+                                           project_id,
+                                           scan_id)
             print("Save scan Data")
-            return HttpResponseRedirect("/burpscanner/burp_scan_list")
+            return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
 
         elif scanner == "arachni":
             date_time = datetime.now()
@@ -621,7 +665,7 @@ def xml_upload(request):
                                           scan_id=scan_id,
                                           root=root_xml)
             print("Save scan Data")
-            return HttpResponseRedirect("/arachniscanner/arachni_scan_list")
+            return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
 
         elif scanner == 'netsparker':
             date_time = datetime.now()
@@ -638,8 +682,8 @@ def xml_upload(request):
             netsparker_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
-            print("Saved scan data")
-            return HttpResponseRedirect("/netsparkerscanner/netsparker_scan_list/")
+
+            return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
         elif scanner == 'webinspect':
             date_time = datetime.now()
             scan_dump = webinspect_scan_db(
@@ -655,8 +699,8 @@ def xml_upload(request):
             webinspect_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
                                              root=root_xml)
-            print("Saved scan data")
-            return HttpResponseRedirect("/webinspectscanner/webinspect_scan_list/")
+
+            return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
 
         elif scanner == 'acunetix':
             date_time = datetime.now()
@@ -673,8 +717,58 @@ def xml_upload(request):
             acunetix_xml_parser.xml_parser(project_id=project_id,
                                            scan_id=scan_id,
                                            root=root_xml)
-            print("Saved scan data")
-            return HttpResponseRedirect("/acunetixscanner/acunetix_scan_list/")
+
+            return HttpResponseRedirect(reverse('acunetixscanner:acunetix_scan_list'))
+
+        elif scanner == 'dependencycheck':
+            date_time = datetime.now()
+            scan_dump = dependencycheck_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            data = etree.parse(xml_file)
+            root = data.getroot()
+            dependencycheck_report_parser.xml_parser(project_id=project_id,
+                                                     scan_id=scan_id,
+                                                     data=root)
+
+            return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
+
+        elif scanner == 'findbugs':
+            date_time = datetime.now()
+            scan_dump = findbugs_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status
+            )
+            scan_dump.save()
+            tree = ET.parse(xml_file)
+            root = tree.getroot()
+            findbugs_report_parser.xml_parser(project_id=project_id,
+                                              scan_id=scan_id,
+                                              root=root)
+
+            return HttpResponseRedirect(reverse('findbugs:findbugs_list'))
+
+        elif scanner == 'nikto':
+            date_time = datetime.now()
+            scan_dump = nikto_result_db(
+                date_time=date_time,
+                scan_url=scan_url,
+                scan_id=scan_id,
+                project_id=project_id,
+            )
+            scan_dump.save()
+
+            nikto_html_parser(xml_file, project_id, scan_id)
+
+            return HttpResponseRedirect(reverse('tools:nikto'))
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
 
@@ -695,12 +789,12 @@ def add_cookies(request):
 
         if cookies == target_url:
             cookie_db.objects.filter(Q(url__icontains=target_url)).update(cookie=target_cookies)
-            return HttpResponseRedirect("/webscanners/")
+            return HttpResponseRedirect(reverse('webscanners:index'))
         else:
             data_dump = cookie_db(url=target_url,
                                   cookie=target_cookies)
             data_dump.save()
-            return HttpResponseRedirect("/webscanners/")
+            return HttpResponseRedirect(reverse('webscanners:index'))
 
     return render(request, 'cookie_add.html')
 
@@ -735,7 +829,7 @@ def save_cookie(driver):
     f.close()
     driver.close()
 
-    return HttpResponseRedirect('/zapscanner/')
+    return HttpResponseRedirect(reverse('webscanners:index'))
 
 
 def cookies_list(request):
@@ -751,7 +845,6 @@ def cookies_list(request):
 
 def del_cookies(request):
     if request.method == 'POST':
-        # cookie_id = request.POST.get('id')
         cookie_url = request.POST.get('url')
         cookies_item = str(cookie_url)
         cooki_split = cookies_item.replace(" ", "")
@@ -764,7 +857,7 @@ def del_cookies(request):
             del_cookie = cookie_db.objects.filter(url=cookies_target)
             del_cookie.delete()
             zap_plugin.zap_replacer(target_url=cookies_target)
-        return HttpResponseRedirect('/webscanners/cookies_list/')
+        return HttpResponseRedirect(reverse('webscanners:cookies_list'))
 
     return render(request, 'cookies_list.html')
 
@@ -777,7 +870,6 @@ def sel_login(request):
     """
     action_vul = request.POST.get("action", )
     url_da = request.POST.get("url_login", )
-    # print(url_da)
     if action_vul == "open_page":
         global driver
         driver = webdriver.Firefox()
@@ -788,11 +880,6 @@ def sel_login(request):
 
         for cookie_data in read_f:
 
-            # cookie_save = cookie_db(url=new_uri, cookie=cookie_data)
-            # cookie_save.save()
-
-            # target_url = request.POST.get('url')
-            # target_cookies = request.POST.get('cookies')
             print(cookie_data)
             all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri))
             for da in all_cookie_url:
@@ -801,15 +888,15 @@ def sel_login(request):
 
             if cookies == new_uri:
                 cookie_db.objects.filter(Q(url__icontains=new_uri)).update(cookie=cookie_data)
-                return HttpResponseRedirect("/zapscanner/")
+                return HttpResponseRedirect(reverse('webscanners:index'))
             else:
                 data_dump = cookie_db(url=new_uri,
                                       cookie=cookie_data)
                 data_dump.save()
-                return HttpResponseRedirect("/zapscanner/")
+                return HttpResponseRedirect(reverse('webscanners:index'))
         messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
-        return HttpResponseRedirect('/zapscanner/')
+        return HttpResponseRedirect(reverse('webscanners:index'))
     return render(request, 'webscanner.html')
 
 
@@ -846,6 +933,6 @@ def exluded_url_list(request):
             del_excluded = excluded_db.objects.filter(exclude_url=exclude_target)
             del_excluded.delete()
 
-        return HttpResponseRedirect('/zapscanner/excluded_url_list')
+            return HttpResponseRedirect(reverse('zapscanner:excluded_url_list'))
 
     return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})

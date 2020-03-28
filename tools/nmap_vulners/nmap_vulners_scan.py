@@ -1,3 +1,19 @@
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
+
 import uuid
 
 import nmap
@@ -48,6 +64,9 @@ def run_nmap_vulners(ip_addr='', project_id=''):
         raise ValueError('[NMAP_VULNERS] - ip_addr must be specified')
 
     scan_id = uuid.uuid4()
+    nv_version = ''
+    nv_online = ''
+    nv_timing = ''
 
     nmap_vulners_path = os.path.join(settings.BASE_DIR, 'tools/nmap_vulners/vulners.nse')
     all_nv = nmap_vulners_setting_db.objects.all()
@@ -108,4 +127,4 @@ def run_nmap_vulners(ip_addr='', project_id=''):
                                  )
         save_scan.save()
 
-    print('[NMAP_VULNERS][] - END - scan of domain %s' % (scan_id, format(ip_addr)))
+    # print('[NMAP_VULNERS][] - END - scan of domain %s' % (scan_id, format(ip_addr)))

@@ -28,6 +28,12 @@ Move to directory archerysec
 cd /archerysec
 ```
 
+Copy sample settings and modify as needed
+
+``` sh
+cp archerysecurity/local_settings.sample.py archerysecurity/local_settings.py
+```
+
 Install requirements
 ``` sh
 pip install -r requirements.txt
@@ -36,20 +42,6 @@ pip install -r requirements.txt
 Load static files
 ``` sh
 python manage.py collectstatic
-```
-
-Makemigrations of all networkscanners app models
-``` sh
-python manage.py makemigrations networkscanners
-```
-Makemigrations of all webscanners app models
-``` sh
-python manage.py makemigrations webscanners
-```
-
-Makemigrations of all projects app models
-```sh
-python manage.py makemigrations projects
 ```
 
 Migrate all data
@@ -62,9 +54,14 @@ Now you need to create application Credentials
 python manage.py createsuperuser
 ```
 
+Or you could auto create the superuser executing. This command uses the ADMINS
+setting to create the admin accounts so remember to set some username first.
+Default password is "admin". REMEMBER TO CHANGE IT!
+``` sh
+python manage.py initadmin
+```
+
 Let's run the application
 ``` sh
 python manage.py runserver
 ```
-
-

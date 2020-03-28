@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from django.conf.urls import url
@@ -30,9 +35,6 @@ urlpatterns = [
     url(r'^ip_scan',
         views.ip_scan,
         name='ip_scan'),
-    url(r'^ip_table',
-        views.ip_scan_table,
-        name='ip_scan_table'),
     url(r'^nv_setting',
         views.nv_setting,
         name='nv_setting'),
@@ -48,15 +50,9 @@ urlpatterns = [
     url(r'^del_vuln',
         views.del_vuln,
         name='del_vuln'),
-    url(r'^edit_vuln',
-        views.edit_vuln,
-        name='edit_vuln'),
     url(r'^vuln_check',
         views.vuln_check,
         name='vuln_check'),
-    url(r'^add_vuln',
-        views.add_vuln,
-        name='add_vuln'),
     url(r'^OpenVAS_xml_upload',
         views.OpenVAS_xml_upload,
         name='OpenVAS_xml_upload'),

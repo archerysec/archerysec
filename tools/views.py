@@ -1,11 +1,33 @@
 # -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
+
 from __future__ import unicode_literals
-from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nmap_scan_db
+from tools.models import sslscan_result_db, nikto_result_db, nmap_result_db, nmap_scan_db, nikto_vuln_db
 from django.shortcuts import render, HttpResponseRedirect
 import subprocess
 import defusedxml.ElementTree as ET
 from scanners.scanner_parser.network_scanner import nmap_parser
 import uuid
+import codecs
+from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
+import hashlib
+import os
+from datetime import datetime
+from notifications.signals import notify
+from django.urls import reverse
 
 # NOTE[gmedian]: in order to be more portable we just import everything rather than add anything in this very script
 from tools.nmap_vulners.nmap_vulners_view import nmap_vulners, nmap_vulners_port, nmap_vulners_scan
@@ -21,6 +43,8 @@ def sslscan(request):
     global sslscan_output
     all_sslscan = sslscan_result_db.objects.all()
 
+    user = request.user
+
     if request.method == 'POST':
         scan_url = request.POST.get('scan_url')
         project_id = request.POST.get('project_id')
@@ -35,10 +59,10 @@ def sslscan(request):
 
             try:
                 sslscan_output = subprocess.check_output(['sslscan', '--no-colour', scans_url])
-                print(sslscan_output)
+                notify.send(user, recipient=user, verb='SSLScan Completed')
 
             except Exception as e:
-                print (e)
+                print(e)
 
             dump_scans = sslscan_result_db(scan_url=scans_url,
                                            scan_id=scan_id,
@@ -46,6 +70,7 @@ def sslscan(request):
                                            sslscan_output=sslscan_output)
 
             dump_scans.save()
+            return HttpResponseRedirect(reverse('tools:sslscan'))
 
     return render(request,
                   'sslscan_list.html',
@@ -85,7 +110,7 @@ def sslcan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
@@ -103,6 +128,8 @@ def nikto(request):
     global nikto_output
     all_nikto = nikto_result_db.objects.all()
 
+    user = request.user
+
     if request.method == 'POST':
         scan_url = request.POST.get('scan_url')
         project_id = request.POST.get('project_id')
@@ -112,26 +139,52 @@ def nikto(request):
         value_split = value.split(',')
         split_length = value_split.__len__()
         for i in range(0, split_length):
+            date_time = datetime.now()
             scan_id = uuid.uuid4()
             scans_url = value_split.__getitem__(i)
 
+            nikto_res_path = os.getcwd() + '/nikto_result/' + str(scan_id) + '.html'
+            print(nikto_res_path)
+
             try:
-                print(scans_url)
-                nikto_output = subprocess.check_output(['nikto.pl', '-host', scans_url])
+
+                nikto_output = subprocess.check_output(['nikto', '-o', nikto_res_path,
+                                                        '-Format', 'htm', '-Tuning', '123bde',
+                                                        '-host', scans_url])
                 print(nikto_output)
+                f = codecs.open(nikto_res_path, 'r')
+                data = f.read()
+                try:
+                    nikto_html_parser(data, project_id, scan_id)
+                except Exception as e:
+                    print(e)
 
             except Exception as e:
-                print (e)
+                print(e)
 
                 try:
-                    nikto_output = subprocess.check_output(['nikto', '-host', scans_url])
+                    print("New command running......")
+                    print(scans_url)
+                    nikto_output = subprocess.check_output(['nikto.pl', '-o', nikto_res_path,
+                                                            '-Format', 'htm', '-Tuning', '123bde',
+                                                            '-host', scans_url])
                     print(nikto_output)
+                    f = codecs.open(nikto_res_path, 'r')
+                    data = f.read()
+                    try:
+                        nikto_html_parser(data, project_id, scan_id)
+                        notify.send(user, recipient=user, verb='Nikto Scan Completed')
+                    except Exception as e:
+                        print(e)
+
+
                 except Exception as e:
                     print(e)
 
             dump_scans = nikto_result_db(scan_url=scan_url,
                                          scan_id=scan_id,
                                          project_id=project_id,
+                                         date_time=date_time,
                                          nikto_scan_output=nikto_output)
 
             dump_scans.save()
@@ -160,6 +213,82 @@ def nikto_result(request):
                   )
 
 
+def nikto_result_vul(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        scan_id = request.GET['scan_id']
+
+    if request.method == "POST":
+        false_positive = request.POST.get('false')
+        status = request.POST.get('status')
+        vuln_id = request.POST.get('vuln_id')
+        scan_id = request.POST.get('scan_id')
+        nikto_vuln_db.objects.filter(vuln_id=vuln_id,
+                                     scan_id=scan_id).update(false_positive=false_positive, vuln_status=status)
+
+        if false_positive == 'Yes':
+            vuln_info = nikto_vuln_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            for vi in vuln_info:
+                discription = vi.discription
+                hostname = vi.hostname
+                dup_data = discription + hostname
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+                nikto_vuln_db.objects.filter(vuln_id=vuln_id,
+                                             scan_id=scan_id).update(false_positive=false_positive,
+                                                                     vuln_status=status,
+                                                                     false_positive_hash=false_positive_hash
+                                                                     )
+    scan_result = nikto_vuln_db.objects.filter(scan_id=scan_id)
+
+    vuln_data = nikto_vuln_db.objects.filter(scan_id=scan_id,
+                                             false_positive='No',
+                                             )
+
+    vuln_data_close = nikto_vuln_db.objects.filter(scan_id=scan_id,
+                                                   false_positive='No',
+                                                   vuln_status='Closed'
+                                                   )
+
+    false_data = nikto_vuln_db.objects.filter(scan_id=scan_id,
+                                              false_positive='Yes')
+
+    return render(request,
+                  'nikto_vuln_list.html',
+                  {'scan_result': scan_result,
+                   'vuln_data': vuln_data,
+                   'vuln_data_close': vuln_data_close,
+                   'false_data': false_data
+                   }
+                  )
+
+
+def nikto_vuln_del(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        vuln_id = request.POST.get("del_vuln")
+        scan_id = request.POST.get("scan_id")
+
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+        split_length = value_split.__len__()
+        print("split_length"), split_length
+        for i in range(0, split_length):
+            _vuln_id = value_split.__getitem__(i)
+            delete_vuln = nikto_vuln_db.objects.filter(vuln_id=_vuln_id)
+            delete_vuln.delete()
+
+        return HttpResponseRedirect("/tools/nikto_result_vul/?scan_id=%s" % scan_id)
+
+
 def nikto_scan_del(request):
     """
 
@@ -174,11 +303,13 @@ def nikto_scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
-        for i in range(0, split_length):
-            vuln_id = value_split.__getitem__(i)
 
-            del_scan = nikto_result_db.objects.filter(scan_id=vuln_id)
+        for i in range(0, split_length):
+            _scan_id = value_split.__getitem__(i)
+
+            del_scan = nikto_result_db.objects.filter(scan_id=_scan_id)
+            del_scan.delete()
+            del_scan = nikto_vuln_db.objects.filter(scan_id=_scan_id)
             del_scan.delete()
 
     return HttpResponseRedirect('/tools/nikto/')
@@ -277,7 +408,7 @@ def nmap_scan_del(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 

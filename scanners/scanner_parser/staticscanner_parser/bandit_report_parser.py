@@ -1,14 +1,18 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
-
 
 from staticscanners.models import bandit_scan_db, bandit_scan_results_db
 import json
@@ -16,6 +20,8 @@ import uuid
 from networkscanners.models import nessus_report_db, nessus_scan_db
 import hashlib
 from datetime import datetime
+
+from webscanners.zapscanner.views import email_sch_notify
 
 scan_id = None
 rescan_id = None
@@ -35,6 +41,7 @@ filename = None
 more_info = None
 vul_col = None
 
+
 def bandit_report_json(data, project_id, scan_id):
     """
 
@@ -44,10 +51,10 @@ def bandit_report_json(data, project_id, scan_id):
     :return:
     """
 
-    for key, items in data.iteritems():
+    for key, items in data.items():
         if key == 'results':
             for res in items:
-                for key, value in res.iteritems():
+                for key, value in res.items():
                     if key == 'line_number':
                         global line_number
                         if value is None:
@@ -114,7 +121,7 @@ def bandit_report_json(data, project_id, scan_id):
 
                 global vul_col
                 if issue_severity == "HIGH":
-                    vul_col = "important"
+                    vul_col = "danger"
 
                 elif issue_severity == "MEDIUM":
                     vul_col = 'warning'
@@ -123,7 +130,7 @@ def bandit_report_json(data, project_id, scan_id):
                     vul_col = "info"
 
                 dup_data = test_name + filename + issue_severity
-                duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
                 match_dup = bandit_scan_results_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
@@ -144,8 +151,6 @@ def bandit_report_json(data, project_id, scan_id):
                     false_positive = 'Yes'
                 else:
                     false_positive = 'No'
-
-                print(vul_col)
 
                 save_all = bandit_scan_results_db(
                     scan_id=scan_id,
@@ -172,17 +177,26 @@ def bandit_report_json(data, project_id, scan_id):
                 )
                 save_all.save()
 
-        all_bandit_data = bandit_scan_results_db.objects.filter(scan_id=scan_id)
+        all_bandit_data = bandit_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
         total_vul = len(all_bandit_data)
         total_high = len(all_bandit_data.filter(issue_severity="HIGH"))
         total_medium = len(all_bandit_data.filter(issue_severity="MEDIUM"))
         total_low = len(all_bandit_data.filter(issue_severity="LOW"))
-        # total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
+        total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
+
 
         bandit_scan_db.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low
+            SEVERITY_LOW=total_low,
+            total_dup=total_duplicate
         )
+
+    subject = 'Archery Tool Scan Status - Bandit Report Uploaded'
+    message = 'Bandit Scanner has completed the scan ' \
+                  '  %s <br> Total: %s <br>High: %s <br>' \
+                  'Medium: %s <br>Low %s' % (scan_id, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

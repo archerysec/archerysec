@@ -1,18 +1,42 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from networkscanners.models import ov_scan_result_db, scan_save_db
 import datetime
 import uuid
 import hashlib
+
+from webscanners.zapscanner.views import email_sch_notify
+
+name = ''
+creation_time = ''
+modification_time = ''
+host = ''
+port = ''
+threat = ''
+severity = ''
+description = ''
+family = ''
+cvss_base = ''
+cve = ''
+bid = ''
+xref = ''
+tags = ''
+banner = ''
+vuln_color = None
 
 
 def xml_parser(root, project_id, scan_id):
@@ -127,11 +151,21 @@ def xml_parser(root, project_id, scan_id):
         vul_id = uuid.uuid4()
 
         dup_data = name + host + severity + port
-        duplicate_hash = hashlib.sha256(dup_data).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = ov_scan_result_db.objects.filter(
-            dup_hash=duplicate_hash).values('dup_hash').distinct()
+            vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
         lenth_match = len(match_dup)
+
+        vuln_color = ''
+        if threat == 'High':
+            vuln_color = 'danger'
+        elif threat == 'Medium':
+            vuln_color = 'warning'
+        elif threat == 'Low':
+            vuln_color = 'info'
+        elif threat == 'Log':
+            vuln_color = 'info'
 
         if lenth_match == 1:
             duplicate_vuln = 'Yes'
@@ -170,35 +204,32 @@ def xml_parser(root, project_id, scan_id):
                                      false_positive=false_positive,
                                      vuln_status='Open',
                                      dup_hash=duplicate_hash,
-                                     vuln_duplicate=duplicate_vuln
+                                     vuln_duplicate=duplicate_vuln,
+                                     project_id=project_id,
+                                     vuln_color=vuln_color
                                      )
         save_all.save()
 
-        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id).\
-            values('name',
-                   'severity',
-                   'vuln_color',
-                   'threat',
-                   'host',
-                   'port').distinct()
-        total_vul = len(openvas_vul)
+        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
         total_low = len(openvas_vul.filter(threat="Low"))
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_high + total_medium + total_low
 
-        scan_save_db.objects.filter(scan_id=scan_id).\
+        scan_save_db.objects.filter(scan_id=scan_id). \
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,
                    low_total=total_low,
                    total_dup=total_duplicate,
+                   scan_ip=host,
                    )
-        if total_vul == total_duplicate:
-            scan_save_db.objects.filter(scan_id=scan_id). \
-                update(total_vul='0',
-                       high_total='0',
-                       medium_total='0',
-                       low_total='0',
-                       total_dup=total_duplicate,
-                       )
+
+    subject = 'Archery Tool Scan Status - OpenVAS Report Uploaded'
+    message = 'OpenVAS Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (scan_id, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

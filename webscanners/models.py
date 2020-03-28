@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
 
 from django.db import models
+
 
 class zap_spider_db(models.Model):
     spider_url = models.TextField(blank=True)
@@ -30,6 +35,7 @@ class zap_scans_db(models.Model):
     high_vul = models.IntegerField(blank=True, null=True)
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
+    info_vul = models.IntegerField(blank=True, null=True)
     project_id = models.UUIDField(null=True)
     date_time = models.DateTimeField(null=True)
     rescan = models.TextField(blank=True, null=True)
@@ -86,6 +92,7 @@ class zap_scan_results_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='ZAP Scanner', editable=False)
 
 
 class cookie_db(models.Model):
@@ -108,6 +115,7 @@ class burp_scan_db(models.Model):
     high_vul = models.IntegerField(blank=True, null=True)
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
+    info_vul = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
     total_dup = models.TextField(blank=True, null=True)
@@ -119,30 +127,43 @@ class burp_scan_result_db(models.Model):
     project_id = models.TextField(blank=True)
     vuln_id = models.TextField(blank=True)
     rescan = models.TextField(blank=True, null=True)
-    serialNumber = models.TextField(blank=True)
-    types = models.TextField(blank=True)
-    name = models.TextField(blank=True)
-    host = models.TextField(blank=True)
-    path = models.TextField(blank=True)
-    location = models.TextField(blank=True)
-    severity = models.TextField(blank=True)
-    severity_color = models.TextField(blank=True)
-    confidence = models.TextField(blank=True)
-    issueBackground = models.TextField(blank=True)
-    remediationBackground = models.TextField(blank=True)
-    references = models.TextField(blank=True)
-    vulnerabilityClassifications = models.TextField(blank=True)
-    issueDetail = models.TextField(blank=True)
-    requestresponse = models.TextField(blank=True)
-    scan_request = models.TextField(blank=True)
-    scan_response = models.TextField(blank=True)
-    method = models.TextField(blank=True)
+    name = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    remediation = models.TextField(blank=True, null=True)
+    reference = models.TextField(blank=True, null=True)
+    vulnerability_classifications = models.TextField(blank=True, null=True)
+    path = models.TextField(blank=True, null=True)
+    type_index = models.TextField(blank=True, null=True)
+    serial_number = models.TextField(blank=True, null=True)
+    origin = models.TextField(blank=True, null=True)
+    severity = models.TextField(blank=True, null=True)
+    confidence = models.TextField(blank=True, null=True)
+    caption = models.TextField(blank=True, null=True)
+    request_response_url = models.TextField(blank=True, null=True)
+    request_response_request_type = models.TextField(blank=True, null=True)
+    request_response_request_data = models.TextField(blank=True, null=True)
+    request_response_response_type = models.TextField(blank=True, null=True)
+    request_response_response_data = models.TextField(blank=True, null=True)
+    was_redirect_followed = models.TextField(blank=True, null=True)
+    request_time = models.TextField(blank=True, null=True)
+    internal_data = models.TextField(blank=True, null=True)
     false_positive = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='Burp Scanner', editable=False)
+    severity_color = models.TextField(null=True, blank=True)
+
+
+class burp_issue_definitions(models.Model):
+    remediation = models.TextField(blank=True, null=True)
+    issue_type_id = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    reference = models.TextField(blank=True, null=True)
+    vulnerability_classifications = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
 
 
 class netsparker_scan_db(models.Model):
@@ -193,7 +214,7 @@ class netsparker_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
-
+    scanner = models.TextField(default='Netsparker', editable=False)
 
 
 class web_scan_db(models.Model):
@@ -228,6 +249,7 @@ class arachni_scan_db(models.Model):
     high_vul = models.IntegerField(blank=True, null=True)
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
+    info_vul = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
     total_dup = models.TextField(blank=True, null=True)
@@ -267,6 +289,7 @@ class arachni_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='Arachni', editable=False)
 
 
 class task_schedule_db(models.Model):
@@ -324,6 +347,7 @@ class webinspect_scan_result_db(models.Model):
     dup_hash = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='Webinspect', editable=False)
 
 
 class acunetix_scan_db(models.Model):
@@ -395,6 +419,4 @@ class acunetix_scan_result_db(models.Model):
     UriName = models.TextField(null=True, blank=True)
     VulnUrl = models.TextField(null=True, blank=True)
     VulnFullUrl = models.TextField(null=True, blank=True)
-
-
-
+    scanner = models.TextField(default='Acunetix', editable=False)

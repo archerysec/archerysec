@@ -1,3 +1,19 @@
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
+
 from django.conf.urls import url
 from manual_scan import views
 
@@ -28,5 +44,14 @@ urlpatterns = [
     url(r'^add_list_scan/',
         views.add_list_scan,
         name='add_list_scan'),
+
+    url(r'^add_vuln_data/',
+        views.add_vuln_data,
+        name='add_vuln_data'),
+
+    url(r'^add_new_vuln/',
+        views.add_new_vuln,
+        name='add_new_vuln'),
+
 
 ]

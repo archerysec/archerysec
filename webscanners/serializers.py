@@ -1,12 +1,17 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
-#/_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from rest_framework import serializers
@@ -78,7 +83,7 @@ class WebScanResultSerializer(serializers.Serializer):
     requestresponse = serializers.CharField(read_only=True)
     scan_request = serializers.CharField(read_only=True)
     scan_response = serializers.CharField(read_only=True)
-    #method = serializers.CharField(read_only=True)
+    # method = serializers.CharField(read_only=True)
     false_positive = serializers.CharField(read_only=True)
 
 
@@ -89,3 +94,141 @@ class UploadScanSerializer(serializers.Serializer):
     scan_url = serializers.URLField()
 
 
+class WebScanStatusSerializer(serializers.Serializer):
+    scan_url = serializers.URLField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    scan_scanid = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    vul_num = serializers.CharField(read_only=True)
+    vul_status = serializers.IntegerField(read_only=True)
+    total_vul = serializers.CharField(read_only=True)
+    high_vul = serializers.CharField(read_only=True)
+    medium_vul = serializers.CharField(read_only=True)
+    low_vul = serializers.CharField(read_only=True)
+    date_created = serializers.DateTimeField(read_only=True)
+    date_modified = serializers.DateTimeField(read_only=True)
+    rescan_id = serializers.CharField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    rescan = serializers.CharField(read_only=True)
+    total_dup = serializers.CharField(read_only=True)
+
+
+class ArachniScanStatusSerializer(serializers.Serializer):
+    url = serializers.URLField(read_only=True)
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    total_vul = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    rescan = serializers.CharField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+
+
+class BurpScanStatusSerializer(serializers.Serializer):
+    url = serializers.URLField(read_only=True)
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    total_vul = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    rescan = serializers.CharField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+
+
+class NetsparkerScanStatusSerializer(serializers.Serializer):
+    url = serializers.URLField(read_only=True)
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    total_vul = serializers.IntegerField(read_only=True)
+    critical_vul = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
+    info_vul = serializers.IntegerField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    rescan = serializers.CharField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+
+
+class WebinspectScanStatusSerializer(serializers.Serializer):
+    url = serializers.URLField(read_only=True)
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    total_vul = serializers.IntegerField(read_only=True)
+    critical_vul = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
+    info_vul = serializers.IntegerField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    rescan = serializers.UUIDField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+
+
+class AcunetixStatusSerializer(serializers.Serializer):
+    url = serializers.URLField(read_only=True)
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    total_vul = serializers.IntegerField(read_only=True)
+    critical_vul = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
+    info_vul = serializers.IntegerField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    rescan = serializers.UUIDField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+
+
+class DependencycheckStatusSerializer(serializers.Serializer):
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+    project_name = serializers.CharField(read_only=True)
+    total_vuln = serializers.IntegerField(read_only=True)
+    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
+    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
+    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+
+
+class findbugsStatusSerializer(serializers.Serializer):
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+    project_name = serializers.CharField(read_only=True)
+    total_vuln = serializers.IntegerField(read_only=True)
+    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
+    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
+    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+
+
+class ZapScanStatusDataSerializers(serializers.Serializer):
+
+    scan_id = serializers.UUIDField(read_only=True)
+    scan_status = serializers.CharField(required=True)

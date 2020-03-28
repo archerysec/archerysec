@@ -98,44 +98,44 @@ class arachniAPI(object):
         """
         return self._request('GET', '/scans/%s' % id)
 
-    def scan_summary(self, data):
+    def scan_summary(self, id):
         """
         Summary
-        :param data:
+        :param id:
         :return:
         """
-        return self._request('GET', '/scans/%s/summary' % data)
+        return self._request('GET', '/scans/%s/summary' % id)
 
-    def scan_pause(self, data):
+    def scan_pause(self, id):
         """
         Pause a scan
-        :param data:
+        :param id:
         :return:
         """
 
-        return self._request('PUT', '/scans/%s/pause' % data)
+        return self._request('PUT', '/scans/%s/pause' % id)
 
-    def scan_resume(self, data):
+    def scan_resume(self, id):
 
         """
-        :param data:
+        :param id:
         :return:
         """
-        return self._request('PUT', '/scans/%s/resume' % data)
+        return self._request('PUT', '/scans/%s/resume' % id)
 
-    def scan_xml_report(self, data):
+    def scan_xml_report(self, id):
         """
         :return:
         """
-        return self._request('GET', '/scans/%s/report.xml' % data)
+        return self._request('GET', '/scans/%s/report.xml' % id)
 
-    def stop_scan(self, data):
+    def stop_scan(self, id):
         """
         Abort or shutdown a scan
-        :param data:
+        :param id:
         :return:
         """
-        return self._request('DELETE', '/scans/%s', data)
+        return self._request('DELETE', '/scans/%s', id)
 
     def _request(self, method, url, params=None, headers=None, data=None):
         """Common handler for all the HTTP requests."""

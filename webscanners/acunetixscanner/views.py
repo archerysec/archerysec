@@ -1,22 +1,30 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
+# -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
 # /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from webscanners.models import burp_scan_result_db, \
     acunetix_scan_db, acunetix_scan_result_db
 from jiraticketing.models import jirasetting
 import hashlib
+from webscanners.resources import AcunetixResource
+from notifications.models import Notification
+from django.urls import reverse
 
 
 def acunetix_list_vuln(request):
@@ -54,9 +62,12 @@ def acunetix_scan_list(request):
     """
     all_acunetix_scan = acunetix_scan_db.objects.all()
 
+    all_notify = Notification.objects.unread()
+
     return render(request,
                   'acunetixscanner/acunetix_scan_lis.html',
-                  {'all_acunetix_scan': all_acunetix_scan})
+                  {'all_acunetix_scan': all_acunetix_scan,
+                   'message': all_notify})
 
 
 def acunetix_vuln_data(request):
@@ -105,18 +116,36 @@ def acunetix_vuln_out(request):
             vuln_info = acunetix_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.VulnName
-                url = vi.ScanStartURL
+                url = vi.VulnFullUrl
                 Severity = vi.VulnSeverity
                 dup_data = name + url + Severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 acunetix_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                        scan_id=scan_id).update(false_positive=false_positive,
                                                                                vuln_status=status,
                                                                                false_positive_hash=false_positive_hash
                                                                                )
 
+            acunetix_all_vul = acunetix_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+
+            total_high = len(acunetix_all_vul.filter(VulnSeverity="High"))
+            total_medium = len(acunetix_all_vul.filter(VulnSeverity="Medium"))
+            total_low = len(acunetix_all_vul.filter(VulnSeverity="Low"))
+            total_info = len(acunetix_all_vul.filter(VulnSeverity="Informational"))
+            total_duplicate = len(acunetix_all_vul.filter(vuln_duplicate='Yes'))
+            total_vul = total_high + total_medium + total_low + total_info
+
+            acunetix_scan_db.objects.filter(scan_id=scan_id) \
+                .update(total_vul=total_vul,
+                        high_vul=total_high,
+                        medium_vul=total_medium,
+                        low_vul=total_low,
+                        info_vul=total_info,
+                        total_dup=total_duplicate,
+                        )
+
         return HttpResponseRedirect(
-            '/acunetixscanner/acunetix_vuln_out/?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
+            reverse('acunetixscanner:acunetix_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
     vuln_data = acunetix_scan_result_db.objects.filter(scan_id=scan_id,
                                                        VulnName=name,
@@ -162,8 +191,7 @@ def del_acunetix_scan(request):
             item.delete()
             item_results = acunetix_scan_result_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-        messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/acunetixscanner/acunetix_scan_list/')
+        return HttpResponseRedirect(reverse('acunetixscanner:acunetix_scan_list'))
 
 
 def edit_acunetix_vuln(request):
@@ -191,14 +219,14 @@ def edit_acunetix_vuln(request):
         vulnerabilityClassifications = request.POST.get("reference", )
         global vul_col
         if severity == 'High':
-            vul_col = "important"
+            vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':
             vul_col = "info"
         else:
             vul_col = "info"
-        print "edit_vul :", name
+        print("edit_vul :"), name
 
         acunetix_scan_result_db.objects.filter(vuln_id=vuln_id).update(
             name=name,
@@ -213,9 +241,7 @@ def edit_acunetix_vuln(request):
             vulnerabilityClassifications=vulnerabilityClassifications,
         )
 
-        messages.add_message(request, messages.SUCCESS, 'Vulnerability Edited...')
-
-        return HttpResponseRedirect("/acunetixscanner/acunetix_vuln_data/?vuln_id=%s" % vuln_id)
+        return HttpResponseRedirect(reverse('acunetixscanner:acunetix_vuln_data') + '?vuln_id=%s' % vuln_id)
 
     return render(request, 'acunetixscanner/edit_acunetix_vuln.html', {'edit_vul_dat': edit_vul_dat})
 
@@ -234,7 +260,7 @@ def acunetix_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = acunetix_scan_result_db.objects.filter(vuln_id=vuln_id)
@@ -256,6 +282,31 @@ def acunetix_del_vuln(request):
             low_vul=total_low,
             info_vul=total_info
         )
-        messages.success(request, "Deleted vulnerability")
 
-        return HttpResponseRedirect("/acunetixscanner/acunetix_list_vuln?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('acunetixscanner:acunetix_list_vuln') + '?scan_id=%s' % un_scanid)
+
+def export(request):
+    """
+    :param request:
+    :return:
+    """
+
+    if request.method == 'POST':
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
+
+        zap_resource = AcunetixResource()
+        queryset = acunetix_scan_result_db.objects.filter(scan_id=scan_id)
+        dataset = zap_resource.export(queryset)
+        if report_type == 'csv':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == 'json':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == 'yaml':
+            response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            return response

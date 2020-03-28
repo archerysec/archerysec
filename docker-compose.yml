@@ -4,19 +4,53 @@ services:
   db:
     image: postgres:10.1-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ./dbdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=archerysec
+      - POSTGRES_PASSWORD=archerysec
+      - POSTGRES_USER=archerysec
 
   archerysec:
-    image: archerysec/archerysec:latest
-  #  build: .
-    command: install.sh
-    command: python manage.py runserver 0.0.0.0:8008
+    image: archerysec/archerysec
     ports:
-      - "8008:8008"
+      - "8000:8000"
     expose:
-      - "8008"
+      - "8000"
     depends_on:
       - db
+    links:
+      - db:db
+    environment:
+      - DB_PASSWORD=archerysec
+      - DB_USER=archerysec
+      - DB_NAME=archerysec
+      - DB_HOST=db
+      - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
+      - DJANGO_DEBUG=1
+      - EMAIL_HOST=mailhog
+      - EMAIL_PORT=1025
+    container_name: archerysec
+
+  archerysec-worker:
+    image: archerysec/archerysec
+    depends_on:
+      - db
+      - archerysec
+    links:
+      - db
+    environment:
+      - DB_PASSWORD=archerysec
+      - DB_USER=archerysec
+      - DB_NAME=archerysec
+      - DB_HOST=db
+      - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-"SETME"}
+      - DJANGO_DEBUG=1
+      - EMAIL_HOST=mailhog
+      - EMAIL_PORT=1025
+      - ARCHERY_WORKER=True
+    container_name: archerysec-worker
 
   zaproxy:
     image: owasp/zap2docker-stable
@@ -28,6 +62,19 @@ services:
       - "8090"
     links:
       - archerysec
+    container_name: zapscanner
+
+
+  arachni:
+    image: ahannigan/docker-arachni
+    #build: ../arachni
+    ports:
+      - "9292:9292"
+      - "7331:7331"
+    command: bin/arachni_rest_server --address 0.0.0.0
+    links:
+      - archerysec
+    container_name: arachniscanner
 
   openvas:
     image: avhost/docker-openvas
@@ -41,6 +88,11 @@ services:
       - "443"
     links:
       - archerysec
+    container_name: openvas
 
-volumes:
-  postgres_data:
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    container_name: mailhog

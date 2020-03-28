@@ -7,6 +7,8 @@ env:
   - TEST=docker-bench-security
   - TEST=bandit
 
+cache: pip
+
 matrix:
   allow_failures:
     - env: TEST=bandit

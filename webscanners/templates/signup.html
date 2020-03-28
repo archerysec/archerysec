@@ -1,27 +1,28 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <title>Archery</title>
-    <link rel="icon" href="/static/logo.png" type="image/x-icon">
+    <link rel="icon" href="{% static 'logo.png' %}" type="image/x-icon">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/static/css/bootstrap-responsive.min.css"/>
-    <link rel="stylesheet" href="/static/css/archery-login.css"/>
-    <link rel="stylesheet" href="/static/css/select2.css"/>
-    <link rel="stylesheet" href="/static/css/uniform.css"/>
-    <link rel="stylesheet" href="/static/css/archery-style.css"/>
-    <link rel="stylesheet" href="/static/css/archery-media.css"/>
-    <link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type='text/css'/>
+    <link rel="stylesheet" href="{% static 'css/bootstrap-responsive.min.css' %}" type='text/css'/>
+    <link rel="stylesheet" href="{% static 'css/archery-login.css' %}" type='text/css'/>
+    <link rel="stylesheet" href="{% static 'css/select2.css' %}" type='text/css'/>
+    <link rel="stylesheet" href="{% static 'css/uniform.css' %}" type='text/css'/>
+    <link rel="stylesheet" href="{% static 'archerysecurity/css/style.css' %}" type='text/css'/>
+    <link rel="stylesheet" href="{% static 'archerysecurity/css/media.css' %}" type='text/css'/>
+    <link href="{% static 'font-awesome/css/font-awesome.css' %}" type='text/css' rel="stylesheet"/>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
 
 </head>
 <body>
 <div id="loginbox">
-    <form class="form-vertical" action="/signup/" method="POST" name="password_validate" id="password_validate"
+    <form class="form-vertical" action="{% url 'webscanners:signup' %}" method="POST" name="password_validate" id="password_validate"
           novalidate="novalidate">{% csrf_token %}
-        <div class="control-group normal_text"><h3><img src="/static/archery.png"
+        <div class="control-group normal_text"><h3><img src="{% static 'archery.png' %}"
                                                         style="max-width:190px; margin-top: 10px;" alt=""/></h3></div>
         <div class="control-group">
             <div class="controls">
@@ -60,7 +61,7 @@
             </div>
         </div>
         <div class="form-actions">
-            <span class="pull-left"><a href="/login/" class="btn btn-lg btn-primary" type="submit">Sign In</a></span>
+            <span class="pull-left"><a href="{% url 'webscanners:login' %}" class="btn btn-lg btn-primary" type="submit">Sign In</a></span>
 
             <span class="pull-right"><button class="btn btn-lg btn-primary " type="submit"
                                              value="Validate">Sign Up</button></span>
@@ -68,15 +69,15 @@
     </form>
 </div>
 
-<script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/archery.login.js"></script>
-<script src="/static/js/archery.form_validation.js"></script>
-<script src="/static/js/jquery.validate.js"></script>
-<script src="/static/js/jquery.ui.custom.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/jquery.uniform.js"></script>
-<script src="/static/js/select2.min.js"></script>
-<script src="/static/js/archery.js"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/archery.login.js' %}"></script>
+<script src="{% static 'js/archery.form_validation.js' %}"></script>
+<script src="{% static 'js/jquery.validate.js' %}"></script>
+<script src="{% static 'js/jquery.ui.custom.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/jquery.uniform.js' %}"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'archerysecurity/js/base.js' %}"></script>
 </body>
 
 </html>

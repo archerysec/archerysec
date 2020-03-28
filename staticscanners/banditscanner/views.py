@@ -1,22 +1,29 @@
-#                   _
-#    /\            | |
-#   /  \   _ __ ___| |__   ___ _ __ _   _
-#  / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
-# / ____ \| | | (__| | | |  __/ |  | |_| |
-# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
-#                                    __/ |
-#                                   |___/
-# Copyright (C) 2017-2018 ArcherySec
-# This file is part of ArcherySec Project.
 # -*- coding: utf-8 -*-
+#                    _
+#     /\            | |
+#    /  \   _ __ ___| |__   ___ _ __ _   _
+#   / /\ \ | '__/ __| '_ \ / _ \ '__| | | |
+#  / ____ \| | | (__| | | |  __/ |  | |_| |
+# /_/    \_\_|  \___|_| |_|\___|_|   \__, |
+#                                     __/ |
+#                                    |___/
+# Copyright (C) 2017 Anand Tiwari
+#
+# Email:   anandtiwarics@gmail.com
+# Twitter: @anandtiwarics
+#
+# This file is part of ArcherySec Project.
 
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from staticscanners.models import bandit_scan_results_db, bandit_scan_db
 import hashlib
+from django.urls import reverse
+from jiraticketing.models import jirasetting
 
 
 def banditscans_list(request):
     """
+    Bandit Scan list.
     :param request:
     :return:
     """
@@ -28,10 +35,14 @@ def banditscans_list(request):
 
 def banditscan_list_vuln(request):
     """
-
+    Vulnerability list.
     :param request:
     :return:
     """
+    jira_url = ''
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
 
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
@@ -47,15 +58,21 @@ def banditscan_list_vuln(request):
     ).distinct()
 
     return render(request, 'banditscanner/banditscan_list_vuln.html',
-                  {'bandit_all_vuln': bandit_all_vuln})
+                  {'bandit_all_vuln': bandit_all_vuln,
+                   'jira_url': jira_url
+                   })
 
 
 def banditscan_vuln_data(request):
     """
-
     :param request:
     :return:
     """
+    jira_url = ''
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
+
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         test_name = request.GET['test_name']
@@ -80,20 +97,31 @@ def banditscan_vuln_data(request):
                 filename = vi.filename
                 Severity = vi.issue_severity
                 dup_data = name + filename + Severity
-                false_positive_hash = hashlib.sha256(dup_data).hexdigest()
+                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 bandit_scan_results_db.objects.filter(vuln_id=vuln_id,
                                                       scan_id=scan_id).update(false_positive=false_positive,
                                                                               vuln_status=status,
                                                                               false_positive_hash=false_positive_hash
                                                                               )
 
-        return HttpResponseRedirect(
-            '/banditscanner/banditscan_vuln_data/?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
+            all_bandit_data = bandit_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
 
-    # bandit_vuln_data = bandit_scan_results_db.objects.filter(
-    #     scan_id=scan_id,
-    #     test_name=test_name
-    # )
+            total_vul = len(all_bandit_data)
+            total_high = len(all_bandit_data.filter(issue_severity="HIGH"))
+            total_medium = len(all_bandit_data.filter(issue_severity="MEDIUM"))
+            total_low = len(all_bandit_data.filter(issue_severity="LOW"))
+            total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
+
+            bandit_scan_db.objects.filter(scan_id=scan_id).update(
+                total_vuln=total_vul,
+                SEVERITY_HIGH=total_high,
+                SEVERITY_MEDIUM=total_medium,
+                SEVERITY_LOW=total_low,
+                total_dup=total_duplicate
+            )
+
+        return HttpResponseRedirect(
+            reverse('banditscanner:banditscan_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     bandit_vuln_data = bandit_scan_results_db.objects.filter(scan_id=scan_id,
                                                              test_name=test_name,
@@ -110,7 +138,8 @@ def banditscan_vuln_data(request):
     return render(request, 'banditscanner/banditscan_vuln_data.html',
                   {'bandit_vuln_data': bandit_vuln_data,
                    'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed
+                   'vuln_data_closed': vuln_data_closed,
+                   'jira_url': jira_url
                    })
 
 
@@ -120,6 +149,10 @@ def banditscan_details(request):
     :param request:
     :return:
     """
+    jira_url = ''
+    jira = jirasetting.objects.all()
+    for d in jira:
+        jira_url = d.jira_server
 
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
@@ -157,8 +190,7 @@ def del_bandit_scan(request):
             item.delete()
             item_results = bandit_scan_results_db.objects.filter(scan_id=scan_id)
             item_results.delete()
-        # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-        return HttpResponseRedirect('/banditscanner/banditscans_list')
+        return HttpResponseRedirect(reverse('banditscanner:banditscans_list'))
 
 
 def bandit_del_vuln(request):
@@ -174,7 +206,7 @@ def bandit_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print "split_length", split_length
+        # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = bandit_scan_results_db.objects.filter(vuln_id=vuln_id)
@@ -193,4 +225,4 @@ def bandit_del_vuln(request):
             SEVERITY_LOW=total_low
         )
 
-        return HttpResponseRedirect("/banditscanner/banditscan_list_vuln/?scan_id=%s" % un_scanid)
+        return HttpResponseRedirect(reverse('banditscanner:banditscan_list_vuln/') + '?scan_id=%s' % un_scanid)

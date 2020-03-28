@@ -1,53 +1,41 @@
-{% extends 'header.html' %}
+{% extends 'dashboard/base.html' %}
+
 {% block body %}
-
-<div id="content">{% for data in scan_result %}
-    <div id="content-header">
-        <div id="breadcrumb"><a href="/webscanners/web_vuln_list/?scan_id={{data.scan_id}}" title="Go to Home"
-                                class="tip-bottom"><i class="icon-home"></i> Vulnerability Details</a>
-            <a
-                    href="#" class="current">{{ data.name }}</a></div>
-        <div>
-            <div class="btn-group">
-                <a class="btn btn-info"
-                   href="#"><i
-                        class="icon-edit icon-white"></i>
-                </a>
-                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span
-                        class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <!--<li><a href="/webscanners/edit_burp_vuln/?vuln_id={{data.vuln_id}}"><i-->
-                    <!--class="icon-pencil"></i> Edit </a></li>-->
-                    <!--<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i-->
-                    <!--class="icon-trash"></i> Delete</a></li>-->
-                    <li>
-                        <a href="/jira/submit_jira_ticket/?summary=SSLScan Result&description=Vulnerable URL: {{ data.scan_url }} %0a%0a SSLScan Output: {{ data.sslscan_output }} &scanner=SSLScan&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "><i
-                                class="icon-random"></i> Jira Ticket</a>
-                    </li>
-                </ul>
-            </div>
-
-            <h1>{{ data.scan_url }}</h1>
-        </div>
-    </div>
+{% for data in scan_result %}
+<div class="page-wrapper">
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <i class="icon-list"></i> </span>
-                        <h5>SSLScan :</h5>
-                    </div>
-                    <div class="widget-content">
-                        <pre>
-                            {{ data.sslscan_output }}
-                        </pre>
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{ data.scan_url }}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <h5>SSLScan :</h5>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <pre> {{ data.sslscan_output }} </pre>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
 {% endfor %}
+
+
+
 
 {% endblock %}

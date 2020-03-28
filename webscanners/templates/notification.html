@@ -1,0 +1,99 @@
+<style>
+    /* -----------------------------------------
+   Timeline
+----------------------------------------- */
+.timeline {
+  list-style: none;
+  padding-left: 0;
+  position: relative;
+}
+.timeline:after {
+  content: "";
+  height: auto;
+  width: 1px;
+  background: #e3e3e3;
+  position: absolute;
+  top: 5px;
+  left: 30px;
+  bottom: 25px;
+}
+.timeline.timeline-sm:after {
+  left: 12px;
+}
+.timeline-load-more-btn {
+  margin-left: 70px;
+}
+.timeline-load-more-btn i {
+  margin-right: 5px;
+}
+
+
+/* -----------------------------------------
+   Dropdown
+----------------------------------------- */
+.dropdown-menu{
+    padding:0 0 0 0;
+}
+a.dropdown-menu-header {
+    background: #f7f9fe;
+    font-weight: bold;
+    border-bottom: 1px solid #e3e3e3;
+}
+.dropdown-menu > li a {
+    padding: 10px 20px;
+}
+
+/* -----------------------------------------
+   Badge
+----------------------------------------- */
+
+.notify-badge{
+    padding: 3px 5px 2px;
+    position: absolute;
+    top: 8px;
+    right: 13px;
+    display: inline-block;
+    min-width: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 1;
+    vertical-align: baseline;
+    white-space: nowrap;
+    text-align: center;
+    border-radius: 10px;
+}
+.badge-danger {
+    background-color: #db5565;
+}
+
+
+
+
+
+</style>
+
+<li class="nav-item dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages"
+                                                    aria-haspopup="true" aria-expanded="false"
+                                                    class="nav-link dropdown-toggle waves-effect waves-dark">
+    <i class="mdi mdi-bell font-24"></i><span
+        class="notify-badge badge-pill badge-danger">{% load notifications_tags %}{% live_notify_badge %}</span> <span
+        class="text"></span> <b class="caret"></b></a>
+    <ul class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown" aria-labelledby="2">
+        <ul class="list-style-none" style="margin:20px;width:410px">
+            <li role="presentation">
+            <a href="{% url 'webscanners:del_all_notify' %}" class="dropdown-menu-header">Clear All</a>
+        </li>
+            {% for data in message %}
+            <li>
+                <div class="alert alert-info alert-block">
+                    <a class="close" data-dismiss="alert" href="/webscanners/del_notify?notify_id={{data.id}}"><i class="mdi mdi-close"></i></a>
+                    <br>
+                    {{data.verb}}
+                    <!--<a href="/webscanners/del_notify?notify_id={{data.id}}"> <i class="mdi mdi-close"></i></a>-->
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </ul>
+</li>

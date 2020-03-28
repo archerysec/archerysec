@@ -1,0 +1,257 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <div class="float-right">
+                            <form action="{% url 'dashboard:export' %}" method="post"
+                                  class="forms-sample">
+                                {% csrf_token %}
+                                <div class="form-row align-items-center">
+                                    <div class="col-auto my-1">
+                                        <select name="type" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                            <option value="csv" selected>CSV</option>
+                                            <option value="json">JSON</option>
+                                            <option value="yaml">YAML</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto my-1">
+                                        <input type="hidden" name="project_id" value="{{project_id}}"/>
+                                        <input type="hidden" name="severity" value="{{severity}}"/>
+                                        <button type="submit" class="btn btn-primary"><i
+                                                class="fas fa-arrow-alt-circle-down"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">{{ severity }} Vulnerability List</h1>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                            <table id="vuln_details" class="table table-striped table-bordered" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Vulnerability</th>
+                                    <th>Scanner</th>
+                                    <th>URL/IP</th>
+                                    <th>Risk</th>
+
+                                </tr>
+                                </thead>
+                                <!--zap-->
+                                <tbody>{% for data in zap_all_high %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'zapscanner:zap_vuln_check' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.url}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.risk}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--arachni-->
+                                {% for data in arachni_all_high %}
+                                <tr data-target="#">
+
+                                    <td><a href="{% url 'arachniscanner:arachni_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.url}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--Webinspect-->
+                                {% for data in webinspect_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'webinspectscanner:webinspect_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.host}}</td>
+                                    <td><span
+                                            class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Netsparker&ndash;&gt;-->
+                                {% for data in netsparker_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'netsparkerscanner:netsparker_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.type}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td width="50%">{{data.vuln_url}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.severity}}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Burp&ndash;&gt;-->
+                                {% for data in burp_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'burpscanner:burp_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.host}}{{data.request_response_url}}</td>
+                                    <td><span
+                                            class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Acunetix&ndash;&gt;-->
+                                {% for data in acunetix_all_high %}
+                                <tr data-target="#">
+
+                                    <td><a href="{% url 'acunetixscanner:acunetix_vuln_data' %}?vuln_id={{data.vuln_id}}">{{data.VulnName}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.VulnFullUrl}}</td>
+                                    <td><span
+                                            class="badge badge-pill badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Dependencycheck&ndash;&gt;-->
+                                {% for data in dependencycheck_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'dependencycheck:dependencycheck_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.fileName}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Findsecbug&ndash;&gt;-->
+                                {% for data in findbugs_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'findbugs:findbugs_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.sourcepath}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.risk}}</span></td>
+                                </tr>
+                                {% endfor %}
+                                {% for data in bandit_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'banditscanner:banditscan_vuln_data' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}&test_name={{data.test_name}}">{{data.test_name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.issue_severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+                                {% for data in clair_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'clair:clair_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.Name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.NamespaceName}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in trivy_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'trivy:trivy_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.VulnerabilityID}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.Target}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Bandit&ndash;&gt;-->
+                                {% for data in bandit_vuln_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'banditscanner:banditscan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.test_name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span
+                                            class="badge badge-pill badge-{{data.vul_col}}">{{data.issue_severity}}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;Nessus&ndash;&gt;-->
+                                {% for data in nessus_all_high %}
+                                <tr data-target="#">
+
+                                    <td><a href="{% url 'networkscanners:nessus_vuln_check' %}?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.scan_ip}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.risk_factor}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                <!--&lt;!&ndash;OpenVAS&ndash;&gt;-->
+                                {% for data in openvas_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'networkscanners:vuln_check' %}?vuln_id={{data.vul_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.host}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.threat}}</span></td>
+                                </tr>
+                                {% endfor %}
+                                {% for data in pentest_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                       <a href="{% url 'manual_scan:vuln_details' %}?vuln_id={{data.vuln_id}}">{{data.vuln_name}}</a>
+                                    </td>
+                                    <td>Pentest</td>
+                                    <td></td>
+                                    <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

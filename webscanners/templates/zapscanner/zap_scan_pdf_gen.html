@@ -1,8 +1,8 @@
 {% extends "easy_pdf/base.html" %}
-
+{% load static %}
 {% block extra_js %}
 
-<script type="text/javascript" src="/static/js/google_chart.js"></script>
+<script type="text/javascript" src="{% static 'js/google_chart.js' %}"></script>
 
 <script type="text/javascript">
         {% for data in all_scan %}
@@ -48,6 +48,7 @@
 
 
 
+
 </script>
 
 {% endblock %}
@@ -70,6 +71,7 @@
         white-space: -pre-wrap;      /* Opera 4-6 */
         white-space: -o-pre-wrap;    /* Opera 7 */
         word-wrap: break-word;       /* Internet Explorer 5.5+ */
+        font-size: 50%;
 }
 
 
@@ -135,14 +137,15 @@
         .info a { color: #4F81BD; text-decoration: none; }
         .break { page-break-after:always }
 
+
 </style>
 {% endblock %}
 
 {%block page_header%}
 <!--<div id="page-header">-->
-    <!--<div class="header">-->
-        <!--<p class="logo"><img src="/static/photo.png" ></p>-->
-    <!--</div>-->
+<!--<div class="header">-->
+<!--<p class="logo"><img src="/static/photo.png" ></p>-->
+<!--</div>-->
 <!--</div>-->
 {% endblock %}
 
@@ -196,14 +199,6 @@
 
                 </tr>
                 <tr>
-                    <td>
-                        <p>Method: </p>
-                    </td>
-                    <td>
-                        {{ data.method}}
-                    </td>
-                </tr>
-                <tr>
                     <td width="30%">
                         <p>Severity:
 
@@ -215,50 +210,30 @@
                 </tr>
                 <tr>
                     <td>
-                        <p>Vulnerable URL: </p>
-                    </td>
-                    <td>
-                        {{ data.url}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Parameter: </p>
-                    </td>
-                    <td>
-                        {{ data.param}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
                         <p>Description: </p>
                     </td>
                     <td>
-                        {{ data.description}}
+                        {{ data.description | safe}}
                     </td>
                 </tr>
+
+                <tr>
+                    <td>
+                        <p>Instances: </p>
+                    </td>
+                    <td width="100%">
+
+                        <pre>{{data.param}}</pre>
+
+                    </td>
+                </tr>
+
                 <tr>
                     <td>
                         <p>Solution: </p>
                     </td>
                     <td>
-                        {{ data.solution}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Request Header: </p>
-                    </td>
-                    <td>
-                        <pre>{{ data.requestHeader}}</pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Response Header: </p>
-                    </td>
-                    <td>
-                        <pre>{{ data.responseHeader}}</pre>
+                        {{ data.solution | safe}}
                     </td>
                 </tr>
 

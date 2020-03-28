@@ -1,0 +1,85 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+{% for data in findbugs_vuln_details %}
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="col-md-auto">
+                    <div class="float-right">
+                        <!-- Large modal -->
+                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description=%0a%0a%0a CVE: {{data.name}} %0a%0a File Name: {{data.classname}} %0a%0a File Path: {{data.sourcepath}} Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=findbugs&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+               class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
+
+                    </div>
+                </div>
+
+                <h1>{{ data.ShortDescription }}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Description</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.Details | safe}}
+                                    <strong>CVE: </strong><a href="/vfeed/cve_info/?cve={{data.name}}">{{data.name}}</a><br><br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                                       aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Instance</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered data-table table-fixed">
+                                            <thead>
+                                            <tr>
+                                                <td>Class Name</td>
+                                                <td>Source Path</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    {{data.classname}}
+                                                </td>
+                                                <td>
+                                                    {{data.sourcepath}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
