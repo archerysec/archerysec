@@ -471,7 +471,7 @@ class UpladScanResult(APIView):
 
             zap_xml_parser.xml_parser(project_id=project_id,
                                       scan_id=scan_id,
-                                      root=root_xml_en, source='parser')
+                                      root=root_xml_en)
             return Response({"message": "ZAP Scan Data Uploaded",
                              "scanner": scanner,
                              "project_id": project_id,
