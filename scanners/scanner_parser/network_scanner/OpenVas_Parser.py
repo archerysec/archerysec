@@ -15,7 +15,7 @@
 # This file is part of ArcherySec Project.
 
 from networkscanners.models import ov_scan_result_db, scan_save_db
-import datetime
+from datetime import datetime
 import uuid
 import hashlib
 
@@ -39,14 +39,7 @@ banner = ''
 vuln_color = None
 
 
-def xml_parser(root, project_id, scan_id):
-    """
-    OpenVAS Scanner report parser.
-    :param root:
-    :param project_id:
-    :param scan_id:
-    :return:
-    """
+def updated_xml_parser(root, project_id, scan_id):
     for openvas in root.findall(".//result"):
         for r in openvas:
             if r.tag == "name":
@@ -55,14 +48,12 @@ def xml_parser(root, project_id, scan_id):
                     name = "NA"
                 else:
                     name = r.text
-
             if r.tag == "creation_time":
                 global creation_time
                 if r.text is None:
                     creation_time = "NA"
                 else:
                     creation_time = r.text
-
             if r.tag == "modification_time":
                 global modification_time
                 if r.text is None:
@@ -75,7 +66,6 @@ def xml_parser(root, project_id, scan_id):
                     host = "NA"
                 else:
                     host = r.text
-
             if r.tag == "port":
                 global port
                 if r.text is None:
@@ -100,7 +90,6 @@ def xml_parser(root, project_id, scan_id):
                     description = "NA"
                 else:
                     description = r.text
-
             for rr in r.getchildren():
                 if rr.tag == "family":
                     global family
@@ -126,14 +115,12 @@ def xml_parser(root, project_id, scan_id):
                         bid = "NA"
                     else:
                         bid = rr.text
-
                 if rr.tag == "xref":
                     global xref
                     if rr.text is None:
                         xref = "NA"
                     else:
                         xref = rr.text
-
                 if rr.tag == "tags":
                     global tags
                     if rr.text is None:
@@ -146,17 +133,13 @@ def xml_parser(root, project_id, scan_id):
                         banner = "NA"
                     else:
                         banner = rr.text
-
-        date_time = datetime.datetime.now()
+        date_time = datetime.now()
         vul_id = uuid.uuid4()
-
         dup_data = name + host + severity + port
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-
         match_dup = ov_scan_result_db.objects.filter(
             vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
         lenth_match = len(match_dup)
-
         vuln_color = ''
         if threat == 'High':
             vuln_color = 'danger'
@@ -166,24 +149,20 @@ def xml_parser(root, project_id, scan_id):
             vuln_color = 'info'
         elif threat == 'Log':
             vuln_color = 'info'
-
         if lenth_match == 1:
             duplicate_vuln = 'Yes'
         elif lenth_match == 0:
             duplicate_vuln = 'No'
         else:
             duplicate_vuln = 'None'
-
         false_p = ov_scan_result_db.objects.filter(
             false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
-
         if fp_lenth_match == 1:
             false_positive = 'Yes'
         else:
             false_positive = 'No'
-
-        save_all = ov_scan_result_db(scan_id=scan_id,
+        save_all = ov_scan_result_db(scan_id=host,
                                      vul_id=vul_id,
                                      name=name,
                                      creation_time=creation_time,
@@ -209,16 +188,13 @@ def xml_parser(root, project_id, scan_id):
                                      vuln_color=vuln_color
                                      )
         save_all.save()
-
-        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
-
+        openvas_vul = ov_scan_result_db.objects.filter(scan_id=host)
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
         total_low = len(openvas_vul.filter(threat="Low"))
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
-
-        scan_save_db.objects.filter(scan_id=scan_id). \
+        scan_save_db.objects.filter(scan_id=host). \
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,
@@ -233,3 +209,20 @@ def xml_parser(root, project_id, scan_id):
               'Medium: %s <br>Low %s' % (scan_id, total_vul, total_high, total_medium, total_low)
 
     email_sch_notify(subject=subject, message=message)
+
+
+def get_hosts(root):
+    hosts = []
+    for openvas in root.findall(".//result"):
+        for r in openvas:
+            if r.tag == "host":
+                global host
+                if r.text is None:
+                    host = "NA"
+                else:
+                    host = r.text
+                    if host in hosts:
+                        print("Already present " + host)
+                    else:
+                        hosts.append(host)
+    return hosts

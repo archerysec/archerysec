@@ -710,10 +710,10 @@ class UpladScanResult(APIView):
             root_xml = ET.fromstring(file)
             en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
             root_xml_en = ET.fromstring(en_root_xml)
-            Nessus_Parser.nessus_parser(root=root_xml_en,
-                                        scan_id=scan_id,
-                                        project_id=project_id,
-                                        )
+            Nessus_Parser.updated_nessus_parser(root=root_xml_en,
+                                                scan_id=scan_id,
+                                                project_id=project_id,
+                                                )
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
@@ -722,18 +722,20 @@ class UpladScanResult(APIView):
 
         elif scanner == 'openvas':
             date_time = datetime.datetime.now()
-            scan_dump = scan_save_db(scan_ip=scan_url,
-                                     scan_id=scan_id,
-                                     date_time=date_time,
-                                     project_id=project_id,
-                                     scan_status=scan_status)
-            scan_dump.save()
             root_xml = ET.fromstring(file)
             en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
             root_xml_en = ET.fromstring(en_root_xml)
-            OpenVas_Parser.xml_parser(project_id=project_id,
-                                      scan_id=scan_id,
-                                      root=root_xml_en)
+            hosts = OpenVas_Parser.get_hosts(root_xml_en)
+            for host in hosts:
+                scan_dump = scan_save_db(scan_ip=host,
+                                         scan_id=host,
+                                         date_time=date_time,
+                                         project_id=project_id,
+                                         scan_status=scan_status)
+                scan_dump.save()
+            OpenVas_Parser.updated_xml_parser(project_id=project_id,
+                                              scan_id=scan_id,
+                                              root=root_xml_en)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,

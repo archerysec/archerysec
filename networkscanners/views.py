@@ -478,35 +478,27 @@ def OpenVAS_xml_upload(request):
         scan_status = "100"
         if scanner == "openvas":
             date_time = datetime.now()
-            scan_dump = scan_save_db(scan_ip=scan_ip,
-                                     scan_id=scan_id,
-                                     date_time=date_time,
-                                     project_id=project_id,
-                                     scan_status=scan_status)
-            scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            OpenVas_Parser.xml_parser(project_id=project_id,
-                                      scan_id=scan_id,
-                                      root=root_xml)
+            hosts = OpenVas_Parser.get_hosts(root_xml)
+            for host in hosts:
+                scan_dump = scan_save_db(scan_ip=host,
+                                         scan_id=host,
+                                         date_time=date_time,
+                                         project_id=project_id,
+                                         scan_status=scan_status)
+                scan_dump.save()
+            OpenVas_Parser.updated_xml_parser(project_id=project_id,
+                                              scan_id=scan_id,
+                                              root=root_xml)
             return HttpResponseRedirect(reverse('networkscanners:index'))
         elif scanner == "nessus":
             date_time = datetime.now()
-            scan_dump = nessus_scan_db(
-                scan_ip=scan_ip,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status
-            )
-            scan_dump.save()
-            scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            Nessus_Parser.nessus_parser(root=root_xml,
-                                        scan_id=scan_id,
-                                        project_id=project_id,
-                                        )
+            Nessus_Parser.updated_nessus_parser(root=root_xml,
+                                                scan_id=scan_id,
+                                                project_id=project_id)
             return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
         elif scanner == "nmap":
             tree = ET.parse(xml_file)

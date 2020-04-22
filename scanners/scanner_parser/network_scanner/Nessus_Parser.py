@@ -47,48 +47,60 @@ false_positive = None
 vuln_color = None
 
 
-def nessus_parser(root, project_id, scan_id):
-    """
-    The function is for parser of Nessus scan file as .nessus.
-    :param root:
-    :param project_id:
-    :param scan_id:
-    :return:
-    """
-
-    global agent, description, fname, \
-        plugin_modification_date, plugin_name, \
-        plugin_publication_date, plugin_type, \
-        risk_factor, script_version, solution, \
+def updated_nessus_parser(root, project_id, scan_id):
+    global agent, description, fname,\
+        plugin_modification_date, plugin_name,\
+        plugin_publication_date, plugin_type,\
+        risk_factor, script_version, solution,\
         synopsis, plugin_output, see_also, scan_ip, \
-        pluginName, pluginID, protocol, severity, \
+        pluginName, pluginID, protocol, severity,\
         svc_name, pluginFamily, port, vuln_color
 
     for data in root:
         for reportHost in data.iter('ReportHost'):
-            ip = reportHost.attrib
+            print("reportHost = " + str(reportHost.attrib))
             try:
-                for key, value in ip.items():
+                for key, value in reportHost.items():
                     scan_ip = value
+                    print("IP = " + str(scan_ip))
+
             except:
                 continue
+
+            scan_status = "100"
+            date_time = datetime.datetime.now()
+            scan_dump = nessus_scan_db(
+                    scan_ip=scan_ip,
+                    scan_id=scan_ip,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status
+                )
+            scan_dump.save()
 
             for ReportItem in reportHost.iter('ReportItem'):
                 for key, value in ReportItem.attrib.items():
                     if key == 'pluginName':
                         pluginName = value
+                        # print ("pluginName = "+str(value))
                     if key == 'pluginID':
                         pluginID = value
+                        # print ("pluginID = "+str(value))
                     if key == 'protocol':
                         protocol = value
+                        # print ("protocol = "+str(value))
                     if key == 'severity':
                         severity = value
+                        # print ("severity = "+str(value))
                     if key == 'svc_name':
                         svc_name = value
+                        # print ("svc_name = "+str(value))
                     if key == 'pluginFamily':
                         pluginFamily = value
+                        # print ("pluginFamily = "+str(value))
                     if key == 'port':
                         port = value
+                        # print ("port = "+str(value))
 
                 try:
                     agent = ReportItem.find('agent').text
@@ -142,16 +154,12 @@ def nessus_parser(root, project_id, scan_id):
                     plugin_output = ReportItem.find('plugin_output').text
                 except:
                     plugin_output = "NA"
-
                 vul_id = uuid.uuid4()
-
                 dup_data = scan_ip + plugin_name + severity + port
                 duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-
                 match_dup = nessus_report_db.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)
-
                 if severity == '0':
                     vuln_color = 'info'
                 if severity == '1':
@@ -162,32 +170,24 @@ def nessus_parser(root, project_id, scan_id):
                     vuln_color = 'danger'
                 if severity == '4':
                     vuln_color = 'danger'
-
                 if lenth_match == 1:
                     duplicate_vuln = 'Yes'
                 elif lenth_match == 0:
                     duplicate_vuln = 'No'
                 else:
                     duplicate_vuln = 'None'
-
                 global false_positive
                 false_p = nessus_report_db.objects.filter(
                     false_positive_hash=duplicate_hash)
                 fp_lenth_match = len(false_p)
-
                 if fp_lenth_match == 1:
                     false_positive = 'Yes'
                 else:
                     false_positive = 'No'
-
                 if risk_factor == 'None':
                     risk_factor = 'Informational'
-
-                if risk_factor == 'Critical':
-                    risk_factor = 'High'
-
                 all_data_save = nessus_report_db(project_id=project_id,
-                                                 scan_id=scan_id,
+                                                 scan_id=scan_ip,
                                                  scan_ip=scan_ip,
                                                  vul_id=vul_id,
                                                  agent=agent,
@@ -217,11 +217,11 @@ def nessus_parser(root, project_id, scan_id):
                                                  severity_color=vuln_color
                                                  )
                 all_data_save.save()
-
+                print("RESULTS = "+str(all_data_save.scan_id))
                 del_na = nessus_report_db.objects.filter(plugin_name='NA')
                 del_na.delete()
 
-                ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_id, false_positive='No')
+                ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_ip).order_by('scan_ip')
                 total_vul = len(ov_all_vul)
                 total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
                 total_high = len(ov_all_vul.filter(risk_factor="High"))
@@ -230,7 +230,7 @@ def nessus_parser(root, project_id, scan_id):
                 total_info = len(ov_all_vul.filter(risk_factor="Informational"))
                 total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
 
-                nessus_scan_db.objects.filter(scan_id=scan_id) \
+                nessus_scan_db.objects.filter(scan_id=scan_ip) \
                     .update(total_vul=total_vul,
                             critical_total=total_critical,
                             high_total=total_high,
