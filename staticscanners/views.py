@@ -21,7 +21,7 @@ from projects.models import project_db
 from staticscanners.models import retirejs_scan_results_db, \
     retirejs_scan_db, \
     bandit_scan_results_db, \
-    bandit_scan_db, clair_scan_db, trivy_scan_db, npmaudit_scan_db, npmaudit_scan_results_db
+    bandit_scan_db, clair_scan_db, trivy_scan_db, npmaudit_scan_db, nodejsscan_scan_db
 from compliance.models import inspec_scan_db, inspec_scan_results_db
 import uuid
 from datetime import datetime
@@ -32,6 +32,7 @@ from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser impor
 from scanners.scanner_parser.compliance_parser.inspec_json_parser import inspec_report_json
 from scanners.scanner_parser.staticscanner_parser import trivy_json_report_parser
 from scanners.scanner_parser.staticscanner_parser import npm_audit_report_json
+from scanners.scanner_parser.staticscanner_parser import nodejsscan_report_json
 from django.urls import reverse
 
 
@@ -134,6 +135,22 @@ def report_import(request):
                                                        scan_id=scan_id,
                                                        data=data)
             return HttpResponseRedirect(reverse('npmaudit:npmaudit_list'))
+
+        if scanner == "nodejsscan_scan":
+            date_time = datetime.now()
+            scan_dump = nodejsscan_scan_db(project_name=project_name,
+                                         scan_id=scan_id,
+                                         date_time=date_time,
+                                         project_id=project_id,
+                                         scan_status=scan_status,
+                                         )
+            scan_dump.save()
+            j = json_file.read()
+            data = json.loads(j)
+            nodejsscan_report_json.nodejsscan_report_json(project_id=project_id,
+                                                       scan_id=scan_id,
+                                                       data=data)
+            return HttpResponseRedirect(reverse('nodejsscan:nodejsscan_list'))
 
         if scanner == "inspec_scan":
             date_time = datetime.now()

@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'^clair/', include('staticscanners.clair.urls')),
     url(r'^trivy/', include('staticscanners.trivy.urls')),
     url(r'^npmaudit/', include('staticscanners.npmaudit.urls')),
+    url(r'^nodejsscan/', include('staticscanners.nodejsscan.urls')),
     url(r'^inspec/', include('compliance.inspec.urls')),
     url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     url(r'^api/', include('archeryapi.urls')),

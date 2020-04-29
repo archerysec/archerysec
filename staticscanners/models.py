@@ -247,7 +247,6 @@ class clair_scan_results_db(models.Model):
     scanner = models.TextField(default='Clair', editable=False)
 
 
-
 class trivy_scan_db(models.Model):
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)
@@ -337,3 +336,43 @@ class npmaudit_scan_results_db(models.Model):
     cwe = models.TextField(null=True, blank=True)
     url = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='npmaudit', editable=False)
+
+
+class nodejsscan_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+
+
+class nodejsscan_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    description = models.TextField(null=True, blank=True)
+    filename = models.TextField(null=True, blank=True)
+    line = models.TextField(null=True, blank=True)
+    lines = models.TextField(null=True, blank=True)
+    path = models.TextField(null=True, blank=True)
+    sha2 = models.TextField(null=True, blank=True)
+    tag = models.TextField(null=True, blank=True)
+    title = models.TextField(null=True, blank=True)
+    severity = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='nodejsscan', editable=False)

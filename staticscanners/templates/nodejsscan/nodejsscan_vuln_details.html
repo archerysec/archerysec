@@ -1,0 +1,77 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+{% for data in nodejsscan_vuln_details %}
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-auto">
+                    <div class="float-right">
+                        <!-- Large modal -->
+                        <a href="/jira/submit_jira_ticket/?summary={{ data.VulnerabilityID }}&description=%0a%0a%0a {{data.Description }} PkgName :  {{data.PkgName}} %0a%0a InstalledVersion : {{data.InstalledVersion}} %0a%0aFixedVersion : {{data.FixedVersion}} %0a%0a Title: {{data.Title}} %0a%0a References: {{data.References}} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=nodejsscan&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+                           class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira
+                            Ticket</a>
+
+                    </div>
+                </div>
+                <h1>{{ data.title }}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Description</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.description | safe}}
+                                </div>
+                                <div class="card-body">
+                                     File Name:
+                                    {{data.filename | safe}}
+                                </div>
+                                 <div class="card-body">
+                                     Line:
+                                    {{data.line | safe}}
+                                </div>
+                                <div class="card-body">
+                                     Severity:
+                                    {{data.severity | safe}}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
+                                       aria-controls="collapseThree">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Lines</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.lines | safe}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

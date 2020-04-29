@@ -1,0 +1,176 @@
+{
+   "vuln": [
+      {
+         "name": "Express BodyParser Tempfile Creation Issue",
+         "severity": "High"
+      },
+      {
+         "name": "Handlebars Unescaped String",
+         "severity": "Medium"
+      },
+      {
+         "name": "Server Side Injection(SSI) - eval()",
+         "severity": "High"
+      },
+      {
+         "name": "Server Side Injection(SSI) - setTimeout()",
+         "severity": "High"
+      },
+      {
+         "name": "Server Side Injection(SSI) -setInterval()",
+         "severity": "High"
+      },
+      {
+         "name": "Server Side Injection(SSI) - new Function()",
+         "severity": "High"
+      },
+      {
+         "name": "Deserialization Remote Code Injection",
+         "severity": "High"
+      },
+      {
+         "name": "Loading of untrusted YAML can cause Remote Code Injection",
+         "severity": "High"
+      },
+      {
+         "name": "Accept Self Signed Certificates",
+         "severity": "Medium"
+      },
+      {
+         "name": "Escaping is Disabled",
+         "severity": "Medium"
+      },
+      {
+         "name": "node-curl SSL Verification is Disabled",
+         "severity": "Medium"
+      },
+      {
+         "name": "Weak Hash used - MD5",
+         "severity": "High"
+      },
+      {
+         "name": "Weak Hash used - SHA1",
+         "severity": "High"
+      },
+      {
+         "name": "Password Hardcoded",
+         "severity": "High"
+      },
+      {
+         "name": "Secret Hardcoded",
+         "severity": "High"
+      },
+      {
+         "name": "Username Hardcoded",
+         "severity": "Medium"
+      },
+      {
+         "name": "XSS Filter is turned off",
+         "severity": "Medium"
+      },
+      {
+         "name": "Directory Traversal - (createReadStream())",
+         "severity": "High"
+      },
+      {
+         "name": "Directory Traversal - (readFile())",
+         "severity": "High"
+      },
+      {
+         "name": "Open Redirect",
+         "severity": "High"
+      },
+      {
+         "name": "SQLi - SQL Injection",
+         "severity": "High"
+      },
+      {
+         "name": "NoSQLi - NoSQL JavaScript Injection",
+         "severity": "High"
+      },
+      {
+         "name": "XSS - Reflected Cross Site Scripting",
+         "severity": "High"
+      },
+      {
+         "name": "HTTP Header Injection Vulnerability",
+         "severity": "High"
+      },
+      {
+         "name": "Unescaped variable in Mustache.js/Handlebars.js template file",
+         "severity": "Medium"
+      },
+      {
+         "name": "Unescaped variable in Dust.js template file",
+         "severity": "Medium"
+      },
+      {
+         "name": "Unescaped variable in Pug.js template file",
+         "severity": "Medium"
+      },
+      {
+         "name": "Unescaped variable in EJS template file",
+         "severity": "Medium"
+      },
+      {
+         "name": "Unescaped variable in ECT template file",
+         "severity": "Medium"
+      },
+      {
+         "name": "Remote OS Command Execution - (child_process.exec())",
+         "severity": "High"
+      },
+      {
+         "name": "SSRF - Server Side Request Forgery - request()",
+         "severity": "High"
+      },
+      {
+         "name": "SSRF - Server Side Request Forgery - request.get()",
+         "severity": "High"
+      },
+      {
+         "name": "SSRF - Server Side Request Forgery - needle()",
+         "severity": "High"
+      },
+      {
+         "name": "Missing Security Header - Content-Security-Policy (CSP)",
+         "severity": "Medium"
+      },
+      {
+         "name": "Missing Security Header - X-Frame-Options (XFO)",
+         "severity": "Medium"
+      },
+      {
+         "name": "Missing Security Header - Strict-Transport-Security (HSTS)",
+         "severity": "Medium"
+      },
+      {
+         "name": "Missing Security Header - Public-Key-Pins (HPKP)",
+         "severity": "Medium"
+      },
+      {
+         "name": "Missing Security Header - X-XSS-Protection:1",
+         "severity": "Medium"
+      },
+      {
+         "name": "Missing Security Header - X-Content-Type-Options",
+         "severity": "Medium"
+      },
+      {
+         "name": "Missing Security Header - X-Download-Options: noopen",
+         "severity": "Medium"
+      },
+      {
+         "name": "Missing 'httpOnly' in Cookie",
+         "severity": "Medium"
+      },
+      {
+         "name": "Information Disclosure - X-Powered-By",
+         "severity": "Medium"
+      },
+      {
+         "name": "Use Strict",
+         "severity": "Medium"
+      }
+   ]
+}
