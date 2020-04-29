@@ -16,7 +16,7 @@
 
 from import_export import resources
 from staticscanners.models import dependencycheck_scan_results_db, \
-    findbugs_scan_results_db, clair_scan_results_db, trivy_scan_results_db
+    findbugs_scan_results_db, clair_scan_results_db, trivy_scan_results_db, npmaudit_scan_results_db
 from compliance.models import inspec_scan_results_db, inspec_scan_db
 
 
@@ -38,6 +38,10 @@ class ClairResource(resources.ModelResource):
 class TrivyResource(resources.ModelResource):
     class Meta:
         model = trivy_scan_results_db
+
+class NpmauditResource(resources.ModelResource):
+    class Meta:
+        model = npmaudit_scan_results_db
 
 
 class InspecResource(resources.ModelResource):

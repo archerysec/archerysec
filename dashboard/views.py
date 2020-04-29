@@ -37,7 +37,13 @@ from staticscanners.models import dependencycheck_scan_db, \
     bandit_scan_db, bandit_scan_results_db, \
     findbugs_scan_db, \
     dependencycheck_scan_results_db, \
-    findbugs_scan_results_db, clair_scan_results_db, clair_scan_db, trivy_scan_results_db, trivy_scan_db
+    findbugs_scan_results_db, \
+    clair_scan_results_db, \
+    clair_scan_db, \
+    trivy_scan_results_db, \
+    trivy_scan_db, \
+    npmaudit_scan_db, \
+    npmaudit_scan_results_db
 from networkscanners.models import scan_save_db, \
     nessus_scan_db, \
     ov_scan_result_db, \
@@ -166,6 +172,9 @@ def proj_data(request):
     all_trivy_scan = trivy_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
+    all_npmaudit_scan = npmaudit_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('total_vuln'))
+
     all_inspec_scan = inspec_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
@@ -240,6 +249,12 @@ def proj_data(request):
         else:
             all_trivy = value
 
+    for key, value in all_npmaudit_scan.items():
+        if value is None:
+            all_npmaudit = '0'
+        else:
+            all_npmaudit = value
+
     for key, value in all_inspec_scan.items():
         if value is None:
             all_inspec = '0'
@@ -299,6 +314,7 @@ def proj_data(request):
                int(all_findbugs) + \
                int(all_clair) + \
                int(all_trivy) + \
+               int(all_npmaudit) + \
                int(all_bandit) + \
                int(all_manual)
 
@@ -309,7 +325,8 @@ def proj_data(request):
 
     total_compliance = int(all_inspec)
 
-    total_static = int(all_dependency) + int(all_findbugs) + int(all_bandit) + int(all_clair) + int(all_trivy)
+    total_static = int(all_dependency) + int(all_findbugs) + int(all_bandit) + int(all_clair) + int(all_trivy) + int(
+        all_npmaudit)
 
     all_zap_high = zap_scans_db.objects.filter(project_id=project_id). \
         aggregate(Sum('high_vul'))
@@ -338,6 +355,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_trivy_high = trivy_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('SEVERITY_HIGH'))
+
+    all_npmaudit_high = npmaudit_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_inspec_failed = inspec_scan_db.objects.filter(project_id=project_id). \
@@ -414,6 +434,12 @@ def proj_data(request):
         else:
             high_trivy = value
 
+    for key, value in all_npmaudit_high.items():
+        if value is None:
+            high_npmaudit = '0'
+        else:
+            high_npmaudit = value
+
     for key, value in all_inspec_failed.items():
         if value is None:
             failed_inspec = '0'
@@ -473,6 +499,7 @@ def proj_data(request):
                int(high_findbugs) + \
                int(high_clair) + \
                int(high_trivy) + \
+               int(high_npmaudit) + \
                int(high_bandit) + \
                int(high_nessus) + \
                int(pentest_high)
@@ -486,7 +513,7 @@ def proj_data(request):
 
     all_static_high = int(high_dependency) + \
                       int(high_findbugs) + \
-                      int(high_bandit)
+                      int(high_bandit) + int(high_trivy) + int(high_clair) + int(high_npmaudit)
 
     all_network_high = int(openvas_high) + int(high_nessus) + int(high_pentest_net)
 
@@ -519,6 +546,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_trivy_medium = trivy_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('SEVERITY_MEDIUM'))
+
+    all_npmaudit_medium = npmaudit_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_inspec_passed = inspec_scan_db.objects.filter(project_id=project_id). \
@@ -594,6 +624,12 @@ def proj_data(request):
         else:
             medium_trivy = value
 
+    for key, value in all_npmaudit_medium.items():
+        if value is None:
+            medium_npmaudit = '0'
+        else:
+            medium_npmaudit = value
+
     for key, value in all_inspec_passed.items():
         if value is None:
             passed_inspec = '0'
@@ -635,6 +671,7 @@ def proj_data(request):
                  int(medium_findbugs) + \
                  int(medium_clair) + \
                  int(medium_trivy) + \
+                 int(medium_npmaudit) + \
                  int(medium_bandit) + \
                  int(medium_nessus) + \
                  int(pentest_medium)
@@ -666,7 +703,7 @@ def proj_data(request):
 
     all_static_medium = int(medium_dependency) + \
                         int(medium_findbugs) + \
-                        int(medium_bandit)
+                        int(medium_bandit) + int(medium_trivy) + int(medium_clair) + int(medium_npmaudit)
 
     all_network_medium = int(openvas_medium) + int(medium_pentest_net) + int(medium_nessus)
 
@@ -699,6 +736,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_LOW'))
 
     all_trivy_low = trivy_scan_db.objects.filter(project_id=project_id). \
+        aggregate(Sum('SEVERITY_LOW'))
+
+    all_npmaudit_low = npmaudit_scan_db.objects.filter(project_id=project_id). \
         aggregate(Sum('SEVERITY_LOW'))
 
     all_inspec_skipped = inspec_scan_db.objects.filter(project_id=project_id). \
@@ -775,6 +815,12 @@ def proj_data(request):
         else:
             low_trivy = value
 
+    for key, value in all_npmaudit_low.items():
+        if value is None:
+            low_npmaudit = '0'
+        else:
+            low_npmaudit = value
+
     for key, value in all_inspec_skipped.items():
         if value is None:
             skipped_inspec = '0'
@@ -816,6 +862,7 @@ def proj_data(request):
               int(low_findbugs) + \
               int(low_clair) + \
               int(low_trivy) + \
+              int(low_npmaudit) + \
               int(low_bandit) + \
               int(low_nessus) + \
               int(pentest_low)
@@ -847,7 +894,7 @@ def proj_data(request):
 
     all_static_low = int(low_dependency) + \
                      int(low_findbugs) + \
-                     int(low_bandit)
+                     int(low_bandit) + int(low_trivy) + int(low_clair) + int(low_npmaudit)
 
     all_network_low = int(openvas_low) + int(low_nessus) + int(low_pentest_net)
 
@@ -865,6 +912,7 @@ def proj_data(request):
     findbugs = findbugs_scan_db.objects.filter(project_id=project_id)
     clair = clair_scan_db.objects.filter(project_id=project_id)
     trivy = trivy_scan_db.objects.filter(project_id=project_id)
+    npmaudit = npmaudit_scan_db.objects.filter(project_id=project_id)
     bandit = bandit_scan_db.objects.filter(project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
@@ -893,6 +941,7 @@ def proj_data(request):
     findbugs_false_positive = findbugs_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
     clair_false_positive = clair_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
     trivy_false_positive = trivy_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
+    npmaudit_false_positive = npmaudit_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
     bandit_false_positive = bandit_scan_results_db.objects.filter(false_positive='Yes', project_id=project_id)
 
     openvas_false_positive = ov_scan_result_db.objects.filter(false_positive='Yes', project_id=project_id)
@@ -906,13 +955,32 @@ def proj_data(request):
     openvas_closed_vuln = ov_scan_result_db.objects.filter(vuln_status='Closed', project_id=project_id)
     nessus_closed_vuln = nessus_report_db.objects.filter(vuln_status='Closed', project_id=project_id)
 
+    dependencycheck_closed_vuln = dependencycheck_scan_results_db.objects.filter(vuln_status='Closed',
+                                                                                 project_id=project_id)
+    findbugs_closed_vuln = findbugs_scan_results_db.objects.filter(vuln_status='Closed',
+                                                                   project_id=project_id)
+    clair_closed_vuln = clair_scan_results_db.objects.filter(vuln_status='Closed',
+                                                             project_id=project_id)
+    trivy_closed_vuln = trivy_scan_results_db.objects.filter(vuln_status='Closed',
+                                                             project_id=project_id)
+    npmaudit_closed_vuln = npmaudit_scan_results_db.objects.filter(vuln_status='Closed',
+                                                                   project_id=project_id)
+    bandit_closed_vuln = bandit_scan_results_db.objects.filter(vuln_status='Closed',
+                                                               project_id=project_id)
+
     all_closed_vuln = int(len(zap_closed_vuln)) + \
                       int(len(burp_closed_vuln)) + \
                       int(len(arachni_closed_vuln)) + \
                       int(len(netsparker_closed_vuln)) + \
                       int(len(webinspect_closed_vuln)) + \
                       int(len(openvas_closed_vuln)) + \
-                      int(len(nessus_closed_vuln))
+                      int(len(nessus_closed_vuln)) + \
+                      int(len(dependencycheck_closed_vuln)) + \
+                      int(len(findbugs_closed_vuln)) + \
+                      int(len(clair_closed_vuln)) + \
+                      int(len(trivy_closed_vuln)) + \
+                      int(len(npmaudit_closed_vuln)) + \
+                      int(len(bandit_closed_vuln))
 
     all_false_positive = int(len(zap_false_positive)) + \
                          int(len(burp_false_positive)) + \
@@ -926,6 +994,7 @@ def proj_data(request):
                          int(len(findbugs_false_positive)) + \
                          int(len(clair_false_positive)) + \
                          int(len(trivy_false_positive)) + \
+                         int(len(npmaudit_false_positive)) + \
                          int(len(bandit_false_positive))
 
     all_notify = Notification.objects.unread()
@@ -969,6 +1038,7 @@ def proj_data(request):
                    'bandit': bandit,
                    'clair': clair,
                    'trivy': trivy,
+                   'npmaudit': npmaudit,
                    'pentest': pentest,
                    'network_dat': network_dat,
                    'all_zap_scan': all_zap_scan,
@@ -982,6 +1052,7 @@ def proj_data(request):
                    'all_findbugs_scan': all_findbugs_scan,
                    'all_clair_scan': all_clair_scan,
                    'all_trivy_scan': all_trivy_scan,
+                   'all_npmaudit_scan': all_npmaudit_scan,
                    'all_webinspect_scan': all_webinspect_scan,
 
                    'all_compliance_failed': all_compliance_failed,
@@ -1048,6 +1119,10 @@ def proj_data(request):
                    'all_trivy_low': all_trivy_low,
                    'all_trivy_medium': all_trivy_medium,
 
+                   'all_npmaudit_high': all_npmaudit_high,
+                   'all_npmaudit_low': all_npmaudit_low,
+                   'all_npmaudit_medium': all_npmaudit_medium,
+
                    'all_closed_vuln': all_closed_vuln,
                    'all_false_positive': all_false_positive,
                    'message': all_notify
@@ -1099,6 +1174,9 @@ def all_high_vuln(request):
         trivy_all_high = trivy_scan_results_db.objects.filter(Severity='High', project_id=project_id,
                                                               false_positive='No')
 
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(severity='High', project_id=project_id,
+                                                                    false_positive='No')
+
         openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id,
                                                             false_positive='No')
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id,
@@ -1131,6 +1209,8 @@ def all_high_vuln(request):
 
         trivy_all_high = trivy_scan_results_db.objects.filter(Severity='Medium', project_id=project_id)
 
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(severity='Medium', project_id=project_id)
+
         openvas_all_high = ov_scan_result_db.objects.filter(threat='Medium', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='Medium', project_id=project_id)
 
@@ -1160,6 +1240,8 @@ def all_high_vuln(request):
 
         trivy_all_high = trivy_scan_results_db.objects.filter(Severity='Low', project_id=project_id)
 
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(severity='Low', project_id=project_id)
+
         openvas_all_high = ov_scan_result_db.objects.filter(threat='Low', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(risk_factor='Low', project_id=project_id)
 
@@ -1187,6 +1269,8 @@ def all_high_vuln(request):
         clair_all_high = clair_scan_results_db.objects.filter(project_id=project_id)
 
         trivy_all_high = trivy_scan_results_db.objects.filter(project_id=project_id)
+
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(project_id=project_id)
@@ -1216,6 +1300,8 @@ def all_high_vuln(request):
 
         trivy_all_high = trivy_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
 
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
+
         openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, false_positive='Yes')
         nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, false_positive='Yes')
 
@@ -1244,6 +1330,8 @@ def all_high_vuln(request):
 
         trivy_all_high = trivy_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
 
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
+
         openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, vuln_status='Closed')
         nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, vuln_status='Closed')
 
@@ -1265,6 +1353,7 @@ def all_high_vuln(request):
                    'bandit_all_high': bandit_all_high,
                    'clair_all_high': clair_all_high,
                    'trivy_all_high': trivy_all_high,
+                   'npmaudit_all_high': npmaudit_all_high,
                    'openvas_all_high': openvas_all_high,
                    'nessus_all_high': nessus_all_high,
                    'project_id': project_id,
@@ -1313,6 +1402,8 @@ def export(request):
 
             trivy_all_high = trivy_scan_results_db.objects.filter(Severity='HIGH', project_id=project_id)
 
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(severity='HIGH', project_id=project_id)
+
             openvas_all_high = ov_scan_result_db.objects.filter(threat='High', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='High', project_id=project_id)
 
@@ -1328,6 +1419,7 @@ def export(request):
                              findbugs_all_high,
                              clair_all_high,
                              trivy_all_high,
+                             npmaudit_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1359,6 +1451,8 @@ def export(request):
 
             trivy_all_high = trivy_scan_results_db.objects.filter(Severity='Medium', project_id=project_id)
 
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(severity='Medium', project_id=project_id)
+
             openvas_all_high = ov_scan_result_db.objects.filter(threat='Medium', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='Medium', project_id=project_id)
 
@@ -1374,6 +1468,7 @@ def export(request):
                              findbugs_all_high,
                              clair_all_high,
                              trivy_all_high,
+                             npmaudit_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1406,6 +1501,8 @@ def export(request):
 
             trivy_all_high = trivy_scan_results_db.objects.filter(Severity='Low', project_id=project_id)
 
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(severity='Low', project_id=project_id)
+
             openvas_all_high = ov_scan_result_db.objects.filter(threat='Low', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(risk_factor='Low', project_id=project_id)
 
@@ -1421,6 +1518,7 @@ def export(request):
                              findbugs_all_high,
                              clair_all_high,
                              trivy_all_high,
+                             npmaudit_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1454,6 +1552,8 @@ def export(request):
 
             trivy_all_high = trivy_scan_results_db.objects.filter(project_id=project_id)
 
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(project_id=project_id)
+
             openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(project_id=project_id)
 
@@ -1469,6 +1569,7 @@ def export(request):
                              findbugs_all_high,
                              clair_all_high,
                              trivy_all_high,
+                             npmaudit_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1499,6 +1600,8 @@ def export(request):
 
             trivy_all_high = trivy_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
 
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(project_id=project_id, false_positive='Yes')
+
             openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, false_positive='Yes')
             nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, false_positive='Yes')
 
@@ -1512,6 +1615,7 @@ def export(request):
                              findbugs_all_high,
                              clair_all_high,
                              trivy_all_high,
+                             npmaudit_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high
@@ -1540,6 +1644,8 @@ def export(request):
 
             trivy_all_high = trivy_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
 
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(project_id=project_id, vuln_status='Closed')
+
             openvas_all_high = ov_scan_result_db.objects.filter(project_id=project_id, vuln_status='Closed')
             nessus_all_high = nessus_report_db.objects.filter(project_id=project_id, vuln_status='Closed')
 
@@ -1553,6 +1659,7 @@ def export(request):
                              findbugs_all_high,
                              clair_all_high,
                              trivy_all_high,
+                             npmaudit_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high

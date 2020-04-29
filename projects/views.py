@@ -28,7 +28,7 @@ from webscanners.models import zap_scans_db, zap_scan_results_db, \
 from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_results_db, \
     findbugs_scan_db, findbugs_scan_results_db, \
     bandit_scan_db, bandit_scan_results_db, clair_scan_db, clair_scan_results_db, \
-    trivy_scan_db, trivy_scan_results_db
+    trivy_scan_db, trivy_scan_results_db, npmaudit_scan_db, npmaudit_scan_results_db
 from compliance.models import inspec_scan_results_db, inspec_scan_db
 from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_report_db
 import datetime
@@ -128,6 +128,11 @@ def projects(request):
         trivy.delete()
         trivy_result = trivy_scan_results_db.objects.filter(project_id=project_id)
         trivy_result.delete()
+
+        npmaudit = npmaudit_scan_db.objects.filter(project_id=project_id)
+        npmaudit.delete()
+        npmaudit_result = npmaudit_scan_results_db.objects.filter(project_id=project_id)
+        npmaudit_result.delete()
 
         inspec = inspec_scan_db.objects.filter(project_id=project_id)
         inspec.delete()
