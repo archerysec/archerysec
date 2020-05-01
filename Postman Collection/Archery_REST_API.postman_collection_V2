@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "Archery_REST_API",
-		"_postman_id": "c5e67ae1-a78f-53cd-4774-384ae5ec7b2b",
+		"_postman_id": "363ae70b-b199-c52a-1512-5d5bddc95cf7",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -21,7 +21,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"username\":\"admin\",\"password\":\"admin@123A\"}"
+					"raw": "{\"username\":\"admin\",\"password\":\"admin@123\"}"
 				},
 				"description": ""
 			},
@@ -40,7 +40,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "{{Authorization}}",
+						"value": "JWT {{jwtkey}}",
 						"description": ""
 					}
 				],
@@ -62,7 +62,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "{{Authorization}}",
+						"value": "JWT {{jwtkey}}",
 						"description": ""
 					}
 				],
@@ -87,7 +87,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "{{Authorization}}",
+						"value": "JWT {{jwtkey}}",
 						"description": ""
 					}
 				],
@@ -115,7 +115,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"scan_url\":\"http://crackme.cenzic.com\",\"project_id\":\"bfaa2514-a08b-4751-9e2d-3e62223141e3\",\"scanner\":\"zap_scan\"}"
+					"raw": "{\"scan_url\":\"https://business.paytm.com\",\"project_id\":\"4c003118-4ec5-4783-86be-dd0bcb01ce00\",\"scanner\":\"zap_scan\"}"
 				},
 				"description": ""
 			},
@@ -163,7 +163,10 @@
 						"description": ""
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"description": "Get the Network scans"
 			},
 			"response": []
@@ -215,6 +218,281 @@
 					"raw": "{\"scan_id\":\"a20b9c2e-1bd0-4a69-8771-67c023a3b96b\"}"
 				},
 				"description": "Get The scan data"
+			},
+			"response": []
+		},
+		{
+			"name": "zapstatusupdate",
+			"request": {
+				"url": "{{url}}/api/zapstatusupdate/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\":\"6ad60197-de9d-4f34-994a-a4f357631f37\",\"scan_status\":\"60\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/zapscanstatus/",
+			"request": {
+				"url": "{{url}}/api/zapscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_scanid\": \"305a3fcf-9abe-447d-8f14-57f059c75c4b\"}"
+				},
+				"description": "zap scan status"
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/burpscanstatus/",
+			"request": {
+				"url": "{{url}}/api/burpscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"85af0752-cae4-41a4-bd41-f47b62d8b333\"}"
+				},
+				"description": "Burp scan status\n"
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/banditscanstatus/",
+			"request": {
+				"url": "{{url}}/api/banditscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"0162f749-dadb-492c-8d34-b1a7b3eeb1f1\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/clairscanstatus/",
+			"request": {
+				"url": "{{url}}/api/clairscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"596d3fa8-5258-47e7-9ddd-f347e647df6f\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/nodejsscanstatus/",
+			"request": {
+				"url": "{{url}}/api/nodejsscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"f530f6a8-0a25-4fa2-99be-7a3d9ac4cfa0\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/npmauditscanstatus/",
+			"request": {
+				"url": "{{url}}/api/npmauditscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"bb1d463c-d230-4673-b6d9-e8f03d9a50c2\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/trivyscanstatus/",
+			"request": {
+				"url": "{{url}}/api/trivyscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"bb1d463c-d230-4673-b6d9-e8f03d9a50c2\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/banditscanstatus/",
+			"request": {
+				"url": "{{url}}/api/banditscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"bb1d463c-d230-4673-b6d9-e8f03d9a50c2\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/findbugscanstatus/",
+			"request": {
+				"url": "{{url}}/api/findbugscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"9d92049f-ad2c-4746-9038-da267ff38c70\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/api/dependencycheckscanstatus/",
+			"request": {
+				"url": "{{url}}/api/dependencycheckscanstatus/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"scan_id\": \"e3e96250-0db1-4653-8cd7-5d02d9852940\"}"
+				},
+				"description": ""
 			},
 			"response": []
 		}
