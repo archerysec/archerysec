@@ -16,7 +16,7 @@
 
 from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
     netsparker_scan_db, webinspect_scan_db, acunetix_scan_db
-from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_report_db, nessus_scan_db
+from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db
 from projects.models import project_db
 from webscanners.serializers import WebScanSerializer, \
     WebScanResultSerializer, \
@@ -27,9 +27,11 @@ from webscanners.serializers import WebScanSerializer, \
     NetsparkerScanStatusSerializer, \
     AcunetixStatusSerializer, \
     WebinspectScanStatusSerializer, \
-    DependencycheckStatusSerializer, \
-    findbugsStatusSerializer, \
     ZapScanStatusDataSerializers
+
+from staticscanners.serializers import findbugsStatusSerializer, RetirejsStatusSerializer, ClairStatusSerializer, \
+    DependencycheckStatusSerializer, NodejsscanSatatusSerializer, NpmauditStatusSerializer, TrivyStatusSerializer, \
+    BanditScanStatusSerializer
 
 from rest_framework import status
 from webscanners.zapscanner.views import launch_zap_scan
@@ -54,7 +56,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import json
 from rest_framework.parsers import MultiPartParser, FormParser
-from staticscanners.models import bandit_scan_db, bandit_scan_results_db
+from staticscanners.models import bandit_scan_db, retirejs_scan_db
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from django.contrib.auth.models import User
 from stronghold.decorators import public
@@ -68,7 +70,7 @@ from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db, cla
 from tools.models import nikto_result_db
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from scanners.scanner_parser.compliance_parser import inspec_json_parser
-from compliance.models import inspec_scan_db, inspec_scan_results_db
+from compliance.models import inspec_scan_db
 from scanners.scanner_parser.network_scanner import Nessus_Parser, OpenVas_Parser
 
 
@@ -323,6 +325,108 @@ class FindbugsScanStatus(generics.ListCreateAPIView):
             findbugs_scan = findbugs_scan_db.objects.filter(scan_id=scan_id)
             all_scans = chain(findbugs_scan)
             serialized_scans = findbugsStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class RetirejsScanStatus(generics.ListCreateAPIView):
+    queryset = retirejs_scan_db.objects.all()
+    serializer_class = RetirejsStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = RetirejsStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            retirejs_scan = retirejs_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(retirejs_scan)
+            serialized_scans = RetirejsStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class ClairScanStatus(generics.ListCreateAPIView):
+    queryset = clair_scan_db.objects.all()
+    serializer_class = ClairStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = ClairStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            clair_scan = clair_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(clair_scan)
+            serialized_scans = ClairStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class NodejsScanStatus(generics.ListCreateAPIView):
+    queryset = nodejsscan_scan_db.objects.all()
+    serializer_class = NodejsscanSatatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = NodejsscanSatatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            nodejs_scan = nodejsscan_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(nodejs_scan)
+            serialized_scans = NodejsscanSatatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class NpmauditScanStatus(generics.ListCreateAPIView):
+    queryset = npmaudit_scan_db.objects.all()
+    serializer_class = NpmauditStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = NpmauditStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            npmaudit_scan = npmaudit_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(npmaudit_scan)
+            serialized_scans = NpmauditStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class TrivyScanStatus(generics.ListCreateAPIView):
+    queryset = trivy_scan_db.objects.all()
+    serializer_class = TrivyStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = TrivyStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            trivy_scan = trivy_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(trivy_scan)
+            serialized_scans = TrivyStatusSerializer(all_scans, many=True)
+            return Response(serialized_scans.data)
+
+
+class BanditScanStatus(generics.ListCreateAPIView):
+    queryset = bandit_scan_db.objects.all()
+    serializer_class = BanditScanStatusSerializer
+
+    def post(self, request, format=None, **kwargs):
+        """
+            Post request to get all vulnerability Data.
+        """
+        serializer = BanditScanStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            scan_id = request.data.get('scan_id', )
+            bandit_scan = bandit_scan_db.objects.filter(scan_id=scan_id)
+            all_scans = chain(bandit_scan)
+            serialized_scans = BanditScanStatusSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
 
 
