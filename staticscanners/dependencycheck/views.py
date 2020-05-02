@@ -78,25 +78,26 @@ def dependencycheck_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 dependencycheck_scan_results_db.objects.filter(vuln_id=vuln_id,
                                                                scan_id=scan_id).update(false_positive=false_positive,
-                                                                                       vuln_status=status,
+                                                                                       vuln_status='Close',
                                                                                        false_positive_hash=false_positive_hash
                                                                                        )
 
-            all_dependency_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+        all_dependency_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No',
+                                                                             vuln_status='Open')
 
-            total_vul = len(all_dependency_data)
-            total_high = len(all_dependency_data.filter(severity="High"))
-            total_medium = len(all_dependency_data.filter(severity="Medium"))
-            total_low = len(all_dependency_data.filter(severity="Low"))
-            total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
+        total_vul = len(all_dependency_data)
+        total_high = len(all_dependency_data.filter(severity="High"))
+        total_medium = len(all_dependency_data.filter(severity="Medium"))
+        total_low = len(all_dependency_data.filter(severity="Low"))
+        total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
 
-            dependencycheck_scan_db.objects.filter(scan_id=scan_id).update(
-                total_vuln=total_vul,
-                SEVERITY_HIGH=total_high,
-                SEVERITY_MEDIUM=total_medium,
-                SEVERITY_LOW=total_low,
-                total_dup=total_duplicate
-            )
+        dependencycheck_scan_db.objects.filter(scan_id=scan_id).update(
+            total_vuln=total_vul,
+            SEVERITY_HIGH=total_high,
+            SEVERITY_MEDIUM=total_medium,
+            SEVERITY_LOW=total_low,
+            total_dup=total_duplicate
+        )
 
         return HttpResponseRedirect(
             reverse('dependencycheck:dependencycheck_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))

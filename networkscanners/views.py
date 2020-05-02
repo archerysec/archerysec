@@ -152,25 +152,24 @@ def scan_vul_details(request):
                     scan_id=scan_id,
                     vul_id=vuln_id).update(
                     false_positive=false_positive,
-                    vuln_status=status,
+                    vuln_status='Close',
                     false_positive_hash=false_positive_hash
                 )
-            openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No', vuln_status='Open')
 
-            total_high = len(openvas_vul.filter(threat="High"))
-            total_medium = len(openvas_vul.filter(threat="Medium"))
-            total_low = len(openvas_vul.filter(threat="Low"))
-            total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
-            total_vul = total_high + total_medium + total_low
+        total_high = len(openvas_vul.filter(threat="High"))
+        total_medium = len(openvas_vul.filter(threat="Medium"))
+        total_low = len(openvas_vul.filter(threat="Low"))
+        total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_high + total_medium + total_low
 
-            scan_save_db.objects.filter(scan_id=scan_id). \
-                update(total_vul=total_vul,
-                       high_total=total_high,
-                       medium_total=total_medium,
-                       low_total=total_low,
-                       total_dup=total_duplicate,
-                       scan_ip=host,
-                       )
+        scan_save_db.objects.filter(scan_id=scan_id). \
+            update(total_vul=total_vul,
+                   high_total=total_high,
+                   medium_total=total_medium,
+                   low_total=total_low,
+                   total_dup=total_duplicate,
+                   )
 
         return HttpResponseRedirect(
             reverse('networkscanners:vul_details') + '?scan_id=%s' % scan_id)
@@ -670,26 +669,26 @@ def nessus_vuln_details(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 nessus_report_db.objects.filter(scan_id=scan_id,
                                                 vul_id=vuln_id).update(false_positive=false_positive,
-                                                                       vuln_status=status,
+                                                                       vuln_status='Close',
                                                                        false_positive_hash=false_positive_hash)
-            ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_id, false_positive='No')
-            total_vul = len(ov_all_vul)
-            total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
-            total_high = len(ov_all_vul.filter(risk_factor="High"))
-            total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
-            total_low = len(ov_all_vul.filter(risk_factor="Low"))
-            total_info = len(ov_all_vul.filter(risk_factor="Informational"))
-            total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
+        ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_id, false_positive='No', vuln_status='Open')
+        total_vul = len(ov_all_vul)
+        total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
+        total_high = len(ov_all_vul.filter(risk_factor="High"))
+        total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
+        total_low = len(ov_all_vul.filter(risk_factor="Low"))
+        total_info = len(ov_all_vul.filter(risk_factor="Informational"))
+        total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
 
-            nessus_scan_db.objects.filter(scan_id=scan_id) \
-                .update(total_vul=total_vul,
-                        critical_total=total_critical,
-                        high_total=total_high,
-                        medium_total=total_medium,
-                        low_total=total_low,
-                        info_total=total_info,
-                        total_dup=total_duplicate,
-                        )
+        nessus_scan_db.objects.filter(scan_id=scan_id) \
+            .update(total_vul=total_vul,
+                    critical_total=total_critical,
+                    high_total=total_high,
+                    medium_total=total_medium,
+                    low_total=total_low,
+                    info_total=total_info,
+                    total_dup=total_duplicate,
+                    )
 
         return HttpResponseRedirect(
             reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % scan_id)

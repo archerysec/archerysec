@@ -253,24 +253,24 @@ def burp_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 burp_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                    scan_id=scan_id).update(false_positive=false_positive,
-                                                                           vuln_status=vuln_status,
+                                                                           vuln_status='Close',
                                                                            false_positive_hash=false_positive_hash
                                                                            )
-            burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
-            total_vul = len(burp_all_vul)
-            total_high = len(burp_all_vul.filter(severity="High"))
-            total_medium = len(burp_all_vul.filter(severity="Medium"))
-            total_low = len(burp_all_vul.filter(severity="Low"))
-            total_info = len(burp_all_vul.filter(severity="Information"))
-            total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
-            burp_scan_db.objects.filter(scan_id=scan_id).update(
-                total_vul=total_vul,
-                high_vul=total_high,
-                medium_vul=total_medium,
-                low_vul=total_low,
-                info_vul=total_info,
-                total_dup=total_duplicate
-            )
+        burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No', vuln_status='Open')
+        total_vul = len(burp_all_vul)
+        total_high = len(burp_all_vul.filter(severity="High"))
+        total_medium = len(burp_all_vul.filter(severity="Medium"))
+        total_low = len(burp_all_vul.filter(severity="Low"))
+        total_info = len(burp_all_vul.filter(severity="Information"))
+        total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
+        burp_scan_db.objects.filter(scan_id=scan_id).update(
+            total_vul=total_vul,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            info_vul=total_info,
+            total_dup=total_duplicate
+        )
 
         return HttpResponseRedirect(
             reverse('burpscanner:burp_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id,

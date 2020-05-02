@@ -418,27 +418,27 @@ def zap_vuln_details(request):
                 zap_scan_results_db.objects.filter(
                     vuln_id=vuln_id,
                     scan_id=scan_id).update(false_positive=false_positive,
-                                            vuln_status=vuln_status,
+                                            vuln_status='Close',
                                             false_positive_hash=false_positive_hash
                                             )
 
-            zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No', vuln_status='Open')
 
-            total_high = len(zap_all_vul.filter(risk="High"))
-            total_medium = len(zap_all_vul.filter(risk="Medium"))
-            total_low = len(zap_all_vul.filter(risk="Low"))
-            total_info = len(zap_all_vul.filter(risk="Informational"))
-            total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
-            total_vul = total_high + total_medium + total_low + total_info
+        total_high = len(zap_all_vul.filter(risk="High"))
+        total_medium = len(zap_all_vul.filter(risk="Medium"))
+        total_low = len(zap_all_vul.filter(risk="Low"))
+        total_info = len(zap_all_vul.filter(risk="Informational"))
+        total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_high + total_medium + total_low + total_info
 
-            zap_scans_db.objects.filter(scan_scanid=scan_id) \
-                .update(total_vul=total_vul,
-                        high_vul=total_high,
-                        medium_vul=total_medium,
-                        low_vul=total_low,
-                        info_vul=total_info,
-                        total_dup=total_duplicate,
-                        )
+        zap_scans_db.objects.filter(scan_scanid=scan_id) \
+            .update(total_vul=total_vul,
+                    high_vul=total_high,
+                    medium_vul=total_medium,
+                    low_vul=total_low,
+                    info_vul=total_info,
+                    total_dup=total_duplicate,
+                    )
 
         messages.add_message(request,
                              messages.SUCCESS,

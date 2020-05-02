@@ -185,6 +185,14 @@
                                             <td><span class="badge badge-pill badge-warning">{{all_nodejsscan_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_nodejsscan_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+
+                                         <tr>
+                                            <td><a href="{% url 'tfsec:tfsec_list' %}">tfsec</a></td>
+                                            <td><span class="badge badge-pill badge-danger">{{all_tfsec_high.SEVERITY_HIGH__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-warning">{{all_tfsec_medium.SEVERITY_MEDIUM__sum}}</span></td>
+                                            <td><span class="badge badge-pill badge-info">{{all_tfsec_low.SEVERITY_LOW__sum}}</span></td>
+                                        </tr>
+
                                         <tr>
                                             <td><a href="{% url 'findbugs:findbugs_list' %}">FindBugs</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_findbugs_high.SEVERITY_HIGH__sum}}</span></td>

@@ -83,11 +83,11 @@ def trivy_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 trivy_scan_results_db.objects.filter(vuln_id=vuln_id,
                                                      scan_id=scan_id).update(false_positive=false_positive,
-                                                                             vuln_status=status,
+                                                                             vuln_status='Close',
                                                                              false_positive_hash=false_positive_hash
                                                                              )
 
-            all_trivy_data = trivy_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+            all_trivy_data = trivy_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No', vuln_status='Open')
 
             total_vul = len(all_trivy_data)
             total_high = len(all_trivy_data.filter(Severity='High'))

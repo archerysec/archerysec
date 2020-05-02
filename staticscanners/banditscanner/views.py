@@ -100,25 +100,25 @@ def banditscan_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 bandit_scan_results_db.objects.filter(vuln_id=vuln_id,
                                                       scan_id=scan_id).update(false_positive=false_positive,
-                                                                              vuln_status=status,
+                                                                              vuln_status='Close',
                                                                               false_positive_hash=false_positive_hash
                                                                               )
 
-            all_bandit_data = bandit_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+        all_bandit_data = bandit_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No', vuln_status='Open')
 
-            total_vul = len(all_bandit_data)
-            total_high = len(all_bandit_data.filter(issue_severity="HIGH"))
-            total_medium = len(all_bandit_data.filter(issue_severity="MEDIUM"))
-            total_low = len(all_bandit_data.filter(issue_severity="LOW"))
-            total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
+        total_vul = len(all_bandit_data)
+        total_high = len(all_bandit_data.filter(issue_severity="HIGH"))
+        total_medium = len(all_bandit_data.filter(issue_severity="MEDIUM"))
+        total_low = len(all_bandit_data.filter(issue_severity="LOW"))
+        total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
 
-            bandit_scan_db.objects.filter(scan_id=scan_id).update(
-                total_vuln=total_vul,
-                SEVERITY_HIGH=total_high,
-                SEVERITY_MEDIUM=total_medium,
-                SEVERITY_LOW=total_low,
-                total_dup=total_duplicate
-            )
+        bandit_scan_db.objects.filter(scan_id=scan_id).update(
+            total_vuln=total_vul,
+            SEVERITY_HIGH=total_high,
+            SEVERITY_MEDIUM=total_medium,
+            SEVERITY_LOW=total_low,
+            total_dup=total_duplicate
+        )
 
         return HttpResponseRedirect(
             reverse('banditscanner:banditscan_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))

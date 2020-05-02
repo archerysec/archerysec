@@ -121,28 +121,29 @@ def webinspect_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 webinspect_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                          scan_id=scan_id).update(false_positive=false_positive,
-                                                                                 vuln_status=status,
+                                                                                 vuln_status='Close',
                                                                                  false_positive_hash=false_positive_hash
                                                                                  )
 
-            webinspect_all_vul = webinspect_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+        webinspect_all_vul = webinspect_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No',
+                                                                      vuln_status='Open')
 
-            total_critical = len(webinspect_all_vul.filter(severity='Critical'))
-            total_high = len(webinspect_all_vul.filter(severity="High"))
-            total_medium = len(webinspect_all_vul.filter(severity="Medium"))
-            total_low = len(webinspect_all_vul.filter(severity="Low"))
-            total_info = len(webinspect_all_vul.filter(severity="Information"))
-            total_duplicate = len(webinspect_all_vul.filter(severity='Yes'))
-            total_vul = total_critical + total_high + total_medium + total_low + total_info
+        total_critical = len(webinspect_all_vul.filter(severity='Critical'))
+        total_high = len(webinspect_all_vul.filter(severity="High"))
+        total_medium = len(webinspect_all_vul.filter(severity="Medium"))
+        total_low = len(webinspect_all_vul.filter(severity="Low"))
+        total_info = len(webinspect_all_vul.filter(severity="Information"))
+        total_duplicate = len(webinspect_all_vul.filter(severity='Yes'))
+        total_vul = total_critical + total_high + total_medium + total_low + total_info
 
-            webinspect_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
-                                                                      high_vul=total_high,
-                                                                      medium_vul=total_medium,
-                                                                      low_vul=total_low,
-                                                                      critical_vul=total_critical,
-                                                                      info_vul=total_info,
-                                                                      total_dup=total_duplicate
-                                                                      )
+        webinspect_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
+                                                                  high_vul=total_high,
+                                                                  medium_vul=total_medium,
+                                                                  low_vul=total_low,
+                                                                  critical_vul=total_critical,
+                                                                  info_vul=total_info,
+                                                                  total_dup=total_duplicate
+                                                                  )
 
         return HttpResponseRedirect(
             reverse('webinspectscanner:webinspect_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
@@ -285,6 +286,7 @@ def webinspect_del_vuln(request):
 
         return HttpResponseRedirect(reverse('webinspectscanner:webinspect_list_vuln') + '?scan_id=%s' % un_scanid)
 
+
 def export(request):
     """
     :param request:
@@ -310,4 +312,3 @@ def export(request):
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
             response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
             return response
-

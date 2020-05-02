@@ -112,28 +112,29 @@ def netsparker_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 netsparker_scan_result_db.objects.filter(vuln_id=vuln_id,
                                                          scan_id=scan_id).update(false_positive=false_positive,
-                                                                                 vuln_status=status,
+                                                                                 vuln_status='Close',
                                                                                  false_positive_hash=false_positive_hash
                                                                                  )
 
-            netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+        netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No',
+                                                                      vuln_status='Open')
 
-            total_critical = len(netsparker_all_vul.filter(severity='Critical'))
-            total_high = len(netsparker_all_vul.filter(severity="High"))
-            total_medium = len(netsparker_all_vul.filter(severity="Medium"))
-            total_low = len(netsparker_all_vul.filter(severity="Low"))
-            total_info = len(netsparker_all_vul.filter(severity="Information"))
-            total_duplicate = len(netsparker_all_vul.filter(vuln_duplicate='Yes'))
-            total_vul = total_critical + total_high + total_medium + total_low + total_info
+        total_critical = len(netsparker_all_vul.filter(severity='Critical'))
+        total_high = len(netsparker_all_vul.filter(severity="High"))
+        total_medium = len(netsparker_all_vul.filter(severity="Medium"))
+        total_low = len(netsparker_all_vul.filter(severity="Low"))
+        total_info = len(netsparker_all_vul.filter(severity="Information"))
+        total_duplicate = len(netsparker_all_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_critical + total_high + total_medium + total_low + total_info
 
-            netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
-                                                                      high_vul=total_high,
-                                                                      medium_vul=total_medium,
-                                                                      low_vul=total_low,
-                                                                      critical_vul=total_critical,
-                                                                      info_vul=total_info,
-                                                                      total_dup=total_duplicate,
-                                                                      )
+        netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
+                                                                  high_vul=total_high,
+                                                                  medium_vul=total_medium,
+                                                                  low_vul=total_low,
+                                                                  critical_vul=total_critical,
+                                                                  info_vul=total_info,
+                                                                  total_dup=total_duplicate,
+                                                                  )
 
         return HttpResponseRedirect(
             reverse('netsparkerscanner:netsparker_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))

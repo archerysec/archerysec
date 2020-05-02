@@ -376,3 +376,42 @@ class nodejsscan_scan_results_db(models.Model):
     title = models.TextField(null=True, blank=True)
     severity = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='nodejsscan', editable=False)
+
+
+class tfsec_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+
+
+class tfsec_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    description = models.TextField(null=True, blank=True)
+    filename = models.TextField(null=True, blank=True)
+    start_line = models.TextField(null=True, blank=True)
+    end_line = models.TextField(null=True, blank=True)
+    rule_id = models.TextField(null=True, blank=True)
+    link = models.TextField(null=True, blank=True)
+    title = models.TextField(null=True, blank=True)
+    severity = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='tfsec', editable=False)
