@@ -24,17 +24,20 @@ class zap_settings_db(models.Model):
     zap_api = models.TextField(blank=False, null=False, default='dwed23wdwedwwefw4rwrfw')
     zap_port = models.IntegerField(blank=False, null=False, default=8090)
     enabled = models.NullBooleanField(blank=False, null=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class arachni_settings_db(models.Model):
     arachni_url = models.TextField(blank=True, null=True)
     arachni_port = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class burp_setting_db(models.Model):
     burp_url = models.TextField(blank=True, null=True)
     burp_port = models.TextField(blank=True, null=True)
     burp_api_key = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class openvas_setting_db(models.Model):
@@ -43,6 +46,7 @@ class openvas_setting_db(models.Model):
     enabled = models.NullBooleanField(blank=False, null=False)
     user = models.TextField(blank=True, null=True)
     password = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class nmap_vulners_setting_db(models.Model):
@@ -53,9 +57,11 @@ class nmap_vulners_setting_db(models.Model):
     online = models.NullBooleanField(blank=False, null=False)
     # -T4 | Set timing template (higher is faster)
     timing = models.IntegerField(blank=False, null=False, default=0)
+    username = models.CharField(max_length=256, null=True)
 
 
 class email_db(models.Model):
     subject = models.TextField(blank=True, null=True)
     message = models.TextField(blank=True, null=True)
     recipient_list = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)

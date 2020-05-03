@@ -46,6 +46,8 @@ def create_form(request):
 
 def create(request):
     if request.method == 'POST':
+        username = request.user.username
+        print(username)
         project_id = uuid.uuid4()
         project_name = request.POST.get("projectname", )
         project_date = request.POST.get("projectstart", )
@@ -54,7 +56,7 @@ def create(request):
         project_disc = request.POST.get("project_disc", )
         date_time = datetime.datetime.now()
 
-        save_project = project_db(project_name=project_name, project_id=project_id,
+        save_project = project_db(username=username, project_name=project_name, project_id=project_id,
                                   project_start=project_date, project_end=project_end,
                                   project_owner=project_owner, project_disc=project_disc, date_time=date_time)
         save_project.save()
@@ -67,7 +69,8 @@ def create(request):
 
 
 def projects(request):
-    all_projects = project_db.objects.all()
+    username = request.user.username
+    all_projects = project_db.objects.filter(username=username)
 
     if request.method == 'POST':
         project_id = request.POST.get("proj_id", )
@@ -183,7 +186,8 @@ def project_edit(request):
     global project_dat
     if request.method == 'GET':
         project_id = request.GET['project_id']
-        project_dat = project_db.objects.filter(project_id=project_id)
+        username = request.user.username
+        project_dat = project_db.objects.filter(project_id=project_id, username=username)
 
     if request.method == 'POST':
         project_id = request.POST.get('project_id')

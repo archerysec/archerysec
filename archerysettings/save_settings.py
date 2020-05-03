@@ -27,9 +27,10 @@ from archerysettings.models import zap_settings_db,\
 
 class SaveSettings:
 
-    def __init__(self, setting_file):
+    def __init__(self, setting_file, username):
 
         self.setting_file = setting_file
+        self.username = username
 
     def nmap_vulners(self, enabled, version, online, timing):
         """
@@ -40,7 +41,7 @@ class SaveSettings:
         :param timing:
         :return:
         """
-        all_nv = nmap_vulners_setting_db.objects.all()
+        all_nv = nmap_vulners_setting_db.objects.filter(self.username)
         all_nv.delete()
         if timing > 5:
             timing = 5
@@ -62,12 +63,13 @@ class SaveSettings:
         :param zaport:
         :return:
         """
-        all_zap = zap_settings_db.objects.all()
+        all_zap = zap_settings_db.objects.filter(self.username)
         all_zap.delete()
 
         save_zapsettings = zap_settings_db(zap_url=zaphost,
                                            zap_api=apikey,
-                                           zap_port=zaport
+                                           zap_port=zaport,
+                                           username=self.username
                                            )
         save_zapsettings.save()
 
@@ -79,12 +81,13 @@ class SaveSettings:
         :return:
         """
 
-        all_burp = burp_setting_db.objects.all()
+        all_burp = burp_setting_db.objects.filter(self.username)
         all_burp.delete()
 
         save_burpsettings = burp_setting_db(burp_url=burphost,
                                             burp_port=burport,
-                                            burp_api_key=burpapikey
+                                            burp_api_key=burpapikey,
+                                            username=self.username
                                             )
         save_burpsettings.save()
 
@@ -98,15 +101,12 @@ class SaveSettings:
         :param passwrod:
         :return:
         """
-
-        all_openvas = openvas_setting_db.objects.all()
-        all_openvas.delete()
-
         openvas_settings = openvas_setting_db(host=openvas_host,
                                               port=openvas_port,
                                               enabled=openvas_enabled,
                                               user=openvas_user,
-                                              password=openvas_password
+                                              password=openvas_password,
+                                              username=self.username
                                               )
         openvas_settings.save()
         try:
@@ -174,8 +174,8 @@ class SaveSettings:
         :param arachniport:
         :return:
         """
-        all_email = email_db.objects.all()
+        all_email = email_db.objects.filter(self.username)
         all_email.delete()
 
-        save_emailsettings = email_db(subject=subject, message=message, recipient_list=recipient_list)
+        save_emailsettings = email_db(username=self.username, subject=subject, message=message, recipient_list=recipient_list)
         save_emailsettings.save()

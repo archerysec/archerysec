@@ -39,8 +39,8 @@ from django.urls import reverse
 def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     arachni_hosts = None
     arachni_ports = None
-
-    all_arachni = arachni_settings_db.objects.all()
+    username = user.username
+    all_arachni = arachni_settings_db.objects.filter(username=username)
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
@@ -89,6 +89,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
 
     try:
         save_all_scan = arachni_scan_db(
+            username=username,
             project_id=project_id,
             url=target,
             scan_id=scan_id,
@@ -118,7 +119,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
             'total_job_time']:
             status = 100 - scan_sum['statistics']['browser_cluster']['queued_job_count'] * 100 / \
                      scan_sum['statistics']['browser_cluster']['total_job_time']
-        arachni_scan_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+        arachni_scan_db.objects.filter(username=username, scan_id=scan_id).update(scan_status=status)
         scan_sum = arachni.scan_summary(id=scan_run_id).data
         for key, value in scan_sum.items():
             if key == 'status':
@@ -127,10 +128,12 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     if scan_status == 'done':
         xml_report = arachni.scan_xml_report(id=scan_run_id).data
         root_xml = ET.fromstring(xml_report)
-        arachni_xml_parser.xml_parser(project_id=project_id,
+        arachni_xml_parser.xml_parser(username=username,
+                                      project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml)
-        arachni_scan_db.objects.filter(scan_id=scan_id).update(scan_status='100')
+        arachni_scan_db.objects.filter(username=username,
+                                       scan_id=scan_id).update(scan_status='100')
         print("Data uploaded !!!!")
 
     notify.send(user, recipient=user, verb='Arachni Scan Completed on URL %s' % target)
@@ -171,18 +174,19 @@ def arachni_list_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
 
-    arachni_all_vul = arachni_scan_result_db.objects.filter(
+    arachni_all_vul = arachni_scan_result_db.objects.filter(username=username,
         scan_id=scan_id).values('name',
                                 'severity',
                                 'vuln_color',
                                 'scan_id').distinct()
 
-    arachni_all_vul_close = arachni_scan_result_db.objects.filter(
+    arachni_all_vul_close = arachni_scan_result_db.objects.filter(username=username,
         scan_id=scan_id, vuln_status='Closed').values('name',
                                                       'severity',
                                                       'vuln_color',
@@ -202,7 +206,8 @@ def arachni_scan_list(request):
     :param request:
     :return:
     """
-    all_arachni_scan = arachni_scan_db.objects.all()
+    username = request.user.username
+    all_arachni_scan = arachni_scan_db.objects.filter(username=username)
 
     return render(request,
                   'arachniscanner/arachni_scan_list.html',
@@ -215,11 +220,12 @@ def arachni_vuln_data(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         vuln_id = request.GET['vuln_id']
     else:
         vuln_id = None
-    vuln_data = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
+    vuln_data = arachni_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
 
     return render(request,
                   'arachniscanner/arachni_vuln_data.html',
@@ -232,6 +238,7 @@ def arachni_vuln_out(request):
     :param request:
     :return:
     """
+    username = request.user.username
     jira_url = None
 
     jira = jirasetting.objects.all()
@@ -247,11 +254,11 @@ def arachni_vuln_out(request):
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
-        arachni_scan_result_db.objects.filter(vuln_id=vuln_id,
+        arachni_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                               scan_id=scan_id).update(false_positive=false_positive, vuln_status=status)
 
         if false_positive == 'Yes':
-            vuln_info = arachni_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            vuln_info = arachni_scan_result_db.objects.filter(username=username, scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.name
                 url = vi.url
@@ -259,13 +266,13 @@ def arachni_vuln_out(request):
                 dup_data = name + url + severity
                 print(dup_data)
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                arachni_scan_result_db.objects.filter(vuln_id=vuln_id,
+                arachni_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                       scan_id=scan_id).update(false_positive=false_positive,
                                                                               vuln_status='Close',
                                                                               false_positive_hash=false_positive_hash
                                                                               )
 
-        arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No',
+        arachni_all_vul = arachni_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
                                                                 vuln_status='Open')
 
         total_high = len(arachni_all_vul.filter(severity="High"))
@@ -275,7 +282,7 @@ def arachni_vuln_out(request):
         total_duplicate = len(arachni_all_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low + total_info
 
-        arachni_scan_db.objects.filter(scan_id=scan_id).update(
+        arachni_scan_db.objects.filter(scan_id=scan_id, username=username).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -289,19 +296,22 @@ def arachni_vuln_out(request):
                 'scan_id': scan_id,
                 'vuln_name': vuln_name})
 
-    vuln_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
+    vuln_data = arachni_scan_result_db.objects.filter(username=username,
+                                                      scan_id=scan_id,
                                                       name=name,
                                                       false_positive='No',
                                                       vuln_status='Open'
                                                       )
 
-    vuln_data_close = arachni_scan_result_db.objects.filter(scan_id=scan_id,
+    vuln_data_close = arachni_scan_result_db.objects.filter(username=username,
+                                                            scan_id=scan_id,
                                                             name=name,
                                                             false_positive='No',
                                                             vuln_status='Closed'
                                                             )
 
-    false_data = arachni_scan_result_db.objects.filter(scan_id=scan_id,
+    false_data = arachni_scan_result_db.objects.filter(username=username,
+                                                       scan_id=scan_id,
                                                        name=name,
                                                        false_positive='Yes')
 
@@ -320,6 +330,7 @@ def del_arachni_scan(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
@@ -332,10 +343,11 @@ def del_arachni_scan(request):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = arachni_scan_db.objects.filter(scan_id=scan_id
+            item = arachni_scan_db.objects.filter(username=username,
+                                                  scan_id=scan_id
                                                   )
             item.delete()
-            item_results = arachni_scan_result_db.objects.filter(scan_id=scan_id)
+            item_results = arachni_scan_result_db.objects.filter(username=username, scan_id=scan_id)
             item_results.delete()
         return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
 
@@ -346,6 +358,7 @@ def arachni_del_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         un_scanid = request.POST.get("scan_id", )
@@ -356,9 +369,9 @@ def arachni_del_vuln(request):
         split_length = value_split.__len__()
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = arachni_scan_result_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln = arachni_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
             delete_vuln.delete()
-        arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=un_scanid).values(
+        arachni_all_vul = arachni_scan_result_db.objects.filter(username=username, scan_id=un_scanid).values(
             'name',
             'severity',
             'vuln_color'
@@ -367,7 +380,7 @@ def arachni_del_vuln(request):
         total_high = len(arachni_all_vul.filter(severity="High"))
         total_medium = len(arachni_all_vul.filter(severity="Medium"))
         total_low = len(arachni_all_vul.filter(severity="Low"))
-        arachni_scan_db.objects.filter(scan_id=un_scanid).update(
+        arachni_scan_db.objects.filter(username=username, scan_id=un_scanid).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -383,10 +396,11 @@ def arachni_settings(request):
     :param request:
     :return:
     """
+    username = request.user.username
     arachni_hosts = None
     arachni_ports = None
 
-    all_arachni = arachni_settings_db.objects.all()
+    all_arachni = arachni_settings_db.objects.filter(username=username)
     for arachni in all_arachni:
         # global arachni_api_key, arachni_hosts, arachni_ports
         arachni_hosts = arachni.arachni_url
@@ -407,11 +421,12 @@ def arachni_setting_update(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         arachnihost = request.POST.get("arachnihost", )
         port = request.POST.get("arachniport", )
         save_data = arachni_settings_db(
+            username=username,
             arachni_url=arachnihost,
             arachni_port=port,
         )
@@ -428,13 +443,13 @@ def export(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
         zap_resource = ArachniResource()
-        queryset = arachni_scan_result_db.objects.filter(scan_id=scan_id)
+        queryset = arachni_scan_result_db.objects.filter(username=username, scan_id=scan_id)
         dataset = zap_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')

@@ -23,7 +23,7 @@ from webscanners.zapscanner.views import email_sch_notify
 
 vul_col = ''
 
-def clair_report_json(data, project_id, scan_id):
+def clair_report_json(data, project_id, scan_id, username):
     """
 
     :param data:
@@ -89,7 +89,7 @@ def clair_report_json(data, project_id, scan_id):
 
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-            match_dup = clair_scan_results_db.objects.filter(
+            match_dup = clair_scan_results_db.objects.filter(username=username,
                 dup_hash=duplicate_hash).values('dup_hash')
             lenth_match = len(match_dup)
 
@@ -100,7 +100,7 @@ def clair_report_json(data, project_id, scan_id):
             else:
                 duplicate_vuln = 'None'
 
-            false_p = clair_scan_results_db.objects.filter(
+            false_p = clair_scan_results_db.objects.filter(username=username,
                 false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
@@ -126,6 +126,7 @@ def clair_report_json(data, project_id, scan_id):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 vul_col=vul_col,
+                username=username
             )
             save_all.save()
     except Exception:
@@ -183,7 +184,7 @@ def clair_report_json(data, project_id, scan_id):
 
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-            match_dup = clair_scan_results_db.objects.filter(
+            match_dup = clair_scan_results_db.objects.filter(username=username,
                 dup_hash=duplicate_hash).values('dup_hash')
             lenth_match = len(match_dup)
 
@@ -194,7 +195,7 @@ def clair_report_json(data, project_id, scan_id):
             else:
                 duplicate_vuln = 'None'
 
-            false_p = clair_scan_results_db.objects.filter(
+            false_p = clair_scan_results_db.objects.filter(username=username,
                 false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
@@ -220,6 +221,7 @@ def clair_report_json(data, project_id, scan_id):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 vul_col=vul_col,
+                username=username,
             )
             save_all.save()
     except Exception:
@@ -288,7 +290,7 @@ def clair_report_json(data, project_id, scan_id):
             else:
                 duplicate_vuln = 'None'
 
-            false_p = clair_scan_results_db.objects.filter(
+            false_p = clair_scan_results_db.objects.filter(username=username,
                 false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
@@ -314,6 +316,7 @@ def clair_report_json(data, project_id, scan_id):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 vul_col=vul_col,
+                username=username,
             )
             save_all.save()
     except Exception:
@@ -378,7 +381,7 @@ def clair_report_json(data, project_id, scan_id):
 
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-            match_dup = clair_scan_results_db.objects.filter(
+            match_dup = clair_scan_results_db.objects.filter(username=username,
                 dup_hash=duplicate_hash).values('dup_hash')
             lenth_match = len(match_dup)
 
@@ -389,7 +392,7 @@ def clair_report_json(data, project_id, scan_id):
             else:
                 duplicate_vuln = 'None'
 
-            false_p = clair_scan_results_db.objects.filter(
+            false_p = clair_scan_results_db.objects.filter(username=username,
                 false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
@@ -415,11 +418,12 @@ def clair_report_json(data, project_id, scan_id):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 vul_col=vul_col,
+                username=username,
             )
             save_all.save()
         # pass
 
-    all_clair_data = clair_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+    all_clair_data = clair_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
 
     total_vul = len(all_clair_data)
     total_high = len(all_clair_data.filter(Severity='High'))
@@ -427,7 +431,7 @@ def clair_report_json(data, project_id, scan_id):
     total_low = len(all_clair_data.filter(Severity='Low'))
     total_duplicate = len(all_clair_data.filter(vuln_duplicate='Yes'))
 
-    clair_scan_db.objects.filter(scan_id=scan_id).update(
+    clair_scan_db.objects.filter(username=username, scan_id=scan_id).update(
         total_vuln=total_vul,
         SEVERITY_HIGH=total_high,
         SEVERITY_MEDIUM=total_medium,

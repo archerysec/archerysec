@@ -34,7 +34,7 @@ class OpenVAS_Plugin:
     OpenVAS plugin Class
     """
 
-    def __init__(self, scan_ip, project_id, sel_profile):
+    def __init__(self, scan_ip, project_id, sel_profile, username):
         """
 
         :param scan_ip:
@@ -45,6 +45,7 @@ class OpenVAS_Plugin:
         self.scan_ip = scan_ip
         self.project_id = project_id
         self.sel_profile = sel_profile
+        self.username = username
 
     def connect(self):
         """
@@ -52,7 +53,7 @@ class OpenVAS_Plugin:
         :return:
         """
 
-        all_openvas = openvas_setting_db.objects.all()
+        all_openvas = openvas_setting_db.objects.filter(username=self.username)
 
         for openvas in all_openvas:
             ov_user = openvas.user
@@ -114,26 +115,19 @@ class OpenVAS_Plugin:
             time.sleep(5)
 
         status = "100"
-        scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+        scan_save_db.objects.filter(username=self.username, scan_id=scan_id).update(scan_status=status)
 
         return status
 
 
-def vuln_an_id(scan_id, project_id):
+def vuln_an_id(scan_id, project_id, username):
     """
     The function is filtering all data from OpenVAS and dumping to Archery database.
     :param scan_id:
     :return:
     """
-    # ov_user = openvas_setting.openvas_username()
-    # ov_pass = openvas_setting.openvas_pass()
-    # ov_ip = openvas_setting.openvas_host()
-    #
-    # lod_ov_user = signing.loads(ov_user)
-    # lod_ov_pass = signing.loads(ov_pass)
-    # lod_ov_ip = signing.loads(ov_ip)
 
-    all_openvas = openvas_setting_db.objects.all()
+    all_openvas = openvas_setting_db.objects.filter(username=username)
 
     for openvas in all_openvas:
         ov_user = openvas.user
@@ -255,7 +249,7 @@ def vuln_an_id(scan_id, project_id):
         dup_data = name + host + severity + port
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-        match_dup = ov_scan_result_db.objects.filter(
+        match_dup = ov_scan_result_db.objects.filter(username=username,
             vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
         lenth_match = len(match_dup)
 
@@ -266,7 +260,7 @@ def vuln_an_id(scan_id, project_id):
         else:
             duplicate_vuln = 'None'
 
-        false_p = ov_scan_result_db.objects.filter(
+        false_p = ov_scan_result_db.objects.filter(username=username,
             false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
 
@@ -298,11 +292,12 @@ def vuln_an_id(scan_id, project_id):
                                      dup_hash=duplicate_hash,
                                      vuln_duplicate=duplicate_vuln,
                                      project_id=project_id,
+                                     username=username
 
                                      )
         save_all.save()
 
-        openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id)
+        openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id)
 
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
@@ -311,7 +306,7 @@ def vuln_an_id(scan_id, project_id):
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
 
-        scan_save_db.objects.filter(scan_id=scan_id). \
+        scan_save_db.objects.filter(username=username, scan_id=scan_id). \
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,
@@ -321,6 +316,6 @@ def vuln_an_id(scan_id, project_id):
 
                    )
 
-        for row in ov_scan_result_db.objects.all():
-            if ov_scan_result_db.objects.filter(name=row.name, port=row.port, scan_id=scan_id).count() > 1:
+        for row in ov_scan_result_db.objects.filter(username=username):
+            if ov_scan_result_db.objects.filter(username=username, name=row.name, port=row.port, scan_id=scan_id).count() > 1:
                 row.delete()

@@ -39,7 +39,7 @@ banner = ''
 vuln_color = None
 
 
-def updated_xml_parser(root, project_id, scan_id):
+def updated_xml_parser(root, project_id, scan_id, username):
     for openvas in root.findall(".//result"):
         for r in openvas:
             if r.tag == "name":
@@ -137,7 +137,7 @@ def updated_xml_parser(root, project_id, scan_id):
         vul_id = uuid.uuid4()
         dup_data = name + host + severity + port
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-        match_dup = ov_scan_result_db.objects.filter(
+        match_dup = ov_scan_result_db.objects.filter(username=username,
             vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
         lenth_match = len(match_dup)
         vuln_color = ''
@@ -155,7 +155,7 @@ def updated_xml_parser(root, project_id, scan_id):
             duplicate_vuln = 'No'
         else:
             duplicate_vuln = 'None'
-        false_p = ov_scan_result_db.objects.filter(
+        false_p = ov_scan_result_db.objects.filter(username=username,
             false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
         if fp_lenth_match == 1:
@@ -185,16 +185,17 @@ def updated_xml_parser(root, project_id, scan_id):
                                      dup_hash=duplicate_hash,
                                      vuln_duplicate=duplicate_vuln,
                                      project_id=project_id,
-                                     vuln_color=vuln_color
+                                     vuln_color=vuln_color,
+                                     username=username,
                                      )
         save_all.save()
-        openvas_vul = ov_scan_result_db.objects.filter(scan_id=host)
+        openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=host)
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
         total_low = len(openvas_vul.filter(threat="Low"))
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
-        scan_save_db.objects.filter(scan_id=host). \
+        scan_save_db.objects.filter(username=username, scan_id=host). \
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,

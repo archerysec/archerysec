@@ -23,6 +23,7 @@ class zap_spider_db(models.Model):
     spider_url = models.TextField(blank=True)
     spider_scanid = models.TextField(blank=True)
     urls_num = models.TextField(blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class zap_scans_db(models.Model):
@@ -40,11 +41,13 @@ class zap_scans_db(models.Model):
     date_time = models.DateTimeField(null=True)
     rescan = models.TextField(blank=True, null=True)
     total_dup = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class zap_spider_results(models.Model):
     spider_id = models.TextField(blank=True)
     spider_urls = models.TextField(blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class zap_scan_results_db(models.Model):
@@ -93,15 +96,18 @@ class zap_scan_results_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='ZAP Scanner', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class cookie_db(models.Model):
     url = models.TextField(blank=True)
     cookie = models.TextField(blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class excluded_db(models.Model):
     exclude_url = models.TextField(blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class burp_scan_db(models.Model):
@@ -119,6 +125,7 @@ class burp_scan_db(models.Model):
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
     total_dup = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class burp_scan_result_db(models.Model):
@@ -155,6 +162,7 @@ class burp_scan_result_db(models.Model):
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Burp Scanner', editable=False)
     severity_color = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class burp_issue_definitions(models.Model):
@@ -164,6 +172,7 @@ class burp_issue_definitions(models.Model):
     reference = models.TextField(blank=True, null=True)
     vulnerability_classifications = models.TextField(blank=True, null=True)
     name = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class netsparker_scan_db(models.Model):
@@ -182,6 +191,7 @@ class netsparker_scan_db(models.Model):
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
     total_dup = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class netsparker_scan_result_db(models.Model):
@@ -215,6 +225,7 @@ class netsparker_scan_result_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Netsparker', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class web_scan_db(models.Model):
@@ -229,6 +240,7 @@ class web_scan_db(models.Model):
     low_vul = models.IntegerField(blank=True)
     info_vuln = models.IntegerField(blank=True)
     scanner = models.TextField(blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class email_config_db(models.Model):
@@ -236,6 +248,7 @@ class email_config_db(models.Model):
     email_subject = models.TextField(blank=True)
     email_message = models.TextField(blank=True)
     email_id_to = models.EmailField(blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class arachni_scan_db(models.Model):
@@ -253,6 +266,7 @@ class arachni_scan_db(models.Model):
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
     total_dup = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class arachni_scan_result_db(models.Model):
@@ -290,6 +304,7 @@ class arachni_scan_result_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Arachni', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class task_schedule_db(models.Model):
@@ -299,6 +314,7 @@ class task_schedule_db(models.Model):
     project_id = models.TextField(blank=True, null=True)
     scanner = models.TextField(blank=True, null=True)
     periodic_task = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class webinspect_scan_db(models.Model):
@@ -317,6 +333,7 @@ class webinspect_scan_db(models.Model):
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
     total_dup = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class webinspect_scan_result_db(models.Model):
@@ -348,6 +365,7 @@ class webinspect_scan_result_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Webinspect', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class acunetix_scan_db(models.Model):
@@ -366,6 +384,7 @@ class acunetix_scan_db(models.Model):
     date_time = models.DateTimeField(blank=True, null=True)
     rescan = models.TextField(blank=True, null=True)
     total_dup = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class acunetix_scan_result_db(models.Model):
@@ -420,3 +439,4 @@ class acunetix_scan_result_db(models.Model):
     VulnUrl = models.TextField(null=True, blank=True)
     VulnFullUrl = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Acunetix', editable=False)
+    username = models.CharField(max_length=256, null=True)

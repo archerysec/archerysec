@@ -20,7 +20,7 @@ import uuid
 import hashlib
 
 
-def nikto_html_parser(data, project_id, scan_id):
+def nikto_html_parser(data, project_id, scan_id, username):
     discription = 'None'
     targetip = 'None'
     hostname = 'None'
@@ -91,8 +91,8 @@ def nikto_html_parser(data, project_id, scan_id):
         dup_data = discription + hostname
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-        match_dup = nikto_vuln_db.objects.filter(
-            dup_hash=duplicate_hash).values('dup_hash').distinct()
+        match_dup = nikto_vuln_db.objects.filter(username=username,
+                                                 dup_hash=duplicate_hash).values('dup_hash').distinct()
         lenth_match = len(match_dup)
 
         if lenth_match == 1:
@@ -102,8 +102,8 @@ def nikto_html_parser(data, project_id, scan_id):
         else:
             duplicate_vuln = 'None'
 
-        false_p = nikto_vuln_db.objects.filter(
-            false_positive_hash=duplicate_hash)
+        false_p = nikto_vuln_db.objects.filter(username=username,
+                                               false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
 
         global false_positive
@@ -129,7 +129,8 @@ def nikto_html_parser(data, project_id, scan_id):
             false_positive=false_positive,
             dup_hash=duplicate_hash,
             vuln_duplicate=duplicate_vuln,
-            vuln_status = 'Open',
+            vuln_status='Open',
+            username=username,
 
         )
         dump_data.save()

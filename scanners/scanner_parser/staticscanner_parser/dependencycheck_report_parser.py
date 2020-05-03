@@ -24,7 +24,7 @@ from django.shortcuts import HttpResponse
 from webscanners.zapscanner.views import email_sch_notify
 
 
-def xml_parser(data, project_id, scan_id):
+def xml_parser(data, project_id, scan_id, username):
     """
 
     :param data:
@@ -185,7 +185,7 @@ def xml_parser(data, project_id, scan_id):
                         dup_data = name + fileName + severity
                         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-                        match_dup = dependencycheck_scan_results_db.objects.filter(
+                        match_dup = dependencycheck_scan_results_db.objects.filter(username=username,
                             dup_hash=duplicate_hash).values('dup_hash')
                         lenth_match = len(match_dup)
 
@@ -196,7 +196,7 @@ def xml_parser(data, project_id, scan_id):
                         else:
                             duplicate_vuln = 'None'
 
-                        false_p = dependencycheck_scan_results_db.objects.filter(
+                        false_p = dependencycheck_scan_results_db.objects.filter(username=username,
                             false_positive_hash=duplicate_hash)
                         fp_lenth_match = len(false_p)
 
@@ -233,10 +233,11 @@ def xml_parser(data, project_id, scan_id):
                             vuln_status='Open',
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
-                            false_positive=false_positive
+                            false_positive=false_positive,
+                            username=username,
                         )
                         save_all.save()
-        all_dependency_data = dependencycheck_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+        all_dependency_data = dependencycheck_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
 
         total_vul = len(all_dependency_data)
         total_high = len(all_dependency_data.filter(severity="High"))
@@ -244,7 +245,7 @@ def xml_parser(data, project_id, scan_id):
         total_low = len(all_dependency_data.filter(severity="Low"))
         total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
 
-        dependencycheck_scan_db.objects.filter(scan_id=scan_id).update(
+        dependencycheck_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,

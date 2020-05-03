@@ -28,13 +28,15 @@ def nodejsscan_list(request):
     :param request:
     :return:
     """
-    all_nodejsscan_scan = nodejsscan_scan_db.objects.all()
+    username = request.user.username
+    all_nodejsscan_scan = nodejsscan_scan_db.objects.filter(username=username)
 
     return render(request, 'nodejsscan/nodejsscan_list.html',
                   {'all_nodejsscan_scan': all_nodejsscan_scan})
 
 
 def list_vuln(request):
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
@@ -42,8 +44,8 @@ def list_vuln(request):
 
     # nodejsscan_all_vuln = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id)
 
-    nodejsscan_all_vuln = nodejsscan_scan_results_db.objects.filter(
-        scan_id=scan_id, vuln_status='Open').values(
+    nodejsscan_all_vuln = nodejsscan_scan_results_db.objects.filter(username=username,
+                                                                    scan_id=scan_id, vuln_status='Open').values(
         'title',
         'severity',
         'vul_col',
@@ -59,6 +61,7 @@ def nodejsscan_vuln_data(request):
     :param request:
     :return:
     """
+    username = request.user.username
     jira_url = ''
     jira = jirasetting.objects.all()
     for d in jira:
@@ -77,24 +80,25 @@ def nodejsscan_vuln_data(request):
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
-        nodejsscan_scan_results_db.objects.filter(vuln_id=vuln_id,
+        nodejsscan_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                   scan_id=scan_id).update(false_positive=false_positive,
                                                                           vuln_status=status)
 
         if false_positive == 'Yes':
-            vuln_info = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            vuln_info = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 title = vi.title
                 severity = vi.severity
                 dup_data = severity + title
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                nodejsscan_scan_results_db.objects.filter(vuln_id=vuln_id,
+                nodejsscan_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                           scan_id=scan_id).update(false_positive=false_positive,
                                                                                   vuln_status='Close',
                                                                                   false_positive_hash=false_positive_hash
                                                                                   )
 
-        all_nodejsscan_data = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No',
+        all_nodejsscan_data = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                                        false_positive='No',
                                                                         vuln_status='Open')
 
         total_vul = len(all_nodejsscan_data)
@@ -103,7 +107,7 @@ def nodejsscan_vuln_data(request):
         total_low = len(all_nodejsscan_data.filter(severity='Low'))
         total_duplicate = len(all_nodejsscan_data.filter(vuln_duplicate='Yes'))
 
-        nodejsscan_scan_db.objects.filter(scan_id=scan_id).update(
+        nodejsscan_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
@@ -114,17 +118,17 @@ def nodejsscan_vuln_data(request):
         return HttpResponseRedirect(
             reverse('nodejsscan:nodejsscan_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
-    nodejsscan_vuln_data = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id,
+    nodejsscan_vuln_data = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                      title=test_name,
                                                                      vuln_status='Open',
                                                                      false_positive='No'
                                                                      )
 
-    vuln_data_closed = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id,
+    vuln_data_closed = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                  title=test_name,
                                                                  vuln_status='Closed',
                                                                  false_positive='No')
-    false_data = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id,
+    false_data = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                            title=test_name,
                                                            false_positive='Yes')
 
@@ -142,7 +146,7 @@ def nodejsscan_details(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
         vuln_id = request.GET['vuln_id']
@@ -150,10 +154,10 @@ def nodejsscan_details(request):
         scan_id = None
         vuln_id = None
 
-    nodejsscan_vuln_details = nodejsscan_scan_results_db.objects.filter(
-        scan_id=scan_id,
-        vuln_id=vuln_id
-    )
+    nodejsscan_vuln_details = nodejsscan_scan_results_db.objects.filter(username=username,
+                                                                        scan_id=scan_id,
+                                                                        vuln_id=vuln_id
+                                                                        )
 
     return render(request, 'nodejsscan/nodejsscan_vuln_details.html',
                   {'nodejsscan_vuln_details': nodejsscan_vuln_details}
@@ -166,6 +170,7 @@ def del_nodejsscan(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_item = str(scan_id)
@@ -175,9 +180,9 @@ def del_nodejsscan(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
-            item = nodejsscan_scan_db.objects.filter(scan_id=scan_id)
+            item = nodejsscan_scan_db.objects.filter(username=username, scan_id=scan_id)
             item.delete()
-            item_results = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id)
+            item_results = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id)
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
         return HttpResponseRedirect(reverse('nodejsscan:nodejsscan_list'))
@@ -189,6 +194,7 @@ def nodejsscan_del_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         scan_id = request.POST.get("scan_id", )
@@ -199,9 +205,9 @@ def nodejsscan_del_vuln(request):
         print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = nodejsscan_scan_results_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln = nodejsscan_scan_results_db.objects.filter(username=username, vuln_id=vuln_id)
             delete_vuln.delete()
-        all_nodejsscan_data = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id)
+        all_nodejsscan_data = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id)
 
         total_vul = len(all_nodejsscan_data)
         total_high = len(all_nodejsscan_data.filter(severity="High"))
@@ -209,7 +215,7 @@ def nodejsscan_del_vuln(request):
         total_low = len(all_nodejsscan_data.filter(severity="Low"))
         total_duplicate = len(all_nodejsscan_data.filter(vuln_duplicate='Yes'))
 
-        nodejsscan_scan_db.objects.filter(scan_id=scan_id).update(
+        nodejsscan_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
@@ -225,13 +231,13 @@ def export(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
         nodejsscan_resource = nodejsscanResource()
-        queryset = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id)
+        queryset = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id)
         dataset = nodejsscan_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')

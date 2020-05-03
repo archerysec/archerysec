@@ -25,7 +25,7 @@ from webscanners.zapscanner.views import email_sch_notify
 vul_col = ''
 
 
-def npmaudit_report_json(data, project_id, scan_id):
+def npmaudit_report_json(data, project_id, scan_id, username):
     """
 
     :param data:
@@ -111,7 +111,7 @@ def npmaudit_report_json(data, project_id, scan_id):
 
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-        match_dup = npmaudit_scan_results_db.objects.filter(
+        match_dup = npmaudit_scan_results_db.objects.filter(username=username,
             dup_hash=duplicate_hash).values('dup_hash')
         lenth_match = len(match_dup)
 
@@ -122,7 +122,7 @@ def npmaudit_report_json(data, project_id, scan_id):
         else:
             duplicate_vuln = 'None'
 
-        false_p = npmaudit_scan_results_db.objects.filter(
+        false_p = npmaudit_scan_results_db.objects.filter(username=username,
             false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
 
@@ -155,10 +155,11 @@ def npmaudit_report_json(data, project_id, scan_id):
             severity=severity,
             cwe=cwe,
             url=url,
+            username=username,
         )
         save_all.save()
 
-    all_findbugs_data = npmaudit_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+    all_findbugs_data = npmaudit_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(severity="High"))
@@ -166,7 +167,7 @@ def npmaudit_report_json(data, project_id, scan_id):
     total_low = len(all_findbugs_data.filter(severity="Low"))
     total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
 
-    npmaudit_scan_db.objects.filter(scan_id=scan_id).update(
+    npmaudit_scan_db.objects.filter(username=username, scan_id=scan_id).update(
         total_vuln=total_vul,
         SEVERITY_HIGH=total_high,
         SEVERITY_MEDIUM=total_medium,

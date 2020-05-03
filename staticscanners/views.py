@@ -47,6 +47,7 @@ def report_import(request):
     :param request:
     :return:
     """
+    username = request.user.username
     all_project = project_db.objects.all()
 
     if request.method == "POST":
@@ -63,13 +64,16 @@ def report_import(request):
                                        date_time=date_time,
                                        project_id=project_id,
                                        scan_status=scan_status,
+                                       username=username
                                        )
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
             bandit_report_json(data=data,
                                project_id=project_id,
-                               scan_id=scan_id)
+                               scan_id=scan_id,
+                               username=username
+                               )
 
             return HttpResponseRedirect(reverse('banditscanner:banditscans_list'))
 
@@ -80,13 +84,16 @@ def report_import(request):
                                          date_time=date_time,
                                          project_id=project_id,
                                          scan_status=scan_status,
+                                         username=username
                                          )
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
             retirejs_report_json(data=data,
                                  project_id=project_id,
-                                 scan_id=scan_id)
+                                 scan_id=scan_id,
+                                 username=username
+                                 )
 
             return HttpResponseRedirect(reverse('retirejsscanner:retirejsscans_list'))
 
@@ -97,13 +104,16 @@ def report_import(request):
                                       date_time=date_time,
                                       project_id=project_id,
                                       scan_status=scan_status,
+                                      username=username
                                       )
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
             clair_report_json(data=data,
                               project_id=project_id,
-                              scan_id=scan_id)
+                              scan_id=scan_id,
+                              username=username
+                              )
             return HttpResponseRedirect(reverse('clair:clair_list'))
 
         if scanner == "trivy_scan":
@@ -113,13 +123,16 @@ def report_import(request):
                                       date_time=date_time,
                                       project_id=project_id,
                                       scan_status=scan_status,
+                                      username=username,
                                       )
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
             trivy_json_report_parser.trivy_report_json(project_id=project_id,
                                                        scan_id=scan_id,
-                                                       data=data)
+                                                       data=data,
+                                                       username=username
+                                                       )
             return HttpResponseRedirect(reverse('trivy:trivy_list'))
 
         if scanner == "npmaudit_scan":
@@ -129,13 +142,16 @@ def report_import(request):
                                          date_time=date_time,
                                          project_id=project_id,
                                          scan_status=scan_status,
+                                         username=username
                                          )
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
             npm_audit_report_json.npmaudit_report_json(project_id=project_id,
                                                        scan_id=scan_id,
-                                                       data=data)
+                                                       data=data,
+                                                       username=username
+                                                       )
             return HttpResponseRedirect(reverse('npmaudit:npmaudit_list'))
 
         if scanner == "nodejsscan_scan":
@@ -145,13 +161,16 @@ def report_import(request):
                                            date_time=date_time,
                                            project_id=project_id,
                                            scan_status=scan_status,
+                                           username=username
                                            )
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
             nodejsscan_report_json.nodejsscan_report_json(project_id=project_id,
                                                           scan_id=scan_id,
-                                                          data=data)
+                                                          data=data,
+                                                          username=username
+                                                          )
             return HttpResponseRedirect(reverse('nodejsscan:nodejsscan_list'))
 
         if scanner == "tfsec_scan":
@@ -161,13 +180,16 @@ def report_import(request):
                                       date_time=date_time,
                                       project_id=project_id,
                                       scan_status=scan_status,
+                                      username=username
                                       )
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
             tfsec_report_parser.tfsec_report_json(project_id=project_id,
                                                   scan_id=scan_id,
-                                                  data=data)
+                                                  data=data,
+                                                  username=username
+                                                  )
             return HttpResponseRedirect(reverse('tfsec:tfsec_list'))
 
         if scanner == "inspec_scan":
@@ -177,13 +199,16 @@ def report_import(request):
                                        date_time=date_time,
                                        project_id=project_id,
                                        scan_status=scan_status,
+                                       username=username
                                        )
             scan_dump.save()
             j = json_file.read()
             data = json.loads(j)
             inspec_report_json(data=data,
                                project_id=project_id,
-                               scan_id=scan_id)
+                               scan_id=scan_id,
+                               username=username
+                               )
 
             return HttpResponseRedirect(reverse('inspec:inspec_list'))
 

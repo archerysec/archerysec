@@ -57,7 +57,7 @@ response_raw_headers = ""
 false_positive = None
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(root, project_id, scan_id, username):
     global name, description, remedy_guidance, remedy_code, severity, check, digest, references, \
         vector, remarks, page, signature, \
         proof, trusted, platform_type, platform_name, url, action, \
@@ -231,8 +231,8 @@ def xml_parser(root, project_id, scan_id):
                 dup_data = name + url + severity
                 duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-                match_dup = arachni_scan_result_db.objects.filter(
-                    dup_hash=duplicate_hash).values('dup_hash').distinct()
+                match_dup = arachni_scan_result_db.objects.filter(username=username,
+                                                                  dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)
 
                 if lenth_match == 1:
@@ -242,8 +242,8 @@ def xml_parser(root, project_id, scan_id):
                 else:
                     duplicate_vuln = 'None'
 
-                false_p = arachni_scan_result_db.objects.filter(
-                    false_positive_hash=duplicate_hash)
+                false_p = arachni_scan_result_db.objects.filter(username=username,
+                                                                false_positive_hash=duplicate_hash)
                 fp_lenth_match = len(false_p)
 
                 global false_positive
@@ -278,12 +278,12 @@ def xml_parser(root, project_id, scan_id):
                                                    false_positive=false_positive,
                                                    vuln_status='Open',
                                                    dup_hash=duplicate_hash,
-                                                   vuln_duplicate=duplicate_vuln
-
+                                                   vuln_duplicate=duplicate_vuln,
+                                                   username=username
                                                    )
                 dump_data.save()
 
-    arachni_all_vul = arachni_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+    arachni_all_vul = arachni_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
 
     total_high = len(arachni_all_vul.filter(severity="High"))
     total_medium = len(arachni_all_vul.filter(severity="Medium"))
@@ -292,7 +292,7 @@ def xml_parser(root, project_id, scan_id):
     total_duplicate = len(arachni_all_vul.filter(vuln_duplicate='Yes'))
     total_vul = total_high + total_medium + total_low + total_info
 
-    arachni_scan_db.objects.filter(scan_id=scan_id).update(
+    arachni_scan_db.objects.filter(scan_id=scan_id, username=username).update(
         url=url,
         total_vul=total_vul,
         high_vul=total_high,
@@ -302,7 +302,7 @@ def xml_parser(root, project_id, scan_id):
         total_dup=total_duplicate,
     )
     if total_vul == total_duplicate:
-        arachni_scan_db.objects.filter(scan_id=scan_id).update(
+        arachni_scan_db.objects.filter(scan_id=scan_id, username=username).update(
             url=url,
             total_vul=total_vul,
             high_vul=total_high,

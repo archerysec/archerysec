@@ -30,8 +30,10 @@ from django.conf import settings
 from archerysettings.models import email_db
 from django.core.mail import send_mail
 
+to_mail = ''
 
 def email_notify(user, subject, message):
+    global to_mail
     all_email = email_db.objects.all()
     for email in all_email:
         to_mail = email.recipient_list
@@ -99,7 +101,7 @@ class burp_scans(object):
         global burp_status, data
 
         # Load setting parameters from burp_setting_db models
-        all_burp_settings = burp_setting_db.objects.all()
+        all_burp_settings = burp_setting_db.objects.filter(username=self.user.username)
 
         for data in all_burp_settings:
             burp_host = data.burp_url
@@ -107,7 +109,8 @@ class burp_scans(object):
             burp_api_key = data.burp_api_key
 
         date_time = datetime.now()
-        scan_dump = burp_scan_db(scan_id=self.scan_id,
+        scan_dump = burp_scan_db(username=self.user.username,
+                                 scan_id=self.scan_id,
                                  project_id=self.project_id,
                                  url=self.scan_url,
                                  date_time=date_time)
@@ -132,16 +135,16 @@ class burp_scans(object):
         json_scan_data = json.dumps(scan_info.data)
         scan_info_data = json.loads(json_scan_data)
         scan_status = scan_info_data['scan_metrics']['crawl_and_audit_progress']
+        print(scan_status)
 
         while (int(scan_status) < 100):
             scan_info = bi.scan_info(burp_scan_id)
             json_scan_data = json.dumps(scan_info.data)
             scan_info_data = json.loads(json_scan_data)
             scan_status = scan_info_data['scan_metrics']['crawl_and_audit_progress']
-            print("Burp Scan Status :"), scan_status
-            burp_scan_db.objects.filter(
-                scan_id=self.scan_id).update(
-                scan_status=scan_status)
+            print("Scan Status:", scan_status)
+            burp_scan_db.objects.filter(username=self.user.username,
+                                        scan_id=self.scan_id).update(scan_status=scan_status)
             time.sleep(5)
 
         scan_info = bi.scan_info(burp_scan_id)
@@ -245,7 +248,7 @@ class burp_scans(object):
             dup_data = name + path + severity
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-            match_dup = burp_scan_result_db.objects.filter(
+            match_dup = burp_scan_result_db.objects.filter(username=self.user.username,
                 dup_hash=duplicate_hash).values('dup_hash').distinct()
             lenth_match = len(match_dup)
 
@@ -256,7 +259,7 @@ class burp_scans(object):
             else:
                 duplicate_vuln = 'None'
 
-            false_p = burp_scan_result_db.objects.filter(
+            false_p = burp_scan_result_db.objects.filter(username=self.user.username,
                 false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
@@ -295,12 +298,14 @@ class burp_scans(object):
                     description=issue_description,
                     remediation=issue_remediation,
                     reference=issue_reference,
-                    vulnerability_classifications=issue_vulnerability_classifications
+                    vulnerability_classifications=issue_vulnerability_classifications,
+                    username=self.user.username
                 )
                 data_dump.save()
             except Exception as e:
                 print(e)
-        burp_all_vul = burp_scan_result_db.objects.filter(scan_id=self.scan_id).values('name', 'severity'
+        burp_all_vul = burp_scan_result_db.objects.filter(username=self.user.username,
+                                                          scan_id=self.scan_id).values('name', 'severity'
                                                                                        ).distinct()
         total_vul = len(burp_all_vul)
         total_high = len(burp_all_vul.filter(severity="High"))
@@ -308,7 +313,7 @@ class burp_scans(object):
         total_low = len(burp_all_vul.filter(severity="Low"))
         total_info = len(burp_all_vul.filter(severity="Info"))
         total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
-        burp_scan_db.objects.filter(scan_id=self.scan_id).update(
+        burp_scan_db.objects.filter(username=self.user.username, scan_id=self.scan_id).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,

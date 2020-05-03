@@ -41,6 +41,7 @@ class bandit_scan_db(models.Model):
     scan_status = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     total_dup = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class bandit_scan_results_db(models.Model):
@@ -68,6 +69,7 @@ class bandit_scan_results_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Bandit', editable=False)
     jira_ticket = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class dependencycheck_scan_db(models.Model):
@@ -83,6 +85,7 @@ class dependencycheck_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class dependencycheck_scan_results_db(models.Model):
@@ -118,6 +121,7 @@ class dependencycheck_scan_results_db(models.Model):
     sha256 = models.TextField(blank=True, null=True)
     evidenceCollected = models.TextField(blank=True, null=True)
     scanner = models.TextField(default='Dependency Check', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class retirejs_scan_db(models.Model):
@@ -134,6 +138,7 @@ class retirejs_scan_db(models.Model):
     scan_status = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     total_dup = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class retirejs_scan_results_db(models.Model):
@@ -157,6 +162,7 @@ class retirejs_scan_results_db(models.Model):
     issue = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='RetireJs', editable=False)
     jira_ticket = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class findbugs_scan_db(models.Model):
@@ -172,6 +178,7 @@ class findbugs_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class findbugs_scan_results_db(models.Model):
@@ -204,6 +211,7 @@ class findbugs_scan_results_db(models.Model):
     risk = models.TextField(blank=True)
     scanner = models.TextField(default='Findbugs', editable=False)
     jira_ticket = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class clair_scan_db(models.Model):
@@ -219,6 +227,7 @@ class clair_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class clair_scan_results_db(models.Model):
@@ -245,6 +254,7 @@ class clair_scan_results_db(models.Model):
     controls_tags_audit_text = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Clair', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class trivy_scan_db(models.Model):
@@ -260,6 +270,7 @@ class trivy_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class trivy_scan_results_db(models.Model):
@@ -287,6 +298,7 @@ class trivy_scan_results_db(models.Model):
     References = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Trivy', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class npmaudit_scan_db(models.Model):
@@ -302,6 +314,7 @@ class npmaudit_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class npmaudit_scan_results_db(models.Model):
@@ -336,6 +349,7 @@ class npmaudit_scan_results_db(models.Model):
     cwe = models.TextField(null=True, blank=True)
     url = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='npmaudit', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class nodejsscan_scan_db(models.Model):
@@ -351,6 +365,7 @@ class nodejsscan_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class nodejsscan_scan_results_db(models.Model):
@@ -376,6 +391,7 @@ class nodejsscan_scan_results_db(models.Model):
     title = models.TextField(null=True, blank=True)
     severity = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='nodejsscan', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class tfsec_scan_db(models.Model):
@@ -391,6 +407,7 @@ class tfsec_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class tfsec_scan_results_db(models.Model):
@@ -415,3 +432,4 @@ class tfsec_scan_results_db(models.Model):
     title = models.TextField(null=True, blank=True)
     severity = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='tfsec', editable=False)
+    username = models.CharField(max_length=256, null=True)

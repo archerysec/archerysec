@@ -35,6 +35,7 @@ class inspec_scan_db(models.Model):
     inspec_failed = models.IntegerField(blank=True, null=True)
     inspec_passed = models.IntegerField(blank=True, null=True)
     inspec_skipped = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class inspec_scan_results_db(models.Model):
@@ -86,3 +87,4 @@ class inspec_scan_results_db(models.Model):
     controls_tags_audit_text = models.TextField(null=True, blank=True)
 
     scanner = models.TextField(default='inspec', editable=False)
+    username = models.CharField(max_length=256, null=True)

@@ -61,7 +61,8 @@ UriName = None
 VulnUrl = None
 FullURL = None
 
-def xml_parser(root, project_id, scan_id):
+
+def xml_parser(root, project_id, scan_id, username):
     """
 
     :param root:
@@ -241,8 +242,9 @@ def xml_parser(root, project_id, scan_id):
                     dup_data = VulnName + FullURL + risk
                     duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-                    match_dup = acunetix_scan_result_db.objects.filter(
-                        dup_hash=duplicate_hash).values('dup_hash').distinct()
+                    match_dup = acunetix_scan_result_db.objects.filter(username=username,
+                                                                       dup_hash=duplicate_hash).values(
+                        'dup_hash').distinct()
                     lenth_match = len(match_dup)
 
                     if lenth_match == 1:
@@ -252,8 +254,8 @@ def xml_parser(root, project_id, scan_id):
                     else:
                         duplicate_vuln = 'None'
 
-                    false_p = acunetix_scan_result_db.objects.filter(
-                        false_positive_hash=duplicate_hash)
+                    false_p = acunetix_scan_result_db.objects.filter(username=username,
+                                                                     false_positive_hash=duplicate_hash)
                     fp_lenth_match = len(false_p)
 
                     if fp_lenth_match == 1:
@@ -262,6 +264,7 @@ def xml_parser(root, project_id, scan_id):
                         false_positive = 'No'
 
                     dump_data = acunetix_scan_result_db(
+                        username=username,
                         scan_id=scan_id,
                         project_id=project_id,
                         vuln_id=vuln_id,
@@ -312,7 +315,7 @@ def xml_parser(root, project_id, scan_id):
                     )
                     dump_data.save()
 
-    acunetix_all_vul = acunetix_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+    acunetix_all_vul = acunetix_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
 
     total_high = len(acunetix_all_vul.filter(VulnSeverity="High"))
     total_medium = len(acunetix_all_vul.filter(VulnSeverity="Medium"))
@@ -323,7 +326,7 @@ def xml_parser(root, project_id, scan_id):
 
     # cal_total_vuln = total_high + total_medium + total_low + total_info
 
-    acunetix_scan_db.objects.filter(scan_id=scan_id) \
+    acunetix_scan_db.objects.filter(username=username, scan_id=scan_id) \
         .update(total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,

@@ -43,7 +43,7 @@ false_positive = None
 
 def xml_parser(root,
                project_id,
-               scan_id):
+               scan_id, username):
     global url, \
         Scheme, \
         Host, \
@@ -128,7 +128,7 @@ def xml_parser(root,
             dup_data = Name + url + Severity
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-            match_dup = webinspect_scan_result_db.objects.filter(
+            match_dup = webinspect_scan_result_db.objects.filter(username=username,
                 dup_hash=duplicate_hash).values('dup_hash').distinct()
             lenth_match = len(match_dup)
 
@@ -139,7 +139,7 @@ def xml_parser(root,
             else:
                 duplicate_vuln = 'None'
 
-            false_p = webinspect_scan_result_db.objects.filter(
+            false_p = webinspect_scan_result_db.objects.filter(username=username,
                 false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
@@ -175,11 +175,13 @@ def xml_parser(root,
                                                       vuln_status='Open',
                                                       dup_hash=duplicate_hash,
                                                       vuln_duplicate=duplicate_vuln,
-                                                      project_id=project_id
+                                                      project_id=project_id,
+                                                      username=username
                                                       )
                 dump_data.save()
 
-        webinspect_all_vul = webinspect_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+        webinspect_all_vul = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
+                                                                      false_positive='No')
 
         total_critical = len(webinspect_all_vul.filter(severity='Critical'))
         total_high = len(webinspect_all_vul.filter(severity="High"))
@@ -189,7 +191,8 @@ def xml_parser(root,
         total_duplicate = len(webinspect_all_vul.filter(severity='Yes'))
         total_vul = total_critical + total_high + total_medium + total_low + total_info
 
-        webinspect_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
+        webinspect_scan_db.objects.filter(username=username,
+                                          scan_id=scan_id).update(total_vul=total_vul,
                                                                   high_vul=total_high,
                                                                   medium_vul=total_medium,
                                                                   low_vul=total_low,

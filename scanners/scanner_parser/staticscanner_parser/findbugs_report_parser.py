@@ -30,7 +30,7 @@ LongMessage = 'NA'
 name = ''
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(root, project_id, scan_id, username):
     """
 
     :param root:
@@ -77,8 +77,8 @@ def xml_parser(root, project_id, scan_id):
 
                 duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-                match_dup = findbugs_scan_results_db.objects.filter(
-                    dup_hash=duplicate_hash).values('dup_hash')
+                match_dup = findbugs_scan_results_db.objects.filter(username=username,
+                                                                    dup_hash=duplicate_hash).values('dup_hash')
                 lenth_match = len(match_dup)
 
                 if lenth_match == 1:
@@ -88,8 +88,8 @@ def xml_parser(root, project_id, scan_id):
                 else:
                     duplicate_vuln = 'None'
 
-                false_p = findbugs_scan_results_db.objects.filter(
-                    false_positive_hash=duplicate_hash)
+                false_p = findbugs_scan_results_db.objects.filter(username=username,
+                                                                  false_positive_hash=duplicate_hash)
                 fp_lenth_match = len(false_p)
 
                 if fp_lenth_match == 1:
@@ -112,7 +112,8 @@ def xml_parser(root, project_id, scan_id):
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
-                risk=risk
+                risk=risk,
+                username=username
             )
             save_all.save()
         if bug.tag == 'BugPattern':
@@ -124,12 +125,13 @@ def xml_parser(root, project_id, scan_id):
                     global Details
                     Details = BugPattern.text
 
-                findbugs_scan_results_db.objects.filter(scan_id=scan_id, name=name).update(
+                findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id, name=name).update(
                     ShortDescription=ShortDescription,
                     Details=Details,
                 )
 
-        all_findbugs_data = findbugs_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+        all_findbugs_data = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                                    false_positive='No')
 
         total_vul = len(all_findbugs_data)
         total_high = len(all_findbugs_data.filter(priority="1"))
@@ -137,7 +139,7 @@ def xml_parser(root, project_id, scan_id):
         total_low = len(all_findbugs_data.filter(priority="3"))
         total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
 
-        findbugs_scan_db.objects.filter(scan_id=scan_id).update(
+        findbugs_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,

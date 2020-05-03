@@ -57,7 +57,7 @@ duplicate_hash = ""
 duplicate_vuln = ""
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(username, root, project_id, scan_id):
     """
     ZAP Proxy scanner xml report parser.
     :param root:
@@ -174,10 +174,11 @@ def xml_parser(root, project_id, scan_id):
                                             dup_hash=duplicate_hash,
                                             vuln_duplicate=duplicate_vuln,
                                             evidence=inst,
+                                            username=username
                                             )
             dump_data.save()
 
-            vul_dat = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
+            vul_dat = zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id)
             full_data = []
             for data in vul_dat:
                 evi = data.evidence
@@ -203,9 +204,9 @@ def xml_parser(root, project_id, scan_id):
 
                         full_data.append(instance)
             removed_list_data = ','.join(full_data)
-            zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(param=removed_list_data)
+            zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id).update(param=removed_list_data)
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+    zap_all_vul = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
 
     total_high = len(zap_all_vul.filter(risk="High"))
     total_medium = len(zap_all_vul.filter(risk="Medium"))
@@ -214,7 +215,7 @@ def xml_parser(root, project_id, scan_id):
     total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
     total_vul = total_high + total_medium + total_low + total_info
 
-    zap_scans_db.objects.filter(scan_scanid=scan_id) \
+    zap_scans_db.objects.filter(username=username, scan_scanid=scan_id) \
         .update(total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,
@@ -224,7 +225,7 @@ def xml_parser(root, project_id, scan_id):
                 scan_url=scan_url
                 )
     if total_vul == total_duplicate:
-        zap_scans_db.objects.filter(scan_scanid=scan_id) \
+        zap_scans_db.objects.filter(username=username, scan_scanid=scan_id) \
             .update(total_vul=total_vul,
                     high_vul=total_high,
                     medium_vul=total_medium,

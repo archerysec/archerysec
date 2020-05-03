@@ -51,9 +51,10 @@ def burp_setting(request):
     :param request:
     :return:
     """
+    username = request.user.username
     user = request.user
 
-    all_burp_setting = burp_setting_db.objects.all()
+    all_burp_setting = burp_setting_db.objects.filter(username=username)
 
     for data in all_burp_setting:
         global burp_url, burp_port, burp_api_key, \
@@ -68,7 +69,7 @@ def burp_setting(request):
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
         burpapikey = request.POST.get("burpapikey")
-        save_burp_settings = burp_setting_db(burp_url=burphost, burp_port=burport, burp_api_key=burpapikey)
+        save_burp_settings = burp_setting_db(username=username, burp_url=burphost, burp_port=burport, burp_api_key=burpapikey)
         save_burp_settings.save()
 
         host = 'http://' + burphost + ':' + burport + '/'
@@ -80,7 +81,7 @@ def burp_setting(request):
         json_issue_data = json.dumps(issue_list.data)
         issues = json.loads(json_issue_data)
 
-        all_data = burp_issue_definitions.objects.all()
+        all_data = burp_issue_definitions.objects.filter(username=username)
         all_data.delete()
 
         try:
@@ -99,7 +100,8 @@ def burp_setting(request):
                     if key == 'vulnerability_classifications':
                         vulnerability_classifications = values
 
-                data_dump = burp_issue_definitions(remediation=remediation,
+                data_dump = burp_issue_definitions(username=username,
+                                                   remediation=remediation,
                                                    issue_type_id=issue_type_id,
                                                    description=description,
                                                    reference=references,
@@ -126,7 +128,7 @@ def burp_scan_launch(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     user = request.user
 
     global vuln_id, burp_status
@@ -165,7 +167,8 @@ def burp_scan_list(request):
     :param request:
     :return:
     """
-    all_burp_scan = burp_scan_db.objects.all()
+    username = request.user.username
+    all_burp_scan = burp_scan_db.objects.filter(username=username)
 
     return render(request,
                   'burpscanner/burp_scan_list.html',
@@ -178,17 +181,18 @@ def burp_list_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
-    burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id,
+    burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                       vuln_status='Open').values('name',
                                                                                  'severity',
                                                                                  'severity_color',
                                                                                  'scan_id').distinct()
 
-    burp_all_vul_close = burp_scan_result_db.objects.filter(scan_id=scan_id,
+    burp_all_vul_close = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                             vuln_status='Closed').values('name',
                                                                                          'severity',
                                                                                          'severity_color',
@@ -208,11 +212,12 @@ def burp_vuln_data(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         vuln_id = request.GET['vuln_id']
     else:
         vuln_id = None
-    vuln_data = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
+    vuln_data = burp_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
 
     return render(request,
                   'burpscanner/burp_vuln_data.html',
@@ -225,8 +230,9 @@ def burp_vuln_out(request):
     :param request:
     :return:
     """
+    username = request.user.username
     jira_url = None
-    jira = jirasetting.objects.all()
+    jira = jirasetting.objects.filter(username=username)
     for d in jira:
         jira_url = d.jira_server
 
@@ -239,31 +245,31 @@ def burp_vuln_out(request):
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
-        burp_scan_result_db.objects.filter(vuln_id=vuln_id,
+        burp_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                            scan_id=scan_id).update(false_positive=false_positive,
                                                                    vuln_status=vuln_status)
 
         if false_positive == 'Yes':
-            vuln_info = burp_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            vuln_info = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.name
                 location = vi.path
                 severity = vi.severity
                 dup_data = name + location + severity
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                burp_scan_result_db.objects.filter(vuln_id=vuln_id,
+                burp_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                    scan_id=scan_id).update(false_positive=false_positive,
                                                                            vuln_status='Close',
                                                                            false_positive_hash=false_positive_hash
                                                                            )
-        burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No', vuln_status='Open')
+        burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
         total_vul = len(burp_all_vul)
         total_high = len(burp_all_vul.filter(severity="High"))
         total_medium = len(burp_all_vul.filter(severity="Medium"))
         total_low = len(burp_all_vul.filter(severity="Low"))
         total_info = len(burp_all_vul.filter(severity="Information"))
         total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
-        burp_scan_db.objects.filter(scan_id=scan_id).update(
+        burp_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -275,18 +281,21 @@ def burp_vuln_out(request):
         return HttpResponseRedirect(
             reverse('burpscanner:burp_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id,
                                                                                  vuln_name))
-    vuln_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
+    vuln_data = burp_scan_result_db.objects.filter(username=username,
+                                                   scan_id=scan_id,
                                                    name=name,
                                                    false_positive='No',
                                                    vuln_status='Open'
                                                    )
-    vuln_close_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
+    vuln_close_data = burp_scan_result_db.objects.filter(username=username,
+                                                         scan_id=scan_id,
                                                          name=name,
                                                          false_positive='No',
                                                          vuln_status='Closed'
                                                          )
 
-    false_data = burp_scan_result_db.objects.filter(scan_id=scan_id,
+    false_data = burp_scan_result_db.objects.filter(username=username,
+                                                    scan_id=scan_id,
                                                     name=name,
                                                     false_positive='Yes')
 
@@ -303,6 +312,7 @@ def del_burp_scan(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
@@ -314,9 +324,10 @@ def del_burp_scan(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
-            item = burp_scan_db.objects.filter(scan_id=scan_id)
+            item = burp_scan_db.objects.filter(username=username,
+                                               scan_id=scan_id)
             item.delete()
-            item_results = burp_scan_result_db.objects.filter(scan_id=scan_id)
+            item_results = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id)
             item_results.delete()
         return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
 
@@ -327,6 +338,7 @@ def del_burp_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         un_scanid = request.POST.get("scan_id", )
@@ -337,16 +349,16 @@ def del_burp_vuln(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = burp_scan_result_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln = burp_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
             delete_vuln.delete()
-        burp_all_vul = burp_scan_result_db.objects.filter(scan_id=un_scanid).values('name', 'severity',
+        burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=un_scanid).values('name', 'severity',
                                                                                     'severity_color').distinct()
         total_vul = len(burp_all_vul)
         total_high = len(burp_all_vul.filter(severity="High"))
         total_medium = len(burp_all_vul.filter(severity="Medium"))
         total_low = len(burp_all_vul.filter(severity="Low"))
 
-        burp_scan_db.objects.filter(scan_id=un_scanid).update(total_vul=total_vul, high_vul=total_high,
+        burp_scan_db.objects.filter(username=username, scan_id=un_scanid).update(total_vul=total_vul, high_vul=total_high,
                                                               medium_vul=total_medium, low_vul=total_low)
 
         return HttpResponseRedirect(reverse('burpscanner:burp_vuln_list') + '?scan_id=%s' % un_scanid)
@@ -357,13 +369,13 @@ def export(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
         zap_resource = BurpResource()
-        queryset = burp_scan_result_db.objects.filter(scan_id=scan_id)
+        queryset = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id)
         dataset = zap_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')

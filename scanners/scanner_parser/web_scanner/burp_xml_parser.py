@@ -54,7 +54,7 @@ issue_reference = ''
 issue_vulnerability_classifications = ''
 
 
-def burp_scan_data(root, project_id, scan_id):
+def burp_scan_data(root, project_id, scan_id, username):
     """
     The function parse the burp result as xml data
     and stored into archery database.
@@ -183,7 +183,7 @@ def burp_scan_data(root, project_id, scan_id):
         dup_data = name + path + severity
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-        match_dup = burp_scan_result_db.objects.filter(
+        match_dup = burp_scan_result_db.objects.filter(username=username,
             dup_hash=duplicate_hash).values('dup_hash').distinct()
         lenth_match = len(match_dup)
 
@@ -194,7 +194,7 @@ def burp_scan_data(root, project_id, scan_id):
         else:
             duplicate_vuln = 'None'
 
-        false_p = burp_scan_result_db.objects.filter(
+        false_p = burp_scan_result_db.objects.filter(username=username,
             false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
 
@@ -238,19 +238,21 @@ def burp_scan_data(root, project_id, scan_id):
                 description=issue_description,
                 remediation=issue_remediation,
                 reference=issue_reference,
-                vulnerability_classifications=issue_vulnerability_classifications
+                vulnerability_classifications=issue_vulnerability_classifications,
+                username=username
             )
             data_dump.save()
         except Exception as e:
             print(e)
-    burp_all_vul = burp_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+    burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
     total_vul = len(burp_all_vul)
     total_high = len(burp_all_vul.filter(severity="High"))
     total_medium = len(burp_all_vul.filter(severity="Medium"))
     total_low = len(burp_all_vul.filter(severity="Low"))
     total_info = len(burp_all_vul.filter(severity="Information"))
     total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
-    burp_scan_db.objects.filter(scan_id=scan_id).update(
+    burp_scan_db.objects.filter(username=username,
+                                scan_id=scan_id).update(
         url=host,
         total_vul=total_vul,
         high_vul=total_high,
