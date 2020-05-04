@@ -20,18 +20,24 @@
 </head>
 <body>
 <div id="loginbox">
-    <form class="form-vertical" action="{% url 'webscanners:signup' %}" method="POST" name="password_validate" id="password_validate"
-          novalidate="novalidate">{% csrf_token %}
+    <form class="form-vertical" action="{% url 'webscanners:signup' %}" method="POST" name="password_validate"
+          id="example-form">{% csrf_token %}
         <div class="control-group normal_text"><h3><img src="{% static 'archery.png' %}"
                                                         style="max-width:190px; margin-top: 10px;" alt=""/></h3></div>
         <div class="control-group">
             <div class="controls">
+                {% if messages %}
+                    <ul class="messages" style="margin: 20px 20px 20px 20px;">
+                        {% for msg in messages %}
+                            <div class="alert alert-{{ msg.level_tag }}" role="alert">
+                                {{ msg.message }}
+                            </div>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
                 <div class="main_input_box">
                     <span class="add-on bg_lg"><i class="icon-user"> </i></span>
-                    <input type="text" name="username"
-                           id="username" tabindex="1"
-                           class="form-control"
-                           placeholder="Username" value="">
+                    <input type="text" name="username" id="username" class="required form-control" placeholder="Username" value="">
                 </div>
             </div>
         </div>
@@ -39,7 +45,7 @@
             <div class="controls">
                 <div class="main_input_box">
                     <span class="add-on bg_lg"><i class="icon icon-envelope"> </i></span>
-                    <input placeholder="Email" type="text" name="email" id="email">
+                    <input placeholder="Email" type="text" class="required form-control" name="email" id="email">
                 </div>
             </div>
         </div>
@@ -47,7 +53,7 @@
             <div class="controls">
                 <div class="main_input_box">
                     <span class="add-on bg_ly"><i class="icon-lock"></i></span>
-                    <input placeholder="Password" type="password" name="password" id="pwd"/>
+                    <input placeholder="Password" type="password" class="required form-control" name="password" id="password"/>
                 </div>
             </div>
         </div>
@@ -55,13 +61,13 @@
             <div class="controls">
                 <div class="main_input_box">
                     <span class="add-on bg_ly"><i class="icon-lock"></i></span>
-                    <input placeholder="Confirm password
-" type="password" name="password" id="pwd2"/>
+                    <input placeholder="Confirm password" type="password" class="required form-control" id="confirm" name="confirm"/>
                 </div>
             </div>
         </div>
         <div class="form-actions">
-            <span class="pull-left"><a href="{% url 'webscanners:login' %}" class="btn btn-lg btn-primary" type="submit">Sign In</a></span>
+            <span class="pull-left"><a href="{% url 'webscanners:login' %}" class="btn btn-lg btn-primary"
+                                       type="submit">Sign In</a></span>
 
             <span class="pull-right"><button class="btn btn-lg btn-primary " type="submit"
                                              value="Validate">Sign Up</button></span>
@@ -79,5 +85,36 @@
 <script src="{% static 'js/select2.min.js' %}"></script>
 <script src="{% static 'archerysecurity/js/base.js' %}"></script>
 </body>
+
+<script>
+        // Basic Example with form
+    var form = $("#example-form");
+    form.validate({
+        errorPlacement: function errorPlacement(error, element) { element.before(error); },
+        rules: {
+            confirm: {
+                equalTo: "#password"
+            }
+        }
+    });
+     form.children("div").steps({
+        headerTag: "h3",
+        bodyTag: "section",
+        transitionEffect: "slideLeft",
+        onStepChanging: function(event, currentIndex, newIndex) {
+            form.validate().settings.ignore = ":disabled,:hidden";
+            return form.valid();
+        },
+        onFinishing: function(event, currentIndex) {
+            form.validate().settings.ignore = ":disabled";
+            return form.valid();
+        },
+        onFinished: function(event, currentIndex) {
+            alert("Submitted!");
+        }
+    });
+
+
+    </script>
 
 </html>

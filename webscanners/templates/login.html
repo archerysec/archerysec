@@ -23,25 +23,35 @@
         <div class="control-group">
             <div class="controls">
                 <div class="main_input_box">
-                    <span class="add-on bg_lg"><i class="icon-user"> </i></span><input type="text" name="username"
-                                                                                       id="username" tabindex="1"
-                                                                                       class="form-control"
-                                                                                       placeholder="Username" value="">
+                    {% if messages %}
+                        <ul class="messages" style="margin: 20px 20px 20px 20px;">
+                            {% for msg in messages %}
+                                <div class="alert alert-{{ msg.level_tag }}" role="alert">
+                                    {{ msg.message }}
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <span class="add-on bg_lg">
+                        <i class="icon-user"></i>
+                    </span>
+                    <input type="text" name="username" id="username"  class="form-control" placeholder="Username" value="">
                 </div>
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
                 <div class="main_input_box">
-                    <span class="add-on bg_ly"><i class="icon-lock"></i></span><input type="password" name="password"
-                                                                                      id="password" tabindex="2"
-                                                                                      class="form-control"
-                                                                                      placeholder="Password">
+                    <span class="add-on bg_ly">
+                        <i class="icon-lock"></i>
+                    </span>
+                    <input type="password" name="password" id="password" tabindex="2" class="form-control"  placeholder="Password">
                 </div>
             </div>
         </div>
         <div class="form-actions">
-            <span class="pull-left"><a href="{% url 'webscanners:signup' %}"  class="btn btn-lg btn-primary" type="submit">Sign Up</a></span>
+            <span class="pull-left"><a href="{% url 'webscanners:signup' %}" class="btn btn-lg btn-primary"
+                                       type="submit">Sign Up</a></span>
 
             <span class="pull-right"><button class="btn btn-lg btn-primary " type="submit">Sign in</button></span>
         </div>

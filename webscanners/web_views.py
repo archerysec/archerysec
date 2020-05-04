@@ -149,6 +149,7 @@ def auth_view(request):
         auth.login(request, user)
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
     else:
+        messages.add_message(request, messages.ERROR, 'Please check your login details and try again.')
         return HttpResponseRedirect(reverse('webscanners:login'))
 
 
@@ -174,12 +175,16 @@ def signup(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')
-        user = User.objects.create_user(username, email, password)
-        user.save()
+        user_c = User.objects.filter(username=username)
+        if user_c:
+            messages.add_message(request, messages.ERROR, 'User already exists')
+            return HttpResponseRedirect(reverse('webscanners:signup'))
+        else:
+            user = User.objects.create_user(username, email, password)
+            user.save()
         return HttpResponseRedirect(reverse('webscanners:login'))
 
-    return render(request,
-                  'signup.html')
+    return render(request, 'signup.html')
 
 
 def error_404_view(request):
