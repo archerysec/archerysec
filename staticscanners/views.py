@@ -48,7 +48,7 @@ def report_import(request):
     :return:
     """
     username = request.user.username
-    all_project = project_db.objects.all()
+    all_project = project_db.objects.filter(username=username)
 
     if request.method == "POST":
         project_id = request.POST.get("project_id")

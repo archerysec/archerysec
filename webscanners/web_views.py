@@ -793,20 +793,23 @@ def add_cookies(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         target_url = request.POST.get('url')
         target_cookies = request.POST.get('cookies')
-        all_cookie_url = cookie_db.objects.filter(Q(url__icontains=target_url))
+        all_cookie_url = cookie_db.objects.filter(Q(url__icontains=target_url, username=username))
         for da in all_cookie_url:
             global cookies
             cookies = da.url
 
         if cookies == target_url:
-            cookie_db.objects.filter(Q(url__icontains=target_url)).update(cookie=target_cookies)
+            cookie_db.objects.filter(Q(url__icontains=target_url, username=username)).update(cookie=target_cookies)
             return HttpResponseRedirect(reverse('webscanners:index'))
         else:
             data_dump = cookie_db(url=target_url,
-                                  cookie=target_cookies)
+                                  cookie=target_cookies,
+                                  username=username
+                                  )
             data_dump.save()
             return HttpResponseRedirect(reverse('webscanners:index'))
 
@@ -852,12 +855,14 @@ def cookies_list(request):
     :param request:
     :return:
     """
-    all_cookies = cookie_db.objects.all()
+    username = request.user.username
+    all_cookies = cookie_db.objects.filter(username=username)
 
     return render(request, 'cookies_list.html', {'all_cookies': all_cookies})
 
 
 def del_cookies(request):
+    username = request.user.username
     if request.method == 'POST':
         cookie_url = request.POST.get('url')
         cookies_item = str(cookie_url)
@@ -868,7 +873,7 @@ def del_cookies(request):
         for i in range(0, split_length):
             cookies_target = target_split.__getitem__(i)
             print(cookies_target)
-            del_cookie = cookie_db.objects.filter(url=cookies_target)
+            del_cookie = cookie_db.objects.filter(url=cookies_target, username=username)
             del_cookie.delete()
             zap_plugin.zap_replacer(target_url=cookies_target)
         return HttpResponseRedirect(reverse('webscanners:cookies_list'))
@@ -882,6 +887,7 @@ def sel_login(request):
     :param request:
     :return:
     """
+    username = request.user.username
     action_vul = request.POST.get("action", )
     url_da = request.POST.get("url_login", )
     if action_vul == "open_page":
@@ -895,17 +901,19 @@ def sel_login(request):
         for cookie_data in read_f:
 
             print(cookie_data)
-            all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri))
+            all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri, username=username))
             for da in all_cookie_url:
                 global cookies
                 cookies = da.url
 
             if cookies == new_uri:
-                cookie_db.objects.filter(Q(url__icontains=new_uri)).update(cookie=cookie_data)
+                cookie_db.objects.filter(Q(url__icontains=new_uri, username=username)).update(cookie=cookie_data)
                 return HttpResponseRedirect(reverse('webscanners:index'))
             else:
                 data_dump = cookie_db(url=new_uri,
-                                      cookie=cookie_data)
+                                      cookie=cookie_data,
+                                      username=username,
+                                      )
                 data_dump.save()
                 return HttpResponseRedirect(reverse('webscanners:index'))
         messages.add_message(request, messages.SUCCESS, 'Cookies stored')
@@ -920,8 +928,11 @@ def exclude_url(request):
     :param request:
     :return:
     """
+    username = request.user.username
     exclud = request.POST.get("exclude_url", )
-    exclude_save = excluded_db(exclude_url=exclud)
+    exclude_save = excluded_db(exclude_url=exclud,
+                               username=username
+                               )
     exclude_save.save()
 
     return render(request, 'webscanner.html', )
@@ -933,7 +944,8 @@ def exluded_url_list(request):
     :param request:
     :return:
     """
-    all_excluded_url = excluded_db.objects.all()
+    username = request.user.username
+    all_excluded_url = excluded_db.objects.filter(username=username)
 
     if request.method == 'POST':
         exclude_url = request.POST.get('exclude_url')
@@ -944,7 +956,7 @@ def exluded_url_list(request):
         for i in range(0, split_length):
             exclude_target = target_split.__getitem__(i)
 
-            del_excluded = excluded_db.objects.filter(exclude_url=exclude_target)
+            del_excluded = excluded_db.objects.filter(username=username, exclude_url=exclude_target)
             del_excluded.delete()
 
             return HttpResponseRedirect(reverse('zapscanner:excluded_url_list'))

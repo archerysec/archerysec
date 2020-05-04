@@ -107,12 +107,15 @@
                                         </tr>
                                         </thead>
                                         <tbody>
+                                        {% if all_burp_high.high_vul__sum != None or all_burp_medium.medium_vul__sum != None or  all_burp_low.low_vul__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'burpscanner:burp_scan_list' %}">Burp Scan</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_burp_high.high_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_burp_medium.medium_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_burp_low.low_vul__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
+                                        {% if all_acunetix_high.high_vul__sum != None or all_acunetix_medium.medium_vul__sum != None or  all_acunetix_low.low_vul__sum != None %}
                                         <tr>
                                             <td>
                                                 <a href="{% url 'acunetixscanner:acunetix_scan_list' %}">Acunetix</a>
@@ -121,6 +124,9 @@
                                             <td><span class="badge badge-pill badge-warning">{{all_acunetix_medium.medium_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_acunetix_low.low_vul__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
+
+                                        {% if all_arachni_high.high_vul__sum != None or all_arachni_medium.medium_vul__sum != None or  all_arachni_low.low_vul__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'arachniscanner:arachni_scan_list' %}">Arachni</a>
                                             </td>
@@ -128,18 +134,28 @@
                                             <td><span class="badge badge-pill badge-warning">{{all_arachni_medium.medium_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_arachni_low.low_vul__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
+
+                                        {% if all_zap_high.high_vul__sum != None or all_zap_medium.medium_vul__sum != None or  all_zap_low.low_vul__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'zapscanner:zap_scan_list' %}">OWASP ZAP</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_zap_high.high_vul__sum}}</td>
                                             <td><span class="badge badge-pill badge-warning">{{all_zap_medium.medium_vul__sum}}</td>
                                             <td><span class="badge badge-pill badge-info">{{all_zap_low.low_vul__sum}}</td>
                                         </tr>
+                                         {% endif %}
+
+                                        {% if all_nessus_high.high_total__sum != None or all_nessus_medium.medium_total__sum != None or  all_nessus_low.low_total__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'networkscanners:nessus_scan' %}">Nessus</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_nessus_high.high_total__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_nessus_medium.medium_total__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_nessus_low.low_total__sum}}</span></td>
                                         </tr>
+
+                                        {% endif %}
+
+                                        {% if all_dependency_high.SEVERITY_HIGH__sum != None or all_dependency_medium.SEVERITY_MEDIUM__sum != None or  all_dependency_low.SEVERITY_LOW__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'dependencycheck:dependencycheck_list' %}">Dependency
                                                 Check</a>
@@ -148,12 +164,18 @@
                                             <td><span class="badge badge-pill badge-warning">{{all_dependency_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_dependency_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                         {% endif %}
+
+                                        {% if all_openvas_high.high_total__sum != None or all_openvas_medium.medium_total__sum != None or  all_openvas_low.low_total__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'networkscanners:index' %}">OpenVAS</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_openvas_high.high_total__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_openvas_medium.medium_total__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_openvas_low.low_total__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
+
+                                        {% if all_webinspect_high.high_vul__sum != None or all_webinspect_medium.medium_vul__sum != None or  all_webinspect_low.low_vul__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'webinspectscanner:webinspect_scan_list' %}">Webinspect</a>
                                             </td>
@@ -161,50 +183,70 @@
                                             <td><span class="badge badge-pill badge-warning">{{all_webinspect_medium.medium_vul__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_webinspect_low.low_vul__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
+
+                                        {% if all_clair_high.SEVERITY_HIGH__sum != None or all_clair_medium.SEVERITY_MEDIUM__sum != None or  all_clair_low.SEVERITY_LOW__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'clair:clair_list' %}">Clair</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_clair_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_clair_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_clair_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
+
+                                        {% if all_trivy_high.SEVERITY_HIGH__sum != None or all_trivy_medium.SEVERITY_MEDIUM__sum != None or  all_trivy_low.SEVERITY_LOW__sum != None %}
                                          <tr>
                                             <td><a href="{% url 'trivy:trivy_list' %}">Trivy</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_trivy_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_trivy_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_trivy_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
+
+                                        {% if all_npmaudit_high.SEVERITY_HIGH__sum != None or all_npmaudit_medium.SEVERITY_MEDIUM__sum != None or  all_npmaudit_low.SEVERITY_LOW__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'npmaudit:npmaudit_list' %}">npmaudit</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_npmaudit_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_npmaudit_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_npmaudit_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                         {% endif %}
+
+                                        {% if all_nodejsscan_high.SEVERITY_HIGH__sum != None or all_nodejsscan_medium.SEVERITY_MEDIUM__sum != None or  all_nodejsscan_low.SEVERITY_LOW__sum != None %}
                                          <tr>
                                             <td><a href="{% url 'nodejsscan:nodejsscan_list' %}">nodejsscan</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_nodejsscan_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_nodejsscan_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_nodejsscan_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
 
+                                        {% if all_tfsec_high.SEVERITY_HIGH__sum != None or all_tfsec_medium.SEVERITY_MEDIUM__sum != None or  all_tfsec_low.SEVERITY_LOW__sum != None %}
                                          <tr>
                                             <td><a href="{% url 'tfsec:tfsec_list' %}">tfsec</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_tfsec_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_tfsec_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_tfsec_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                         {% endif %}
 
+                                        {% if all_findbugs_high.SEVERITY_HIGH__sum != None or all_findbugs_medium.SEVERITY_MEDIUM__sum != None or  all_findbugs_low.SEVERITY_LOW__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'findbugs:findbugs_list' %}">FindBugs</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_findbugs_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_findbugs_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_findbugs_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
+
+                                        {% if all_bandit_high.SEVERITY_HIGH__sum != None or all_bandit_medium.SEVERITY_MEDIUM__sum != None or  all_bandit_low.SEVERITY_LOW__sum != None %}
                                         <tr>
                                             <td><a href="{% url 'banditscanner:banditscans_list' %}">Bandit</a></td>
                                             <td><span class="badge badge-pill badge-danger">{{all_bandit_high.SEVERITY_HIGH__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-warning">{{all_bandit_medium.SEVERITY_MEDIUM__sum}}</span></td>
                                             <td><span class="badge badge-pill badge-info">{{all_bandit_low.SEVERITY_LOW__sum}}</span></td>
                                         </tr>
+                                        {% endif %}
                                         </tbody>
                                     </table>
                                 </div>
