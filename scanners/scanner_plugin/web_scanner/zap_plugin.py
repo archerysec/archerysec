@@ -23,7 +23,10 @@ import json
 import ast
 from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
 import hashlib
-from scanners.scanner_parser.web_scanner import zap_xml_parser
+try:
+    from scanners.scanner_parser.web_scanner import zap_xml_parser
+except Exception as e:
+    print(e)
 import defusedxml.ElementTree as ET
 import platform
 import subprocess
@@ -583,12 +586,16 @@ class ZAPScanner:
         en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
         root_xml_en = ET.fromstring(en_root_xml)
 
-        zap_xml_parser.xml_parser(username=username,
-                                  project_id=project_id,
-                                  scan_id=un_scanid,
-                                  root=root_xml_en)
+        try:
 
-        self.zap.core.delete_all_alerts()
+            zap_xml_parser.xml_parser(username=username,
+                                      project_id=project_id,
+                                      scan_id=un_scanid,
+                                      root=root_xml_en)
+
+            self.zap.core.delete_all_alerts()
+        except Exception as e:
+            print(e)
 
     def zap_shutdown(self):
         """
