@@ -17,16 +17,35 @@
 from openvas_lib import VulnscanManager, VulnscanException
 from networkscanners.models import scan_save_db, ov_scan_result_db
 from django.utils import timezone
-from archerysettings import load_settings
-from django.core import signing
 import time
 import os
 import uuid
 from archerysettings.models import openvas_setting_db
-
-# openvas_data = os.getcwd() + '/' + 'apidata.json'
-# openvas_setting = load_settings.ArcherySettings(openvas_data)
 import hashlib
+
+name = ''
+creation_time = ''
+modification_time = ''
+host = ''
+port = ''
+threat = ''
+severity = ''
+description = ''
+family = ''
+cvss_base = ''
+cve = ''
+bid = ''
+xref = ''
+tags = ''
+banner = ''
+vuln_color = None
+false_positive = ''
+duplicate_hash = ''
+duplicate_vuln = ''
+ov_host = ''
+ov_user = ''
+ov_pass = ''
+ov_port = ''
 
 
 class OpenVAS_Plugin:
@@ -53,6 +72,7 @@ class OpenVAS_Plugin:
         :return:
         """
 
+        global ov_host, ov_user, ov_pass, ov_port
         all_openvas = openvas_setting_db.objects.filter(username=self.username)
 
         for openvas in all_openvas:
@@ -61,19 +81,10 @@ class OpenVAS_Plugin:
             ov_host = openvas.host
             ov_port = openvas.port
 
-        # ov_user = openvas_setting.openvas_username()
-        # ov_pass = openvas_setting.openvas_pass()
-        # ov_host = openvas_setting.openvas_host()
-
-        lod_ov_user = ov_user
-        lod_ov_pass = ov_pass
-        lod_ov_host = ov_host
-        lod_ov_port = ov_port
-
-        scanner = VulnscanManager(str(lod_ov_host),
-                                  str(lod_ov_user),
-                                  str(lod_ov_pass),
-                                  int(lod_ov_port))
+        scanner = VulnscanManager(str(ov_host),
+                                  str(ov_user),
+                                  str(ov_pass),
+                                  int(ov_port))
         time.sleep(5)
 
         return scanner
@@ -126,6 +137,7 @@ def vuln_an_id(scan_id, project_id, username):
     :param scan_id:
     :return:
     """
+    global name, host, severity, port, creation_time, modification_time, threat, severity, description, family, cvss_base, cve, bid, xref, tags, banner, date_time, false_positive, duplicate_hash, duplicate_vuln, ov_ip, ov_user, ov_pass
 
     all_openvas = openvas_setting_db.objects.filter(username=username)
 
@@ -134,13 +146,9 @@ def vuln_an_id(scan_id, project_id, username):
         ov_pass = openvas.password
         ov_ip = openvas.host
 
-    lod_ov_user = ov_user
-    lod_ov_pass = ov_pass
-    lod_ov_ip = ov_ip
-
-    scanner = VulnscanManager(str(lod_ov_ip),
-                              str(lod_ov_user),
-                              str(lod_ov_pass))
+    scanner = VulnscanManager(str(ov_ip),
+                              str(ov_user),
+                              str(ov_pass))
     openvas_results = scanner.get_raw_xml(str(scan_id))
 
     for openvas in openvas_results.findall(".//result"):
@@ -250,7 +258,7 @@ def vuln_an_id(scan_id, project_id, username):
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = ov_scan_result_db.objects.filter(username=username,
-            vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
+                                                     vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
         lenth_match = len(match_dup)
 
         if lenth_match == 1:
@@ -261,7 +269,7 @@ def vuln_an_id(scan_id, project_id, username):
             duplicate_vuln = 'None'
 
         false_p = ov_scan_result_db.objects.filter(username=username,
-            false_positive_hash=duplicate_hash)
+                                                   false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
 
         if fp_lenth_match == 1:
@@ -293,7 +301,6 @@ def vuln_an_id(scan_id, project_id, username):
                                      vuln_duplicate=duplicate_vuln,
                                      project_id=project_id,
                                      username=username
-
                                      )
         save_all.save()
 
@@ -317,5 +324,6 @@ def vuln_an_id(scan_id, project_id, username):
                    )
 
         for row in ov_scan_result_db.objects.filter(username=username):
-            if ov_scan_result_db.objects.filter(username=username, name=row.name, port=row.port, scan_id=scan_id).count() > 1:
+            if ov_scan_result_db.objects.filter(username=username, name=row.name, port=row.port,
+                                                scan_id=scan_id).count() > 1:
                 row.delete()
