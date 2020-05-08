@@ -119,7 +119,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
             'total_job_time']:
             status = 100 - scan_sum['statistics']['browser_cluster']['queued_job_count'] * 100 / \
                      scan_sum['statistics']['browser_cluster']['total_job_time']
-        arachni_scan_db.objects.filter(username=username, scan_id=scan_id).update(scan_status=status)
+        arachni_scan_db.objects.filter(username=username, scan_id=scan_id).update(scan_status=int(status))
         scan_sum = arachni.scan_summary(id=scan_run_id).data
         for key, value in scan_sum.items():
             if key == 'status':
@@ -131,7 +131,8 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         arachni_xml_parser.xml_parser(username=username,
                                       project_id=project_id,
                                       scan_id=scan_id,
-                                      root=root_xml)
+                                      root=root_xml, 
+                                      target_url=target)
         arachni_scan_db.objects.filter(username=username,
                                        scan_id=scan_id).update(scan_status='100')
         print("Data uploaded !!!!")

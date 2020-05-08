@@ -672,7 +672,8 @@ def xml_upload(request):
             arachni_xml_parser.xml_parser(username=username,
                                           project_id=project_id,
                                           scan_id=scan_id,
-                                          root=root_xml)
+                                          root=root_xml, 
+                                          target_url=scan_url)
             print("Save scan Data")
             return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
 

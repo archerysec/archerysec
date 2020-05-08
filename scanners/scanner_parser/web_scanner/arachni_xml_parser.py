@@ -57,7 +57,7 @@ response_raw_headers = ""
 false_positive = None
 
 
-def xml_parser(root, project_id, scan_id, username):
+def xml_parser(root, project_id, scan_id, username, target_url):
     global name, description, remedy_guidance, remedy_code, severity, check, digest, references, \
         vector, remarks, page, signature, \
         proof, trusted, platform_type, platform_name, url, action, \
@@ -254,7 +254,9 @@ def xml_parser(root, project_id, scan_id, username):
                 else:
                     false_positive = "No"
 
-                dump_data = arachni_scan_result_db(vuln_id=vuln_id, scan_id=scan_id, vuln_color=vul_col,
+                dump_data = arachni_scan_result_db(vuln_id=vuln_id,
+                                                   scan_id=scan_id, 
+                                                   vuln_color=vul_col,
                                                    project_id=project_id,
                                                    name=name, description=description,
                                                    remedy_guidance=remedy_guidance,
@@ -293,7 +295,7 @@ def xml_parser(root, project_id, scan_id, username):
     total_vul = total_high + total_medium + total_low + total_info
 
     arachni_scan_db.objects.filter(scan_id=scan_id, username=username).update(
-        url=url,
+        url=target_url,
         total_vul=total_vul,
         high_vul=total_high,
         medium_vul=total_medium,
@@ -301,15 +303,6 @@ def xml_parser(root, project_id, scan_id, username):
         info_vul=total_info,
         total_dup=total_duplicate,
     )
-    if total_vul == total_duplicate:
-        arachni_scan_db.objects.filter(scan_id=scan_id, username=username).update(
-            url=url,
-            total_vul=total_vul,
-            high_vul=total_high,
-            medium_vul=total_medium,
-            low_vul=total_low,
-            total_dup=total_duplicate,
-        )
 
     subject = 'Archery Tool Scan Status - Arachni Report Uploaded'
     message = 'Arachni Scanner has completed the scan ' \

@@ -656,7 +656,8 @@ class UpladScanResult(APIView):
             arachni_xml_parser.xml_parser(project_id=project_id,
                                           scan_id=scan_id,
                                           root=root_xml,
-                                          username=username)
+                                          username=username, 
+                                          target_url=scan_url)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
