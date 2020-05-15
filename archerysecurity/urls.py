@@ -58,6 +58,7 @@ urlpatterns = [
     url(r'^nodejsscan/', include('staticscanners.nodejsscan.urls')),
     url(r'^tfsec/', include('staticscanners.tfsec.urls')),
     url(r'^inspec/', include('compliance.inspec.urls')),
+    url(r'^dockle/', include('compliance.dockle.urls')),
     url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     url(r'^api/', include('archeryapi.urls')),
     # url(r'^scanapi/', include('APIScan.urls')),

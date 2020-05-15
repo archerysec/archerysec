@@ -23,7 +23,7 @@ from staticscanners.models import retirejs_scan_results_db, \
     bandit_scan_results_db, \
     bandit_scan_db, clair_scan_db, trivy_scan_db, npmaudit_scan_db, nodejsscan_scan_db, tfsec_scan_results_db, \
     tfsec_scan_db
-from compliance.models import inspec_scan_db, inspec_scan_results_db
+from compliance.models import inspec_scan_db, dockle_scan_db
 import uuid
 from datetime import datetime
 import json
@@ -31,6 +31,7 @@ from scanners.scanner_parser.staticscanner_parser.retirejss_json_parser import r
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser import clair_report_json
 from scanners.scanner_parser.compliance_parser.inspec_json_parser import inspec_report_json
+from scanners.scanner_parser.compliance_parser.dockle_json_parser import dockle_report_json
 from scanners.scanner_parser.staticscanner_parser import trivy_json_report_parser
 from scanners.scanner_parser.staticscanner_parser import npm_audit_report_json
 from scanners.scanner_parser.staticscanner_parser import nodejsscan_report_json
@@ -210,6 +211,24 @@ def report_import(request):
                                username=username
                                )
 
-            return HttpResponseRedirect(reverse('inspec:inspec_list'))
+        if scanner == "dockle_scan":
+            date_time = datetime.now()
+            scan_dump = dockle_scan_db(project_name=project_name,
+                                       scan_id=scan_id,
+                                       date_time=date_time,
+                                       project_id=project_id,
+                                       scan_status=scan_status,
+                                       username=username
+                                       )
+            scan_dump.save()
+            j = json_file.read()
+            data = json.loads(j)
+            dockle_report_json(data=data,
+                               project_id=project_id,
+                               scan_id=scan_id,
+                               username=username
+                               )
+
+            return HttpResponseRedirect(reverse('dockle:dockle_list'))
 
     return render(request, 'report_import.html', {'all_project': all_project})
