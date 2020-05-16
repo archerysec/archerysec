@@ -52,7 +52,7 @@ from networkscanners.models import scan_save_db, \
     nessus_scan_db, \
     ov_scan_result_db, \
     nessus_report_db
-from compliance.models import inspec_scan_db, inspec_scan_results_db
+from compliance.models import inspec_scan_db, dockle_scan_db
 from projects.models import project_db
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from itertools import chain
@@ -191,6 +191,9 @@ def proj_data(request):
     all_inspec_scan = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
+    all_dockle_scan = dockle_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('total_vuln'))
+
     all_bandit_scan = bandit_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
@@ -286,6 +289,13 @@ def proj_data(request):
         else:
             all_inspec = value
 
+
+    for key, value in all_dockle_scan.items():
+        if value is None:
+            all_dockle = '0'
+        else:
+            all_dockle = value
+
     for key, value in all_bandit_scan.items():
         if value is None:
             all_bandit = '0'
@@ -350,7 +360,7 @@ def proj_data(request):
     total_web = int(all_zap) + int(all_burp) + int(pentest_web) + int(all_arachni) + \
                 int(all_netsparker) + int(all_webinspect) + int(all_acunetix)
 
-    total_compliance = int(all_inspec)
+    total_compliance = int(all_inspec) + int(all_dockle)
 
     total_static = int(all_dependency) + int(all_findbugs) + int(all_bandit) + int(all_clair) + int(all_trivy) + int(
         all_npmaudit) + int(all_nodejsscan) + int(all_tfsec)
@@ -395,6 +405,9 @@ def proj_data(request):
 
     all_inspec_failed = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('inspec_failed'))
+
+    all_dockle_failed = dockle_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('dockle_fatal'))
 
     all_bandit_high = bandit_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_HIGH'))
@@ -493,6 +506,13 @@ def proj_data(request):
         else:
             failed_inspec = value
 
+
+    for key, value in all_dockle_failed.items():
+        if value is None:
+            failed_dockle = '0'
+        else:
+            failed_dockle = value
+
     for key, value in all_bandit_high.items():
         if value is None:
             high_bandit = '0'
@@ -571,7 +591,7 @@ def proj_data(request):
 
     all_network_high = int(openvas_high) + int(high_nessus) + int(high_pentest_net)
 
-    all_compliance_failed = int(failed_inspec)
+    all_compliance_failed = int(failed_inspec) + int(failed_dockle)
 
     all_zap_medium = zap_scans_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('medium_vul'))
@@ -830,6 +850,9 @@ def proj_data(request):
     all_inspec_skipped = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('inspec_skipped'))
 
+    all_dockle_skipped = dockle_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('dockle_info'))
+
     all_bandit_low = bandit_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_LOW'))
 
@@ -926,6 +949,12 @@ def proj_data(request):
         else:
             skipped_inspec = value
 
+    for key, value in all_dockle_skipped.items():
+        if value is None:
+            skipped_dockle = '0'
+        else:
+            skipped_dockle = value
+
     for key, value in all_bandit_low.items():
         if value is None:
             low_bandit = '0'
@@ -1004,7 +1033,7 @@ def proj_data(request):
 
     all_network_low = int(openvas_low) + int(low_nessus) + int(low_pentest_net)
 
-    all_compliance_skipped = int(skipped_inspec)
+    all_compliance_skipped = int(skipped_inspec) + int(skipped_dockle)
 
     project_dat = project_db.objects.filter(username=username, project_id=project_id)
     burp = burp_scan_db.objects.filter(username=username, project_id=project_id)
@@ -1030,10 +1059,17 @@ def proj_data(request):
 
     network_dat = chain(openvas_dat, nessus_dat)
 
-    inspec = inspec_scan_db.objects.filter(username=username, project_id=project_id)
-    compliance_dat = chain(inspec)
+    inspec_dat = inspec_scan_db.objects.filter(username=username, project_id=project_id)
 
-    all_compliance = inspec_scan_db.objects.filter(username=username, project_id=project_id)
+    dockle_dat = dockle_scan_db.objects.filter(username=username, project_id=project_id)
+
+    compliance_dat = chain(inspec_dat, dockle_dat)
+
+    all_comp_inspec = inspec_scan_db.objects.filter(username=username, project_id=project_id)
+
+    all_comp_dockle = inspec_scan_db.objects.filter(username=username, project_id=project_id)
+
+    all_compliance = chain(all_comp_inspec, all_comp_dockle)
 
     pentest = manual_scans_db.objects.filter(username=username, project_id=project_id)
 
@@ -1190,6 +1226,8 @@ def proj_data(request):
                    'all_compliance': all_compliance,
 
                    'compliance_dat': compliance_dat,
+                   'inspec_dat': inspec_dat,
+                   'dockle_dat': dockle_dat,
 
                    'all_zap_high': all_zap_high,
                    'all_zap_low': all_zap_low,

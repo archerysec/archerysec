@@ -70,7 +70,8 @@ from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db, cla
 from tools.models import nikto_result_db
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from scanners.scanner_parser.compliance_parser import inspec_json_parser
-from compliance.models import inspec_scan_db
+from scanners.scanner_parser.compliance_parser import dockle_json_parser
+from compliance.models import inspec_scan_db, dockle_scan_db
 from scanners.scanner_parser.network_scanner import Nessus_Parser, OpenVas_Parser
 
 
@@ -656,7 +657,7 @@ class UpladScanResult(APIView):
             arachni_xml_parser.xml_parser(project_id=project_id,
                                           scan_id=scan_id,
                                           root=root_xml,
-                                          username=username, 
+                                          username=username,
                                           target_url=scan_url)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
@@ -897,9 +898,9 @@ class UpladScanResult(APIView):
             scan_dump.save()
             data = json.loads(file)
             tfsec_report_parser.tfsec_report_json(project_id=project_id,
-                                                          scan_id=scan_id,
-                                                          data=data,
-                                                          username=username)
+                                                  scan_id=scan_id,
+                                                  data=data,
+                                                  username=username)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
@@ -919,6 +920,28 @@ class UpladScanResult(APIView):
             scan_dump.save()
             data = json.loads(file)
             inspec_json_parser.inspec_report_json(project_id=project_id,
+                                                  scan_id=scan_id,
+                                                  data=data,
+                                                  username=username)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'dockle':
+            date_time = datetime.datetime.now()
+            scan_dump = dockle_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = json.loads(file)
+            dockle_json_parser.dockle_report_json(project_id=project_id,
                                                   scan_id=scan_id,
                                                   data=data,
                                                   username=username)
