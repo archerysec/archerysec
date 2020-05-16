@@ -30,7 +30,7 @@ from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_
     bandit_scan_db, bandit_scan_results_db, clair_scan_db, clair_scan_results_db, \
     trivy_scan_db, trivy_scan_results_db, npmaudit_scan_db, npmaudit_scan_results_db, nodejsscan_scan_results_db, \
     nodejsscan_scan_db, tfsec_scan_results_db, tfsec_scan_db
-from compliance.models import inspec_scan_results_db, inspec_scan_db
+from compliance.models import inspec_scan_results_db, inspec_scan_db, dockle_scan_db, dockle_scan_results_db
 from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_report_db
 import datetime
 from manual_scan.models import manual_scan_results_db, manual_scans_db
@@ -152,6 +152,11 @@ def projects(request):
         inspec.delete()
         inspec_result = inspec_scan_results_db.objects.filter(project_id=project_id)
         inspec_result.delete()
+
+        dockle = dockle_scan_db.objects.filter(project_id=project_id)
+        dockle.delete()
+        dockle_result = dockle_scan_results_db.objects.filter(project_id=project_id)
+        dockle_result.delete()
 
         openvas = scan_save_db.objects.filter(project_id=project_id)
         openvas.delete()
