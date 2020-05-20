@@ -95,11 +95,12 @@ Systemd service file is available in the project.
 
 ### Burp Scanner
 
-Follow the instruction in order to enable Burp REST API. You can manage and trigger scans using Archery once REST API enabled.
+Follow the instruction in order to enable Burp REST API. 
 
-* [Burp REST API](https://github.com/vmware/burp-rest-api)
+* [Burp REST API](https://portswigger.net/blog/burps-new-rest-api)
 
-Systemd service file is available in the project.
+Configure REST API endpoint in ArcherySec Settings
+
 
 ### SSLScan
 
