@@ -61,7 +61,7 @@ def create(request):
                                   project_owner=project_owner, project_disc=project_disc, date_time=date_time)
         save_project.save()
 
-        messages.success(request, "Project Created")
+        # messages.success(request, "Project Created")
 
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
 
@@ -175,7 +175,7 @@ def projects(request):
         pentest_dat = manual_scans_db.objects.filter(project_id=project_id)
         pentest_dat.delete()
 
-        messages.success(request, "Deleted Project")
+        # messages.success(request, "Deleted Project")
 
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
 

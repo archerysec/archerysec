@@ -922,7 +922,7 @@ def sel_login(request):
                                       )
                 data_dump.save()
                 return HttpResponseRedirect(reverse('webscanners:index'))
-        messages.add_message(request, messages.SUCCESS, 'Cookies stored')
+        # messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
         return HttpResponseRedirect(reverse('webscanners:index'))
     return render(request, 'webscanner.html')

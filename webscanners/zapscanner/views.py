@@ -447,9 +447,9 @@ def zap_vuln_details(request):
                     total_dup=total_duplicate,
                     )
 
-        messages.add_message(request,
-                             messages.SUCCESS,
-                             'Vulnerability Status Changed')
+        # messages.add_message(request,
+        #                      messages.SUCCESS,
+        #                      'Vulnerability Status Changed')
         return HttpResponseRedirect(
             reverse('zapscanner:zap_vuln_details') + '?scan_id=%s&scan_name=%s' % (
                 scan_id,
@@ -554,9 +554,9 @@ def zap_setting_update(request):
 
         return HttpResponseRedirect(reverse('webscanners:setting'))
 
-    messages.add_message(request,
-                         messages.SUCCESS,
-                         'ZAP Setting Updated ')
+    # messages.add_message(request,
+    #                      messages.SUCCESS,
+    #                      'ZAP Setting Updated ')
 
     return render(request,
                   'zapscanner/zap_settings_form.html')
@@ -585,7 +585,7 @@ def del_zap_scan(request):
                 item = zap_scans_db.objects.filter(username=username, scan_scanid=target,
                                                    )
                 item.delete()
-                messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+                # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
             return HttpResponseRedirect(reverse('webscanners:index'))
     except Exception as e:
         print("Error Got !!!")
@@ -689,7 +689,7 @@ def sel_login(request):
                 data_dump = cookie_db(url=new_uri, username=username, cookie=cookie_data)
                 data_dump.save()
                 return HttpResponseRedirect(reverse('webscanners:index'))
-        messages.add_message(request, messages.SUCCESS, 'Cookies stored')
+        # messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
         return HttpResponseRedirect(reverse('webscanners:index'))
     return render(request, 'webscanner.html')
@@ -765,7 +765,7 @@ def del_zap_vuln(request):
                                                                                      high_vul=total_high,
                                                                                      medium_vul=total_medium,
                                                                                      low_vul=total_low)
-        messages.success(request, "Deleted vulnerability")
+        # messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect(reverse('zapscanner:zap_list_vuln') + '?scan_id=%s' % un_scanid)
 
