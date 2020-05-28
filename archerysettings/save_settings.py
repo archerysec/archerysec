@@ -41,7 +41,7 @@ class SaveSettings:
         :param timing:
         :return:
         """
-        all_nv = nmap_vulners_setting_db.objects.filter(self.username)
+        all_nv = nmap_vulners_setting_db.objects.filter()
         all_nv.delete()
         if timing > 5:
             timing = 5
@@ -51,7 +51,8 @@ class SaveSettings:
         save_nv_settings = nmap_vulners_setting_db(enabled=enabled,
                                                    version=version,
                                                    online=online,
-                                                   timing=timing
+                                                   timing=timing,
+                                                   username=self.username
                                                    )
         save_nv_settings.save()
 
