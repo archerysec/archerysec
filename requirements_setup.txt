@@ -78,3 +78,4 @@ xhtml2pdf==0.2.3
 beautifulsoup4==4.7.1
 django-import-export==1.2.0
 django-s3-storage==0.12.4
+jsonfield==2.1.1

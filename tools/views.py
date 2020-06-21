@@ -34,6 +34,8 @@ from tools.nmap_vulners.nmap_vulners_view import nmap_vulners, nmap_vulners_port
 
 sslscan_output = None
 nikto_output = ''
+scan_result = ''
+all_nmap = ''
 
 
 def sslscan(request):
@@ -345,6 +347,7 @@ def nmap(request):
 
     :return:
     """
+    global all_nmap
     username = request.user.username
 
     if request.method == 'GET':
@@ -396,6 +399,7 @@ def nmap_result(request):
     :param request:
     :return:
     """
+    global scan_result
     username = request.user.username
 
     if request.method == 'GET':
