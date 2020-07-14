@@ -35,8 +35,11 @@ from webscanners.resources import ArachniResource
 from notifications.signals import notify
 from django.urls import reverse
 
+scan_run_id = ''
+scan_status = ''
 
 def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
+    global scan_run_id, scan_status
     arachni_hosts = None
     arachni_ports = None
     username = user.username
@@ -57,6 +60,55 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         "sql_injection",
         "sql_injection_differential",
         "sql_injection_timing",
+        "no_sql_injection",
+        "no_sql_injection_differential",
+        "code_injection",
+        "code_injection_timing",
+        "ldap_injection",
+        "path_traversal",
+        "file_inclusion",
+        "response_splitting",
+        "os_cmd_injection",
+        "os_cmd_injection_timing",
+        "rfi",
+        "unvalidated_redirect",
+        "unvalidated_redirect_dom",
+        "xpath_injection",
+        "xxe",
+        "source_code_disclosure",
+        "allowed_methods",
+        "backup_files",
+        "backup_directories",
+        "common_admin_interfaces",
+        "common_directories",
+        "common_files",
+        "http_put",
+        "webdav",
+        "xst",
+        "credit_card",
+        "cvs_svn_users",
+        "private_ip",
+        "backdoors",
+        "htaccess_limit",
+        "interesting_responses",
+        "html_objects",
+        "emails",
+        "ssn",
+        "directory_listing",
+        "mixed_resource",
+        "insecure_cookies",
+        "http_only_cookies",
+        "password_autocomplete",
+        "origin_spoof_access_restriction_bypass",
+        "form_upload",
+        "localstart_asp",
+        "cookie_set_for_parent_domain",
+        "hsts",
+        "x_frame_options",
+        "insecure_cors_policy",
+        "insecure_cross_domain_policy_access",
+        "insecure_cross_domain_policy_headers",
+        "insecure_client_access_policy",
         "csrf",
         "common_files",
         "directory_listing",
