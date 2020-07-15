@@ -9,13 +9,13 @@
                 <div class="col-md-auto">
                     <div class="float-right">
                         <!-- Large modal -->
-                        <a href="/jira/submit_jira_ticket/?summary={{ data.VulnerabilityID }}&description=%0a%0a%0a {{data.Description }} PkgName :  {{data.PkgName}} %0a%0a InstalledVersion : {{data.InstalledVersion}} %0a%0aFixedVersion : {{data.FixedVersion}} %0a%0a Title: {{data.Title}} %0a%0a References: {{data.References}} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=tfsec&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+                        <a href="/jira/submit_jira_ticket/?summary={{data.rule_id}}&description=Description:%0a%0a {{data.description | safe}} File Name: {{data.filename | safe}} %0a%0a Start Line: {{data.start_line | safe}} %0a%0aEnd Line: {{data.end_line | safe}} %0a%0a Title: {{data.rule_id}} %0a%0a References: {{data.link | safe}} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=tfsec&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
                            class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira
                             Ticket</a>
 
                     </div>
                 </div>
-                <h1>{{ data.title }}</h1>
+                <h1>{{data.rule_id}}</h1>
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">

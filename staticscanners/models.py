@@ -350,6 +350,7 @@ class npmaudit_scan_results_db(models.Model):
     url = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='npmaudit', editable=False)
     username = models.CharField(max_length=256, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)
 
 
 class nodejsscan_scan_db(models.Model):
@@ -392,6 +393,7 @@ class nodejsscan_scan_results_db(models.Model):
     severity = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='nodejsscan', editable=False)
     username = models.CharField(max_length=256, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)
 
 
 class tfsec_scan_db(models.Model):
@@ -433,3 +435,4 @@ class tfsec_scan_results_db(models.Model):
     severity = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='tfsec', editable=False)
     username = models.CharField(max_length=256, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)

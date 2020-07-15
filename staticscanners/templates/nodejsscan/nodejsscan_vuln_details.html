@@ -9,7 +9,7 @@
                 <div class="col-md-auto">
                     <div class="float-right">
                         <!-- Large modal -->
-                        <a href="/jira/submit_jira_ticket/?summary={{ data.VulnerabilityID }}&description=%0a%0a%0a {{data.Description }} PkgName :  {{data.PkgName}} %0a%0a InstalledVersion : {{data.InstalledVersion}} %0a%0aFixedVersion : {{data.FixedVersion}} %0a%0a Title: {{data.Title}} %0a%0a References: {{data.References}} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=nodejsscan&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+                        <a href="/jira/submit_jira_ticket/?summary={{ data.title }}&description=Description: {{data.description | safe}} File Name : {{data.filename | safe}} %0a%0a Line :  {{data.line | safe}} %0a%0a Title: {{ data.title }} %0a%0a Archery URL: {SERVERIP}/nodejsscan/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=nodejsscan&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
                            class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira
                             Ticket</a>
 
