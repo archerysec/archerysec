@@ -320,7 +320,9 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [x] Bandit Scan (XML)
     - [x] Dependency Check (XML)
     - [x] FindBugs (XML)
-	[more](https://github.com/archerysec/archerysec/issues/16)
+	
+	
+	[More Scanners](https://github.com/archerysec/archerysec/issues/16)
     
 * Popular Tools plugin support.
     - [x] Nmap
