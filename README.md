@@ -27,8 +27,8 @@ Archery
     - [SSLScan](#sslscan)
     - [Nikto](#nikto)
     - [NMAP Vulners](#nmap-vulners)
-- [Automated installation](#automated-installation)
-- [Manual Installation](#manual-installation)
+- [Installation](#installation)
+- [Windows Installation](#windows-installation)
 - [Note on installation for developers and contributors](#note-on-installation-for-developers-and-contributors)
 - [Note on manual and automated installation](#note-on-manual-and-automated-installation)
 - [Docker Installation](#docker-installation)
@@ -131,7 +131,7 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 - Search STRONGHOLD_PUBLIC_URLS
 - Comment r'^/api/createuser/$',
 
-## installation
+## Installation
 
 `export TIME_ZONE='Asia/Kolkata'`
 
@@ -142,6 +142,19 @@ $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ ./setup.sh
 $ ./run.sh
+```
+
+## Windows installation
+
+`set TIME_ZONE='Asia/Kolkata'`
+
+[https://en.wikipedia.org/wiki/List_of_tz_database_time_zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+```
+$ git clone https://github.com/archerysec/archerysec.git
+$ cd archerysec
+$ setup.bat
+$ run.bat
 ```
 
 ## Note on installation for developers and contributors
@@ -307,6 +320,7 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [x] Bandit Scan (XML)
     - [x] Dependency Check (XML)
     - [x] FindBugs (XML)
+	[more](https://github.com/archerysec/archerysec/issues/16)
     
 * Popular Tools plugin support.
     - [x] Nmap
