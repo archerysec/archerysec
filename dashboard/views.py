@@ -47,7 +47,9 @@ from staticscanners.models import dependencycheck_scan_db, \
     nodejsscan_scan_db, \
     nodejsscan_scan_results_db, \
     tfsec_scan_db, \
-    tfsec_scan_results_db
+    tfsec_scan_results_db, \
+    whitesource_scan_db, \
+    whitesource_scan_results_db
 from networkscanners.models import scan_save_db, \
     nessus_scan_db, \
     ov_scan_result_db, \
@@ -188,6 +190,9 @@ def proj_data(request):
     all_tfsec_scan = tfsec_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
+    all_whitesource_scan = whitesource_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('total_vuln'))
+
     all_inspec_scan = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
@@ -283,12 +288,17 @@ def proj_data(request):
         else:
             all_tfsec = value
 
+    for key, value in all_whitesource_scan.items():
+        if value is None:
+            all_whitesource = '0'
+        else:
+            all_whitesource = value
+
     for key, value in all_inspec_scan.items():
         if value is None:
             all_inspec = '0'
         else:
             all_inspec = value
-
 
     for key, value in all_dockle_scan.items():
         if value is None:
@@ -352,6 +362,7 @@ def proj_data(request):
                int(all_npmaudit) + \
                int(all_nodejsscan) + \
                int(all_tfsec) + \
+               int(all_whitesource) + \
                int(all_bandit) + \
                int(all_manual)
 
@@ -363,7 +374,7 @@ def proj_data(request):
     total_compliance = int(all_inspec) + int(all_dockle)
 
     total_static = int(all_dependency) + int(all_findbugs) + int(all_bandit) + int(all_clair) + int(all_trivy) + int(
-        all_npmaudit) + int(all_nodejsscan) + int(all_tfsec)
+        all_npmaudit) + int(all_nodejsscan) + int(all_tfsec) + int(all_whitesource)
 
     all_zap_high = zap_scans_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('high_vul'))
@@ -401,6 +412,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_tfsec_high = tfsec_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_HIGH'))
+
+    all_whitesource_high = whitesource_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_inspec_failed = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -486,26 +500,29 @@ def proj_data(request):
         else:
             high_npmaudit = value
 
-
     for key, value in all_nodejsscan_high.items():
         if value is None:
             high_nodejsscan = '0'
         else:
             high_nodejsscan = value
 
-
     for key, value in all_tfsec_high.items():
         if value is None:
-            high_tfsec= '0'
+            high_tfsec = '0'
         else:
             high_tfsec = value
+
+    for key, value in all_whitesource_high.items():
+        if value is None:
+            high_whitesource = '0'
+        else:
+            high_whitesource = value
 
     for key, value in all_inspec_failed.items():
         if value is None:
             failed_inspec = '0'
         else:
             failed_inspec = value
-
 
     for key, value in all_dockle_failed.items():
         if value is None:
@@ -546,7 +563,8 @@ def proj_data(request):
         else:
             high_pentest_web = value
 
-    all_high_pentest_net = manual_scans_db.objects.filter(username=username, pentest_type='network', project_id=project_id). \
+    all_high_pentest_net = manual_scans_db.objects.filter(username=username, pentest_type='network',
+                                                          project_id=project_id). \
         aggregate(Sum('high_vul'))
 
     for key, value in all_high_pentest_net.items():
@@ -569,6 +587,7 @@ def proj_data(request):
                int(high_npmaudit) + \
                int(high_nodejsscan) + \
                int(high_tfsec) + \
+               int(high_whitesource) + \
                int(high_bandit) + \
                int(high_nessus) + \
                int(pentest_high)
@@ -587,7 +606,8 @@ def proj_data(request):
                       int(high_clair) + \
                       int(high_npmaudit) + \
                       int(high_nodejsscan) + \
-                      int(high_tfsec)
+                      int(high_tfsec) + \
+                      int(high_whitesource)
 
     all_network_high = int(openvas_high) + int(high_nessus) + int(high_pentest_net)
 
@@ -629,6 +649,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_tfsec_medium = tfsec_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_MEDIUM'))
+
+    all_whitesource_medium = whitesource_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_inspec_passed = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -716,12 +739,17 @@ def proj_data(request):
         else:
             medium_nodejsscan = value
 
-
     for key, value in all_tfsec_medium.items():
         if value is None:
             medium_tfsec = '0'
         else:
             medium_tfsec = value
+
+    for key, value in all_whitesource_medium.items():
+        if value is None:
+            medium_whitesource = '0'
+        else:
+            medium_whitesource = value
 
     for key, value in all_inspec_passed.items():
         if value is None:
@@ -767,11 +795,13 @@ def proj_data(request):
                  int(medium_npmaudit) + \
                  int(medium_nodejsscan) + \
                  int(medium_tfsec) + \
+                 int(medium_whitesource) + \
                  int(medium_bandit) + \
                  int(medium_nessus) + \
                  int(pentest_medium)
 
-    all_medium_pentest_web = manual_scans_db.objects.filter(username=username, pentest_type='web', project_id=project_id). \
+    all_medium_pentest_web = manual_scans_db.objects.filter(username=username, pentest_type='web',
+                                                            project_id=project_id). \
         aggregate(Sum('medium_vul'))
 
     for key, value in all_medium_pentest_web.items():
@@ -780,7 +810,8 @@ def proj_data(request):
         else:
             medium_pentest_web = value
 
-    all_medium_pentest_net = manual_scans_db.objects.filter(username=username, pentest_type='network', project_id=project_id). \
+    all_medium_pentest_net = manual_scans_db.objects.filter(username=username, pentest_type='network',
+                                                            project_id=project_id). \
         aggregate(Sum('medium_vul'))
 
     for key, value in all_medium_pentest_net.items():
@@ -803,7 +834,8 @@ def proj_data(request):
                         int(medium_clair) + \
                         int(medium_npmaudit) + \
                         int(medium_nodejsscan) + \
-                        int(medium_tfsec)
+                        int(medium_tfsec) + \
+                        int(medium_whitesource)
 
     all_network_medium = int(openvas_medium) + int(medium_pentest_net) + int(medium_nessus)
 
@@ -845,6 +877,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_LOW'))
 
     all_tfsec_low = tfsec_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_LOW'))
+
+    all_whitesource_low = whitesource_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_LOW'))
 
     all_inspec_skipped = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -936,12 +971,17 @@ def proj_data(request):
         else:
             low_nodejsscan = value
 
-
     for key, value in all_tfsec_low.items():
         if value is None:
             low_tfsec = '0'
         else:
             low_tfsec = value
+
+    for key, value in all_whitesource_low.items():
+        if value is None:
+            low_whitesource = '0'
+        else:
+            low_whitesource = value
 
     for key, value in all_inspec_skipped.items():
         if value is None:
@@ -993,6 +1033,7 @@ def proj_data(request):
               int(low_npmaudit) + \
               int(low_nodejsscan) + \
               int(low_tfsec) + \
+              int(low_whitesource) + \
               int(low_bandit) + \
               int(low_nessus) + \
               int(pentest_low)
@@ -1006,7 +1047,8 @@ def proj_data(request):
         else:
             low_pentest_web = value
 
-    all_low_pentest_net = manual_scans_db.objects.filter(username=username, pentest_type='network', project_id=project_id). \
+    all_low_pentest_net = manual_scans_db.objects.filter(username=username, pentest_type='network',
+                                                         project_id=project_id). \
         aggregate(Sum('low_vul'))
 
     for key, value in all_low_pentest_net.items():
@@ -1029,7 +1071,8 @@ def proj_data(request):
                      int(low_clair) + \
                      int(low_npmaudit) + \
                      int(low_nodejsscan) + \
-                     int(low_tfsec)
+                     int(low_tfsec) + \
+                     int(low_whitesource)
 
     all_network_low = int(openvas_low) + int(low_nessus) + int(low_pentest_net)
 
@@ -1050,10 +1093,11 @@ def proj_data(request):
     npmaudit = npmaudit_scan_db.objects.filter(username=username, project_id=project_id)
     nodejsscan = nodejsscan_scan_db.objects.filter(username=username, project_id=project_id)
     tfsec = tfsec_scan_db.objects.filter(username=username, project_id=project_id)
+    whitesource = whitesource_scan_db.objects.filter(username=username, project_id=project_id)
     bandit = bandit_scan_db.objects.filter(username=username, project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
-    static_scan = chain(dependency_check, findbugs, clair, trivy, npmaudit, nodejsscan, tfsec, bandit)
+    static_scan = chain(dependency_check, findbugs, clair, trivy, npmaudit, nodejsscan, tfsec, whitesource, bandit)
     openvas_dat = scan_save_db.objects.filter(username=username, project_id=project_id)
     nessus_dat = nessus_scan_db.objects.filter(username=username, project_id=project_id)
 
@@ -1073,36 +1117,61 @@ def proj_data(request):
 
     pentest = manual_scans_db.objects.filter(username=username, project_id=project_id)
 
-    zap_false_positive = zap_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    burp_false_positive = burp_scan_result_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    arachni_false_positive = arachni_scan_result_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    netsparker_false_positive = netsparker_scan_result_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    webinspect_false_positive = webinspect_scan_result_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    acunetix_false_positive = acunetix_scan_result_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
+    zap_false_positive = zap_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                            project_id=project_id)
+    burp_false_positive = burp_scan_result_db.objects.filter(username=username, false_positive='Yes',
+                                                             project_id=project_id)
+    arachni_false_positive = arachni_scan_result_db.objects.filter(username=username, false_positive='Yes',
+                                                                   project_id=project_id)
+    netsparker_false_positive = netsparker_scan_result_db.objects.filter(username=username, false_positive='Yes',
+                                                                         project_id=project_id)
+    webinspect_false_positive = webinspect_scan_result_db.objects.filter(username=username, false_positive='Yes',
+                                                                         project_id=project_id)
+    acunetix_false_positive = acunetix_scan_result_db.objects.filter(username=username, false_positive='Yes',
+                                                                     project_id=project_id)
 
-    dependencycheck_false_positive = dependencycheck_scan_results_db.objects.filter(username=username, false_positive='Yes',
+    dependencycheck_false_positive = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                    false_positive='Yes',
                                                                                     project_id=project_id)
-    findbugs_false_positive = findbugs_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    clair_false_positive = clair_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    trivy_false_positive = trivy_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    npmaudit_false_positive = npmaudit_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    nodejsscan_false_positive = nodejsscan_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    tfsec_false_positive = tfsec_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    bandit_false_positive = bandit_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
+    findbugs_false_positive = findbugs_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                      project_id=project_id)
+    clair_false_positive = clair_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                project_id=project_id)
+    trivy_false_positive = trivy_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                project_id=project_id)
+    npmaudit_false_positive = npmaudit_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                      project_id=project_id)
+    nodejsscan_false_positive = nodejsscan_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                          project_id=project_id)
+    tfsec_false_positive = tfsec_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                project_id=project_id)
+    whitesource_false_positive = whitesource_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                            project_id=project_id)
+    bandit_false_positive = bandit_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                  project_id=project_id)
 
-    openvas_false_positive = ov_scan_result_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-    nessus_false_positive = nessus_report_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
+    openvas_false_positive = ov_scan_result_db.objects.filter(username=username, false_positive='Yes',
+                                                              project_id=project_id)
+    nessus_false_positive = nessus_report_db.objects.filter(username=username, false_positive='Yes',
+                                                            project_id=project_id)
 
     zap_closed_vuln = zap_scan_results_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
-    burp_closed_vuln = burp_scan_result_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
-    arachni_closed_vuln = arachni_scan_result_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
-    netsparker_closed_vuln = netsparker_scan_result_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
-    webinspect_closed_vuln = webinspect_scan_result_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
-    acunetix_closed_vuln = acunetix_scan_result_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
-    openvas_closed_vuln = ov_scan_result_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
+    burp_closed_vuln = burp_scan_result_db.objects.filter(username=username, vuln_status='Closed',
+                                                          project_id=project_id)
+    arachni_closed_vuln = arachni_scan_result_db.objects.filter(username=username, vuln_status='Closed',
+                                                                project_id=project_id)
+    netsparker_closed_vuln = netsparker_scan_result_db.objects.filter(username=username, vuln_status='Closed',
+                                                                      project_id=project_id)
+    webinspect_closed_vuln = webinspect_scan_result_db.objects.filter(username=username, vuln_status='Closed',
+                                                                      project_id=project_id)
+    acunetix_closed_vuln = acunetix_scan_result_db.objects.filter(username=username, vuln_status='Closed',
+                                                                  project_id=project_id)
+    openvas_closed_vuln = ov_scan_result_db.objects.filter(username=username, vuln_status='Closed',
+                                                           project_id=project_id)
     nessus_closed_vuln = nessus_report_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
 
-    dependencycheck_closed_vuln = dependencycheck_scan_results_db.objects.filter(username=username, vuln_status='Closed',
+    dependencycheck_closed_vuln = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                 vuln_status='Closed',
                                                                                  project_id=project_id)
     findbugs_closed_vuln = findbugs_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                                    project_id=project_id)
@@ -1113,9 +1182,11 @@ def proj_data(request):
     npmaudit_closed_vuln = npmaudit_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                                    project_id=project_id)
     nodejsscan_closed_vuln = nodejsscan_scan_results_db.objects.filter(username=username, vuln_status='Closed',
-                                                                   project_id=project_id)
-    tfsec_closed_vuln = tfsec_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                                        project_id=project_id)
+    tfsec_closed_vuln = tfsec_scan_results_db.objects.filter(username=username, vuln_status='Closed',
+                                                             project_id=project_id)
+    whitesource_closed_vuln = whitesource_scan_results_db.objects.filter(username=username, vuln_status='Closed',
+                                                                         project_id=project_id)
     bandit_closed_vuln = bandit_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                                project_id=project_id)
 
@@ -1134,6 +1205,7 @@ def proj_data(request):
                       int(len(npmaudit_closed_vuln)) + \
                       int(len(nodejsscan_closed_vuln)) + \
                       int(len(tfsec_closed_vuln)) + \
+                      int(len(whitesource_closed_vuln)) + \
                       int(len(bandit_closed_vuln))
 
     all_false_positive = int(len(zap_false_positive)) + \
@@ -1151,6 +1223,7 @@ def proj_data(request):
                          int(len(npmaudit_false_positive)) + \
                          int(len(nodejsscan_false_positive)) + \
                          int(len(tfsec_false_positive)) + \
+                         int(len(whitesource_false_positive)) + \
                          int(len(bandit_false_positive))
 
     all_notify = Notification.objects.unread()
@@ -1197,6 +1270,7 @@ def proj_data(request):
                    'npmaudit': npmaudit,
                    'nodejsscan': nodejsscan,
                    'tfsec': tfsec,
+                   'whitesource': whitesource,
                    'pentest': pentest,
                    'network_dat': network_dat,
                    'all_zap_scan': all_zap_scan,
@@ -1213,6 +1287,7 @@ def proj_data(request):
                    'all_npmaudit_scan': all_npmaudit_scan,
                    'all_nodejsscan_scan': all_nodejsscan_scan,
                    'all_tfsec_scan': all_tfsec_scan,
+                   'all_whitesource_scan': all_whitesource_scan,
                    'all_webinspect_scan': all_webinspect_scan,
 
                    'all_compliance_failed': all_compliance_failed,
@@ -1293,6 +1368,10 @@ def proj_data(request):
                    'all_tfsec_low': all_tfsec_low,
                    'all_tfsec_medium': all_tfsec_medium,
 
+                   'all_whitesource_high': all_whitesource_high,
+                   'all_whitesource_low': all_whitesource_low,
+                   'all_whitesource_medium': all_whitesource_medium,
+
                    'all_closed_vuln': all_closed_vuln,
                    'all_false_positive': all_false_positive,
                    'message': all_notify
@@ -1332,12 +1411,15 @@ def all_high_vuln(request):
                                                            severity='High',
                                                            false_positive='No')
 
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                  project_id=project_id,
                                                                                   severity='High',
                                                                                   false_positive='No')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='High', project_id=project_id,
+        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='High',
+                                                                    project_id=project_id,
                                                                     false_positive='No')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='HIGH', project_id=project_id,
+        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='HIGH',
+                                                                project_id=project_id,
                                                                 false_positive='No')
         clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='High', project_id=project_id,
                                                               false_positive='No')
@@ -1345,21 +1427,28 @@ def all_high_vuln(request):
         trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='High', project_id=project_id,
                                                               false_positive='No')
 
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='High', project_id=project_id,
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='High',
+                                                                    project_id=project_id,
                                                                     false_positive='No')
 
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='High', project_id=project_id,
-                                                                    false_positive='No')
+        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='High',
+                                                                        project_id=project_id,
+                                                                        false_positive='No')
 
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='High', project_id=project_id,
-                                                                        false_positive='No')
+                                                              false_positive='No')
+
+        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='High',
+                                                                          project_id=project_id,
+                                                                          false_positive='No')
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='High', project_id=project_id,
                                                             false_positive='No')
         nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='High', project_id=project_id,
                                                           false_positive='No')
 
-        pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='High', project_id=project_id)
+        pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='High',
+                                                                 project_id=project_id)
 
     elif severity == 'Medium':
 
@@ -1378,24 +1467,37 @@ def all_high_vuln(request):
                                                                    VulnSeverity='Medium')
         burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                            severity='Medium')
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                  project_id=project_id,
                                                                                   severity='Medium')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Medium', project_id=project_id)
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='MEDIUM', project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Medium', project_id=project_id)
+        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Medium',
+                                                                    project_id=project_id)
+        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='MEDIUM',
+                                                                project_id=project_id)
+        clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Medium',
+                                                              project_id=project_id)
 
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Medium', project_id=project_id)
+        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Medium',
+                                                              project_id=project_id)
 
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Medium', project_id=project_id)
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                    project_id=project_id)
 
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Medium', project_id=project_id)
+        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                        project_id=project_id)
 
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Medium', project_id=project_id)
+        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                              project_id=project_id)
+
+        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                          project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Medium', project_id=project_id)
-        nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Medium', project_id=project_id)
+        nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Medium',
+                                                          project_id=project_id)
 
-        pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Medium', project_id=project_id)
+        pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                 project_id=project_id)
 
     # All Low
     elif severity == 'Low':
@@ -1413,24 +1515,33 @@ def all_high_vuln(request):
                                                                    VulnSeverity='Low')
         burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                            severity='Low')
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                  project_id=project_id,
                                                                                   severity='Low')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Low', project_id=project_id)
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='LOW', project_id=project_id)
+        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Low',
+                                                                    project_id=project_id)
+        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='LOW',
+                                                                project_id=project_id)
         clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Low', project_id=project_id)
 
         trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Low', project_id=project_id)
 
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                    project_id=project_id)
 
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
+        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                        project_id=project_id)
 
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
+
+        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                          project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Low', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Low', project_id=project_id)
 
-        pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
+        pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                 project_id=project_id)
 
     elif severity == 'Total':
         zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
@@ -1447,7 +1558,8 @@ def all_high_vuln(request):
         burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                            )
 
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                  project_id=project_id,
                                                                                   )
         findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id)
         bandit_all_high = bandit_scan_results_db.objects.filter(username=username, project_id=project_id)
@@ -1460,6 +1572,8 @@ def all_high_vuln(request):
         nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id)
 
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id)
+
+        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id)
@@ -1481,22 +1595,35 @@ def all_high_vuln(request):
         burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                            false_positive='Yes')
 
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                  project_id=project_id,
                                                                                   false_positive='Yes')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, false_positive='Yes', project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                    false_positive='Yes')
+        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                project_id=project_id)
+        clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                              false_positive='Yes')
 
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                              false_positive='Yes')
 
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                    false_positive='Yes')
 
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        false_positive='Yes')
 
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                              false_positive='Yes')
 
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
-        nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                          false_positive='Yes')
+
+        openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
+                                                            false_positive='Yes')
+        nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
+                                                          false_positive='Yes')
 
         pentest_all_high = ''
 
@@ -1515,22 +1642,35 @@ def all_high_vuln(request):
         burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                            vuln_status='Closed')
 
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                  project_id=project_id,
                                                                                   vuln_status='Closed')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                    vuln_status='Closed')
+        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, vuln_status='Closed',
+                                                                project_id=project_id)
+        clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                              vuln_status='Closed')
 
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                              vuln_status='Closed')
 
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                    vuln_status='Closed')
 
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        vuln_status='Closed')
 
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                              vuln_status='Closed')
 
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
-        nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                          vuln_status='Closed')
+
+        openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
+                                                            vuln_status='Closed')
+        nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
+                                                          vuln_status='Closed')
 
         pentest_all_high = ''
 
@@ -1553,6 +1693,7 @@ def all_high_vuln(request):
                    'npmaudit_all_high': npmaudit_all_high,
                    'nodejsscan_all_high': nodejsscan_all_high,
                    'tfsec_all_high': tfsec_all_high,
+                   'whitesource_all_high': whitesource_all_high,
                    'openvas_all_high': openvas_all_high,
                    'nessus_all_high': nessus_all_high,
                    'project_id': project_id,
@@ -1594,24 +1735,37 @@ def export(request):
             burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                severity='High')
 
-            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                      project_id=project_id,
                                                                                       severity='High')
-            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='High', project_id=project_id)
-            bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='High', project_id=project_id)
-            clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='High', project_id=project_id)
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='High',
+                                                                        project_id=project_id)
+            bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='High',
+                                                                    project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='High',
+                                                                  project_id=project_id)
 
-            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='HIGH', project_id=project_id)
+            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='HIGH',
+                                                                  project_id=project_id)
 
-            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='HIGH', project_id=project_id)
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='HIGH',
+                                                                        project_id=project_id)
 
-            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='HIGH', project_id=project_id)
+            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='HIGH',
+                                                                            project_id=project_id)
 
-            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='HIGH', project_id=project_id)
+            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='HIGH',
+                                                                  project_id=project_id)
+
+            whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='HIGH',
+                                                                              project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='High', project_id=project_id)
-            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='High', project_id=project_id)
+            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='High',
+                                                              project_id=project_id)
 
-            pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='High', project_id=project_id)
+            pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='High',
+                                                                     project_id=project_id)
 
             all_data = chain(zap_all_high,
                              burp_all_high,
@@ -1626,6 +1780,7 @@ def export(request):
                              npmaudit_all_high,
                              nodejsscan_all_high,
                              tfsec_all_high,
+                             whitesource_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1649,24 +1804,38 @@ def export(request):
                                                                        VulnSeverity='Medium')
             burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                severity='Medium')
-            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                      project_id=project_id,
                                                                                       severity='Medium')
-            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Medium', project_id=project_id)
-            bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='Medium', project_id=project_id)
-            clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Medium', project_id=project_id)
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Medium',
+                                                                        project_id=project_id)
+            bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='Medium',
+                                                                    project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Medium',
+                                                                  project_id=project_id)
 
-            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Medium', project_id=project_id)
+            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Medium',
+                                                                  project_id=project_id)
 
-            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Medium', project_id=project_id)
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                        project_id=project_id)
 
-            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Medium', project_id=project_id)
+            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                            project_id=project_id)
 
-            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Medium', project_id=project_id)
+            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                  project_id=project_id)
 
-            openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Medium', project_id=project_id)
-            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Medium', project_id=project_id)
+            whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                              project_id=project_id)
 
-            pentest_all_high = manual_scan_results_db.filter(username=username, severity='Medium', project_id=project_id)
+            openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Medium',
+                                                                project_id=project_id)
+            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Medium',
+                                                              project_id=project_id)
+
+            pentest_all_high = manual_scan_results_db.filter(username=username, severity='Medium',
+                                                             project_id=project_id)
 
             all_data = chain(zap_all_high,
                              burp_all_high,
@@ -1681,6 +1850,7 @@ def export(request):
                              npmaudit_all_high,
                              nodejsscan_all_high,
                              tfsec_all_high,
+                             whitesource_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1705,22 +1875,34 @@ def export(request):
                                                                        VulnSeverity='Low')
             burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                severity='Low')
-            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                      project_id=project_id,
                                                                                       severity='Low')
-            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Low', project_id=project_id)
-            bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='Low', project_id=project_id)
-            clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Low', project_id=project_id)
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Low',
+                                                                        project_id=project_id)
+            bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='Low',
+                                                                    project_id=project_id)
+            clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Low',
+                                                                  project_id=project_id)
 
-            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Low', project_id=project_id)
+            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Low',
+                                                                  project_id=project_id)
 
-            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                        project_id=project_id)
 
-            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
+            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                            project_id=project_id)
 
-            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
+            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                  project_id=project_id)
+
+            whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                              project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Low', project_id=project_id)
-            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Low', project_id=project_id)
+            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Low',
+                                                              project_id=project_id)
 
             pentest_all_high = manual_scan_results_db.filter(username=username, severity='Low', project_id=project_id)
 
@@ -1737,6 +1919,7 @@ def export(request):
                              npmaudit_all_high,
                              nodejsscan_all_high,
                              tfsec_all_high,
+                             whitesource_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1762,7 +1945,8 @@ def export(request):
             burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                )
 
-            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                      project_id=project_id,
                                                                                       )
             findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id)
             bandit_all_high = bandit_scan_results_db.objects.filter(username=username, project_id=project_id)
@@ -1775,6 +1959,8 @@ def export(request):
             nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id)
 
             tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id)
+
+            whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id)
@@ -1794,6 +1980,7 @@ def export(request):
                              npmaudit_all_high,
                              nodejsscan_all_high,
                              tfsec_all_high,
+                             whitesource_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1817,21 +2004,33 @@ def export(request):
             burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                false_positive='Yes')
 
-            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                      project_id=project_id,
                                                                                       false_positive='Yes')
-            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
-            clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        false_positive='Yes')
+            clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                  false_positive='Yes')
 
-            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                  false_positive='Yes')
 
-            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        false_positive='Yes')
 
-            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                            false_positive='Yes')
 
-            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                  false_positive='Yes')
 
-            openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
-            nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id, false_positive='Yes')
+            whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                              false_positive='Yes')
+
+            openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
+                                                                false_positive='Yes')
+            nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
+                                                              false_positive='Yes')
 
             all_data = chain(zap_all_high,
                              burp_all_high,
@@ -1846,6 +2045,7 @@ def export(request):
                              npmaudit_all_high,
                              nodejsscan_all_high,
                              tfsec_all_high,
+                             whitesource_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high
@@ -1867,21 +2067,33 @@ def export(request):
             burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                vuln_status='Closed')
 
-            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username, project_id=project_id,
+            dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                      project_id=project_id,
                                                                                       vuln_status='Closed')
-            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
-            clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+            findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        vuln_status='Closed')
+            clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                  vuln_status='Closed')
 
-            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+            trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                  vuln_status='Closed')
 
-            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+            npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        vuln_status='Closed')
 
-            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+            nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                            vuln_status='Closed')
 
-            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+            tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                  vuln_status='Closed')
 
-            openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
-            nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
+            whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                              vuln_status='Closed')
+
+            openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
+                                                                vuln_status='Closed')
+            nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
+                                                              vuln_status='Closed')
 
             all_data = chain(zap_all_high,
                              burp_all_high,
@@ -1896,6 +2108,7 @@ def export(request):
                              npmaudit_all_high,
                              nodejsscan_all_high,
                              tfsec_all_high,
+                             whitesource_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high

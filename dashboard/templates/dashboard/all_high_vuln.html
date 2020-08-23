@@ -229,6 +229,18 @@
                                 </tr>
                                 {% endfor %}
 
+                                {% for data in whitesource_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'whitesource:whitesource_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
                                 <!--&lt;!&ndash;Bandit&ndash;&gt;-->
                                 {% for data in bandit_vuln_high %}
                                 <tr data-target="#">
