@@ -1,118 +1,124 @@
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-{% for data in whitesource_vuln_details %}
-<div class="page-wrapper">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-auto">
-                    <div class="float-right">
-                        <!-- Large modal -->
-                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description=Description:%0a%0a {{data.description | safe}} File Name: {{data.filename | safe}} %0a%0a Title: {{data.name}} %0a%0a References: {{data.url | safe}} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=whitesource&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
-                           class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira
-                            Ticket</a>
-
-                    </div>
-                </div>
-                <h1>{{data.name}}</h1>
-                <br>
-                <div class="card">
-                    <div class="accordion" id="accordionExample">
-                        <div class="card m-b-0">
-                            <div class="card-header" id="headingOne">
-                                <h5 class="mb-0">
-                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
-                                       aria-controls="collapseOne">
-                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Description</span>
-                                    </a>
-                                </h5>
-                            </div>
-                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    {{data.description | safe}}
-                                </div>
-                                <div class="card-body">
-                                     File Name:
-                                    {{data.filename | safe}}
-                                </div>
-                                 <div class="card-body">
-                                     Score :
-                                    {{data.score | safe}}
-                                </div>
-                                <div class="card-body">
-                                     CVSS3 Score:
-                                    {{data.cvss3_score | safe}}
-                                </div>
-                                <div class="card-body">
-                                     Severity:
-                                    {{data.severity | safe}}
-                                </div>
-                                <div class="card-body">
-                                     Publish Date:
-                                    {{data.publishDate | safe}}
-                                </div>
-                                <div class="card-body">
-                                     Last Updated Date:
-                                    {{data.lastUpdatedDate | safe}}
-                                </div>
-                                <div class="card-body">
-                                     Score Metadata Vector:
-                                    {{data.scoreMetadataVector | safe}}
-                                </div>
+    {% for data in whitesource_vuln_details %}
+        <div class="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-auto">
+                            <div class="float-right">
+                                <!-- Large modal -->
+                                <a href="/jira/submit_jira_ticket/?summary={{ data.name }}&description=Description:%0a%0a {{ data.description | safe }} File Name: {{ data.filename | safe }} %0a%0a Title: {{ data.name }} %0a%0a References: {{ data.url | safe }} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{ data.vuln_id }} &scanner=whitesource&vuln_id={{ data.vuln_id }}&scan_id={{ data.scan_id }} "
+                                   class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira
+                                    Ticket</a>
 
                             </div>
                         </div>
-                        <div class="card m-b-0">
-                            <div class="card-header" id="headingThree">
-                                <h5 class="mb-0">
-                                    <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
-                                       aria-controls="collapseThree">
-                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Fix</span>
-                                    </a>
-                                </h5>
-                            </div>
-                            <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    {{ data.topFix }}
+                        <h1>{{ data.name }}</h1>
+                        <br>
+                        <div class="card">
+                            <div class="accordion" id="accordionExample">
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingOne">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                               aria-controls="collapseOne">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Description</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            {{ data.description | safe }}
+                                        </div>
+                                        <div class="card-body">
+                                            File Name:
+                                            {{ data.filename | safe }}
+                                        </div>
+                                        <div class="card-body">
+                                            Score :
+                                            {{ data.score | safe }}
+                                        </div>
+                                        <div class="card-body">
+                                            CVSS3 Score:
+                                            {{ data.cvss3_score | safe }}
+                                        </div>
+                                        <div class="card-body">
+                                            Severity:
+                                            {{ data.severity | safe }}
+                                        </div>
+                                        <div class="card-body">
+                                            Publish Date:
+                                            {{ data.publishDate | safe }}
+                                        </div>
+                                        <div class="card-body">
+                                            Last Updated Date:
+                                            {{ data.lastUpdatedDate | safe }}
+                                        </div>
+                                        <div class="card-body">
+                                            Score Metadata Vector:
+                                            {{ data.scoreMetadataVector | safe }}
+                                        </div>
+
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="card m-b-0">
-                            <div class="card-header" id="headingThree">
-                                <h5 class="mb-0">
-                                    <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
-                                       aria-controls="collapseThree">
-                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Library</span>
-                                    </a>
-                                </h5>
-                            </div>
-                            <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    {{ data.library }}
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingThree">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
+                                               aria-controls="collapseThree">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Fix</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody id="topFix"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="card m-b-0">
-                            <div class="card-header" id="headingThree">
-                                <h5 class="mb-0">
-                                    <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
-                                       aria-controls="collapseThree">
-                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Reference</span>
-                                    </a>
-                                </h5>
-                            </div>
-                            <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <a href="{{data.url | safe}}"  target="_blank">{{data.url | safe}}</a>
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingFour">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseFour" aria-expanded="true"
+                                               aria-controls="collapseFour">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Library</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseFour" class="collapse show" aria-labelledby="headingFour"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody id="library"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingFive">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseFive" aria-expanded="true"
+                                               aria-controls="collapseFive">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Reference</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseFive" class="collapse show" aria-labelledby="headingFive"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <a href="{{ data.url | safe }}" target="_blank">{{ data.url | safe }}</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -120,7 +126,24 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-{% endfor %}
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+        <script type="text/javascript">
+            var json = {{ data.library | safe }};
+            $.each(json, function (key, data) {
+                var tbody = document.getElementById('library');
+                var tr = "<tr>";
+                tr += "<td>" + key + "</td>" + "<td>" + data.toString() + "</td></tr>";
+                tbody.innerHTML += tr;
+            });
+
+            var json = {{ data.topFix | safe }};
+            $.each(json, function (key, data) {
+                console.log(key, data);
+                var tbody = document.getElementById('topFix');
+                var tr = "<tr>";
+                tr += "<td>" + key + "</td>" + "<td>" + data.toString() + "</td></tr>";
+                tbody.innerHTML += tr;
+            })
+        </script>
+    {% endfor %}
 {% endblock %}
