@@ -12,31 +12,35 @@
         $("input:checkbox").prop('checked', $(this).prop("checked"));
     });
     $(document).ready(function() {
-        $("button").click(function(){
-            var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
-            $.each($("input[name='del_vuln_id']:checked"), function(){
-                scan_id.push($(this).val());
-            });
+        $('.btn-danger').click(function(){
+            if (confirm('Are you sure you want to delete this?')) {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_vuln_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
 
-            var json_scanid = scan_id.join(", ");
-            $.ajax({
-                type:'POST',
-                <!--contentType: 'application/json; charset=utf-8',-->
-                url:'{% url 'networkscanners:delete_nessus_vuln' %}',
-                data:{
-                   del_vuln: json_scanid,
-                   scan_id: $('input[name=scan_id]').val(),
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-                }
-            });
-            setTimeout(function(){location.reload();},1000);
+                var json_scanid = scan_id.join(", ");
+                $.ajax({
+                    type:'POST',
+                    <!--contentType: 'application/json; charset=utf-8',-->
+                    url:'{% url 'networkscanners:delete_nessus_vuln' %}',
+                    data:{
+                       del_vuln: json_scanid,
+                       scan_id: $('input[name=scan_id]').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+                    }
+                });
+                setTimeout(function(){location.reload();},1000);
+            }
         });
 
     });
 
-
+$(document).on('click', '.confirm-delete', function(){
+    return confirm('Are you sure you want to delete this?');
+})
 
 
 </script>
@@ -109,14 +113,14 @@
                                             </form>
                                         </td>
                                         <td>{{data.vuln_status}}</td>
-                                        <td>
+                                        <td class="confirm-delete">
                                             <div>
                                                 <form action="{% url 'networkscanners:delete_nessus_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vul_id}}">
                                                     <input type="hidden" name="scan_id" value="{{scan_id}}">
-                                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                    <button class="btn btn-warning"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             </div>
                                         </td>
@@ -201,14 +205,14 @@
                                                 <button class="btn btn-info btn-mini">No</button>
                                             </form>
                                         </td>
-                                        <td>
+                                        <td class="confirm-delete">
                                             <div>
                                                 <form action="{% url 'networkscanners:delete_nessus_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vul_id}}">
                                                     <input type="hidden" name="scan_id" value="{{scan_id}}">
-                                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                    <button class="btn btn-warning"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             </div>
                                         </td>
@@ -236,17 +240,10 @@
                                 <table id="nessus_scans_close" class="table table-bordered data-table">
                                     <thead>
                                     <tr>
-                                        <td>
-                                            <form>
-                                                <label class="customcheckbox">
-                                                    <input type="checkbox" class="listCheckbox"
-                                                           value="{{data.scan_id}}"
-                                                           name="del_scan_id"
-                                                           onClick="reload">
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                            </form>
-                                        </td>
+                                        <th><label class="customcheckbox m-b-20">
+                                            <input type="checkbox" id="mainCheckbox">
+                                            <span class="checkmark"></span>
+                                        </label></th>
                                         <th>Vulnerability</th>
                                         <th>Criticality</th>
                                         <th>Severity</th>
@@ -287,14 +284,14 @@
                                                 <button class="btn btn-info btn-mini">No</button>
                                             </form>
                                         </td>
-                                        <td>
+                                        <td class="confirm-delete">
                                             <div>
                                                 <form action="{% url 'networkscanners:delete_nessus_vuln' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="del_vuln" value="{{data.vul_id}}">
                                                     <input type="hidden" name="scan_id" value="{{scan_id}}">
-                                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                    <button class="btn btn-warning"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             </div>
                                         </td>

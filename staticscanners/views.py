@@ -230,6 +230,7 @@ def report_import(request):
                                scan_id=scan_id,
                                username=username
                                )
+            return HttpResponseRedirect(reverse('inspec:inspec_list'))
 
         if scanner == "dockle_scan":
             date_time = datetime.now()

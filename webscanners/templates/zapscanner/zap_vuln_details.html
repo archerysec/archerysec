@@ -10,34 +10,35 @@
     });
 
     $(document).ready(function() {
-        $("button").click(function(){
-            var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
-            $.each($("input[name='del_vuln_id']:checked"), function(){
-                scan_id.push($(this).val());
-            });
+        $('.btn-danger').click(function(){
+            if (confirm('Are you sure you want to delete this?')) {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_vuln_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
 
-            var json_scanid = scan_id.join(", ");
-            $.ajax({
-                type:'POST',
-                <!--contentType: 'application/json; charset=utf-8',-->
-                url:'{% url 'zapscanner:del_zap_vuln' %}',
-                data:{
-                   del_vuln: json_scanid,
-                   scan_id: $('input[name=scan_id]').val(),
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-                }
-            });
-            setTimeout(function(){location.reload();},1000);
+                var json_scanid = scan_id.join(", ");
+                $.ajax({
+                    type:'POST',
+                    <!--contentType: 'application/json; charset=utf-8',-->
+                    url:'{% url 'zapscanner:del_zap_vuln' %}',
+                    data:{
+                       del_vuln: json_scanid,
+                       scan_id: $('input[name=scan_id]').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+                    }
+                });
+                setTimeout(function(){location.reload();},1000);
+            }
         });
 
     });
 
-
-
-
-
+$(document).on('click', '.confirm-delete', function(){
+    return confirm('Are you sure you want to delete this?');
+})
 
 </script>
 
@@ -105,7 +106,8 @@
                                             </form>
                                         </td>
                                         <td>{{ data.vuln_status }}</td>
-                                        <td>
+
+                                        <td class="confirm-delete">
                                             <div>
                                                 <form action="{% url 'zapscanner:del_zap_vuln' %}" method="POST"
                                                       class="form-horizontal">
@@ -190,7 +192,7 @@
                                         </td>
                                         <td>{{data.vuln_status}}</td>
 
-                                        <td>
+                                        <td class="confirm-delete">
                                             <div>
                                                 <form action="{% url 'zapscanner:del_zap_vuln' %}" method="POST"
                                                       class="form-horizontal">
@@ -254,7 +256,7 @@
                                     <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.risk}}</span></td>
                                     <td> {{data.vuln_status}}</td>
 
-                                    <td>
+                                    <td class="confirm-delete">
                                         <div>
                                             <form action="{% url 'zapscanner:del_zap_vuln' %}" method="POST"
                                                   class="form-horizontal">
