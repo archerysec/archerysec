@@ -9,13 +9,13 @@
                 <div class="col-md-auto">
                     <div class="float-right">
                         <!-- Large modal -->
-                        <a href="/jira/submit_jira_ticket/?summary={{data.rule_id}}&description=Description:%0a%0a {{data.description | safe}} File Name: {{data.filename | safe}} %0a%0a Start Line: {{data.start_line | safe}} %0a%0aEnd Line: {{data.end_line | safe}} %0a%0a Title: {{data.rule_id}} %0a%0a References: {{data.link | safe}} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=whitesource&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description=Description:%0a%0a {{data.description | safe}} File Name: {{data.filename | safe}} %0a%0a Title: {{data.name}} %0a%0a References: {{data.url | safe}} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=whitesource&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
                            class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira
                             Ticket</a>
 
                     </div>
                 </div>
-                <h1>{{data.rule_id}}</h1>
+                <h1>{{data.name}}</h1>
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
@@ -39,16 +39,28 @@
                                     {{data.filename | safe}}
                                 </div>
                                  <div class="card-body">
-                                     Start Line:
-                                    {{data.start_line | safe}}
+                                     Score :
+                                    {{data.score | safe}}
                                 </div>
                                 <div class="card-body">
-                                     End Line:
-                                    {{data.end_line | safe}}
+                                     CVSS3 Score:
+                                    {{data.cvss3_score | safe}}
                                 </div>
                                 <div class="card-body">
                                      Severity:
                                     {{data.severity | safe}}
+                                </div>
+                                <div class="card-body">
+                                     Publish Date:
+                                    {{data.publishDate | safe}}
+                                </div>
+                                <div class="card-body">
+                                     Last Updated Date:
+                                    {{data.lastUpdatedDate | safe}}
+                                </div>
+                                <div class="card-body">
+                                     Score Metadata Vector:
+                                    {{data.scoreMetadataVector | safe}}
                                 </div>
 
                             </div>
@@ -59,14 +71,48 @@
                                     <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
                                        aria-controls="collapseThree">
                                         <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Link</span>
+                                        <span>Fix</span>
                                     </a>
                                 </h5>
                             </div>
                             <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    <a href="{{data.link | safe}}"  target="_blank">{{data.link | safe}}</a>
+                                    {{ data.topFix }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
+                                       aria-controls="collapseThree">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Library</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{ data.library }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
+                                       aria-controls="collapseThree">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Reference</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <a href="{{data.url | safe}}"  target="_blank">{{data.url | safe}}</a>
                                 </div>
                             </div>
                         </div>
@@ -77,5 +123,4 @@
     </div>
 </div>
 {% endfor %}
-
 {% endblock %}

@@ -17,7 +17,7 @@
 from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
 from staticscanners.models import whitesource_scan_results_db, whitesource_scan_db
 import hashlib
-# from staticscanners.resources import whitesourceResource
+from staticscanners.resources import whitesourceResource
 from django.urls import reverse
 from jiraticketing.models import jirasetting
 
@@ -41,8 +41,6 @@ def list_vuln(request):
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
-
-    # whitesource_all_vuln = whitesource_scan_results_db.objects.filter(scan_id=scan_id)
 
     whitesource_all_vuln = whitesource_scan_results_db.objects.filter(username=username,
                                                                       scan_id=scan_id, vuln_status='Open').values(
@@ -69,10 +67,10 @@ def whitesource_vuln_data(request):
 
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
-        test_name = request.GET['test_name']
+        name = request.GET['name']
     else:
         scan_id = None
-        test_name = None
+        name = None
 
     if request.method == "POST":
         false_positive = request.POST.get('false')
@@ -118,17 +116,17 @@ def whitesource_vuln_data(request):
             reverse('whitesource:whitesource_vuln_data') + '?scan_id=%s&name=%s' % (scan_id, vuln_name))
 
     whitesource_vuln_data = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                       name=test_name,
+                                                                       name=name,
                                                                        vuln_status='Open',
                                                                        false_positive='No'
                                                                        )
 
     vuln_data_closed = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                  name=test_name,
+                                                                  name=name,
                                                                   vuln_status='Closed',
                                                                   false_positive='No')
     false_data = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                            name=test_name,
+                                                            name=name,
                                                             false_positive='Yes')
 
     return render(request, 'whitesource/whitesource_vuln_data.html',
@@ -176,7 +174,6 @@ def del_whitesource(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
             item = whitesource_scan_db.objects.filter(username=username, scan_id=scan_id)
@@ -201,7 +198,6 @@ def whitesource_del_vuln(request):
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
         split_length = value_split.__len__()
-        print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = whitesource_scan_results_db.objects.filter(username=username, vuln_id=vuln_id)

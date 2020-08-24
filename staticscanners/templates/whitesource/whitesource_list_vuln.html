@@ -26,7 +26,7 @@
                             <tbody>{% for data in whitesource_all_vuln %}
                             <tr data-target="#">
                                 <td>
-                                    <a href="{% url 'whitesource:whitesource_vuln_data' %}?scan_id={{data.scan_id}}&test_name={{data.name}}">{{data.name}}</a>
+                                    <a href="{% url 'whitesource:whitesource_vuln_data' %}?scan_id={{data.scan_id}}&name={{data.name}}">{{data.name}}</a>
                                 </td>
                                 <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
                             </tr>
