@@ -73,7 +73,7 @@ urllib3==1.25
 webencodings==0.5.1
 whitenoise==3.3.0
 wrapt==1.10.11
-xhtml2pdf==0.2.3
+xhtml2pdf
 beautifulsoup4==4.7.1
 django-import-export==1.2.0
 django-s3-storage==0.12.4
