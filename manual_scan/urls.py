@@ -16,6 +16,8 @@
 
 from django.conf.urls import url
 from manual_scan import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'manual_scan'
 
@@ -53,5 +55,7 @@ urlpatterns = [
         views.add_new_vuln,
         name='add_new_vuln'),
 
-
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

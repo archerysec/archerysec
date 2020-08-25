@@ -215,6 +215,9 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")

@@ -23,9 +23,10 @@ from datetime import datetime
 from projects.models import project_db
 from manual_scan.models import VulnerabilityData
 import uuid
-
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
+from .forms import *
 
 
 def list_scan(request):
@@ -123,7 +124,7 @@ def add_vuln(request):
         scanid = request.GET['scan_id']
         project_id = request.GET['project_id']
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.FILES['poc']:
         vuln_name = request.POST.get('vuln_name')
         severity = request.POST.get('vuln_severity')
         vuln_url = request.POST.get('vuln_instance')
@@ -132,8 +133,15 @@ def add_vuln(request):
         reference = request.POST.get('vuln_reference')
         scan_id = request.POST.get('scan_id')
         project_id = request.POST.get('project_id')
+        poc = request.FILES['poc']
+        poc_description = request.POST.get('poc_description')
         date_time = datetime.now()
         vuln_id = uuid.uuid4()
+
+        fs = FileSystemStorage()
+        filename = fs.save(poc.name, poc)
+        uploaded_poc_url = fs.url(filename)
+
 
         if severity == "High":
             severity_color = "danger"
@@ -155,6 +163,8 @@ def add_vuln(request):
             reference=reference,
             scan_id=scan_id,
             project_id=project_id,
+            Poc_Img=uploaded_poc_url,
+            poc_description=poc_description,
             username=username,
         )
         dump_data.save()

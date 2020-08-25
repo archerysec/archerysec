@@ -48,6 +48,8 @@ class manual_scan_results_db(models.Model):
     reference = models.TextField(blank=True, null=True)
     vuln_fixed = models.TextField(null=True, blank=True)
     project_id = models.UUIDField(null=True, blank=True)
+    Poc_Img = models.ImageField(null=True, blank=True)
+    poc_description = models.TextField(null=True, blank=True)
     username = models.CharField(max_length=256, null=True)
 
 
