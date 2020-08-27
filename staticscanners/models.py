@@ -214,6 +214,48 @@ class findbugs_scan_results_db(models.Model):
     username = models.CharField(max_length=256, null=True)
 
 
+class checkmarx_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class checkmarx_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    name = models.TextField(blank=True)
+    scan_details = models.TextField(blank=True)
+    query = models.TextField(blank=True)
+    severity = models.TextField(blank=True)
+    result = models.TextField(blank=True)
+    result_data = models.TextField(blank=True)
+    file_name = models.TextField(blank=True)
+
+    scanner = models.TextField(default='Checkmarx', editable=False)
+    jira_ticket = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
+
+
 class clair_scan_db(models.Model):
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)

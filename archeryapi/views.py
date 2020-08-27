@@ -31,7 +31,7 @@ from webscanners.serializers import WebScanSerializer, \
 
 from staticscanners.serializers import findbugsStatusSerializer, RetirejsStatusSerializer, ClairStatusSerializer, \
     DependencycheckStatusSerializer, NodejsscanSatatusSerializer, NpmauditStatusSerializer, TrivyStatusSerializer, \
-    BanditScanStatusSerializer
+    BanditScanStatusSerializer, CheckmarxStatusSerializer
 
 from rest_framework import status
 from webscanners.zapscanner.views import launch_zap_scan
@@ -63,11 +63,11 @@ from stronghold.decorators import public
 from webscanners.arachniscanner.views import launch_arachni_scan
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, \
     findbugs_report_parser, clair_json_report_parser, trivy_json_report_parser, npm_audit_report_json, \
-    nodejsscan_report_json, tfsec_report_parser, whitesource_json_report_parser
+    nodejsscan_report_json, tfsec_report_parser, whitesource_json_report_parser, checkmarx_xml_report_parser
 from lxml import etree
 from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db, clair_scan_db, trivy_scan_db, \
     npmaudit_scan_db, nodejsscan_scan_db, tfsec_scan_db, tfsec_scan_results_db, whitesource_scan_results_db, \
-    whitesource_scan_db
+    whitesource_scan_db, checkmarx_scan_db
 from tools.models import nikto_result_db
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from scanners.scanner_parser.compliance_parser import inspec_json_parser
@@ -793,6 +793,28 @@ class UpladScanResult(APIView):
                                               scan_id=scan_id,
                                               root=root_xml,
                                               username=username)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'checkmarx':
+            date_time = datetime.datetime.now()
+            scan_dump = checkmarx_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            root_xml = ET.fromstring(file)
+            checkmarx_xml_report_parser.checkmarx_report_xml(data=root_xml,
+                                                             project_id=project_id,
+                                                             scan_id=scan_id,
+                                                             username=username)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,

@@ -338,6 +338,21 @@
                                                 </tr>
                                             {% endif %}
 
+                                            {% if all_checkmarx_high.SEVERITY_HIGH__sum != None or all_checkmarx_medium.SEVERITY_MEDIUM__sum != None or  all_checkmarx_low.SEVERITY_LOW__sum != None %}
+                                                <tr>
+                                                    <td><a href="{% url 'checkmarx:checkmarx_list' %}">checkmarx</a></td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-danger">{{ all_checkmarx_high.SEVERITY_HIGH__sum }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-warning">{{ all_checkmarx_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-info">{{ all_checkmarx_low.SEVERITY_LOW__sum }}</span>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+
                                             {% if all_findbugs_high.SEVERITY_HIGH__sum != None or all_findbugs_medium.SEVERITY_MEDIUM__sum != None or  all_findbugs_low.SEVERITY_LOW__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'findbugs:findbugs_list' %}">FindBugs</a></td>
@@ -990,6 +1005,43 @@
                                                 <tr data-target="#">
                                                     <td width="20%">
                                                         <a href="{% url 'whitesource:whitesource_all_vuln' %}?scan_id={{ data.scan_id }}">{{ data.project_name }}</a>
+                                                    </td>
+                                                    <td width="20%">
+                                                        <div>
+                                                            <div class="d-flex no-block align-items-center">
+                                                                <span>{{ data.scan_status }}{{ data.vul_status }}% Completed</span>
+                                                            </div>
+                                                            <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                                <div class="progress-bar progress-bar-striped"
+                                                                     role="progressbar"
+                                                                     style="width:
+                                                                             {{ data.scan_status }}{{ data.vul_status }}%"
+                                                                     aria-valuenow="10" aria-valuemin="0"
+                                                                     aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ data.date_time }}</td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                    </td>
+
+                                                </tr>
+                                            {% endfor %}
+
+                                            {% for data in checkmarx %}
+                                                <tr data-target="#">
+                                                    <td width="20%">
+                                                        <a href="{% url 'checkmarx:checkmarx_all_vuln' %}?scan_id={{ data.scan_id }}">{{ data.project_name }}</a>
                                                     </td>
                                                     <td width="20%">
                                                         <div>

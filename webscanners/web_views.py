@@ -55,10 +55,11 @@ from archerysettings.models import zap_settings_db, \
     burp_setting_db, \
     nmap_vulners_setting_db, \
     arachni_settings_db, email_db
-from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser
+from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser, \
+    checkmarx_xml_report_parser
 from lxml import etree
 from staticscanners.models import dependencycheck_scan_db, \
-    findbugs_scan_db
+    findbugs_scan_db, checkmarx_scan_results_db, checkmarx_scan_db
 from tools.models import nikto_result_db
 import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
@@ -672,7 +673,7 @@ def xml_upload(request):
             arachni_xml_parser.xml_parser(username=username,
                                           project_id=project_id,
                                           scan_id=scan_id,
-                                          root=root_xml, 
+                                          root=root_xml,
                                           target_url=scan_url)
             print("Save scan Data")
             return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
@@ -755,6 +756,27 @@ def xml_upload(request):
                                                      )
 
             return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
+
+        elif scanner == 'checkmarx':
+            date_time = datetime.now()
+            scan_dump = checkmarx_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = etree.parse(xml_file)
+            root = data.getroot()
+            checkmarx_xml_report_parser.checkmarx_report_xml(project_id=project_id,
+                                                             scan_id=scan_id,
+                                                             data=root,
+                                                             username=username
+                                                             )
+
+            return HttpResponseRedirect(reverse('checkmarx:checkmarx_list'))
 
         elif scanner == 'findbugs':
             date_time = datetime.now()

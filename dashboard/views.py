@@ -49,7 +49,9 @@ from staticscanners.models import dependencycheck_scan_db, \
     tfsec_scan_db, \
     tfsec_scan_results_db, \
     whitesource_scan_db, \
-    whitesource_scan_results_db
+    whitesource_scan_results_db, \
+    checkmarx_scan_db, \
+    checkmarx_scan_results_db
 from networkscanners.models import scan_save_db, \
     nessus_scan_db, \
     ov_scan_result_db, \
@@ -193,6 +195,9 @@ def proj_data(request):
     all_whitesource_scan = whitesource_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
+    all_checkmarx_scan = checkmarx_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('total_vuln'))
+
     all_inspec_scan = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
@@ -294,6 +299,12 @@ def proj_data(request):
         else:
             all_whitesource = value
 
+    for key, value in all_checkmarx_scan.items():
+        if value is None:
+            all_checkmarx = '0'
+        else:
+            all_checkmarx = value
+
     for key, value in all_inspec_scan.items():
         if value is None:
             all_inspec = '0'
@@ -363,6 +374,7 @@ def proj_data(request):
                int(all_nodejsscan) + \
                int(all_tfsec) + \
                int(all_whitesource) + \
+               int(all_checkmarx) + \
                int(all_bandit) + \
                int(all_manual)
 
@@ -374,7 +386,7 @@ def proj_data(request):
     total_compliance = int(all_inspec) + int(all_dockle)
 
     total_static = int(all_dependency) + int(all_findbugs) + int(all_bandit) + int(all_clair) + int(all_trivy) + int(
-        all_npmaudit) + int(all_nodejsscan) + int(all_tfsec) + int(all_whitesource)
+        all_npmaudit) + int(all_nodejsscan) + int(all_tfsec) + int(all_whitesource) + int(all_checkmarx)
 
     all_zap_high = zap_scans_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('high_vul'))
@@ -415,6 +427,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_whitesource_high = whitesource_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_HIGH'))
+
+    all_checkmarx_high = checkmarx_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_inspec_failed = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -518,6 +533,12 @@ def proj_data(request):
         else:
             high_whitesource = value
 
+    for key, value in all_checkmarx_high.items():
+        if value is None:
+            high_checkmarx = '0'
+        else:
+            high_checkmarx = value
+
     for key, value in all_inspec_failed.items():
         if value is None:
             failed_inspec = '0'
@@ -588,6 +609,7 @@ def proj_data(request):
                int(high_nodejsscan) + \
                int(high_tfsec) + \
                int(high_whitesource) + \
+               int(high_checkmarx) + \
                int(high_bandit) + \
                int(high_nessus) + \
                int(pentest_high)
@@ -607,7 +629,8 @@ def proj_data(request):
                       int(high_npmaudit) + \
                       int(high_nodejsscan) + \
                       int(high_tfsec) + \
-                      int(high_whitesource)
+                      int(high_whitesource) + \
+                      int(high_checkmarx)
 
     all_network_high = int(openvas_high) + int(high_nessus) + int(high_pentest_net)
 
@@ -652,6 +675,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_whitesource_medium = whitesource_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_MEDIUM'))
+
+    all_checkmarx_medium = checkmarx_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_inspec_passed = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -751,6 +777,12 @@ def proj_data(request):
         else:
             medium_whitesource = value
 
+    for key, value in all_checkmarx_medium.items():
+        if value is None:
+            medium_checkmarx = '0'
+        else:
+            medium_checkmarx = value
+
     for key, value in all_inspec_passed.items():
         if value is None:
             passed_inspec = '0'
@@ -796,6 +828,7 @@ def proj_data(request):
                  int(medium_nodejsscan) + \
                  int(medium_tfsec) + \
                  int(medium_whitesource) + \
+                 int(medium_checkmarx) + \
                  int(medium_bandit) + \
                  int(medium_nessus) + \
                  int(pentest_medium)
@@ -835,7 +868,8 @@ def proj_data(request):
                         int(medium_npmaudit) + \
                         int(medium_nodejsscan) + \
                         int(medium_tfsec) + \
-                        int(medium_whitesource)
+                        int(medium_whitesource) + \
+                        int(medium_checkmarx)
 
     all_network_medium = int(openvas_medium) + int(medium_pentest_net) + int(medium_nessus)
 
@@ -880,6 +914,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_LOW'))
 
     all_whitesource_low = whitesource_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_LOW'))
+
+    all_checkmarx_low = checkmarx_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_LOW'))
 
     all_inspec_skipped = inspec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -983,6 +1020,12 @@ def proj_data(request):
         else:
             low_whitesource = value
 
+    for key, value in all_checkmarx_low.items():
+        if value is None:
+            low_checkmarx = '0'
+        else:
+            low_checkmarx = value
+
     for key, value in all_inspec_skipped.items():
         if value is None:
             skipped_inspec = '0'
@@ -1034,6 +1077,7 @@ def proj_data(request):
               int(low_nodejsscan) + \
               int(low_tfsec) + \
               int(low_whitesource) + \
+              int(low_checkmarx) + \
               int(low_bandit) + \
               int(low_nessus) + \
               int(pentest_low)
@@ -1072,7 +1116,8 @@ def proj_data(request):
                      int(low_npmaudit) + \
                      int(low_nodejsscan) + \
                      int(low_tfsec) + \
-                     int(low_whitesource)
+                     int(low_whitesource) + \
+                     int(low_checkmarx)
 
     all_network_low = int(openvas_low) + int(low_nessus) + int(low_pentest_net)
 
@@ -1094,10 +1139,11 @@ def proj_data(request):
     nodejsscan = nodejsscan_scan_db.objects.filter(username=username, project_id=project_id)
     tfsec = tfsec_scan_db.objects.filter(username=username, project_id=project_id)
     whitesource = whitesource_scan_db.objects.filter(username=username, project_id=project_id)
+    checkmarx = checkmarx_scan_db.objects.filter(username=username, project_id=project_id)
     bandit = bandit_scan_db.objects.filter(username=username, project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
-    static_scan = chain(dependency_check, findbugs, clair, trivy, npmaudit, nodejsscan, tfsec, whitesource, bandit)
+    static_scan = chain(dependency_check, findbugs, clair, trivy, npmaudit, nodejsscan, tfsec, whitesource, checkmarx, bandit)
     openvas_dat = scan_save_db.objects.filter(username=username, project_id=project_id)
     nessus_dat = nessus_scan_db.objects.filter(username=username, project_id=project_id)
 
@@ -1147,6 +1193,8 @@ def proj_data(request):
                                                                 project_id=project_id)
     whitesource_false_positive = whitesource_scan_results_db.objects.filter(username=username, false_positive='Yes',
                                                                             project_id=project_id)
+    checkmarx_false_positive = checkmarx_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                            project_id=project_id)
     bandit_false_positive = bandit_scan_results_db.objects.filter(username=username, false_positive='Yes',
                                                                   project_id=project_id)
 
@@ -1187,6 +1235,10 @@ def proj_data(request):
                                                              project_id=project_id)
     whitesource_closed_vuln = whitesource_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                                          project_id=project_id)
+
+    checkmarx_closed_vuln = checkmarx_scan_results_db.objects.filter(username=username, vuln_status='Closed',
+                                                                         project_id=project_id)
+
     bandit_closed_vuln = bandit_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                                project_id=project_id)
 
@@ -1206,6 +1258,7 @@ def proj_data(request):
                       int(len(nodejsscan_closed_vuln)) + \
                       int(len(tfsec_closed_vuln)) + \
                       int(len(whitesource_closed_vuln)) + \
+                      int(len(checkmarx_closed_vuln)) + \
                       int(len(bandit_closed_vuln))
 
     all_false_positive = int(len(zap_false_positive)) + \
@@ -1224,6 +1277,7 @@ def proj_data(request):
                          int(len(nodejsscan_false_positive)) + \
                          int(len(tfsec_false_positive)) + \
                          int(len(whitesource_false_positive)) + \
+                         int(len(checkmarx_false_positive)) + \
                          int(len(bandit_false_positive))
 
     all_notify = Notification.objects.unread()
@@ -1271,6 +1325,7 @@ def proj_data(request):
                    'nodejsscan': nodejsscan,
                    'tfsec': tfsec,
                    'whitesource': whitesource,
+                   'checkmarx': checkmarx,
                    'pentest': pentest,
                    'network_dat': network_dat,
                    'all_zap_scan': all_zap_scan,
@@ -1288,6 +1343,7 @@ def proj_data(request):
                    'all_nodejsscan_scan': all_nodejsscan_scan,
                    'all_tfsec_scan': all_tfsec_scan,
                    'all_whitesource_scan': all_whitesource_scan,
+                   'all_checkmarx_scan': all_checkmarx_scan,
                    'all_webinspect_scan': all_webinspect_scan,
 
                    'all_compliance_failed': all_compliance_failed,
@@ -1372,6 +1428,10 @@ def proj_data(request):
                    'all_whitesource_low': all_whitesource_low,
                    'all_whitesource_medium': all_whitesource_medium,
 
+                   'all_checkmarx_high': all_checkmarx_high,
+                   'all_checkmarx_low': all_checkmarx_low,
+                   'all_checkmarx_medium': all_checkmarx_medium,
+
                    'all_closed_vuln': all_closed_vuln,
                    'all_false_positive': all_false_positive,
                    'message': all_notify
@@ -1442,6 +1502,10 @@ def all_high_vuln(request):
                                                                           project_id=project_id,
                                                                           false_positive='No')
 
+        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='High',
+                                                                          project_id=project_id,
+                                                                          false_positive='No')
+
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='High', project_id=project_id,
                                                             false_positive='No')
         nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='High', project_id=project_id,
@@ -1492,6 +1556,9 @@ def all_high_vuln(request):
         whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Medium',
                                                                           project_id=project_id)
 
+        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                          project_id=project_id)
+
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Medium', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Medium',
                                                           project_id=project_id)
@@ -1537,6 +1604,9 @@ def all_high_vuln(request):
         whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Low',
                                                                           project_id=project_id)
 
+        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                          project_id=project_id)
+
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Low', project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Low', project_id=project_id)
 
@@ -1574,6 +1644,8 @@ def all_high_vuln(request):
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id)
 
         whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id)
+
+        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id)
         nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id)
@@ -1618,6 +1690,9 @@ def all_high_vuln(request):
                                                               false_positive='Yes')
 
         whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                          false_positive='Yes')
+
+        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                           false_positive='Yes')
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -1667,6 +1742,9 @@ def all_high_vuln(request):
         whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                           vuln_status='Closed')
 
+        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                          vuln_status='Closed')
+
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                             vuln_status='Closed')
         nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
@@ -1694,6 +1772,7 @@ def all_high_vuln(request):
                    'nodejsscan_all_high': nodejsscan_all_high,
                    'tfsec_all_high': tfsec_all_high,
                    'whitesource_all_high': whitesource_all_high,
+                   'checkmarx_all_high': checkmarx_all_high,
                    'openvas_all_high': openvas_all_high,
                    'nessus_all_high': nessus_all_high,
                    'project_id': project_id,
@@ -1760,6 +1839,9 @@ def export(request):
             whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='HIGH',
                                                                               project_id=project_id)
 
+            checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='HIGH',
+                                                                              project_id=project_id)
+
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='High', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='High',
                                                               project_id=project_id)
@@ -1781,6 +1863,7 @@ def export(request):
                              nodejsscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
+                             checkmarx_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1829,6 +1912,9 @@ def export(request):
             whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Medium',
                                                                               project_id=project_id)
 
+            checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                              project_id=project_id)
+
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Medium',
                                                                 project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Medium',
@@ -1851,6 +1937,7 @@ def export(request):
                              nodejsscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
+                             checkmarx_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1899,6 +1986,8 @@ def export(request):
 
             whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Low',
                                                                               project_id=project_id)
+            checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                              project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Low', project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Low',
@@ -1920,6 +2009,7 @@ def export(request):
                              nodejsscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
+                             checkmarx_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -1961,6 +2051,7 @@ def export(request):
             tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id)
 
             whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id)
+            checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id)
             nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id)
@@ -1981,6 +2072,7 @@ def export(request):
                              nodejsscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
+                             checkmarx_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high,
@@ -2027,6 +2119,9 @@ def export(request):
             whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                               false_positive='Yes')
 
+            checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                              false_positive='Yes')
+
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                 false_positive='Yes')
             nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
@@ -2046,6 +2141,7 @@ def export(request):
                              nodejsscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
+                             checkmarx_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high
@@ -2090,6 +2186,9 @@ def export(request):
             whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                               vuln_status='Closed')
 
+            checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                              vuln_status='Closed')
+
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                 vuln_status='Closed')
             nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
@@ -2109,6 +2208,7 @@ def export(request):
                              nodejsscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
+                             checkmarx_all_high,
                              openvas_all_high,
                              netsparker_all_high,
                              nessus_all_high

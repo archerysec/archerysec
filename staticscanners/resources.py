@@ -16,7 +16,7 @@
 
 from import_export import resources
 from staticscanners.models import dependencycheck_scan_results_db, \
-    findbugs_scan_results_db, clair_scan_results_db, trivy_scan_results_db, npmaudit_scan_results_db, nodejsscan_scan_results_db, tfsec_scan_db, tfsec_scan_results_db, whitesource_scan_results_db
+    findbugs_scan_results_db, clair_scan_results_db, trivy_scan_results_db, npmaudit_scan_results_db, nodejsscan_scan_results_db, tfsec_scan_db, tfsec_scan_results_db, whitesource_scan_results_db, checkmarx_scan_results_db
 from compliance.models import inspec_scan_results_db, dockle_scan_results_db
 
 
@@ -57,6 +57,10 @@ class tfsecResource(resources.ModelResource):
 class whitesourceResource(resources.ModelResource):
     class Meta:
         model = whitesource_scan_results_db
+
+class checkmarxResource(resources.ModelResource):
+    class Meta:
+        model = checkmarx_scan_results_db
 
 class InspecResource(resources.ModelResource):
     class Meta:
