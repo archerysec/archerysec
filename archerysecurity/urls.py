@@ -54,6 +54,8 @@ urlpatterns = [
     url(r'^findbugs/', include('staticscanners.findbugs.urls')),
     url(r'^clair/', include('staticscanners.clair.urls')),
     url(r'^trivy/', include('staticscanners.trivy.urls')),
+    url(r'^gitlabsast/', include('staticscanners.gitlabsast.urls')),
+    url(r'^gitlabsca/', include('staticscanners.gitlabsca.urls')),
     url(r'^npmaudit/', include('staticscanners.npmaudit.urls')),
     url(r'^nodejsscan/', include('staticscanners.nodejsscan.urls')),
     url(r'^tfsec/', include('staticscanners.tfsec.urls')),

@@ -1,0 +1,45 @@
+
+
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Vulnerability List</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="gitlabsca_scans_list" class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th>Vulnerability</th>
+                                <th>Risk</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in gitlabsca_all_vuln %}
+                            <tr data-target="#">
+                                <td>
+                                    <a href="{% url 'gitlabsca:gitlabsca_vuln_data' %}?scan_id={{data.scan_id}}&test_name={{data.message}}">{{data.message}}</a>
+                                </td>
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

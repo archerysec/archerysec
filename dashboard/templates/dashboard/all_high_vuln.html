@@ -193,6 +193,30 @@
                                 </tr>
                                 {% endfor %}
 
+                                {% for data in gitlabsca_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'gitlabsca:gitlabsca_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in gitlabsast_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'gitlabsast:gitlabsast_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
                                 {% for data in npmaudit_all_high %}
                                 <tr data-target="#">
 

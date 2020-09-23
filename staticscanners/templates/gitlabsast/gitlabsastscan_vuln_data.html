@@ -1,0 +1,296 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $('.btn-danger').click(function(){
+            if (confirm('Are you sure you want to delete this?')) {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_vuln_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
+
+                var json_scanid = scan_id.join(", ");
+                $.ajax({
+                    type:'POST',
+                    <!--contentType: 'application/json; charset=utf-8',-->
+                    url:'{% url 'gitlabsast:gitlabsast_del_vuln' %}',
+                    data:{
+                       del_vuln: json_scanid,
+                       scan_id: $('input[name=scan_id]').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+                    }
+                });
+                setTimeout(function(){location.reload();},1000);
+            }
+        });
+
+    });
+
+
+$(document).on('click', '.confirm-delete', function(){
+    return confirm('Are you sure you want to delete this?');
+})
+
+</script>
+
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right">
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Vulnerability List</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="gitlabsast_scans_list" class="table table-bordered data-table">
+                                    <thead>
+                                    <tr>
+                                        <th><label class="customcheckbox m-b-20">
+                                            <input type="checkbox" id="mainCheckbox">
+                                            <span class="checkmark"></span>
+                                        </label></th>
+                                        <th>Name</th>
+                                        <th>File</th>
+                                        <th>Severity</th>
+                                        <th>JIRA Ticket</th>
+                                        <th>False Positive</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>{% for data in gitlabsast_vuln_data %}
+                                    <tr data-target="#">
+                                        <td>
+                                            <form>
+                                                <label class="customcheckbox">
+                                                    <input type="checkbox" class="listCheckbox"
+                                                           value="{{data.vuln_id}}"
+                                                           name="del_vuln_id"
+                                                           onClick="reload">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'gitlabsast:gitlabsast_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                        </td>
+                                        <td>{{data.file}}</td>
+                                        <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                        <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
+                                        <td>
+                                            <form method="POST" action="{% url 'gitlabsast:gitlabsast_vuln_data' %}">{% csrf_token %}
+                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="false" value="Yes">
+                                                <input type="hidden" name="status" value="Open">
+                                                <input type="hidden" name="vuln_name" value="{{data.message}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-info btn-mini">Yes</button>
+                                            </form>
+                                        </td>
+                                        <td>{{data.vuln_status}}</td>
+                                        <td class="confirm-delete">
+                                            <div>
+                                                <form action="{% url 'gitlabsast:gitlabsast_del_vuln' %}" method="POST"
+                                                      class="form-horizontal">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                    <button class="btn btn-warning btn-mini"><i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <form method="POST" action="{% url 'gitlabsast:gitlabsast_vuln_data' %}">{% csrf_token %}
+                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="false" value="No">
+                                                <input type="hidden" name="status" value="Closed">
+                                                <input type="hidden" name="vuln_name" value="{{data.message}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-info btn-mini">Close</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">False Positive Vulnerability List</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="gitlabsast_scans_false" class="table table-bordered data-table table-fixed">
+                                    <thead>
+                                    <tr>
+                                        <th><label class="customcheckbox m-b-20">
+                                            <input type="checkbox" id="mainCheckbox">
+                                            <span class="checkmark"></span>
+                                        </label></th>
+                                        <th>Name</th>
+                                        <th>File</th>
+                                        <th>Severity</th>
+                                        <th>False Positive</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>{% for data in false_data %}
+                                    <tr data-target="#">
+                                        <td>
+                                            <form>
+                                                <label class="customcheckbox">
+                                                    <input type="checkbox" class="listCheckbox"
+                                                           value="{{data.vuln_id}}"
+                                                           name="del_vuln_id"
+                                                           onClick="reload">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'gitlabsast:gitlabsast_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">
+                                                {{data.message}}</a>
+                                        </td>
+                                        <td>{{data.file}}</td>
+                                        <td><span
+                                                class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span>
+                                        </td>
+                                        <td>
+                                            <form method="POST" action="{% url 'gitlabsast:gitlabsast_vuln_data' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="false" value="No">
+                                                <input type="hidden" name="status" value="Open">
+                                                <input type="hidden" name="vuln_name" value="{{data.message}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-info btn-mini">No</button>
+                                            </form>
+                                        </td>
+                                        <td class="confirm-delete">
+                                            <div>
+                                                <form action="{% url 'gitlabsast:gitlabsast_del_vuln' %}" method="POST"
+                                                      class="form-horizontal">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                    <button class="btn btn-warning btn-mini"><i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Closed Vulnerability List</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="gitlabsast_scans_close" class="table table-bordered data-table table-fixed">
+                                    <thead>
+                                    <tr>
+                                        <th><label class="customcheckbox m-b-20">
+                                            <input type="checkbox" id="mainCheckbox">
+                                            <span class="checkmark"></span>
+                                        </label></th>
+                                        <th>Name</th>
+                                        <th>File</th>
+                                        <th>Severity</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>{% for data in vuln_data_closed %}
+                                    <tr data-target="#">
+                                        <td>
+                                            <form>
+                                                <label class="customcheckbox">
+                                                    <input type="checkbox" class="listCheckbox"
+                                                           value="{{data.vuln_id}}"
+                                                           name="del_vuln_id"
+                                                           onClick="reload">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'gitlabsast:gitlabsast_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                        </td>
+                                        <td>{{data.file}}</td>
+                                        <td><span
+                                                class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span>
+                                        </td>
+                                        <td>{{data.vuln_status}}</td>
+                                        <td class="confirm-delete">
+                                            <div>
+                                                <form action="{% url 'gitlabsast:gitlabsast_del_vuln' %}" method="POST"
+                                                      class="form-horizontal">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                    <button class="btn btn-warning btn-mini"><i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <form method="POST" action="{% url 'gitlabsast:gitlabsast_vuln_data' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="false" value="No">
+                                                <input type="hidden" name="status" value="Open">
+                                                <input type="hidden" name="vuln_name" value="{{data.message}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-info btn-mini">Open</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
