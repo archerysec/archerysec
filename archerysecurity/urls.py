@@ -58,6 +58,7 @@ urlpatterns = [
     url(r'^gitlabsca/', include('staticscanners.gitlabsca.urls')),
     url(r'^npmaudit/', include('staticscanners.npmaudit.urls')),
     url(r'^nodejsscan/', include('staticscanners.nodejsscan.urls')),
+    url(r'^semgrepscan/', include('staticscanners.semgrep.urls')),
     url(r'^tfsec/', include('staticscanners.tfsec.urls')),
     url(r'^whitesource/', include('staticscanners.whitesource.urls')),
     url(r'^checkmarx/', include('staticscanners.checkmarx.urls')),

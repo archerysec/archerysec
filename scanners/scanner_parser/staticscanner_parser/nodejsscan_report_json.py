@@ -128,6 +128,6 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
         subject = 'Archery Tool Scan Status - Trivy Report Uploaded'
         message = 'Trivy Scanner has completed the scan ' \
                   '  %s <br> Total: %s <br>High: %s <br>' \
-                  'Medium: %s <br>Low %s' % ("npm-audit", total_vul, total_high, total_medium, total_low)
+                  'Medium: %s <br>Low %s' % ("Nodejsscan", total_vul, total_high, total_medium, total_low)
 
         email_sch_notify(subject=subject, message=message)

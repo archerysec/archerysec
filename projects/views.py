@@ -29,7 +29,7 @@ from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_
     findbugs_scan_db, findbugs_scan_results_db, \
     bandit_scan_db, bandit_scan_results_db, clair_scan_db, clair_scan_results_db, \
     trivy_scan_db, trivy_scan_results_db, npmaudit_scan_db, npmaudit_scan_results_db, nodejsscan_scan_results_db, \
-    nodejsscan_scan_db, tfsec_scan_results_db, tfsec_scan_db, checkmarx_scan_results_db, checkmarx_scan_db, whitesource_scan_db, whitesource_scan_results_db, gitlabsca_scan_results_db, gitlabsast_scan_results_db, gitlabsca_scan_db, gitlabsast_scan_db
+    nodejsscan_scan_db, tfsec_scan_results_db, tfsec_scan_db, checkmarx_scan_results_db, checkmarx_scan_db, whitesource_scan_db, whitesource_scan_results_db, gitlabsca_scan_results_db, gitlabsast_scan_results_db, gitlabsca_scan_db, gitlabsast_scan_db, semgrepscan_scan_results_db, semgrepscan_scan_db
 from compliance.models import inspec_scan_results_db, inspec_scan_db, dockle_scan_db, dockle_scan_results_db
 from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_report_db
 import datetime
@@ -167,6 +167,11 @@ def projects(request):
         checkmarx.delete()
         checkmarx_result = checkmarx_scan_results_db.objects.filter(project_id=project_id)
         checkmarx_result.delete()
+
+        semgrepscan = semgrepscan_scan_db.objects.filter(project_id=project_id)
+        semgrepscan.delete()
+        semgrepscan_result = semgrepscan_scan_results_db.objects.filter(project_id=project_id)
+        semgrepscan_result.delete()
 
         inspec = inspec_scan_db.objects.filter(project_id=project_id)
         inspec.delete()

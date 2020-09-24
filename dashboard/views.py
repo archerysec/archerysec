@@ -46,6 +46,8 @@ from staticscanners.models import dependencycheck_scan_db, \
     npmaudit_scan_results_db, \
     nodejsscan_scan_db, \
     nodejsscan_scan_results_db, \
+    semgrepscan_scan_db, \
+    semgrepscan_scan_results_db, \
     tfsec_scan_db, \
     tfsec_scan_results_db, \
     whitesource_scan_db, \
@@ -199,6 +201,9 @@ def proj_data(request):
     all_nodejsscan_scan = nodejsscan_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
+    all_semgrepscan_scan = semgrepscan_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('total_vuln'))
+
     all_tfsec_scan = tfsec_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vuln'))
 
@@ -311,6 +316,12 @@ def proj_data(request):
         else:
             all_nodejsscan = value
 
+    for key, value in all_semgrepscan_scan.items():
+        if value is None:
+            all_semgrepscan = '0'
+        else:
+            all_semgrepscan = value
+
     for key, value in all_tfsec_scan.items():
         if value is None:
             all_tfsec = '0'
@@ -398,6 +409,7 @@ def proj_data(request):
                int(all_gitlabsca) + \
                int(all_npmaudit) + \
                int(all_nodejsscan) + \
+               int(all_semgrepscan) + \
                int(all_tfsec) + \
                int(all_whitesource) + \
                int(all_checkmarx) + \
@@ -412,7 +424,7 @@ def proj_data(request):
     total_compliance = int(all_inspec) + int(all_dockle)
 
     total_static = int(all_dependency) + int(all_findbugs) + int(all_bandit) + int(all_clair) + int(all_trivy) + int(
-        all_npmaudit) + int(all_nodejsscan) + int(all_tfsec) + int(all_whitesource) + int(all_checkmarx) + int(all_gitlabsast) + int(all_gitlabsca)
+        all_npmaudit) + int(all_nodejsscan) + int(all_semgrepscan) + int(all_tfsec) + int(all_whitesource) + int(all_checkmarx) + int(all_gitlabsast) + int(all_gitlabsca)
 
     all_zap_high = zap_scans_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('high_vul'))
@@ -453,6 +465,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_nodejsscan_high = nodejsscan_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_HIGH'))
+
+    all_semgrepscan_high = semgrepscan_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_tfsec_high = tfsec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -565,6 +580,13 @@ def proj_data(request):
         else:
             high_nodejsscan = value
 
+
+    for key, value in all_semgrepscan_high.items():
+        if value is None:
+            high_semgrepscan = '0'
+        else:
+            high_semgrepscan = value
+
     for key, value in all_tfsec_high.items():
         if value is None:
             high_tfsec = '0'
@@ -653,6 +675,7 @@ def proj_data(request):
                int(high_gitlabsca) + \
                int(high_npmaudit) + \
                int(high_nodejsscan) + \
+               int(high_semgrepscan) + \
                int(high_tfsec) + \
                int(high_whitesource) + \
                int(high_checkmarx) + \
@@ -676,6 +699,7 @@ def proj_data(request):
                       int(high_clair) + \
                       int(high_npmaudit) + \
                       int(high_nodejsscan) + \
+                      int(high_semgrepscan) + \
                       int(high_tfsec) + \
                       int(high_whitesource) + \
                       int(high_checkmarx)
@@ -723,6 +747,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_nodejsscan_medium = nodejsscan_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_MEDIUM'))
+
+    all_semgrepscan_medium = semgrepscan_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_tfsec_medium = tfsec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -831,6 +858,12 @@ def proj_data(request):
         else:
             medium_nodejsscan = value
 
+    for key, value in all_semgrepscan_medium.items():
+        if value is None:
+            medium_semgrepscan = '0'
+        else:
+            medium_semgrepscan = value
+
     for key, value in all_tfsec_medium.items():
         if value is None:
             medium_tfsec = '0'
@@ -894,6 +927,7 @@ def proj_data(request):
                  int(medium_gitlabsca) + \
                  int(medium_npmaudit) + \
                  int(medium_nodejsscan) + \
+                 int(medium_semgrepscan) + \
                  int(medium_tfsec) + \
                  int(medium_whitesource) + \
                  int(medium_checkmarx) + \
@@ -937,6 +971,7 @@ def proj_data(request):
                         int(medium_clair) + \
                         int(medium_npmaudit) + \
                         int(medium_nodejsscan) + \
+                        int(medium_semgrepscan) + \
                         int(medium_tfsec) + \
                         int(medium_whitesource) + \
                         int(medium_checkmarx)
@@ -984,6 +1019,9 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_LOW'))
 
     all_nodejsscan_low = nodejsscan_scan_db.objects.filter(username=username, project_id=project_id). \
+        aggregate(Sum('SEVERITY_LOW'))
+
+    all_semgrepscan_low = semgrepscan_scan_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('SEVERITY_LOW'))
 
     all_tfsec_low = tfsec_scan_db.objects.filter(username=username, project_id=project_id). \
@@ -1096,6 +1134,12 @@ def proj_data(request):
         else:
             low_nodejsscan = value
 
+    for key, value in all_semgrepscan_low.items():
+        if value is None:
+            low_semgrepscan = '0'
+        else:
+            low_semgrepscan = value
+
     for key, value in all_tfsec_low.items():
         if value is None:
             low_tfsec = '0'
@@ -1165,6 +1209,7 @@ def proj_data(request):
               int(low_gitlabsca) + \
               int(low_npmaudit) + \
               int(low_nodejsscan) + \
+              int(low_semgrepscan) + \
               int(low_tfsec) + \
               int(low_whitesource) + \
               int(low_checkmarx) + \
@@ -1207,6 +1252,7 @@ def proj_data(request):
                      int(low_clair) + \
                      int(low_npmaudit) + \
                      int(low_nodejsscan) + \
+                     int(low_semgrepscan) + \
                      int(low_tfsec) + \
                      int(low_whitesource) + \
                      int(low_checkmarx)
@@ -1231,13 +1277,14 @@ def proj_data(request):
     gitlabsca = gitlabsca_scan_db.objects.filter(username=username, project_id=project_id)
     npmaudit = npmaudit_scan_db.objects.filter(username=username, project_id=project_id)
     nodejsscan = nodejsscan_scan_db.objects.filter(username=username, project_id=project_id)
+    semgrepscan = semgrepscan_scan_db.objects.filter(username=username, project_id=project_id)
     tfsec = tfsec_scan_db.objects.filter(username=username, project_id=project_id)
     whitesource = whitesource_scan_db.objects.filter(username=username, project_id=project_id)
     checkmarx = checkmarx_scan_db.objects.filter(username=username, project_id=project_id)
     bandit = bandit_scan_db.objects.filter(username=username, project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
-    static_scan = chain(dependency_check, findbugs, clair, trivy, gitlabsast, gitlabsca, npmaudit, nodejsscan, tfsec, whitesource, checkmarx, bandit)
+    static_scan = chain(dependency_check, findbugs, clair, trivy, gitlabsast, gitlabsca, npmaudit, nodejsscan, semgrepscan, tfsec, whitesource, checkmarx, bandit)
     openvas_dat = scan_save_db.objects.filter(username=username, project_id=project_id)
     nessus_dat = nessus_scan_db.objects.filter(username=username, project_id=project_id)
 
@@ -1287,6 +1334,8 @@ def proj_data(request):
                                                                       project_id=project_id)
     nodejsscan_false_positive = nodejsscan_scan_results_db.objects.filter(username=username, false_positive='Yes',
                                                                           project_id=project_id)
+    semgrepscan_false_positive = semgrepscan_scan_results_db.objects.filter(username=username, false_positive='Yes',
+                                                                          project_id=project_id)
     tfsec_false_positive = tfsec_scan_results_db.objects.filter(username=username, false_positive='Yes',
                                                                 project_id=project_id)
     whitesource_false_positive = whitesource_scan_results_db.objects.filter(username=username, false_positive='Yes',
@@ -1333,6 +1382,8 @@ def proj_data(request):
                                                                    project_id=project_id)
     nodejsscan_closed_vuln = nodejsscan_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                                        project_id=project_id)
+    semgrepscan_closed_vuln = semgrepscan_scan_results_db.objects.filter(username=username, vuln_status='Closed',
+                                                                       project_id=project_id)
     tfsec_closed_vuln = tfsec_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                              project_id=project_id)
     whitesource_closed_vuln = whitesource_scan_results_db.objects.filter(username=username, vuln_status='Closed',
@@ -1360,6 +1411,7 @@ def proj_data(request):
                       int(len(gitlabsca_closed_vuln)) + \
                       int(len(npmaudit_closed_vuln)) + \
                       int(len(nodejsscan_closed_vuln)) + \
+                      int(len(semgrepscan_closed_vuln)) + \
                       int(len(tfsec_closed_vuln)) + \
                       int(len(whitesource_closed_vuln)) + \
                       int(len(checkmarx_closed_vuln)) + \
@@ -1381,6 +1433,7 @@ def proj_data(request):
                          int(len(gitlabsca_false_positive)) + \
                          int(len(npmaudit_false_positive)) + \
                          int(len(nodejsscan_false_positive)) + \
+                         int(len(semgrepscan_false_positive)) + \
                          int(len(tfsec_false_positive)) + \
                          int(len(whitesource_false_positive)) + \
                          int(len(checkmarx_false_positive)) + \
@@ -1431,6 +1484,7 @@ def proj_data(request):
                    'gitlabsca': gitlabsca,
                    'npmaudit': npmaudit,
                    'nodejsscan': nodejsscan,
+                   'semgrepscan': semgrepscan,
                    'tfsec': tfsec,
                    'whitesource': whitesource,
                    'checkmarx': checkmarx,
@@ -1451,6 +1505,7 @@ def proj_data(request):
                    'all_gitlabsca_scan': all_gitlabsca_scan,
                    'all_npmaudit_scan': all_npmaudit_scan,
                    'all_nodejsscan_scan': all_nodejsscan_scan,
+                   'all_semgrepscan_scan': all_semgrepscan_scan,
                    'all_tfsec_scan': all_tfsec_scan,
                    'all_whitesource_scan': all_whitesource_scan,
                    'all_checkmarx_scan': all_checkmarx_scan,
@@ -1538,6 +1593,10 @@ def proj_data(request):
                    'all_nodejsscan_low': all_nodejsscan_low,
                    'all_nodejsscan_medium': all_nodejsscan_medium,
 
+                   'all_semgrepscan_high': all_semgrepscan_high,
+                   'all_semgrepscan_low': all_semgrepscan_low,
+                   'all_semgrepscan_medium': all_semgrepscan_medium,
+
                    'all_tfsec_high': all_tfsec_high,
                    'all_tfsec_low': all_tfsec_low,
                    'all_tfsec_medium': all_tfsec_medium,
@@ -1619,6 +1678,10 @@ def all_high_vuln(request):
                                                                         project_id=project_id,
                                                                         false_positive='No')
 
+        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='High',
+                                                                        project_id=project_id,
+                                                                        false_positive='No')
+
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='High', project_id=project_id,
                                                               false_positive='No')
 
@@ -1680,6 +1743,9 @@ def all_high_vuln(request):
         nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Medium',
                                                                         project_id=project_id)
 
+        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                        project_id=project_id)
+
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Medium',
                                                               project_id=project_id)
 
@@ -1733,6 +1799,9 @@ def all_high_vuln(request):
         nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Low',
                                                                         project_id=project_id)
 
+        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                        project_id=project_id)
+
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
 
         whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Low',
@@ -1778,6 +1847,8 @@ def all_high_vuln(request):
         npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id)
 
         nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id)
+
+        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id)
 
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id)
 
@@ -1828,6 +1899,9 @@ def all_high_vuln(request):
                                                                     false_positive='Yes')
 
         nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        false_positive='Yes')
+
+        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                         false_positive='Yes')
 
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
@@ -1886,6 +1960,9 @@ def all_high_vuln(request):
         nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                         vuln_status='Closed')
 
+        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        vuln_status='Closed')
+
         tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                               vuln_status='Closed')
 
@@ -1922,6 +1999,7 @@ def all_high_vuln(request):
                    'gitlabsca_all_high': gitlabsca_all_high,
                    'npmaudit_all_high': npmaudit_all_high,
                    'nodejsscan_all_high': nodejsscan_all_high,
+                   'semgrepscan_all_high': semgrepscan_all_high,
                    'tfsec_all_high': tfsec_all_high,
                    'whitesource_all_high': whitesource_all_high,
                    'checkmarx_all_high': checkmarx_all_high,
@@ -1991,6 +2069,9 @@ def export(request):
             nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='HIGH',
                                                                             project_id=project_id)
 
+            semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='HIGH',
+                                                                            project_id=project_id)
+
             tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='HIGH',
                                                                   project_id=project_id)
 
@@ -2021,6 +2102,7 @@ def export(request):
                              gitlabsca_all_high,
                              npmaudit_all_high,
                              nodejsscan_all_high,
+                             semgrepscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
                              checkmarx_all_high,
@@ -2072,6 +2154,9 @@ def export(request):
             nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Medium',
                                                                             project_id=project_id)
 
+            semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                            project_id=project_id)
+
             tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Medium',
                                                                   project_id=project_id)
 
@@ -2103,6 +2188,7 @@ def export(request):
                              gitlabsca_all_high,
                              npmaudit_all_high,
                              nodejsscan_all_high,
+                             semgrepscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
                              checkmarx_all_high,
@@ -2155,6 +2241,9 @@ def export(request):
             nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Low',
                                                                             project_id=project_id)
 
+            semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                            project_id=project_id)
+
             tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Low',
                                                                   project_id=project_id)
 
@@ -2183,6 +2272,7 @@ def export(request):
                              gitlabsca_all_high,
                              npmaudit_all_high,
                              nodejsscan_all_high,
+                             semgrepscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
                              checkmarx_all_high,
@@ -2228,6 +2318,8 @@ def export(request):
 
             nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id)
 
+            semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id)
+
             tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id)
 
             whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id)
@@ -2252,6 +2344,7 @@ def export(request):
                              gitlabsca_all_high,
                              npmaudit_all_high,
                              nodejsscan_all_high,
+                             semgrepscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
                              checkmarx_all_high,
@@ -2301,6 +2394,9 @@ def export(request):
             nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                             false_positive='Yes')
 
+            semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                            false_positive='Yes')
+
             tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                   false_positive='Yes')
 
@@ -2329,6 +2425,7 @@ def export(request):
                              gitlabsca_all_high,
                              npmaudit_all_high,
                              nodejsscan_all_high,
+                             semgrepscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
                              checkmarx_all_high,
@@ -2376,6 +2473,9 @@ def export(request):
             nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                             vuln_status='Closed')
 
+            semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                            vuln_status='Closed')
+
             tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                   vuln_status='Closed')
 
@@ -2404,6 +2504,7 @@ def export(request):
                              gitlabsca_all_high,
                              npmaudit_all_high,
                              nodejsscan_all_high,
+                             semgrepscan_all_high,
                              tfsec_all_high,
                              whitesource_all_high,
                              checkmarx_all_high,

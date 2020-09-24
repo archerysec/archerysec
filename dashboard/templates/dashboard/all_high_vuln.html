@@ -241,6 +241,18 @@
                                 </tr>
                                 {% endfor %}
 
+                                {% for data in semgrepscan_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'semgrepscan:semgrepscan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.check_id}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
                                  {% for data in tfsec_all_high %}
                                 <tr data-target="#">
 
