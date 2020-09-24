@@ -48,7 +48,7 @@ futures==3.2.0
 gunicorn==19.9.0
 hjson==3.0.1
 html5lib==1.0.1
-httplib2==0.12.1
+httplib2==0.18.0
 idna==2.6
 ipaddress==1.0.18
 isort==4.3.17
