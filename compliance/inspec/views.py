@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render,  HttpResponse, HttpResponseRedirect
 from compliance.models import inspec_scan_db, inspec_scan_results_db
 import hashlib
 from staticscanners.resources import InspecResource

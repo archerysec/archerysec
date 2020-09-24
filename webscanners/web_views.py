@@ -24,7 +24,7 @@ from django.contrib.auth.models import User
 from django.core import signing
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, render_to_response, HttpResponse
+from django.shortcuts import render,  HttpResponse
 from django.views.decorators.csrf import csrf_protect
 from selenium import webdriver
 from stronghold.decorators import public
@@ -162,7 +162,7 @@ def logout(request):
     :return:
     """
     auth.logout(request)
-    return render_to_response("logout.html")
+    return render(request, 'logout.html')
 
 
 @public
@@ -206,7 +206,7 @@ def invalid_login():
     Validate user login.
     :return:
     """
-    return render_to_response('invalid_login.html')
+    return render('invalid_login.html')
 
 
 def del_notify(request):

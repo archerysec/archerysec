@@ -19,7 +19,7 @@
 from __future__ import unicode_literals
 import json
 from vFeed.lib.core.methods import *
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from notifications.signals import notify
 
 cve_summary = ''

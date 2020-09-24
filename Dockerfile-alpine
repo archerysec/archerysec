@@ -32,7 +32,7 @@ RUN apk add --update --no-cache --virtual .build-deps \
 RUN apk add --no-cache --virtual .build-deps \
     ca-certificates gcc postgresql-dev linux-headers musl-dev \
     libffi-dev jpeg-dev zlib-dev 
-RUN pip install --no-cache-dir -r requirements_setup.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 #Change to the archerysec user so things get done as the right person (apart from copy)
 USER archerysec

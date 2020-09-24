@@ -23,7 +23,7 @@ import uuid
 import defusedxml.ElementTree as ET
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, render_to_response, HttpResponse
+from django.shortcuts import render,  HttpResponse
 from django.utils import timezone
 from archerysettings import save_settings
 from archerysettings import load_settings
@@ -303,7 +303,7 @@ def launch_scan(request):
             thread.daemon = True
             thread.start()
 
-    return render_to_response('openvas_vuln_list.html',
+    return render('openvas_vuln_list.html',
                               {'all_ip': all_ip})
 
 

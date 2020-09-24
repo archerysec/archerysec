@@ -22,7 +22,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
-from easy_pdf.views import render_to_pdf_response
+# from easy_pdf.views import render_to_pdf_response
 from selenium import webdriver
 from scanners.scanner_plugin.web_scanner import zap_plugin
 from webscanners.models import zap_scan_results_db, \

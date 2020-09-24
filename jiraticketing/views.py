@@ -17,7 +17,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, render_to_response, HttpResponseRedirect
+from django.shortcuts import render,  HttpResponseRedirect
 from jiraticketing.models import jirasetting
 from django.core import signing
 from jira import JIRA

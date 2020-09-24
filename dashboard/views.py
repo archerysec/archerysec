@@ -64,7 +64,7 @@ from networkscanners.models import scan_save_db, \
     nessus_report_db
 from compliance.models import inspec_scan_db, dockle_scan_db
 from projects.models import project_db
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render,  HttpResponse, HttpResponseRedirect
 from itertools import chain
 import datetime
 from webscanners.resources import AllResource

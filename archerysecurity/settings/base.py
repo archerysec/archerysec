@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
     'debug_toolbar',
-    'easy_pdf',
     'dashboard',
     'background_task',
     'sitetree',

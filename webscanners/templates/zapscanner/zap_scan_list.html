@@ -105,7 +105,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>Low</th>
                                         <th>Info</th>
                                         <th>Duplicates</th>
-                                        <th></th>
+{#                                        <th></th>#}
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -146,18 +146,18 @@ $(document).on('click', '.confirm-delete', function(){
 
                                         <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span>
                                         </td>
-                                        <td>
-                                            <form action="{% url 'zapscanner:zap_scan_pdf_gen' %}" method="post"
-                                                  class="forms-sample">
-
-                                                {% csrf_token %}
-                                                <input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>
-                                                <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
-
-                                                <button class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i>
-                                                </button>
-                                            </form>
-                                        </td>
+{#                                        <td>#}
+{#                                            <form action="{% url 'zapscanner:zap_scan_pdf_gen' %}" method="post"#}
+{#                                                  class="forms-sample">#}
+{##}
+{#                                                {% csrf_token %}#}
+{#                                                <input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>#}
+{#                                                <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>#}
+{##}
+{#                                                <button class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i>#}
+{#                                                </button>#}
+{#                                            </form>#}
+{#                                        </td>#}
                                         <td class="confirm-delete">
                                             <form action="{% url 'zapscanner:del_zap_scan' %}" method="post"
                                                   class="forms-sample">
