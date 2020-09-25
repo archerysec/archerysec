@@ -23,7 +23,7 @@ class zap_settings_db(models.Model):
     zap_url = models.TextField(blank=False, null=False, default='127.0.0.1')
     zap_api = models.TextField(blank=False, null=False, default='dwed23wdwedwwefw4rwrfw')
     zap_port = models.IntegerField(blank=False, null=False, default=8090)
-    enabled = models.NullBooleanField(blank=False, null=False)
+    enabled = models.BooleanField(blank=False, null=False)
     username = models.CharField(max_length=256, null=True)
 
 
@@ -43,18 +43,18 @@ class burp_setting_db(models.Model):
 class openvas_setting_db(models.Model):
     host = models.TextField(blank=True, null=True)
     port = models.IntegerField(blank=False, null=False, default=9390)
-    enabled = models.NullBooleanField(blank=False, null=False)
+    enabled = models.BooleanField(blank=False, null=False)
     user = models.TextField(blank=True, null=True)
     password = models.TextField(blank=True, null=True)
     username = models.CharField(max_length=256, null=True)
 
 
 class nmap_vulners_setting_db(models.Model):
-    enabled = models.NullBooleanField(blank=False, null=False)
+    enabled = models.BooleanField(blank=False, null=False)
     # -sV | Version detection
-    version = models.NullBooleanField(blank=False, null=False)
+    version = models.BooleanField(blank=False, null=False)
     # -Pn | Treat all hosts as online -- skip host discovery
-    online = models.NullBooleanField(blank=False, null=False)
+    online = models.BooleanField(blank=False, null=False)
     # -T4 | Set timing template (higher is faster)
     timing = models.IntegerField(blank=False, null=False, default=0)
     username = models.CharField(max_length=256, null=True)
