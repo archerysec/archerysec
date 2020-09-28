@@ -22,7 +22,8 @@ from staticscanners.models import retirejs_scan_results_db, \
     retirejs_scan_db, \
     bandit_scan_results_db, \
     bandit_scan_db, clair_scan_db, trivy_scan_db, npmaudit_scan_db, nodejsscan_scan_db, tfsec_scan_results_db, \
-    tfsec_scan_db, whitesource_scan_db, gitlabsast_scan_db, gitlabsca_scan_db, semgrepscan_scan_db
+    tfsec_scan_db, whitesource_scan_db, gitlabsast_scan_db, gitlabsca_scan_db, gitlabcontainerscan_scan_db, \
+    semgrepscan_scan_db
 from compliance.models import inspec_scan_db, dockle_scan_db
 import uuid
 from datetime import datetime
@@ -39,6 +40,7 @@ from scanners.scanner_parser.staticscanner_parser import tfsec_report_parser
 from scanners.scanner_parser.staticscanner_parser import whitesource_json_report_parser
 from scanners.scanner_parser.staticscanner_parser import gitlab_sast_json_report_parser
 from scanners.scanner_parser.staticscanner_parser import gitlab_sca_json_report_parser
+from scanners.scanner_parser.staticscanner_parser import gitlab_container_json_report_parser
 from scanners.scanner_parser.staticscanner_parser import semgrep_json_report_parser
 from django.urls import reverse
 
@@ -292,6 +294,25 @@ def report_import(request):
                                                                   username=username
                                                                   )
             return HttpResponseRedirect(reverse('gitlabsast:gitlabsast_list'))
+
+        if scanner == "gitlabcontainerscan_scan":
+            date_time = datetime.now()
+            scan_dump = gitlabcontainerscan_scan_db(project_name=project_name,
+                                                    scan_id=scan_id,
+                                                    date_time=date_time,
+                                                    project_id=project_id,
+                                                    scan_status=scan_status,
+                                                    username=username,
+                                                    )
+            scan_dump.save()
+            j = json_file.read()
+            data = json.loads(j)
+            gitlab_container_json_report_parser.gitlabcontainerscan_report_json(project_id=project_id,
+                                                                                scan_id=scan_id,
+                                                                                data=data,
+                                                                                username=username
+                                                                                )
+            return HttpResponseRedirect(reverse('gitlabcontainerscan:gitlabcontainerscan_list'))
 
         if scanner == "gitlabsca_scan":
             date_time = datetime.now()

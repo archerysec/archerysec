@@ -578,6 +578,49 @@ class gitlabsast_scan_results_db(models.Model):
     username = models.CharField(max_length=256, null=True)
 
 
+class gitlabcontainerscan_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class gitlabcontainerscan_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    name = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    cve = models.TextField(null=True, blank=True)
+    gl_scanner = models.TextField(null=True, blank=True)
+    location = models.TextField(null=True, blank=True)
+    file = models.TextField(null=True, blank=True)
+    identifiers = models.TextField(null=True, blank=True)
+    Severity = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='gitlabcontainerscan', editable=False)
+    username = models.CharField(max_length=256, null=True)
+
+
 class gitlabsca_scan_db(models.Model):
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)

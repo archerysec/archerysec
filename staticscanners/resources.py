@@ -82,6 +82,11 @@ class GitlabsastResource(resources.ModelResource):
         model = gitlabsast_scan_results_db
 
 
+class GitlabcontainerscanResource(resources.ModelResource):
+    class Meta:
+        model = gitlabsast_scan_results_db
+
+
 class GitlabscaResource(resources.ModelResource):
     class Meta:
         model = gitlabsca_scan_results_db
