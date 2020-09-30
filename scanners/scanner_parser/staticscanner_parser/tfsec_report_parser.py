@@ -67,49 +67,71 @@ def tfsec_report_json(data, project_id, scan_id, username):
                                                          dup_hash=duplicate_hash).values('dup_hash')
         lenth_match = len(match_dup)
 
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
+        if lenth_match == 0:
             duplicate_vuln = 'No'
+
+            false_p = tfsec_scan_results_db.objects.filter(username=username,
+                                                           false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
+
+            save_all = tfsec_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                vul_col=vul_col,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+                rule_id=rule_id,
+                filename=filename,
+                severity=severity,
+                description=description,
+                link=link,
+                start_line=start_line,
+                end_line=end_line,
+                username=username,
+            )
+            save_all.save()
+
         else:
-            duplicate_vuln = 'None'
+            duplicate_vuln = 'Yes'
 
-        false_p = tfsec_scan_results_db.objects.filter(username=username,
-                                                       false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
-
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        else:
-            false_positive = 'No'
-
-        save_all = tfsec_scan_results_db(
-            vuln_id=vul_id,
-            scan_id=scan_id,
-            project_id=project_id,
-            vul_col=vul_col,
-            vuln_status='Open',
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            false_positive=false_positive,
-            rule_id=rule_id,
-            filename=filename,
-            severity=severity,
-            description=description,
-            link=link,
-            start_line=start_line,
-            end_line=end_line,
-            username=username,
-        )
-        save_all.save()
+            save_all = tfsec_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                vul_col=vul_col,
+                vuln_status='Duplicate',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive='Duplicate',
+                rule_id=rule_id,
+                filename=filename,
+                severity=severity,
+                description=description,
+                link=link,
+                start_line=start_line,
+                end_line=end_line,
+                username=username,
+            )
+            save_all.save()
 
     all_findbugs_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+
+    duplicate_count = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                           vuln_duplicate='Yes')
 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
     total_low = len(all_findbugs_data.filter(severity="Low"))
-    total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     tfsec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
         total_vuln=total_vul,

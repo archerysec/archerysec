@@ -115,68 +115,90 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
 
         vul_id = uuid.uuid4()
 
-        dup_data = message + severity + file
+        dup_data = str(message) + str(severity) + str(file)
 
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                              dup_hash=duplicate_hash).values('dup_hash')
+                                                                       dup_hash=duplicate_hash).values('dup_hash')
         lenth_match = len(match_dup)
 
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
+        if lenth_match == 0:
             duplicate_vuln = 'No'
+
+            false_p = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
+                                                                         false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
+
+            save_all = gitlabcontainerscan_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                name=name,
+                message=message,
+                description=description,
+                cve=cve,
+                gl_scanner=scanner,
+                location=location,
+                file=file,
+                Severity=severity,
+                identifiers=identifiers,
+                vul_col=vul_col,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+                username=username,
+            )
+            save_all.save()
         else:
-            duplicate_vuln = 'None'
+            duplicate_vuln = 'Yes'
 
-        false_p = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                            false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
-
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        else:
-            false_positive = 'No'
-
-        save_all = gitlabcontainerscan_scan_results_db(
-            vuln_id=vul_id,
-            scan_id=scan_id,
-            project_id=project_id,
-            name=name,
-            message=message,
-            description=description,
-            cve=cve,
-            gl_scanner=scanner,
-            location=location,
-            file=file,
-            Severity=severity,
-            identifiers=identifiers,
-            vul_col=vul_col,
-            vuln_status='Open',
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            false_positive=false_positive,
-            username=username,
-        )
-        save_all.save()
+            save_all = gitlabcontainerscan_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                name=name,
+                message=message,
+                description=description,
+                cve=cve,
+                gl_scanner=scanner,
+                location=location,
+                file=file,
+                Severity=severity,
+                identifiers=identifiers,
+                vul_col=vul_col,
+                vuln_status='Duplicate',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive='Duplicate',
+                username=username,
+            )
+            save_all.save()
 
     all_findbugs_data = gitlabcontainerscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                  false_positive='No')
+                                                                           false_positive='No')
+
+    duplicate_count = gitlabcontainerscan_scan_results_db.objects.filter(username=username, scan_id=scan_id, vuln_duplicate='Yes')
 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(Severity="High"))
     total_medium = len(all_findbugs_data.filter(Severity="Medium"))
     total_low = len(all_findbugs_data.filter(Severity="Low"))
-    total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     gitlabcontainerscan_scan_db.objects.filter(scan_id=scan_id).update(username=username,
-                                                              total_vuln=total_vul,
-                                                              SEVERITY_HIGH=total_high,
-                                                              SEVERITY_MEDIUM=total_medium,
-                                                              SEVERITY_LOW=total_low,
-                                                              total_dup=total_duplicate
-                                                              )
+                                                                       total_vuln=total_vul,
+                                                                       SEVERITY_HIGH=total_high,
+                                                                       SEVERITY_MEDIUM=total_medium,
+                                                                       SEVERITY_LOW=total_low,
+                                                                       total_dup=total_duplicate
+                                                                       )
     subject = 'Archery Tool Scan Status - GitLab Container Scan Report Uploaded'
     message = 'GitLab Container Scan has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

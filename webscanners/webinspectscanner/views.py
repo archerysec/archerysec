@@ -41,10 +41,10 @@ def webinspect_list_vuln(request):
         scan_id = None
 
     webinspect_all_vul = webinspect_scan_result_db.objects.filter(
-        username=username, scan_id=scan_id, vuln_status='Open')
+        username=username, scan_id=scan_id).exclude(vuln_status='Duplicate')
 
     webinspect_all_vul_close = webinspect_scan_result_db.objects.filter(
-        username=username, scan_id=scan_id, vuln_status='Close')
+        username=username, scan_id=scan_id, vuln_status='Close').exclude(vuln_status='Duplicate')
 
     return render(request,
                   'webinspectscanner/webinspect_list_vuln.html',
@@ -146,7 +146,7 @@ def webinspect_vuln_out(request):
                                                                   low_vul=total_low,
                                                                   critical_vul=total_critical,
                                                                   info_vul=total_info,
-                                                                  total_dup=total_duplicate
+
                                                                   )
 
         return HttpResponseRedirect(

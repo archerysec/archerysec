@@ -183,7 +183,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         arachni_xml_parser.xml_parser(username=username,
                                       project_id=project_id,
                                       scan_id=scan_id,
-                                      root=root_xml, 
+                                      root=root_xml,
                                       target_url=target)
         arachni_scan_db.objects.filter(username=username,
                                        scan_id=scan_id).update(scan_status='100')
@@ -237,13 +237,15 @@ def arachni_list_vuln(request):
         scan_id=scan_id).values('name',
                                 'severity',
                                 'vuln_color',
-                                'scan_id').distinct()
+                                'vuln_status',
+                                'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     arachni_all_vul_close = arachni_scan_result_db.objects.filter(username=username,
         scan_id=scan_id, vuln_status='Closed').values('name',
                                                       'severity',
                                                       'vuln_color',
-                                                      'scan_id').distinct()
+                                                      'vuln_status',
+                                                      'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request,
                   'arachniscanner/arachni_list_vuln.html',

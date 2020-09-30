@@ -42,7 +42,7 @@ def list_vuln(request):
     else:
         scan_id = None
 
-    gitlabcontainerscan_all_vuln = gitlabcontainerscan_scan_results_db.objects.filter(scan_id=scan_id, username=username)
+    gitlabcontainerscan_all_vuln = gitlabcontainerscan_scan_results_db.objects.filter(scan_id=scan_id, username=username).exclude(vuln_status='Duplicate')
 
     return render(request, 'gitlabcontainerscan/gitlabcontainerscan_list_vuln.html',
                   {'gitlabcontainerscan_all_vuln': gitlabcontainerscan_all_vuln}
@@ -103,8 +103,7 @@ def gitlabcontainerscan_vuln_data(request):
                 total_vuln=total_vul,
                 SEVERITY_HIGH=total_high,
                 SEVERITY_MEDIUM=total_medium,
-                SEVERITY_LOW=total_low,
-                total_dup=total_duplicate
+                SEVERITY_LOW=total_low
             )
 
         return HttpResponseRedirect(
@@ -211,8 +210,8 @@ def gitlabcontainerscan_del_vuln(request):
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+            SEVERITY_LOW=total_low
+
         )
 
         return HttpResponseRedirect(reverse('gitlabcontainerscan:gitlabcontainerscan_all_vuln') + '?scan_id=%s' % scan_id)

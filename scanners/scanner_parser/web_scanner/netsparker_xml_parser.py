@@ -126,93 +126,124 @@ def xml_parser(root,
         elif vuln_severity == 'Low':
             vul_col = "info"
 
-        elif vuln_severity == 'informational':
+        else:
+            vuln_severity = "Low"
             vul_col = "info"
 
         dup_data = str(vuln_type) + str(vuln_url) + str(vuln_severity)
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
         match_dup = netsparker_scan_result_db.objects.filter(username=username,
-            dup_hash=duplicate_hash).values('dup_hash').distinct()
+                                                             dup_hash=duplicate_hash).values('dup_hash').distinct()
         lenth_match = len(match_dup)
 
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
+        if lenth_match == 0:
             duplicate_vuln = 'No'
+
+            false_p = netsparker_scan_result_db.objects.filter(username=username,
+                                                               false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            global false_positive
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            elif lenth_match == 0:
+                false_positive = 'No'
+            else:
+                false_positive = 'No'
+
+            dump_data = netsparker_scan_result_db(scan_id=scan_id,
+                                                  project_id=project_id,
+                                                  vuln_id=vuln_id,
+                                                  vuln_url=vuln_url,
+                                                  type=vuln_type,
+                                                  severity=vuln_severity,
+                                                  certainty=vuln_certainty,
+                                                  rawrequest=vuln_rawrequest,
+                                                  rawresponse=vuln_rawresponse,
+                                                  extrainformation=vuln_extrainformation,
+                                                  classification=vuln_classification,
+                                                  false_positive=false_positive,
+                                                  vuln_color=vul_col,
+                                                  description=description,
+                                                  impact=impact,
+                                                  actionsToTake=actionsToTake,
+                                                  remedy=remedy,
+                                                  requiredSkillsForExploitation=requiredSkillsForExploitation,
+                                                  externalReferences=externalReferences,
+                                                  remedyReferences=remedyReferences,
+                                                  proofOfConcept=proofOfConcept,
+                                                  proofs=proofs,
+                                                  vuln_status='Open',
+                                                  dup_hash=duplicate_hash,
+                                                  vuln_duplicate=duplicate_vuln,
+                                                  username=username
+                                                  )
+            dump_data.save()
+
         else:
-            duplicate_vuln = 'None'
+            duplicate_vuln = 'Yes'
 
-        false_p = netsparker_scan_result_db.objects.filter(username=username,
-            false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
+            dump_data = netsparker_scan_result_db(scan_id=scan_id,
+                                                  project_id=project_id,
+                                                  vuln_id=vuln_id,
+                                                  vuln_url=vuln_url,
+                                                  type=vuln_type,
+                                                  severity=vuln_severity,
+                                                  certainty=vuln_certainty,
+                                                  rawrequest=vuln_rawrequest,
+                                                  rawresponse=vuln_rawresponse,
+                                                  extrainformation=vuln_extrainformation,
+                                                  classification=vuln_classification,
+                                                  false_positive='Duplicate',
+                                                  vuln_color=vul_col,
+                                                  description=description,
+                                                  impact=impact,
+                                                  actionsToTake=actionsToTake,
+                                                  remedy=remedy,
+                                                  requiredSkillsForExploitation=requiredSkillsForExploitation,
+                                                  externalReferences=externalReferences,
+                                                  remedyReferences=remedyReferences,
+                                                  proofOfConcept=proofOfConcept,
+                                                  proofs=proofs,
+                                                  vuln_status='Duplicate',
+                                                  dup_hash=duplicate_hash,
+                                                  vuln_duplicate=duplicate_vuln,
+                                                  username=username
+                                                  )
+            dump_data.save()
 
-        global false_positive
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        elif lenth_match == 0:
-            false_positive = 'No'
-        else:
-            false_positive = 'No'
-
-        dump_data = netsparker_scan_result_db(scan_id=scan_id,
-                                              project_id=project_id,
-                                              vuln_id=vuln_id,
-                                              vuln_url=vuln_url,
-                                              type=vuln_type,
-                                              severity=vuln_severity,
-                                              certainty=vuln_certainty,
-                                              rawrequest=vuln_rawrequest,
-                                              rawresponse=vuln_rawresponse,
-                                              extrainformation=vuln_extrainformation,
-                                              classification=vuln_classification,
-                                              false_positive=false_positive,
-                                              vuln_color=vul_col,
-                                              description=description,
-                                              impact=impact,
-                                              actionsToTake=actionsToTake,
-                                              remedy=remedy,
-                                              requiredSkillsForExploitation=requiredSkillsForExploitation,
-                                              externalReferences=externalReferences,
-                                              remedyReferences=remedyReferences,
-                                              proofOfConcept=proofOfConcept,
-                                              proofs=proofs,
-                                              vuln_status='Open',
-                                              dup_hash=duplicate_hash,
-                                              vuln_duplicate=duplicate_vuln,
-                                              username=username
-                                              )
-        dump_data.save()
-
-    netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+    netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
+                                                                  false_positive='No')
+    duplicate_count = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id, vuln_duplicate='Yes')
 
     total_critical = len(netsparker_all_vul.filter(severity='Critical'))
     total_high = len(netsparker_all_vul.filter(severity="High"))
     total_medium = len(netsparker_all_vul.filter(severity="Medium"))
     total_low = len(netsparker_all_vul.filter(severity="Low"))
     total_info = len(netsparker_all_vul.filter(severity="Information"))
-    total_duplicate = len(netsparker_all_vul.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
     total_vul = total_critical + total_high + total_medium + total_low + total_info
 
     netsparker_scan_db.objects.filter(username=username, scan_id=scan_id).update(total_vul=total_vul,
-                                                              high_vul=total_high,
-                                                              medium_vul=total_medium,
-                                                              low_vul=total_low,
-                                                              critical_vul=total_critical,
-                                                              info_vul=total_info,
-                                                              total_dup=total_duplicate,
-                                                              url=target
-                                                              )
+                                                                                 high_vul=total_high,
+                                                                                 medium_vul=total_medium,
+                                                                                 low_vul=total_low,
+                                                                                 critical_vul=total_critical,
+                                                                                 info_vul=total_info,
+                                                                                 total_dup=total_duplicate,
+                                                                                 url=target
+                                                                                 )
 
     if total_vul == total_duplicate:
         netsparker_scan_db.objects.filter(username=username, scan_id=scan_id).update(total_vul=total_vul,
-                                                                  high_vul=total_high,
-                                                                  medium_vul=total_medium,
-                                                                  low_vul=total_low,
-                                                                  critical_vul=total_critical,
-                                                                  info_vul=total_info,
-                                                                  total_dup=total_duplicate,
-                                                                  url=target
-                                                                  )
+                                                                                     high_vul=total_high,
+                                                                                     medium_vul=total_medium,
+                                                                                     low_vul=total_low,
+                                                                                     critical_vul=total_critical,
+                                                                                     info_vul=total_info,
+                                                                                     total_dup=total_duplicate,
+                                                                                     url=target
+                                                                                     )
     subject = 'Archery Tool Scan Status - Netsparker Report Uploaded'
     message = 'Netsparker Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

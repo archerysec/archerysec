@@ -365,18 +365,20 @@ def zap_list_vuln(request):
         scan_id = None
 
     zap_all_vul = zap_scan_results_db.objects.filter(
-        scan_id=scan_id, username=username, vuln_status='Open').values(
+        scan_id=scan_id, username=username).values(
         'name',
         'risk',
         'vuln_color',
-        'scan_id').distinct()
+        'vuln_status',
+        'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     zap_all_close_vul = zap_scan_results_db.objects.filter(
-        scan_id=scan_id, username=username, vuln_status='Close').values(
+        scan_id=scan_id, username=username).values(
         'name',
         'risk',
         'vuln_color',
-        'scan_id').distinct()
+        'vuln_status',
+        'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request,
                   'zapscanner/zap_list_vuln.html',
@@ -444,7 +446,7 @@ def zap_vuln_details(request):
                     medium_vul=total_medium,
                     low_vul=total_low,
                     info_vul=total_info,
-                    total_dup=total_duplicate,
+
                     )
 
         # messages.add_message(request,

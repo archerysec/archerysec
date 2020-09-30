@@ -75,59 +75,97 @@ def whitesource_report_json(data, project_id, scan_id, username):
         match_dup = whitesource_scan_results_db.objects.filter(username=username,
                                                                dup_hash=duplicate_hash).values('dup_hash')
         lenth_match = len(match_dup)
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
+        if lenth_match == 0:
             duplicate_vuln = 'No'
-        else:
-            duplicate_vuln = 'None'
-        false_p = whitesource_scan_results_db.objects.filter(username=username,
-                                                             false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        else:
-            false_positive = 'No'
-        save_all = whitesource_scan_results_db(
-            vuln_id=vul_id,
-            scan_id=scan_id,
-            project_id=project_id,
-            vul_col=vul_col,
-            vuln_status='Open',
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            false_positive=false_positive,
 
-            name=name,
-            severity=severity,
-            score=score,
-            cvss3_severity=cvss3_severity,
-            cvss3_score=cvss3_score,
-            publishDate=publishDate,
-            lastUpdatedDate=lastUpdatedDate,
-            scoreMetadataVector=scoreMetadataVector,
-            url=url,
-            description=description,
-            project=project,
-            product=product,
-            cvss3Attributes=cvss3Attributes,
-            library=library,
-            topFix=topFix,
-            # allFixes=allFixes,
-            filename=filename,
-            sha1=sha1,
-            version=version,
-            groupId=groupId,
-            username=username,
-        )
-        save_all.save()
+            false_p = whitesource_scan_results_db.objects.filter(username=username,
+                                                                 false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
+            save_all = whitesource_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                vul_col=vul_col,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+
+                name=name,
+                severity=severity,
+                score=score,
+                cvss3_severity=cvss3_severity,
+                cvss3_score=cvss3_score,
+                publishDate=publishDate,
+                lastUpdatedDate=lastUpdatedDate,
+                scoreMetadataVector=scoreMetadataVector,
+                url=url,
+                description=description,
+                project=project,
+                product=product,
+                cvss3Attributes=cvss3Attributes,
+                library=library,
+                topFix=topFix,
+                # allFixes=allFixes,
+                filename=filename,
+                sha1=sha1,
+                version=version,
+                groupId=groupId,
+                username=username,
+            )
+            save_all.save()
+
+        else:
+            duplicate_vuln = 'Yes'
+
+            save_all = whitesource_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                vul_col=vul_col,
+                vuln_status='Duplicate',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive='Duplicate',
+
+                name=name,
+                severity=severity,
+                score=score,
+                cvss3_severity=cvss3_severity,
+                cvss3_score=cvss3_score,
+                publishDate=publishDate,
+                lastUpdatedDate=lastUpdatedDate,
+                scoreMetadataVector=scoreMetadataVector,
+                url=url,
+                description=description,
+                project=project,
+                product=product,
+                cvss3Attributes=cvss3Attributes,
+                library=library,
+                topFix=topFix,
+                # allFixes=allFixes,
+                filename=filename,
+                sha1=sha1,
+                version=version,
+                groupId=groupId,
+                username=username,
+            )
+            save_all.save()
+
     all_findbugs_data = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+
+    duplicate_count = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                                         vuln_duplicate='Yes')
 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
     total_low = len(all_findbugs_data.filter(severity="Low"))
-    total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     whitesource_scan_db.objects.filter(username=username, scan_id=scan_id).update(
         project_name=project,

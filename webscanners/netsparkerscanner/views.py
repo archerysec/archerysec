@@ -40,7 +40,7 @@ def netsparker_list_vuln(request):
         scan_id = None
 
     netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username,
-        scan_id=scan_id)
+                                                                  scan_id=scan_id).exclude(vuln_status='Duplicate')
 
     return render(request,
                   'netsparkerscanner/netsparker_list_vuln.html',
@@ -120,7 +120,8 @@ def netsparker_vuln_out(request):
                                                                                  false_positive_hash=false_positive_hash
                                                                                  )
 
-        netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+        netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
+                                                                      false_positive='No',
                                                                       vuln_status='Open')
 
         total_critical = len(netsparker_all_vul.filter(severity='Critical'))
@@ -132,13 +133,13 @@ def netsparker_vuln_out(request):
         total_vul = total_critical + total_high + total_medium + total_low + total_info
 
         netsparker_scan_db.objects.filter(username=username, scan_id=scan_id).update(total_vul=total_vul,
-                                                                  high_vul=total_high,
-                                                                  medium_vul=total_medium,
-                                                                  low_vul=total_low,
-                                                                  critical_vul=total_critical,
-                                                                  info_vul=total_info,
-                                                                  total_dup=total_duplicate,
-                                                                  )
+                                                                                     high_vul=total_high,
+                                                                                     medium_vul=total_medium,
+                                                                                     low_vul=total_low,
+                                                                                     critical_vul=total_critical,
+                                                                                     info_vul=total_info,
+
+                                                                                     )
 
         return HttpResponseRedirect(
             reverse('netsparkerscanner:netsparker_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))

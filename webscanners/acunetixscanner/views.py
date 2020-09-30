@@ -40,12 +40,12 @@ def acunetix_list_vuln(request):
         scan_id = None
 
     acunetix_all_vul = acunetix_scan_result_db.objects.filter(username=username,
-        scan_id=scan_id, vuln_status='Open').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
-                                                    'vuln_status').distinct()
+        scan_id=scan_id).values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
+                                                    'vuln_status').distinct().exclude(vuln_status='Duplicate')
 
     acunetix_all_vul_close = acunetix_scan_result_db.objects.filter(username=username,
-        scan_id=scan_id, vuln_status='Close').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
-                                                     'vuln_status').distinct()
+        scan_id=scan_id).values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
+                                                     'vuln_status').distinct().exclude(vuln_status='Duplicate')
 
     return render(request,
                   'acunetixscanner/acunetix_list_vuln.html',
@@ -146,7 +146,7 @@ def acunetix_vuln_out(request):
                     medium_vul=total_medium,
                     low_vul=total_low,
                     info_vul=total_info,
-                    total_dup=total_duplicate,
+
                     )
 
         return HttpResponseRedirect(

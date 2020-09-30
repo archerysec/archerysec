@@ -63,60 +63,86 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
 
             vul_id = uuid.uuid4()
 
-            dup_data = str(title) + str(severity) + str(filename)
+            dup_data = str(title) + str(severity) + str(filename) + str(line)
+            print(dup_data)
 
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+            print(duplicate_hash)
 
             match_dup = nodejsscan_scan_results_db.objects.filter(username=username,
                                                                   dup_hash=duplicate_hash).values('dup_hash')
             lenth_match = len(match_dup)
 
-            if lenth_match == 1:
-                duplicate_vuln = 'Yes'
-            elif lenth_match == 0:
+            if lenth_match == 0:
                 duplicate_vuln = 'No'
+
+                false_p = nodejsscan_scan_results_db.objects.filter(username=username,
+                                                                    false_positive_hash=duplicate_hash)
+                fp_lenth_match = len(false_p)
+
+                if fp_lenth_match == 1:
+                    false_positive = 'Yes'
+                else:
+                    false_positive = 'No'
+
+                save_all = nodejsscan_scan_results_db(
+                    vuln_id=vul_id,
+                    scan_id=scan_id,
+                    project_id=project_id,
+                    vul_col=vul_col,
+                    vuln_status='Open',
+                    dup_hash=duplicate_hash,
+                    vuln_duplicate=duplicate_vuln,
+                    false_positive=false_positive,
+                    title=title,
+                    filename=filename,
+                    severity=severity,
+                    path=path,
+                    sha2=sha2,
+                    tag=tag,
+                    description=description,
+                    line=line,
+                    lines=lines,
+                    username=username,
+                )
+                save_all.save()
+
             else:
-                duplicate_vuln = 'None'
+                duplicate_vuln = 'Yes'
 
-            false_p = nodejsscan_scan_results_db.objects.filter(username=username,
-                                                                false_positive_hash=duplicate_hash)
-            fp_lenth_match = len(false_p)
-
-            if fp_lenth_match == 1:
-                false_positive = 'Yes'
-            else:
-                false_positive = 'No'
-
-            save_all = nodejsscan_scan_results_db(
-                vuln_id=vul_id,
-                scan_id=scan_id,
-                project_id=project_id,
-                vul_col=vul_col,
-                vuln_status='Open',
-                dup_hash=duplicate_hash,
-                vuln_duplicate=duplicate_vuln,
-                false_positive=false_positive,
-                title=title,
-                filename=filename,
-                severity=severity,
-                path=path,
-                sha2=sha2,
-                tag=tag,
-                description=description,
-                line=line,
-                lines=lines,
-                username=username,
-            )
-            save_all.save()
+                save_all = nodejsscan_scan_results_db(
+                    vuln_id=vul_id,
+                    scan_id=scan_id,
+                    project_id=project_id,
+                    vul_col=vul_col,
+                    vuln_status='Duplicate',
+                    dup_hash=duplicate_hash,
+                    vuln_duplicate=duplicate_vuln,
+                    false_positive='Duplicate',
+                    title=title,
+                    filename=filename,
+                    severity=severity,
+                    path=path,
+                    sha2=sha2,
+                    tag=tag,
+                    description=description,
+                    line=line,
+                    lines=lines,
+                    username=username,
+                )
+                save_all.save()
 
         all_findbugs_data = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                       false_positive='No')
+
+        duplicate_count = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                                             vuln_duplicate='Yes')
 
         total_vul = len(all_findbugs_data)
         total_high = len(all_findbugs_data.filter(severity="High"))
         total_medium = len(all_findbugs_data.filter(severity="Medium"))
         total_low = len(all_findbugs_data.filter(severity="Low"))
-        total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
+        total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
         nodejsscan_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,

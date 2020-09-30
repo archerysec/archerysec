@@ -149,6 +149,23 @@
                                                 </tr>
                                             {% endif %}
 
+                                            {% if all_netsparker_high.high_vul__sum != None or all_netsparker_medium.medium_vul__sum != None or  all_netsparker_low.low_vul__sum != None %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="{% url 'netsparkerscanner:netsparker_scan_list' %}">netsparker</a>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-danger">{{ all_netsparker_high.high_vul__sum }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-warning">{{ all_netsparker_medium.medium_vul__sum }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-info">{{ all_netsparker_low.low_vul__sum }}</span>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+
                                             {% if all_arachni_high.high_vul__sum != None or all_arachni_medium.medium_vul__sum != None or  all_arachni_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td>

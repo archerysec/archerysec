@@ -45,12 +45,12 @@ def retirejs_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    global component, files, severity
     for f in data:
-        global files
         files = f["file"]
 
         for components in data:
-            global component
+
             component = components["results"][0]["component"]
 
         for versions in data:

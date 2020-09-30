@@ -41,7 +41,7 @@ def list_vuln(request):
     else:
         scan_id = None
 
-    findbugs_all_vuln = findbugs_scan_results_db.objects.filter(scan_id=scan_id, username=username)
+    findbugs_all_vuln = findbugs_scan_results_db.objects.filter(scan_id=scan_id, username=username).exclude(vuln_status='Duplicate')
 
     return render(request, 'findbugs/findbugsscan_list_vuln.html',
                   {'findbugs_all_vuln': findbugs_all_vuln}
@@ -99,8 +99,8 @@ def findbugs_vuln_data(request):
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+            SEVERITY_LOW=total_low
+
         )
 
         return HttpResponseRedirect(
@@ -206,8 +206,7 @@ def findbugs_del_vuln(request):
             total_vuln=total_vul,
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+            SEVERITY_LOW=total_low
         )
 
         return HttpResponseRedirect(reverse('findbugs:findbugs_all_vuln') + '?scan_id=%s' % scan_id)

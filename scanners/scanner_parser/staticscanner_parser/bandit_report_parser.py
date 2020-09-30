@@ -50,7 +50,8 @@ def bandit_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
-
+    global vul_col, issue_severity, test_name, filename, line_number, code, issue_confidence, line_range, \
+        test_id, issue_text, more_info
     for key, items in data.items():
         if key == 'results':
             for res in items:
@@ -119,7 +120,6 @@ def bandit_report_json(data, project_id, scan_id, username):
                 date_time = datetime.now()
                 vul_id = uuid.uuid4()
 
-                global vul_col
                 if issue_severity == "HIGH":
                     vul_col = "danger"
 
@@ -136,55 +136,82 @@ def bandit_report_json(data, project_id, scan_id, username):
                                                                   dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)
 
-                if lenth_match == 1:
-                    duplicate_vuln = 'Yes'
-                elif lenth_match == 0:
+                if lenth_match == 0:
                     duplicate_vuln = 'No'
+
+                    false_p = bandit_scan_results_db.objects.filter(username=username,
+                                                                    false_positive_hash=duplicate_hash)
+                    fp_lenth_match = len(false_p)
+
+                    if fp_lenth_match == 1:
+                        false_positive = 'Yes'
+                    else:
+                        false_positive = 'No'
+
+                    save_all = bandit_scan_results_db(
+                        scan_id=scan_id,
+                        # rescan_id = rescan_id,
+                        scan_date=date_time,
+                        project_id=project_id,
+                        vuln_id=vul_id,
+                        # source_line=source_line,
+                        line_number=line_number,
+                        code=code,
+                        issue_confidence=issue_confidence,
+                        line_range=line_range,
+                        test_id=test_id,
+                        issue_severity=issue_severity,
+                        issue_text=issue_text,
+                        test_name=test_name,
+                        filename=filename,
+                        more_info=more_info,
+                        vul_col=vul_col,
+                        false_positive=false_positive,
+                        vuln_status='Open',
+                        dup_hash=duplicate_hash,
+                        vuln_duplicate=duplicate_vuln,
+                        username=username,
+                    )
+                    save_all.save()
+
                 else:
-                    duplicate_vuln = 'None'
+                    duplicate_vuln = 'Yes'
 
-                false_p = bandit_scan_results_db.objects.filter(username=username,
-                                                                false_positive_hash=duplicate_hash)
-                fp_lenth_match = len(false_p)
-
-                if fp_lenth_match == 1:
-                    false_positive = 'Yes'
-                else:
-                    false_positive = 'No'
-
-                save_all = bandit_scan_results_db(
-                    scan_id=scan_id,
-                    # rescan_id = rescan_id,
-                    scan_date=date_time,
-                    project_id=project_id,
-                    vuln_id=vul_id,
-                    # source_line=source_line,
-                    line_number=line_number,
-                    code=code,
-                    issue_confidence=issue_confidence,
-                    line_range=line_range,
-                    test_id=test_id,
-                    issue_severity=issue_severity,
-                    issue_text=issue_text,
-                    test_name=test_name,
-                    filename=filename,
-                    more_info=more_info,
-                    vul_col=vul_col,
-                    false_positive=false_positive,
-                    vuln_status='Open',
-                    dup_hash=duplicate_hash,
-                    vuln_duplicate=duplicate_vuln,
-                    username=username,
-                )
-                save_all.save()
+                    save_all = bandit_scan_results_db(
+                        scan_id=scan_id,
+                        # rescan_id = rescan_id,
+                        scan_date=date_time,
+                        project_id=project_id,
+                        vuln_id=vul_id,
+                        # source_line=source_line,
+                        line_number=line_number,
+                        code=code,
+                        issue_confidence=issue_confidence,
+                        line_range=line_range,
+                        test_id=test_id,
+                        issue_severity=issue_severity,
+                        issue_text=issue_text,
+                        test_name=test_name,
+                        filename=filename,
+                        more_info=more_info,
+                        vul_col=vul_col,
+                        false_positive='Duplicate',
+                        vuln_status='Duplicate',
+                        dup_hash=duplicate_hash,
+                        vuln_duplicate=duplicate_vuln,
+                        username=username,
+                    )
+                    save_all.save()
 
         all_bandit_data = bandit_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+
+        duplicate_count = bandit_scan_results_db.objects.filter(username=username, scan_id=scan_id, vuln_duplicate='Yes')
 
         total_vul = len(all_bandit_data)
         total_high = len(all_bandit_data.filter(issue_severity="HIGH"))
         total_medium = len(all_bandit_data.filter(issue_severity="MEDIUM"))
         total_low = len(all_bandit_data.filter(issue_severity="LOW"))
-        total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
+        total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
         bandit_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,

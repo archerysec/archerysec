@@ -64,11 +64,15 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
                 instance = {}
                 instance[file_name] = d.text
                 code_data.append(instance)
+        print(severity)
         if severity == "High":
             vul_col = "danger"
         elif severity == 'Medium':
             vul_col = "warning"
         elif severity == 'Low':
+            vul_col = "info"
+        else:
+            severity = 'Low'
             vul_col = "info"
         vul_id = uuid.uuid4()
 
@@ -77,48 +81,72 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
         match_dup = checkmarx_scan_results_db.objects.filter(username=username,
                                                              dup_hash=duplicate_hash).values('dup_hash')
         lenth_match = len(match_dup)
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
+        if lenth_match == 0:
             duplicate_vuln = 'No'
+
+            false_p = checkmarx_scan_results_db.objects.filter(username=username,
+                                                               false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
+
+            save_all = checkmarx_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                vul_col=vul_col,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+
+                name=name,
+                severity=severity,
+                query=query,
+                result=code_data,
+                scan_details=scan_details,
+                result_data=result_data_all,
+                file_name=file_name,
+                username=username,
+            )
+            save_all.save()
+
         else:
-            duplicate_vuln = 'None'
-        false_p = checkmarx_scan_results_db.objects.filter(username=username,
-                                                           false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        else:
-            false_positive = 'No'
+            duplicate_vuln = 'Yes'
 
-        save_all = checkmarx_scan_results_db(
-            vuln_id=vul_id,
-            scan_id=scan_id,
-            project_id=project_id,
-            vul_col=vul_col,
-            vuln_status='Open',
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            false_positive=false_positive,
+            save_all = checkmarx_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                vul_col=vul_col,
+                vuln_status='Duplicate',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive='Duplicate',
+                name=name,
+                severity=severity,
+                query=query,
+                result=code_data,
+                scan_details=scan_details,
+                result_data=result_data_all,
+                file_name=file_name,
+                username=username,
+            )
+            save_all.save()
 
-            name=name,
-            severity=severity,
-            query=query,
-            result=code_data,
-            scan_details=scan_details,
-            result_data=result_data_all,
-            file_name=file_name,
-            username=username,
-        )
-        save_all.save()
-    all_findbugs_data = checkmarx_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 false_positive='No')
+    all_findbugs_data = checkmarx_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
 
-    total_vul = len(all_findbugs_data)
+    duplicate_count = checkmarx_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                               vuln_duplicate='Yes')
+
+
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
     total_low = len(all_findbugs_data.filter(severity="Low"))
-    total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
+    total_vul = len(all_findbugs_data)
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     checkmarx_scan_db.objects.filter(username=username, scan_id=scan_id).update(
         project_name=project,

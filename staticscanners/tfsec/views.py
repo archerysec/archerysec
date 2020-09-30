@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.shortcuts import render,  HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from staticscanners.models import tfsec_scan_results_db, tfsec_scan_db
 import hashlib
 from staticscanners.resources import tfsecResource
@@ -45,11 +45,12 @@ def list_vuln(request):
     # tfsec_all_vuln = tfsec_scan_results_db.objects.filter(scan_id=scan_id)
 
     tfsec_all_vuln = tfsec_scan_results_db.objects.filter(username=username,
-        scan_id=scan_id, vuln_status='Open').values(
+                                                          scan_id=scan_id).values(
         'rule_id',
         'severity',
         'vul_col',
-        'scan_id').distinct()
+        'vuln_status',
+        'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request, 'tfsec/tfsec_list_vuln.html',
                   {'tfsec_all_vuln': tfsec_all_vuln}
@@ -98,7 +99,8 @@ def tfsec_vuln_data(request):
                                                                              false_positive_hash=false_positive_hash
                                                                              )
 
-        all_tfsec_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
+        all_tfsec_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+                                                              vuln_status='Open')
 
         total_vul = len(all_tfsec_data)
         total_high = len(all_tfsec_data.filter(severity='High'))
@@ -111,7 +113,6 @@ def tfsec_vuln_data(request):
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
             SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
         )
 
         return HttpResponseRedirect(
@@ -154,9 +155,9 @@ def tfsec_details(request):
         vuln_id = None
 
     tfsec_vuln_details = tfsec_scan_results_db.objects.filter(username=username,
-        scan_id=scan_id,
-        vuln_id=vuln_id
-    )
+                                                              scan_id=scan_id,
+                                                              vuln_id=vuln_id
+                                                              )
 
     return render(request, 'tfsec/tfsec_vuln_details.html',
                   {'tfsec_vuln_details': tfsec_vuln_details}
@@ -219,7 +220,6 @@ def tfsec_del_vuln(request):
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
             SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
         )
 
         return HttpResponseRedirect(reverse('tfsec:tfsec_all_vuln') + '?scan_id=%s' % scan_id)

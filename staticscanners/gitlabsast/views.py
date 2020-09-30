@@ -42,7 +42,7 @@ def list_vuln(request):
     else:
         scan_id = None
 
-    gitlabsast_all_vuln = gitlabsast_scan_results_db.objects.filter(scan_id=scan_id, username=username)
+    gitlabsast_all_vuln = gitlabsast_scan_results_db.objects.filter(scan_id=scan_id, username=username).exclude(vuln_status='Duplicate')
 
     return render(request, 'gitlabsast/gitlabsastscan_list_vuln.html',
                   {'gitlabsast_all_vuln': gitlabsast_all_vuln}
@@ -104,7 +104,7 @@ def gitlabsast_vuln_data(request):
                 SEVERITY_HIGH=total_high,
                 SEVERITY_MEDIUM=total_medium,
                 SEVERITY_LOW=total_low,
-                total_dup=total_duplicate
+
             )
 
         return HttpResponseRedirect(
@@ -212,7 +212,7 @@ def gitlabsast_del_vuln(request):
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
             SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+
         )
 
         return HttpResponseRedirect(reverse('gitlabsast:gitlabsast_all_vuln') + '?scan_id=%s' % scan_id)

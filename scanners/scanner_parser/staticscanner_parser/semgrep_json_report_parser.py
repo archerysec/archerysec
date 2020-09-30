@@ -71,12 +71,10 @@ def semgrep_report_json(data, project_id, scan_id, username):
         except Exception as e:
             message = 'Not Found'
 
-
         try:
             metavars = vuln_data['extra']['metavars']
         except Exception as e:
             metavars = 'Not Found'
-
 
         try:
             metadata = vuln_data['extra']['metadata']
@@ -112,54 +110,77 @@ def semgrep_report_json(data, project_id, scan_id, username):
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
         match_dup = semgrepscan_scan_results_db.objects.filter(username=username,
-                                                              dup_hash=duplicate_hash).values('dup_hash')
+                                                               dup_hash=duplicate_hash).values('dup_hash')
         lenth_match = len(match_dup)
 
-        if lenth_match == 1:
-            duplicate_vuln = 'Yes'
-        elif lenth_match == 0:
+        if lenth_match == 0:
             duplicate_vuln = 'No'
+
+            false_p = semgrepscan_scan_results_db.objects.filter(username=username,
+                                                                 false_positive_hash=duplicate_hash)
+            fp_lenth_match = len(false_p)
+
+            if fp_lenth_match == 1:
+                false_positive = 'Yes'
+            else:
+                false_positive = 'No'
+
+            save_all = semgrepscan_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                vul_col=vul_col,
+                vuln_status='Open',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive=false_positive,
+                check_id=check_id,
+                path=path,
+                severity=severity,
+                message=message,
+                end=end,
+                metavars=metavars,
+                metadata=metadata,
+                lines=lines,
+                username=username,
+            )
+            save_all.save()
+
         else:
-            duplicate_vuln = 'None'
+            duplicate_vuln = 'Yes'
 
-        false_p = semgrepscan_scan_results_db.objects.filter(username=username,
-                                                            false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
-
-        if fp_lenth_match == 1:
-            false_positive = 'Yes'
-        else:
-            false_positive = 'No'
-
-        save_all = semgrepscan_scan_results_db(
-            vuln_id=vul_id,
-            scan_id=scan_id,
-            project_id=project_id,
-            vul_col=vul_col,
-            vuln_status='Open',
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            false_positive=false_positive,
-            check_id=check_id,
-            path=path,
-            severity=severity,
-            message=message,
-            end=end,
-            metavars=metavars,
-            metadata=metadata,
-            lines=lines,
-            username=username,
-        )
-        save_all.save()
+            save_all = semgrepscan_scan_results_db(
+                vuln_id=vul_id,
+                scan_id=scan_id,
+                project_id=project_id,
+                vul_col=vul_col,
+                vuln_status='Duplicate',
+                dup_hash=duplicate_hash,
+                vuln_duplicate=duplicate_vuln,
+                false_positive='Duplicate',
+                check_id=check_id,
+                path=path,
+                severity=severity,
+                message=message,
+                end=end,
+                metavars=metavars,
+                metadata=metadata,
+                lines=lines,
+                username=username,
+            )
+            save_all.save()
 
     all_findbugs_data = semgrepscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                  false_positive='No')
+                                                                   false_positive='No')
+
+    duplicate_count = semgrepscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                                 vuln_duplicate='Yes')
 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
     total_low = len(all_findbugs_data.filter(severity="Low"))
-    total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     semgrepscan_scan_db.objects.filter(username=username, scan_id=scan_id).update(
         total_vuln=total_vul,
@@ -174,6 +195,3 @@ def semgrep_report_json(data, project_id, scan_id, username):
               'Medium: %s <br>Low %s' % ("semgrep", total_vul, total_high, total_medium, total_low)
 
     email_sch_notify(subject=subject, message=message)
-
-
-

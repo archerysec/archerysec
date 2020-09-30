@@ -45,11 +45,12 @@ def list_vuln(request):
     # semgrepscan_all_vuln = semgrepscan_scan_results_db.objects.filter(scan_id=scan_id)
 
     semgrepscan_all_vuln = semgrepscan_scan_results_db.objects.filter(username=username,
-                                                                      scan_id=scan_id, vuln_status='Open').values(
+                                                                      scan_id=scan_id).values(
         'check_id',
         'severity',
         'vul_col',
-        'scan_id').distinct()
+        'vuln_status',
+        'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request, 'semgrepscan/semgrepscan_list_vuln.html',
                   {'semgrepscan_all_vuln': semgrepscan_all_vuln}
@@ -113,7 +114,7 @@ def semgrepscan_vuln_data(request):
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
             SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+
         )
 
         return HttpResponseRedirect(
@@ -221,7 +222,7 @@ def semgrepscan_del_vuln(request):
             SEVERITY_HIGH=total_high,
             SEVERITY_MEDIUM=total_medium,
             SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+
         )
 
         return HttpResponseRedirect(reverse('semgrepscan:semgrepscan_all_vuln') + '?scan_id=%s' % scan_id)
