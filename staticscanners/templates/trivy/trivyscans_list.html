@@ -6,7 +6,14 @@
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script type="text/javascript">
-
+    function toreport(){
+        var uuid = [];
+        $.each($("input[name='del_scan_id']:checked"), function(){            
+            uuid.push($(this).val());
+        });
+        //alert(uuid.join(", "));
+        document.getElementById("toexport").value=uuid.join(", ");
+    }
     $("#checkAll").change(function () {
         $("input:checkbox").prop('checked', $(this).prop("checked"));
     });
@@ -17,6 +24,7 @@
                 $.each($("input[name='del_scan_id']:checked"), function(){
                     scan_id.push($(this).val());
                 });
+
 
                 var json_scanid = scan_id.join(", ");
                 $.ajax({
@@ -52,7 +60,7 @@
                                 <a href="{% url 'staticscanners:report_import' %}" class="btn btn-primary btn-mini"><i
                                         class="icon-upload-alt"></i> Upload</a>
                             </div>
-                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                            <button type="button" class="btn btn-danger btn-mini delbtn" onclick="">Delete Selected</button>
                         </div>
                         <br>
                         <br>
@@ -66,10 +74,11 @@
                                             <option value="csv" selected>CSV</option>
                                             <option value="json">JSON</option>
                                             <option value="yaml">YAML</option>
+                                            <option value="pdf"><a href="csv2pdf.html">PDF<a></option>
                                         </select>
                                     </div>
                                     <div class="col-auto my-1">
-                                        <input type="hidden" name="scan_id"
+                                        <input type="hidden" id="toexport" name="scan_id"
                                                value="{% for data in all_trivy_scan %}{{data.scan_id}}{% endfor %}"/>
                                         <button type="submit" class="btn btn-primary"><i
                                                 class="fas fa-arrow-alt-circle-down"></i></button>
@@ -113,7 +122,7 @@
                                                     <input type="checkbox" class="listCheckbox"
                                                            value="{{data.scan_id}}"
                                                            name="del_scan_id"
-                                                           onClick="reload">
+                                                           onClick="toreport();reload();">
                                                     <span class="checkmark"></span>
                                                 </label>
                                             </form>
@@ -148,7 +157,7 @@
                                                 {% csrf_token %}
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
                                                 <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
-                                                <button class="btn btn-danger btn-mini"><i class="fas fa-trash"></i></button>
+                                                <button class="btn btn-danger btn-mini delbtn"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </td>
                                     </tr>
