@@ -23,7 +23,7 @@ import uuid
 import defusedxml.ElementTree as ET
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, render_to_response, HttpResponse
+from django.shortcuts import render,  HttpResponse
 from django.utils import timezone
 from archerysettings import save_settings
 from archerysettings import load_settings
@@ -88,12 +88,13 @@ def email_notify(user, subject, message):
 
 
 def index(request):
+    username = request.user.username
     """
     Function calling network base html.
     :param request:
     :return:
     """
-    all_ip = scan_save_db.objects.all()
+    all_ip = scan_save_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
 
@@ -101,26 +102,28 @@ def index(request):
 
 
 def scan_status(request):
+    username = request.user.username
     """
     Check the network scan status.
     :param request:
     :return:
     """
     if request.method == 'POST':
-        all_ip = scan_save_db.objects.all()
+        all_ip = scan_save_db.objects.filter(username=username)
         scan_ip = request.POST.get('scan_id', )
 
     return render(request, 'openvas_scan.html')
 
 
 def scan_vul_details(request):
+    username = request.user.username
     """
     Get the Network scan vulnerability details.
     :param request:
     :return:
     """
     jira_url = None
-    jira = jirasetting.objects.all()
+    jira = jirasetting.objects.filter(username=username)
     for d in jira:
         jira_url = d.jira_server
     scanid = ""
@@ -134,13 +137,13 @@ def scan_vul_details(request):
         false_positive = request.POST.get('false')
         status = request.POST.get('status')
 
-        ov_scan_result_db.objects.filter(
+        ov_scan_result_db.objects.filter(username=username,
             scan_id=scan_id,
             vul_id=vuln_id).update(
             false_positive=false_positive, vuln_status=status)
 
         if false_positive == 'Yes':
-            vuln_info = ov_scan_result_db.objects.filter(scan_id=scan_id, vul_id=vuln_id)
+            vuln_info = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id, vul_id=vuln_id)
             for vi in vuln_info:
                 name = vi.name
                 host = vi.host
@@ -148,34 +151,33 @@ def scan_vul_details(request):
                 port = vi.port
                 dup_data = name + host + severity + port
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                ov_scan_result_db.objects.filter(
+                ov_scan_result_db.objects.filter(username=username,
                     scan_id=scan_id,
                     vul_id=vuln_id).update(
                     false_positive=false_positive,
-                    vuln_status=status,
+                    vuln_status='Close',
                     false_positive_hash=false_positive_hash
                 )
-            openvas_vul = ov_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+        openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
 
-            total_high = len(openvas_vul.filter(threat="High"))
-            total_medium = len(openvas_vul.filter(threat="Medium"))
-            total_low = len(openvas_vul.filter(threat="Low"))
-            total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
-            total_vul = total_high + total_medium + total_low
+        total_high = len(openvas_vul.filter(threat="High"))
+        total_medium = len(openvas_vul.filter(threat="Medium"))
+        total_low = len(openvas_vul.filter(threat="Low"))
+        total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_high + total_medium + total_low
 
-            scan_save_db.objects.filter(scan_id=scan_id). \
-                update(total_vul=total_vul,
-                       high_total=total_high,
-                       medium_total=total_medium,
-                       low_total=total_low,
-                       total_dup=total_duplicate,
-                       scan_ip=host,
-                       )
+        scan_save_db.objects.filter(username=username, scan_id=scan_id). \
+            update(total_vul=total_vul,
+                   high_total=total_high,
+                   medium_total=total_medium,
+                   low_total=total_low,
+                   total_dup=total_duplicate,
+                   )
 
         return HttpResponseRedirect(
             reverse('networkscanners:vul_details') + '?scan_id=%s' % scan_id)
 
-    all_vuln = ov_scan_result_db.objects.filter(scan_id=scanid,
+    all_vuln = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
                                                 false_positive='No', vuln_status='Open').values('name', 'severity',
                                                                                                 'vuln_color',
                                                                                                 'threat', 'host',
@@ -183,7 +185,7 @@ def scan_vul_details(request):
                                                                                                 'jira_ticket',
                                                                                                 'vuln_status').distinct()
 
-    all_vuln_closed = ov_scan_result_db.objects.filter(scan_id=scanid,
+    all_vuln_closed = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
                                                        false_positive='No', vuln_status='Closed').values('name',
                                                                                                          'severity',
                                                                                                          'vuln_color',
@@ -195,7 +197,7 @@ def scan_vul_details(request):
                                                                                                          'vuln_status'
                                                                                                          ).distinct()
 
-    all_false_vul = ov_scan_result_db.objects.filter(scan_id=scanid,
+    all_false_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
                                                      false_positive='Yes').values('name', 'severity',
                                                                                   'vuln_color',
                                                                                   'threat', 'host',
@@ -219,7 +221,8 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     :param sel_profile:
     :return:
     """
-    openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile)
+    username = user.username
+    openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile, username=username)
     try:
         scanner = openvas.connect()
     except Exception as e:
@@ -243,15 +246,17 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
                             scan_ip=scan_ip,
                             target_id=str(target_id),
                             date_time=date_time,
-                            scan_status=0.0)
+                            scan_status=0.0,
+                            username=username
+                            )
     save_all.save()
     openvas.scan_status(scanner=scanner, scan_id=scan_id)
     time.sleep(5)
-    vuln_an_id(scan_id=scan_id, project_id=project_id)
+    vuln_an_id(scan_id=scan_id, project_id=project_id, username=username)
 
     notify.send(user, recipient=user, verb='OpenVAS Scan Completed')
 
-    all_openvas = scan_save_db.objects.all()
+    all_openvas = scan_save_db.objects.filter(username=username)
     all_vuln = ''
     total_high = ''
     total_medium = ''
@@ -273,16 +278,17 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
 
 
 def launch_scan(request):
+    username = request.user.username
     """
     Function Trigger Network scans.
     :param request:
     :return:
     """
-    all_ip = scan_save_db.objects.all()
+    all_ip = scan_save_db.objects.filter(username=username)
     user = request.user
 
     if request.method == 'POST':
-        all_ip = scan_save_db.objects.all()
+        all_ip = scan_save_db.objects.filter(username=username)
         scan_ip = request.POST.get('ip')
         project_id = request.POST.get('project_id')
         sel_profile = request.POST.get('scan_profile')
@@ -297,11 +303,12 @@ def launch_scan(request):
             thread.daemon = True
             thread.start()
 
-    return render_to_response('openvas_vuln_list.html',
+    return render('openvas_vuln_list.html',
                               {'all_ip': all_ip})
 
 
 def scan_del(request):
+    username = request.user.username
     """
     Delete Network scans.
     :param request:
@@ -317,22 +324,23 @@ def scan_del(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
-            scans = scan_save_db.objects.filter(scan_id=scan_id).order_by('scan_id')
+            scans = scan_save_db.objects.filter(username=username, scan_id=scan_id).order_by('scan_id')
             scans.delete()
-            vuln_data = ov_scan_result_db.objects.filter(scan_id=scan_id)
+            vuln_data = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id)
             vuln_data.delete()
 
     return HttpResponseRedirect(reverse('networkscanners:index'))
 
 
 def ip_scan(request):
+    username = request.user.username
     """
     List all network scan IP's.
     :param request:
     :return:
     """
-    all_scans = scan_save_db.objects.all()
-    all_proj = project_db.objects.all()
+    all_scans = scan_save_db.objects.filter(username=username)
+    all_proj = project_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
 
@@ -345,12 +353,13 @@ def ip_scan(request):
 
 
 def openvas_details(request):
+    username = request.user.username
     """
     OpenVAS tool settings.
     :param request:
     :return:
     """
-    save_openvas_setting = save_settings.SaveSettings(api_data)
+    save_openvas_setting = save_settings.SaveSettings(api_data, username=username)
     if request.method == 'POST':
         if request.POST.get("openvas_enabled") == 'on':
             openvas_enabled = True
@@ -375,12 +384,13 @@ def openvas_details(request):
 
 
 def openvas_setting(request):
+    username = request.user.username
     """
     Calling OpenVAS setting page.
     :param request:
     :return:
     """
-    load_openvas_setting = load_settings.ArcherySettings(api_data)
+    load_openvas_setting = load_settings.ArcherySettings(api_data, username=username)
     openvas_host = load_openvas_setting.openvas_host()
     openvas_port = load_openvas_setting.openvas_port()
     openvas_enabled = load_openvas_setting.openvas_enabled()
@@ -403,6 +413,7 @@ def openvas_setting(request):
 
 
 def del_vuln(request):
+    username = request.user.username
     """
     Delete Network Vulnerability.
     :param request:
@@ -420,15 +431,15 @@ def del_vuln(request):
 
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = ov_scan_result_db.objects.filter(vul_id=vuln_id)
+            delete_vuln = ov_scan_result_db.objects.filter(username=username, vul_id=vuln_id)
             delete_vuln.delete()
-        ov_all_vul = ov_scan_result_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
+        ov_all_vul = ov_scan_result_db.objects.filter(username=username, scan_id=un_scanid).order_by('scan_id')
         total_vul = len(ov_all_vul)
         total_high = len(ov_all_vul.filter(threat="High"))
         total_medium = len(ov_all_vul.filter(threat="Medium"))
         total_low = len(ov_all_vul.filter(threat="Low"))
 
-        scan_save_db.objects.filter(scan_id=un_scanid) \
+        scan_save_db.objects.filter(username=username, scan_id=un_scanid) \
             .update(total_vul=total_vul,
                     high_total=total_high,
                     medium_total=total_medium,
@@ -438,6 +449,7 @@ def del_vuln(request):
 
 
 def vuln_check(request):
+    username = request.user.username
     """
     Get the detailed vulnerability information.
     :param request:
@@ -448,7 +460,7 @@ def vuln_check(request):
         id_vul = request.GET['vuln_id']
     else:
         id_vul = ''
-    vul_dat = ov_scan_result_db.objects.filter(vul_id=id_vul).order_by('vul_id')
+    vul_dat = ov_scan_result_db.objects.filter(username=username, vul_id=id_vul).order_by('vul_id')
 
     for cve_dat in vul_dat:
         cve = cve_dat.cve
@@ -463,12 +475,13 @@ def vuln_check(request):
                                                  })
 
 def OpenVAS_xml_upload(request):
+    username = request.user.username
     """
     OpenVAS XML file upload.
     :param request:
     :return:
     """
-    all_project = project_db.objects.all()
+    all_project = project_db.objects.filter(username=username)
     if request.method == "POST":
         project_id = request.POST.get("project_id")
         scanner = request.POST.get("scanner")
@@ -478,35 +491,33 @@ def OpenVAS_xml_upload(request):
         scan_status = "100"
         if scanner == "openvas":
             date_time = datetime.now()
-            scan_dump = scan_save_db(scan_ip=scan_ip,
-                                     scan_id=scan_id,
-                                     date_time=date_time,
-                                     project_id=project_id,
-                                     scan_status=scan_status)
-            scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            OpenVas_Parser.xml_parser(project_id=project_id,
-                                      scan_id=scan_id,
-                                      root=root_xml)
+            hosts = OpenVas_Parser.get_hosts(root_xml)
+            for host in hosts:
+                scan_dump = scan_save_db(scan_ip=host,
+                                         scan_id=host,
+                                         date_time=date_time,
+                                         project_id=project_id,
+                                         scan_status=scan_status,
+                                         username=username
+                                         )
+                scan_dump.save()
+            OpenVas_Parser.updated_xml_parser(project_id=project_id,
+                                              scan_id=scan_id,
+                                              root=root_xml,
+                                              username=username
+                                              )
             return HttpResponseRedirect(reverse('networkscanners:index'))
         elif scanner == "nessus":
             date_time = datetime.now()
-            scan_dump = nessus_scan_db(
-                scan_ip=scan_ip,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status
-            )
-            scan_dump.save()
-            scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            Nessus_Parser.nessus_parser(root=root_xml,
-                                        scan_id=scan_id,
-                                        project_id=project_id,
-                                        )
+            Nessus_Parser.updated_nessus_parser(root=root_xml,
+                                                scan_id=scan_id,
+                                                project_id=project_id,
+                                                username=username,
+                                                )
             return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
         elif scanner == "nmap":
             tree = ET.parse(xml_file)
@@ -514,6 +525,7 @@ def OpenVAS_xml_upload(request):
             nmap_parser.xml_parser(root=root_xml,
                                    scan_id=scan_id,
                                    project_id=project_id,
+                                   username=username,
                                    )
             return HttpResponseRedirect(reverse('tools:nmap_scan'))
 
@@ -546,8 +558,9 @@ def net_scan_schedule(request):
     :param request:
     :return:
     """
-    all_scans_db = project_db.objects.all()
-    all_scheduled_scans = task_schedule_db.objects.all()
+    username = request.user.username
+    all_scans_db = project_db.objects.filter(username=username)
+    all_scheduled_scans = task_schedule_db.objects.filter(username=username)
 
     if request.method == 'POST':
         scan_ip = request.POST.get('ip')
@@ -594,7 +607,8 @@ def net_scan_schedule(request):
                                               schedule_time=scan_schedule_time,
                                               project_id=project_id,
                                               scanner=scanner,
-                                              periodic_task=periodic_task_value)
+                                              periodic_task=periodic_task_value,
+                                              username=username)
             save_scheadule.save()
 
     return render(request, 'network_scan_schedule.html',
@@ -609,7 +623,7 @@ def del_net_scan_schedule(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == "POST":
         task_id = request.POST.get('task_id')
 
@@ -620,9 +634,9 @@ def del_net_scan_schedule(request):
         print("split_length"), split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
-            del_task = task_schedule_db.objects.filter(task_id=task_id)
+            del_task = task_schedule_db.objects.filter(username=username, task_id=task_id)
             del_task.delete()
-            del_task_schedule = Task.objects.filter(id=task_id)
+            del_task_schedule = Task.objects.filter(id=task_id, username=username)
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse('networkscanners:net_scan_schedule'))
@@ -634,7 +648,8 @@ def nessus_scan(request):
     :param request:
     :return:
     """
-    all_scan = nessus_scan_db.objects.all()
+    username = request.user.username
+    all_scan = nessus_scan_db.objects.filter(username=username)
 
     return render(request,
                   'nessus_scan.html',
@@ -648,8 +663,9 @@ def nessus_vuln_details(request):
     :param request:
     :return:
     """
+    username = request.user.username
     jira_url = None
-    jira = jirasetting.objects.all()
+    jira = jirasetting.objects.filter(username=username)
     for d in jira:
         jira_url = d.jira_server
 
@@ -664,11 +680,11 @@ def nessus_vuln_details(request):
         false_positive = request.POST.get('false')
         status = request.POST.get('status')
 
-        nessus_report_db.objects.filter(scan_id=scan_id,
+        nessus_report_db.objects.filter(username=username, scan_id=scan_id,
                                         vul_id=vuln_id).update(false_positive=false_positive, vuln_status=status)
 
         if false_positive == 'Yes':
-            vuln_info = nessus_report_db.objects.filter(scan_id=scan_id, vul_id=vuln_id)
+            vuln_info = nessus_report_db.objects.filter(username=username, scan_id=scan_id, vul_id=vuln_id)
             for vi in vuln_info:
                 scan_ip = vi.scan_ip
                 plugin_name = vi.plugin_name
@@ -676,39 +692,39 @@ def nessus_vuln_details(request):
                 port = vi.port
                 dup_data = scan_ip + plugin_name + severity + port
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                nessus_report_db.objects.filter(scan_id=scan_id,
+                nessus_report_db.objects.filter(scan_id=scan_id, username=username,
                                                 vul_id=vuln_id).update(false_positive=false_positive,
-                                                                       vuln_status=status,
+                                                                       vuln_status='Close',
                                                                        false_positive_hash=false_positive_hash)
-            ov_all_vul = nessus_report_db.objects.filter(scan_id=scan_id, false_positive='No')
-            total_vul = len(ov_all_vul)
-            total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
-            total_high = len(ov_all_vul.filter(risk_factor="High"))
-            total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
-            total_low = len(ov_all_vul.filter(risk_factor="Low"))
-            total_info = len(ov_all_vul.filter(risk_factor="Informational"))
-            total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
+        ov_all_vul = nessus_report_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
+        total_vul = len(ov_all_vul)
+        total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
+        total_high = len(ov_all_vul.filter(risk_factor="High"))
+        total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
+        total_low = len(ov_all_vul.filter(risk_factor="Low"))
+        total_info = len(ov_all_vul.filter(risk_factor="Informational"))
+        total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
 
-            nessus_scan_db.objects.filter(scan_id=scan_id) \
-                .update(total_vul=total_vul,
-                        critical_total=total_critical,
-                        high_total=total_high,
-                        medium_total=total_medium,
-                        low_total=total_low,
-                        info_total=total_info,
-                        total_dup=total_duplicate,
-                        )
+        nessus_scan_db.objects.filter(username=username, scan_id=scan_id) \
+            .update(total_vul=total_vul,
+                    critical_total=total_critical,
+                    high_total=total_high,
+                    medium_total=total_medium,
+                    low_total=total_low,
+                    info_total=total_info,
+                    total_dup=total_duplicate,
+                    )
 
         return HttpResponseRedirect(
             reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % scan_id)
 
-    all_vuln = nessus_report_db.objects.filter(scan_id=scanid,
+    all_vuln = nessus_report_db.objects.filter(username=username, scan_id=scanid,
                                                false_positive='No')
 
-    all_vuln_closed = nessus_report_db.objects.filter(scan_id=scanid, vuln_status='Closed',
+    all_vuln_closed = nessus_report_db.objects.filter(username=username, scan_id=scanid, vuln_status='Closed',
                                                       false_positive='No')
 
-    all_false_vul = nessus_report_db.objects.filter(scan_id=scanid,
+    all_false_vul = nessus_report_db.objects.filter(username=username, scan_id=scanid,
                                                     false_positive='Yes')
     return render(request,
                   'nessus_vuln_details.html',
@@ -721,6 +737,7 @@ def nessus_vuln_details(request):
 
 
 def delete_nessus_scan(request):
+    username = request.user.username
     if request.method == "POST":
         scan_id = request.POST.get('scan_id')
         del_vuln = request.POST.get('del_vuln')
@@ -733,15 +750,16 @@ def delete_nessus_scan(request):
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
 
-            del_rep = nessus_report_db.objects.filter(scan_id=task_id)
+            del_rep = nessus_report_db.objects.filter(username=username, scan_id=task_id)
             del_rep.delete()
-            del_scan = nessus_scan_db.objects.filter(scan_id=task_id)
+            del_scan = nessus_scan_db.objects.filter(username=username, scan_id=task_id)
             del_scan.delete()
 
     return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
 
 
 def delete_nessus_vuln(request):
+    username = request.user.username
     if request.method == "POST":
         vuln_id = request.POST.get("del_vuln")
         un_scanid = request.POST.get("scan_id")
@@ -754,16 +772,16 @@ def delete_nessus_vuln(request):
         print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = nessus_report_db.objects.filter(vul_id=vuln_id)
+            delete_vuln = nessus_report_db.objects.filter(username=username, vul_id=vuln_id)
             delete_vuln.delete()
-        ov_all_vul = nessus_report_db.objects.filter(scan_id=un_scanid).order_by('scan_id')
+        ov_all_vul = nessus_report_db.objects.filter(username=username, scan_id=un_scanid).order_by('scan_id')
         total_vul = len(ov_all_vul)
         total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
         total_high = len(ov_all_vul.filter(risk_factor="High"))
         total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
         total_low = len(ov_all_vul.filter(risk_factor="Low"))
 
-        nessus_scan_db.objects.filter(scan_id=un_scanid) \
+        nessus_scan_db.objects.filter(username=username, scan_id=un_scanid) \
             .update(total_vul=total_vul,
                     critical_total=total_critical,
                     high_total=total_high,
@@ -774,6 +792,7 @@ def delete_nessus_vuln(request):
 
 
 def nessus_vuln_check(request):
+    username = request.user.username
     """
     Get the detailed vulnerability information.
     :param request:
@@ -783,18 +802,19 @@ def nessus_vuln_check(request):
         id_vul = request.GET['vuln_id']
     else:
         id_vul = ''
-    vul_dat = nessus_report_db.objects.filter(vul_id=id_vul)
+    vul_dat = nessus_report_db.objects.filter(username=username, vul_id=id_vul)
 
     return render(request, 'nessus_vuln_data.html', {'vul_dat': vul_dat})
 
 
 def nv_setting(request):
+    username = request.user.username
     """
     Calling NMAP Vulners setting page.
     :param request:
     :return:
     """
-    load_nv_setting = load_settings.ArcherySettings(api_data)
+    load_nv_setting = load_settings.ArcherySettings(api_data, username=username)
     nv_enabled = str(load_nv_setting.nv_enabled())
     nv_online = str(load_nv_setting.nv_enabled())
     nv_version = str(load_nv_setting.nv_enabled())
@@ -812,12 +832,13 @@ def nv_setting(request):
 
 
 def nv_details(request):
+    username = request.user.username
     """
     OpenVAS tool settings.
     :param request:
     :return:
     """
-    save_nv_setting = save_settings.SaveSettings(api_data)
+    save_nv_setting = save_settings.SaveSettings(api_data, username=username)
     if request.method == 'POST':
         if str(request.POST.get("nv_enabled")) == 'on':
             nv_enabled = True

@@ -41,6 +41,7 @@ class bandit_scan_db(models.Model):
     scan_status = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     total_dup = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class bandit_scan_results_db(models.Model):
@@ -68,6 +69,7 @@ class bandit_scan_results_db(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Bandit', editable=False)
     jira_ticket = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class dependencycheck_scan_db(models.Model):
@@ -83,6 +85,7 @@ class dependencycheck_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class dependencycheck_scan_results_db(models.Model):
@@ -118,6 +121,7 @@ class dependencycheck_scan_results_db(models.Model):
     sha256 = models.TextField(blank=True, null=True)
     evidenceCollected = models.TextField(blank=True, null=True)
     scanner = models.TextField(default='Dependency Check', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class retirejs_scan_db(models.Model):
@@ -134,6 +138,7 @@ class retirejs_scan_db(models.Model):
     scan_status = models.IntegerField(blank=True, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     total_dup = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class retirejs_scan_results_db(models.Model):
@@ -157,6 +162,7 @@ class retirejs_scan_results_db(models.Model):
     issue = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='RetireJs', editable=False)
     jira_ticket = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class findbugs_scan_db(models.Model):
@@ -172,6 +178,7 @@ class findbugs_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class findbugs_scan_results_db(models.Model):
@@ -204,6 +211,49 @@ class findbugs_scan_results_db(models.Model):
     risk = models.TextField(blank=True)
     scanner = models.TextField(default='Findbugs', editable=False)
     jira_ticket = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class checkmarx_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class checkmarx_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    name = models.TextField(blank=True)
+    scan_details = models.TextField(blank=True)
+    query = models.TextField(blank=True)
+    severity = models.TextField(blank=True)
+    result = models.TextField(blank=True)
+    result_data = models.TextField(blank=True)
+    file_name = models.TextField(blank=True)
+
+    scanner = models.TextField(default='Checkmarx', editable=False)
+    jira_ticket = models.TextField(null=True, blank=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class clair_scan_db(models.Model):
@@ -219,6 +269,7 @@ class clair_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class clair_scan_results_db(models.Model):
@@ -245,7 +296,7 @@ class clair_scan_results_db(models.Model):
     controls_tags_audit_text = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Clair', editable=False)
-
+    username = models.CharField(max_length=256, null=True)
 
 
 class trivy_scan_db(models.Model):
@@ -261,6 +312,7 @@ class trivy_scan_db(models.Model):
     SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
     SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
     SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class trivy_scan_results_db(models.Model):
@@ -288,3 +340,370 @@ class trivy_scan_results_db(models.Model):
     References = models.TextField(null=True, blank=True)
     jira_ticket = models.TextField(null=True, blank=True)
     scanner = models.TextField(default='Trivy', editable=False)
+    username = models.CharField(max_length=256, null=True)
+
+
+class npmaudit_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class npmaudit_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    paths = models.TextField(null=True, blank=True)
+    version = models.TextField(null=True, blank=True)
+    created = models.TextField(null=True, blank=True)
+    updated = models.TextField(null=True, blank=True)
+    title = models.TextField(null=True, blank=True)
+    found_by = models.TextField(null=True, blank=True)
+    reported_by = models.TextField(null=True, blank=True)
+    module_name = models.TextField(null=True, blank=True)
+    cves = models.TextField(null=True, blank=True)
+    vulnerable_versions = models.TextField(null=True, blank=True)
+    patched_versions = models.TextField(null=True, blank=True)
+    overview = models.TextField(null=True, blank=True)
+    recommendation = models.TextField(null=True, blank=True)
+    references = models.TextField(null=True, blank=True)
+    access = models.TextField(null=True, blank=True)
+    severity = models.TextField(null=True, blank=True)
+    cwe = models.TextField(null=True, blank=True)
+    url = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='npmaudit', editable=False)
+    username = models.CharField(max_length=256, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+
+
+class nodejsscan_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class nodejsscan_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    description = models.TextField(null=True, blank=True)
+    filename = models.TextField(null=True, blank=True)
+    line = models.TextField(null=True, blank=True)
+    lines = models.TextField(null=True, blank=True)
+    path = models.TextField(null=True, blank=True)
+    sha2 = models.TextField(null=True, blank=True)
+    tag = models.TextField(null=True, blank=True)
+    title = models.TextField(null=True, blank=True)
+    severity = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='nodejsscan', editable=False)
+    username = models.CharField(max_length=256, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+
+
+class tfsec_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class tfsec_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    description = models.TextField(null=True, blank=True)
+    filename = models.TextField(null=True, blank=True)
+    start_line = models.TextField(null=True, blank=True)
+    end_line = models.TextField(null=True, blank=True)
+    rule_id = models.TextField(null=True, blank=True)
+    link = models.TextField(null=True, blank=True)
+    title = models.TextField(null=True, blank=True)
+    severity = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='tfsec', editable=False)
+    username = models.CharField(max_length=256, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+
+
+class whitesource_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class whitesource_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    name = models.TextField(null=True, blank=True)
+    type = models.TextField(null=True, blank=True)
+    severity = models.TextField(null=True, blank=True)
+    score = models.TextField(null=True, blank=True)
+    cvss3_severity = models.TextField(null=True, blank=True)
+    cvss3_score = models.TextField(null=True, blank=True)
+    publishDate = models.TextField(null=True, blank=True)
+    lastUpdatedDate = models.TextField(null=True, blank=True)
+    scoreMetadataVector = models.TextField(null=True, blank=True)
+    url = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    project = models.TextField(null=True, blank=True)
+    product = models.TextField(null=True, blank=True)
+    cvss3Attributes = models.TextField(null=True, blank=True)
+    library = models.TextField(null=True, blank=True)
+    topFix = models.TextField(null=True, blank=True)
+    allFixes = models.TextField(null=True, blank=True)
+    filename = models.TextField(null=True, blank=True)
+    sha1 = models.TextField(null=True, blank=True)
+    version = models.TextField(null=True, blank=True)
+    groupId = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='whitesource', editable=False)
+    username = models.CharField(max_length=256, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+
+
+class gitlabsast_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class gitlabsast_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    name = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    cve = models.TextField(null=True, blank=True)
+    gl_scanner = models.TextField(null=True, blank=True)
+    location = models.TextField(null=True, blank=True)
+    file = models.TextField(null=True, blank=True)
+    identifiers = models.TextField(null=True, blank=True)
+    Severity = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='gitlabsast', editable=False)
+    username = models.CharField(max_length=256, null=True)
+
+
+class gitlabcontainerscan_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class gitlabcontainerscan_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    name = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    cve = models.TextField(null=True, blank=True)
+    gl_scanner = models.TextField(null=True, blank=True)
+    location = models.TextField(null=True, blank=True)
+    file = models.TextField(null=True, blank=True)
+    identifiers = models.TextField(null=True, blank=True)
+    Severity = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='gitlabcontainerscan', editable=False)
+    username = models.CharField(max_length=256, null=True)
+
+
+class gitlabsca_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class gitlabsca_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    name = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    cve = models.TextField(null=True, blank=True)
+    solution = models.TextField(null=True, blank=True)
+    gl_scanner = models.TextField(null=True, blank=True)
+    location = models.TextField(null=True, blank=True)
+    file = models.TextField(null=True, blank=True)
+    Severity = models.TextField(null=True, blank=True)
+    identifiers = models.TextField(null=True, blank=True)
+    links = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='gitlabsca', editable=False)
+    username = models.CharField(max_length=256, null=True)
+
+
+class semgrepscan_scan_db(models.Model):
+    scan_id = models.UUIDField(blank=True, null=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True, null=True)
+    project_name = models.TextField(blank=True, null=True)
+    total_vuln = models.IntegerField(blank=True, null=True)
+    scan_status = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    total_dup = models.IntegerField(blank=True, null=True)
+    SEVERITY_HIGH = models.IntegerField(blank=True, null=True)
+    SEVERITY_MEDIUM = models.IntegerField(blank=True, null=True)
+    SEVERITY_LOW = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+
+
+class semgrepscan_scan_results_db(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    vul_col = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+
+    check_id = models.TextField(null=True, blank=True)
+    path = models.TextField(null=True, blank=True)
+    start = models.TextField(null=True, blank=True)
+    end = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+    metavars = models.TextField(null=True, blank=True)
+    metadata = models.TextField(null=True, blank=True)
+    lines = models.TextField(null=True, blank=True)
+    severity = models.TextField(null=True, blank=True)
+    scanner = models.TextField(default='semgrepscan', editable=False)
+    username = models.CharField(max_length=256, null=True)
+    jira_ticket = models.TextField(null=True, blank=True)

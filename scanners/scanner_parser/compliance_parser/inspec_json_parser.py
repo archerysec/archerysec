@@ -24,7 +24,7 @@ status = None
 controls_results_message = None
 
 
-def inspec_report_json(data, project_id, scan_id):
+def inspec_report_json(data, project_id, scan_id, username):
     """
 
     :param data:
@@ -102,11 +102,12 @@ def inspec_report_json(data, project_id, scan_id):
                             controls_results_run_time=controls_results_run_time,
                             controls_results_start_time=controls_results_start_time,
                             controls_results_message=controls_results_message,
+                            username=username,
 
                         )
                         save_all.save()
 
-            all_inspec_data = inspec_scan_results_db.objects.filter(scan_id=scan_id)
+            all_inspec_data = inspec_scan_results_db.objects.filter(username=username, scan_id=scan_id)
 
             total_vul = len(all_inspec_data)
             inspec_failed = len(all_inspec_data.filter(controls_results_status="Failed"))
@@ -114,7 +115,7 @@ def inspec_report_json(data, project_id, scan_id):
             inspec_skipped = len(all_inspec_data.filter(controls_results_status="Skipped"))
             total_duplicate = len(all_inspec_data.filter(vuln_duplicate='Yes'))
 
-            inspec_scan_db.objects.filter(scan_id=scan_id).update(
+            inspec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
                 total_vuln=total_vul,
                 inspec_failed=inspec_failed,
                 inspec_passed=inspec_failed,

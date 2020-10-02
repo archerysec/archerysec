@@ -33,13 +33,14 @@ def netsparker_list_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
 
-    netsparker_all_vul = netsparker_scan_result_db.objects.filter(
-        scan_id=scan_id)
+    netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username,
+                                                                  scan_id=scan_id).exclude(vuln_status='Duplicate')
 
     return render(request,
                   'netsparkerscanner/netsparker_list_vuln.html',
@@ -53,7 +54,8 @@ def netsparker_scan_list(request):
     :param request:
     :return:
     """
-    all_netsparker_scan = netsparker_scan_db.objects.all()
+    username = request.user.username
+    all_netsparker_scan = netsparker_scan_db.objects.filter(username=username)
 
     return render(request,
                   'netsparkerscanner/netsparker_scan_list.html',
@@ -66,11 +68,12 @@ def netsparker_vuln_data(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         vuln_id = request.GET['vuln_id']
     else:
         vuln_id = None
-    vuln_data = netsparker_scan_result_db.objects.filter(vuln_id=vuln_id)
+    vuln_data = netsparker_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
 
     return render(request,
                   'netsparkerscanner/netsparker_vuln_data.html',
@@ -83,9 +86,10 @@ def netsparker_vuln_out(request):
     :param request:
     :return:
     """
+    username = request.user.username
     jira_url = None
 
-    jira = jirasetting.objects.all()
+    jira = jirasetting.objects.filter(username=username)
     for d in jira:
         jira_url = d.jira_server
 
@@ -98,58 +102,60 @@ def netsparker_vuln_out(request):
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
-        netsparker_scan_result_db.objects.filter(vuln_id=vuln_id,
+        netsparker_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                  scan_id=scan_id).update(false_positive=false_positive,
                                                                          vuln_status=status)
 
         if false_positive == 'Yes':
-            vuln_info = netsparker_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            vuln_info = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 vuln_type = vi.type
                 url = vi.vuln_url
                 severity = vi.severity
                 dup_data = str(vuln_type) + str(url) + str(severity)
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                netsparker_scan_result_db.objects.filter(vuln_id=vuln_id,
+                netsparker_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                          scan_id=scan_id).update(false_positive=false_positive,
-                                                                                 vuln_status=status,
+                                                                                 vuln_status='Close',
                                                                                  false_positive_hash=false_positive_hash
                                                                                  )
 
-            netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+        netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
+                                                                      false_positive='No',
+                                                                      vuln_status='Open')
 
-            total_critical = len(netsparker_all_vul.filter(severity='Critical'))
-            total_high = len(netsparker_all_vul.filter(severity="High"))
-            total_medium = len(netsparker_all_vul.filter(severity="Medium"))
-            total_low = len(netsparker_all_vul.filter(severity="Low"))
-            total_info = len(netsparker_all_vul.filter(severity="Information"))
-            total_duplicate = len(netsparker_all_vul.filter(vuln_duplicate='Yes'))
-            total_vul = total_critical + total_high + total_medium + total_low + total_info
+        total_critical = len(netsparker_all_vul.filter(severity='Critical'))
+        total_high = len(netsparker_all_vul.filter(severity="High"))
+        total_medium = len(netsparker_all_vul.filter(severity="Medium"))
+        total_low = len(netsparker_all_vul.filter(severity="Low"))
+        total_info = len(netsparker_all_vul.filter(severity="Information"))
+        total_duplicate = len(netsparker_all_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_critical + total_high + total_medium + total_low + total_info
 
-            netsparker_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
-                                                                      high_vul=total_high,
-                                                                      medium_vul=total_medium,
-                                                                      low_vul=total_low,
-                                                                      critical_vul=total_critical,
-                                                                      info_vul=total_info,
-                                                                      total_dup=total_duplicate,
-                                                                      )
+        netsparker_scan_db.objects.filter(username=username, scan_id=scan_id).update(total_vul=total_vul,
+                                                                                     high_vul=total_high,
+                                                                                     medium_vul=total_medium,
+                                                                                     low_vul=total_low,
+                                                                                     critical_vul=total_critical,
+                                                                                     info_vul=total_info,
+
+                                                                                     )
 
         return HttpResponseRedirect(
             reverse('netsparkerscanner:netsparker_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
-    vuln_data = netsparker_scan_result_db.objects.filter(scan_id=scan_id,
+    vuln_data = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                          type=name,
                                                          false_positive='No',
                                                          vuln_status='Open'
                                                          )
 
-    vuln_data_close = netsparker_scan_result_db.objects.filter(scan_id=scan_id,
+    vuln_data_close = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                                type=name,
                                                                false_positive='No',
                                                                vuln_status='Closed')
 
-    false_data = netsparker_scan_result_db.objects.filter(scan_id=scan_id,
+    false_data = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                           type=name,
                                                           false_positive='Yes')
 
@@ -168,6 +174,7 @@ def del_netsparker_scan(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
@@ -180,10 +187,10 @@ def del_netsparker_scan(request):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = netsparker_scan_db.objects.filter(scan_id=scan_id
+            item = netsparker_scan_db.objects.filter(username=username, scan_id=scan_id
                                                      )
             item.delete()
-            item_results = netsparker_scan_result_db.objects.filter(scan_id=scan_id)
+            item_results = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id)
             item_results.delete()
         return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
 
@@ -194,11 +201,12 @@ def edit_netsparker_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
     else:
         id_vul = ''
-    edit_vul_dat = burp_scan_result_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+    edit_vul_dat = burp_scan_result_db.objects.filter(username=username, vuln_id=id_vul).order_by('vuln_id')
     if request.method == 'POST':
         vuln_id = request.POST.get("vuln_id", )
         scan_id = request.POST.get("scan_id", )
@@ -222,7 +230,7 @@ def edit_netsparker_vuln(request):
             vul_col = "info"
         print("edit_vul :"), name
 
-        netsparker_scan_result_db.objects.filter(vuln_id=vuln_id).update(
+        netsparker_scan_result_db.objects.filter(username=username, vuln_id=vuln_id).update(
             name=name,
             severity_color=vul_col,
             severity=severity,
@@ -246,6 +254,7 @@ def netsparker_del_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         un_scanid = request.POST.get("scan_id", )
@@ -257,9 +266,9 @@ def netsparker_del_vuln(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = netsparker_scan_result_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln = netsparker_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
             delete_vuln.delete()
-        netsparker_all_vul = netsparker_scan_result_db.objects.filter(scan_id=un_scanid)
+        netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username, scan_id=un_scanid)
 
         total_vul = len(netsparker_all_vul)
         total_critical = len(netsparker_all_vul.filter(severity='Critical'))
@@ -268,7 +277,7 @@ def netsparker_del_vuln(request):
         total_low = len(netsparker_all_vul.filter(severity="Low"))
         total_info = len(netsparker_all_vul.filter(severity="Information"))
 
-        netsparker_scan_db.objects.filter(scan_id=un_scanid).update(
+        netsparker_scan_db.objects.filter(username=username, scan_id=un_scanid).update(
             total_vul=total_vul,
             critical_vul=total_critical,
             high_vul=total_high,
@@ -285,13 +294,13 @@ def export(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
         netsparker_resource = NetsparkerResource()
-        queryset = netsparker_scan_result_db.objects.filter(scan_id=scan_id)
+        queryset = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id)
         dataset = netsparker_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')

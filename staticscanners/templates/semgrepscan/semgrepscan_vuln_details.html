@@ -1,0 +1,117 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+    {% for data in semgrepscan_vuln_details %}
+        <div class="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-auto">
+                            <div class="float-right">
+                                <!-- Large modal -->
+                                <a href="/jira/submit_jira_ticket/?summary={{ data.check_id }}&description=Description: {{ data.message | safe }} File Name : {{ data.path }} %0a%0a Line :  {{ data.lines }} %0a%0a Archery URL: {SERVERIP}/semgrepscan/vuln_dat/?vuln_id={{ data.vuln_id }} &scanner=semgrepscan&vuln_id={{ data.vuln_id }}&scan_id={{ data.scan_id }} "
+                                   class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira
+                                    Ticket</a>
+
+                            </div>
+                        </div>
+                        <h1>{{ data.check_id }}</h1>
+                        <br>
+                        <div class="card">
+                            <div class="accordion" id="accordionExample">
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingOne">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                               aria-controls="collapseOne">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Description</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            {{ data.message }}
+                                        </div>
+                                        <div class="card-body">
+                                            <strong>File Name:</strong>
+                                            {{ data.path }}
+                                        </div>
+                                        <div class="card-body">
+                                            <strong>Severity:</strong>
+                                            {{ data.severity }}
+                                        </div>
+
+                                        <div class="card-body">
+                                            <strong>Start:</strong>
+                                            {{ data.start }}
+                                        </div>
+
+                                        <div class="card-body">
+                                            <strong>End:</strong>
+                                            {{ data.end }}
+                                        </div>
+
+                                        <div class="card-body">
+                                            <strong>Metavars:</strong>
+                                            {{ data.metavars }}
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingTwo">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+                                               aria-controls="collapseTwo">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Metadata</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody id="Metadata"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingThree">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
+                                               aria-controls="collapseThree">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Lines</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            {{ data.lines }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+        <script type="text/javascript">
+            var json = {{ data.metadata | safe}};
+            $.each(json, function (key, data) {
+                var tbody = document.getElementById('Metadata');
+                var tr = "<tr>";
+                tr += "<td>" + key + "</td>" + "<td>" + data.toString() + "</td></tr>";
+                tbody.innerHTML += tr;
+            });
+        </script>
+    {% endfor %}
+
+{% endblock %}

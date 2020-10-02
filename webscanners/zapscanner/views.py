@@ -22,7 +22,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
-from easy_pdf.views import render_to_pdf_response
+# from easy_pdf.views import render_to_pdf_response
 from selenium import webdriver
 from scanners.scanner_plugin.web_scanner import zap_plugin
 from webscanners.models import zap_scan_results_db, \
@@ -85,23 +85,23 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     :param project_id: Project ID
     :return:
     """
+    username = user.username
     zap_enabled = False
-    random_port = '8090'
+    random_port = '8091'
 
-    all_zap = zap_settings_db.objects.all()
+    all_zap = zap_settings_db.objects.filter(username=username)
     for zap in all_zap:
         zap_enabled = zap.enabled
 
     if zap_enabled is False:
         print("started local instence")
         random_port = zap_plugin.zap_local()
-        print(random_port)
 
     for i in range(0, 100):
         while True:
             try:
                 # Connection Test
-                zap_connect = zap_plugin.zap_connect(random_port)
+                zap_connect = zap_plugin.zap_connect(random_port, username=username)
                 zap_connect.spider.scan(url=target_url)
             except Exception as e:
                 print("ZAP Connection Not Found, re-try after 5 sec")
@@ -109,14 +109,14 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
                 continue
             break
 
-    zap_plugin.zap_spider_thread(count=20, random_port=random_port)
-    zap_plugin.zap_spider_setOptionMaxDepth(count=5, random_port=random_port)
+    zap_plugin.zap_spider_thread(count=20, random_port=random_port, username=username)
+    zap_plugin.zap_spider_setOptionMaxDepth(count=5, random_port=random_port, username=username)
 
-    zap_plugin.zap_scan_thread(count=30, random_port=random_port)
-    zap_plugin.zap_scan_setOptionHostPerScan(count=3, random_port=random_port)
+    zap_plugin.zap_scan_thread(count=30, random_port=random_port, username=username)
+    zap_plugin.zap_scan_setOptionHostPerScan(count=3, random_port=random_port, username=username)
 
     # Load ZAP Plugin
-    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan, random_port=random_port)
+    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan, random_port=random_port, username=username)
     zap.exclude_url()
     time.sleep(3)
     zap.cookies()
@@ -124,6 +124,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     date_time = datetime.now()
     try:
         save_all_scan = zap_scans_db(
+            username=username,
             project_id=project_id,
             scan_url=target_url,
             scan_scanid=scan_id,
@@ -159,9 +160,10 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         all_vuln=all_vuln,
         project_id=project_id,
         un_scanid=scan_id,
+        username=username,
     )
     print(save_all_vuln)
-    all_zap_scan = zap_scans_db.objects.all()
+    all_zap_scan = zap_scans_db.objects.filter(username=username)
 
     total_vuln = ''
     total_high = ''
@@ -196,7 +198,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     random_port = '8090'
 
     # Connection Test
-    zap_connect = zap_plugin.zap_connect(random_port)
+    zap_connect = zap_plugin.zap_connect(random_port, username='')
 
     try:
         zap_connect.spider.scan(url=target_url)
@@ -249,6 +251,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         all_vuln=all_vuln,
         project_id=project_id,
         un_scanid=scan_id,
+        username=''
     )
     all_zap_scan = zap_scans_db.objects.all()
 
@@ -333,9 +336,10 @@ def zap_scan_list(request):
     :param request:
     :return:
     """
-    all_scans = zap_scans_db.objects.filter(rescan='No')
-    rescan_all_scans = zap_scans_db.objects.filter(rescan='Yes')
-    zap_scan_result = zap_scan_results_db.objects.all()
+    username = request.user.username
+    all_scans = zap_scans_db.objects.filter(rescan='No', username=username)
+    rescan_all_scans = zap_scans_db.objects.filter(rescan='Yes', username=username)
+    zap_scan_result = zap_scan_results_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
 
@@ -354,24 +358,27 @@ def zap_list_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
 
     zap_all_vul = zap_scan_results_db.objects.filter(
-        scan_id=scan_id, vuln_status='Open').values(
+        scan_id=scan_id, username=username).values(
         'name',
         'risk',
         'vuln_color',
-        'scan_id').distinct()
+        'vuln_status',
+        'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     zap_all_close_vul = zap_scan_results_db.objects.filter(
-        scan_id=scan_id, vuln_status='Close').values(
+        scan_id=scan_id, username=username).values(
         'name',
         'risk',
         'vuln_color',
-        'scan_id').distinct()
+        'vuln_status',
+        'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request,
                   'zapscanner/zap_list_vuln.html',
@@ -388,9 +395,10 @@ def zap_vuln_details(request):
     :param request:
     :return:
     """
+    username = request.user.username
     global scan_id, scan_name
     jira_url = None
-    jira = jirasetting.objects.all()
+    jira = jirasetting.objects.filter(username=username)
     for d in jira:
         jira_url = d.jira_server
 
@@ -404,45 +412,46 @@ def zap_vuln_details(request):
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
         zap_scan_results_db.objects.filter(
-            vuln_id=vuln_id,
+            vuln_id=vuln_id, username=username,
             scan_id=scan_id).update(false_positive=false_positive,
                                     vuln_status=vuln_status)
         if false_positive == 'Yes':
-            vuln_info = zap_scan_results_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            vuln_info = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.name
                 url = vi.url
                 risk = vi.risk
                 dup_data = name + url + risk
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                zap_scan_results_db.objects.filter(
-                    vuln_id=vuln_id,
-                    scan_id=scan_id).update(false_positive=false_positive,
-                                            vuln_status=vuln_status,
-                                            false_positive_hash=false_positive_hash
-                                            )
+                zap_scan_results_db.objects.filter(username=username,
+                                                   vuln_id=vuln_id,
+                                                   scan_id=scan_id).update(false_positive=false_positive,
+                                                                           vuln_status='Close',
+                                                                           false_positive_hash=false_positive_hash
+                                                                           )
 
-            zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+        zap_all_vul = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+                                                         vuln_status='Open')
 
-            total_high = len(zap_all_vul.filter(risk="High"))
-            total_medium = len(zap_all_vul.filter(risk="Medium"))
-            total_low = len(zap_all_vul.filter(risk="Low"))
-            total_info = len(zap_all_vul.filter(risk="Informational"))
-            total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
-            total_vul = total_high + total_medium + total_low + total_info
+        total_high = len(zap_all_vul.filter(risk="High"))
+        total_medium = len(zap_all_vul.filter(risk="Medium"))
+        total_low = len(zap_all_vul.filter(risk="Low"))
+        total_info = len(zap_all_vul.filter(risk="Informational"))
+        total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
+        total_vul = total_high + total_medium + total_low + total_info
 
-            zap_scans_db.objects.filter(scan_scanid=scan_id) \
-                .update(total_vul=total_vul,
-                        high_vul=total_high,
-                        medium_vul=total_medium,
-                        low_vul=total_low,
-                        info_vul=total_info,
-                        total_dup=total_duplicate,
-                        )
+        zap_scans_db.objects.filter(scan_scanid=scan_id, username=username) \
+            .update(total_vul=total_vul,
+                    high_vul=total_high,
+                    medium_vul=total_medium,
+                    low_vul=total_low,
+                    info_vul=total_info,
 
-        messages.add_message(request,
-                             messages.SUCCESS,
-                             'Vulnerability Status Changed')
+                    )
+
+        # messages.add_message(request,
+        #                      messages.SUCCESS,
+        #                      'Vulnerability Status Changed')
         return HttpResponseRedirect(
             reverse('zapscanner:zap_vuln_details') + '?scan_id=%s&scan_name=%s' % (
                 scan_id,
@@ -450,6 +459,7 @@ def zap_vuln_details(request):
             )
         )
     zap_all_vul = zap_scan_results_db.objects.filter(
+        username=username,
         scan_id=scan_id,
         false_positive='No',
         name=scan_name,
@@ -457,6 +467,7 @@ def zap_vuln_details(request):
     )
 
     zap_all_close_vul = zap_scan_results_db.objects.filter(
+        username=username,
         scan_id=scan_id,
         false_positive='No',
         name=scan_name,
@@ -464,6 +475,7 @@ def zap_vuln_details(request):
     ).order_by('name')
 
     zap_all_false_vul = zap_scan_results_db.objects.filter(
+        username=username,
         scan_id=scan_id,
         name=scan_name,
         false_positive='Yes').order_by('name')
@@ -484,12 +496,13 @@ def zap_settings(request):
     :param request:
     :return:
     """
+    username = request.user.username
     zap_api_key = ''
     zap_hosts = None
     zap_ports = None
     zap_enabled = False
 
-    all_zap = zap_settings_db.objects.all()
+    all_zap = zap_settings_db.objects.filter(username=username)
     for zap in all_zap:
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
@@ -518,9 +531,10 @@ def zap_setting_update(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
 
-        all_zap = zap_settings_db.objects.all()
+        all_zap = zap_settings_db.objects.filter(username=username)
         all_zap.delete()
 
         if request.POST.get("zap_enabled") == 'on':
@@ -532,6 +546,7 @@ def zap_setting_update(request):
         zaphost = request.POST.get("zappath", )
         port = request.POST.get("port", )
         save_data = zap_settings_db(
+            username=username,
             zap_url=zaphost,
             zap_port=port,
             zap_api=apikey,
@@ -541,9 +556,9 @@ def zap_setting_update(request):
 
         return HttpResponseRedirect(reverse('webscanners:setting'))
 
-    messages.add_message(request,
-                         messages.SUCCESS,
-                         'ZAP Setting Updated ')
+    # messages.add_message(request,
+    #                      messages.SUCCESS,
+    #                      'ZAP Setting Updated ')
 
     return render(request,
                   'zapscanner/zap_settings_form.html')
@@ -555,6 +570,7 @@ def del_zap_scan(request):
     :param request:
     :return:
     """
+    username = request.user.username
     try:
         if request.method == 'POST':
             item_id = request.POST.get("scan_scanid")
@@ -564,14 +580,14 @@ def del_zap_scan(request):
             split_length = target_split.__len__()
             for i in range(0, split_length):
                 target = target_split.__getitem__(i)
-                item_results = zap_scan_results_db.objects.filter(scan_id=target,
+                item_results = zap_scan_results_db.objects.filter(username=username, scan_id=target,
                                                                   )
                 item_results.delete()
 
-                item = zap_scans_db.objects.filter(scan_scanid=target,
+                item = zap_scans_db.objects.filter(username=username, scan_scanid=target,
                                                    )
                 item.delete()
-                messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
+                # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
             return HttpResponseRedirect(reverse('webscanners:index'))
     except Exception as e:
         print("Error Got !!!")
@@ -616,12 +632,14 @@ def cookies_list(request):
     :param request:
     :return:
     """
-    all_cookies = cookie_db.objects.all()
+    username = request.user.username
+    all_cookies = cookie_db.objects.filter(username=username)
 
     return render(request, 'cookies_list.html', {'all_cookies': all_cookies})
 
 
 def del_cookies(request):
+    username = request.user.username
     if request.method == 'POST':
         cookie_url = request.POST.get('url')
         cookies_item = str(cookie_url)
@@ -631,7 +649,7 @@ def del_cookies(request):
         for i in range(0, split_length):
             cookies_target = target_split.__getitem__(i)
             print(cookies_target)
-            del_cookie = cookie_db.objects.filter(url=cookies_target)
+            del_cookie = cookie_db.objects.filter(username=username, url=cookies_target)
             del_cookie.delete()
             zap_plugin.zap_replacer(target_url=cookies_target, random_port='8090')
         return HttpResponseRedirect(reverse('webscanners:index'))
@@ -645,6 +663,7 @@ def sel_login(request):
     :param request:
     :return:
     """
+    username = request.user.username
     action_vul = request.POST.get("action", )
     url_da = request.POST.get("url_login", )
     # print(url_da)
@@ -660,20 +679,19 @@ def sel_login(request):
             # cookie_save.save()
             # target_cookies = request.POST.get('cookies')
             print(cookie_data)
-            all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri))
+            all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri, username=username))
             for da in all_cookie_url:
                 global cookies
                 cookies = da.url
 
             if cookies == new_uri:
-                cookie_db.objects.filter(Q(url__icontains=new_uri)).update(cookie=cookie_data)
+                cookie_db.objects.filter(Q(url__icontains=new_uri, username=username)).update(cookie=cookie_data)
                 return HttpResponseRedirect(reverse('webscanners:index'))
             else:
-                data_dump = cookie_db(url=new_uri,
-                                      cookie=cookie_data)
+                data_dump = cookie_db(url=new_uri, username=username, cookie=cookie_data)
                 data_dump.save()
                 return HttpResponseRedirect(reverse('webscanners:index'))
-        messages.add_message(request, messages.SUCCESS, 'Cookies stored')
+        # messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
         return HttpResponseRedirect(reverse('webscanners:index'))
     return render(request, 'webscanner.html')
@@ -685,8 +703,9 @@ def exclude_url(request):
     :param request:
     :return:
     """
+    username = request.user.username
     exclud = request.POST.get("exclude_url", )
-    exclude_save = excluded_db(exclude_url=exclud)
+    exclude_save = excluded_db(username=username, exclude_url=exclud)
     exclude_save.save()
 
     return render(request, 'webscanner.html', )
@@ -698,7 +717,8 @@ def exluded_url_list(request):
     :param request:
     :return:
     """
-    all_excluded_url = excluded_db.objects.all()
+    username = request.user.username
+    all_excluded_url = excluded_db.objects.filter(username=username)
 
     if request.method == 'POST':
         exclude_url = request.POST.get('exclude_url')
@@ -709,7 +729,7 @@ def exluded_url_list(request):
         for i in range(0, split_length):
             exclude_target = target_split.__getitem__(i)
 
-            del_excluded = excluded_db.objects.filter(exclude_url=exclude_target)
+            del_excluded = excluded_db.objects.filter(username=username, exclude_url=exclude_target)
             del_excluded.delete()
 
         return HttpResponseRedirect(reverse('zapscanner:excluded_url_list'))
@@ -723,6 +743,7 @@ def del_zap_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         un_scanid = request.POST.get("scan_id", )
@@ -733,18 +754,20 @@ def del_zap_vuln(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln = zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id)
             delete_vuln.delete()
-        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid).values('name', 'risk',
-                                                                                   'vuln_color').distinct()
+        zap_all_vul = zap_scan_results_db.objects.filter(username=username, scan_id=un_scanid).values('name', 'risk',
+                                                                                                      'vuln_color').distinct()
         total_vul = len(zap_all_vul)
         total_high = len(zap_all_vul.filter(risk="High"))
         total_medium = len(zap_all_vul.filter(risk="Medium"))
         total_low = len(zap_all_vul.filter(risk="Low"))
 
-        zap_scans_db.objects.filter(scan_scanid=un_scanid).update(total_vul=total_vul, high_vul=total_high,
-                                                                  medium_vul=total_medium, low_vul=total_low)
-        messages.success(request, "Deleted vulnerability")
+        zap_scans_db.objects.filter(username=username, scan_scanid=un_scanid).update(total_vul=total_vul,
+                                                                                     high_vul=total_high,
+                                                                                     medium_vul=total_medium,
+                                                                                     low_vul=total_low)
+        # messages.success(request, "Deleted vulnerability")
 
         return HttpResponseRedirect(reverse('zapscanner:zap_list_vuln') + '?scan_id=%s' % un_scanid)
 
@@ -755,11 +778,12 @@ def zap_vuln_check(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
     else:
         id_vul = ''
-    vul_dat = zap_scan_results_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+    vul_dat = zap_scan_results_db.objects.filter(username=username, vuln_id=id_vul).order_by('vuln_id')
 
     full_data = []
     for data in vul_dat:
@@ -802,16 +826,17 @@ def zap_scan_pdf_gen(request):
     :param request:
     :return:
     """
-    all_scan = zap_scans_db.objects.all()
+    username = request.user.username
+    all_scan = zap_scans_db.objects.filter(username=username)
 
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
-        vuln_scan = zap_scan_results_db.objects.filter(scan_id=scan_id)
-        zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id).values('name',
-                                                                                 'risk',
-                                                                                 'vuln_color',
-                                                                                 'scan_id').distinct()
+        vuln_scan = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id)
+        zap_all_vul = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id).values('name',
+                                                                                                    'risk',
+                                                                                                    'vuln_color',
+                                                                                                    'scan_id').distinct()
 
         return render_to_pdf_response(request,
                                       template=str('zapscanner/zap_scan_pdf_gen.html'),
@@ -831,13 +856,14 @@ def export(request):
     :param request:
     :return:
     """
+    username = request.user.username
 
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
         zap_resource = ZapResource()
-        queryset = zap_scan_results_db.objects.filter(scan_id=scan_id)
+        queryset = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id)
         dataset = zap_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')

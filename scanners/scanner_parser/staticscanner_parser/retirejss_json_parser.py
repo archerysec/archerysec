@@ -37,7 +37,7 @@ info = None
 version = None
 
 
-def retirejs_report_json(data, project_id, scan_id):
+def retirejs_report_json(data, project_id, scan_id, username):
     """
 
     :param data:
@@ -45,12 +45,12 @@ def retirejs_report_json(data, project_id, scan_id):
     :param scan_id:
     :return:
     """
+    global component, files, severity
     for f in data:
-        global files
         files = f["file"]
 
         for components in data:
-            global component
+
             component = components["results"][0]["component"]
 
         for versions in data:
@@ -98,7 +98,7 @@ def retirejs_report_json(data, project_id, scan_id):
         dup_data = files + component + severity
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-        match_dup = retirejs_scan_results_db.objects.filter(
+        match_dup = retirejs_scan_results_db.objects.filter(username=username,
             dup_hash=duplicate_hash).values('dup_hash').distinct()
         lenth_match = len(match_dup)
 
@@ -109,7 +109,7 @@ def retirejs_report_json(data, project_id, scan_id):
         else:
             duplicate_vuln = 'None'
 
-        false_p = retirejs_scan_results_db.objects.filter(
+        false_p = retirejs_scan_results_db.objects.filter(username=username,
             false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
 
@@ -137,5 +137,6 @@ def retirejs_report_json(data, project_id, scan_id):
             # dup_hash=duplicate_hash,
             # vuln_duplicate=duplicate_vuln,
             # version=version,
+            username=username,
         )
         save_all.save()

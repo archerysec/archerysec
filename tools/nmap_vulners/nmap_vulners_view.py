@@ -28,7 +28,8 @@ def nmap_vulners_scan(request):
 
     :return:
     """
-    all_nmap = nmap_scan_db.objects.all()
+    username = request.user.username
+    all_nmap = nmap_scan_db.objects.filter(username=username)
 
     return render(request,
                   'nmap_scan.html',
@@ -43,6 +44,7 @@ def nmap_vulners(request):
 
     :return:
     """
+    username = request.user.username
     user = request.user
 
     if request.method == 'POST':
@@ -60,7 +62,7 @@ def nmap_vulners(request):
     elif request.method == 'GET':
         ip_address = request.GET.get('ip')
 
-        all_nmap = nmap_result_db.objects.filter(ip_address=ip_address)
+        all_nmap = nmap_result_db.objects.filter(username=username, ip_address=ip_address)
 
     return render(request,
                   'nmap_vulners_list.html',
@@ -70,12 +72,13 @@ def nmap_vulners(request):
 
 
 def nmap_vulners_port(request):
+    username = request.user.username
     ip_address = request.GET.get('ip')
     port = request.GET.get('port')
     if not (ip_address and port):
         raise ValueError('Nmap Vulners Port info: both IP and port must be present.')
 
-    port_info = nmap_vulners_port_result_db.objects.filter(ip_address=ip_address, port=port)
+    port_info = nmap_vulners_port_result_db.objects.filter(username=username, ip_address=ip_address, port=port)
 
     cve_info = list()
     if port_info.first().vulners_extrainfo:

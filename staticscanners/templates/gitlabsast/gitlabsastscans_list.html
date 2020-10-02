@@ -1,0 +1,167 @@
+
+
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $('.btn-danger').click(function(){
+            if (confirm('Are you sure you want to delete this?')) {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_scan_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
+
+                var json_scanid = scan_id.join(", ");
+                $.ajax({
+                    type:'POST',
+                    <!--contentType: 'application/json; charset=utf-8',-->
+                    url:'{% url 'gitlabsast:del_gitlabsast' %}',
+                    data:{
+                       scan_id: json_scanid,
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+                });
+                setTimeout(location.reload(), 6000);
+            }
+        });
+
+    });
+
+
+</script>
+
+
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="{% url 'staticscanners:report_import' %}" class="btn btn-primary btn-mini"><i
+                                        class="icon-upload-alt"></i> Upload</a>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="float-right">
+                            <form action="{% url 'gitlabsast:export' %}" method="post"
+                                  class="forms-sample">
+                                {% csrf_token %}
+                                <div class="form-row align-items-center">
+                                    <div class="col-auto my-1">
+                                        <select name="type" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                            <option value="csv" selected>CSV</option>
+                                            <option value="json">JSON</option>
+                                            <option value="yaml">YAML</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto my-1">
+                                        <input type="hidden" name="scan_id"
+                                               value="{% for data in all_gitlabsast_scan %}{{data.scan_id}}{% endfor %}"/>
+                                        <button type="submit" class="btn btn-primary"><i
+                                                class="fas fa-arrow-alt-circle-down"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">GitLab SAST Scan List</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="gitlabsast_scans_list" class="table table-bordered data-table">
+                                    <thead>
+                                    <tr>
+                                        <th><label class="customcheckbox m-b-20">
+                                            <input type="checkbox" id="mainCheckbox">
+                                            <span class="checkmark"></span>
+                                        </label></th>
+                                        <th>Project Name</th>
+                                        <th>Status</th>
+                                        <th>Date Time</th>
+                                        <th>Total Vulnerability</th>
+                                        <th>HIGH</th>
+                                        <th>MEDIUM</th>
+                                        <th>LOW</th>
+                                        <th>Duplicates</th>
+                                        <!--<th>Export</th>-->
+                                        <!--<th></th>-->
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>{% for data in all_gitlabsast_scan %}
+                                    <tr data-target="#">
+                                        <td>
+                                            <form>
+                                                <label class="customcheckbox">
+                                                    <input type="checkbox" class="listCheckbox"
+                                                           value="{{data.scan_id}}"
+                                                           name="del_scan_id"
+                                                           onClick="reload">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'gitlabsast:gitlabsast_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                        </td>
+                                        <td width="20%">
+                                            <div>
+                                                <div class="d-flex no-block align-items-center">
+                                                    <span>{{data.scan_status}}{{data.vul_status}}% Completed</span>
+                                                </div>
+                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
+                                                         style="width: {{data.scan_status}}{{data.vul_status}}%" aria-valuenow="10" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{data.date_time}}</td>
+                                        <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span></td>
+                                        <td><span class="badge badge-pill badge-danger">{{data.SEVERITY_HIGH}}</span>
+                                        </td>
+                                        <td><span class="badge badge-pill badge-warning">{{data.SEVERITY_MEDIUM}}</span>
+                                        </td>
+                                        <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span></td>
+                                        <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span>
+                                        </td>
+                                        <td>
+                                            <form action="{% url 'gitlabsast:del_gitlabsast' %}" method="post"
+                                                  class="forms-sample">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
+                                                <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
+                                                <button class="btn btn-danger btn-mini"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

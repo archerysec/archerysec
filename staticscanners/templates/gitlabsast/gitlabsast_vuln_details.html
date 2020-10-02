@@ -1,0 +1,138 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+    {% for data in gitlabsast_vuln_details %}
+        <div class="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-auto">
+                            <div class="float-right">
+                                <!-- Large modal -->
+                                <a href="/jira/submit_jira_ticket/?summary={{ data.message }}&description=%0a%0a%0a {{ data.description }} File :  {{ data.file }} %0a%0a Scanner : {{ data.gl_scanner }} %0a%0a  Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{ data.vuln_id }} &scanner=gitlabsast&vuln_id={{ data.vuln_id }}&scan_id={{ data.scan_id }} "
+                                   class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira
+                                    Ticket</a>
+
+                            </div>
+                        </div>
+                        <h1>{{ data.message }}</h1>
+                        <br>
+                        <div class="card">
+                            <div class="accordion" id="accordionExample">
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingOne">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                               aria-controls="collapseOne">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Description</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            {{ data.description | safe }}
+                                            <br>
+                                            <br>
+
+                                            <strong> CVE : </strong>
+                                            {{ data.cve }}</a><br><br>
+                                            <strong> File : </strong>
+                                            {{ data.file }}</a><br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingTwo">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+                                               aria-controls="collapseTwo">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Location</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody id="Location"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingThree">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="true"
+                                               aria-controls="collapseThree">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Identifiers</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody id="topFix"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card m-b-0">
+                                    <div class="card-header" id="headingFour">
+                                        <h5 class="mb-0">
+                                            <a data-toggle="collapse" data-target="#collapseFour" aria-expanded="true"
+                                               aria-controls="collapseFour">
+                                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                                <span>Scanner</span>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseFour" class="collapse show" aria-labelledby="headingFour"
+                                         data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody id="scanner"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+        <script type="text/javascript">
+            var json = {{ data.location | safe }};
+            $.each(json, function (key, data) {
+                var tbody = document.getElementById('Location');
+                var tr = "<tr>";
+                tr += "<td>" + key + "</td>" + "<td>" + data.toString() + "</td></tr>";
+                tbody.innerHTML += tr;
+            });
+
+            var json = {{ data.identifiers | safe }};
+            $.each(json, function (key, data) {
+                $.each(data, function (key2, data2) {
+                    var tbody = document.getElementById('topFix');
+                    var tr = "<tr>";
+                    tr += "<td>" + key2 + "</td>" + "<td>" + data2.toString() + "</td></tr>";
+                    tbody.innerHTML += tr;
+                })
+            });
+            var json = {{ data.gl_scanner | safe }};
+            $.each(json, function (key, data) {
+                var tbody = document.getElementById('scanner');
+                var tr = "<tr>";
+                tr += "<td>" + key + "</td>" + "<td>" + data.toString() + "</td></tr>";
+                tbody.innerHTML += tr;
+            });
+        </script>
+    {% endfor %}
+
+{% endblock %}

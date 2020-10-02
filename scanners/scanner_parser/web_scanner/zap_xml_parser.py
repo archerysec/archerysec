@@ -18,6 +18,7 @@ from webscanners.models import zap_scan_results_db, zap_scans_db
 import uuid
 import hashlib
 import ast
+from webscanners.zapscanner.views import email_sch_notify
 
 spider_status = "0"
 scans_status = "0"
@@ -55,9 +56,10 @@ reference = ""
 false_positive = ""
 duplicate_hash = ""
 duplicate_vuln = ""
+scan_url = ''
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(username, root, project_id, scan_id):
     """
     ZAP Proxy scanner xml report parser.
     :param root:
@@ -77,7 +79,7 @@ def xml_parser(root, project_id, scan_id):
         pluginid, \
         alert, \
         desc, \
-        riskcode, vuln_id, false_positive, duplicate_hash, duplicate_vuln
+        riskcode, vuln_id, false_positive, duplicate_hash, duplicate_vuln, scan_url
 
     for child in root:
         d = child.attrib
@@ -123,22 +125,77 @@ def xml_parser(root, project_id, scan_id):
             elif riskcode == '1':
                 vul_col = "info"
                 risk = "Low"
-            elif riskcode == '0':
+            else:
                 vul_col = "info"
-                risk = "Informational"
+                risk = "Low"
 
-            dup_data = name + url + risk
+        if name == "None":
+            print(name)
+        else:
+            dup_data = name + risk + scan_url
+            print(dup_data)
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
             match_dup = zap_scan_results_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()
             lenth_match = len(match_dup)
 
-            if lenth_match == 1:
-                duplicate_vuln = 'Yes'
-            elif lenth_match == 0:
+            if lenth_match == 0:
                 duplicate_vuln = 'No'
+
+                dump_data = zap_scan_results_db(vuln_id=vuln_id,
+                                                vuln_color=vul_col,
+                                                scan_id=scan_id,
+                                                project_id=project_id,
+                                                confidence=confidence,
+                                                wascid=wascid,
+                                                risk=risk,
+                                                reference=reference,
+                                                url=url,
+                                                name=name,
+                                                solution=solution,
+                                                param=instance,
+                                                sourceid=sourceid,
+                                                pluginId=pluginid,
+                                                alert=alert,
+                                                description=desc,
+                                                false_positive=false_positive,
+                                                rescan='No',
+                                                vuln_status='Open',
+                                                dup_hash=duplicate_hash,
+                                                vuln_duplicate=duplicate_vuln,
+                                                evidence=inst,
+                                                username=username
+                                                )
+                dump_data.save()
+
             else:
-                duplicate_vuln = 'None'
+                duplicate_vuln = 'Yes'
+
+                dump_data = zap_scan_results_db(vuln_id=vuln_id,
+                                                vuln_color=vul_col,
+                                                scan_id=scan_id,
+                                                project_id=project_id,
+                                                confidence=confidence,
+                                                wascid=wascid,
+                                                risk=risk,
+                                                reference=reference,
+                                                url=url,
+                                                name=name,
+                                                solution=solution,
+                                                param=instance,
+                                                sourceid=sourceid,
+                                                pluginId=pluginid,
+                                                alert=alert,
+                                                description=desc,
+                                                false_positive='Duplicate',
+                                                rescan='No',
+                                                vuln_status='Duplicate',
+                                                dup_hash=duplicate_hash,
+                                                vuln_duplicate=duplicate_vuln,
+                                                evidence=inst,
+                                                username=username
+                                                )
+                dump_data.save()
 
             false_p = zap_scan_results_db.objects.filter(
                 false_positive_hash=duplicate_hash)
@@ -149,35 +206,7 @@ def xml_parser(root, project_id, scan_id):
             else:
                 false_positive = 'No'
 
-        if name == "None":
-            print(name)
-        else:
-            dump_data = zap_scan_results_db(vuln_id=vuln_id,
-                                            vuln_color=vul_col,
-                                            scan_id=scan_id,
-                                            project_id=project_id,
-                                            confidence=confidence,
-                                            wascid=wascid,
-                                            risk=risk,
-                                            reference=reference,
-                                            url=url,
-                                            name=name,
-                                            solution=solution,
-                                            param=instance,
-                                            sourceid=sourceid,
-                                            pluginId=pluginid,
-                                            alert=alert,
-                                            description=desc,
-                                            false_positive=false_positive,
-                                            rescan='No',
-                                            vuln_status='Open',
-                                            dup_hash=duplicate_hash,
-                                            vuln_duplicate=duplicate_vuln,
-                                            evidence=inst,
-                                            )
-            dump_data.save()
-
-            vul_dat = zap_scan_results_db.objects.filter(vuln_id=vuln_id)
+            vul_dat = zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id)
             full_data = []
             for data in vul_dat:
                 evi = data.evidence
@@ -203,18 +232,20 @@ def xml_parser(root, project_id, scan_id):
 
                         full_data.append(instance)
             removed_list_data = ','.join(full_data)
-            zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(param=removed_list_data)
+            zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id).update(param=removed_list_data)
 
-    zap_all_vul = zap_scan_results_db.objects.filter(scan_id=scan_id, false_positive='No')
+    zap_all_vul = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+
+    duplicate_count = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id, vuln_duplicate='Yes')
 
     total_high = len(zap_all_vul.filter(risk="High"))
     total_medium = len(zap_all_vul.filter(risk="Medium"))
     total_low = len(zap_all_vul.filter(risk="Low"))
     total_info = len(zap_all_vul.filter(risk="Informational"))
-    total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
     total_vul = total_high + total_medium + total_low + total_info
 
-    zap_scans_db.objects.filter(scan_scanid=scan_id) \
+    zap_scans_db.objects.filter(username=username, scan_scanid=scan_id) \
         .update(total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,
@@ -224,10 +255,17 @@ def xml_parser(root, project_id, scan_id):
                 scan_url=scan_url
                 )
     if total_vul == total_duplicate:
-        zap_scans_db.objects.filter(scan_scanid=scan_id) \
+        zap_scans_db.objects.filter(username=username, scan_scanid=scan_id) \
             .update(total_vul=total_vul,
                     high_vul=total_high,
                     medium_vul=total_medium,
                     low_vul=total_low,
                     total_dup=total_duplicate
                     )
+
+    subject = 'Archery Tool Scan Status - ZAP Report Uploaded'
+    message = 'ZAP Scanner has completed the scan ' \
+              '  %s <br> Total: %s <br>High: %s <br>' \
+              'Medium: %s <br>Low %s' % (target_url, total_vul, total_high, total_medium, total_low)
+
+    email_sch_notify(subject=subject, message=message)

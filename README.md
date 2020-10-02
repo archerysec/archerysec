@@ -4,8 +4,6 @@
 
 [![Road Map](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/roadmap-orange.svg)](https://github.com/archerysec/archerysec/projects/1) [![BlackHat USA Arsenal 2018](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/blackhat-usa-2018.svg)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/) [![BlackHat Asia Arsenal 2018](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/blackhat-asia-2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837) [![DEFCON 26 Demolabs](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/defcon-26-demo-labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
 
-[![Rawsec's CyberSecurity Inventory](https://inventory.rawsec.ml/img/badges/Rawsec-inventoried-FF5050_flat.svg)](https://inventory.rawsec.ml/tools.html#Archery)
-
 <p align="center">
   <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
 </p>
@@ -27,8 +25,8 @@ Archery
     - [SSLScan](#sslscan)
     - [Nikto](#nikto)
     - [NMAP Vulners](#nmap-vulners)
-- [Automated installation](#automated-installation)
-- [Manual Installation](#manual-installation)
+- [Installation](#installation)
+- [Windows Installation](#windows-installation)
 - [Note on installation for developers and contributors](#note-on-installation-for-developers-and-contributors)
 - [Note on manual and automated installation](#note-on-manual-and-automated-installation)
 - [Docker Installation](#docker-installation)
@@ -95,11 +93,12 @@ Systemd service file is available in the project.
 
 ### Burp Scanner
 
-Follow the instruction in order to enable Burp REST API. You can manage and trigger scans using Archery once REST API enabled.
+Follow the instruction in order to enable Burp REST API. 
 
-* [Burp REST API](https://github.com/vmware/burp-rest-api)
+* [Burp REST API](https://portswigger.net/blog/burps-new-rest-api)
 
-Systemd service file is available in the project.
+Configure REST API endpoint in ArcherySec Settings
+
 
 ### SSLScan
 
@@ -130,7 +129,7 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 - Search STRONGHOLD_PUBLIC_URLS
 - Comment r'^/api/createuser/$',
 
-## installation
+## Installation
 
 `export TIME_ZONE='Asia/Kolkata'`
 
@@ -141,6 +140,19 @@ $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
 $ ./setup.sh
 $ ./run.sh
+```
+
+## Windows installation
+
+`set TIME_ZONE='Asia/Kolkata'`
+
+[https://en.wikipedia.org/wiki/List_of_tz_database_time_zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+```
+$ git clone https://github.com/archerysec/archerysec.git
+$ cd archerysec
+$ setup.bat
+$ run.bat
 ```
 
 ## Note on installation for developers and contributors
@@ -306,6 +318,9 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
     - [x] Bandit Scan (XML)
     - [x] Dependency Check (XML)
     - [x] FindBugs (XML)
+	
+	
+	[More Scanners](https://github.com/archerysec/archerysec/issues/16)
     
 * Popular Tools plugin support.
     - [x] Nmap

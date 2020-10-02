@@ -60,6 +60,7 @@ class ov_scan_result_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField( default='OpenVAS', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class scan_save_db(models.Model):
@@ -76,6 +77,7 @@ class scan_save_db(models.Model):
     project_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
     total_dup = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class task_schedule_db(models.Model):
@@ -85,6 +87,7 @@ class task_schedule_db(models.Model):
     project_id = models.TextField(blank=True, null=True)
     scanner = models.TextField(blank=True, null=True)
     periodic_task = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class nessus_report_db(models.Model):
@@ -120,6 +123,7 @@ class nessus_report_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField( default='Nessus', editable=False)
+    username = models.CharField(max_length=256, null=True)
 
 
 class nessus_scan_db(models.Model):
@@ -137,3 +141,4 @@ class nessus_scan_db(models.Model):
     project_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
     total_dup = models.IntegerField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)

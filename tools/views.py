@@ -33,6 +33,9 @@ from django.urls import reverse
 from tools.nmap_vulners.nmap_vulners_view import nmap_vulners, nmap_vulners_port, nmap_vulners_scan
 
 sslscan_output = None
+nikto_output = ''
+scan_result = ''
+all_nmap = ''
 
 
 def sslscan(request):
@@ -40,8 +43,9 @@ def sslscan(request):
 
     :return:
     """
+    username = request.user.username
     global sslscan_output
-    all_sslscan = sslscan_result_db.objects.all()
+    all_sslscan = sslscan_result_db.objects.filter(username=username)
 
     user = request.user
 
@@ -67,7 +71,9 @@ def sslscan(request):
             dump_scans = sslscan_result_db(scan_url=scans_url,
                                            scan_id=scan_id,
                                            project_id=project_id,
-                                           sslscan_output=sslscan_output)
+                                           sslscan_output=sslscan_output,
+                                           username=username,
+                                           )
 
             dump_scans.save()
             return HttpResponseRedirect(reverse('tools:sslscan'))
@@ -85,10 +91,11 @@ def sslscan_result(request):
     :param request:
     :return:
     """
+    username = request.user.username
 
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
-        scan_result = sslscan_result_db.objects.filter(scan_id=scan_id)
+        scan_result = sslscan_result_db.objects.filter(username=username, scan_id=scan_id)
 
     return render(request,
                   'sslscan_result.html',
@@ -102,7 +109,7 @@ def sslcan_del(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get('scan_id')
 
@@ -114,7 +121,7 @@ def sslcan_del(request):
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
-            del_scan = sslscan_result_db.objects.filter(scan_id=vuln_id)
+            del_scan = sslscan_result_db.objects.filter(username=username, scan_id=vuln_id)
             del_scan.delete()
 
     return HttpResponseRedirect('/tools/sslscan/')
@@ -125,8 +132,9 @@ def nikto(request):
 
     :return:
     """
+    username = request.user.username
     global nikto_output
-    all_nikto = nikto_result_db.objects.all()
+    all_nikto = nikto_result_db.objects.filter(username=username)
 
     user = request.user
 
@@ -185,7 +193,9 @@ def nikto(request):
                                          scan_id=scan_id,
                                          project_id=project_id,
                                          date_time=date_time,
-                                         nikto_scan_output=nikto_output)
+                                         nikto_scan_output=nikto_output,
+                                         username=username,
+                                         )
 
             dump_scans.save()
 
@@ -202,10 +212,10 @@ def nikto_result(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
-        scan_result = nikto_result_db.objects.filter(scan_id=scan_id)
+        scan_result = nikto_result_db.objects.filter(username=username, scan_id=scan_id)
 
     return render(request,
                   'nikto_scan_result.html',
@@ -219,6 +229,7 @@ def nikto_result_vul(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
 
@@ -227,33 +238,33 @@ def nikto_result_vul(request):
         status = request.POST.get('status')
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
-        nikto_vuln_db.objects.filter(vuln_id=vuln_id,
+        nikto_vuln_db.objects.filter(username=username, vuln_id=vuln_id,
                                      scan_id=scan_id).update(false_positive=false_positive, vuln_status=status)
 
         if false_positive == 'Yes':
-            vuln_info = nikto_vuln_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            vuln_info = nikto_vuln_db.objects.filter(username=username, scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 discription = vi.discription
                 hostname = vi.hostname
                 dup_data = discription + hostname
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                nikto_vuln_db.objects.filter(vuln_id=vuln_id,
+                nikto_vuln_db.objects.filter(username=username, vuln_id=vuln_id,
                                              scan_id=scan_id).update(false_positive=false_positive,
                                                                      vuln_status=status,
                                                                      false_positive_hash=false_positive_hash
                                                                      )
-    scan_result = nikto_vuln_db.objects.filter(scan_id=scan_id)
+    scan_result = nikto_vuln_db.objects.filter(username=username, scan_id=scan_id)
 
-    vuln_data = nikto_vuln_db.objects.filter(scan_id=scan_id,
+    vuln_data = nikto_vuln_db.objects.filter(username=username, scan_id=scan_id,
                                              false_positive='No',
                                              )
 
-    vuln_data_close = nikto_vuln_db.objects.filter(scan_id=scan_id,
+    vuln_data_close = nikto_vuln_db.objects.filter(username=username, scan_id=scan_id,
                                                    false_positive='No',
                                                    vuln_status='Closed'
                                                    )
 
-    false_data = nikto_vuln_db.objects.filter(scan_id=scan_id,
+    false_data = nikto_vuln_db.objects.filter(username=username, scan_id=scan_id,
                                               false_positive='Yes')
 
     return render(request,
@@ -272,6 +283,7 @@ def nikto_vuln_del(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln")
         scan_id = request.POST.get("scan_id")
@@ -283,7 +295,7 @@ def nikto_vuln_del(request):
         print("split_length"), split_length
         for i in range(0, split_length):
             _vuln_id = value_split.__getitem__(i)
-            delete_vuln = nikto_vuln_db.objects.filter(vuln_id=_vuln_id)
+            delete_vuln = nikto_vuln_db.objects.filter(username=username, vuln_id=_vuln_id)
             delete_vuln.delete()
 
         return HttpResponseRedirect("/tools/nikto_result_vul/?scan_id=%s" % scan_id)
@@ -295,7 +307,7 @@ def nikto_scan_del(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get('scan_id')
 
@@ -307,9 +319,9 @@ def nikto_scan_del(request):
         for i in range(0, split_length):
             _scan_id = value_split.__getitem__(i)
 
-            del_scan = nikto_result_db.objects.filter(scan_id=_scan_id)
+            del_scan = nikto_result_db.objects.filter(username=username, scan_id=_scan_id)
             del_scan.delete()
-            del_scan = nikto_vuln_db.objects.filter(scan_id=_scan_id)
+            del_scan = nikto_vuln_db.objects.filter(username=username, scan_id=_scan_id)
             del_scan.delete()
 
     return HttpResponseRedirect('/tools/nikto/')
@@ -320,7 +332,8 @@ def nmap_scan(request):
 
     :return:
     """
-    all_nmap = nmap_scan_db.objects.all()
+    username = request.user.username
+    all_nmap = nmap_scan_db.objects.filter(username=username)
 
     return render(request,
                   'nmap_scan.html',
@@ -334,11 +347,13 @@ def nmap(request):
 
     :return:
     """
+    global all_nmap
+    username = request.user.username
 
     if request.method == 'GET':
         ip_address = request.GET['ip']
 
-        all_nmap = nmap_result_db.objects.filter(ip_address=ip_address)
+        all_nmap = nmap_result_db.objects.filter(username=username, ip_address=ip_address)
 
     if request.method == 'POST':
         ip_address = request.POST.get('ip')
@@ -363,6 +378,7 @@ def nmap(request):
             nmap_parser.xml_parser(root=root_xml,
                                    scan_id=scan_id,
                                    project_id=project_id,
+                                   username=username
                                    )
 
         except Exception as e:
@@ -383,10 +399,12 @@ def nmap_result(request):
     :param request:
     :return:
     """
+    global scan_result
+    username = request.user.username
 
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
-        scan_result = nmap_result_db.objects.filter(scan_id=scan_id)
+        scan_result = nmap_result_db.objects.filter(username=username, scan_id=scan_id)
 
     return render(request,
                   'nmap_scan_result.html',
@@ -400,7 +418,7 @@ def nmap_scan_del(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         ip_address = request.POST.get('ip_address')
 
@@ -412,9 +430,9 @@ def nmap_scan_del(request):
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
-            del_scan = nmap_result_db.objects.filter(ip_address=vuln_id)
+            del_scan = nmap_result_db.objects.filter(username=username, ip_address=vuln_id)
             del_scan.delete()
-            del_scan = nmap_scan_db.objects.filter(scan_ip=vuln_id)
+            del_scan = nmap_scan_db.objects.filter(username=username, scan_ip=vuln_id)
             del_scan.delete()
 
     return HttpResponseRedirect('/tools/nmap_scan/')

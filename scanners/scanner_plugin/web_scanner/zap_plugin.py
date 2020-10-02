@@ -23,7 +23,10 @@ import json
 import ast
 from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
 import hashlib
-from scanners.scanner_parser.web_scanner import zap_xml_parser
+try:
+    from scanners.scanner_parser.web_scanner import zap_xml_parser
+except Exception as e:
+    print(e)
 import defusedxml.ElementTree as ET
 import platform
 import subprocess
@@ -41,7 +44,7 @@ from archerysettings import load_settings
 
 # Global Variables
 setting_file = os.getcwd() + '/apidata.json'
-zap_setting = load_settings.ArcherySettings(setting_file)
+# zap_setting = load_settings.ArcherySettings(setting_file, username=username)
 zap_api_key = 'dwed23wdwedwwefw4rwrfw'
 zap_hosts = '0.0.0.0'
 zap_ports = '8090'
@@ -97,8 +100,8 @@ def zap_local():
     return random_port
 
 
-def zap_connect(random_port):
-    all_zap = zap_settings_db.objects.all()
+def zap_connect(random_port, username):
+    all_zap = zap_settings_db.objects.filter(username=username)
 
     zap_api_key = 'dwed23wdwedwwefw4rwrfw'
     zap_hosts = '127.0.0.1'
@@ -112,12 +115,12 @@ def zap_connect(random_port):
         zap_api_key = 'dwed23wdwedwwefw4rwrfw'
         zap_hosts = '127.0.0.1'
         zap_ports = random_port
-    elif zap_enabled is True:
+
+    if zap_enabled is True:
         for zap in all_zap:
             zap_api_key = zap.zap_api
             zap_hosts = zap.zap_url
             zap_ports = zap.zap_port
-
     zap = ZAPv2(apikey=zap_api_key,
                 proxies={
                     'http': zap_hosts + ':' + str(zap_ports),
@@ -126,8 +129,8 @@ def zap_connect(random_port):
     return zap
 
 
-def zap_replacer(target_url, random_port):
-    zap = zap_connect(random_port=random_port)
+def zap_replacer(target_url, random_port, username):
+    zap = zap_connect(random_port=random_port, username=username)
     try:
         zap.replacer.remove_rule(description=target_url, apikey=zap_api_key)
     except Exception as e:
@@ -136,32 +139,32 @@ def zap_replacer(target_url, random_port):
     return
 
 
-def zap_spider_thread(count, random_port):
-    zap = zap_connect(random_port=random_port)
+def zap_spider_thread(count, random_port, username):
+    zap = zap_connect(random_port=random_port, username=username)
 
     zap.spider.set_option_thread_count(count, apikey=zap_api_key)
 
     return
 
 
-def zap_scan_thread(count, random_port):
-    zap = zap_connect(random_port=random_port)
+def zap_scan_thread(count, random_port, username):
+    zap = zap_connect(random_port=random_port, username=username)
 
     zap.ascan.set_option_thread_per_host(count, apikey=zap_api_key)
 
     return
 
 
-def zap_spider_setOptionMaxDepth(count, random_port):
-    zap = zap_connect(random_port=random_port)
+def zap_spider_setOptionMaxDepth(count, random_port, username):
+    zap = zap_connect(random_port=random_port, username=username)
 
     zap.spider.set_option_max_depth(count, apikey=zap_api_key)
 
     return
 
 
-def zap_scan_setOptionHostPerScan(count, random_port):
-    zap = zap_connect(random_port=random_port)
+def zap_scan_setOptionHostPerScan(count, random_port, username):
+    zap = zap_connect(random_port=random_port, username=username)
 
     zap.ascan.set_option_host_per_scan(count, apikey=zap_api_key)
 
@@ -221,7 +224,7 @@ class ZAPScanner:
 
     """ Connect with ZAP scanner global variable """
 
-    def __init__(self, target_url, project_id, rescan_id, rescan, random_port):
+    def __init__(self, target_url, project_id, rescan_id, rescan, random_port, username):
         """
 
         :param target_url: Target URL parameter.
@@ -231,7 +234,8 @@ class ZAPScanner:
         self.project_id = project_id
         self.rescan_id = rescan_id
         self.rescan = rescan
-        self.zap = zap_connect(random_port=random_port)
+        self.username = username
+        self.zap = zap_connect(random_port=random_port, username=username)
 
     def exclude_url(self):
         """
@@ -425,7 +429,7 @@ class ZAPScanner:
 
         return all_vuln
 
-    def zap_result_save(self, all_vuln, project_id, un_scanid):
+    def zap_result_save(self, all_vuln, project_id, un_scanid, username):
         """
         The function save all data in Archery Database
         :param all_vuln:
@@ -582,11 +586,16 @@ class ZAPScanner:
         en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
         root_xml_en = ET.fromstring(en_root_xml)
 
-        zap_xml_parser.xml_parser(project_id=project_id,
-                                  scan_id=un_scanid,
-                                  root=root_xml_en)
+        try:
 
-        self.zap.core.delete_all_alerts()
+            zap_xml_parser.xml_parser(username=username,
+                                      project_id=project_id,
+                                      scan_id=un_scanid,
+                                      root=root_xml_en)
+
+            self.zap.core.delete_all_alerts()
+        except Exception as e:
+            print(e)
 
     def zap_shutdown(self):
         """

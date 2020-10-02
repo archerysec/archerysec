@@ -43,7 +43,7 @@ osgen = None
 accuracy = None
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(root, project_id, scan_id, username):
     """
 
     :param root:
@@ -161,6 +161,7 @@ def xml_parser(root, project_id, scan_id):
                     used_state=used_state,
                     used_portid=used_portid,
                     used_proto=used_proto,
+                    username=username
                 )
                 dump_data.save()
 
@@ -176,21 +177,21 @@ def xml_parser(root, project_id, scan_id):
                                 if key == 'addr':
                                     ip_address = value
 
-                                    all_data = nmap_result_db.objects.filter(ip_address=ip_address)
+                                    all_data = nmap_result_db.objects.filter(ip_address=ip_address, username=username)
                                     # for a in all_data:
                                     #     global total_ports, ports_p
                                     #     ports_p = a.port
                                     total_ports = len(all_data)
                                     # print(total_ports)
 
-                                    all_open_p = nmap_result_db.objects.filter(ip_address=ip_address,
+                                    all_open_p = nmap_result_db.objects.filter(username=username, ip_address=ip_address,
                                                                                state='open')
                                     # for p in all_open_p:
                                     #     global total_open_p
                                     total_open_p = len(all_open_p)
                                     # print(total_open_p)
 
-                                    all_close_p = nmap_result_db.objects.filter(ip_address=ip_address,
+                                    all_close_p = nmap_result_db.objects.filter(username=username, ip_address=ip_address,
                                                                                 state='closed')
                                     total_close_p = len(all_close_p)
 
@@ -200,5 +201,6 @@ def xml_parser(root, project_id, scan_id):
                                                              total_ports=total_ports,
                                                              total_open_ports=total_open_p,
                                                              total_close_ports=total_close_p,
+                                                             username=username
                                                              )
                                     save_scan.save()

@@ -11,26 +11,28 @@
         $("input:checkbox").prop('checked', $(this).prop("checked"));
     });
     $(document).ready(function() {
-        $("button").click(function(){
-            var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
-            $.each($("input[name='del_scan_id']:checked"), function(){
-                scan_id.push($(this).val());
-            });
+        $('.btn-danger').click(function(){
+            if (confirm('Are you sure you want to delete this?')) {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_scan_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
 
-            var json_scanid = scan_id.join(", ");
-            $.ajax({
-                type:'POST',
-                <!--contentType: 'application/json; charset=utf-8',-->
-                url:'{% url 'networkscanners:scan_del' %}',
-                data:{
-                   scan_id: json_scanid,
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
+                var json_scanid = scan_id.join(", ");
+                $.ajax({
+                    type:'POST',
+                    <!--contentType: 'application/json; charset=utf-8',-->
+                    url:'{% url 'networkscanners:scan_del' %}',
+                    data:{
+                       scan_id: json_scanid,
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
 
-                }
-            });
-            setTimeout(function(){location.reload();},1000);
+                    }
+                });
+                setTimeout(function(){location.reload();},1000);
+            }
         });
 
     });
@@ -75,7 +77,6 @@
                                         <th>Low</th>
                                         <th>Log</th>
                                         <th>Duplicate</th>
-                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>{% for data in all_ip %}
@@ -93,6 +94,7 @@
                                         </td>
                                         <td><a href="{% url 'networkscanners:vul_details' %}?scan_id={{data.scan_id}}">{{data.scan_ip}}</a>
                                         </td>
+                                     {% csrf_token %}
                                         <td>{{data.date_time}}</td>
                                         <td width="20%">
                                             <div>
@@ -113,16 +115,6 @@
                                         <td><span class="badge badge-pill badge-info">{{data.low_total}}</span></td>
                                         <td><span class="badge badge-pill badge-info">{{data.log_total}}</span></td>
                                         <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span></td>
-                                        <td>
-                                            <form action="{% url 'networkscanners:scan_del' %}" method="post"
-                                                  class="forms-sample">
-
-                                                {% csrf_token %}
-                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
-
-                                                <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                            </form>
-                                        </td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>

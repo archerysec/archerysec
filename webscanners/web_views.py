@@ -24,7 +24,7 @@ from django.contrib.auth.models import User
 from django.core import signing
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, render_to_response, HttpResponse
+from django.shortcuts import render,  HttpResponse
 from django.views.decorators.csrf import csrf_protect
 from selenium import webdriver
 from stronghold.decorators import public
@@ -55,10 +55,11 @@ from archerysettings.models import zap_settings_db, \
     burp_setting_db, \
     nmap_vulners_setting_db, \
     arachni_settings_db, email_db
-from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser
+from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser, \
+    checkmarx_xml_report_parser
 from lxml import etree
 from staticscanners.models import dependencycheck_scan_db, \
-    findbugs_scan_db
+    findbugs_scan_db, checkmarx_scan_results_db, checkmarx_scan_db
 from tools.models import nikto_result_db
 import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
@@ -149,6 +150,7 @@ def auth_view(request):
         auth.login(request, user)
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
     else:
+        messages.add_message(request, messages.ERROR, 'Please check your login details and try again.')
         return HttpResponseRedirect(reverse('webscanners:login'))
 
 
@@ -160,7 +162,7 @@ def logout(request):
     :return:
     """
     auth.logout(request)
-    return render_to_response("logout.html")
+    return render(request, 'logout.html')
 
 
 @public
@@ -174,16 +176,19 @@ def signup(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')
-        user = User.objects.create_user(username, email, password)
-        user.save()
+        user_c = User.objects.filter(username=username)
+        if user_c:
+            messages.add_message(request, messages.ERROR, 'User already exists')
+            return HttpResponseRedirect(reverse('webscanners:signup'))
+        else:
+            user = User.objects.create_user(username, email, password)
+            user.save()
         return HttpResponseRedirect(reverse('webscanners:login'))
 
-    return render(request,
-                  'signup.html')
+    return render(request, 'signup.html')
 
 
 def error_404_view(request):
-
     return render(request, '404.html')
 
 
@@ -201,7 +206,7 @@ def invalid_login():
     Validate user login.
     :return:
     """
-    return render_to_response('invalid_login.html')
+    return render('invalid_login.html')
 
 
 def del_notify(request):
@@ -236,13 +241,14 @@ def index(request):
     :param request:
     :return:
     """
-    all_urls = zap_spider_db.objects.all()
-    all_scans = zap_scans_db.objects.all()
-    all_spider_results = zap_spider_results.objects.all()
-    all_excluded_url = excluded_db.objects.all()
-    all_cookies = cookie_db.objects.all()
+    username = request.user.username
+    all_urls = zap_spider_db.objects.filter(username=username)
+    all_scans = zap_scans_db.objects.filter(username=username)
+    all_spider_results = zap_spider_results.objects.filter(username=username)
+    all_excluded_url = excluded_db.objects.filter(username=username)
+    all_cookies = cookie_db.objects.filter(username=username)
 
-    all_scans_db = project_db.objects.all()
+    all_scans_db = project_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
 
@@ -315,8 +321,9 @@ def web_scan_schedule(request):
     :param request:
     :return:
     """
-    all_scans_db = project_db.objects.all()
-    all_scheduled_scans = task_schedule_db.objects.all()
+    username = request.user.username
+    all_scans_db = project_db.objects.filter(username=username)
+    all_scheduled_scans = task_schedule_db.objects.filter(username=username)
 
     if request.method == 'POST':
         scan_url = request.POST.get('url')
@@ -326,8 +333,6 @@ def web_scan_schedule(request):
         # periodic_task = request.POST.get('periodic_task')
         periodic_task_value = request.POST.get('periodic_task_value')
         # periodic_task = 'Yes'
-        print('scanner-', scanner)
-
         if periodic_task_value == 'HOURLY':
             periodic_time = Task.HOURLY
         elif periodic_task_value == 'DAILY':
@@ -340,15 +345,8 @@ def web_scan_schedule(request):
             periodic_time = Task.EVERY_4_WEEKS
         else:
             periodic_time = None
-
         dt_str = scan_schedule_time
         dt_obj = datetime.strptime(dt_str, '%d/%m/%Y %H:%M:%S %p')
-
-        print("scan_url", scan_url)
-        print("schedule", scan_schedule_time)
-
-        # task(scan_url, project_id, schedule=dt_obj)
-
         target__split = scan_url.split(',')
         split_length = target__split.__len__()
         for i in range(0, split_length):
@@ -372,7 +370,7 @@ def web_scan_schedule(request):
                     my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
-            save_scheadule = task_schedule_db(task_id=task_id, target=target,
+            save_scheadule = task_schedule_db(username=username, task_id=task_id, target=target,
                                               schedule_time=scan_schedule_time,
                                               project_id=project_id,
                                               scanner=scanner,
@@ -391,7 +389,7 @@ def del_web_scan_schedule(request):
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == "POST":
         task_id = request.POST.get('task_id')
 
@@ -402,9 +400,9 @@ def del_web_scan_schedule(request):
         print("split_length", split_length)
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
-            del_task = task_schedule_db.objects.filter(task_id=task_id)
+            del_task = task_schedule_db.objects.filter(task_id=task_id, username=username)
             del_task.delete()
-            del_task_schedule = Task.objects.filter(id=task_id)
+            del_task_schedule = Task.objects.filter(id=task_id, username=username)
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse('webscanners:web_scan_schedule'))
@@ -416,14 +414,16 @@ def setting(request):
     :param request:
     :return:
     """
-
     all_notify = Notification.objects.unread()
 
     jira_url = None
-    username = None
+    j_username = None
     password = None
     # Loading settings
-    settings = load_settings.ArcherySettings(setting_file)
+
+    username = request.user.username
+
+    settings = load_settings.ArcherySettings(setting_file, username=username)
 
     lod_ov_user = settings.openvas_username()
     lod_ov_pass = settings.openvas_pass()
@@ -437,7 +437,7 @@ def setting(request):
     zap_ports = ''
     zap_enable = False
 
-    all_zap = zap_settings_db.objects.all()
+    all_zap = zap_settings_db.objects.filter(username=username)
     for zap in all_zap:
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
@@ -452,7 +452,7 @@ def setting(request):
     arachni_hosts = ''
     arachni_ports = ''
 
-    all_arachni = arachni_settings_db.objects.all()
+    all_arachni = arachni_settings_db.objects.filter(username=username)
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
@@ -466,7 +466,7 @@ def setting(request):
     nv_version = False
     nv_timing = 0
 
-    all_nv = nmap_vulners_setting_db.objects.all()
+    all_nv = nmap_vulners_setting_db.objects.filter(username=username)
     for nv in all_nv:
         nv_enabled = bool(nv.enabled)
         nv_online = bool(nv.online)
@@ -481,20 +481,20 @@ def setting(request):
 
     # Loading Email Settings
 
-    all_email = email_db.objects.all()
+    all_email = email_db.objects.filter(username=username)
 
     # Load JIRA Setting
-    jira_setting = jirasetting.objects.all()
+    jira_setting = jirasetting.objects.filter(username=username)
 
     for jira in jira_setting:
         jira_url = jira.jira_server
-        username = jira.jira_username
+        j_username = jira.jira_username
         password = jira.jira_password
     jira_server = jira_url
-    if username is None:
+    if j_username is None:
         jira_username = None
     else:
-        jira_username = signing.loads(username)
+        jira_username = signing.loads(j_username)
 
     if password is None:
         jira_password = None
@@ -534,8 +534,9 @@ def email_setting(request):
     :param request:
     :return:
     """
+    username = request.user.username
     # Load Email Setting function
-    all_email = email_db.objects.all()
+    all_email = email_db.objects.filter(username=username)
 
     if request.method == 'POST':
         subject = request.POST.get("email_subject")
@@ -545,6 +546,7 @@ def email_setting(request):
         all_email.delete()
 
         save_email = email_db(
+            username=username,
             subject=subject,
             message=from_message,
             recipient_list=email_to,
@@ -562,7 +564,8 @@ def burp_scan_launch(request):
     :param request:
     :return:
     """
-
+    user = request.user
+    username = request.user.username
     if request.POST.get("url"):
         target_url = request.POST.get('url')
         project_id = request.POST.get('project_id')
@@ -573,7 +576,8 @@ def burp_scan_launch(request):
             print("Targets", target)
             scan_id = uuid.uuid4()
             date_time = datetime.now()
-            scan_dump = burp_scan_db(scan_id=scan_id,
+            scan_dump = burp_scan_db(username=username,
+                                     scan_id=scan_id,
                                      project_id=project_id,
                                      url=target,
                                      date_time=date_time)
@@ -582,7 +586,7 @@ def burp_scan_launch(request):
                 do_scan = burp_plugin.burp_scans(
                     project_id,
                     target,
-                    scan_id)
+                    scan_id, user)
                 # do_scan.scan_lauch(project_id,
                 #                    target,
                 #                    scan_id)
@@ -605,7 +609,8 @@ def xml_upload(request):
     :param request:
     :return:
     """
-    all_project = project_db.objects.all()
+    username = request.user.username
+    all_project = project_db.objects.filter(username=username)
 
     if request.method == "POST":
         project_id = request.POST.get("project_id")
@@ -616,7 +621,8 @@ def xml_upload(request):
         scan_status = "100"
         if scanner == "zap_scan":
             date_time = datetime.now()
-            scan_dump = zap_scans_db(scan_url=scan_url,
+            scan_dump = zap_scans_db(username=username,
+                                     scan_url=scan_url,
                                      scan_scanid=scan_id,
                                      date_time=date_time,
                                      project_id=project_id,
@@ -627,13 +633,15 @@ def xml_upload(request):
             root_xml = tree.getroot()
             en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
             root_xml_en = ET.fromstring(en_root_xml)
-            zap_xml_parser.xml_parser(project_id=project_id,
+            zap_xml_parser.xml_parser(username=username,
+                                      project_id=project_id,
                                       scan_id=scan_id,
                                       root=root_xml_en)
             return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
         elif scanner == "burp_scan":
             date_time = datetime.now()
-            scan_dump = burp_scan_db(url=scan_url,
+            scan_dump = burp_scan_db(username=username,
+                                     url=scan_url,
                                      scan_id=scan_id,
                                      date_time=date_time,
                                      project_id=project_id,
@@ -647,13 +655,14 @@ def xml_upload(request):
 
             burp_xml_parser.burp_scan_data(root_xml_en,
                                            project_id,
-                                           scan_id)
-            print("Save scan Data")
+                                           scan_id,
+                                           username=username)
             return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
 
         elif scanner == "arachni":
             date_time = datetime.now()
-            scan_dump = arachni_scan_db(url=scan_url,
+            scan_dump = arachni_scan_db(username=username,
+                                        url=scan_url,
                                         scan_id=scan_id,
                                         date_time=date_time,
                                         project_id=project_id,
@@ -661,15 +670,18 @@ def xml_upload(request):
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            arachni_xml_parser.xml_parser(project_id=project_id,
+            arachni_xml_parser.xml_parser(username=username,
+                                          project_id=project_id,
                                           scan_id=scan_id,
-                                          root=root_xml)
+                                          root=root_xml,
+                                          target_url=scan_url)
             print("Save scan Data")
             return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
 
         elif scanner == 'netsparker':
             date_time = datetime.now()
             scan_dump = netsparker_scan_db(
+                username=username,
                 url=scan_url,
                 scan_id=scan_id,
                 date_time=date_time,
@@ -681,12 +693,13 @@ def xml_upload(request):
             root_xml = tree.getroot()
             netsparker_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
-                                             root=root_xml)
+                                             root=root_xml, username=username)
 
             return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
         elif scanner == 'webinspect':
             date_time = datetime.now()
             scan_dump = webinspect_scan_db(
+                username=username,
                 url=scan_url,
                 scan_id=scan_id,
                 date_time=date_time,
@@ -698,13 +711,15 @@ def xml_upload(request):
             root_xml = tree.getroot()
             webinspect_xml_parser.xml_parser(project_id=project_id,
                                              scan_id=scan_id,
-                                             root=root_xml)
+                                             root=root_xml,
+                                             username=username)
 
             return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
 
         elif scanner == 'acunetix':
             date_time = datetime.now()
             scan_dump = acunetix_scan_db(
+                username=username,
                 url=scan_url,
                 scan_id=scan_id,
                 date_time=date_time,
@@ -714,7 +729,8 @@ def xml_upload(request):
             scan_dump.save()
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
-            acunetix_xml_parser.xml_parser(project_id=project_id,
+            acunetix_xml_parser.xml_parser(username=username,
+                                           project_id=project_id,
                                            scan_id=scan_id,
                                            root=root_xml)
 
@@ -727,16 +743,40 @@ def xml_upload(request):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                scan_status=scan_status
+                scan_status=scan_status,
+                username=username
             )
             scan_dump.save()
             data = etree.parse(xml_file)
             root = data.getroot()
             dependencycheck_report_parser.xml_parser(project_id=project_id,
                                                      scan_id=scan_id,
-                                                     data=root)
+                                                     data=root,
+                                                     username=username
+                                                     )
 
             return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
+
+        elif scanner == 'checkmarx':
+            date_time = datetime.now()
+            scan_dump = checkmarx_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = etree.parse(xml_file)
+            root = data.getroot()
+            checkmarx_xml_report_parser.checkmarx_report_xml(project_id=project_id,
+                                                             scan_id=scan_id,
+                                                             data=root,
+                                                             username=username
+                                                             )
+
+            return HttpResponseRedirect(reverse('checkmarx:checkmarx_list'))
 
         elif scanner == 'findbugs':
             date_time = datetime.now()
@@ -745,14 +785,16 @@ def xml_upload(request):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                scan_status=scan_status
+                scan_status=scan_status,
+                username=username
             )
             scan_dump.save()
             tree = ET.parse(xml_file)
             root = tree.getroot()
             findbugs_report_parser.xml_parser(project_id=project_id,
                                               scan_id=scan_id,
-                                              root=root)
+                                              root=root,
+                                              username=username)
 
             return HttpResponseRedirect(reverse('findbugs:findbugs_list'))
 
@@ -779,20 +821,23 @@ def add_cookies(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         target_url = request.POST.get('url')
         target_cookies = request.POST.get('cookies')
-        all_cookie_url = cookie_db.objects.filter(Q(url__icontains=target_url))
+        all_cookie_url = cookie_db.objects.filter(Q(url__icontains=target_url, username=username))
         for da in all_cookie_url:
             global cookies
             cookies = da.url
 
         if cookies == target_url:
-            cookie_db.objects.filter(Q(url__icontains=target_url)).update(cookie=target_cookies)
+            cookie_db.objects.filter(Q(url__icontains=target_url, username=username)).update(cookie=target_cookies)
             return HttpResponseRedirect(reverse('webscanners:index'))
         else:
             data_dump = cookie_db(url=target_url,
-                                  cookie=target_cookies)
+                                  cookie=target_cookies,
+                                  username=username
+                                  )
             data_dump.save()
             return HttpResponseRedirect(reverse('webscanners:index'))
 
@@ -838,12 +883,14 @@ def cookies_list(request):
     :param request:
     :return:
     """
-    all_cookies = cookie_db.objects.all()
+    username = request.user.username
+    all_cookies = cookie_db.objects.filter(username=username)
 
     return render(request, 'cookies_list.html', {'all_cookies': all_cookies})
 
 
 def del_cookies(request):
+    username = request.user.username
     if request.method == 'POST':
         cookie_url = request.POST.get('url')
         cookies_item = str(cookie_url)
@@ -854,7 +901,7 @@ def del_cookies(request):
         for i in range(0, split_length):
             cookies_target = target_split.__getitem__(i)
             print(cookies_target)
-            del_cookie = cookie_db.objects.filter(url=cookies_target)
+            del_cookie = cookie_db.objects.filter(url=cookies_target, username=username)
             del_cookie.delete()
             zap_plugin.zap_replacer(target_url=cookies_target)
         return HttpResponseRedirect(reverse('webscanners:cookies_list'))
@@ -868,6 +915,7 @@ def sel_login(request):
     :param request:
     :return:
     """
+    username = request.user.username
     action_vul = request.POST.get("action", )
     url_da = request.POST.get("url_login", )
     if action_vul == "open_page":
@@ -881,20 +929,22 @@ def sel_login(request):
         for cookie_data in read_f:
 
             print(cookie_data)
-            all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri))
+            all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri, username=username))
             for da in all_cookie_url:
                 global cookies
                 cookies = da.url
 
             if cookies == new_uri:
-                cookie_db.objects.filter(Q(url__icontains=new_uri)).update(cookie=cookie_data)
+                cookie_db.objects.filter(Q(url__icontains=new_uri, username=username)).update(cookie=cookie_data)
                 return HttpResponseRedirect(reverse('webscanners:index'))
             else:
                 data_dump = cookie_db(url=new_uri,
-                                      cookie=cookie_data)
+                                      cookie=cookie_data,
+                                      username=username,
+                                      )
                 data_dump.save()
                 return HttpResponseRedirect(reverse('webscanners:index'))
-        messages.add_message(request, messages.SUCCESS, 'Cookies stored')
+        # messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
         return HttpResponseRedirect(reverse('webscanners:index'))
     return render(request, 'webscanner.html')
@@ -906,8 +956,11 @@ def exclude_url(request):
     :param request:
     :return:
     """
+    username = request.user.username
     exclud = request.POST.get("exclude_url", )
-    exclude_save = excluded_db(exclude_url=exclud)
+    exclude_save = excluded_db(exclude_url=exclud,
+                               username=username
+                               )
     exclude_save.save()
 
     return render(request, 'webscanner.html', )
@@ -919,7 +972,8 @@ def exluded_url_list(request):
     :param request:
     :return:
     """
-    all_excluded_url = excluded_db.objects.all()
+    username = request.user.username
+    all_excluded_url = excluded_db.objects.filter(username=username)
 
     if request.method == 'POST':
         exclude_url = request.POST.get('exclude_url')
@@ -930,7 +984,7 @@ def exluded_url_list(request):
         for i in range(0, split_length):
             exclude_target = target_split.__getitem__(i)
 
-            del_excluded = excluded_db.objects.filter(exclude_url=exclude_target)
+            del_excluded = excluded_db.objects.filter(username=username, exclude_url=exclude_target)
             del_excluded.delete()
 
             return HttpResponseRedirect(reverse('zapscanner:excluded_url_list'))

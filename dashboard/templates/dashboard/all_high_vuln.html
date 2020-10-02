@@ -193,6 +193,114 @@
                                 </tr>
                                 {% endfor %}
 
+                                {% for data in gitlabsca_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'gitlabsca:gitlabsca_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in gitlabsast_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'gitlabsast:gitlabsast_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in gitlabcontainerscan_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'gitlabcontainerscan:gitlabcontainerscan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in npmaudit_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'npmaudit:npmaudit_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.title}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.module_name}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in nodejsscan_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'nodejsscan:nodejsscan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.title}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in semgrepscan_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'semgrepscan:semgrepscan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.check_id}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                 {% for data in tfsec_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'tfsec:tfsec_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.rule_id}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in whitesource_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'whitesource:whitesource_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in checkmarx_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'checkmarx:checkmarx_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file_name}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
                                 <!--&lt;!&ndash;Bandit&ndash;&gt;-->
                                 {% for data in bandit_vuln_high %}
                                 <tr data-target="#">

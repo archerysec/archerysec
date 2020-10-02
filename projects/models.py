@@ -28,6 +28,7 @@ class project_db(models.Model):
     project_disc = models.TextField(blank=True)
     project_status = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
+    username = models.CharField(max_length=256, null=True)
 
 
 class project_scan_db(models.Model):

@@ -34,16 +34,17 @@ def webinspect_list_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         scan_id = request.GET['scan_id']
     else:
         scan_id = None
 
     webinspect_all_vul = webinspect_scan_result_db.objects.filter(
-        scan_id=scan_id, vuln_status='Open')
+        username=username, scan_id=scan_id).exclude(vuln_status='Duplicate')
 
     webinspect_all_vul_close = webinspect_scan_result_db.objects.filter(
-        scan_id=scan_id, vuln_status='Close')
+        username=username, scan_id=scan_id, vuln_status='Close').exclude(vuln_status='Duplicate')
 
     return render(request,
                   'webinspectscanner/webinspect_list_vuln.html',
@@ -59,7 +60,8 @@ def webinspect_scan_list(request):
     :param request:
     :return:
     """
-    all_webinspect_scan = webinspect_scan_db.objects.all()
+    username = request.user.username
+    all_webinspect_scan = webinspect_scan_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
 
@@ -75,11 +77,12 @@ def webinspect_vuln_data(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         vuln_id = request.GET['vuln_id']
     else:
         vuln_id = None
-    vuln_data = webinspect_scan_result_db.objects.filter(vuln_id=vuln_id)
+    vuln_data = webinspect_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
 
     return render(request,
                   'webinspectscanner/webinspect_vuln_data.html',
@@ -92,9 +95,10 @@ def webinspect_vuln_out(request):
     :param request:
     :return:
     """
+    username = request.user.username
     jira_url = None
 
-    jira = jirasetting.objects.all()
+    jira = jirasetting.objects.filter(username=username)
     for d in jira:
         jira_url = d.jira_server
 
@@ -107,55 +111,56 @@ def webinspect_vuln_out(request):
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
         vuln_name = request.POST.get('vuln_name')
-        webinspect_scan_result_db.objects.filter(vuln_id=vuln_id,
+        webinspect_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                  scan_id=scan_id).update(false_positive=false_positive,
                                                                          vuln_status=status)
 
         if false_positive == 'Yes':
-            vuln_info = webinspect_scan_result_db.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
+            vuln_info = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 name = vi.name
                 url = vi.vuln_url
                 Severity = vi.severity
                 dup_data = name + url + Severity
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                webinspect_scan_result_db.objects.filter(vuln_id=vuln_id,
+                webinspect_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                          scan_id=scan_id).update(false_positive=false_positive,
-                                                                                 vuln_status=status,
+                                                                                 vuln_status='Close',
                                                                                  false_positive_hash=false_positive_hash
                                                                                  )
 
-            webinspect_all_vul = webinspect_scan_result_db.objects.filter(scan_id=scan_id, false_positive='No')
+        webinspect_all_vul = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+                                                                      vuln_status='Open')
 
-            total_critical = len(webinspect_all_vul.filter(severity='Critical'))
-            total_high = len(webinspect_all_vul.filter(severity="High"))
-            total_medium = len(webinspect_all_vul.filter(severity="Medium"))
-            total_low = len(webinspect_all_vul.filter(severity="Low"))
-            total_info = len(webinspect_all_vul.filter(severity="Information"))
-            total_duplicate = len(webinspect_all_vul.filter(severity='Yes'))
-            total_vul = total_critical + total_high + total_medium + total_low + total_info
+        total_critical = len(webinspect_all_vul.filter(severity='Critical'))
+        total_high = len(webinspect_all_vul.filter(severity="High"))
+        total_medium = len(webinspect_all_vul.filter(severity="Medium"))
+        total_low = len(webinspect_all_vul.filter(severity="Low"))
+        total_info = len(webinspect_all_vul.filter(severity="Information"))
+        total_duplicate = len(webinspect_all_vul.filter(severity='Yes'))
+        total_vul = total_critical + total_high + total_medium + total_low + total_info
 
-            webinspect_scan_db.objects.filter(scan_id=scan_id).update(total_vul=total_vul,
-                                                                      high_vul=total_high,
-                                                                      medium_vul=total_medium,
-                                                                      low_vul=total_low,
-                                                                      critical_vul=total_critical,
-                                                                      info_vul=total_info,
-                                                                      total_dup=total_duplicate
-                                                                      )
+        webinspect_scan_db.objects.filter(username=username, scan_id=scan_id).update(total_vul=total_vul,
+                                                                  high_vul=total_high,
+                                                                  medium_vul=total_medium,
+                                                                  low_vul=total_low,
+                                                                  critical_vul=total_critical,
+                                                                  info_vul=total_info,
+
+                                                                  )
 
         return HttpResponseRedirect(
             reverse('webinspectscanner:webinspect_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
-    vuln_data = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
+    vuln_data = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                          name=name,
                                                          vuln_status='Open',
                                                          false_positive='No')
-    vuln_data_closed = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
+    vuln_data_closed = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                                 name=name,
                                                                 vuln_status='Closed',
                                                                 false_positive='No')
-    false_data = webinspect_scan_result_db.objects.filter(scan_id=scan_id,
+    false_data = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                           name=name,
                                                           false_positive='Yes')
 
@@ -174,6 +179,7 @@ def del_webinspect_scan(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         scan_url = request.POST.get("scan_url")
@@ -186,10 +192,10 @@ def del_webinspect_scan(request):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = webinspect_scan_db.objects.filter(scan_id=scan_id
+            item = webinspect_scan_db.objects.filter(username=username, scan_id=scan_id
                                                      )
             item.delete()
-            item_results = webinspect_scan_result_db.objects.filter(scan_id=scan_id)
+            item_results = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id)
             item_results.delete()
         return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
 
@@ -200,11 +206,12 @@ def edit_webinspect_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'GET':
         id_vul = request.GET['vuln_id']
     else:
         id_vul = ''
-    edit_vul_dat = burp_scan_result_db.objects.filter(vuln_id=id_vul).order_by('vuln_id')
+    edit_vul_dat = burp_scan_result_db.objects.filter(username=username, vuln_id=id_vul).order_by('vuln_id')
     if request.method == 'POST':
         vuln_id = request.POST.get("vuln_id", )
         scan_id = request.POST.get("scan_id", )
@@ -228,7 +235,7 @@ def edit_webinspect_vuln(request):
             vul_col = "info"
         print("edit_vul :"), name
 
-        webinspect_scan_result_db.objects.filter(vuln_id=vuln_id).update(
+        webinspect_scan_result_db.objects.filter(username=username, vuln_id=vuln_id).update(
             name=name,
             severity_color=vul_col,
             severity=severity,
@@ -252,6 +259,7 @@ def webinspect_del_vuln(request):
     :param request:
     :return:
     """
+    username = request.user.username
     if request.method == 'POST':
         vuln_id = request.POST.get("del_vuln", )
         un_scanid = request.POST.get("scan_id", )
@@ -263,9 +271,9 @@ def webinspect_del_vuln(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = webinspect_scan_result_db.objects.filter(vuln_id=vuln_id)
+            delete_vuln = webinspect_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
             delete_vuln.delete()
-        webinspect_all_vul = webinspect_scan_result_db.objects.filter(scan_id=un_scanid)
+        webinspect_all_vul = webinspect_scan_result_db.objects.filter(username=username, scan_id=un_scanid)
 
         total_vul = len(webinspect_all_vul)
         total_critical = len(webinspect_all_vul.filter(severity_name='Critical'))
@@ -274,7 +282,7 @@ def webinspect_del_vuln(request):
         total_low = len(webinspect_all_vul.filter(severity_name="Low"))
         total_info = len(webinspect_all_vul.filter(severity_name="Information"))
 
-        webinspect_scan_db.objects.filter(scan_id=un_scanid).update(
+        webinspect_scan_db.objects.filter(username=username, scan_id=un_scanid).update(
             total_vul=total_vul,
             critical_vul=total_critical,
             high_vul=total_high,
@@ -285,18 +293,19 @@ def webinspect_del_vuln(request):
 
         return HttpResponseRedirect(reverse('webinspectscanner:webinspect_list_vuln') + '?scan_id=%s' % un_scanid)
 
+
 def export(request):
     """
     :param request:
     :return:
     """
-
+    username = request.user.username
     if request.method == 'POST':
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
         zap_resource = WebinspectResource()
-        queryset = webinspect_scan_result_db.objects.filter(scan_id=scan_id)
+        queryset = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id)
         dataset = zap_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
@@ -310,4 +319,3 @@ def export(request):
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
             response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
             return response
-

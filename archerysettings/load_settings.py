@@ -23,53 +23,46 @@ from archerysettings.models import zap_settings_db, burp_setting_db, openvas_set
 
 class ArcherySettings:
 
-    def __init__(self, setting_file):
+    def __init__(self, setting_file, username):
         self.setting_file = setting_file
+        self.username = username
 
-    def zap_api_key(self):
+    def zap_api_key(self, username):
         """
         Loading ZAP API Key from setting file.
         :return:
         """
         apikey = None
 
-        all_zap = zap_settings_db.objects.all()
+        all_zap = zap_settings_db.objects.filter(username=username)
 
         for zap in all_zap:
             apikey = zap.zap_api
 
-        # try:
-        #     with open(self.setting_file, 'r+') as f:
-        #         data = json.load(f)
-        #         load_api_key = data['zap_api_key']
-        #         apikey = signing.loads(load_api_key)
-        # except Exception as e:
-        #     print e
-
         return apikey
 
-    def zap_host(self):
+    def zap_host(self, username):
         """
         Loading ZAP Host from setting file.
         :return:
         """
         zapath = None
 
-        all_zap = zap_settings_db.objects.all()
+        all_zap = zap_settings_db.objects.filter(username=username)
 
         for zap in all_zap:
             zapath = zap.zap_url
 
         return zapath
 
-    def zap_port(self):
+    def zap_port(self, username):
         """
         Loading ZAP Port from setting file.
         :return:
         """
         zaport = None
 
-        all_zap = zap_settings_db.objects.all()
+        all_zap = zap_settings_db.objects.filter(username=username)
 
         for zap in all_zap:
             zaport = zap.zap_port
@@ -83,7 +76,7 @@ class ArcherySettings:
         """
         burpapikey = None
 
-        all_burp = burp_setting_db.objects.all()
+        all_burp = burp_setting_db.objects.filter(username=self.username)
 
         for burp in all_burp:
             burpapikey = burp.burp_api_key
@@ -97,7 +90,7 @@ class ArcherySettings:
         """
         burphost = None
 
-        all_burp = burp_setting_db.objects.all()
+        all_burp = burp_setting_db.objects.filter(username=self.username)
 
         for burp in all_burp:
             burphost = burp.burp_url
@@ -111,7 +104,7 @@ class ArcherySettings:
         """
         burport = None
 
-        all_burp = burp_setting_db.objects.all()
+        all_burp = burp_setting_db.objects.filter(username=self.username)
 
         for burp in all_burp:
             burport = burp.burp_port
@@ -125,7 +118,7 @@ class ArcherySettings:
         """
         openvas_host = None
 
-        all_openvas = openvas_setting_db.objects.all()
+        all_openvas = openvas_setting_db.objects.filter(username=self.username)
 
         for openvas in all_openvas:
             openvas_host = openvas.host
@@ -146,7 +139,7 @@ class ArcherySettings:
         """
         openvas_username = None
 
-        all_openvas = openvas_setting_db.objects.all()
+        all_openvas = openvas_setting_db.objects.filter(username=self.username)
 
         for openvas in all_openvas:
             openvas_username = openvas.user
@@ -167,7 +160,7 @@ class ArcherySettings:
         """
         openvas_password = None
 
-        all_openvas = openvas_setting_db.objects.all()
+        all_openvas = openvas_setting_db.objects.filter(username=self.username)
 
         for openvas in all_openvas:
             openvas_password = openvas.password
@@ -178,7 +171,7 @@ class ArcherySettings:
     def openvas_port(self):
         openvas_port = None
 
-        all_openvas = openvas_setting_db.objects.all()
+        all_openvas = openvas_setting_db.objects.filter(username=self.username)
 
         for openvas in all_openvas:
             openvas_port = openvas.port
@@ -189,7 +182,7 @@ class ArcherySettings:
     def openvas_enabled(self):
         openvas_enabled = None
 
-        all_openvas = openvas_setting_db.objects.all()
+        all_openvas = openvas_setting_db.objects.filter(username=self.username)
 
         for openvas in all_openvas:
             openvas_enabled = openvas.enabled
@@ -248,7 +241,7 @@ class ArcherySettings:
     def nv_enabled(self):
         nv_enabled = False
 
-        all_nv = nmap_vulners_setting_db.objects.all()
+        all_nv = nmap_vulners_setting_db.objects.filter(username=self.username)
 
         for nv in all_nv:
             nv_enabled = nv.enabled
@@ -260,7 +253,7 @@ class ArcherySettings:
     def nv_version(self):
         nv_version = False
 
-        all_nv = nmap_vulners_setting_db.objects.all()
+        all_nv = nmap_vulners_setting_db.objects.filter(username=self.username)
 
         for nv in all_nv:
             nv_version = nv.version
@@ -272,7 +265,7 @@ class ArcherySettings:
     def nv_online(self):
         nv_online = False
 
-        all_nv = nmap_vulners_setting_db.objects.all()
+        all_nv = nmap_vulners_setting_db.objects.filter(username=self.username)
 
         for nv in all_nv:
             nv_online = nv.online
@@ -284,7 +277,7 @@ class ArcherySettings:
     def nv_timing(self):
         nv_timing = 0
 
-        all_nv = nmap_vulners_setting_db.objects.all()
+        all_nv = nmap_vulners_setting_db.objects.filter(username=self.username)
 
         for nv in all_nv:
             nv_timing = nv.timing
