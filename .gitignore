@@ -17,3 +17,6 @@ venv/*
 sonar-project.properties
 .DS_Store
 media
+node_modules
+package.json
+package-lock.json
