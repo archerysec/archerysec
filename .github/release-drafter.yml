@@ -1,6 +1,6 @@
 # Configuration for Release Drafter: https://github.com/toolmantim/release-drafter
-name-template: '$NEXT_MINOR_VERSION 🌈'
-tag-template: '$NEXT_MINOR_VERSION'
+name-template: 'archerysec-v$NEXT_PATCH_VERSION 🌈'
+tag-template: 'v$NEXT_PATCH_VERSION'
 branches:
   - master
 categories:
