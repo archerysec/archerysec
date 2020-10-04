@@ -1,0 +1,64 @@
+
+
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+    <div class="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <br>
+                            <div class="d-md-flex align-items-center">
+                                <h1 class="card-title">Vulnerability List</h1>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="table-responsive">
+                                    <table id="nessus_scans_list" class="table table-bordered data-table table-fixed"
+                                           width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th>Target</th>
+                                            <th>Total Vulnerability</th>
+                                            <th>HIGH</th>
+                                            <th>MEDIUM</th>
+                                            <th>LOW</th>
+                                            <th>Duplicates</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>{% for data in nessus_all_vuln %}
+                                            <tr data-target="#">
+                                                <td>
+                                                    <a href="{% url 'nessus:nessus_vuln_data' %}?scan_id={{ data.scan_id }}&target={{ data.target }}">{{ data.target }}</a>
+                                                </td>
+                                                <td><span
+                                                        class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                </td>
+                                                <td><span
+                                                        class="badge badge-pill badge-danger">{{ data.total_high }}</span>
+                                                </td>
+                                                <td><span
+                                                        class="badge badge-pill badge-warning">{{ data.total_medium }}</span>
+                                                </td>
+                                                <td><span
+                                                        class="badge badge-pill badge-info">{{ data.total_low }}</span>
+                                                </td>
+                                                <td><span
+                                                        class="badge badge-pill badge-secondary">{{ data.total_dup }}</span>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

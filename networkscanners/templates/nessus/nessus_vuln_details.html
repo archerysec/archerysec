@@ -3,7 +3,7 @@
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-{% for data in vul_dat %}
+{% for data in nessus_vuln_details %}
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row">
@@ -43,7 +43,6 @@
                                     <br>
                                     <strong> Plugin Modification Date : </strong>{{data.plugin_modification_date}}<br><br>
                         <strong> Plugin Publication Date : </strong>{{data.plugin_publication_date}}<br><br>
-                        <strong> Threat :</strong>{{data.severity}}
                                 </div>
                             </div>
                         </div>
@@ -71,7 +70,7 @@
                                         <tbody>
                                         <tr>
                                             <td>
-                                                {{data.scan_ip}}
+                                                {{data.target}}
                                             </td>
                                             <td>
                                                 {{data.port}}

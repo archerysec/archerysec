@@ -70,6 +70,7 @@ urlpatterns = [
     # url(r'^scanapi/', include('APIScan.urls')),
     url(r'^vfeed/', include('vFeedgui.urls')),
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
+    url(r'^nessus/', include('networkscanners.nessus.urls')),
 
     # Default url
     url(r'', include('dashboard.urls')),

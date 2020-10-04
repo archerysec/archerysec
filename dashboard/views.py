@@ -63,7 +63,8 @@ from staticscanners.models import dependencycheck_scan_db, \
 from networkscanners.models import scan_save_db, \
     nessus_scan_db, \
     ov_scan_result_db, \
-    nessus_report_db
+    nessus_report_db, \
+    nessus_scan_results_db
 from compliance.models import inspec_scan_db, dockle_scan_db
 from projects.models import project_db
 from django.shortcuts import render,  HttpResponse, HttpResponseRedirect
@@ -231,7 +232,7 @@ def proj_data(request):
         aggregate(Sum('total_vul'))
 
     all_nessus_scan = nessus_scan_db.objects.filter(username=username, project_id=project_id). \
-        aggregate(Sum('total_vul'))
+        aggregate(Sum('total_vuln'))
 
     all_manual_scan = manual_scans_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('total_vul'))
@@ -505,7 +506,7 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_HIGH'))
 
     all_nessus_high = nessus_scan_db.objects.filter(username=username, project_id=project_id). \
-        aggregate(Sum('high_total'))
+        aggregate(Sum('total_high'))
 
     all_openvas_high = scan_save_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('high_total'))
@@ -795,7 +796,7 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_MEDIUM'))
 
     all_nessus_medium = nessus_scan_db.objects.filter(username=username, project_id=project_id). \
-        aggregate(Sum('medium_total'))
+        aggregate(Sum('total_medium'))
 
     all_openvas_medium = scan_save_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('medium_total'))
@@ -1082,7 +1083,7 @@ def proj_data(request):
         aggregate(Sum('SEVERITY_LOW'))
 
     all_nessus_low = nessus_scan_db.objects.filter(username=username, project_id=project_id). \
-        aggregate(Sum('low_total'))
+        aggregate(Sum('total_low'))
 
     all_openvas_low = scan_save_db.objects.filter(username=username, project_id=project_id). \
         aggregate(Sum('low_total'))
@@ -1397,7 +1398,7 @@ def proj_data(request):
 
     openvas_false_positive = ov_scan_result_db.objects.filter(username=username, false_positive='Yes',
                                                               project_id=project_id)
-    nessus_false_positive = nessus_report_db.objects.filter(username=username, false_positive='Yes',
+    nessus_false_positive = nessus_scan_results_db.objects.filter(username=username, false_positive='Yes',
                                                             project_id=project_id)
 
     zap_closed_vuln = zap_scan_results_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
@@ -1413,7 +1414,7 @@ def proj_data(request):
                                                                   project_id=project_id)
     openvas_closed_vuln = ov_scan_result_db.objects.filter(username=username, vuln_status='Closed',
                                                            project_id=project_id)
-    nessus_closed_vuln = nessus_report_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
+    nessus_closed_vuln = nessus_scan_results_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
 
     dependencycheck_closed_vuln = dependencycheck_scan_results_db.objects.filter(username=username,
                                                                                  vuln_status='Closed',
@@ -1759,7 +1760,7 @@ def all_high_vuln(request):
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='High', project_id=project_id,
                                                             false_positive='No')
-        nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='High', project_id=project_id,
+        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='High', project_id=project_id,
                                                           false_positive='No')
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='High',
@@ -1823,7 +1824,7 @@ def all_high_vuln(request):
                                                                           project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Medium', project_id=project_id)
-        nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Medium',
+        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='Medium',
                                                           project_id=project_id)
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Medium',
@@ -1881,7 +1882,7 @@ def all_high_vuln(request):
                                                                           project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Low', project_id=project_id)
-        nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Low', project_id=project_id)
+        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='Low', project_id=project_id)
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Low',
                                                                  project_id=project_id)
@@ -1929,7 +1930,7 @@ def all_high_vuln(request):
         checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id)
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id)
-        nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id)
+        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id)
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, project_id=project_id)
 
@@ -1990,7 +1991,7 @@ def all_high_vuln(request):
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                             false_positive='Yes')
-        nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
+        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           false_positive='Yes')
 
         pentest_all_high = ''
@@ -2052,7 +2053,7 @@ def all_high_vuln(request):
 
         openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                             vuln_status='Closed')
-        nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
+        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           vuln_status='Closed')
 
         pentest_all_high = ''
@@ -2164,7 +2165,7 @@ def export(request):
                                                                               project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='High', project_id=project_id)
-            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='High',
+            nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='High',
                                                               project_id=project_id)
 
             pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='High',
@@ -2254,10 +2255,10 @@ def export(request):
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Medium',
                                                                 project_id=project_id)
-            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Medium',
+            nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='Medium',
                                                               project_id=project_id)
 
-            pentest_all_high = manual_scan_results_db.filter(username=username, severity='Medium',
+            pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Medium',
                                                              project_id=project_id)
 
             all_data = chain(zap_all_high,
@@ -2343,10 +2344,10 @@ def export(request):
                                                                               project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Low', project_id=project_id)
-            nessus_all_high = nessus_report_db.objects.filter(username=username, risk_factor='Low',
+            nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='Low',
                                                               project_id=project_id)
 
-            pentest_all_high = manual_scan_results_db.filter(username=username, severity='Low', project_id=project_id)
+            pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
 
             all_data = chain(zap_all_high,
                              burp_all_high,
@@ -2419,9 +2420,9 @@ def export(request):
             checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id)
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id)
-            nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id)
+            nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id)
 
-            pentest_all_high = manual_scan_results_db.filter(username=username, project_id=project_id)
+            pentest_all_high = manual_scan_results_db.objects.filter(username=username, project_id=project_id)
 
             all_data = chain(zap_all_high,
                              burp_all_high,
@@ -2505,7 +2506,7 @@ def export(request):
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                 false_positive='Yes')
-            nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
+            nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                               false_positive='Yes')
 
             all_data = chain(zap_all_high,
@@ -2588,7 +2589,7 @@ def export(request):
 
             openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                 vuln_status='Closed')
-            nessus_all_high = nessus_report_db.objects.filter(username=username, project_id=project_id,
+            nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                               vuln_status='Closed')
 
             all_data = chain(zap_all_high,

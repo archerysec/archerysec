@@ -320,10 +320,10 @@
                                 {% for data in nessus_all_high %}
                                 <tr data-target="#">
 
-                                    <td><a href="{% url 'networkscanners:nessus_vuln_check' %}?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
+                                    <td><a href="{% url 'nessus:nessus_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.plugin_name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
-                                    <td>{{data.scan_ip}}</td>
+                                    <td>{{data.target}}</td>
                                     <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.risk_factor}}</span></td>
                                 </tr>
                                 {% endfor %}

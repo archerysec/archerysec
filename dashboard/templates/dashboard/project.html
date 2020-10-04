@@ -1414,8 +1414,7 @@
                                             <tbody>{% for data in nessus_dat %}
                                                 <tr data-target="#">
 
-                                                    <td width="20%"><a
-                                                            href="{% url 'networkscanners:nessus_vuln_details' %}?scan_id={{ data.scan_id }}">{{ data.scan_ip }}</a>
+                                                    <td width="20%"><a href="{% url 'nessus:nessus_list' %}?scan_id={{ data.scan_id }}">{{ data.report_name }}</a>
                                                     </td>
                                                     <td width="20%">
                                                         <div>
@@ -1434,18 +1433,17 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.high_total }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.total_high }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.medium_total }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.total_medium }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.low_total }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.total_low }}</span>
                                                     </td>
-
                                                 </tr>
                                             {% endfor %}
                                             </tbody>

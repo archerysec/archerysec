@@ -29,8 +29,7 @@ from archerysettings import save_settings
 from archerysettings import load_settings
 from networkscanners.models import scan_save_db, \
     ov_scan_result_db, \
-    task_schedule_db, \
-    nessus_scan_db, nessus_report_db
+    task_schedule_db
 from projects.models import project_db
 from scanners.scanner_parser.network_scanner import OpenVas_Parser, Nessus_Parser, nmap_parser
 from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin, vuln_an_id
@@ -518,7 +517,7 @@ def OpenVAS_xml_upload(request):
                                                 project_id=project_id,
                                                 username=username,
                                                 )
-            return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
+            return HttpResponseRedirect(reverse('nessus:nessus_list'))
         elif scanner == "nmap":
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
@@ -640,172 +639,6 @@ def del_net_scan_schedule(request):
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse('networkscanners:net_scan_schedule'))
-
-
-def nessus_scan(request):
-    """
-
-    :param request:
-    :return:
-    """
-    username = request.user.username
-    all_scan = nessus_scan_db.objects.filter(username=username)
-
-    return render(request,
-                  'nessus_scan.html',
-                  {'all_scan': all_scan}
-                  )
-
-
-def nessus_vuln_details(request):
-    """
-
-    :param request:
-    :return:
-    """
-    username = request.user.username
-    jira_url = None
-    jira = jirasetting.objects.filter(username=username)
-    for d in jira:
-        jira_url = d.jira_server
-
-    scanid = ""
-    if request.method == 'GET':
-        scanid = request.GET['scan_id']
-    print("scansss"), scanid
-
-    if request.method == 'POST':
-        vuln_id = request.POST.get('vuln_id')
-        scan_id = request.POST.get('scan_id')
-        false_positive = request.POST.get('false')
-        status = request.POST.get('status')
-
-        nessus_report_db.objects.filter(username=username, scan_id=scan_id,
-                                        vul_id=vuln_id).update(false_positive=false_positive, vuln_status=status)
-
-        if false_positive == 'Yes':
-            vuln_info = nessus_report_db.objects.filter(username=username, scan_id=scan_id, vul_id=vuln_id)
-            for vi in vuln_info:
-                scan_ip = vi.scan_ip
-                plugin_name = vi.plugin_name
-                severity = vi.severity
-                port = vi.port
-                dup_data = scan_ip + plugin_name + severity + port
-                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                nessus_report_db.objects.filter(scan_id=scan_id, username=username,
-                                                vul_id=vuln_id).update(false_positive=false_positive,
-                                                                       vuln_status='Close',
-                                                                       false_positive_hash=false_positive_hash)
-        ov_all_vul = nessus_report_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
-        total_vul = len(ov_all_vul)
-        total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
-        total_high = len(ov_all_vul.filter(risk_factor="High"))
-        total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
-        total_low = len(ov_all_vul.filter(risk_factor="Low"))
-        total_info = len(ov_all_vul.filter(risk_factor="Informational"))
-        total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
-
-        nessus_scan_db.objects.filter(username=username, scan_id=scan_id) \
-            .update(total_vul=total_vul,
-                    critical_total=total_critical,
-                    high_total=total_high,
-                    medium_total=total_medium,
-                    low_total=total_low,
-                    info_total=total_info,
-                    total_dup=total_duplicate,
-                    )
-
-        return HttpResponseRedirect(
-            reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % scan_id)
-
-    all_vuln = nessus_report_db.objects.filter(username=username, scan_id=scanid,
-                                               false_positive='No')
-
-    all_vuln_closed = nessus_report_db.objects.filter(username=username, scan_id=scanid, vuln_status='Closed',
-                                                      false_positive='No')
-
-    all_false_vul = nessus_report_db.objects.filter(username=username, scan_id=scanid,
-                                                    false_positive='Yes')
-    return render(request,
-                  'nessus_vuln_details.html',
-                  {'all_vuln': all_vuln,
-                   'scan_id': scanid,
-                   'jira_url': jira_url,
-                   'all_false_vul': all_false_vul,
-                   'all_vuln_closed': all_vuln_closed
-                   })
-
-
-def delete_nessus_scan(request):
-    username = request.user.username
-    if request.method == "POST":
-        scan_id = request.POST.get('scan_id')
-        del_vuln = request.POST.get('del_vuln')
-
-        scan_item = str(scan_id)
-        taskid = scan_item.replace(" ", "")
-        target_split = taskid.split(',')
-        split_length = target_split.__len__()
-        print("split_length"), split_length
-        for i in range(0, split_length):
-            task_id = target_split.__getitem__(i)
-
-            del_rep = nessus_report_db.objects.filter(username=username, scan_id=task_id)
-            del_rep.delete()
-            del_scan = nessus_scan_db.objects.filter(username=username, scan_id=task_id)
-            del_scan.delete()
-
-    return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
-
-
-def delete_nessus_vuln(request):
-    username = request.user.username
-    if request.method == "POST":
-        vuln_id = request.POST.get("del_vuln")
-        un_scanid = request.POST.get("scan_id")
-        print("scan_iddd"), un_scanid
-
-        scan_item = str(vuln_id)
-        value = scan_item.replace(" ", "")
-        value_split = value.split(',')
-        split_length = value_split.__len__()
-        print("split_length"), split_length
-        for i in range(0, split_length):
-            vuln_id = value_split.__getitem__(i)
-            delete_vuln = nessus_report_db.objects.filter(username=username, vul_id=vuln_id)
-            delete_vuln.delete()
-        ov_all_vul = nessus_report_db.objects.filter(username=username, scan_id=un_scanid).order_by('scan_id')
-        total_vul = len(ov_all_vul)
-        total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
-        total_high = len(ov_all_vul.filter(risk_factor="High"))
-        total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
-        total_low = len(ov_all_vul.filter(risk_factor="Low"))
-
-        nessus_scan_db.objects.filter(username=username, scan_id=un_scanid) \
-            .update(total_vul=total_vul,
-                    critical_total=total_critical,
-                    high_total=total_high,
-                    medium_total=total_medium,
-                    low_total=total_low)
-
-        return HttpResponseRedirect(reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % un_scanid)
-
-
-def nessus_vuln_check(request):
-    username = request.user.username
-    """
-    Get the detailed vulnerability information.
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        id_vul = request.GET['vuln_id']
-    else:
-        id_vul = ''
-    vul_dat = nessus_report_db.objects.filter(username=username, vul_id=id_vul)
-
-    return render(request, 'nessus_vuln_data.html', {'vul_dat': vul_dat})
-
 
 def nv_setting(request):
     username = request.user.username
