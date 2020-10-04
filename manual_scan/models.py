@@ -35,6 +35,7 @@ class manual_scans_db(models.Model):
 class manual_scan_results_db(models.Model):
     vuln_id = models.TextField(blank=True)
     scan_id = models.TextField(blank=True)
+    date_time = models.DateTimeField(null=True)
     rescan_id = models.TextField(blank=True, null=True)
     vuln_name = models.TextField(blank=True, null=True)
     severity = models.TextField(blank=True, null=True)
@@ -46,7 +47,7 @@ class manual_scan_results_db(models.Model):
     request_header = models.TextField(blank=True, null=True)
     response_header = models.TextField(blank=True, null=True)
     reference = models.TextField(blank=True, null=True)
-    vuln_fixed = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
     project_id = models.UUIDField(null=True, blank=True)
     Poc_Img = models.ImageField(null=True, blank=True)
     poc_description = models.TextField(null=True, blank=True)
