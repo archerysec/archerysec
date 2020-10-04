@@ -862,18 +862,22 @@ def export(request):
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+
         zap_resource = ZapResource()
-        queryset = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id)
+        queryset = zap_scan_results_db.objects.filter(username=username, scan_id__in=value_split)
         dataset = zap_resource.export(queryset)
-        if report_type == 'csv':
+        if report_type.lower() == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % 'result'
             return response
-        if report_type == 'json':
+        if report_type.lower() == 'json':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % 'result'
             return response
-        if report_type == 'yaml':
+        if report_type.lower() == 'yaml':
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
-            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % 'result'
             return response
