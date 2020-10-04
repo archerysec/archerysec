@@ -75,8 +75,10 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>Vulnerability</th>
                                         <th>Risk</th>
                                         <th>JIRA Ticket</th>
-                                        <th></th>
-                                        <th></th>
+                                        <th>Status</th>
+                                        <th>Edit</th>
+                                        <th>Mark</th>
+                                        <th>Delete</th>
                                     </tr>
                                     </thead>
                                     <tbody>{% for data in all_vuln %}
@@ -100,12 +102,42 @@ $(document).on('click', '.confirm-delete', function(){
                                         </td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
+                                    {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-success">{{ data.vuln_status }}</span></td>{% endif %}
+                                    {% if data.vuln_status == 'Open' %}
+                                        <td><span class="badge badge-pill badge-info">{{ data.vuln_status }}</span></td>{% endif %}
                                         <td>
                                             <div><a href="{% url 'manual_scan:edit_vuln' %}?vuln_id={{data.vuln_id}}&project_id={{project_id}}"
                                                     class="btn btn-primary"
                                                     data-original-title="Edit"><i class="fas fa-edit"></i></a>
                                             </div>
                                         </td>
+                                         {% if data.vuln_status == 'Open' %}
+                                        <td>
+                                            <form method="POST" action="{% url 'manual_scan:manual_vuln_data' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+
+                                                <input type="hidden" name="status" value="Closed">
+                                                <input type="hidden" name="project_id" value="{{data.project_id}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-info btn-mini">Close</button>
+                                            </form>
+                                        </td>
+                                         {% endif %}
+                                        {% if data.vuln_status == 'Closed' %}
+                                            <td>
+                                                <form method="POST" action="{% url 'manual_scan:manual_vuln_data' %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+
+                                                    <input type="hidden" name="status" value="Open">
+                                                    <input type="hidden" name="project_id" value="{{data.project_id}}">
+                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                    <button class="btn btn-info btn-mini">Open</button>
+                                                </form>
+                                            </td>
+                                             {% endif %}
                                         <td class="confirm-delete">
                                             <div>
                                                 <form action="{% url 'manual_scan:del_vuln' %}" method="POST"

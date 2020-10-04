@@ -1447,6 +1447,7 @@ def proj_data(request):
 
     bandit_closed_vuln = bandit_scan_results_db.objects.filter(username=username, vuln_status='Closed',
                                                                project_id=project_id)
+    pentest_closed_vuln = manual_scan_results_db.objects.filter(username=username, vuln_status='Closed', project_id=project_id)
 
     all_closed_vuln = int(len(zap_closed_vuln)) + \
                       int(len(burp_closed_vuln)) + \
@@ -1469,6 +1470,7 @@ def proj_data(request):
                       int(len(tfsec_closed_vuln)) + \
                       int(len(whitesource_closed_vuln)) + \
                       int(len(checkmarx_closed_vuln)) + \
+                      int(len(pentest_closed_vuln)) + \
                       int(len(bandit_closed_vuln))
 
     all_false_positive = int(len(zap_false_positive)) + \
@@ -2056,7 +2058,7 @@ def all_high_vuln(request):
         nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           vuln_status='Closed')
 
-        pentest_all_high = ''
+        pentest_all_high = manual_scan_results_db.objects.filter(username=username, project_id=project_id, vuln_status='Closed')
 
     else:
         return HttpResponseRedirect(reverse('dashboard:proj_data' + '?project_id=%s' % project_id))

@@ -142,7 +142,6 @@ def add_vuln(request):
         filename = fs.save(poc.name, poc)
         uploaded_poc_url = fs.url(filename)
 
-
         if severity == "High":
             severity_color = "danger"
 
@@ -162,6 +161,7 @@ def add_vuln(request):
             solution=solution,
             reference=reference,
             scan_id=scan_id,
+            vuln_status='Open',
             project_id=project_id,
             Poc_Img=uploaded_poc_url,
             poc_description=poc_description,
@@ -272,13 +272,48 @@ def edit_vuln(request):
         )
         return HttpResponseRedirect(
             reverse('manual_scan:vuln_list') + '?scan_id=%(scan_id)s&project_id=%(project_id)s' % {'scan_id': scan_id,
-                                                                                       'project_id': project_id})
+                                                                                                   'project_id': project_id})
 
     return render(request, 'edit_vuln.html',
                   {'vuln_data': vuln_data,
                    'vuln_id': vuln_id,
                    'project_id': project_id
                    })
+
+
+def manual_vuln_data(request):
+    username = request.user.username
+
+    if request.method == 'POST':
+        vuln_id = request.POST.get('vuln_id')
+        status = request.POST.get('status')
+        scan_id = request.POST.get('scan_id')
+        project_id = request.POST.get('project_id')
+        date_time = datetime.now()
+
+        manual_scan_results_db.objects.filter(username=username, vuln_id=vuln_id).update(
+            vuln_status=status,
+            date_time=date_time,
+        )
+        all_scan_data = manual_scan_results_db.objects.filter(username=username, scan_id=scan_id, vuln_status='Open')
+
+        total_vuln = len(all_scan_data)
+        total_high = len(all_scan_data.filter(severity="High"))
+        total_medium = len(all_scan_data.filter(severity="Medium"))
+        total_low = len(all_scan_data.filter(severity="Low"))
+
+        manual_scans_db.objects.filter(username=username, scan_id=scan_id).update(
+            date_time=date_time,
+            total_vul=total_vuln,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            username=username,
+        )
+
+    return HttpResponseRedirect(
+        reverse('manual_scan:vuln_list') + '?scan_id=%(scan_id)s&project_id=%(project_id)s' % {'scan_id': scan_id,
+                                                                                               'project_id': project_id})
 
 
 def del_vuln(request):
@@ -317,7 +352,8 @@ def del_vuln(request):
             low_vul=total_low,
         )
 
-        return HttpResponseRedirect(reverse('manual_scan:vuln_list') + '?scan_id=%s&project_id=%s' % (scan_id, project_id))
+        return HttpResponseRedirect(
+            reverse('manual_scan:vuln_list') + '?scan_id=%s&project_id=%s' % (scan_id, project_id))
 
 
 def del_scan(request):
