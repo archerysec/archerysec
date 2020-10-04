@@ -31,7 +31,7 @@ from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_
     trivy_scan_db, trivy_scan_results_db, npmaudit_scan_db, npmaudit_scan_results_db, nodejsscan_scan_results_db, \
     nodejsscan_scan_db, tfsec_scan_results_db, tfsec_scan_db, checkmarx_scan_results_db, checkmarx_scan_db, whitesource_scan_db, whitesource_scan_results_db, gitlabsca_scan_results_db, gitlabsast_scan_results_db, gitlabsca_scan_db, gitlabsast_scan_db, semgrepscan_scan_results_db, semgrepscan_scan_db, gitlabcontainerscan_scan_results_db, gitlabcontainerscan_scan_db
 from compliance.models import inspec_scan_results_db, inspec_scan_db, dockle_scan_db, dockle_scan_results_db
-from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_report_db
+from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_targets_db, nessus_scan_results_db
 import datetime
 from manual_scan.models import manual_scan_results_db, manual_scans_db
 from itertools import chain
@@ -196,8 +196,11 @@ def projects(request):
         nessus = nessus_scan_db.objects.filter(project_id=project_id)
         nessus.delete()
 
-        nessus_result = nessus_report_db.objects.filter(project_id=project_id)
+        nessus_result = nessus_targets_db.objects.filter(project_id=project_id)
         nessus_result.delete()
+
+        nessus_scan_results = nessus_scan_results_db.objects.filter(project_id=project_id)
+        nessus_scan_results.delete()
 
         pentest = manual_scan_results_db.objects.filter(project_id=project_id)
         pentest.delete()
