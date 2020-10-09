@@ -16,7 +16,7 @@
 
 from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
     netsparker_scan_db, webinspect_scan_db, acunetix_scan_db
-from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db
+from networkscanners.models import openvas_scan_db, ov_scan_result_db, nessus_scan_db
 from projects.models import project_db
 from webscanners.serializers import WebScanSerializer, \
     WebScanResultSerializer, \
@@ -160,7 +160,7 @@ class NetworkScan(generics.ListCreateAPIView):
     """
     Network Scan API call to perform scan.
     """
-    queryset = scan_save_db.objects.all()
+    queryset = openvas_scan_db.objects.all()
     serializer_class = NetworkScanSerializer
 
     def get(self, request, format=None, **kwargs):
@@ -170,7 +170,7 @@ class NetworkScan(generics.ListCreateAPIView):
 
         """
         username = request.user.username
-        all_scans = scan_save_db.objects.filter(username=username)
+        all_scans = openvas_scan_db.objects.filter(username=username)
         serialized_scans = NetworkScanSerializer(all_scans, many=True)
         return Response(serialized_scans.data)
 
@@ -1118,7 +1118,7 @@ class UpladScanResult(APIView):
             root_xml_en = ET.fromstring(en_root_xml)
             hosts = OpenVas_Parser.get_hosts(root_xml_en)
             for host in hosts:
-                scan_dump = scan_save_db(scan_ip=host,
+                scan_dump = openvas_scan_db(scan_ip=host,
                                          scan_id=host,
                                          date_time=date_time,
                                          project_id=project_id,

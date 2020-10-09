@@ -189,61 +189,60 @@
                                                     </td>
                                                     <td><span
                                                             class="badge badge-pill badge-danger">{{ all_zap_high.high_vul__sum }}
-                                                    </td>
+                                                    </span></td>
                                                     <td><span
                                                             class="badge badge-pill badge-warning">{{ all_zap_medium.medium_vul__sum }}
-                                                    </td>
+                                                    </span></td>
                                                     <td><span
                                                             class="badge badge-pill badge-info">{{ all_zap_low.low_vul__sum }}
-                                                    </td>
+                                                    </span></td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_nessus_high.high_total__sum != None or all_nessus_medium.medium_total__sum != None or  all_nessus_low.low_total__sum != None %}
+                                            {% if all_nessus_high.total_high__sum != None or all_nessus_medium.total_medium__sum != None or  all_nessus_low.total_low__sum != None %}
                                                 <tr>
-                                                    <td><a href="{% url 'networkscanners:nessus_scan' %}">Nessus</a>
+                                                    <td><a href="{% url 'nessus:nessus_list' %}">Nessus</a></td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-danger">{{ all_nessus_high.total_high__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_nessus_high.high_total__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_nessus_medium.total_medium__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_nessus_medium.medium_total__sum }}</span>
-                                                    </td>
-                                                    <td><span
-                                                            class="badge badge-pill badge-info">{{ all_nessus_low.low_total__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_nessus_low.total_low__sum }}</span>
                                                     </td>
                                                 </tr>
 
                                             {% endif %}
 
-                                            {% if all_dependency_high.SEVERITY_HIGH__sum != None or all_dependency_medium.SEVERITY_MEDIUM__sum != None or  all_dependency_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_dependency_high.high_vul__sum != None or all_dependency_medium.medium_vul__sum != None or  all_dependency_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'dependencycheck:dependencycheck_list' %}">Dependency
                                                         Check</a>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_dependency_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_dependency_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_dependency_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_dependency_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_dependency_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_dependency_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_openvas_high.high_total__sum != None or all_openvas_medium.medium_total__sum != None or  all_openvas_low.low_total__sum != None %}
+                                            {% if all_openvas_high.high_vul__sum != None or all_openvas_medium.medium_vul__sum != None or  all_openvas_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'networkscanners:index' %}">OpenVAS</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_openvas_high.high_total__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_openvas_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_openvas_medium.medium_total__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_openvas_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_openvas_low.low_total__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_openvas_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
@@ -264,200 +263,200 @@
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_clair_high.SEVERITY_HIGH__sum != None or all_clair_medium.SEVERITY_MEDIUM__sum != None or  all_clair_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_clair_high.high_vul__sum != None or all_clair_medium.medium_vul__sum != None or  all_clair_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'clair:clair_list' %}">Clair</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_clair_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_clair_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_clair_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_clair_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_clair_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_clair_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_trivy_high.SEVERITY_HIGH__sum != None or all_trivy_medium.SEVERITY_MEDIUM__sum != None or  all_trivy_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_trivy_high.high_vul__sum != None or all_trivy_medium.medium_vul__sum != None or  all_trivy_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'trivy:trivy_list' %}">Trivy</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_trivy_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_trivy_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_trivy_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_trivy_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_trivy_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_trivy_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_gitlabsast_high.SEVERITY_HIGH__sum != None or all_gitlabsast_medium.SEVERITY_MEDIUM__sum != None or  all_gitlabsast_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_gitlabsast_high.high_vul__sum != None or all_gitlabsast_medium.medium_vul__sum != None or  all_gitlabsast_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'gitlabsast:gitlabsast_list' %}">GitLab SAST Scan</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_gitlabsast_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_gitlabsast_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_gitlabsast_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_gitlabsast_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_gitlabsast_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_gitlabsast_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_gitlabcontainerscan_high.SEVERITY_HIGH__sum != None or all_gitlabcontainerscan_medium.SEVERITY_MEDIUM__sum != None or  all_gitlabcontainerscan_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_gitlabcontainerscan_high.high_vul__sum != None or all_gitlabcontainerscan_medium.medium_vul__sum != None or  all_gitlabcontainerscan_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'gitlabcontainerscan:gitlabcontainerscan_list' %}">GitLab Container Scan</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_gitlabcontainerscan_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_gitlabcontainerscan_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_gitlabcontainerscan_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_gitlabcontainerscan_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_gitlabcontainerscan_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_gitlabcontainerscan_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_gitlabsca_high.SEVERITY_HIGH__sum != None or all_gitlabsca_medium.SEVERITY_MEDIUM__sum != None or  all_gitlabsca_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_gitlabsca_high.high_vul__sum != None or all_gitlabsca_medium.medium_vul__sum != None or  all_gitlabsca_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'gitlabsca:gitlabsca_list' %}">GitLab Dependency Scan</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_gitlabsca_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_gitlabsca_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_gitlabsca_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_gitlabsca_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_gitlabsca_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_gitlabsca_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_npmaudit_high.SEVERITY_HIGH__sum != None or all_npmaudit_medium.SEVERITY_MEDIUM__sum != None or  all_npmaudit_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_npmaudit_high.high_vul__sum != None or all_npmaudit_medium.medium_vul__sum != None or  all_npmaudit_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'npmaudit:npmaudit_list' %}">npmaudit</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_npmaudit_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_npmaudit_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_npmaudit_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_npmaudit_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_npmaudit_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_npmaudit_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_nodejsscan_high.SEVERITY_HIGH__sum != None or all_nodejsscan_medium.SEVERITY_MEDIUM__sum != None or  all_nodejsscan_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_nodejsscan_high.high_vul__sum != None or all_nodejsscan_medium.medium_vul__sum != None or  all_nodejsscan_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'nodejsscan:nodejsscan_list' %}">nodejsscan</a>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_nodejsscan_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_nodejsscan_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_nodejsscan_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_nodejsscan_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_nodejsscan_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_nodejsscan_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_semgrepscan_high.SEVERITY_HIGH__sum != None or all_semgrepscan_medium.SEVERITY_MEDIUM__sum != None or  all_semgrepscan_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_semgrepscan_high.high_vul__sum != None or all_semgrepscan_medium.medium_vul__sum != None or  all_semgrepscan_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'semgrepscan:semgrepscan_list' %}">semgrepscan</a>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_semgrepscan_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_semgrepscan_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_semgrepscan_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_semgrepscan_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_semgrepscan_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_semgrepscan_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_tfsec_high.SEVERITY_HIGH__sum != None or all_tfsec_medium.SEVERITY_MEDIUM__sum != None or  all_tfsec_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_tfsec_high.high_vul__sum != None or all_tfsec_medium.medium_vul__sum != None or  all_tfsec_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'tfsec:tfsec_list' %}">tfsec</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_tfsec_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_tfsec_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_tfsec_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_tfsec_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_tfsec_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_tfsec_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_whitesource_high.SEVERITY_HIGH__sum != None or all_whitesource_medium.SEVERITY_MEDIUM__sum != None or  all_whitesource_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_whitesource_high.high_vul__sum != None or all_whitesource_medium.medium_vul__sum != None or  all_whitesource_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'whitesource:whitesource_list' %}">whitesource</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_whitesource_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_whitesource_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_whitesource_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_whitesource_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_whitesource_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_whitesource_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_checkmarx_high.SEVERITY_HIGH__sum != None or all_checkmarx_medium.SEVERITY_MEDIUM__sum != None or  all_checkmarx_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_checkmarx_high.high_vul__sum != None or all_checkmarx_medium.medium_vul__sum != None or  all_checkmarx_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'checkmarx:checkmarx_list' %}">checkmarx</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_checkmarx_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_checkmarx_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_checkmarx_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_checkmarx_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_checkmarx_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_checkmarx_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_findbugs_high.SEVERITY_HIGH__sum != None or all_findbugs_medium.SEVERITY_MEDIUM__sum != None or  all_findbugs_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_findbugs_high.high_vul__sum != None or all_findbugs_medium.medium_vul__sum != None or  all_findbugs_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'findbugs:findbugs_list' %}">FindBugs</a></td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_findbugs_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_findbugs_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_findbugs_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_findbugs_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_findbugs_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_findbugs_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
 
-                                            {% if all_bandit_high.SEVERITY_HIGH__sum != None or all_bandit_medium.SEVERITY_MEDIUM__sum != None or  all_bandit_low.SEVERITY_LOW__sum != None %}
+                                            {% if all_bandit_high.high_vul__sum != None or all_bandit_medium.medium_vul__sum != None or  all_bandit_low.low_vul__sum != None %}
                                                 <tr>
                                                     <td><a href="{% url 'banditscanner:banditscans_list' %}">Bandit</a>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ all_bandit_high.SEVERITY_HIGH__sum }}</span>
+                                                            class="badge badge-pill badge-danger">{{ all_bandit_high.high_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ all_bandit_medium.SEVERITY_MEDIUM__sum }}</span>
+                                                            class="badge badge-pill badge-warning">{{ all_bandit_medium.medium_vul__sum }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ all_bandit_low.SEVERITY_LOW__sum }}</span>
+                                                            class="badge badge-pill badge-info">{{ all_bandit_low.low_vul__sum }}</span>
                                                     </td>
                                                 </tr>
                                             {% endif %}
@@ -845,16 +844,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
                                                 </tr>
                                             {% endfor %}
@@ -880,16 +879,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -916,16 +915,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -952,16 +951,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -989,16 +988,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1026,16 +1025,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1064,16 +1063,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1101,16 +1100,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1138,16 +1137,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1175,16 +1174,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1212,16 +1211,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1249,16 +1248,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1286,16 +1285,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1323,16 +1322,16 @@
                                                     </td>
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
-                                                            class="badge badge-pill badge-dark">{{ data.total_vuln }}</span>
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.SEVERITY_HIGH }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.SEVERITY_MEDIUM }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.SEVERITY_LOW }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1399,13 +1398,13 @@
                                                             class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-danger">{{ data.high_total }}</span>
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-warning">{{ data.medium_total }}</span>
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
                                                     </td>
                                                     <td><span
-                                                            class="badge badge-pill badge-info">{{ data.low_total }}</span>
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
                                                     </td>
 
                                                 </tr>
@@ -1565,8 +1564,10 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript" src="{% static 'js/Chart.js' %}"></script>
-    <script type="text/javascript">
+
+    <script src="{% static 'js/Chart.js' %}"></script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script>
         var ctx = document.getElementById("ProBar").getContext('2d');
         var ProBar = new Chart(ctx, {
             type: 'pie',

@@ -107,9 +107,9 @@ def npmaudit_vuln_data(request):
 
         npmaudit_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
 
         )
 
@@ -215,9 +215,9 @@ def npmaudit_del_vuln(request):
 
         npmaudit_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
 
         )
 

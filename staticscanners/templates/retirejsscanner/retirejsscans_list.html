@@ -69,9 +69,9 @@
                                 <th>Status</th>
                                 <th>Date Time</th>
                                 <th>Total Vulnerability</th>
-                                <th>SEVERITY_HIGH</th>
-                                <th>SEVERITY_MEDIUM</th>
-                                <th>SEVERITY_LOW</th>
+                                <th>high_vul</th>
+                                <th>medium_vul</th>
+                                <th>low_vul</th>
                                 <th>Duplicates</th>
                                 <th>Action</th>
                                 <th></th>
@@ -97,10 +97,10 @@
                                     </div>
                                 </td>
                                 <td>{{data.date_time}}</td>
-                                <td><span class="badge badge-pill badge-inverse">{{data.total_vuln}}</span></td>
-                                <td><span class="badge badge-pill badge-danger">{{data.SEVERITY_HIGH}}</span></td>
-                                <td><span class="badge badge-pill badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
-                                <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span></td>
+                                <td><span class="badge badge-pill badge-inverse">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>
                                 <td><span class="badge badge-pill badge-danger">{{data.total_dup}}</span></td>
                                 <td>
                                     <form action="{% url 'zapscanner:zap_scan_pdf_gen' %}" method="post" class="forms-sample">

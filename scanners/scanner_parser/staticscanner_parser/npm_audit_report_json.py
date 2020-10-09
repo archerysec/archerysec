@@ -33,6 +33,7 @@ def npmaudit_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    date_time = datetime.now()
     global vul_col
     for vuln in data['advisories']:
         title = data['advisories'][vuln]['title']
@@ -129,6 +130,7 @@ def npmaudit_report_json(data, project_id, scan_id, username):
 
             save_all = npmaudit_scan_results_db(
                 vuln_id=vul_id,
+                date_time=date_time,
                 scan_id=scan_id,
                 project_id=project_id,
                 vul_col=vul_col,
@@ -160,6 +162,7 @@ def npmaudit_report_json(data, project_id, scan_id, username):
 
             save_all = npmaudit_scan_results_db(
                 vuln_id=vul_id,
+                date_time=date_time,
                 scan_id=scan_id,
                 project_id=project_id,
                 vul_col=vul_col,
@@ -198,10 +201,11 @@ def npmaudit_report_json(data, project_id, scan_id, username):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     npmaudit_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-        total_vuln=total_vul,
-        SEVERITY_HIGH=total_high,
-        SEVERITY_MEDIUM=total_medium,
-        SEVERITY_LOW=total_low,
+        total_vul=total_vul,
+        date_time=date_time,
+        high_vul=total_high,
+        medium_vul=total_medium,
+        low_vul=total_low,
         total_dup=total_duplicate
     )
     subject = 'Archery Tool Scan Status - Trivy Report Uploaded'

@@ -34,7 +34,7 @@ def tfsec_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
-
+    date_time = datetime.now()
     global vul_col
     for vuln in data['results']:
         rule_id = vuln['rule_id']
@@ -82,6 +82,7 @@ def tfsec_report_json(data, project_id, scan_id, username):
             save_all = tfsec_scan_results_db(
                 vuln_id=vul_id,
                 scan_id=scan_id,
+                date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
                 vuln_status='Open',
@@ -105,6 +106,7 @@ def tfsec_report_json(data, project_id, scan_id, username):
             save_all = tfsec_scan_results_db(
                 vuln_id=vul_id,
                 scan_id=scan_id,
+                date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
                 vuln_status='Duplicate',
@@ -134,10 +136,11 @@ def tfsec_report_json(data, project_id, scan_id, username):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     tfsec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-        total_vuln=total_vul,
-        SEVERITY_HIGH=total_high,
-        SEVERITY_MEDIUM=total_medium,
-        SEVERITY_LOW=total_low,
+        total_vul=total_vul,
+        date_time=date_time,
+        high_vul=total_high,
+        medium_vul=total_medium,
+        low_vul=total_low,
         total_dup=total_duplicate
     )
     subject = 'Archery Tool Scan Status - tfsec Report Uploaded'

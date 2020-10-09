@@ -71,8 +71,6 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>JIRA Ticket</th>
                                         <th>False Positive</th>
                                         <th>Status</th>
-
-                                        <th></th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -107,18 +105,6 @@ $(document).on('click', '.confirm-delete', function(){
                                         </td>
                                         <td>{{ data.vuln_status }}</td>
 
-                                        <td class="confirm-delete">
-                                            <div>
-                                                <form action="{% url 'zapscanner:del_zap_vuln' %}" method="POST"
-                                                      class="form-horizontal">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
-                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                    <button class="btn btn-danger btn-mini"><i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
                                         <td>
                                             <form method="POST" action="{% url 'zapscanner:zap_vuln_details' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
@@ -126,7 +112,7 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="status" value="Closed">
                                                 <input type="hidden" name="vuln_name" value="{{data.name}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-danger btn-mini">Close</button>
+                                                <button class="btn btn-pinterest btn-mini">Close</button>
                                             </form>
                                         </td>
                                     </tr>

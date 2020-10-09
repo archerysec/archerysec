@@ -17,6 +17,7 @@
 from webscanners.models import acunetix_scan_db, acunetix_scan_result_db
 import uuid
 import hashlib
+from datetime import datetime
 
 from webscanners.zapscanner.views import email_sch_notify
 
@@ -70,6 +71,7 @@ def xml_parser(root, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    date_time = datetime.now()
     global ScanName, \
         ScanShortName, ScanStartURL, \
         ScanStartTime, \
@@ -264,6 +266,7 @@ def xml_parser(root, project_id, scan_id, username):
                             scan_id=scan_id,
                             project_id=project_id,
                             vuln_id=vuln_id,
+                            date_time=date_time,
                             false_positive=false_positive,
                             vuln_color=vul_col,
                             vuln_status='Open',
@@ -319,6 +322,7 @@ def xml_parser(root, project_id, scan_id, username):
                             scan_id=scan_id,
                             project_id=project_id,
                             vuln_id=vuln_id,
+                            date_time=date_time,
                             false_positive='Duplicate',
                             vuln_color=vul_col,
                             vuln_status='Duplicate',
@@ -382,6 +386,7 @@ def xml_parser(root, project_id, scan_id, username):
 
     acunetix_scan_db.objects.filter(username=username, scan_id=scan_id) \
         .update(total_vul=total_vul,
+                date_time=date_time,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low,

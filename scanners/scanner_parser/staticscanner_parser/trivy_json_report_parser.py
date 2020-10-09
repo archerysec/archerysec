@@ -42,6 +42,7 @@ def trivy_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    date_time = datetime.now()
     vul_col = ''
     for vuln_data in data:
         vuln = vuln_data['Vulnerabilities']
@@ -133,6 +134,7 @@ def trivy_report_json(data, project_id, scan_id, username):
                 save_all = trivy_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     VulnerabilityID=VulnerabilityID,
                     PkgName=PkgName,
@@ -157,6 +159,7 @@ def trivy_report_json(data, project_id, scan_id, username):
                 save_all = trivy_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     VulnerabilityID=VulnerabilityID,
                     PkgName=PkgName,
@@ -188,10 +191,11 @@ def trivy_report_json(data, project_id, scan_id, username):
         total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
         trivy_scan_db.objects.filter(scan_id=scan_id).update(username=username,
-                                                             total_vuln=total_vul,
-                                                             SEVERITY_HIGH=total_high,
-                                                             SEVERITY_MEDIUM=total_medium,
-                                                             SEVERITY_LOW=total_low,
+                                                             total_vul=total_vul,
+                                                             date_time=date_time,
+                                                             high_vul=total_high,
+                                                             medium_vul=total_medium,
+                                                             low_vul=total_low,
                                                              total_dup=total_duplicate
                                                              )
     subject = 'Archery Tool Scan Status - Trivy Report Uploaded'
