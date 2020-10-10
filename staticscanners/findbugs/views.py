@@ -81,7 +81,7 @@ def findbugs_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 findbugs_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                         scan_id=scan_id).update(false_positive=false_positive,
-                                                                                vuln_status='Close',
+                                                                                vuln_status='Closed',
                                                                                 false_positive_hash=false_positive_hash
                                                                                 )
 
@@ -96,7 +96,7 @@ def findbugs_vuln_data(request):
         total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
 
         findbugs_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-            total_vuln=total_vul,
+            total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low
@@ -108,22 +108,12 @@ def findbugs_vuln_data(request):
 
     findbugs_vuln_data = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                  name=test_name,
-                                                                 vuln_status='Open',
-                                                                 false_positive='No'
-                                                                 )
 
-    vuln_data_closed = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                               name=test_name,
-                                                               vuln_status='Closed',
-                                                               false_positive='No')
-    false_data = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                         name=test_name,
-                                                         false_positive='Yes')
+                                                                 )
 
     return render(request, 'findbugs/findbugsscan_vuln_data.html',
                   {'findbugs_vuln_data': findbugs_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed
+
                    })
 
 

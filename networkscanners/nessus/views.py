@@ -115,7 +115,7 @@ def nessus_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 nessus_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                       scan_id=scan_id).update(false_positive=false_positive,
-                                                                              vuln_status='Close',
+                                                                              vuln_status='Closed',
                                                                               false_positive_hash=false_positive_hash
                                                                               )
 
@@ -159,23 +159,10 @@ def nessus_vuln_data(request):
             reverse('nessus:nessus_vuln_data') + '?scan_id=%s&target=%s' % (scan_id, Target))
 
     nessus_vuln_data = nessus_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                             target=target,
-                                                             vuln_status='Open',
-                                                             false_positive='No'
-                                                             )
-
-    vuln_data_closed = nessus_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                             target=target,
-                                                             vuln_status='Closed',
-                                                             false_positive='No')
-    false_data = nessus_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                       target=target,
-                                                       false_positive='Yes')
+                                                             target=target)
 
     return render(request, 'nessus/nessusscan_vuln_data.html',
                   {'nessus_vuln_data': nessus_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed,
                    'jira_url': jira_url
                    })
 

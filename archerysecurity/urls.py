@@ -68,7 +68,6 @@ urlpatterns = [
     url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     url(r'^api/', include('archeryapi.urls')),
     # url(r'^scanapi/', include('APIScan.urls')),
-    url(r'^vfeed/', include('vFeedgui.urls')),
     url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
     url(r'^nessus/', include('networkscanners.nessus.urls')),
 

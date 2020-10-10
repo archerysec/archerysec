@@ -154,7 +154,7 @@ def scan_vul_details(request):
                     scan_id=scan_id,
                     vul_id=vuln_id).update(
                     false_positive=false_positive,
-                    vuln_status='Close',
+                    vuln_status='Closed',
                     false_positive_hash=false_positive_hash
                 )
         openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
@@ -167,48 +167,29 @@ def scan_vul_details(request):
 
         openvas_scan_db.objects.filter(username=username, scan_id=scan_id). \
             update(total_vul=total_vul,
-                   high_total=total_high,
-                   medium_total=total_medium,
-                   low_total=total_low,
+                   high_vul=total_high,
+                   medium_vul=total_medium,
+                   low_vul=total_low,
                    total_dup=total_duplicate,
                    )
 
         return HttpResponseRedirect(
             reverse('networkscanners:vul_details') + '?scan_id=%s' % scan_id)
 
-    all_vuln = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
-                                                false_positive='No', vuln_status='Open').values('name', 'severity',
+    all_vuln = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,).values('name', 'severity',
                                                                                                 'vuln_color',
                                                                                                 'threat', 'host',
                                                                                                 'port', 'vul_id',
-                                                                                                'jira_ticket',
+                                                                                                'jira_ticket', 'false_positive',
                                                                                                 'vuln_status').distinct()
 
-    all_vuln_closed = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
-                                                       false_positive='No', vuln_status='Closed').values('name',
-                                                                                                         'severity',
-                                                                                                         'vuln_color',
-                                                                                                         'threat',
-                                                                                                         'host',
-                                                                                                         'port',
-                                                                                                         'vul_id',
-                                                                                                         'jira_ticket',
-                                                                                                         'vuln_status'
-                                                                                                         ).distinct()
 
-    all_false_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
-                                                     false_positive='Yes').values('name', 'severity',
-                                                                                  'vuln_color',
-                                                                                  'threat', 'host',
-                                                                                  'port', 'vul_id',
-                                                                                  'jira_ticket').distinct()
     return render(request,
                   'openvas_vuln_list.html',
                   {'all_vuln': all_vuln,
                    'scan_id': scanid,
                    'jira_url': jira_url,
-                   'all_false_vul': all_false_vul,
-                   'all_vuln_closed': all_vuln_closed
+
                    })
 
 

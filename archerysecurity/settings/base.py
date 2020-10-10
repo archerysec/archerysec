@@ -70,7 +70,6 @@ INSTALLED_APPS = [
     'background_task',
     'sitetree',
     'import_export',
-    'vFeedgui',
     'compliance',
     'notifications',
 

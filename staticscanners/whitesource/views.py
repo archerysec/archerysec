@@ -93,7 +93,7 @@ def whitesource_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 whitesource_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                            scan_id=scan_id).update(false_positive=false_positive,
-                                                                                   vuln_status='Close',
+                                                                                   vuln_status='Closed',
                                                                                    false_positive_hash=false_positive_hash)
 
         all_whitesource_data = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
@@ -106,7 +106,7 @@ def whitesource_vuln_data(request):
         total_duplicate = len(all_whitesource_data.filter(vuln_duplicate='Yes'))
 
         whitesource_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-            total_vuln=total_vul,
+            total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,
@@ -117,23 +117,10 @@ def whitesource_vuln_data(request):
             reverse('whitesource:whitesource_vuln_data') + '?scan_id=%s&name=%s' % (scan_id, vuln_name))
 
     whitesource_vuln_data = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                       name=name,
-                                                                       vuln_status='Open',
-                                                                       false_positive='No'
-                                                                       )
-
-    vuln_data_closed = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                  name=name,
-                                                                  vuln_status='Closed',
-                                                                  false_positive='No')
-    false_data = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                            name=name,
-                                                            false_positive='Yes')
+                                                                       name=name)
 
     return render(request, 'whitesource/whitesource_vuln_data.html',
                   {'whitesource_vuln_data': whitesource_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed,
                    'jira_url': jira_url
                    })
 

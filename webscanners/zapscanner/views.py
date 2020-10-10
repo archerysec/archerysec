@@ -426,7 +426,7 @@ def zap_vuln_details(request):
                 zap_scan_results_db.objects.filter(username=username,
                                                    vuln_id=vuln_id,
                                                    scan_id=scan_id).update(false_positive=false_positive,
-                                                                           vuln_status='Close',
+                                                                           vuln_status='Closed',
                                                                            false_positive_hash=false_positive_hash
                                                                            )
 
@@ -461,32 +461,14 @@ def zap_vuln_details(request):
     zap_all_vul = zap_scan_results_db.objects.filter(
         username=username,
         scan_id=scan_id,
-        false_positive='No',
         name=scan_name,
-        vuln_status='Open'
-    )
-
-    zap_all_close_vul = zap_scan_results_db.objects.filter(
-        username=username,
-        scan_id=scan_id,
-        false_positive='No',
-        name=scan_name,
-        vuln_status='Closed'
-    ).order_by('name')
-
-    zap_all_false_vul = zap_scan_results_db.objects.filter(
-        username=username,
-        scan_id=scan_id,
-        name=scan_name,
-        false_positive='Yes').order_by('name')
+    ).exclude(vuln_status='Duplicate')
 
     return render(request,
                   'zapscanner/zap_vuln_details.html',
                   {'zap_all_vul': zap_all_vul,
                    'scan_vul': scan_id,
-                   'zap_all_false_vul': zap_all_false_vul,
                    'jira_url': jira_url,
-                   'zap_all_close_vul': zap_all_close_vul
                    })
 
 

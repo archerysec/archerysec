@@ -86,7 +86,7 @@ def trivy_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 trivy_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                      scan_id=scan_id).update(false_positive=false_positive,
-                                                                             vuln_status='Close',
+                                                                             vuln_status='Closed',
                                                                              false_positive_hash=false_positive_hash
                                                                              )
 
@@ -100,34 +100,21 @@ def trivy_vuln_data(request):
             total_duplicate = len(all_trivy_data.filter(vuln_duplicate='Yes'))
 
             trivy_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-                total_vuln=total_vul,
+                total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low,
 
             )
 
-        return HttpResponseRedirect(
-            reverse('trivy:trivy_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
+        return HttpResponseRedirect(reverse('trivy:trivy_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     trivy_vuln_data = trivy_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                           VulnerabilityID=test_name,
-                                                           vuln_status='Open',
-                                                           false_positive='No'
-                                                           )
-
-    vuln_data_closed = trivy_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                            VulnerabilityID=test_name,
-                                                            vuln_status='Closed',
-                                                            false_positive='No')
-    false_data = trivy_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                      VulnerabilityID=test_name,
-                                                      false_positive='Yes')
+                                                           VulnerabilityID=test_name
+                                                           ).exclude(vuln_status='Duplicate')
 
     return render(request, 'trivy/trivyscan_vuln_data.html',
                   {'trivy_vuln_data': trivy_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed,
                    'jira_url': jira_url
                    })
 
