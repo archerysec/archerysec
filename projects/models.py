@@ -66,8 +66,8 @@ class Month(Func):
 
 class month_db(models.Model):
     month = models.TextField(blank=True, null=True)
-    high = models.IntegerField(blank=True, null=True)
-    medium = models.IntegerField(blank=True, null=True)
-    low = models.IntegerField(blank=True, null=True)
-    project_id = models.TextField(blank=True, null=True)
+    high = models.IntegerField(blank=True, default=0)
+    medium = models.IntegerField(blank=True, default=0)
+    low = models.IntegerField(blank=True, default=0)
+    project_id = models.TextField(blank=True, default=0)
     username = models.CharField(max_length=256, null=True)
