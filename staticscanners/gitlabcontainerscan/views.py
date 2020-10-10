@@ -86,7 +86,7 @@ def gitlabcontainerscan_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 gitlabcontainerscan_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                           scan_id=scan_id).update(false_positive=false_positive,
-                                                                                  vuln_status='Close',
+                                                                                  vuln_status='Closed',
                                                                                   false_positive_hash=false_positive_hash
                                                                                   )
 
@@ -100,7 +100,7 @@ def gitlabcontainerscan_vuln_data(request):
             total_duplicate = len(all_gitlabcontainerscan_data.filter(vuln_duplicate='Yes'))
 
             gitlabcontainerscan_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-                total_vuln=total_vul,
+                total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low
@@ -111,22 +111,12 @@ def gitlabcontainerscan_vuln_data(request):
 
     gitlabcontainerscan_vuln_data = gitlabcontainerscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                      message=test_name,
-                                                                     vuln_status='Open',
-                                                                     false_positive='No'
-                                                                     )
 
-    vuln_data_closed = gitlabcontainerscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 message=test_name,
-                                                                 vuln_status='Closed',
-                                                                 false_positive='No')
-    false_data = gitlabcontainerscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                           message=test_name,
-                                                           false_positive='Yes')
+                                                                     )
 
     return render(request, 'gitlabcontainerscan/gitlabcontainerscan_vuln_data.html',
                   {'gitlabcontainerscan_vuln_data': gitlabcontainerscan_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed,
+
                    'jira_url': jira_url
                    })
 

@@ -116,7 +116,7 @@ def netsparker_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 netsparker_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                          scan_id=scan_id).update(false_positive=false_positive,
-                                                                                 vuln_status='Close',
+                                                                                 vuln_status='Closed',
                                                                                  false_positive_hash=false_positive_hash
                                                                                  )
 
@@ -146,25 +146,13 @@ def netsparker_vuln_out(request):
 
     vuln_data = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                          type=name,
-                                                         false_positive='No',
-                                                         vuln_status='Open'
-                                                         )
+                                                         ).exclude(vuln_status='Duplicate')
 
-    vuln_data_close = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                               type=name,
-                                                               false_positive='No',
-                                                               vuln_status='Closed')
-
-    false_data = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                          type=name,
-                                                          false_positive='Yes')
 
     return render(request,
                   'netsparkerscanner/netsparker_vuln_out.html',
                   {'vuln_data': vuln_data,
-                   'false_data': false_data,
                    'jira_url': jira_url,
-                   'vuln_data_close': vuln_data_close
                    })
 
 

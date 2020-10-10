@@ -93,6 +93,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.risk}}</span></td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
+                                        {% if data.false_positive == 'No' %}
                                         <td>
                                             <form method="POST" action="{% url 'zapscanner:zap_vuln_details' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
@@ -100,73 +101,12 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="status" value="{{data.vuln_status}}">
                                                 <input type="hidden" name="vuln_name" value="{{data.name}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-info btn-mini">Yes</button>
+                                                <button class="btn btn-outline-info btn-mini">Yes</button>
                                             </form>
                                         </td>
-                                        <td>{{ data.vuln_status }}</td>
-
-                                        <td>
-                                            <form method="POST" action="{% url 'zapscanner:zap_vuln_details' %}">{% csrf_token %}
-                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                                <input type="hidden" name="false" value="No">
-                                                <input type="hidden" name="status" value="Closed">
-                                                <input type="hidden" name="vuln_name" value="{{data.name}}">
-                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-pinterest btn-mini">Close</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <br>
-                        <div class="d-md-flex align-items-center">
-                            <h5 class="card-title">False Positive Vulnerability List</h5>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="table-responsive">
-                                <table id="zap_scans_list_false" class="table table-bordered data-table">
-                                    <thead>
-                                    <tr>
-                                        <th><label class="customcheckbox m-b-20">
-                                            <input type="checkbox" id="mainCheckbox1">
-                                            <span class="checkmark"></span>
-                                        </label></th>
-                                        <th>Vulnerability</th>
-                                        <!--<th>URL</th>-->
-                                        <th>Risk</th>
-                                        <th>False Positive</th>
-                                        <th>Status</th>
-
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>{% for data in zap_all_false_vul %}
-                                    <tr data-target="#">
-                                        <td>
-                                            <form>
-                                                <label class="customcheckbox">
-                                                    <input type="checkbox" class="listCheckbox1"
-                                                           value="{{data.vuln_id}}"
-                                                           name="del_vuln_id"
-                                                           onClick="reload">
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <a href="{% url 'zapscanner:zap_vuln_check' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
-                                        </td>
-                                        <!--<td>{{data.url}}</td>-->
-                                        <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.risk}}</span></td>
-                                        <td>
+                                        {% endif %}
+                                     {% if data.false_positive == 'Yes' %}
+                                     <td>
                                             <form method="POST" action="{% url 'zapscanner:zap_vuln_details' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
@@ -176,85 +116,22 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <button class="btn btn-info btn-mini">No</button>
                                             </form>
                                         </td>
-                                        <td>{{data.vuln_status}}</td>
-
-                                        <td class="confirm-delete">
-                                            <div>
-                                                <form action="{% url 'zapscanner:del_zap_vuln' %}" method="POST"
-                                                      class="form-horizontal">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
-                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                    <button class="btn btn-danger btn-mini"><i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <br>
-                        <div class="d-md-flex align-items-center">
-                            <h5 class="card-title">Closed Vulnerability list</h5>
-                        </div>
-                        <br>
-                        <div class="table-responsive">
-                            <table id="zap_scans_list_close" class="table table-bordered data-table">
-                                <thead>
-                                <tr>
-                                    <th><label class="customcheckbox m-b-20">
-                                        <input type="checkbox" id="mainCheckbox2">
-                                        <span class="checkmark"></span>
-                                    </label></th>
-                                    <th>Vulnerability</th>
-                                    <!--<th>URL</th>-->
-                                    <th>Risk</th>
-                                    <!--<th>False Positive</th>-->
-                                    <th>Status</th>
-
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>{% for data in zap_all_close_vul %}
-                                <tr data-target="#">
-                                    <td>
-                                        <form>
-                                            <label class="customcheckbox">
-                                                <input type="checkbox" class="listCheckbox2"
-                                                       value="{{data.vuln_id}}"
-                                                       name="del_vuln_id"
-                                                       onClick="reload">
-                                                <span class="checkmark"></span>
-                                            </label>
-                                        </form>
-                                    </td>
-                                    <td><a href="{% url 'zapscanner:zap_vuln_check' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
-                                    </td>
-                                    <!--<td>{{data.url}}</td>-->
-                                    <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.risk}}</span></td>
-                                    <td> {{data.vuln_status}}</td>
-
-                                    <td class="confirm-delete">
-                                        <div>
-                                            <form action="{% url 'zapscanner:del_zap_vuln' %}" method="POST"
-                                                  class="form-horizontal">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                      {% endif %}
+                                        <td>{{ data.vuln_status }}</td>
+                                        {% if data.vuln_status == 'Open' %}
+                                        <td>
+                                            <form method="POST" action="{% url 'zapscanner:zap_vuln_details' %}">{% csrf_token %}
+                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="false" value="No">
+                                                <input type="hidden" name="status" value="Closed">
+                                                <input type="hidden" name="vuln_name" value="{{data.name}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-danger btn-mini"><i class="fas fa-trash"></i>
-                                                </button>
+                                                <button class="btn btn-outline-info btn-mini">Close</button>
                                             </form>
-                                        </div>
-                                    </td>
-                                    <td>
+                                        </td>
+                                    {% endif %}
+                                    {% if data.vuln_status == 'Closed' %}
+                                        <td>
                                         <form method="POST" action="{% url 'zapscanner:zap_vuln_details' %}">{% csrf_token %}
                                             <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                             <input type="hidden" name="false" value="No">
@@ -264,10 +141,12 @@ $(document).on('click', '.confirm-delete', function(){
                                             <button class="btn btn-info btn-mini">Open</button>
                                         </form>
                                     </td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

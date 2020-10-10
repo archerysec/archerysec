@@ -86,7 +86,7 @@ def gitlabsca_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 gitlabsca_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                           scan_id=scan_id).update(false_positive=false_positive,
-                                                                                  vuln_status='Close',
+                                                                                  vuln_status='Closed',
                                                                                   false_positive_hash=false_positive_hash
                                                                                   )
 
@@ -100,7 +100,7 @@ def gitlabsca_vuln_data(request):
             total_duplicate = len(all_gitlabsca_data.filter(vuln_duplicate='Yes'))
 
             gitlabsca_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-                total_vuln=total_vul,
+                total_vul=total_vul,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low,
@@ -112,22 +112,12 @@ def gitlabsca_vuln_data(request):
 
     gitlabsca_vuln_data = gitlabsca_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                      message=test_name,
-                                                                     vuln_status='Open',
-                                                                     false_positive='No'
+
                                                                      )
 
-    vuln_data_closed = gitlabsca_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 message=test_name,
-                                                                 vuln_status='Closed',
-                                                                 false_positive='No')
-    false_data = gitlabsca_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                           message=test_name,
-                                                           false_positive='Yes')
 
     return render(request, 'gitlabsca/gitlabscascan_vuln_data.html',
                   {'gitlabsca_vuln_data': gitlabsca_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed,
                    'jira_url': jira_url
                    })
 

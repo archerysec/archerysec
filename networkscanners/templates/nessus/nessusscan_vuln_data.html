@@ -71,8 +71,8 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>JIRA Ticket</th>
                                         <th>False Positive</th>
                                         <th>Status</th>
-                                        <th></th>
-                                        <th></th>
+                                        <th>Delete</th>
+                                        <th>Mark</th>
                                     </tr>
                                     </thead>
                                     <tbody>{% for data in nessus_vuln_data %}
@@ -95,15 +95,30 @@ $(document).on('click', '.confirm-delete', function(){
                                         <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.risk_factor}}</span></td>
                                         <td>{{ data.port }}</td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
+                                        {% if data.false_positive == 'No' %}
                                         <td>
                                             <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="Yes">
-                                                <input type="hidden" name="status" value="Open">
+                                                <input type="hidden" name="status" value="Closed">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-info btn-mini">Yes</button>
+                                                <button class="btn btn-outline-info btn-mini">Yes</button>
                                             </form>
                                         </td>
+                                        {% endif %}
+                                    {% if data.false_positive == 'Yes' %}
+                                        <td>
+                                            <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="false" value="No">
+                                                <input type="hidden" name="status" value="Open">
+                                                <input type="hidden" name="vuln_name" value="{{data.plugin_name}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <button class="btn btn-info btn-mini">No</button>
+                                            </form>
+                                        </td>
+                                    {% endif %}
                                         <td>{{data.vuln_status}}</td>
                                         <td class="confirm-delete">
                                             <div>
@@ -118,6 +133,7 @@ $(document).on('click', '.confirm-delete', function(){
                                                 </form>
                                             </div>
                                         </td>
+                                    {% if data.vuln_status == 'Open' %}
                                         <td>
                                             <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
@@ -125,151 +141,11 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="status" value="Closed">
                                                 <input type="hidden" name="vuln_name" value="{{data.plugin_name}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-info btn-mini">Close</button>
+                                                <button class="btn btn-outline-info btn-mini">Close</button>
                                             </form>
                                         </td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <br>
-                        <div class="d-md-flex align-items-center">
-                            <h1 class="card-title">False Positive Vulnerability List</h1>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="table-responsive">
-                                <table id="nessus_scans_false" class="table table-bordered data-table table-fixed">
-                                    <thead>
-                                    <tr>
-                                        <th><label class="customcheckbox m-b-20">
-                                            <input type="checkbox" id="mainCheckbox">
-                                            <span class="checkmark"></span>
-                                        </label></th>
-                                        <th>Name</th>
-                                        <th>Severity</th>
-                                        <th>Port</th>
-                                        <th>False Positive</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>{% for data in false_data %}
-                                    <tr data-target="#">
-                                        <td>
-                                            <form>
-                                                <label class="customcheckbox">
-                                                    <input type="checkbox" class="listCheckbox"
-                                                           value="{{data.vuln_id}}"
-                                                           name="del_vuln_id"
-                                                           onClick="reload">
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <a href="{% url 'nessus:nessus_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">
-                                                {{data.plugin_name}}</a>
-                                        </td>
-                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.risk_factor}}</span></td>
-                                        <td>{{ data.port }}</td>
-
-                                        <td>
-                                            <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                                <input type="hidden" name="false" value="No">
-                                                <input type="hidden" name="status" value="Open">
-                                                <input type="hidden" name="vuln_name" value="{{data.plugin_name}}">
-                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-info btn-mini">No</button>
-                                            </form>
-                                        </td>
-                                        <td>{{data.vuln_status}}</td>
-                                        <td class="confirm-delete">
-                                            <div>
-                                                <form action="{% url 'nessus:nessus_del_vuln' %}" method="POST"
-                                                      class="form-horizontal">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
-                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                    <button class="btn btn-warning btn-mini"><i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <br>
-                        <div class="d-md-flex align-items-center">
-                            <h1 class="card-title">Closed Vulnerability List</h1>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="table-responsive">
-                                <table id="nessus_scans_close" class="table table-bordered data-table table-fixed">
-                                    <thead>
-                                    <tr>
-                                        <th><label class="customcheckbox m-b-20">
-                                            <input type="checkbox" id="mainCheckbox">
-                                            <span class="checkmark"></span>
-                                        </label></th>
-                                        <th>Name</th>
-                                        <th>Severity</th>
-                                        <th>Port</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>{% for data in vuln_data_closed %}
-                                    <tr data-target="#">
-                                        <td>
-                                            <form>
-                                                <label class="customcheckbox">
-                                                    <input type="checkbox" class="listCheckbox"
-                                                           value="{{data.vuln_id}}"
-                                                           name="del_vuln_id"
-                                                           onClick="reload">
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <a href="{% url 'nessus:nessus_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">
-                                                {{data.plugin_name}}</a>
-                                        </td>
-                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.risk_factor}}</span></td>
-                                         <td>{{ data.port }}</td>
-                                        <td>{{data.vuln_status}}</td>
-                                        <td class="confirm-delete">
-                                            <div>
-                                                <form action="{% url 'nessus:nessus_del_vuln' %}" method="POST"
-                                                      class="form-horizontal">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
-                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                    <button class="btn btn-warning btn-mini"><i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
+                                    {% endif %}
+                                    {% if data.vuln_status == 'Closed' %}
                                         <td>
                                             <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">
                                                 {% csrf_token %}
@@ -281,6 +157,7 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <button class="btn btn-info btn-mini">Open</button>
                                             </form>
                                         </td>
+                                    {% endif %}
                                     </tr>
                                     {% endfor %}
                                     </tbody>

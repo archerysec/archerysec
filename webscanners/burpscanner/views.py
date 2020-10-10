@@ -262,7 +262,7 @@ def burp_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 burp_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                    scan_id=scan_id).update(false_positive=false_positive,
-                                                                           vuln_status='Close',
+                                                                           vuln_status='Closed',
                                                                            false_positive_hash=false_positive_hash
                                                                            )
         burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
@@ -288,25 +288,10 @@ def burp_vuln_out(request):
     vuln_data = burp_scan_result_db.objects.filter(username=username,
                                                    scan_id=scan_id,
                                                    name=name,
-                                                   false_positive='No',
-                                                   vuln_status='Open'
-                                                   )
-    vuln_close_data = burp_scan_result_db.objects.filter(username=username,
-                                                         scan_id=scan_id,
-                                                         name=name,
-                                                         false_positive='No',
-                                                         vuln_status='Closed'
-                                                         )
-
-    false_data = burp_scan_result_db.objects.filter(username=username,
-                                                    scan_id=scan_id,
-                                                    name=name,
-                                                    false_positive='Yes')
+                                                   ).exclude(vuln_status='Duplicate')
 
     return render(request, 'burpscanner/burp_vuln_out.html', {'vuln_data': vuln_data,
-                                                              'false_data': false_data,
                                                               'jira_url': jira_url,
-                                                              'vuln_close_data': vuln_close_data
                                                               })
 
 
