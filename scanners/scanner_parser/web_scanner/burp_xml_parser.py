@@ -21,6 +21,7 @@ from django.shortcuts import HttpResponse
 # from django.core.mail import send_mail
 from webscanners import email_notification
 import hashlib
+from datetime import datetime
 
 from webscanners.zapscanner.views import email_sch_notify
 
@@ -55,6 +56,7 @@ issue_vulnerability_classifications = ''
 
 
 def burp_scan_data(root, project_id, scan_id, username):
+    date_time = datetime.now()
     """
     The function parse the burp result as xml data
     and stored into archery database.
@@ -218,6 +220,7 @@ def burp_scan_data(root, project_id, scan_id, username):
                 data_dump = burp_scan_result_db(
                     scan_id=scan_id,
                     project_id=project_id,
+                    date_time=date_time,
                     vuln_id=vuln_id,
                     name=name,
                     path=path,
@@ -251,6 +254,7 @@ def burp_scan_data(root, project_id, scan_id, username):
                 data_dump = burp_scan_result_db(
                     scan_id=scan_id,
                     project_id=project_id,
+                    date_time=date_time,
                     vuln_id=vuln_id,
                     name=name,
                     path=path,
@@ -290,6 +294,7 @@ def burp_scan_data(root, project_id, scan_id, username):
     burp_scan_db.objects.filter(username=username,
                                 scan_id=scan_id).update(
         url=host,
+        date_time=date_time,
         total_vul=total_vul,
         high_vul=total_high,
         medium_vul=total_medium,

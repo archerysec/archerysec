@@ -18,6 +18,7 @@ from staticscanners.models import checkmarx_scan_db, checkmarx_scan_results_db
 import uuid
 import hashlib
 from datetime import datetime
+from projects.models import month_db
 import json
 
 from webscanners.zapscanner.views import email_sch_notify
@@ -40,8 +41,7 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
-    print(data)
-
+    date_time = datetime.now()
     global vul_col, project, result, result_data, file_name, inst, code_data
     project = data.attrib['ProjectName']
     scan_details = data.attrib
@@ -95,6 +95,7 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
             save_all = checkmarx_scan_results_db(
                 vuln_id=vul_id,
                 scan_id=scan_id,
+                date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
                 vuln_status='Open',
@@ -119,6 +120,7 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
             save_all = checkmarx_scan_results_db(
                 vuln_id=vul_id,
                 scan_id=scan_id,
+                date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
                 vuln_status='Duplicate',
@@ -150,10 +152,11 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
 
     checkmarx_scan_db.objects.filter(username=username, scan_id=scan_id).update(
         project_name=project,
-        total_vuln=total_vul,
-        SEVERITY_HIGH=total_high,
-        SEVERITY_MEDIUM=total_medium,
-        SEVERITY_LOW=total_low,
+        date_time=date_time,
+        total_vul=total_vul,
+        high_vul=total_high,
+        medium_vul=total_medium,
+        low_vul=total_low,
         total_dup=total_duplicate
     )
     subject = 'Archery Tool Scan Status - checkmarx Report Uploaded'

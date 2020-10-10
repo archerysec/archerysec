@@ -17,6 +17,7 @@
 from webscanners.models import netsparker_scan_result_db, netsparker_scan_db
 import uuid
 import hashlib
+from datetime import datetime
 
 from webscanners.zapscanner.views import email_sch_notify
 
@@ -49,7 +50,7 @@ def xml_parser(root,
         vuln_rawresponse, vuln_extrainformation, vuln_classification, vuln_id, \
         vul_col, description, impact, actionsToTake, remedy, requiredSkillsForExploitation, \
         externalReferences, remedyReferences, proofOfConcept, proofs
-
+    date_time = datetime.now()
     for data in root:
         if data.tag == "target":
             for url in data:
@@ -153,6 +154,7 @@ def xml_parser(root,
 
             dump_data = netsparker_scan_result_db(scan_id=scan_id,
                                                   project_id=project_id,
+                                                  date_time=date_time,
                                                   vuln_id=vuln_id,
                                                   vuln_url=vuln_url,
                                                   type=vuln_type,
@@ -186,6 +188,7 @@ def xml_parser(root,
             dump_data = netsparker_scan_result_db(scan_id=scan_id,
                                                   project_id=project_id,
                                                   vuln_id=vuln_id,
+                                                  date_time=date_time,
                                                   vuln_url=vuln_url,
                                                   type=vuln_type,
                                                   severity=vuln_severity,
@@ -225,6 +228,7 @@ def xml_parser(root,
     total_vul = total_critical + total_high + total_medium + total_low + total_info
 
     netsparker_scan_db.objects.filter(username=username, scan_id=scan_id).update(total_vul=total_vul,
+                                                                                 date_time=date_time,
                                                                                  high_vul=total_high,
                                                                                  medium_vul=total_medium,
                                                                                  low_vul=total_low,
@@ -237,6 +241,7 @@ def xml_parser(root,
     if total_vul == total_duplicate:
         netsparker_scan_db.objects.filter(username=username, scan_id=scan_id).update(total_vul=total_vul,
                                                                                      high_vul=total_high,
+                                                                                     date_time=date_time,
                                                                                      medium_vul=total_medium,
                                                                                      low_vul=total_low,
                                                                                      critical_vul=total_critical,

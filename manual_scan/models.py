@@ -51,6 +51,7 @@ class manual_scan_results_db(models.Model):
     project_id = models.UUIDField(null=True, blank=True)
     Poc_Img = models.ImageField(null=True, blank=True)
     poc_description = models.TextField(null=True, blank=True)
+    pentest_type = models.TextField(blank=True, null=True)
     username = models.CharField(max_length=256, null=True)
 
 
@@ -61,4 +62,5 @@ class VulnerabilityData(models.Model):
     vuln_severity = models.TextField(blank=True)
     vuln_remediation = models.TextField(blank=True)
     vuln_references = models.TextField(blank=True)
+    date_time = models.DateTimeField(blank=True, null=True)
     username = models.CharField(max_length=256, null=True)

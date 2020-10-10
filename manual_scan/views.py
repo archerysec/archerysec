@@ -133,6 +133,7 @@ def add_vuln(request):
         reference = request.POST.get('vuln_reference')
         scan_id = request.POST.get('scan_id')
         project_id = request.POST.get('project_id')
+        pentest_type = request.POST.get('pentest_type')
         poc = request.FILES['poc']
         poc_description = request.POST.get('poc_description')
         date_time = datetime.now()
@@ -161,6 +162,7 @@ def add_vuln(request):
             solution=solution,
             reference=reference,
             scan_id=scan_id,
+            pentest_type=pentest_type,
             vuln_status='Open',
             project_id=project_id,
             Poc_Img=uploaded_poc_url,

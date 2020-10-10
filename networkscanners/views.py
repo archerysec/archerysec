@@ -27,7 +27,7 @@ from django.shortcuts import render,  HttpResponse
 from django.utils import timezone
 from archerysettings import save_settings
 from archerysettings import load_settings
-from networkscanners.models import scan_save_db, \
+from networkscanners.models import openvas_scan_db, \
     ov_scan_result_db, \
     task_schedule_db
 from projects.models import project_db
@@ -93,7 +93,7 @@ def index(request):
     :param request:
     :return:
     """
-    all_ip = scan_save_db.objects.filter(username=username)
+    all_ip = openvas_scan_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
 
@@ -108,7 +108,7 @@ def scan_status(request):
     :return:
     """
     if request.method == 'POST':
-        all_ip = scan_save_db.objects.filter(username=username)
+        all_ip = openvas_scan_db.objects.filter(username=username)
         scan_ip = request.POST.get('scan_id', )
 
     return render(request, 'openvas_scan.html')
@@ -165,7 +165,7 @@ def scan_vul_details(request):
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
 
-        scan_save_db.objects.filter(username=username, scan_id=scan_id). \
+        openvas_scan_db.objects.filter(username=username, scan_id=scan_id). \
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,
@@ -240,7 +240,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     email_notify(user=user, subject=subject, message=message)
     scan_id, target_id = openvas.scan_launch(scanner)
     date_time = datetime.now()
-    save_all = scan_save_db(scan_id=str(scan_id),
+    save_all = openvas_scan_db(scan_id=str(scan_id),
                             project_id=str(project_id),
                             scan_ip=scan_ip,
                             target_id=str(target_id),
@@ -255,7 +255,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
 
     notify.send(user, recipient=user, verb='OpenVAS Scan Completed')
 
-    all_openvas = scan_save_db.objects.filter(username=username)
+    all_openvas = openvas_scan_db.objects.filter(username=username)
     all_vuln = ''
     total_high = ''
     total_medium = ''
@@ -283,11 +283,11 @@ def launch_scan(request):
     :param request:
     :return:
     """
-    all_ip = scan_save_db.objects.filter(username=username)
+    all_ip = openvas_scan_db.objects.filter(username=username)
     user = request.user
 
     if request.method == 'POST':
-        all_ip = scan_save_db.objects.filter(username=username)
+        all_ip = openvas_scan_db.objects.filter(username=username)
         scan_ip = request.POST.get('ip')
         project_id = request.POST.get('project_id')
         sel_profile = request.POST.get('scan_profile')
@@ -323,7 +323,7 @@ def scan_del(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
-            scans = scan_save_db.objects.filter(username=username, scan_id=scan_id).order_by('scan_id')
+            scans = openvas_scan_db.objects.filter(username=username, scan_id=scan_id).order_by('scan_id')
             scans.delete()
             vuln_data = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id)
             vuln_data.delete()
@@ -338,7 +338,7 @@ def ip_scan(request):
     :param request:
     :return:
     """
-    all_scans = scan_save_db.objects.filter(username=username)
+    all_scans = openvas_scan_db.objects.filter(username=username)
     all_proj = project_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
@@ -438,7 +438,7 @@ def del_vuln(request):
         total_medium = len(ov_all_vul.filter(threat="Medium"))
         total_low = len(ov_all_vul.filter(threat="Low"))
 
-        scan_save_db.objects.filter(username=username, scan_id=un_scanid) \
+        openvas_scan_db.objects.filter(username=username, scan_id=un_scanid) \
             .update(total_vul=total_vul,
                     high_total=total_high,
                     medium_total=total_medium,
@@ -494,7 +494,7 @@ def OpenVAS_xml_upload(request):
             root_xml = tree.getroot()
             hosts = OpenVas_Parser.get_hosts(root_xml)
             for host in hosts:
-                scan_dump = scan_save_db(scan_ip=host,
+                scan_dump = openvas_scan_db(scan_ip=host,
                                          scan_id=host,
                                          date_time=date_time,
                                          project_id=project_id,

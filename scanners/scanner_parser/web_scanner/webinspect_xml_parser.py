@@ -18,6 +18,7 @@
 from webscanners.models import webinspect_scan_result_db, webinspect_scan_db
 import uuid
 import hashlib
+from datetime import datetime
 
 from webscanners.zapscanner.views import email_sch_notify
 
@@ -59,7 +60,7 @@ def xml_parser(root,
         RawResponse, \
         SectionText, \
         vuln_id, severity_name, vul_col
-
+    date_time = datetime.now()
     for data in root:
         for issues in data:
             for issue in issues:
@@ -153,6 +154,7 @@ def xml_parser(root,
                     dump_data = webinspect_scan_result_db(scan_id=scan_id,
                                                           vuln_id=vuln_id,
                                                           vuln_url=url,
+                                                          date_time=date_time,
                                                           host=Host,
                                                           port=Port,
                                                           attackmethod=AttackMethod,
@@ -182,6 +184,7 @@ def xml_parser(root,
                 dump_data = webinspect_scan_result_db(scan_id=scan_id,
                                                       vuln_id=vuln_id,
                                                       vuln_url=url,
+                                                      date_time=date_time,
                                                       host=Host,
                                                       port=Port,
                                                       attackmethod=AttackMethod,
@@ -221,6 +224,7 @@ def xml_parser(root,
 
         webinspect_scan_db.objects.filter(username=username,
                                           scan_id=scan_id).update(total_vul=total_vul,
+                                                                  date_time=date_time,
                                                                   high_vul=total_high,
                                                                   medium_vul=total_medium,
                                                                   low_vul=total_low,

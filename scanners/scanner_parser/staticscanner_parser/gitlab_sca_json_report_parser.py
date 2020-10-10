@@ -42,6 +42,7 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    date_time = datetime.now()
 
     vul_col = ''
 
@@ -138,6 +139,7 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
 
             save_all = gitlabsca_scan_results_db(
                 vuln_id=vul_id,
+                date_time=date_time,
                 scan_id=scan_id,
                 project_id=project_id,
                 name=name,
@@ -164,6 +166,7 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
             save_all = gitlabsca_scan_results_db(
                 vuln_id=vul_id,
                 scan_id=scan_id,
+                date_time=date_time,
                 project_id=project_id,
                 name=name,
                 message=message,
@@ -196,10 +199,11 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     gitlabsca_scan_db.objects.filter(scan_id=scan_id).update(username=username,
-                                                             total_vuln=total_vul,
-                                                             SEVERITY_HIGH=total_high,
-                                                             SEVERITY_MEDIUM=total_medium,
-                                                             SEVERITY_LOW=total_low,
+                                                             date_time=date_time,
+                                                             total_vul=total_vul,
+                                                             high_vul=total_high,
+                                                             medium_vul=total_medium,
+                                                             low_vul=total_low,
                                                              total_dup=total_duplicate
                                                              )
     subject = 'Archery Tool Scan Status - GitLab Dependency Report Uploaded'

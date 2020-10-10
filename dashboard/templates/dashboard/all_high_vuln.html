@@ -347,7 +347,7 @@
                                        <a href="{% url 'manual_scan:vuln_details' %}?vuln_id={{data.vuln_id}}">{{data.vuln_name}}</a>
                                     </td>
                                     <td>Pentest</td>
-                                    <td></td>
+                                    <td>{{data.vuln_url}}</td>
                                     <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span></td>
                                 </tr>
                                 {% endfor %}

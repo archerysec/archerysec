@@ -19,6 +19,7 @@ import uuid
 import hashlib
 import ast
 from webscanners.zapscanner.views import email_sch_notify
+from datetime import datetime
 
 spider_status = "0"
 scans_status = "0"
@@ -67,6 +68,7 @@ def xml_parser(username, root, project_id, scan_id):
     :param scan_id:
     :return:
     """
+    date_time = datetime.now()
     global vul_col, \
         confidence, \
         wascid, risk, \
@@ -145,6 +147,7 @@ def xml_parser(username, root, project_id, scan_id):
                 dump_data = zap_scan_results_db(vuln_id=vuln_id,
                                                 vuln_color=vul_col,
                                                 scan_id=scan_id,
+                                                date_time=date_time,
                                                 project_id=project_id,
                                                 confidence=confidence,
                                                 wascid=wascid,
@@ -174,6 +177,7 @@ def xml_parser(username, root, project_id, scan_id):
                 dump_data = zap_scan_results_db(vuln_id=vuln_id,
                                                 vuln_color=vul_col,
                                                 scan_id=scan_id,
+                                                date_time=date_time,
                                                 project_id=project_id,
                                                 confidence=confidence,
                                                 wascid=wascid,
@@ -247,6 +251,7 @@ def xml_parser(username, root, project_id, scan_id):
 
     zap_scans_db.objects.filter(username=username, scan_scanid=scan_id) \
         .update(total_vul=total_vul,
+                date_time=date_time,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low,
@@ -257,6 +262,7 @@ def xml_parser(username, root, project_id, scan_id):
     if total_vul == total_duplicate:
         zap_scans_db.objects.filter(username=username, scan_scanid=scan_id) \
             .update(total_vul=total_vul,
+                    date_time=date_time,
                     high_vul=total_high,
                     medium_vul=total_medium,
                     low_vul=total_low,

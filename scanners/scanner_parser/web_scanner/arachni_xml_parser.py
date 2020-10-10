@@ -18,6 +18,7 @@
 from webscanners.models import arachni_scan_db, arachni_scan_result_db
 import uuid
 import hashlib
+from datetime import datetime
 
 from webscanners.zapscanner.views import email_sch_notify
 
@@ -58,6 +59,7 @@ false_positive = None
 
 
 def xml_parser(root, project_id, scan_id, username, target_url):
+    date_time = datetime.now()
     global name, description, remedy_guidance, remedy_code, severity, check, digest, references, \
         vector, remarks, page, signature, \
         proof, trusted, platform_type, platform_name, url, action, \
@@ -252,6 +254,7 @@ def xml_parser(root, project_id, scan_id, username, target_url):
 
                     dump_data = arachni_scan_result_db(vuln_id=vuln_id,
                                                        scan_id=scan_id,
+                                                       date_time=date_time,
                                                        vuln_color=vul_col,
                                                        project_id=project_id,
                                                        name=name, description=description,
@@ -286,6 +289,7 @@ def xml_parser(root, project_id, scan_id, username, target_url):
 
                     dump_data = arachni_scan_result_db(vuln_id=vuln_id,
                                                        scan_id=scan_id,
+                                                       date_time=date_time,
                                                        vuln_color=vul_col,
                                                        project_id=project_id,
                                                        name=name, description=description,
@@ -331,6 +335,7 @@ def xml_parser(root, project_id, scan_id, username, target_url):
     arachni_scan_db.objects.filter(scan_id=scan_id, username=username).update(
         url=target_url,
         total_vul=total_vul,
+        date_time=date_time,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,

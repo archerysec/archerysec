@@ -36,7 +36,7 @@ def clair_report_json(data, project_id, scan_id, username):
     #
     # for dd in d:
     #     print dd['Name']
-
+    date_time = datetime.now()
     global vul_col
     try:
         high = data['Vulnerabilities']['High']
@@ -108,6 +108,7 @@ def clair_report_json(data, project_id, scan_id, username):
                 save_all = clair_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     Name=Name,
                     NamespaceName=NamespaceName,
@@ -132,6 +133,7 @@ def clair_report_json(data, project_id, scan_id, username):
                 save_all = clair_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     Name=Name,
                     NamespaceName=NamespaceName,
@@ -226,6 +228,7 @@ def clair_report_json(data, project_id, scan_id, username):
                 save_all = clair_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     Name=Name,
                     NamespaceName=NamespaceName,
@@ -250,6 +253,7 @@ def clair_report_json(data, project_id, scan_id, username):
                 save_all = clair_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     Name=Name,
                     NamespaceName=NamespaceName,
@@ -342,6 +346,7 @@ def clair_report_json(data, project_id, scan_id, username):
                 save_all = clair_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     Name=Name,
                     NamespaceName=NamespaceName,
@@ -366,6 +371,7 @@ def clair_report_json(data, project_id, scan_id, username):
                 save_all = clair_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     Name=Name,
                     NamespaceName=NamespaceName,
@@ -465,6 +471,7 @@ def clair_report_json(data, project_id, scan_id, username):
                 save_all = clair_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     Name=Name,
                     NamespaceName=NamespaceName,
@@ -489,6 +496,7 @@ def clair_report_json(data, project_id, scan_id, username):
                 save_all = clair_scan_results_db(
                     vuln_id=vul_id,
                     scan_id=scan_id,
+                    date_time=date_time,
                     project_id=project_id,
                     Name=Name,
                     NamespaceName=NamespaceName,
@@ -520,10 +528,11 @@ def clair_report_json(data, project_id, scan_id, username):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
     clair_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-        total_vuln=total_vul,
-        SEVERITY_HIGH=total_high,
-        SEVERITY_MEDIUM=total_medium,
-        SEVERITY_LOW=total_low,
+        total_vul=total_vul,
+        high_vul=total_high,
+        date_time=date_time,
+        medium_vul=total_medium,
+        low_vul=total_low,
         total_dup=total_duplicate
     )
 

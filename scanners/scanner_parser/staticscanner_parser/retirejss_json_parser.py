@@ -45,6 +45,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    date_time = datetime.now()
     global component, files, severity
     for f in data:
         files = f["file"]
@@ -120,6 +121,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
         save_all = retirejs_scan_results_db(
             scan_id=scan_id,
             # rescan_id = rescan_id,
+            date_time=date_time,
             scan_date=date_time,
             project_id=project_id,
             vuln_id=vul_id,

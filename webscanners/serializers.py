@@ -209,7 +209,7 @@ class DependencycheckStatusSerializer(serializers.Serializer):
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
     SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
     SEVERITY_LOW = serializers.IntegerField(read_only=True)
 
 
@@ -224,7 +224,7 @@ class findbugsStatusSerializer(serializers.Serializer):
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
     SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
     SEVERITY_LOW = serializers.IntegerField(read_only=True)
 
 

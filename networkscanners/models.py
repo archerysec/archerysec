@@ -63,16 +63,16 @@ class ov_scan_result_db(models.Model):
     username = models.CharField(max_length=256, null=True)
 
 
-class scan_save_db(models.Model):
+class openvas_scan_db(models.Model):
     scan_id = models.TextField(blank=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_ip = models.TextField(blank=True)
     target_id = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
     total_vul = models.IntegerField(blank=True, null=True)
-    high_total = models.IntegerField(blank=True, null=True)
-    medium_total = models.IntegerField(blank=True, null=True)
-    low_total = models.IntegerField(blank=True, null=True)
+    high_vul = models.IntegerField(blank=True, null=True)
+    medium_vul = models.IntegerField(blank=True, null=True)
+    low_vul = models.IntegerField(blank=True, null=True)
     log_total = models.IntegerField(blank=True, null=True)
     project_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
@@ -94,6 +94,7 @@ class nessus_report_db(models.Model):
     project_id = models.UUIDField(null=True)
     scan_id = models.TextField(blank=True)
     vul_id = models.TextField(blank=True)
+    date_time = models.DateTimeField(blank=True, null=True)
     agent = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     fname = models.TextField(blank=True, null=True)
@@ -166,6 +167,7 @@ class nessus_scan_results_db(models.Model):
     scan_date = models.TextField(blank=True)
     project_id = models.UUIDField(blank=True)
     vuln_id = models.UUIDField(blank=True)
+    date_time = models.DateTimeField(blank=True, null=True)
     false_positive = models.TextField(null=True, blank=True)
     vul_col = models.TextField(blank=True)
     dup_hash = models.TextField(null=True, blank=True)
