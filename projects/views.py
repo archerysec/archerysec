@@ -34,7 +34,7 @@ from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_
     gitlabsca_scan_db, gitlabsast_scan_db, semgrepscan_scan_results_db, semgrepscan_scan_db, \
     gitlabcontainerscan_scan_results_db, gitlabcontainerscan_scan_db
 from compliance.models import inspec_scan_results_db, inspec_scan_db, dockle_scan_db, dockle_scan_results_db
-from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_targets_db, nessus_scan_results_db
+from networkscanners.models import openvas_scan_db, ov_scan_result_db, nessus_scan_db, nessus_targets_db, nessus_scan_results_db
 import datetime
 from manual_scan.models import manual_scan_results_db, manual_scans_db
 from projects.models import month_db
