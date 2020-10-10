@@ -61,13 +61,43 @@ def create(request):
         project_disc = request.POST.get("project_disc", )
         date_time = datetime.datetime.now()
 
-        save_project = project_db(username=username, project_name=project_name, project_id=project_id,
-                                  project_start=project_date, project_end=project_end,
-                                  project_owner=project_owner, project_disc=project_disc, date_time=date_time)
+        save_project = project_db(username=username,
+                                  project_name=project_name,
+                                  project_id=project_id,
+                                  project_start=project_date,
+                                  project_end=project_end,
+                                  project_owner=project_owner,
+                                  project_disc=project_disc,
+                                  date_time=date_time,
+                                  total_vuln=0,
+                                  total_high=0,
+                                  total_medium=0,
+                                  total_low=0,
+                                  total_open=0,
+                                  total_false=0,
+                                  total_close=0,
+                                  total_net=0,
+                                  total_web=0,
+                                  total_static=0,
+                                  high_net=0,
+                                  high_web=0,
+                                  high_static=0,
+                                  medium_net=0,
+                                  medium_web=0,
+                                  medium_static=0,
+                                  low_net=0,
+                                  low_web=0,
+                                  low_static=0)
         save_project.save()
 
         # messages.success(request, "Project Created")
-        save_months_data = month_db(username=username, project_id=project_id, month=datetime.datetime.now().month)
+        save_months_data = month_db(username=username,
+                                    project_id=project_id,
+                                    month=datetime.datetime.now().month,
+                                    high=0,
+                                    medium=0,
+                                    low=0
+                                    )
         save_months_data.save()
 
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
