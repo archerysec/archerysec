@@ -60,6 +60,11 @@ class project_scan_db(models.Model):
 
 
 class Month(Func):
+    function = 'EXTRACT'
+    template = '%(function)s(MONTH from %(expressions)s)'
+    output_field = models.IntegerField()
+
+class MonthSqlite(Func):
     function = 'STRFTIME'
     template = '%(function)s("%%m", %(expressions)s)'
     output_field = models.CharField()

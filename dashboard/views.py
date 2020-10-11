@@ -76,7 +76,7 @@ from django.contrib.auth import user_logged_in
 from django.contrib.auth.models import User
 from django.urls import reverse
 from dashboard.scans_data import scans_query
-from projects.models import Month
+from projects.models import Month, MonthSqlite
 from projects.models import month_db
 
 # Create your views here.
@@ -106,15 +106,22 @@ def dashboard(request):
         proj_id = project.project_id
         all_date_data = (project_db.objects
                          .annotate(month=Month('date_time'))
-                         .values('month').annotate(total_high=Sum('total_high')).annotate(
-            total_medium=Sum('total_medium')).annotate(total_low=Sum('total_low')).order_by("month")
+                         .values('month').annotate(total_high=Sum('total_high')).annotate(total_medium=Sum('total_medium')).annotate(total_low=Sum('total_low')).order_by("month")
                          )
+
         try:
             high = all_date_data.first()['total_high']
             medium = all_date_data.first()['total_medium']
             low = all_date_data.first()['total_low']
-        except Exception as e:
-            print(e)
+        except:
+            all_date_data = (project_db.objects
+                             .annotate(month=MonthSqlite('date_time'))
+                             .values('month').annotate(total_high=Sum('total_high')).annotate(
+                total_medium=Sum('total_medium')).annotate(total_low=Sum('total_low')).order_by("month")
+                             )
+            high = all_date_data.first()['total_high']
+            medium = all_date_data.first()['total_medium']
+            low = all_date_data.first()['total_low']
 
         all_month_data_display = month_db.objects.all()
 
