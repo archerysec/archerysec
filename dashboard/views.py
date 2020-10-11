@@ -92,9 +92,9 @@ def dashboard(request):
     :return:
     """
     current_month = ''
-    high = ''
-    medium = ''
-    low = ''
+    high = 0
+    medium = 0
+    low = 0
 
     scanners = 'vscanners'
     username = request.user.username

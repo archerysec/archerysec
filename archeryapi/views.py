@@ -233,6 +233,8 @@ class Project(generics.CreateAPIView):
             project_owner = request.data.get("project_owner", )
             project_disc = request.data.get("project_disc", )
 
+            date_time = datetime.datetime.now()
+
             all_project = project_db.objects.filter(project_name=project_name, username=username)
 
             for project in all_project:
@@ -243,14 +245,33 @@ class Project(generics.CreateAPIView):
                 return Response({"message": "Project already existed", "project_id": _project_id})
 
             else:
-                save_project = project_db(project_name=project_name,
+                save_project = project_db(username=username,
+                                          project_name=project_name,
                                           project_id=project_id,
                                           project_start=project_start,
                                           project_end=project_end,
                                           project_owner=project_owner,
                                           project_disc=project_disc,
-                                          username=username
-                                          )
+                                          date_time=date_time,
+                                          total_vuln=0,
+                                          total_high=0,
+                                          total_medium=0,
+                                          total_low=0,
+                                          total_open=0,
+                                          total_false=0,
+                                          total_close=0,
+                                          total_net=0,
+                                          total_web=0,
+                                          total_static=0,
+                                          high_net=0,
+                                          high_web=0,
+                                          high_static=0,
+                                          medium_net=0,
+                                          medium_web=0,
+                                          medium_static=0,
+                                          low_net=0,
+                                          low_web=0,
+                                          low_static=0)
                 save_project.save()
 
                 if not project_name:
@@ -1119,11 +1140,11 @@ class UpladScanResult(APIView):
             hosts = OpenVas_Parser.get_hosts(root_xml_en)
             for host in hosts:
                 scan_dump = openvas_scan_db(scan_ip=host,
-                                         scan_id=host,
-                                         date_time=date_time,
-                                         project_id=project_id,
-                                         scan_status=scan_status,
-                                         username=username)
+                                            scan_id=host,
+                                            date_time=date_time,
+                                            project_id=project_id,
+                                            scan_status=scan_status,
+                                            username=username)
                 scan_dump.save()
             OpenVas_Parser.updated_xml_parser(project_id=project_id,
                                               scan_id=scan_id,
