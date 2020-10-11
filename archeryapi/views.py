@@ -77,6 +77,7 @@ from scanners.scanner_parser.compliance_parser import inspec_json_parser
 from scanners.scanner_parser.compliance_parser import dockle_json_parser
 from compliance.models import inspec_scan_db, dockle_scan_db
 from scanners.scanner_parser.network_scanner import Nessus_Parser, OpenVas_Parser
+from projects.models import month_db
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -273,6 +274,15 @@ class Project(generics.CreateAPIView):
                                           low_web=0,
                                           low_static=0)
                 save_project.save()
+
+                save_months_data = month_db(username=username,
+                                            project_id=project_id,
+                                            month=datetime.datetime.now().month,
+                                            high=0,
+                                            medium=0,
+                                            low=0
+                                            )
+                save_months_data.save()
 
                 if not project_name:
                     return Response({"error": "No name passed"})
