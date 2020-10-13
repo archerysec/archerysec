@@ -18,3 +18,5 @@ sonar-project.properties
 media
 node_modules
 package-lock.json
+htmlcov
+.coverage
