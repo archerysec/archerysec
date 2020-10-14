@@ -46,6 +46,6 @@ jobs:
       - name: scanner download
         uses: microsoft/ApplicationInspector-Action@v1
       - uses: actions/upload-artifact@v2
-          with:
-            name: AppInspectorResults
-            path: AppInspectorResults.json
+        with:
+          name: AppInspectorResults
+          path: AppInspectorResults.json
