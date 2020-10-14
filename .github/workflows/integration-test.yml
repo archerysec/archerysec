@@ -29,6 +29,9 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+      - name: Integration test
+        run: |
+          bash integration-test.sh || exit 1
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1
         with:
@@ -36,16 +39,3 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: archerysec/archerysec
           tag_with_ref: true
-
-  SAST:
-    name: Source code scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-      - name: scanner download
-        uses: microsoft/ApplicationInspector-Action@v1
-      - uses: actions/upload-artifact@v2
-        with:
-          name: AppInspectorResults
-          path: AppInspectorResults.json
