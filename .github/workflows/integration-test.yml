@@ -39,3 +39,23 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: archerysec/archerysec
           tag_with_ref: true
+
+  SAST:
+    name: GitLab SAST Scanners run
+    runs-on: ubuntu-latest
+    setps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: run dependency check scan
+        run: |
+         docker run \
+          --env SECURE_LOG_LEVEL=${SECURE_LOG_LEVEL} \
+          -v "$PWD:/code" \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          registry.gitlab.com/gitlab-org/security-products/dependency-scanning:latest /code
+      - name: run source code review
+        run: |
+         docker run \
+          --volume "$PWD":/code \
+          --volume /var/run/docker.sock:/var/run/docker.sock \
+          registry.gitlab.com/gitlab-org/security-products/sast:latest /app/bin/run /code
