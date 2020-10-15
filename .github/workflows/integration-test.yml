@@ -43,7 +43,7 @@ jobs:
   SAST:
     name: GitLab SAST Scanners run
     runs-on: ubuntu-latest
-    setps:
+    steps:
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: run dependency check scan
