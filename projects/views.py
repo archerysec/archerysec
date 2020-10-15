@@ -91,14 +91,17 @@ def create(request):
         save_project.save()
 
         # messages.success(request, "Project Created")
-        save_months_data = month_db(username=username,
-                                    project_id=project_id,
-                                    month=datetime.datetime.now().month,
-                                    high=0,
-                                    medium=0,
-                                    low=0
-                                    )
-        save_months_data.save()
+        all_month_data_display = month_db.objects.filter(username=username)
+
+        if len(all_month_data_display) == 0:
+            save_months_data = month_db(username=username,
+                                        project_id=project_id,
+                                        month=datetime.datetime.now().month,
+                                        high=0,
+                                        medium=0,
+                                        low=0
+                                        )
+            save_months_data.save()
 
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
 

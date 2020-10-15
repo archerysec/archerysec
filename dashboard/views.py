@@ -123,7 +123,7 @@ def dashboard(request):
             medium = all_date_data.first()['total_medium']
             low = all_date_data.first()['total_low']
 
-        all_month_data_display = month_db.objects.all()
+        all_month_data_display = month_db.objects.filter(username=username)
 
         if len(all_month_data_display) == 0:
             add_data = month_db(username=username, project_id=proj_id, month=current_month, high=high, medium=medium,
@@ -207,7 +207,7 @@ def dashboard(request):
     user = user_logged_in
     all_notify = Notification.objects.unread()
 
-    all_month_data_display = month_db.objects.filter()
+    all_month_data_display = month_db.objects.filter(username=username).values('month', 'high', 'medium', 'low').distinct()
 
     return render(request,
                   'dashboard/index.html',
