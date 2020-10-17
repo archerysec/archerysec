@@ -81,18 +81,18 @@ jobs:
           --volume /var/run/docker.sock:/var/run/docker.sock \
           registry.gitlab.com/gitlab-org/security-products/sast:latest /app/bin/run /code
 
-          apt-get install jq
-          pip install archerysec-cli
+              apt-get install jq
+              pip install archerysec-cli
 
-        DATE=`date +%Y-%m-%d`
-         export PROJECT_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} --createproject \
-         --project_name=devsecops --project_disc="devsecops project" --project_start=${DATE} \
-         --project_end=${DATE} --project_owner=dev | tail -n1 | jq '.project_id' | sed -e 's/^"//' -e 's/"$//'`
+            DATE=`date +%Y-%m-%d`
+             export PROJECT_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} --createproject \
+             --project_name=devsecops --project_disc="devsecops project" --project_start=${DATE} \
+             --project_end=${DATE} --project_owner=dev | tail -n1 | jq '.project_id' | sed -e 's/^"//' -e 's/"$//'`
 
-        export SCAN_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} \
-        --upload --file_type=JSON --file=${WORKSPACE}/gl-sast-report.json --TARGET=${GIT_COMMIT} \
-        --scanner=gitlabsast --project_id=''$PROJECT_ID'' | tail -n1 | jq '.scan_id' | sed -e 's/^"//' -e 's/"$//'`
-        echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
+            export SCAN_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} \
+            --upload --file_type=JSON --file=${WORKSPACE}/gl-sast-report.json --TARGET=${GIT_COMMIT} \
+            --scanner=gitlabsast --project_id=''$PROJECT_ID'' | tail -n1 | jq '.scan_id' | sed -e 's/^"//' -e 's/"$//'`
+            echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
 
         with:
           ARCHERYSEC_HOST: ${{ ARCHERYSEC_HOST }}
