@@ -47,6 +47,10 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: run dependency check scan
+        with:
+          ARCHERYSEC_HOST: ${{ ARCHERYSEC_HOST }}
+          ARCHERYSEC_USER: ${{ ARCHERYSEC_USER }}
+          ARCHERYSEC_PASS: ${{ ARCHERYSEC_PASS }}
         run: |
          docker run \
           --env SECURE_LOG_LEVEL=${SECURE_LOG_LEVEL} \
@@ -68,13 +72,14 @@ jobs:
           export SCAN_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} \
           --upload --file_type=JSON --file=gl-dependency-scanning-report.json --TARGET=${GITHUB_SHA} \
           --scanner=gitlabsca --project_id=''$PROJECT_ID'' | tail -n1 | jq '.scan_id' | sed -e 's/^"//' -e 's/"$//'`
+
           echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
+
+      - name: run source code review
         with:
           ARCHERYSEC_HOST: ${{ ARCHERYSEC_HOST }}
           ARCHERYSEC_USER: ${{ ARCHERYSEC_USER }}
           ARCHERYSEC_PASS: ${{ ARCHERYSEC_PASS }}
-
-      - name: run source code review
         run: |
          docker run \
           --volume "$PWD":/code \
@@ -93,8 +98,3 @@ jobs:
             --upload --file_type=JSON --file=${WORKSPACE}/gl-sast-report.json --TARGET=${GIT_COMMIT} \
             --scanner=gitlabsast --project_id=''$PROJECT_ID'' | tail -n1 | jq '.scan_id' | sed -e 's/^"//' -e 's/"$//'`
             echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
-
-        with:
-          ARCHERYSEC_HOST: ${{ ARCHERYSEC_HOST }}
-          ARCHERYSEC_USER: ${{ ARCHERYSEC_USER }}
-          ARCHERYSEC_PASS: ${{ ARCHERYSEC_PASS }}
