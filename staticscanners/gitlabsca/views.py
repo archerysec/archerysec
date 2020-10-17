@@ -111,9 +111,7 @@ def gitlabsca_vuln_data(request):
             reverse('gitlabsca:gitlabsca_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     gitlabsca_vuln_data = gitlabsca_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                     message=test_name,
-
-                                                                     )
+                                                                     message=test_name).exclude(vuln_status='Duplicate')
 
 
     return render(request, 'gitlabsca/gitlabscascan_vuln_data.html',

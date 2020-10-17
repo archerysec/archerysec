@@ -105,9 +105,7 @@ def dependencycheck_vuln_data(request):
             reverse('dependencycheck:dependencycheck_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     dependencycheck_vuln_data = dependencycheck_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                               name=test_name
-
-                                                                               )
+                                                                               name=test_name).exclude(vuln_status='Duplicate')
 
     return render(request, 'dependencycheck/dependencycheckscan_vuln_data.html',
                   {'dependencycheck_vuln_data': dependencycheck_vuln_data,
