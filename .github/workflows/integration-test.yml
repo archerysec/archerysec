@@ -72,9 +72,9 @@ jobs:
           echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
 
         env:
-          ARCHERYSEC_HOST: ${{ ARCHERYSEC_HOST }}
-          ARCHERYSEC_USER: ${{ ARCHERYSEC_USER }}
-          ARCHERYSEC_PASS: ${{ ARCHERYSEC_PASS }}
+          ARCHERYSEC_HOST: ${{ secrets.ARCHERYSEC_HOST }}
+          ARCHERYSEC_USER: ${{ secrets.ARCHERYSEC_USER }}
+          ARCHERYSEC_PASS: ${{ secrets.ARCHERYSEC_PASS }}
 
       - name: run source code review
         run: |
@@ -97,6 +97,6 @@ jobs:
             echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
 
         env:
-          ARCHERYSEC_HOST: ${{ ARCHERYSEC_HOST }}
-          ARCHERYSEC_USER: ${{ ARCHERYSEC_USER }}
-          ARCHERYSEC_PASS: ${{ ARCHERYSEC_PASS }}
+          ARCHERYSEC_HOST: ${{ secrets.ARCHERYSEC_HOST }}
+          ARCHERYSEC_USER: ${{ secrets.ARCHERYSEC_USER }}
+          ARCHERYSEC_PASS: ${{ secrets.ARCHERYSEC_PASS }}
