@@ -23,22 +23,22 @@ jobs:
       run: |
         ./setup.sh
 
-  push_to_registry:
-    name: Push Docker image to Docker Hub
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-      - name: Integration test
-        run: |
-         bash integration-test.sh || exit 1
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: archerysec/archerysec
-          tag_with_ref: true
+#  push_to_registry:
+#    name: Push Docker image to Docker Hub
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Check out the repo
+#        uses: actions/checkout@v2
+#      - name: Integration test
+#        run: |
+#         bash integration-test.sh || exit 1
+#      - name: Push to Docker Hub
+#        uses: docker/build-push-action@v1
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#          repository: archerysec/archerysec
+#          tag_with_ref: true
 
   SAST:
     name: GitLab SAST Scanners run
@@ -92,7 +92,7 @@ jobs:
              --project_end=${DATE} --project_owner=dev | tail -n1 | jq '.project_id' | sed -e 's/^"//' -e 's/"$//'`
 
             export SCAN_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} \
-            --upload --file_type=JSON --file=gl-sast-report.json --TARGET=${GIT_COMMIT} \
+            --upload --file_type=JSON --file=gl-sast-report.json --TARGET=${GITHUB_SHA} \
             --scanner=gitlabsast --project_id=''$PROJECT_ID'' | tail -n1 | jq '.scan_id' | sed -e 's/^"//' -e 's/"$//'`
             echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
 
