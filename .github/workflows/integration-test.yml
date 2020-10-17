@@ -55,8 +55,8 @@ jobs:
           registry.gitlab.com/gitlab-org/security-products/dependency-scanning:latest /code
           ls
 
-          apt-get install jq
-          pip install archerysec-cli
+          sudo apt-get install jq
+          sudo pip install archerysec-cli
 
           DATE=`date +%Y-%m-%d`
           export PROJECT_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} --createproject \
@@ -83,8 +83,8 @@ jobs:
           --volume /var/run/docker.sock:/var/run/docker.sock \
           registry.gitlab.com/gitlab-org/security-products/sast:latest /app/bin/run /code
 
-              apt-get install jq
-              pip install archerysec-cli
+              sudo apt-get install jq
+              sudo pip install archerysec-cli
 
             DATE=`date +%Y-%m-%d`
              export PROJECT_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} --createproject \
