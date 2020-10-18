@@ -24,7 +24,7 @@ jobs:
         ./setup.sh
 
   SAST:
-    name: GitLab SAST Scanners run
+    name: Scurity Scanner
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -99,6 +99,7 @@ jobs:
           --auth-username-field 'username' \
           --auth-password-field 'password' \
           --auth-exclude-urls ${ARCHERYSEC_EXCLUDE_HOST} \
+          --full-scan True \
            -x report.xml
 
           sudo apt-get install jq
