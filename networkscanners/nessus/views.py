@@ -159,7 +159,7 @@ def nessus_vuln_data(request):
             reverse('nessus:nessus_vuln_data') + '?scan_id=%s&target=%s' % (scan_id, Target))
 
     nessus_vuln_data = nessus_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                             target=target)
+                                                             target=target).exclude(vuln_status='Duplicate')
 
     return render(request, 'nessus/nessusscan_vuln_data.html',
                   {'nessus_vuln_data': nessus_vuln_data,

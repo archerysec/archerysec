@@ -107,9 +107,7 @@ def findbugs_vuln_data(request):
             reverse('findbugs:findbugs_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     findbugs_vuln_data = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 name=test_name,
-
-                                                                 )
+                                                                 name=test_name).exclude(vuln_status='Duplicate')
 
     return render(request, 'findbugs/findbugsscan_vuln_data.html',
                   {'findbugs_vuln_data': findbugs_vuln_data,

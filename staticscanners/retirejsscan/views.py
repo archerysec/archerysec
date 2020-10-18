@@ -116,8 +116,7 @@ def retirejsscan_vuln_data(request):
             reverse('/retirejsscanner/retirejsscan_vuln_data/') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     retirejs_vuln_data = retirejs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 test_name=test_name,
-                                                                )
+                                                                 test_name=test_name).exclude(vuln_status='Duplicate')
 
     return render(request, 'retirejsscanner/retirejs_vuln_data.html',
                   {'retirejs_vuln_data': retirejs_vuln_data,

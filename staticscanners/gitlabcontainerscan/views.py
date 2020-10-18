@@ -110,9 +110,7 @@ def gitlabcontainerscan_vuln_data(request):
             reverse('gitlabcontainerscan:gitlabcontainerscan_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     gitlabcontainerscan_vuln_data = gitlabcontainerscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                     message=test_name,
-
-                                                                     )
+                                                                     message=test_name).exclude(vuln_status='Duplicate')
 
     return render(request, 'gitlabcontainerscan/gitlabcontainerscan_vuln_data.html',
                   {'gitlabcontainerscan_vuln_data': gitlabcontainerscan_vuln_data,

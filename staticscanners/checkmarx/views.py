@@ -115,8 +115,7 @@ def checkmarx_vuln_data(request):
             reverse('checkmarx:checkmarx_vuln_data') + '?scan_id=%s&name=%s' % (scan_id, vuln_name))
 
     checkmarx_vuln_data = checkmarx_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                   name=name,
-                                                                   )
+                                                                   name=name).exclude(vuln_status='Duplicate')
 
 
     return render(request, 'checkmarx/checkmarx_vuln_data.html',
