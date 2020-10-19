@@ -495,6 +495,64 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "{{url}}/api/uploadscan/",
+			"request": {
+				"url": "{{url}}/api/uploadscan/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT {{jwtkey}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "",
+							"value": "",
+							"description": "",
+							"type": "file",
+							"disabled": true
+						},
+						{
+							"key": "project_id",
+							"value": "ac44458c-9a7d-4028-9d93-c88e6020aeb7",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "scanner",
+							"value": "zap_scan",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"value": "",
+							"description": "",
+							"type": "file"
+						},
+						{
+							"key": "scan_url",
+							"value": "http://test.com",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
