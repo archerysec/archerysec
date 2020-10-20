@@ -42,7 +42,7 @@ def list_vuln(request):
     else:
         scan_id = None
 
-    gitlabsast_all_vuln = gitlabsast_scan_results_db.objects.filter(scan_id=scan_id, username=username).exclude(vuln_status='Duplicate')
+    gitlabsast_all_vuln = gitlabsast_scan_results_db.objects.filter(scan_id=scan_id, username=username).exclude(vuln_status='Duplicate').values('message', 'name', 'vul_col', 'scan_id', 'Severity').distinct()
 
     return render(request, 'gitlabsast/gitlabsastscan_list_vuln.html',
                   {'gitlabsast_all_vuln': gitlabsast_all_vuln}
