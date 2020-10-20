@@ -92,7 +92,7 @@ jobs:
           docker run \
            --volume $(pwd)/wrk:/output:rw \
            --volume $(pwd)/wrk:/zap/wrk:rw \
-           registry.gitlab.com/gitlab-org/security-products/dast:1.29.0 /analyze -t ${ARCHERYSEC_HOST} \
+           registry.gitlab.com/gitlab-org/security-products/dast:latest /analyze -t ${ARCHERYSEC_HOST} \
           --auth-url ${ARCHERYSEC_AUTH_HOST} \
           --auth-username ${ARCHERYSEC_USER} \
           --auth-password ${ARCHERYSEC_PASS} \
