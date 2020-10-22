@@ -97,17 +97,17 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         print("started local instence")
         random_port = zap_plugin.zap_local()
 
-    for i in range(0, 100):
-        while True:
-            try:
-                # Connection Test
-                zap_connect = zap_plugin.zap_connect(random_port, username=username)
-                zap_connect.spider.scan(url=target_url)
-            except Exception as e:
-                print("ZAP Connection Not Found, re-try after 5 sec")
-                time.sleep(5)
-                continue
-            break
+        for i in range(0, 100):
+            while True:
+                try:
+                    # Connection Test
+                    zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                    zap_connect.spider.scan(url=target_url)
+                except Exception as e:
+                    print("ZAP Connection Not Found, re-try after 5 sec")
+                    time.sleep(5)
+                    continue
+                break
 
     zap_plugin.zap_spider_thread(count=20, random_port=random_port, username=username)
     zap_plugin.zap_spider_setOptionMaxDepth(count=5, random_port=random_port, username=username)
@@ -154,13 +154,14 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     )
     """ Save Vulnerability in database """
     time.sleep(5)
-    all_vuln = zap.zap_scan_result(target_url=target_url)
+    all_vuln = zap.zap_scan_result(target_url=target_url, username=username)
     time.sleep(5)
     save_all_vuln = zap.zap_result_save(
         all_vuln=all_vuln,
         project_id=project_id,
         un_scanid=scan_id,
         username=username,
+        target_url=target_url
     )
     print(save_all_vuln)
     all_zap_scan = zap_scans_db.objects.filter(username=username)
@@ -279,6 +280,7 @@ def zap_scan(request):
     :param request:
     :return:
     """
+    username = request.user.username
     global scans_status
     user = request.user
     if request.POST.get("url", ):
@@ -793,8 +795,13 @@ def zap_vuln_check(request):
 
                     full_data.append(instance)
         except Exception as e:
-            full_data = 'NA'
-            print(e)
+            full_data = []
+            for data in vul_dat:
+                key = 'Evidence'
+                value = data.evidence
+                instance = key + ': ' + value
+                full_data.append(instance)
+            removed_list_data = ','.join(full_data)
 
     return render(request, 'zapscanner/zap_vuln_check.html',
                   {'vul_dat': vul_dat,
