@@ -31,6 +31,7 @@ import defusedxml.ElementTree as ET
 import platform
 import subprocess
 import sys
+from datetime import datetime
 
 # ZAP Database import
 
@@ -69,6 +70,7 @@ evidence = ''
 cweid = ''
 risk = ''
 vul_col = ''
+all_vuln = ''
 
 
 import socket
@@ -220,7 +222,7 @@ class ZAPScanner:
     scanner = []
     all_scan_url = []
     all_url_vuln = []
-    false_positive = None
+    false_positive = ''
 
     """ Connect with ZAP scanner global variable """
 
@@ -416,20 +418,31 @@ class ZAPScanner:
         )
         return scan_status
 
-    def zap_scan_result(self, target_url):
+    def zap_scan_result(self, target_url, username):
         """
         The function return ZAP Scan Results.
         :return:
         """
-        try:
-            all_vuln = self.zap.core.xmlreport()
-            #all_vuln = self.zap.core.alerts(baseurl=target_url)
-        except Exception as e:
-            print("zap scan result error")
+        global all_vuln
+        zap_enabled = False
+
+        all_zap = zap_settings_db.objects.filter(username=username)
+        for zap in all_zap:
+            zap_enabled = zap.enabled
+
+        if zap_enabled is False:
+            try:
+                all_vuln = self.zap.core.xmlreport()
+                print(target_url)
+
+            except Exception as e:
+                print("zap scan result error")
+        else:
+            all_vuln = self.zap.core.alerts(baseurl=target_url)
 
         return all_vuln
 
-    def zap_result_save(self, all_vuln, project_id, un_scanid, username):
+    def zap_result_save(self, all_vuln, project_id, un_scanid, username, target_url):
         """
         The function save all data in Archery Database
         :param all_vuln:
@@ -437,165 +450,213 @@ class ZAPScanner:
         :param un_scanid:
         :return:
         """
-        # global name, attack, wascid, description, reference, \
-        #     reference, sourceid, \
-        #     solution, \
-        #     param, \
-        #     method, url, messageId, alert, pluginId, other, evidence, cweid, risk, vul_col
-        # for data in all_vuln:
-        #     for key, value in data.items():
-        #         if key == 'name':
-        #             name = value
-        #
-        #         if key == 'attack':
-        #             attack = value
-        #
-        #         if key == 'wascid':
-        #             wascid = value
-        #
-        #         if key == 'description':
-        #             description = value
-        #
-        #         if key == 'reference':
-        #             reference = value
-        #
-        #         if key == 'sourceid':
-        #             sourceid = value
-        #
-        #         if key == 'solution':
-        #             solution = value
-        #
-        #         if key == 'param':
-        #             param = value
-        #
-        #         if key == 'method':
-        #             method = value
-        #
-        #         if key == 'url':
-        #             url = value
-        #
-        #         if key == 'pluginId':
-        #             pluginId = value
-        #
-        #         if key == 'other':
-        #             other = value
-        #
-        #         if key == 'alert':
-        #             alert = value
-        #
-        #         if key == 'attack':
-        #             attack = value
-        #
-        #         if key == 'messageId':
-        #             messageId = value
-        #
-        #         if key == 'evidence':
-        #             evidence = value
-        #
-        #         if key == 'cweid':
-        #             cweid = value
-        #
-        #         if key == 'risk':
-        #             risk = value
-        #     if risk == "High":
-        #         vul_col = "danger"
-        #         risk = "High"
-        #     elif risk == 'Medium':
-        #         vul_col = "warning"
-        #         risk = "Medium"
-        #     elif risk == 'info':
-        #         vul_col = "info"
-        #         risk = "Low"
-        #     elif risk == 'Informational':
-        #         vul_col = "info"
-        #         risk = "Informational"
-        #
-        #     dup_data = name + risk
-        #     duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-        #     match_dup = zap_scan_results_db.objects.filter(
-        #         dup_hash=duplicate_hash).values('dup_hash').distinct()
-        #     lenth_match = len(match_dup)
-        #
-        #     if lenth_match == 1:
-        #         duplicate_vuln = 'Yes'
-        #     elif lenth_match == 0:
-        #         duplicate_vuln = 'No'
-        #     else:
-        #         duplicate_vuln = 'None'
-        #
-        #     false_p = zap_scan_results_db.objects.filter(
-        #         false_positive_hash=duplicate_hash)
-        #     fp_lenth_match = len(false_p)
-        #
-        #     if fp_lenth_match == 1:
-        #         false_positive = 'Yes'
-        #     else:
-        #         false_positive = 'No'
-        #
-        #     vuln_id = uuid.uuid4()
-        #     dump_data = zap_scan_results_db(vuln_id=vuln_id,
-        #                                     vuln_color=vul_col,
-        #                                     scan_id=un_scanid,
-        #                                     project_id=project_id,
-        #                                     confidence=confidence,
-        #                                     wascid=wascid,
-        #                                     risk=risk,
-        #                                     reference=reference,
-        #                                     url=url,
-        #                                     name=name,
-        #                                     solution=solution,
-        #                                     param=url,
-        #                                     sourceid=sourceid,
-        #                                     pluginId=pluginId,
-        #                                     alert=alert,
-        #                                     description=description,
-        #                                     false_positive=false_positive,
-        #                                     rescan='No',
-        #                                     vuln_status='Open',
-        #                                     dup_hash=duplicate_hash,
-        #                                     vuln_duplicate=duplicate_vuln,
-        #                                     evidence=evidence,
-        #                                     )
-        #     dump_data.save()
-        #     full_data = []
-        #     key = 'Evidence'
-        #     instance = key + ': ' + "NA"
-        #
-        #     full_data.append(instance)
-        #     removed_list_data = ','.join(full_data)
-        #     zap_scan_results_db.objects.filter(vuln_id=vuln_id).update(param=removed_list_data)
-        #
-        # zap_all_vul = zap_scan_results_db.objects.filter(scan_id=un_scanid, false_positive='No')
-        #
-        # total_high = len(zap_all_vul.filter(risk="High"))
-        # total_medium = len(zap_all_vul.filter(risk="Medium"))
-        # total_low = len(zap_all_vul.filter(risk="Low"))
-        # total_info = len(zap_all_vul.filter(risk="Informational"))
-        # total_duplicate = len(zap_all_vul.filter(vuln_duplicate='Yes'))
-        # total_vul = total_high + total_medium + total_low + total_info
-        #
-        # zap_scans_db.objects.filter(scan_scanid=un_scanid) \
-        #     .update(total_vul=total_vul,
-        #             high_vul=total_high,
-        #             medium_vul=total_medium,
-        #             low_vul=total_low,
-        #             info_vul=total_info,
-        #             total_dup=total_duplicate,
-        #             )
-        root_xml = ET.fromstring(all_vuln)
-        en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
-        root_xml_en = ET.fromstring(en_root_xml)
+        date_time = datetime.now()
+        zap_enabled = False
 
-        try:
+        all_zap = zap_settings_db.objects.filter(username=username)
+        for zap in all_zap:
+            zap_enabled = zap.enabled
 
-            zap_xml_parser.xml_parser(username=username,
-                                      project_id=project_id,
-                                      scan_id=un_scanid,
-                                      root=root_xml_en)
+        if zap_enabled is False:
+            root_xml = ET.fromstring(all_vuln)
+            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            root_xml_en = ET.fromstring(en_root_xml)
+            try:
+                zap_xml_parser.xml_parser(username=username,
+                                          project_id=project_id,
+                                          scan_id=un_scanid,
+                                          root=root_xml_en)
+                self.zap.core.delete_all_alerts()
+            except Exception as e:
+                print(e)
+        else:
+            global name, attack, wascid, description, reference, \
+                reference, sourceid, \
+                solution, \
+                param, \
+                method, url, messageId, alert, pluginId, other, evidence, cweid, risk, vul_col, false_positive
+            for data in all_vuln:
+                for key, value in data.items():
+                    if key == 'name':
+                        name = value
 
-            self.zap.core.delete_all_alerts()
-        except Exception as e:
-            print(e)
+                    if key == 'attack':
+                        attack = value
+
+                    if key == 'wascid':
+                        wascid = value
+
+                    if key == 'description':
+                        description = value
+
+                    if key == 'reference':
+                        reference = value
+
+                    if key == 'sourceid':
+                        sourceid = value
+
+                    if key == 'solution':
+                        solution = value
+
+                    if key == 'param':
+                        param = value
+
+                    if key == 'method':
+                        method = value
+
+                    if key == 'url':
+                        url = value
+
+                    if key == 'pluginId':
+                        pluginId = value
+
+                    if key == 'other':
+                        other = value
+
+                    if key == 'alert':
+                        alert = value
+
+                    if key == 'attack':
+                        attack = value
+
+                    if key == 'messageId':
+                        messageId = value
+
+                    if key == 'evidence':
+                        evidence = value
+
+                    if key == 'cweid':
+                        cweid = value
+
+                    if key == 'risk':
+                        risk = value
+                if risk == "High":
+                    vul_col = "danger"
+                    risk = "High"
+                elif risk == 'Medium':
+                    vul_col = "warning"
+                    risk = "Medium"
+                elif risk == 'info':
+                    vul_col = "info"
+                    risk = "Low"
+                else:
+                    vul_col = "info"
+                    risk = "Low"
+
+                dup_data = name + risk + target_url
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+                match_dup = zap_scan_results_db.objects.filter(
+                    dup_hash=duplicate_hash).values('dup_hash').distinct()
+                lenth_match = len(match_dup)
+
+                vuln_id = uuid.uuid4()
+                if lenth_match == 0:
+                    duplicate_vuln = 'No'
+                    dump_data = zap_scan_results_db(vuln_id=vuln_id,
+                                                    vuln_color=vul_col,
+                                                    scan_id=un_scanid,
+                                                    project_id=project_id,
+                                                    confidence=confidence,
+                                                    wascid=wascid,
+                                                    risk=risk,
+                                                    reference=reference,
+                                                    url=url,
+                                                    name=name,
+                                                    solution=solution,
+                                                    param=url,
+                                                    sourceid=sourceid,
+                                                    pluginId=pluginId,
+                                                    alert=alert,
+                                                    description=description,
+                                                    false_positive='No',
+                                                    rescan='No',
+                                                    vuln_status='Open',
+                                                    dup_hash=duplicate_hash,
+                                                    vuln_duplicate=duplicate_vuln,
+                                                    evidence=evidence,
+                                                    username=username
+                                                    )
+                    dump_data.save()
+                else:
+                    duplicate_vuln = 'Yes'
+
+                    dump_data = zap_scan_results_db(vuln_id=vuln_id,
+                                                    vuln_color=vul_col,
+                                                    scan_id=un_scanid,
+                                                    project_id=project_id,
+                                                    confidence=confidence,
+                                                    wascid=wascid,
+                                                    risk=risk,
+                                                    reference=reference,
+                                                    url=url,
+                                                    name=name,
+                                                    solution=solution,
+                                                    param=url,
+                                                    sourceid=sourceid,
+                                                    pluginId=pluginId,
+                                                    alert=alert,
+                                                    description=description,
+                                                    false_positive='Duplicate',
+                                                    rescan='No',
+                                                    vuln_status='Duplicate',
+                                                    dup_hash=duplicate_hash,
+                                                    vuln_duplicate=duplicate_vuln,
+                                                    evidence=evidence,
+                                                    username=username
+                                                    )
+                    dump_data.save()
+
+                false_p = zap_scan_results_db.objects.filter(
+                    false_positive_hash=duplicate_hash)
+                fp_lenth_match = len(false_p)
+
+                if fp_lenth_match == 1:
+                    false_positive = 'Yes'
+                else:
+                    false_positive = 'No'
+
+                vul_dat = zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id)
+                full_data = []
+                for data in vul_dat:
+                    key = 'Evidence'
+                    value = data.evidence
+                    instance = key + ': ' + value
+                    full_data.append(instance)
+                removed_list_data = ','.join(full_data)
+                zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id).update(param=full_data)
+
+            zap_all_vul = zap_scan_results_db.objects.filter(username=username, scan_id=un_scanid, false_positive='No')
+
+            duplicate_count = zap_scan_results_db.objects.filter(username=username, scan_id=un_scanid,
+                                                                 vuln_duplicate='Yes')
+
+            total_high = len(zap_all_vul.filter(risk="High"))
+            total_medium = len(zap_all_vul.filter(risk="Medium"))
+            total_low = len(zap_all_vul.filter(risk="Low"))
+            total_info = len(zap_all_vul.filter(risk="Informational"))
+            total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+            total_vul = total_high + total_medium + total_low + total_info
+
+            zap_scans_db.objects.filter(username=username, scan_scanid=un_scanid) \
+                .update(total_vul=total_vul,
+                        date_time=date_time,
+                        high_vul=total_high,
+                        medium_vul=total_medium,
+                        low_vul=total_low,
+                        info_vul=total_info,
+                        total_dup=total_duplicate,
+                        scan_url=target_url
+                        )
+            if total_vul == total_duplicate:
+                zap_scans_db.objects.filter(username=username, scan_scanid=un_scanid) \
+                    .update(total_vul=total_vul,
+                            date_time=date_time,
+                            high_vul=total_high,
+                            medium_vul=total_medium,
+                            low_vul=total_low,
+                            total_dup=total_duplicate
+                            )
+
 
     def zap_shutdown(self):
         """

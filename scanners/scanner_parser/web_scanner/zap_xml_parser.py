@@ -135,7 +135,7 @@ def xml_parser(username, root, project_id, scan_id):
             print(name)
         else:
             dup_data = name + risk + scan_url
-            print(dup_data)
+
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
             match_dup = zap_scan_results_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()
