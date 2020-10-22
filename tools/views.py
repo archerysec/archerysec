@@ -152,18 +152,29 @@ def nikto(request):
             scans_url = value_split.__getitem__(i)
 
             nikto_res_path = os.getcwd() + '/nikto_result/' + str(scan_id) + '.html'
-            print(nikto_res_path)
+
+            dump_scans = nikto_result_db(scan_url=scans_url,
+                                         scan_id=scan_id,
+                                         project_id=project_id,
+                                         date_time=date_time,
+                                         nikto_status='Scan Started',
+                                         username=username,
+                                         )
+
+            dump_scans.save()
+            HttpResponseRedirect(reverse('tools:nikto'))
 
             try:
 
                 nikto_output = subprocess.check_output(['nikto', '-o', nikto_res_path,
                                                         '-Format', 'htm', '-Tuning', '123bde',
                                                         '-host', scans_url])
-                print(nikto_output)
                 f = codecs.open(nikto_res_path, 'r')
                 data = f.read()
                 try:
-                    nikto_html_parser(data, project_id, scan_id)
+                    nikto_html_parser(data, project_id, scan_id, username=username)
+                    notify.send(user, recipient=user, verb='Nikto Scan Completed')
+                    nikto_result_db.objects.filter(scan_id=scan_id).update(nikto_status='Scan Completed')
                 except Exception as e:
                     print(e)
 
@@ -180,24 +191,15 @@ def nikto(request):
                     f = codecs.open(nikto_res_path, 'r')
                     data = f.read()
                     try:
-                        nikto_html_parser(data, project_id, scan_id)
+                        nikto_html_parser(data, project_id, scan_id, username=username)
                         notify.send(user, recipient=user, verb='Nikto Scan Completed')
+                        nikto_result_db.objects.filter(scan_id=scan_id).update(nikto_status='Scan Completed')
                     except Exception as e:
                         print(e)
 
 
                 except Exception as e:
                     print(e)
-
-            dump_scans = nikto_result_db(scan_url=scan_url,
-                                         scan_id=scan_id,
-                                         project_id=project_id,
-                                         date_time=date_time,
-                                         nikto_scan_output=nikto_output,
-                                         username=username,
-                                         )
-
-            dump_scans.save()
 
     return render(request,
                   'nikto_scan_list.html',
