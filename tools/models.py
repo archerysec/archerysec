@@ -35,6 +35,7 @@ class nikto_result_db(models.Model):
     scan_url = models.TextField(blank=True, null=True)
     nikto_scan_output = models.TextField(blank=True, null=True)
     date_time = models.TextField(null=True, blank=True)
+    nikto_status = models.TextField(null=True, blank=True)
     username = models.CharField(max_length=256, null=True)
 
 

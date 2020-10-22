@@ -189,7 +189,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     email_notify(user=user, subject=subject, message=message)
 
 
-def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
+def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, username):
     """
     The function Launch ZAP Scans.
     :param target_url: Target URL
@@ -213,7 +213,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         return HttpResponseRedirect(reverse('webscanners:index'))
 
     # Load ZAP Plugin
-    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan, random_port=random_port)
+    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan, random_port=random_port, username=username)
     zap.exclude_url()
     time.sleep(3)
     zap.cookies()
@@ -246,13 +246,14 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     )
     """ Save Vulnerability in database """
     time.sleep(5)
-    all_vuln = zap.zap_scan_result(target_url=target_url)
+    all_vuln = zap.zap_scan_result(target_url=target_url, username=username)
     time.sleep(5)
     zap.zap_result_save(
         all_vuln=all_vuln,
         project_id=project_id,
         un_scanid=scan_id,
-        username=''
+        username='',
+        target_url=target_url
     )
     all_zap_scan = zap_scans_db.objects.all()
 

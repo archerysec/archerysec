@@ -18,3 +18,4 @@ sonar-project.properties
 media
 node_modules
 package-lock.json
+nikto_output
