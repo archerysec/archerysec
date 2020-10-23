@@ -4,6 +4,7 @@
 {% block body %}
     <div class="page-wrapper">
         <div class="container-fluid">
+        {% if total_count_project.total_vuln__sum >= 0 %}
             <div class="row">
                 <!-- Column -->
                 <div class="col-md-6 col-lg-2 col-xlg-3">
@@ -136,6 +137,7 @@
                     </div>
                 </div>
             </div>
+        {% endif %}
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
