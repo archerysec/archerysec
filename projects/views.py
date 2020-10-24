@@ -90,7 +90,7 @@ def create(request):
                                   low_static=0)
         save_project.save()
 
-        # messages.success(request, "Project Created")
+        messages.success(request, "Project Created")
         all_month_data_display = month_db.objects.filter(username=username)
 
         if len(all_month_data_display) == 0:
@@ -249,7 +249,7 @@ def projects(request):
         month_db_del = month_db.objects.filter(project_id=project_id)
         month_db_del.delete()
 
-        # messages.success(request, "Deleted Project")
+        messages.warning(request, "Project Deleted")
 
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
 
