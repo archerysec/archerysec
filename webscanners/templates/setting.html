@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel="stylesheet">
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row justify-content-md-center">
@@ -16,9 +16,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="card">
-                                        <form class="form-horizontal">
                                             <div class="card-body">
-                                                <form>
                                                     <div class="form-group row">
                                                         <label
                                                                 class="col-sm-4 col-form-label">JIRA Server URL</label>
@@ -46,10 +44,12 @@
                                                     </div>
                                                     <a class="btn btn-primary" href="{% url 'jiraticketing:jira_setting' %}"
                                                        role="button">Edit</a>
-                                                </form>
 
+                                                <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                     <input type="hidden" name="setting_of" value="jira">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
+                                                </form>
                                             </div>
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -68,9 +68,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="card">
-                                        <form class="form-horizontal">
                                             <div class="card-body">
-                                                <form>
                                                      <div class="form-group row">
                                                         <label
                                                                 class="col-sm-4 col-form-label">Enabled</label>
@@ -107,9 +105,13 @@
                                                     </div>
                                                     <a class="btn btn-primary" href="{% url 'zapscanner:zap_settings' %}"
                                                        role="button">Edit</a>
+
+                                                <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                    <input type="hidden" name="setting_of" value="zap">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
                                                 </form>
                                             </div>
-                                        </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -128,9 +130,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="card">
-                                        <form class="form-horizontal">
                                             <div class="card-body">
-                                                <form>
                                                     <div class="form-group row">
                                                         <label
                                                                 class="col-sm-4 col-form-label">Burp API Key</label>
@@ -158,10 +158,11 @@
                                                     </div>
                                                     <a class="btn btn-primary" href="{% url 'burpscanner:burp_setting' %}"
                                                        role="button">Edit</a>
+                                                 <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                     <input type="hidden" name="setting_of" value="burp">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
                                                 </form>
-
                                             </div>
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -180,9 +181,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="card">
-                                        <form class="form-horizontal">
                                             <div class="card-body">
-                                                <form>
                                                     <div class="form-group row">
                                                         <label
                                                                 class="col-sm-4 col-form-label">Arachni API Host</label>
@@ -201,10 +200,12 @@
                                                     </div>
                                                     <a class="btn btn-primary" href="{% url 'arachniscanner:arachni_settings' %}"
                                                        role="button">Edit</a>
+                                                    <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                    <input type="hidden" name="setting_of" value="arachni">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
                                                 </form>
 
                                             </div>
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -223,9 +224,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="card">
-                                        <form class="form-horizontal">
                                             <div class="card-body">
-                                                <form>
                                                     <div class="form-group row">
                                                         <label
                                                                 class="col-sm-4 col-form-label">Host</label>
@@ -271,10 +270,12 @@
                                                     </div>
                                                     <a class="btn btn-primary" href="{% url 'networkscanners:openvas_setting' %}"
                                                        role="button">Edit</a>
+                                                    <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                    <input type="hidden" name="setting_of" value="openvas">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
                                                 </form>
 
                                             </div>
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -398,5 +399,81 @@
         </div>
     </div>
 </div>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/static/matrix-admin-bt4/assets/libs/toastr/build/toastr.min.js"></script>
+    <script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>
+    {% if zap_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('ZAP Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if zap_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('ZAP Connection Found');
+            });
+    </script>
+    {% endif %}
+    {% if burp_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('Burp Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if burp_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('Burp Connection Found');
+            });
+    </script>
+    {% endif %}
+
+    {% if openvas_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('OpenVAS Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if openvas_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('OpenVAS Connection Found');
+            });
+    </script>
+    {% endif %}
+
+    {% if arachni_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('Arachni Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if arachni_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('Arachni Connection Found');
+            });
+    </script>
+    {% endif %}
+
+    {% if jira_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('Jira Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if jira_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('Jira Connection Found');
+            });
+    </script>
+    {% endif %}
 
 {% endblock %}

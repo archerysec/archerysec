@@ -65,6 +65,12 @@ import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from notifications.models import Notification
 from django.urls import reverse
+from PyBurprestapi import burpscanner
+from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin
+import json
+import PyArachniapi
+from jira import JIRA
+import signal
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -501,6 +507,121 @@ def setting(request):
     else:
         jira_password = signing.loads(password)
 
+    username = request.user.username
+    zap_enabled = False
+    random_port = '8091'
+    target_url = 'https://archerysec.com'
+    zap_info = ''
+    burp_info = ''
+    openvas_info = ''
+    arachni_info = ''
+    jira_info = ''
+
+    if request.method == 'POST':
+        setting_of = request.POST.get('setting_of')
+        if setting_of == 'zap':
+            all_zap = zap_settings_db.objects.filter(username=username)
+            for zap in all_zap:
+                zap_enabled = zap.enabled
+
+            if zap_enabled is False:
+                print("started local instence")
+                random_port = zap_plugin.zap_local()
+
+                for i in range(0, 100):
+                    while True:
+                        try:
+                            # Connection Test
+                            zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                            zap_connect.spider.scan(url=target_url)
+                        except Exception as e:
+                            print("ZAP Connection Not Found, re-try after 5 sec")
+                            time.sleep(5)
+                            continue
+                        break
+            try:
+                zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                zap_connect.spider.scan(url=target_url)
+                zap_info = True
+            except:
+                zap_info = False
+        if setting_of == 'burp':
+            host = 'http://' + burp_host + ':' + burp_port + '/'
+
+            bi = burpscanner.BurpApi(host, burp_api_key)
+
+            issue_list = bi.issue_definitions()
+            if issue_list.data is None:
+                burp_info = False
+            else:
+                burp_info = True
+
+        if setting_of == 'openvas':
+            sel_profile = ''
+
+            openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile, username=username)
+            try:
+                openvas.connect()
+                openvas_info = True
+            except:
+                openvas_info = False
+
+        if setting_of == 'arachni':
+            global scan_run_id, scan_status
+            arachni_hosts = None
+            arachni_ports = None
+            all_arachni = arachni_settings_db.objects.filter(username=username)
+            for arachni in all_arachni:
+                arachni_hosts = arachni.arachni_url
+                arachni_ports = arachni.arachni_port
+
+            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports)
+
+            check = []
+            data = {
+                "url": 'https://archerysec.com',
+                "checks": check,
+                "audit": {
+                }
+            }
+            d = json.dumps(data)
+
+            scan_launch = arachni.scan_launch(d)
+            time.sleep(3)
+
+            try:
+                scan_data = scan_launch.data
+
+                for key, value in scan_data.items():
+                    if key == 'id':
+                        scan_run_id = value
+                arachni_info = True
+            except Exception:
+                arachni_info = False
+
+        if setting_of == 'jira':
+            global jira_projects, jira_ser
+            jira_setting = jirasetting.objects.filter(username=username)
+
+            for jira in jira_setting:
+                jira_url = jira.jira_server
+                username = jira.jira_username
+                password = jira.jira_password
+            jira_server = jira_url
+            jira_username = signing.loads(username)
+            jira_password = signing.loads(password)
+
+            options = {'server': jira_server}
+            try:
+
+                jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), timeout=5)
+                jira_projects = jira_ser.projects()
+                print(len(jira_projects))
+                jira_info = True
+            except Exception as e:
+                print(e)
+                jira_info = False
+
     return render(request, 'setting.html',
                   {'apikey': lod_apikey,
                    'zapath': zap_host,
@@ -525,6 +646,11 @@ def setting(request):
                    'nv_online': nv_online,
                    'nv_timing': nv_timing,
                    'message': all_notify,
+                   'zap_info': zap_info,
+                   'burp_info': burp_info,
+                   'openvas_info': openvas_info,
+                   'arachni_info': arachni_info,
+                   'jira_info': jira_info
                    })
 
 
