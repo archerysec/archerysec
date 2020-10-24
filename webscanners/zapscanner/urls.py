@@ -89,10 +89,6 @@ urlpatterns = [
         views.exluded_url_list,
         name='excluded_url_list'),
 
-    # url(r'^zap_scan_task_launch',
-    #     views.zap_scan_task_launch,
-    #     name='zap_scan_task_launch'),
-
     # url(r'^zap_scan_schedule',
     #     views.zap_scan_schedule,
     #     name='zap_scan_schedule'),
