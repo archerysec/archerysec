@@ -27,6 +27,7 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
 from .forms import *
+from django.contrib import messages
 
 
 def list_scan(request):
@@ -69,6 +70,9 @@ def add_list_scan(request):
             username=username,
         )
         dump_scan.save()
+
+        messages.success(request, "Target Added")
+
         return HttpResponseRedirect(reverse('manual_scan:list_scan'))
 
     return render(request,
@@ -380,6 +384,8 @@ def del_scan(request):
 
             del_scan_info = manual_scans_db.objects.filter(username=username, scan_id=scan_id)
             del_scan_info.delete()
+
+            messages.warning(request, "Target Deleted")
 
         return HttpResponseRedirect(reverse('manual_scan:list_scan'))
 
