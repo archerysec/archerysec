@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.retirejsscan import views
 
 
@@ -22,27 +22,27 @@ app_name = 'retirejsscan'
 
 urlpatterns = [
     # retirejs scan list
-    url(r'^retirejsscans_list',
+    path('retirejsscans_list',
         views.retirejsscans_list,
         name='retirejsscans_list'),
 
-    url(r'^retirejsscan_list_vuln',
+    path('retirejsscan_list_vuln',
         views.retirejsscan_list_vuln,
         name='retirejsscan_list_vuln'),
 
-    url(r'^retirejsscan_vuln_data',
+    path('retirejsscan_vuln_data',
         views.retirejsscan_vuln_data,
         name='retirejsscan_vuln_data'),
 
-    url(r'^retirejsscan_details',
+    path('retirejsscan_details',
         views.retirejsscan_details,
         name='retirejsscan_details'),
 
-    url(r'^del_retirejs_scan',
+    path('del_retirejs_scan',
         views.del_retirejs_scan,
         name='del_retirejs_scan'),
 
-    url(r'^retirejs_del_vuln',
+    path('retirejs_del_vuln',
         views.retirejs_del_vuln,
         name='retirejs_del_vuln'),
 ]

@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.findbugs import views
 
 app_name = 'findbugs'
@@ -22,30 +22,30 @@ app_name = 'findbugs'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^findbugs_list',
+    path('findbugs_list',
         views.findbugs_list,
         name='findbugs_list'),
 
-    url(r'^findbugs_all_vuln',
+    path('findbugs_all_vuln',
         views.list_vuln,
         name='findbugs_all_vuln'),
 
-    url(r'^findbugs_vuln_data',
+    path('findbugs_vuln_data',
         views.findbugs_vuln_data,
         name='findbugs_vuln_data'),
 
-    url(r'^findbugs_details',
+    path('findbugs_details',
         views.findbugs_details,
         name='findbugs_details'),
 
-    url(r'^del_findbugs',
+    path('del_findbugs',
         views.del_findbugs,
         name='del_findbugs'),
 
-    url(r'^findbugs_del_vuln',
+    path('findbugs_del_vuln',
         views.findbugs_del_vuln,
         name='findbugs_del_vuln'),
-    url(r'^export',
+    path('export',
         views.export,
         name='export'),
 ]

@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from webscanners.arachniscanner import views
 
 app_name = 'arachniscanner'
@@ -22,36 +22,36 @@ app_name = 'arachniscanner'
 urlpatterns = [
 
     # arachni
-    url(r'^arachni_list_vuln',
+    path('arachni_list_vuln',
         views.arachni_list_vuln,
         name='arachni_list_vuln'),
-    url(r'^arachni_scan_list',
+    path('arachni_scan_list',
         views.arachni_scan_list,
         name='arachni_scan_list'),
-    url(r'^arachni_vuln_data',
+    path('arachni_vuln_data',
         views.arachni_vuln_data,
         name='arachni_vuln_data'),
-    url(r'^arachni_vuln_out',
+    path('arachni_vuln_out',
         views.arachni_vuln_out,
         name='arachni_vuln_out'),
-    url(r'^del_arachni_scan',
+    path('del_arachni_scan',
         views.del_arachni_scan,
         name='del_arachni_scan'),
-    url(r'^arachni_del_vuln',
+    path('arachni_del_vuln',
         views.arachni_del_vuln,
         name='arachni_del_vuln'),
-    url(r'^arachni_settings/',
+    path('arachni_settings/',
         views.arachni_settings,
         name='arachni_settings'),
 
-    url(r'^arachni_setting_update/',
+    path('arachni_setting_update/',
         views.arachni_setting_update,
         name='arachni_setting_update'),
 
-    url(r'^arachni_scan_launch/',
+    path('arachni_scan_launch/',
         views.arachni_scan,
         name='arachni_scan_launch'),
-    url(r'^export',
+    path('export',
         views.export,
         name='export'),
 
