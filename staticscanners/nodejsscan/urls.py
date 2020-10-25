@@ -22,30 +22,30 @@ app_name = 'nodejsscan'
 urlpatterns = [
     # Bandit scan list
 
-    path('nodejsscan_list',
+    path('nodejsscan_list/',
         views.nodejsscan_list,
         name='nodejsscan_list'),
 
-    path('nodejsscan_all_vuln',
+    path('nodejsscan_all_vuln/',
         views.list_vuln,
         name='nodejsscan_all_vuln'),
 
-    path('nodejsscan_vuln_data',
+    path('nodejsscan_vuln_data/',
         views.nodejsscan_vuln_data,
         name='nodejsscan_vuln_data'),
 
-    path('nodejsscan_details',
+    path('nodejsscan_details/',
         views.nodejsscan_details,
         name='nodejsscan_details'),
 
-    path('del_nodejsscan',
+    path('del_nodejsscan/',
         views.del_nodejsscan,
         name='del_nodejsscan'),
 
-    path('nodejsscan_del_vuln',
+    path('nodejsscan_del_vuln/',
         views.nodejsscan_del_vuln,
         name='nodejsscan_del_vuln'),
-    path('export',
+    path('export/',
         views.export,
         name='export'),
 ]

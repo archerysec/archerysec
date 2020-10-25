@@ -22,30 +22,30 @@ app_name = 'trivy'
 urlpatterns = [
     # Bandit scan list
 
-    path('trivy_list',
+    path('trivy_list/',
         views.trivy_list,
         name='trivy_list'),
 
-    path('trivy_all_vuln',
+    path('trivy_all_vuln/',
         views.list_vuln,
         name='trivy_all_vuln'),
 
-    path('trivy_vuln_data',
+    path('trivy_vuln_data/',
         views.trivy_vuln_data,
         name='trivy_vuln_data'),
 
-    path('trivy_details',
+    path('trivy_details/',
         views.trivy_details,
         name='trivy_details'),
 
-    path('del_trivy',
+    path('del_trivy/',
         views.del_trivy,
         name='del_trivy'),
 
-    path('trivy_del_vuln',
+    path('trivy_del_vuln/',
         views.trivy_del_vuln,
         name='trivy_del_vuln'),
-    path('export',
+    path('export/',
         views.export,
         name='export'),
 ]

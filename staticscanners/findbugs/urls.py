@@ -22,30 +22,30 @@ app_name = 'findbugs'
 urlpatterns = [
     # Bandit scan list
 
-    path('findbugs_list',
+    path('findbugs_list/',
         views.findbugs_list,
         name='findbugs_list'),
 
-    path('findbugs_all_vuln',
+    path('findbugs_all_vuln/',
         views.list_vuln,
         name='findbugs_all_vuln'),
 
-    path('findbugs_vuln_data',
+    path('findbugs_vuln_data/',
         views.findbugs_vuln_data,
         name='findbugs_vuln_data'),
 
-    path('findbugs_details',
+    path('findbugs_details/',
         views.findbugs_details,
         name='findbugs_details'),
 
-    path('del_findbugs',
+    path('del_findbugs/',
         views.del_findbugs,
         name='del_findbugs'),
 
-    path('findbugs_del_vuln',
+    path('findbugs_del_vuln/',
         views.findbugs_del_vuln,
         name='findbugs_del_vuln'),
-    path('export',
+    path('export/',
         views.export,
         name='export'),
 ]

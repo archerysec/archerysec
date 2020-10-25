@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from compliance.inspec import views
 
 app_name = 'inspec'
@@ -22,30 +22,30 @@ app_name = 'inspec'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^inspec_list',
+    path('inspec_list/',
         views.inspec_list,
         name='inspec_list'),
 
-    url(r'^inspec_all_vuln',
+    path('inspec_all_vuln/',
         views.list_vuln,
         name='inspec_all_vuln'),
 
-    url(r'^inspec_vuln_data',
+    path('inspec_vuln_data/',
         views.inspec_vuln_data,
         name='inspec_vuln_data'),
 
-    url(r'^inspec_details',
+    path('inspec_details/',
         views.inspec_details,
         name='inspec_details'),
 
-    url(r'^del_inspec',
+    path('del_inspec/',
         views.del_inspec,
         name='del_inspec'),
 
-    url(r'^inspec_del_vuln',
+    path('inspec_del_vuln/',
         views.inspec_del_vuln,
         name='inspec_del_vuln'),
-    url(r'^export',
+    path('export/',
         views.export,
         name='export'),
 ]

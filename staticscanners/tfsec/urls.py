@@ -22,30 +22,30 @@ app_name = 'tfsec'
 urlpatterns = [
     # Bandit scan list
 
-    path('tfsec_list',
+    path('tfsec_list/',
         views.tfsec_list,
         name='tfsec_list'),
 
-    path('tfsec_all_vuln',
+    path('tfsec_all_vuln/',
         views.list_vuln,
         name='tfsec_all_vuln'),
 
-    path('tfsec_vuln_data',
+    path('tfsec_vuln_data/',
         views.tfsec_vuln_data,
         name='tfsec_vuln_data'),
 
-    path('tfsec_details',
+    path('tfsec_details/',
         views.tfsec_details,
         name='tfsec_details'),
 
-    path('del_tfsec',
+    path('del_tfsec/',
         views.del_tfsec,
         name='del_tfsec'),
 
-    path('tfsec_del_vuln',
+    path('tfsec_del_vuln/',
         views.tfsec_del_vuln,
         name='tfsec_del_vuln'),
-    path('export',
+    path('export/',
         views.export,
         name='export'),
 ]
