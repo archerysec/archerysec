@@ -22,30 +22,30 @@ app_name = 'npmaudit'
 urlpatterns = [
     # Bandit scan list
 
-    path('npmaudit_list',
+    path('npmaudit_list/',
         views.npmaudit_list,
         name='npmaudit_list'),
 
-    path('npmaudit_all_vuln',
+    path('npmaudit_all_vuln/',
         views.list_vuln,
         name='npmaudit_all_vuln'),
 
-    path('npmaudit_vuln_data',
+    path('npmaudit_vuln_data/',
         views.npmaudit_vuln_data,
         name='npmaudit_vuln_data'),
 
-    path('npmaudit_details',
+    path('npmaudit_details/',
         views.npmaudit_details,
         name='npmaudit_details'),
 
-    path('del_npmaudit',
+    path('del_npmaudit/',
         views.del_npmaudit,
         name='del_npmaudit'),
 
-    path('npmaudit_del_vuln',
+    path('npmaudit_del_vuln/',
         views.npmaudit_del_vuln,
         name='npmaudit_del_vuln'),
-    path('export',
+    path('export/',
         views.export,
         name='export'),
 ]

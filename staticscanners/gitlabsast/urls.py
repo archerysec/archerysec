@@ -22,30 +22,30 @@ app_name = 'gitlabsast'
 urlpatterns = [
     # Bandit scan list
 
-    path('gitlabsast_list',
+    path('gitlabsast_list/',
         views.gitlabsast_list,
         name='gitlabsast_list'),
 
-    path('gitlabsast_all_vuln',
+    path('gitlabsast_all_vuln/',
         views.list_vuln,
         name='gitlabsast_all_vuln'),
 
-    path('gitlabsast_vuln_data',
+    path('gitlabsast_vuln_data/',
         views.gitlabsast_vuln_data,
         name='gitlabsast_vuln_data'),
 
-    path('gitlabsast_details',
+    path('gitlabsast_details/',
         views.gitlabsast_details,
         name='gitlabsast_details'),
 
-    path('del_gitlabsast',
+    path('del_gitlabsast/',
         views.del_gitlabsast,
         name='del_gitlabsast'),
 
-    path('gitlabsast_del_vuln',
+    path('gitlabsast_del_vuln/',
         views.gitlabsast_del_vuln,
         name='gitlabsast_del_vuln'),
-    path('export',
+    path('export/',
         views.export,
         name='export'),
 ]

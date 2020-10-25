@@ -40,7 +40,7 @@ urlpatterns = [
     path('docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION, public=True, )),
     path('webscan/', views.WebScan.as_view()),
     path('networkscan/', views.NetworkScan.as_view()),
-    path('networkscanresult', views.NetworkScanResult.as_view()),
+    path('networkscanresult/', views.NetworkScanResult.as_view()),
     path('project/', views.Project.as_view()),
     path('webscanresult/', views.WebScanResult.as_view()),
     path('zapscanstatus/', views.ZapScanStatus.as_view()),

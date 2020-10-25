@@ -21,30 +21,30 @@ app_name = 'dependencycheck'
 
 urlpatterns = [
     # Bandit scan list
-    path('dependencycheck_list',
+    path('dependencycheck_list/',
         views.dependencycheck_list,
         name='dependencycheck_list'),
 
-    path('dependencycheck_all_vuln',
+    path('dependencycheck_all_vuln/',
         views.list_vuln,
         name='dependencycheck_all_vuln'),
 
-    path('dependencycheck_vuln_data',
+    path('dependencycheck_vuln_data/',
         views.dependencycheck_vuln_data,
         name='dependencycheck_vuln_data'),
 
-    path('dependencycheck_details',
+    path('dependencycheck_details/',
         views.dependencycheck_details,
         name='dependencycheck_details'),
 
-    path('del_dependencycheck',
+    path('del_dependencycheck/',
         views.del_dependencycheck,
         name='del_dependencycheck'),
 
-    path('dependencycheck_del_vuln',
+    path('dependencycheck_del_vuln/',
         views.dependencycheck_del_vuln,
         name='dependencycheck_del_vuln'),
-    path('export',
+    path('export/',
         views.export,
         name='export'),
 ]
