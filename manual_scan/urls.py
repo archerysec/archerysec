@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from manual_scan import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -22,39 +22,39 @@ from django.conf.urls.static import static
 app_name = 'manual_scan'
 
 urlpatterns = [
-    url(r'^$',
+    path('',
         views.list_scan,
         name='list_scan'),
-    url(r'^add_vuln/',
+    path('add_vuln/',
         views.add_vuln,
         name='add_vuln'),
-    url(r'^vuln_list/',
+    path('vuln_list/',
         views.vuln_list,
         name='vuln_list'),
-    url(r'^edit_vuln/',
+    path('edit_vuln/',
         views.edit_vuln,
         name='edit_vuln'),
-    url(r'^manual_vuln_data/',
+    path('manual_vuln_data/',
         views.manual_vuln_data,
         name='manual_vuln_data'),
-    url(r'^del_vuln/',
+    path('del_vuln/',
         views.del_vuln,
         name='del_vuln'),
-    url(r'^del_scan/',
+    path('del_scan/',
         views.del_scan,
         name='del_scan'),
-    url(r'^vuln_details/',
+    path('vuln_details/',
         views.vuln_details,
         name='vuln_details'),
-    url(r'^add_list_scan/',
+    path('add_list_scan/',
         views.add_list_scan,
         name='add_list_scan'),
 
-    url(r'^add_vuln_data/',
+    path('add_vuln_data/',
         views.add_vuln_data,
         name='add_vuln_data'),
 
-    url(r'^add_new_vuln/',
+    path('add_new_vuln/',
         views.add_new_vuln,
         name='add_new_vuln'),
 

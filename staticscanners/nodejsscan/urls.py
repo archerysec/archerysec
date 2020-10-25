@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.nodejsscan import views
 
 app_name = 'nodejsscan'
@@ -22,30 +22,30 @@ app_name = 'nodejsscan'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^nodejsscan_list',
+    path('nodejsscan_list',
         views.nodejsscan_list,
         name='nodejsscan_list'),
 
-    url(r'^nodejsscan_all_vuln',
+    path('nodejsscan_all_vuln',
         views.list_vuln,
         name='nodejsscan_all_vuln'),
 
-    url(r'^nodejsscan_vuln_data',
+    path('nodejsscan_vuln_data',
         views.nodejsscan_vuln_data,
         name='nodejsscan_vuln_data'),
 
-    url(r'^nodejsscan_details',
+    path('nodejsscan_details',
         views.nodejsscan_details,
         name='nodejsscan_details'),
 
-    url(r'^del_nodejsscan',
+    path('del_nodejsscan',
         views.del_nodejsscan,
         name='del_nodejsscan'),
 
-    url(r'^nodejsscan_del_vuln',
+    path('nodejsscan_del_vuln',
         views.nodejsscan_del_vuln,
         name='nodejsscan_del_vuln'),
-    url(r'^export',
+    path('export',
         views.export,
         name='export'),
 ]

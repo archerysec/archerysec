@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.gitlabsast import views
 
 app_name = 'gitlabsast'
@@ -22,30 +22,30 @@ app_name = 'gitlabsast'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^gitlabsast_list',
+    path('gitlabsast_list',
         views.gitlabsast_list,
         name='gitlabsast_list'),
 
-    url(r'^gitlabsast_all_vuln',
+    path('gitlabsast_all_vuln',
         views.list_vuln,
         name='gitlabsast_all_vuln'),
 
-    url(r'^gitlabsast_vuln_data',
+    path('gitlabsast_vuln_data',
         views.gitlabsast_vuln_data,
         name='gitlabsast_vuln_data'),
 
-    url(r'^gitlabsast_details',
+    path('gitlabsast_details',
         views.gitlabsast_details,
         name='gitlabsast_details'),
 
-    url(r'^del_gitlabsast',
+    path('del_gitlabsast',
         views.del_gitlabsast,
         name='del_gitlabsast'),
 
-    url(r'^gitlabsast_del_vuln',
+    path('gitlabsast_del_vuln',
         views.gitlabsast_del_vuln,
         name='gitlabsast_del_vuln'),
-    url(r'^export',
+    path('export',
         views.export,
         name='export'),
 ]
