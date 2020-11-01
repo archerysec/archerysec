@@ -23,7 +23,7 @@ import uuid
 import defusedxml.ElementTree as ET
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render,  HttpResponse
+from django.shortcuts import render, HttpResponse
 from django.utils import timezone
 from archerysettings import save_settings
 from archerysettings import load_settings
@@ -129,7 +129,6 @@ def scan_vul_details(request):
     if request.method == 'GET':
         scanid = request.GET['scan_id']
 
-
     if request.method == 'POST':
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
@@ -137,8 +136,8 @@ def scan_vul_details(request):
         status = request.POST.get('status')
 
         ov_scan_result_db.objects.filter(username=username,
-            scan_id=scan_id,
-            vul_id=vuln_id).update(
+                                         scan_id=scan_id,
+                                         vul_id=vuln_id).update(
             false_positive=false_positive, vuln_status=status)
 
         if false_positive == 'Yes':
@@ -151,13 +150,14 @@ def scan_vul_details(request):
                 dup_data = name + host + severity + port
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 ov_scan_result_db.objects.filter(username=username,
-                    scan_id=scan_id,
-                    vul_id=vuln_id).update(
+                                                 scan_id=scan_id,
+                                                 vul_id=vuln_id).update(
                     false_positive=false_positive,
                     vuln_status='Closed',
                     false_positive_hash=false_positive_hash
                 )
-        openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
+        openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+                                                       vuln_status='Open')
 
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
@@ -176,13 +176,13 @@ def scan_vul_details(request):
         return HttpResponseRedirect(
             reverse('networkscanners:vul_details') + '?scan_id=%s' % scan_id)
 
-    all_vuln = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,).values('name', 'severity',
-                                                                                                'vuln_color',
-                                                                                                'threat', 'host',
-                                                                                                'port', 'vul_id',
-                                                                                                'jira_ticket', 'false_positive',
-                                                                                                'vuln_status').distinct()
-
+    all_vuln = ov_scan_result_db.objects.filter(username=username, scan_id=scanid, ).values('name', 'severity',
+                                                                                            'vuln_color',
+                                                                                            'threat', 'host',
+                                                                                            'port', 'vul_id',
+                                                                                            'jira_ticket',
+                                                                                            'false_positive',
+                                                                                            'vuln_status').distinct()
 
     return render(request,
                   'openvas_vuln_list.html',
@@ -222,13 +222,13 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     scan_id, target_id = openvas.scan_launch(scanner)
     date_time = datetime.now()
     save_all = openvas_scan_db(scan_id=str(scan_id),
-                            project_id=str(project_id),
-                            scan_ip=scan_ip,
-                            target_id=str(target_id),
-                            date_time=date_time,
-                            scan_status=0.0,
-                            username=username
-                            )
+                               project_id=str(project_id),
+                               scan_ip=scan_ip,
+                               target_id=str(target_id),
+                               date_time=date_time,
+                               scan_status=0.0,
+                               username=username
+                               )
     save_all.save()
     openvas.scan_status(scanner=scanner, scan_id=scan_id)
     time.sleep(5)
@@ -284,7 +284,7 @@ def launch_scan(request):
             thread.start()
 
     return render('openvas_vuln_list.html',
-                              {'all_ip': all_ip})
+                  {'all_ip': all_ip})
 
 
 def scan_del(request):
@@ -403,7 +403,6 @@ def del_vuln(request):
         vuln_id = request.POST.get("del_vuln")
         un_scanid = request.POST.get("scan_id")
 
-
         scan_item = str(vuln_id)
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
@@ -449,10 +448,11 @@ def vuln_check(request):
         cve_list = cve.split(",")
 
     return render(request, 'openvas_scan_data.html', {'vul_dat': vul_dat,
-                                                 'cve_list': cve_list,
-                                                 'xref_list': xref_list
+                                                      'cve_list': cve_list,
+                                                      'xref_list': xref_list
 
-                                                 })
+                                                      })
+
 
 def OpenVAS_xml_upload(request):
     username = request.user.username
@@ -476,18 +476,19 @@ def OpenVAS_xml_upload(request):
             hosts = OpenVas_Parser.get_hosts(root_xml)
             for host in hosts:
                 scan_dump = openvas_scan_db(scan_ip=host,
-                                         scan_id=host,
-                                         date_time=date_time,
-                                         project_id=project_id,
-                                         scan_status=scan_status,
-                                         username=username
-                                         )
+                                            scan_id=host,
+                                            date_time=date_time,
+                                            project_id=project_id,
+                                            scan_status=scan_status,
+                                            username=username
+                                            )
                 scan_dump.save()
             OpenVas_Parser.updated_xml_parser(project_id=project_id,
                                               scan_id=scan_id,
                                               root=root_xml,
                                               username=username
                                               )
+            messages.success(request, "File Uploaded")
             return HttpResponseRedirect(reverse('networkscanners:index'))
         elif scanner == "nessus":
             date_time = datetime.now()
@@ -498,6 +499,7 @@ def OpenVAS_xml_upload(request):
                                                 project_id=project_id,
                                                 username=username,
                                                 )
+            messages.success(request, "File Uploaded")
             return HttpResponseRedirect(reverse('nessus:nessus_list'))
         elif scanner == "nmap":
             tree = ET.parse(xml_file)
@@ -507,6 +509,7 @@ def OpenVAS_xml_upload(request):
                                    project_id=project_id,
                                    username=username,
                                    )
+            messages.success(request, "File Uploaded")
             return HttpResponseRedirect(reverse('tools:nmap_scan'))
 
     return render(request,
@@ -548,7 +551,6 @@ def net_scan_schedule(request):
         project_id = request.POST.get('project_id')
         scanner = request.POST.get('scanner')
         periodic_task_value = request.POST.get('periodic_task_value')
-
 
         if periodic_task_value == 'HOURLY':
             periodic_time = Task.HOURLY
@@ -620,6 +622,7 @@ def del_net_scan_schedule(request):
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse('networkscanners:net_scan_schedule'))
+
 
 def nv_setting(request):
     username = request.user.username

@@ -84,7 +84,7 @@ def report_import(request):
                                    scan_id=scan_id,
                                    username=username
                                    )
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('banditscanner:banditscans_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -109,7 +109,7 @@ def report_import(request):
                                      scan_id=scan_id,
                                      username=username
                                      )
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('retirejsscanner:retirejsscans_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -134,6 +134,7 @@ def report_import(request):
                                   scan_id=scan_id,
                                   username=username
                                   )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('clair:clair_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -158,6 +159,7 @@ def report_import(request):
                                                            data=data,
                                                            username=username
                                                            )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('trivy:trivy_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -182,6 +184,7 @@ def report_import(request):
                                                            data=data,
                                                            username=username
                                                            )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('npmaudit:npmaudit_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -206,6 +209,7 @@ def report_import(request):
                                                               data=data,
                                                               username=username
                                                               )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('nodejsscan:nodejsscan_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -230,6 +234,7 @@ def report_import(request):
                                                                data=data,
                                                                username=username
                                                                )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('semgrepscan:semgrepscan_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -254,6 +259,7 @@ def report_import(request):
                                                       data=data,
                                                       username=username
                                                       )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('tfsec:tfsec_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -278,6 +284,7 @@ def report_import(request):
                                                                        data=data,
                                                                        username=username
                                                                        )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('whitesource:whitesource_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -302,6 +309,7 @@ def report_import(request):
                                    scan_id=scan_id,
                                    username=username
                                    )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('inspec:inspec_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -326,7 +334,7 @@ def report_import(request):
                                    scan_id=scan_id,
                                    username=username
                                    )
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('dockle:dockle_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -351,6 +359,7 @@ def report_import(request):
                                                                       data=data,
                                                                       username=username
                                                                       )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('gitlabsast:gitlabsast_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -375,6 +384,7 @@ def report_import(request):
                                                                                     data=data,
                                                                                     username=username
                                                                                     )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('gitlabcontainerscan:gitlabcontainerscan_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -399,6 +409,7 @@ def report_import(request):
                                                                     data=data,
                                                                     username=username
                                                                     )
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('gitlabsca:gitlabsca_list'))
             except:
                 messages.error(request, "File Not Supported")

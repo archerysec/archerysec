@@ -794,6 +794,7 @@ def xml_upload(request):
                                                project_id,
                                                scan_id,
                                                username=username)
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -817,6 +818,7 @@ def xml_upload(request):
                                               scan_id=scan_id,
                                               root=root_xml,
                                               target_url=scan_url)
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -840,7 +842,7 @@ def xml_upload(request):
                 netsparker_xml_parser.xml_parser(project_id=project_id,
                                                  scan_id=scan_id,
                                                  root=root_xml, username=username)
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -864,7 +866,7 @@ def xml_upload(request):
                                                  scan_id=scan_id,
                                                  root=root_xml,
                                                  username=username)
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -889,7 +891,7 @@ def xml_upload(request):
                                                project_id=project_id,
                                                scan_id=scan_id,
                                                root=root_xml)
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('acunetixscanner:acunetix_scan_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -915,7 +917,7 @@ def xml_upload(request):
                                                          data=root,
                                                          username=username
                                                          )
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -941,7 +943,7 @@ def xml_upload(request):
                                                                  data=root,
                                                                  username=username
                                                                  )
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('checkmarx:checkmarx_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -966,7 +968,7 @@ def xml_upload(request):
                                                   scan_id=scan_id,
                                                   root=root,
                                                   username=username)
-
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('findbugs:findbugs_list'))
             except:
                 messages.error(request, "File Not Supported")
@@ -983,8 +985,8 @@ def xml_upload(request):
                 )
                 scan_dump.save()
 
-                nikto_html_parser(xml_file, project_id, scan_id)
-
+                nikto_html_parser(xml_file, project_id, scan_id, username=username)
+                messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('tools:nikto'))
             except:
                 messages.error(request, "File Not Supported")
