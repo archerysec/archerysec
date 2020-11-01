@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.semgrep import views
 
 app_name = 'semgrepscan'
@@ -22,30 +22,30 @@ app_name = 'semgrepscan'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^semgrepscan_list',
+    path('semgrepscan_list/',
         views.semgrepscan_list,
         name='semgrepscan_list'),
 
-    url(r'^semgrepscan_all_vuln',
+    path('semgrepscan_all_vuln/',
         views.list_vuln,
         name='semgrepscan_all_vuln'),
 
-    url(r'^semgrepscan_vuln_data',
+    path('semgrepscan_vuln_data/',
         views.semgrepscan_vuln_data,
         name='semgrepscan_vuln_data'),
 
-    url(r'^semgrepscan_details',
+    path('semgrepscan_details/',
         views.semgrepscan_details,
         name='semgrepscan_details'),
 
-    url(r'^del_semgrepscan',
+    path('del_semgrepscan/',
         views.del_semgrepscan,
         name='del_semgrepscan'),
 
-    url(r'^semgrepscan_del_vuln',
+    path('semgrepscan_del_vuln/',
         views.semgrepscan_del_vuln,
         name='semgrepscan_del_vuln'),
-    url(r'^export',
+    path('export/',
         views.export,
         name='export'),
 ]

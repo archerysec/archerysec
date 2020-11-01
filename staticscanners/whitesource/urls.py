@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.whitesource import views
 
 app_name = 'whitesource'
@@ -22,30 +22,30 @@ app_name = 'whitesource'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^whitesource_list',
+    path('whitesource_list/',
         views.whitesource_list,
         name='whitesource_list'),
 
-    url(r'^whitesource_all_vuln',
+    path('whitesource_all_vuln/',
         views.list_vuln,
         name='whitesource_all_vuln'),
 
-    url(r'^whitesource_vuln_data',
+    path('whitesource_vuln_data/',
         views.whitesource_vuln_data,
         name='whitesource_vuln_data'),
 
-    url(r'^whitesource_details',
+    path('whitesource_details/',
         views.whitesource_details,
         name='whitesource_details'),
 
-    url(r'^del_whitesource',
+    path('del_whitesource/',
         views.del_whitesource,
         name='del_whitesource'),
 
-    url(r'^whitesource_del_vuln',
+    path('whitesource_del_vuln/',
         views.whitesource_del_vuln,
         name='whitesource_del_vuln'),
-    url(r'^export',
+    path('export/',
         views.export,
         name='export'),
 ]

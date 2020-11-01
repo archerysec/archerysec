@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from dashboard import views
 from webscanners import web_views
 
@@ -22,38 +22,38 @@ app_name = 'dashboard'
 
 urlpatterns = [
 
-    url(r'^login/$',
+    path('login/',
         web_views.login,
         name='login'),
-    url(r'^auth/$',
+    path('auth/',
         web_views.auth_view,
         name='auth'),
-    url(r'^logout/$',
+    path('logout/',
         web_views.logout,
         name='logout'),
-    url(r'^loggedin/$',
+    path('loggedin/',
         web_views.loggedin,
         name='loggedin'),
-    url(r'^signup/$',
+    path('signup/',
         web_views.signup,
         name='signup'),
 
-    url(r'^$',
+    path('',
         views.dashboard,
         name='dashboard'),
-    url(r'^dashboard/$',
+    path('dashboard/',
         views.dashboard,
         name='dashboard'),
-    url(r'^project_dashboard/$',
+    path('project_dashboard/',
         views.project_dashboard,
         name='project_dashboard'),
-    url(r'^proj_data/$',
+    path('proj_data/',
         views.proj_data,
         name='proj_data'),
-    url(r'^all_high_vuln/$',
+    path('all_high_vuln/',
         views.all_high_vuln,
         name='all_high_vuln'),
-    url(r'^export/$',
+    path('export/',
         views.export,
         name='export')
 

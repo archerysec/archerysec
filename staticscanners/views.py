@@ -43,6 +43,7 @@ from scanners.scanner_parser.staticscanner_parser import gitlab_sca_json_report_
 from scanners.scanner_parser.staticscanner_parser import gitlab_container_json_report_parser
 from scanners.scanner_parser.staticscanner_parser import semgrep_json_report_parser
 from django.urls import reverse
+from django.contrib import messages
 
 
 # Create your views here.
@@ -65,272 +66,353 @@ def report_import(request):
         scan_id = uuid.uuid4()
         scan_status = '100'
         if scanner == "bandit_scan":
-            date_time = datetime.now()
-            scan_dump = bandit_scan_db(project_name=project_name,
-                                       scan_id=scan_id,
-                                       date_time=date_time,
-                                       project_id=project_id,
-                                       scan_status=scan_status,
-                                       username=username
-                                       )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            bandit_report_json(data=data,
-                               project_id=project_id,
-                               scan_id=scan_id,
-                               username=username
-                               )
+            try:
+                date_time = datetime.now()
 
-            return HttpResponseRedirect(reverse('banditscanner:banditscans_list'))
-
-        if scanner == "retirejs_scan":
-            date_time = datetime.now()
-            scan_dump = retirejs_scan_db(project_name=project_name,
-                                         scan_id=scan_id,
-                                         date_time=date_time,
-                                         project_id=project_id,
-                                         scan_status=scan_status,
-                                         username=username
-                                         )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            retirejs_report_json(data=data,
-                                 project_id=project_id,
-                                 scan_id=scan_id,
-                                 username=username
-                                 )
-
-            return HttpResponseRedirect(reverse('retirejsscanner:retirejsscans_list'))
-
-        if scanner == "clair_scan":
-            date_time = datetime.now()
-            scan_dump = clair_scan_db(project_name=project_name,
-                                      scan_id=scan_id,
-                                      date_time=date_time,
-                                      project_id=project_id,
-                                      scan_status=scan_status,
-                                      username=username
-                                      )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            clair_report_json(data=data,
-                              project_id=project_id,
-                              scan_id=scan_id,
-                              username=username
-                              )
-            return HttpResponseRedirect(reverse('clair:clair_list'))
-
-        if scanner == "trivy_scan":
-            date_time = datetime.now()
-            scan_dump = trivy_scan_db(project_name=project_name,
-                                      scan_id=scan_id,
-                                      date_time=date_time,
-                                      project_id=project_id,
-                                      scan_status=scan_status,
-                                      username=username,
-                                      )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            trivy_json_report_parser.trivy_report_json(project_id=project_id,
-                                                       scan_id=scan_id,
-                                                       data=data,
-                                                       username=username
-                                                       )
-            return HttpResponseRedirect(reverse('trivy:trivy_list'))
-
-        if scanner == "npmaudit_scan":
-            date_time = datetime.now()
-            scan_dump = npmaudit_scan_db(project_name=project_name,
-                                         scan_id=scan_id,
-                                         date_time=date_time,
-                                         project_id=project_id,
-                                         scan_status=scan_status,
-                                         username=username
-                                         )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            npm_audit_report_json.npmaudit_report_json(project_id=project_id,
-                                                       scan_id=scan_id,
-                                                       data=data,
-                                                       username=username
-                                                       )
-            return HttpResponseRedirect(reverse('npmaudit:npmaudit_list'))
-
-        if scanner == "nodejsscan_scan":
-            date_time = datetime.now()
-            scan_dump = nodejsscan_scan_db(project_name=project_name,
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = bandit_scan_db(project_name=project_name,
                                            scan_id=scan_id,
                                            date_time=date_time,
                                            project_id=project_id,
                                            scan_status=scan_status,
                                            username=username
                                            )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            nodejsscan_report_json.nodejsscan_report_json(project_id=project_id,
-                                                          scan_id=scan_id,
-                                                          data=data,
-                                                          username=username
-                                                          )
-            return HttpResponseRedirect(reverse('nodejsscan:nodejsscan_list'))
+                scan_dump.save()
+                bandit_report_json(data=data,
+                                   project_id=project_id,
+                                   scan_id=scan_id,
+                                   username=username
+                                   )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('banditscanner:banditscans_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
 
-        if scanner == "semgrepscan_scan":
-            date_time = datetime.now()
-            scan_dump = semgrepscan_scan_db(project_name=project_name,
-                                            scan_id=scan_id,
-                                            date_time=date_time,
-                                            project_id=project_id,
-                                            scan_status=scan_status,
-                                            username=username
-                                            )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            semgrep_json_report_parser.semgrep_report_json(project_id=project_id,
-                                                           scan_id=scan_id,
-                                                           data=data,
-                                                           username=username
-                                                           )
-            return HttpResponseRedirect(reverse('semgrepscan:semgrepscan_list'))
+        if scanner == "retirejs_scan":
+            try:
+                date_time = datetime.now()
 
-        if scanner == "tfsec_scan":
-            date_time = datetime.now()
-            scan_dump = tfsec_scan_db(project_name=project_name,
-                                      scan_id=scan_id,
-                                      date_time=date_time,
-                                      project_id=project_id,
-                                      scan_status=scan_status,
-                                      username=username
-                                      )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            tfsec_report_parser.tfsec_report_json(project_id=project_id,
-                                                  scan_id=scan_id,
-                                                  data=data,
-                                                  username=username
-                                                  )
-            return HttpResponseRedirect(reverse('tfsec:tfsec_list'))
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = retirejs_scan_db(project_name=project_name,
+                                             scan_id=scan_id,
+                                             date_time=date_time,
+                                             project_id=project_id,
+                                             scan_status=scan_status,
+                                             username=username
+                                             )
+                scan_dump.save()
+                retirejs_report_json(data=data,
+                                     project_id=project_id,
+                                     scan_id=scan_id,
+                                     username=username
+                                     )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('retirejsscanner:retirejsscans_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
 
-        if scanner == "whitesource_scan":
-            date_time = datetime.now()
-            scan_dump = whitesource_scan_db(project_name=project_name,
-                                            scan_id=scan_id,
-                                            date_time=date_time,
-                                            project_id=project_id,
-                                            scan_status=scan_status,
-                                            username=username
-                                            )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            whitesource_json_report_parser.whitesource_report_json(project_id=project_id,
-                                                                   scan_id=scan_id,
-                                                                   data=data,
-                                                                   username=username
-                                                                   )
-            return HttpResponseRedirect(reverse('whitesource:whitesource_list'))
+        if scanner == "clair_scan":
+            try:
+                date_time = datetime.now()
 
-        if scanner == "inspec_scan":
-            date_time = datetime.now()
-            scan_dump = inspec_scan_db(project_name=project_name,
-                                       scan_id=scan_id,
-                                       date_time=date_time,
-                                       project_id=project_id,
-                                       scan_status=scan_status,
-                                       username=username
-                                       )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            inspec_report_json(data=data,
-                               project_id=project_id,
-                               scan_id=scan_id,
-                               username=username
-                               )
-            return HttpResponseRedirect(reverse('inspec:inspec_list'))
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = clair_scan_db(project_name=project_name,
+                                          scan_id=scan_id,
+                                          date_time=date_time,
+                                          project_id=project_id,
+                                          scan_status=scan_status,
+                                          username=username
+                                          )
+                scan_dump.save()
+                clair_report_json(data=data,
+                                  project_id=project_id,
+                                  scan_id=scan_id,
+                                  username=username
+                                  )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('clair:clair_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
 
-        if scanner == "dockle_scan":
-            date_time = datetime.now()
-            scan_dump = dockle_scan_db(project_name=project_name,
-                                       scan_id=scan_id,
-                                       date_time=date_time,
-                                       project_id=project_id,
-                                       scan_status=scan_status,
-                                       username=username
-                                       )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            dockle_report_json(data=data,
-                               project_id=project_id,
-                               scan_id=scan_id,
-                               username=username
-                               )
+        if scanner == "trivy_scan":
+            try:
+                date_time = datetime.now()
 
-            return HttpResponseRedirect(reverse('dockle:dockle_list'))
-
-        if scanner == "gitlabsast_scan":
-            date_time = datetime.now()
-            scan_dump = gitlabsast_scan_db(project_name=project_name,
-                                           scan_id=scan_id,
-                                           date_time=date_time,
-                                           project_id=project_id,
-                                           scan_status=scan_status,
-                                           username=username,
-                                           )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            gitlab_sast_json_report_parser.gitlabsast_report_json(project_id=project_id,
-                                                                  scan_id=scan_id,
-                                                                  data=data,
-                                                                  username=username
-                                                                  )
-            return HttpResponseRedirect(reverse('gitlabsast:gitlabsast_list'))
-
-        if scanner == "gitlabcontainerscan_scan":
-            date_time = datetime.now()
-            scan_dump = gitlabcontainerscan_scan_db(project_name=project_name,
-                                                    scan_id=scan_id,
-                                                    date_time=date_time,
-                                                    project_id=project_id,
-                                                    scan_status=scan_status,
-                                                    username=username,
-                                                    )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            gitlab_container_json_report_parser.gitlabcontainerscan_report_json(project_id=project_id,
-                                                                                scan_id=scan_id,
-                                                                                data=data,
-                                                                                username=username
-                                                                                )
-            return HttpResponseRedirect(reverse('gitlabcontainerscan:gitlabcontainerscan_list'))
-
-        if scanner == "gitlabsca_scan":
-            date_time = datetime.now()
-            scan_dump = gitlabsca_scan_db(project_name=project_name,
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = trivy_scan_db(project_name=project_name,
                                           scan_id=scan_id,
                                           date_time=date_time,
                                           project_id=project_id,
                                           scan_status=scan_status,
                                           username=username,
                                           )
-            scan_dump.save()
-            j = json_file.read()
-            data = json.loads(j)
-            gitlab_sca_json_report_parser.gitlabsca_report_json(project_id=project_id,
-                                                                scan_id=scan_id,
-                                                                data=data,
-                                                                username=username
-                                                                )
-            return HttpResponseRedirect(reverse('gitlabsca:gitlabsca_list'))
+                scan_dump.save()
+                trivy_json_report_parser.trivy_report_json(project_id=project_id,
+                                                           scan_id=scan_id,
+                                                           data=data,
+                                                           username=username
+                                                           )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('trivy:trivy_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "npmaudit_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = npmaudit_scan_db(project_name=project_name,
+                                             scan_id=scan_id,
+                                             date_time=date_time,
+                                             project_id=project_id,
+                                             scan_status=scan_status,
+                                             username=username
+                                             )
+                scan_dump.save()
+                npm_audit_report_json.npmaudit_report_json(project_id=project_id,
+                                                           scan_id=scan_id,
+                                                           data=data,
+                                                           username=username
+                                                           )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('npmaudit:npmaudit_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "nodejsscan_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = nodejsscan_scan_db(project_name=project_name,
+                                               scan_id=scan_id,
+                                               date_time=date_time,
+                                               project_id=project_id,
+                                               scan_status=scan_status,
+                                               username=username
+                                               )
+                scan_dump.save()
+                nodejsscan_report_json.nodejsscan_report_json(project_id=project_id,
+                                                              scan_id=scan_id,
+                                                              data=data,
+                                                              username=username
+                                                              )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('nodejsscan:nodejsscan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "semgrepscan_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = semgrepscan_scan_db(project_name=project_name,
+                                                scan_id=scan_id,
+                                                date_time=date_time,
+                                                project_id=project_id,
+                                                scan_status=scan_status,
+                                                username=username
+                                                )
+                scan_dump.save()
+                semgrep_json_report_parser.semgrep_report_json(project_id=project_id,
+                                                               scan_id=scan_id,
+                                                               data=data,
+                                                               username=username
+                                                               )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('semgrepscan:semgrepscan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "tfsec_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = tfsec_scan_db(project_name=project_name,
+                                          scan_id=scan_id,
+                                          date_time=date_time,
+                                          project_id=project_id,
+                                          scan_status=scan_status,
+                                          username=username
+                                          )
+                scan_dump.save()
+                tfsec_report_parser.tfsec_report_json(project_id=project_id,
+                                                      scan_id=scan_id,
+                                                      data=data,
+                                                      username=username
+                                                      )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('tfsec:tfsec_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "whitesource_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = whitesource_scan_db(project_name=project_name,
+                                                scan_id=scan_id,
+                                                date_time=date_time,
+                                                project_id=project_id,
+                                                scan_status=scan_status,
+                                                username=username
+                                                )
+                scan_dump.save()
+                whitesource_json_report_parser.whitesource_report_json(project_id=project_id,
+                                                                       scan_id=scan_id,
+                                                                       data=data,
+                                                                       username=username
+                                                                       )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('whitesource:whitesource_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "inspec_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = inspec_scan_db(project_name=project_name,
+                                           scan_id=scan_id,
+                                           date_time=date_time,
+                                           project_id=project_id,
+                                           scan_status=scan_status,
+                                           username=username
+                                           )
+                scan_dump.save()
+                inspec_report_json(data=data,
+                                   project_id=project_id,
+                                   scan_id=scan_id,
+                                   username=username
+                                   )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('inspec:inspec_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "dockle_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = dockle_scan_db(project_name=project_name,
+                                           scan_id=scan_id,
+                                           date_time=date_time,
+                                           project_id=project_id,
+                                           scan_status=scan_status,
+                                           username=username
+                                           )
+                scan_dump.save()
+                dockle_report_json(data=data,
+                                   project_id=project_id,
+                                   scan_id=scan_id,
+                                   username=username
+                                   )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('dockle:dockle_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "gitlabsast_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = gitlabsast_scan_db(project_name=project_name,
+                                               scan_id=scan_id,
+                                               date_time=date_time,
+                                               project_id=project_id,
+                                               scan_status=scan_status,
+                                               username=username,
+                                               )
+                scan_dump.save()
+                gitlab_sast_json_report_parser.gitlabsast_report_json(project_id=project_id,
+                                                                      scan_id=scan_id,
+                                                                      data=data,
+                                                                      username=username
+                                                                      )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('gitlabsast:gitlabsast_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "gitlabcontainerscan_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = gitlabcontainerscan_scan_db(project_name=project_name,
+                                                        scan_id=scan_id,
+                                                        date_time=date_time,
+                                                        project_id=project_id,
+                                                        scan_status=scan_status,
+                                                        username=username,
+                                                        )
+                scan_dump.save()
+                gitlab_container_json_report_parser.gitlabcontainerscan_report_json(project_id=project_id,
+                                                                                    scan_id=scan_id,
+                                                                                    data=data,
+                                                                                    username=username
+                                                                                    )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('gitlabcontainerscan:gitlabcontainerscan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "gitlabsca_scan":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = gitlabsca_scan_db(project_name=project_name,
+                                              scan_id=scan_id,
+                                              date_time=date_time,
+                                              project_id=project_id,
+                                              scan_status=scan_status,
+                                              username=username,
+                                              )
+                scan_dump.save()
+                gitlab_sca_json_report_parser.gitlabsca_report_json(project_id=project_id,
+                                                                    scan_id=scan_id,
+                                                                    data=data,
+                                                                    username=username
+                                                                    )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('gitlabsca:gitlabsca_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
 
     return render(request, 'report_import.html', {'all_project': all_project})

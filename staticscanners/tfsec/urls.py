@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.tfsec import views
 
 app_name = 'tfsec'
@@ -22,30 +22,30 @@ app_name = 'tfsec'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^tfsec_list',
+    path('tfsec_list/',
         views.tfsec_list,
         name='tfsec_list'),
 
-    url(r'^tfsec_all_vuln',
+    path('tfsec_all_vuln/',
         views.list_vuln,
         name='tfsec_all_vuln'),
 
-    url(r'^tfsec_vuln_data',
+    path('tfsec_vuln_data/',
         views.tfsec_vuln_data,
         name='tfsec_vuln_data'),
 
-    url(r'^tfsec_details',
+    path('tfsec_details/',
         views.tfsec_details,
         name='tfsec_details'),
 
-    url(r'^del_tfsec',
+    path('del_tfsec/',
         views.del_tfsec,
         name='del_tfsec'),
 
-    url(r'^tfsec_del_vuln',
+    path('tfsec_del_vuln/',
         views.tfsec_del_vuln,
         name='tfsec_del_vuln'),
-    url(r'^export',
+    path('export/',
         views.export,
         name='export'),
 ]

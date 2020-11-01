@@ -65,6 +65,12 @@ import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from notifications.models import Notification
 from django.urls import reverse
+from PyBurprestapi import burpscanner
+from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin
+import json
+import PyArachniapi
+from jira import JIRA
+import signal
 
 setting_file = os.getcwd() + '/' + 'apidata.json'
 
@@ -501,6 +507,125 @@ def setting(request):
     else:
         jira_password = signing.loads(password)
 
+    username = request.user.username
+    zap_enabled = False
+    random_port = '8091'
+    target_url = 'https://archerysec.com'
+    zap_info = ''
+    burp_info = ''
+    openvas_info = ''
+    arachni_info = ''
+    jira_info = ''
+
+    if request.method == 'POST':
+        setting_of = request.POST.get('setting_of')
+        if setting_of == 'zap':
+            all_zap = zap_settings_db.objects.filter(username=username)
+            for zap in all_zap:
+                zap_enabled = zap.enabled
+
+            if zap_enabled is False:
+                zap_info = 'Disabled'
+                try:
+                    random_port = zap_plugin.zap_local()
+                except:
+                    return render(request, 'setting.html', {'zap_info': zap_info})
+
+                for i in range(0, 100):
+                    while True:
+                        try:
+                            # Connection Test
+                            zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                            zap_connect.spider.scan(url=target_url)
+                        except Exception as e:
+                            print("ZAP Connection Not Found, re-try after 5 sec")
+                            time.sleep(5)
+                            continue
+                        break
+            else:
+                try:
+                    zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                    zap_connect.spider.scan(url=target_url)
+                    zap_info = True
+                except:
+                    zap_info = False
+        if setting_of == 'burp':
+            host = 'http://' + burp_host + ':' + burp_port + '/'
+
+            bi = burpscanner.BurpApi(host, burp_api_key)
+
+            issue_list = bi.issue_definitions()
+            if issue_list.data is None:
+                burp_info = False
+            else:
+                burp_info = True
+
+        if setting_of == 'openvas':
+            sel_profile = ''
+
+            openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile, username=username)
+            try:
+                openvas.connect()
+                openvas_info = True
+            except:
+                openvas_info = False
+
+        if setting_of == 'arachni':
+            global scan_run_id, scan_status
+            arachni_hosts = None
+            arachni_ports = None
+            all_arachni = arachni_settings_db.objects.filter(username=username)
+            for arachni in all_arachni:
+                arachni_hosts = arachni.arachni_url
+                arachni_ports = arachni.arachni_port
+
+            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports)
+
+            check = []
+            data = {
+                "url": 'https://archerysec.com',
+                "checks": check,
+                "audit": {
+                }
+            }
+            d = json.dumps(data)
+
+            scan_launch = arachni.scan_launch(d)
+            time.sleep(3)
+
+            try:
+                scan_data = scan_launch.data
+
+                for key, value in scan_data.items():
+                    if key == 'id':
+                        scan_run_id = value
+                arachni_info = True
+            except Exception:
+                arachni_info = False
+
+        if setting_of == 'jira':
+            global jira_projects, jira_ser
+            jira_setting = jirasetting.objects.filter(username=username)
+
+            for jira in jira_setting:
+                jira_url = jira.jira_server
+                username = jira.jira_username
+                password = jira.jira_password
+            jira_server = jira_url
+            jira_username = signing.loads(username)
+            jira_password = signing.loads(password)
+
+            options = {'server': jira_server}
+            try:
+
+                jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), timeout=5)
+                jira_projects = jira_ser.projects()
+                print(len(jira_projects))
+                jira_info = True
+            except Exception as e:
+                print(e)
+                jira_info = False
+
     return render(request, 'setting.html',
                   {'apikey': lod_apikey,
                    'zapath': zap_host,
@@ -525,6 +650,11 @@ def setting(request):
                    'nv_online': nv_online,
                    'nv_timing': nv_timing,
                    'message': all_notify,
+                   'zap_info': zap_info,
+                   'burp_info': burp_info,
+                   'openvas_info': openvas_info,
+                   'arachni_info': arachni_info,
+                   'jira_info': jira_info
                    })
 
 
@@ -620,197 +750,247 @@ def xml_upload(request):
         scan_id = uuid.uuid4()
         scan_status = "100"
         if scanner == "zap_scan":
-            date_time = datetime.now()
-            scan_dump = zap_scans_db(username=username,
-                                     scan_url=scan_url,
-                                     scan_scanid=scan_id,
-                                     date_time=date_time,
-                                     project_id=project_id,
-                                     vul_status=scan_status,
-                                     rescan='No')
-            scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
-            root_xml_en = ET.fromstring(en_root_xml)
-            zap_xml_parser.xml_parser(username=username,
-                                      project_id=project_id,
-                                      scan_id=scan_id,
-                                      root=root_xml_en)
-            return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
-        elif scanner == "burp_scan":
-            date_time = datetime.now()
-            scan_dump = burp_scan_db(username=username,
-                                     url=scan_url,
-                                     scan_id=scan_id,
-                                     date_time=date_time,
-                                     project_id=project_id,
-                                     scan_status=scan_status)
-            scan_dump.save()
-            # Burp scan XML parser
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
-            root_xml_en = ET.fromstring(en_root_xml)
+            try:
+                tree = ET.parse(xml_file)
+                date_time = datetime.now()
 
-            burp_xml_parser.burp_scan_data(root_xml_en,
-                                           project_id,
-                                           scan_id,
-                                           username=username)
-            return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
-
-        elif scanner == "arachni":
-            date_time = datetime.now()
-            scan_dump = arachni_scan_db(username=username,
-                                        url=scan_url,
-                                        scan_id=scan_id,
-                                        date_time=date_time,
-                                        project_id=project_id,
-                                        scan_status=scan_status)
-            scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            arachni_xml_parser.xml_parser(username=username,
+                root_xml = tree.getroot()
+                en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+                root_xml_en = ET.fromstring(en_root_xml)
+                scan_dump = zap_scans_db(username=username,
+                                         scan_url=scan_url,
+                                         scan_scanid=scan_id,
+                                         date_time=date_time,
+                                         project_id=project_id,
+                                         vul_status=scan_status,
+                                         rescan='No')
+                scan_dump.save()
+                zap_xml_parser.xml_parser(username=username,
                                           project_id=project_id,
                                           scan_id=scan_id,
-                                          root=root_xml,
-                                          target_url=scan_url)
-            print("Save scan Data")
-            return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
+                                          root=root_xml_en)
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
+
+        elif scanner == "burp_scan":
+            try:
+                date_time = datetime.now()
+                # Burp scan XML parser
+                tree = ET.parse(xml_file)
+                root_xml = tree.getroot()
+                en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+                root_xml_en = ET.fromstring(en_root_xml)
+                scan_dump = burp_scan_db(username=username,
+                                         url=scan_url,
+                                         scan_id=scan_id,
+                                         date_time=date_time,
+                                         project_id=project_id,
+                                         scan_status=scan_status)
+                scan_dump.save()
+                burp_xml_parser.burp_scan_data(root_xml_en,
+                                               project_id,
+                                               scan_id,
+                                               username=username)
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
+
+        elif scanner == "arachni":
+            try:
+                date_time = datetime.now()
+
+                tree = ET.parse(xml_file)
+                root_xml = tree.getroot()
+                scan_dump = arachni_scan_db(username=username,
+                                            url=scan_url,
+                                            scan_id=scan_id,
+                                            date_time=date_time,
+                                            project_id=project_id,
+                                            scan_status=scan_status)
+                scan_dump.save()
+                arachni_xml_parser.xml_parser(username=username,
+                                              project_id=project_id,
+                                              scan_id=scan_id,
+                                              root=root_xml,
+                                              target_url=scan_url)
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
 
         elif scanner == 'netsparker':
-            date_time = datetime.now()
-            scan_dump = netsparker_scan_db(
-                username=username,
-                url=scan_url,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status
-            )
-            scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            netsparker_xml_parser.xml_parser(project_id=project_id,
-                                             scan_id=scan_id,
-                                             root=root_xml, username=username)
+            try:
+                date_time = datetime.now()
 
-            return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
+                tree = ET.parse(xml_file)
+                root_xml = tree.getroot()
+                scan_dump = netsparker_scan_db(
+                    username=username,
+                    url=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status
+                )
+                scan_dump.save()
+                netsparker_xml_parser.xml_parser(project_id=project_id,
+                                                 scan_id=scan_id,
+                                                 root=root_xml, username=username)
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
         elif scanner == 'webinspect':
-            date_time = datetime.now()
-            scan_dump = webinspect_scan_db(
-                username=username,
-                url=scan_url,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status
-            )
-            scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            webinspect_xml_parser.xml_parser(project_id=project_id,
-                                             scan_id=scan_id,
-                                             root=root_xml,
-                                             username=username)
+            try:
+                date_time = datetime.now()
 
-            return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
+                tree = ET.parse(xml_file)
+                root_xml = tree.getroot()
+                scan_dump = webinspect_scan_db(
+                    username=username,
+                    url=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status
+                )
+                scan_dump.save()
+                webinspect_xml_parser.xml_parser(project_id=project_id,
+                                                 scan_id=scan_id,
+                                                 root=root_xml,
+                                                 username=username)
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
 
         elif scanner == 'acunetix':
-            date_time = datetime.now()
-            scan_dump = acunetix_scan_db(
-                username=username,
-                url=scan_url,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status
-            )
-            scan_dump.save()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            acunetix_xml_parser.xml_parser(username=username,
-                                           project_id=project_id,
-                                           scan_id=scan_id,
-                                           root=root_xml)
+            try:
+                date_time = datetime.now()
 
-            return HttpResponseRedirect(reverse('acunetixscanner:acunetix_scan_list'))
+                tree = ET.parse(xml_file)
+                root_xml = tree.getroot()
+                scan_dump = acunetix_scan_db(
+                    username=username,
+                    url=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status
+                )
+                scan_dump.save()
+                acunetix_xml_parser.xml_parser(username=username,
+                                               project_id=project_id,
+                                               scan_id=scan_id,
+                                               root=root_xml)
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('acunetixscanner:acunetix_scan_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
 
         elif scanner == 'dependencycheck':
-            date_time = datetime.now()
-            scan_dump = dependencycheck_scan_db(
-                project_name=scan_url,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status,
-                username=username
-            )
-            scan_dump.save()
-            data = etree.parse(xml_file)
-            root = data.getroot()
-            dependencycheck_report_parser.xml_parser(project_id=project_id,
-                                                     scan_id=scan_id,
-                                                     data=root,
-                                                     username=username
-                                                     )
+            try:
+                date_time = datetime.now()
 
-            return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
+                data = etree.parse(xml_file)
+                root = data.getroot()
+                scan_dump = dependencycheck_scan_db(
+                    project_name=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    username=username
+                )
+                scan_dump.save()
+                dependencycheck_report_parser.xml_parser(project_id=project_id,
+                                                         scan_id=scan_id,
+                                                         data=root,
+                                                         username=username
+                                                         )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
 
         elif scanner == 'checkmarx':
-            date_time = datetime.now()
-            scan_dump = checkmarx_scan_db(
-                project_name=scan_url,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status,
-                username=username
-            )
-            scan_dump.save()
-            data = etree.parse(xml_file)
-            root = data.getroot()
-            checkmarx_xml_report_parser.checkmarx_report_xml(project_id=project_id,
-                                                             scan_id=scan_id,
-                                                             data=root,
-                                                             username=username
-                                                             )
+            try:
+                date_time = datetime.now()
 
-            return HttpResponseRedirect(reverse('checkmarx:checkmarx_list'))
+                data = etree.parse(xml_file)
+                root = data.getroot()
+                scan_dump = checkmarx_scan_db(
+                    project_name=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    username=username
+                )
+                scan_dump.save()
+                checkmarx_xml_report_parser.checkmarx_report_xml(project_id=project_id,
+                                                                 scan_id=scan_id,
+                                                                 data=root,
+                                                                 username=username
+                                                                 )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('checkmarx:checkmarx_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
 
         elif scanner == 'findbugs':
-            date_time = datetime.now()
-            scan_dump = findbugs_scan_db(
-                project_name=scan_url,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status,
-                username=username
-            )
-            scan_dump.save()
-            tree = ET.parse(xml_file)
-            root = tree.getroot()
-            findbugs_report_parser.xml_parser(project_id=project_id,
-                                              scan_id=scan_id,
-                                              root=root,
-                                              username=username)
+            try:
+                date_time = datetime.now()
 
-            return HttpResponseRedirect(reverse('findbugs:findbugs_list'))
+                tree = ET.parse(xml_file)
+                root = tree.getroot()
+                scan_dump = findbugs_scan_db(
+                    project_name=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    username=username
+                )
+                scan_dump.save()
+                findbugs_report_parser.xml_parser(project_id=project_id,
+                                                  scan_id=scan_id,
+                                                  root=root,
+                                                  username=username)
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('findbugs:findbugs_list'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
 
         elif scanner == 'nikto':
-            date_time = datetime.now()
-            scan_dump = nikto_result_db(
-                date_time=date_time,
-                scan_url=scan_url,
-                scan_id=scan_id,
-                project_id=project_id,
-            )
-            scan_dump.save()
+            try:
+                date_time = datetime.now()
+                scan_dump = nikto_result_db(
+                    date_time=date_time,
+                    scan_url=scan_url,
+                    scan_id=scan_id,
+                    project_id=project_id,
+                )
+                scan_dump.save()
 
-            nikto_html_parser(xml_file, project_id, scan_id)
-
-            return HttpResponseRedirect(reverse('tools:nikto'))
+                nikto_html_parser(xml_file, project_id, scan_id, username=username)
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('tools:nikto'))
+            except:
+                messages.error(request, "File Not Supported")
+                return render(request, 'upload_xml.html', {'all_project': all_project})
 
     return render(request, 'upload_xml.html', {'all_project': all_project})
 
