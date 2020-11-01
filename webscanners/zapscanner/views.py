@@ -573,7 +573,7 @@ def del_zap_scan(request):
                                                    )
                 item.delete()
                 # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
-            return HttpResponseRedirect(reverse('webscanners:index'))
+            return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
     except Exception as e:
         print("Error Got !!!")
 

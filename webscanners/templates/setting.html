@@ -416,6 +416,13 @@
             });
     </script>
     {% endif %}
+    {% if zap_info == 'Disabled' %}
+    <script>
+            $(window).load(function() {
+                toastr.warning('ZAP Connection Disabled');
+            });
+    </script>
+    {% endif %}
     {% if burp_info == False %}
     <script>
             $(window).load(function() {

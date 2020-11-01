@@ -525,8 +525,11 @@ def setting(request):
                 zap_enabled = zap.enabled
 
             if zap_enabled is False:
-                print("started local instence")
-                random_port = zap_plugin.zap_local()
+                zap_info = 'Disabled'
+                try:
+                    random_port = zap_plugin.zap_local()
+                except:
+                    return render(request, 'setting.html', {'zap_info': zap_info})
 
                 for i in range(0, 100):
                     while True:
@@ -539,12 +542,13 @@ def setting(request):
                             time.sleep(5)
                             continue
                         break
-            try:
-                zap_connect = zap_plugin.zap_connect(random_port, username=username)
-                zap_connect.spider.scan(url=target_url)
-                zap_info = True
-            except:
-                zap_info = False
+            else:
+                try:
+                    zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                    zap_connect.spider.scan(url=target_url)
+                    zap_info = True
+                except:
+                    zap_info = False
         if setting_of == 'burp':
             host = 'http://' + burp_host + ':' + burp_port + '/'
 
