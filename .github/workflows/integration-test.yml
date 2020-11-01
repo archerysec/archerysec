@@ -65,6 +65,7 @@ jobs:
           --volume "$PWD":/code \
           --volume /var/run/docker.sock:/var/run/docker.sock \
           registry.gitlab.com/gitlab-org/security-products/sast:latest /app/bin/run /code
+          ls
 
               sudo apt-get install jq
               sudo pip install archerysec-cli
