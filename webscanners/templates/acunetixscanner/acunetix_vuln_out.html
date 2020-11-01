@@ -136,7 +136,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         </td>
                                         {% if data.vuln_status == 'Open' %}
                                         <td>
-                                            <form method="POST" action="{% url 'acunetixscanner:acunetix_vuln_out' %}/">{% csrf_token %}
+                                            <form method="POST" action="{% url 'acunetixscanner:acunetix_vuln_out' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Closed">
