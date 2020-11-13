@@ -205,7 +205,7 @@ def vuln_an_id(scan_id, project_id, username):
                 else:
                     description = r.text
 
-            for rr in r.getchildren():
+            for rr in r:
                 if rr.tag == "family":
                     global family
                     if rr.text is None:

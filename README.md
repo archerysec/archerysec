@@ -71,7 +71,7 @@ Currently project is in development phase and still lot of work going on. Stay t
 
 ## Requirements
 
-* Python 3.6+ - [Python 3.6 Download](https://www.python.org/downloads/)
+* Python 3.9+ - [Python 3.9 Download](https://www.python.org/downloads/)
 * [OpenVAS 8, 9](http://www.openvas.org/index.html)
 * [OWASP ZAP 2.7.0](https://github.com/zaproxy/zaproxy/wiki/Downloads)
 * [Selenium Python Firefox Web driver](https://github.com/mozilla/geckodriver/releases)
