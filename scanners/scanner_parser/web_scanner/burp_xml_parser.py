@@ -71,7 +71,7 @@ def burp_scan_data(root, project_id, scan_id, username):
         vul_col, severity, name, path, host, location, \
         confidence, types, serialNumber, request_datas, response_datas, url
     for issue in root:
-        for data in issue.getchildren():
+        for data in issue:
             vuln_id = uuid.uuid4()
             if data.tag == "serialNumber":
                 global serialNumber

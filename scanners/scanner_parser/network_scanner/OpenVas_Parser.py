@@ -90,7 +90,7 @@ def updated_xml_parser(root, project_id, scan_id, username):
                     description = "NA"
                 else:
                     description = r.text
-            for rr in r.getchildren():
+            for rr in r:
                 if rr.tag == "family":
                     global family
                     if rr.text is None:
