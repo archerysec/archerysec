@@ -125,9 +125,8 @@ def zap_connect(random_port, username):
             zap_ports = zap.zap_port
     zap = ZAPv2(apikey=zap_api_key,
                 proxies={
-                    'http': zap_hosts + ':' + str(zap_ports),
-                    'https': zap_hosts + ':' + str(zap_ports)})
-
+                    'http': 'http://' + zap_hosts + ':' + str(zap_ports),
+                    'https': 'https://' + zap_hosts + ':' + str(zap_ports)})
     return zap
 
 
