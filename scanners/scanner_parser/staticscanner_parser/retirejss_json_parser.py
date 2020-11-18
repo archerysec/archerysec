@@ -21,7 +21,7 @@ import uuid
 import hashlib
 from datetime import datetime
 import pprint
-
+from dashboard.views import trend_update
 scan_id = None
 rescan_id = None
 scan_date = None
@@ -142,3 +142,4 @@ def retirejs_report_json(data, project_id, scan_id, username):
             username=username,
         )
         save_all.save()
+        trend_update(username=username)

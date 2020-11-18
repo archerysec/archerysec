@@ -19,6 +19,7 @@ from webscanners.models import webinspect_scan_result_db, webinspect_scan_db
 import uuid
 import hashlib
 from datetime import datetime
+from dashboard.views import trend_update
 
 from webscanners.zapscanner.views import email_sch_notify
 
@@ -232,6 +233,8 @@ def xml_parser(root,
                                                                   info_vul=total_info,
                                                                   total_dup=total_duplicate
                                                                   )
+    trend_update(username=username)
+
     subject = 'Archery Tool Scan Status - Webinspect Report Uploaded'
     message = 'Webinspect Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

@@ -18,7 +18,7 @@ import datetime
 import uuid
 from networkscanners.models import nessus_scan_db, nessus_scan_results_db, nessus_targets_db
 import hashlib
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 agent = "NA"
@@ -334,7 +334,7 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                     total_dup=total_duplicate,
                     target=target,
                     )
-
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - Nessus Report Uploaded'
     message = 'Nessus Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

@@ -19,7 +19,7 @@ import uuid
 import hashlib
 from datetime import datetime
 import json
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 vul_col = ''
@@ -179,6 +179,7 @@ def whitesource_report_json(data, project_id, scan_id, username):
         low_vul=total_low,
         total_dup=total_duplicate
     )
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - whitesource Report Uploaded'
     message = 'whitesource Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \
