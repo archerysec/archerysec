@@ -18,7 +18,7 @@ from staticscanners.models import findbugs_scan_db, findbugs_scan_results_db
 import uuid
 import hashlib
 from datetime import datetime
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 Details = 'NA'
@@ -178,7 +178,7 @@ def xml_parser(root, project_id, scan_id, username):
             low_vul=total_low,
             total_dup=total_duplicate
         )
-
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - Findbugs Report Uploaded'
     message = 'Findbugs Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

@@ -18,7 +18,7 @@ from networkscanners.models import ov_scan_result_db, openvas_scan_db
 from datetime import datetime
 import uuid
 import hashlib
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 name = ''
@@ -203,7 +203,7 @@ def updated_xml_parser(root, project_id, scan_id, username):
                    total_dup=total_duplicate,
                    scan_ip=host,
                    )
-
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - OpenVAS Report Uploaded'
     message = 'OpenVAS Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

@@ -19,7 +19,7 @@ from webscanners.models import arachni_scan_db, arachni_scan_result_db
 import uuid
 import hashlib
 from datetime import datetime
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 name = ""
@@ -342,6 +342,7 @@ def xml_parser(root, project_id, scan_id, username, target_url):
         info_vul=total_info,
         total_dup=total_duplicate,
     )
+    trend_update(username=username)
 
     subject = 'Archery Tool Scan Status - Arachni Report Uploaded'
     message = 'Arachni Scanner has completed the scan ' \

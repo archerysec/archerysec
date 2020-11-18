@@ -85,28 +85,17 @@ all_high_stat = ""
 data = ""
 
 
-def dashboard(request):
-    """
-    The function calling Project Dashboard page.
-    :param request:
-    :return:
-    """
+def trend_update(username):
     current_month = ''
-    high = 0
-    medium = 0
-    low = 0
 
-    scanners = 'vscanners'
-    username = request.user.username
     all_project = project_db.objects.filter(username=username)
-
-    current_year = datetime.datetime.now().year
 
     for project in all_project:
         proj_id = project.project_id
         all_date_data = (project_db.objects
                          .annotate(month=Month('date_time'))
-                         .values('month').annotate(total_high=Sum('total_high')).annotate(total_medium=Sum('total_medium')).annotate(total_low=Sum('total_low')).order_by("month")
+                         .values('month').annotate(total_high=Sum('total_high')).annotate(
+            total_medium=Sum('total_medium')).annotate(total_low=Sum('total_low')).order_by("month")
                          )
 
         try:
@@ -203,6 +192,23 @@ def dashboard(request):
                                            low_web=low_web,
                                            low_static=low_static,
                                            )
+
+
+def dashboard(request):
+    """
+    The function calling Project Dashboard page.
+    :param request:
+    :return:
+    """
+
+    scanners = 'vscanners'
+    username = request.user.username
+
+    trend_update(username=username)
+
+    all_project = project_db.objects.filter(username=username)
+
+    current_year = datetime.datetime.now().year
 
     user = user_logged_in
     all_notify = Notification.objects.unread()

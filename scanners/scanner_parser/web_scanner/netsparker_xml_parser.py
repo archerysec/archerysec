@@ -18,7 +18,7 @@ from webscanners.models import netsparker_scan_result_db, netsparker_scan_db
 import uuid
 import hashlib
 from datetime import datetime
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 vuln_url = None
@@ -249,6 +249,7 @@ def xml_parser(root,
                                                                                      total_dup=total_duplicate,
                                                                                      url=target
                                                                                      )
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - Netsparker Report Uploaded'
     message = 'Netsparker Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

@@ -21,6 +21,7 @@ from datetime import datetime
 import json
 
 from webscanners.zapscanner.views import email_sch_notify
+from dashboard.views import trend_update
 
 vul_col = ''
 Target = ''
@@ -201,6 +202,7 @@ def gitlabsast_report_json(data, project_id, scan_id, username):
                                                               low_vul=total_low,
                                                               total_dup=total_duplicate
                                                               )
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - GitLab SAST Report Uploaded'
     message = 'GitLab SAST Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

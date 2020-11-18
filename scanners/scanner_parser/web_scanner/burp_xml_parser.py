@@ -22,7 +22,7 @@ from django.shortcuts import HttpResponse
 from webscanners import email_notification
 import hashlib
 from datetime import datetime
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 project_id = None
@@ -302,6 +302,7 @@ def burp_scan_data(root, project_id, scan_id, username):
         info_vul=total_info,
         total_dup=total_duplicate
     )
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - Burp Report Uploaded'
     message = 'Burp Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \
