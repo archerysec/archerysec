@@ -73,7 +73,7 @@ RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
     rm -rf ZAP_2.7.0
 
 # Install requirements
-RUN . venv/bin/activate && pip3 install --no-cache-dir -r requirements_setup.txt && \
+RUN . venv/bin/activate && pip3 install --no-cache-dir -r requirements.txt && \
     rm -rf /home/archerysec/.cache
 
 RUN . venv/bin/activate && python3 /home/archerysec/app/manage.py collectstatic --noinput

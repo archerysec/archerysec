@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from compliance.dockle import views
 
 app_name = 'dockle'
@@ -22,30 +22,30 @@ app_name = 'dockle'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^dockle_list',
+    path('dockle_list/',
         views.dockle_list,
         name='dockle_list'),
 
-    url(r'^dockle_all_vuln',
+    path('dockle_all_vuln/',
         views.list_vuln,
         name='dockle_all_vuln'),
 
-    url(r'^dockle_vuln_data',
+    path('dockle_vuln_data/',
         views.dockle_vuln_data,
         name='dockle_vuln_data'),
 
-    url(r'^dockle_details',
+    path('dockle_details/',
         views.dockle_details,
         name='dockle_details'),
 
-    url(r'^del_dockle',
+    path('del_dockle/',
         views.del_dockle,
         name='del_dockle'),
 
-    url(r'^dockle_del_vuln',
+    path('dockle_del_vuln/',
         views.dockle_del_vuln,
         name='dockle_del_vuln'),
-    url(r'^export',
+    path('export/',
         views.export,
         name='export'),
 ]

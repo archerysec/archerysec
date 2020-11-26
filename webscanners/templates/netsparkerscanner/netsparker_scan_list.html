@@ -2,7 +2,7 @@
 
 {% block body %}
 
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script type="text/javascript">
 
@@ -10,30 +10,45 @@
         $("input:checkbox").prop('checked', $(this).prop("checked"));
     });
     $(document).ready(function() {
-        $("button").click(function(){
-            var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
-            $.each($("input[name='del_scan_id']:checked"), function(){
-                scan_id.push($(this).val());
-            });
+        $('.btn-danger').click(function(){
+            if (confirm('Are you sure you want to delete this?')) {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_scan_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
 
-            var json_scanid = scan_id.join(", ");
-            $.ajax({
-                type:'POST',
-                <!--contentType: 'application/json; charset=utf-8',-->
-                url:'{% url 'netsparkerscanner:del_netsparker_scan' %}',
-                data:{
-                   scan_id: json_scanid,
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
+                var json_scanid = scan_id.join(", ");
+                $.ajax({
+                    type:'POST',
+                    <!--contentType: 'application/json; charset=utf-8',-->
+                    url:'{% url 'netsparkerscanner:del_netsparker_scan' %}',
+                    data:{
+                       scan_id: json_scanid,
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
 
-                }
-            });
-            setTimeout(function(){location.reload();},1000);
+                    }
+                });
+                setTimeout(function(){location.reload();},1000);
+            }
         });
 
     });
 
+    $(document).ready(function() {
+        $('.btn-primary').click(function(){
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_scan_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
+
+            document.getElementById("toexport").value = scan_id.join(", ");
+
+
+        });
+
+    });
 
 </script>
 
@@ -66,8 +81,7 @@
                                         </select>
                                     </div>
                                     <div class="col-auto my-1">
-                                        <input type="hidden" name="scan_id"
-                                               value="{% for data in all_netsparker_scan %}{{data.scan_id}}{% endfor %}"/>
+                                         <input type="hidden" id="toexport" name="scan_id"/>
                                         <button type="submit" class="btn btn-primary"><i
                                                 class="fas fa-arrow-alt-circle-down"></i></button>
                                     </div>
@@ -146,40 +160,20 @@
         </div>
     </div>
 </div>
-
-
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script type="text/javascript">
-
-    $("#checkAll").change(function () {
-        $("input:checkbox").prop('checked', $(this).prop("checked"));
-    });
-    $(document).ready(function() {
-        $("button").click(function(){
-            var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
-            $.each($("input[name='del_scan_id']:checked"), function(){
-                scan_id.push($(this).val());
-            });
-
-            var json_scanid = scan_id.join(", ");
-            $.ajax({
-                type:'POST',
-                <!--contentType: 'application/json; charset=utf-8',-->
-                url:'{% url 'netsparkerscanner:del_netsparker_scan' %}',
-                data:{
-                   scan_id: json_scanid,
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
-
-                }
-            });
-            setTimeout(function(){location.reload();},1000);
+<script src="/static/matrix-admin-bt4/assets/libs/toastr/build/toastr.min.js"></script>
+<script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>
+<script>
+        $(window).load(function() {
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'alert-success' %}
+                        toastr.success('{{ message }}');
+                    {% endif %}
+                    {% if message.tags == 'alert-danger' %}
+                        toastr.error('{{ message }}');
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         });
-
-    });
-
-
 </script>
-
 {% endblock %}

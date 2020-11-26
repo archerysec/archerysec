@@ -21,7 +21,7 @@ import uuid
 import hashlib
 from datetime import datetime
 import pprint
-
+from dashboard.views import trend_update
 scan_id = None
 rescan_id = None
 scan_date = None
@@ -45,12 +45,13 @@ def retirejs_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    date_time = datetime.now()
+    global component, files, severity
     for f in data:
-        global files
         files = f["file"]
 
         for components in data:
-            global component
+
             component = components["results"][0]["component"]
 
         for versions in data:
@@ -120,6 +121,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
         save_all = retirejs_scan_results_db(
             scan_id=scan_id,
             # rescan_id = rescan_id,
+            date_time=date_time,
             scan_date=date_time,
             project_id=project_id,
             vuln_id=vul_id,
@@ -140,3 +142,4 @@ def retirejs_report_json(data, project_id, scan_id, username):
             username=username,
         )
         save_all.save()
+        trend_update(username=username)

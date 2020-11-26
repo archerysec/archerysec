@@ -18,7 +18,7 @@ from staticscanners.models import findbugs_scan_db, findbugs_scan_results_db
 import uuid
 import hashlib
 from datetime import datetime
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 Details = 'NA'
@@ -28,6 +28,10 @@ sourcepath = 'NA'
 sourcefile = 'NA'
 LongMessage = 'NA'
 name = ''
+vul_col = ''
+lenth_match = ''
+duplicate_hash = ''
+vul_id = ''
 
 
 def xml_parser(root, project_id, scan_id, username):
@@ -38,7 +42,9 @@ def xml_parser(root, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
-    global name
+    date_time = datetime.now()
+    global name, classname, risk, ShortMessage, LongMessage, sourcepath, vul_col, \
+        ShortDescription, Details, lenth_match, duplicate_hash, vul_id
     # print root
     for bug in root:
         if bug.tag == 'BugInstance':
@@ -81,12 +87,8 @@ def xml_parser(root, project_id, scan_id, username):
                                                                     dup_hash=duplicate_hash).values('dup_hash')
                 lenth_match = len(match_dup)
 
-                if lenth_match == 1:
-                    duplicate_vuln = 'Yes'
-                elif lenth_match == 0:
-                    duplicate_vuln = 'No'
-                else:
-                    duplicate_vuln = 'None'
+            if lenth_match == 0:
+                duplicate_vuln = 'No'
 
                 false_p = findbugs_scan_results_db.objects.filter(username=username,
                                                                   false_positive_hash=duplicate_hash)
@@ -97,25 +99,51 @@ def xml_parser(root, project_id, scan_id, username):
                 else:
                     false_positive = 'No'
 
-            save_all = findbugs_scan_results_db(
-                vuln_id=vul_id,
-                scan_id=scan_id,
-                project_id=project_id,
-                name=name,
-                priority=priority,
-                ShortMessage=ShortMessage,
-                LongMessage=LongMessage,
-                classname=classname,
-                sourcepath=sourcepath,
-                vul_col=vul_col,
-                vuln_status='Open',
-                dup_hash=duplicate_hash,
-                vuln_duplicate=duplicate_vuln,
-                false_positive=false_positive,
-                risk=risk,
-                username=username
-            )
-            save_all.save()
+                save_all = findbugs_scan_results_db(
+                    vuln_id=vul_id,
+                    date_time=date_time,
+                    scan_id=scan_id,
+                    project_id=project_id,
+                    name=name,
+                    priority=priority,
+                    ShortMessage=ShortMessage,
+                    LongMessage=LongMessage,
+                    classname=classname,
+                    sourcepath=sourcepath,
+                    vul_col=vul_col,
+                    vuln_status='Open',
+                    dup_hash=duplicate_hash,
+                    vuln_duplicate=duplicate_vuln,
+                    false_positive=false_positive,
+                    risk=risk,
+                    username=username
+                )
+                save_all.save()
+
+            else:
+                duplicate_vuln = 'Yes'
+
+                save_all = findbugs_scan_results_db(
+                    vuln_id=vul_id,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    name=name,
+                    priority=priority,
+                    ShortMessage=ShortMessage,
+                    LongMessage=LongMessage,
+                    classname=classname,
+                    sourcepath=sourcepath,
+                    vul_col=vul_col,
+                    vuln_status='Duplicate',
+                    dup_hash=duplicate_hash,
+                    vuln_duplicate=duplicate_vuln,
+                    false_positive='Duplicate',
+                    risk=risk,
+                    username=username
+                )
+                save_all.save()
+
         if bug.tag == 'BugPattern':
             for BugPattern in bug:
                 name = bug.attrib['type']
@@ -133,20 +161,24 @@ def xml_parser(root, project_id, scan_id, username):
         all_findbugs_data = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                     false_positive='No')
 
+        duplicate_count = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                                             vuln_duplicate='Yes')
+
         total_vul = len(all_findbugs_data)
         total_high = len(all_findbugs_data.filter(priority="1"))
         total_medium = len(all_findbugs_data.filter(priority="2"))
         total_low = len(all_findbugs_data.filter(priority="3"))
-        total_duplicate = len(all_findbugs_data.filter(vuln_duplicate='Yes'))
+        total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
         findbugs_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-            total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
+            total_vul=total_vul,
+            date_time=date_time,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
             total_dup=total_duplicate
         )
-
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - Findbugs Report Uploaded'
     message = 'Findbugs Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

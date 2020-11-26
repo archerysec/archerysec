@@ -183,7 +183,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         arachni_xml_parser.xml_parser(username=username,
                                       project_id=project_id,
                                       scan_id=scan_id,
-                                      root=root_xml, 
+                                      root=root_xml,
                                       target_url=target)
         arachni_scan_db.objects.filter(username=username,
                                        scan_id=scan_id).update(scan_status='100')
@@ -237,13 +237,15 @@ def arachni_list_vuln(request):
         scan_id=scan_id).values('name',
                                 'severity',
                                 'vuln_color',
-                                'scan_id').distinct()
+                                'vuln_status',
+                                'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     arachni_all_vul_close = arachni_scan_result_db.objects.filter(username=username,
         scan_id=scan_id, vuln_status='Closed').values('name',
                                                       'severity',
                                                       'vuln_color',
-                                                      'scan_id').distinct()
+                                                      'vuln_status',
+                                                      'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request,
                   'arachniscanner/arachni_list_vuln.html',
@@ -321,7 +323,7 @@ def arachni_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 arachni_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                       scan_id=scan_id).update(false_positive=false_positive,
-                                                                              vuln_status='Close',
+                                                                              vuln_status='Closed',
                                                                               false_positive_hash=false_positive_hash
                                                                               )
 
@@ -352,28 +354,13 @@ def arachni_vuln_out(request):
     vuln_data = arachni_scan_result_db.objects.filter(username=username,
                                                       scan_id=scan_id,
                                                       name=name,
-                                                      false_positive='No',
-                                                      vuln_status='Open'
-                                                      )
+                                                      ).exclude(vuln_status='Duplicate')
 
-    vuln_data_close = arachni_scan_result_db.objects.filter(username=username,
-                                                            scan_id=scan_id,
-                                                            name=name,
-                                                            false_positive='No',
-                                                            vuln_status='Closed'
-                                                            )
-
-    false_data = arachni_scan_result_db.objects.filter(username=username,
-                                                       scan_id=scan_id,
-                                                       name=name,
-                                                       false_positive='Yes')
 
     return render(request,
                   'arachniscanner/arachni_vuln_out.html',
                   {'vuln_data': vuln_data,
-                   'false_data': false_data,
                    'jira_url': jira_url,
-                   'vuln_data_close': vuln_data_close
                    })
 
 
@@ -501,18 +488,22 @@ def export(request):
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+
         zap_resource = ArachniResource()
-        queryset = arachni_scan_result_db.objects.filter(username=username, scan_id=scan_id)
+        queryset = arachni_scan_result_db.objects.filter(username=username, scan_id__in=value_split)
         dataset = zap_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % 'arachni_results'
             return response
         if report_type == 'json':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % 'arachni_results'
             return response
         if report_type == 'yaml':
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
-            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % 'arachni_results'
             return response

@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render,  HttpResponse, HttpResponseRedirect
 from compliance.models import inspec_scan_db, inspec_scan_results_db
 import hashlib
 from staticscanners.resources import InspecResource
@@ -203,8 +203,8 @@ def inspec_del_vuln(request):
 
         inspec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
+            high_vul=total_high,
+            medium_vul=total_medium,
             SEVERITY_LOW=total_low,
             total_dup=total_duplicate
         )

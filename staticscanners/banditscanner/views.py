@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render,  HttpResponse, HttpResponseRedirect
 from staticscanners.models import bandit_scan_results_db, bandit_scan_db
 import hashlib
 from django.urls import reverse
@@ -56,8 +56,9 @@ def banditscan_list_vuln(request):
         'test_name',
         'issue_severity',
         'scan_id',
+        'vuln_status',
         'vul_col',
-    ).distinct()
+    ).distinct().exclude(vuln_status='Duplicate')
 
     return render(request, 'banditscanner/banditscan_list_vuln.html',
                   {'bandit_all_vuln': bandit_all_vuln,
@@ -103,7 +104,7 @@ def banditscan_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 bandit_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                       scan_id=scan_id).update(false_positive=false_positive,
-                                                                              vuln_status='Close',
+                                                                              vuln_status='Closed',
                                                                               false_positive_hash=false_positive_hash
                                                                               )
 
@@ -117,11 +118,10 @@ def banditscan_vuln_data(request):
         total_duplicate = len(all_bandit_data.filter(vuln_duplicate='Yes'))
 
         bandit_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-            total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+            total_vul=total_vul,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low
         )
 
         return HttpResponseRedirect(
@@ -129,20 +129,12 @@ def banditscan_vuln_data(request):
 
     bandit_vuln_data = bandit_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                              test_name=test_name,
-                                                             vuln_status='Open',
-                                                             false_positive='No')
-    vuln_data_closed = bandit_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                             test_name=test_name,
-                                                             vuln_status='Closed',
-                                                             false_positive='No')
-    false_data = bandit_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                       test_name=test_name,
-                                                       false_positive='Yes')
+                                                             ).exclude(vuln_status='Duplicate')
+
 
     return render(request, 'banditscanner/banditscan_vuln_data.html',
                   {'bandit_vuln_data': bandit_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed,
+
                    'jira_url': jira_url
                    })
 
@@ -227,9 +219,9 @@ def bandit_del_vuln(request):
 
         bandit_scan_db.objects.filter(username=username, scan_id=un_scanid).update(
             total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low
         )
 
         return HttpResponseRedirect(reverse('banditscanner:banditscan_list_vuln/') + '?scan_id=%s' % un_scanid)

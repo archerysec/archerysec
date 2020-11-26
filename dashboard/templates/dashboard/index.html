@@ -1,29 +1,164 @@
 {% extends 'dashboard/base.html' %}
+{% load static %}
 
 {% block body %}
-<div class="page-wrapper">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="float-right">
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{% url 'projects:create_form' %}" class="btn btn-primary btn-mini"><i
-                                        class="icon-upload-alt"></i>Create New Project</a>
-                            </div>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel="stylesheet">
+    <div class="page-wrapper">
+        <div class="container-fluid">
+        {% if total_count_project.total_vuln__sum >= 0 %}
+            <div class="row">
+                <!-- Column -->
+                <div class="col-md-6 col-lg-2 col-xlg-3">
+                    <div class="card card-hover">
+                        <div class="box bg-danger text-center">
+                            <h1 class="font-light text-white">{{ total_count_project.total_vuln__sum }}</h1>
+                            <a href="{% url 'dashboard:all_high_vuln' %}?project_id=none&severity=All"><h6
+                                    class="text-white"> Total</h6></a>
                         </div>
-                        <div class="d-md-flex align-items-center">
-                            <div>
-                                <h1>Project List</h1>
-                                <h5 class="card-subtitle"></h5>
-                            </div>
-
+                    </div>
+                </div>
+                <!-- Column -->
+                <div class="col-md-6 col-lg-2 col-xlg-3">
+                    <div class="card card-hover">
+                        <div class="box bg-warning text-center">
+                            <h1 class="font-light text-white">{{ false_count_project.total_false__sum }}</i></h1>
+                            <a href="{% url 'dashboard:all_high_vuln' %}?project_id=none&severity=All_False_Positive">
+                                <h6 class="text-white">False Positive</h6></a>
                         </div>
-                        <br>
-                        <br>
-                        <div class="row">
-                            <!-- column -->
+                    </div>
+                </div>
+                <!-- Column -->
+                <div class="col-md-6 col-lg-2 col-xlg-3">
+                    <div class="card card-hover">
+                        <div class="box bg-cyan text-center">
+                            <h1 class="font-light text-white">{{ close_count_project.total_close__sum }}</h1>
+                            <a href="{% url 'dashboard:all_high_vuln' %}?project_id=none&severity=All_Closed"><h6
+                                    class="text-white">Total Closed</h6></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <div class="col-md-6 col-lg-2 col-xlg-3">
+                    <div class="card card-hover">
+                        <div class="box bg-info text-center">
+                            <h1 class="font-light text-white">{{ net_count_project.total_net__sum }}</h1>
+                            <a href="{% url 'dashboard:all_high_vuln' %}?project_id=none&severity=Network"><h6
+                                    class="text-white"> Infrastructure Issues</h6></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <div class="col-md-6 col-lg-2 col-xlg-3">
+                    <div class="card card-hover">
+                        <div class="box bg-success text-center">
+                            <h1 class="font-light text-white">{{ web_count_project.total_web__sum }}</h1>
+                            <a href="{% url 'dashboard:all_high_vuln' %}?project_id=none&severity=Web"><h6
+                                    class="text-white">Web Issues</h6></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <!-- Column -->
+                <div class="col-md-6 col-lg-2 col-xlg-3">
+                    <div class="card card-hover">
+                        <div class="box bg-cyan  text-center">
+                            <h1 class="font-light text-white">{{ static_count_project.total_static__sum }}</h1>
+                            <a href="{% url 'dashboard:all_high_vuln' %}?project_id=none&severity=Static"><h6
+                                    class="text-white">Static Issues</h6></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-md-flex align-items-center">
+                                <div>
+                                    <h4>Vulnerability Trending Year {{ current_year }}</h4>
+                                    <h5 class="card-subtitle"></h5>
+                                </div>
+                            </div>
+                            <canvas id="myChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-md-flex align-items-center">
+                                <div>
+                                    <h3>Vulnerabilities</h3>
+                                    <h5 class="card-subtitle"></h5>
+                                </div>
+                            </div>
+                            <canvas id="pie"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-md-flex align-items-center">
+                                <div>
+                                    <h6>Web Vulnerabilities</h6>
+                                    <h6 class="card-subtitle"></h6>
+                                </div>
+                            </div>
+                            <canvas id="webpie"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-md-flex align-items-center">
+                                <div>
+                                    <h6>Network Vulnerabilities</h6>
+                                    <h5 class="card-subtitle"></h5>
+                                </div>
+                            </div>
+                            <canvas id="networkpie"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-md-flex align-items-center">
+                                <div>
+                                    <h6>Static Vulnerabilities</h6>
+                                    <h5 class="card-subtitle"></h5>
+                                </div>
+                            </div>
+                            <canvas id="staticpie"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="float-right">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a href="{% url 'projects:create_form' %}" class="btn btn-primary btn-mini"><i
+                                            class="icon-upload-alt"></i>Create New Project</a>
+                                </div>
+                            </div>
+                            <div class="d-md-flex align-items-center">
+                                <div>
+                                    <h1>Project List</h1>
+                                    <h5 class="card-subtitle"></h5>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="row">
+                                <!-- column -->
 
                                 <div class="table-responsive">
                                     <table id="zero_config" class="table table-bordered data-table">
@@ -33,57 +168,250 @@
                                             <th>Start Date</th>
                                             <th>End Date</th>
                                             <th>Owner</th>
-                                            <!--<th>Status</th>-->
-                                            <th></th>
+                                            <th>Total</th>
+                                            <th>High</th>
+                                            <th>Medium</th>
+                                            <th>Low</th>
+                                            <th>Delete</th>
                                         </tr>
                                         </thead>
                                         <tbody>{% for data in all_project %}
-                                        <tr data-target="#">
+                                            <tr data-target="#">
 
-                                            <td>
-                                                <a href="{% url 'dashboard:proj_data' %}?project_id={{data.project_id}}">{{data.project_name}}</a>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-pill badge-primary">{{data.project_start}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-pill badge-warning">{{data.project_end}}</span>
-                                            </td>
-                                            <td><span
-                                                    class="badge badge-pill badge-info">{{data.project_owner}}</span>
-                                            </td>
-                                            <!--<td><span-->
-                                                    <!--class="badge badge-pill badge-success">{{data.project_status}}</span>-->
-                                            <!--</td>-->
+                                                <td>
+                                                    <a href="{% url 'dashboard:proj_data' %}?project_id={{ data.project_id }}">{{ data.project_name }}</a>
+                                                </td>
+                                                <td><span
+                                                        class="badge badge-pill badge-primary">{{ data.project_start }}</span>
+                                                </td>
+                                                <td><span
+                                                        class="badge badge-pill badge-warning">{{ data.project_end }}</span>
+                                                </td>
+                                                <td><span
+                                                        class="badge badge-pill badge-info">{{ data.project_owner }}</span>
+                                                </td>
 
-                                            <td class="confirm-delete">
-                                                <form action="{% url 'projects:projects' %}" method="POST">
-                                                    <input type="hidden" name="proj_id" value="{{data.project_id}}"/>
-                                                    {% csrf_token %}
-                                                    <button class="btn btn-danger"><i class="m-r-0 mdi mdi-delete"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
+                                                <td><span
+                                                        class="badge badge-pill badge-purple">{{ data.total_vuln }}</span>
+                                                </td>
+                                                <td> <span
+                                                        class="badge badge-pill badge-danger">{{ data.total_high }}</span>
+                                                </td>
+                                                <td> <span
+                                                        class="badge badge-pill badge-warning">{{ data.total_medium }}</span>
+                                                </td>
+                                                <td> <span
+                                                        class="badge badge-pill badge-info">{{ data.total_low }}</span>
+                                                </td>
+
+
+                                                <td class="confirm-delete">
+                                                    <form action="{% url 'projects:projects' %}" method="POST">
+                                                        <input type="hidden" name="proj_id"
+                                                               value="{{ data.project_id }}"/>
+                                                        {% csrf_token %}
+                                                        <button class="btn btn-danger"><i
+                                                                class="m-r-0 mdi mdi-delete"></i></button>
+                                                    </form>
+                                                </td>
+                                            </tr>
                                         {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script type="text/javascript">
+    <script src="{% static 'js/Chart.js' %}"></script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script>
+
+        var months = [
+            'January', 'February', 'March', 'April', 'May',
+            'June', 'July', 'August', 'September',
+            'October', 'November', 'December'
+        ];
+
+        function monthNumToName(monthnum) {
+            return months[monthnum - 1] || '';
+        }
 
 
-    $(document).on('click', '.confirm-delete', function(){
-    return confirm('Are you sure you want to delete this?');
-})
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{% for data in all_month_data_display %}monthNumToName({{ data.month }}),{% endfor %}],
+                datasets: [{
+                    label: 'High',
+                    data: [{% for data in all_month_data_display %}{{ data.high }},{% endfor %}],
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                    ],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                    ],
+                    fill: false,
+                }, {
+                    label: 'Medium',
+                    data: [{% for data in all_month_data_display %}{{ data.medium }},{% endfor %}],
+                    backgroundColor: [
 
-</script>
+                        'rgb(255, 159, 64)',
+                    ],
+                    borderColor: [
+
+                        'rgb(255, 159, 64)',
+                    ],
+                    fill: false,
+                }, {
+                    label: 'Low',
+                    data: [{% for data in all_month_data_display %}{{ data.low }},{% endfor %}],
+                    backgroundColor: [
+                        'rgb(54, 162, 235)',
+                    ],
+                    borderColor: [
+                        'rgb(54, 162, 235)',
+                    ],
+                    fill: false,
+                }
+                ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        stacked: true
+                    }]
+                }
+            }
+        });
+        var ctx = document.getElementById('pie').getContext('2d');
+        var pie = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [
+                        {{ high_count_project.total_high__sum }},
+                        {{ medium_count_project.total_medium__sum }},
+                        {{ low_count_project.total_low__sum }}
+                    ], backgroundColor: [
+                        'rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+
+                    ],
+                }],
+
+                // These labels appear in the legend and in the tooltips when hovering different arcs
+                labels: [
+                    'High',
+                    'Medium',
+                    'Low'
+                ]
+            },
+        });
+
+        var ctx = document.getElementById('webpie').getContext('2d');
+        var webpie = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: [
+                        {{high_web_count_project.high_web__sum}},
+                        {{medium_web_count_project.medium_web__sum}},
+                        {{low_web_count_project.low_web__sum}}
+                    ], backgroundColor: [
+                        'rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+
+                    ],
+                }],
+
+                // These labels appear in the legend and in the tooltips when hovering different arcs
+                labels: [
+                    'High',
+                    'Medium',
+                    'Low'
+                ]
+            },
+        });
+        var ctx = document.getElementById('networkpie').getContext('2d');
+        var networkpie = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: [
+                        {{high_net_count_project.high_net__sum}},
+                        {{medium_net_count_project.medium_net__sum}},
+                        {{low_net_count_project.low_net__sum}}
+                    ], backgroundColor: [
+                        'rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+
+                    ],
+                }],
+
+                // These labels appear in the legend and in the tooltips when hovering different arcs
+                labels: [
+                    'High',
+                    'Medium',
+                    'Low'
+                ]
+            },
+        });
+        var ctx = document.getElementById('staticpie').getContext('2d');
+        var staticpie = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: [
+                        {{high_static_count_project.high_static__sum}},
+                        {{medium_static_count_project.medium_static__sum}},
+                        {{low_static_count_project.low_static__sum}}
+                    ], backgroundColor: [
+                        'rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+
+                    ],
+                }],
+
+                // These labels appear in the legend and in the tooltips when hovering different arcs
+                labels: [
+                    'High',
+                    'Medium',
+                    'Low'
+                ]
+            },
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript">
+
+
+        $(document).on('click', '.confirm-delete', function () {
+            return confirm('Are you sure you want to delete this?');
+        })
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/static/matrix-admin-bt4/assets/libs/toastr/build/toastr.min.js"></script>
+    <script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>
+
+    <script>
+        $(window).load(function() {
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'alert-success' %}
+                        toastr.success('{{ message }}');
+                    {% endif %}
+                    {% if message.tags == 'alert-warning' %}
+                        toastr.warning('{{ message }}');
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
 
 {% endblock %}

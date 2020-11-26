@@ -27,9 +27,9 @@ class BanditScanStatusSerializer(serializers.Serializer):
     total_dup = serializers.IntegerField(read_only=True)
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
-    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
-    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
 
 
 class findbugsStatusSerializer(serializers.Serializer):
@@ -42,9 +42,9 @@ class findbugsStatusSerializer(serializers.Serializer):
     total_dup = serializers.IntegerField(read_only=True)
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
-    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
-    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
 
 
 class DependencycheckStatusSerializer(serializers.Serializer):
@@ -57,9 +57,9 @@ class DependencycheckStatusSerializer(serializers.Serializer):
     total_dup = serializers.IntegerField(read_only=True)
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
-    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
-    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
 
 
 class RetirejsStatusSerializer(serializers.Serializer):
@@ -72,9 +72,9 @@ class RetirejsStatusSerializer(serializers.Serializer):
     total_dup = serializers.IntegerField(read_only=True)
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
-    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
-    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
 
 
 class ClairStatusSerializer(serializers.Serializer):
@@ -87,9 +87,9 @@ class ClairStatusSerializer(serializers.Serializer):
     total_dup = serializers.IntegerField(read_only=True)
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
-    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
-    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
 
 
 class TrivyStatusSerializer(serializers.Serializer):
@@ -102,10 +102,53 @@ class TrivyStatusSerializer(serializers.Serializer):
     total_dup = serializers.IntegerField(read_only=True)
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
-    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
-    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
 
+
+class TfscanStatusSerializer(serializers.Serializer):
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+    project_name = serializers.CharField(read_only=True)
+    total_vuln = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
+
+
+class WhitesourceStatusSerializer(serializers.Serializer):
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+    project_name = serializers.CharField(read_only=True)
+    total_vuln = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
+
+class CheckmarxStatusSerializer(serializers.Serializer):
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    rescan_id = serializers.UUIDField(read_only=True)
+    scan_date = serializers.DateTimeField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
+    project_id = serializers.UUIDField(read_only=True)
+    date_time = serializers.DateTimeField(read_only=True)
+    total_dup = serializers.IntegerField(read_only=True)
+    project_name = serializers.CharField(read_only=True)
+    total_vuln = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
 
 class NpmauditStatusSerializer(serializers.Serializer):
     scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
@@ -117,9 +160,9 @@ class NpmauditStatusSerializer(serializers.Serializer):
     total_dup = serializers.IntegerField(read_only=True)
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
-    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
-    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)
 
 
 class NodejsscanSatatusSerializer(serializers.Serializer):
@@ -132,6 +175,6 @@ class NodejsscanSatatusSerializer(serializers.Serializer):
     total_dup = serializers.IntegerField(read_only=True)
     project_name = serializers.CharField(read_only=True)
     total_vuln = serializers.IntegerField(read_only=True)
-    SEVERITY_HIGH = serializers.IntegerField(read_only=True)
-    SEVERITY_MEDIUM = serializers.IntegerField(read_only=True)
-    SEVERITY_LOW = serializers.IntegerField(read_only=True)
+    high_vul = serializers.IntegerField(read_only=True)
+    medium_vul = serializers.IntegerField(read_only=True)
+    low_vul = serializers.IntegerField(read_only=True)

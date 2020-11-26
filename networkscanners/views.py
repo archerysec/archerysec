@@ -23,14 +23,13 @@ import uuid
 import defusedxml.ElementTree as ET
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, render_to_response, HttpResponse
+from django.shortcuts import render, HttpResponse
 from django.utils import timezone
 from archerysettings import save_settings
 from archerysettings import load_settings
-from networkscanners.models import scan_save_db, \
+from networkscanners.models import openvas_scan_db, \
     ov_scan_result_db, \
-    task_schedule_db, \
-    nessus_scan_db, nessus_report_db
+    task_schedule_db
 from projects.models import project_db
 from scanners.scanner_parser.network_scanner import OpenVas_Parser, Nessus_Parser, nmap_parser
 from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin, vuln_an_id
@@ -94,7 +93,7 @@ def index(request):
     :param request:
     :return:
     """
-    all_ip = scan_save_db.objects.filter(username=username)
+    all_ip = openvas_scan_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
 
@@ -109,7 +108,7 @@ def scan_status(request):
     :return:
     """
     if request.method == 'POST':
-        all_ip = scan_save_db.objects.filter(username=username)
+        all_ip = openvas_scan_db.objects.filter(username=username)
         scan_ip = request.POST.get('scan_id', )
 
     return render(request, 'openvas_scan.html')
@@ -130,7 +129,6 @@ def scan_vul_details(request):
     if request.method == 'GET':
         scanid = request.GET['scan_id']
 
-
     if request.method == 'POST':
         vuln_id = request.POST.get('vuln_id')
         scan_id = request.POST.get('scan_id')
@@ -138,8 +136,8 @@ def scan_vul_details(request):
         status = request.POST.get('status')
 
         ov_scan_result_db.objects.filter(username=username,
-            scan_id=scan_id,
-            vul_id=vuln_id).update(
+                                         scan_id=scan_id,
+                                         vul_id=vuln_id).update(
             false_positive=false_positive, vuln_status=status)
 
         if false_positive == 'Yes':
@@ -152,13 +150,14 @@ def scan_vul_details(request):
                 dup_data = name + host + severity + port
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 ov_scan_result_db.objects.filter(username=username,
-                    scan_id=scan_id,
-                    vul_id=vuln_id).update(
+                                                 scan_id=scan_id,
+                                                 vul_id=vuln_id).update(
                     false_positive=false_positive,
-                    vuln_status='Close',
+                    vuln_status='Closed',
                     false_positive_hash=false_positive_hash
                 )
-        openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
+        openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+                                                       vuln_status='Open')
 
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
@@ -166,50 +165,31 @@ def scan_vul_details(request):
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
 
-        scan_save_db.objects.filter(username=username, scan_id=scan_id). \
+        openvas_scan_db.objects.filter(username=username, scan_id=scan_id). \
             update(total_vul=total_vul,
-                   high_total=total_high,
-                   medium_total=total_medium,
-                   low_total=total_low,
+                   high_vul=total_high,
+                   medium_vul=total_medium,
+                   low_vul=total_low,
                    total_dup=total_duplicate,
                    )
 
         return HttpResponseRedirect(
             reverse('networkscanners:vul_details') + '?scan_id=%s' % scan_id)
 
-    all_vuln = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
-                                                false_positive='No', vuln_status='Open').values('name', 'severity',
-                                                                                                'vuln_color',
-                                                                                                'threat', 'host',
-                                                                                                'port', 'vul_id',
-                                                                                                'jira_ticket',
-                                                                                                'vuln_status').distinct()
+    all_vuln = ov_scan_result_db.objects.filter(username=username, scan_id=scanid, ).values('name', 'severity',
+                                                                                            'vuln_color',
+                                                                                            'threat', 'host',
+                                                                                            'port', 'vul_id',
+                                                                                            'jira_ticket',
+                                                                                            'false_positive',
+                                                                                            'vuln_status').distinct()
 
-    all_vuln_closed = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
-                                                       false_positive='No', vuln_status='Closed').values('name',
-                                                                                                         'severity',
-                                                                                                         'vuln_color',
-                                                                                                         'threat',
-                                                                                                         'host',
-                                                                                                         'port',
-                                                                                                         'vul_id',
-                                                                                                         'jira_ticket',
-                                                                                                         'vuln_status'
-                                                                                                         ).distinct()
-
-    all_false_vul = ov_scan_result_db.objects.filter(username=username, scan_id=scanid,
-                                                     false_positive='Yes').values('name', 'severity',
-                                                                                  'vuln_color',
-                                                                                  'threat', 'host',
-                                                                                  'port', 'vul_id',
-                                                                                  'jira_ticket').distinct()
     return render(request,
                   'openvas_vuln_list.html',
                   {'all_vuln': all_vuln,
                    'scan_id': scanid,
                    'jira_url': jira_url,
-                   'all_false_vul': all_false_vul,
-                   'all_vuln_closed': all_vuln_closed
+
                    })
 
 
@@ -241,14 +221,14 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     email_notify(user=user, subject=subject, message=message)
     scan_id, target_id = openvas.scan_launch(scanner)
     date_time = datetime.now()
-    save_all = scan_save_db(scan_id=str(scan_id),
-                            project_id=str(project_id),
-                            scan_ip=scan_ip,
-                            target_id=str(target_id),
-                            date_time=date_time,
-                            scan_status=0.0,
-                            username=username
-                            )
+    save_all = openvas_scan_db(scan_id=str(scan_id),
+                               project_id=str(project_id),
+                               scan_ip=scan_ip,
+                               target_id=str(target_id),
+                               date_time=date_time,
+                               scan_status=0.0,
+                               username=username
+                               )
     save_all.save()
     openvas.scan_status(scanner=scanner, scan_id=scan_id)
     time.sleep(5)
@@ -256,7 +236,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
 
     notify.send(user, recipient=user, verb='OpenVAS Scan Completed')
 
-    all_openvas = scan_save_db.objects.filter(username=username)
+    all_openvas = openvas_scan_db.objects.filter(username=username)
     all_vuln = ''
     total_high = ''
     total_medium = ''
@@ -284,11 +264,11 @@ def launch_scan(request):
     :param request:
     :return:
     """
-    all_ip = scan_save_db.objects.filter(username=username)
+    all_ip = openvas_scan_db.objects.filter(username=username)
     user = request.user
 
     if request.method == 'POST':
-        all_ip = scan_save_db.objects.filter(username=username)
+        all_ip = openvas_scan_db.objects.filter(username=username)
         scan_ip = request.POST.get('ip')
         project_id = request.POST.get('project_id')
         sel_profile = request.POST.get('scan_profile')
@@ -303,8 +283,8 @@ def launch_scan(request):
             thread.daemon = True
             thread.start()
 
-    return render_to_response('openvas_vuln_list.html',
-                              {'all_ip': all_ip})
+    return render('openvas_vuln_list.html',
+                  {'all_ip': all_ip})
 
 
 def scan_del(request):
@@ -324,7 +304,7 @@ def scan_del(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
-            scans = scan_save_db.objects.filter(username=username, scan_id=scan_id).order_by('scan_id')
+            scans = openvas_scan_db.objects.filter(username=username, scan_id=scan_id).order_by('scan_id')
             scans.delete()
             vuln_data = ov_scan_result_db.objects.filter(username=username, scan_id=scan_id)
             vuln_data.delete()
@@ -339,7 +319,7 @@ def ip_scan(request):
     :param request:
     :return:
     """
-    all_scans = scan_save_db.objects.filter(username=username)
+    all_scans = openvas_scan_db.objects.filter(username=username)
     all_proj = project_db.objects.filter(username=username)
 
     all_notify = Notification.objects.unread()
@@ -423,7 +403,6 @@ def del_vuln(request):
         vuln_id = request.POST.get("del_vuln")
         un_scanid = request.POST.get("scan_id")
 
-
         scan_item = str(vuln_id)
         value = scan_item.replace(" ", "")
         value_split = value.split(',')
@@ -439,7 +418,7 @@ def del_vuln(request):
         total_medium = len(ov_all_vul.filter(threat="Medium"))
         total_low = len(ov_all_vul.filter(threat="Low"))
 
-        scan_save_db.objects.filter(username=username, scan_id=un_scanid) \
+        openvas_scan_db.objects.filter(username=username, scan_id=un_scanid) \
             .update(total_vul=total_vul,
                     high_total=total_high,
                     medium_total=total_medium,
@@ -469,10 +448,11 @@ def vuln_check(request):
         cve_list = cve.split(",")
 
     return render(request, 'openvas_scan_data.html', {'vul_dat': vul_dat,
-                                                 'cve_list': cve_list,
-                                                 'xref_list': xref_list
+                                                      'cve_list': cve_list,
+                                                      'xref_list': xref_list
 
-                                                 })
+                                                      })
+
 
 def OpenVAS_xml_upload(request):
     username = request.user.username
@@ -495,19 +475,20 @@ def OpenVAS_xml_upload(request):
             root_xml = tree.getroot()
             hosts = OpenVas_Parser.get_hosts(root_xml)
             for host in hosts:
-                scan_dump = scan_save_db(scan_ip=host,
-                                         scan_id=host,
-                                         date_time=date_time,
-                                         project_id=project_id,
-                                         scan_status=scan_status,
-                                         username=username
-                                         )
+                scan_dump = openvas_scan_db(scan_ip=host,
+                                            scan_id=host,
+                                            date_time=date_time,
+                                            project_id=project_id,
+                                            scan_status=scan_status,
+                                            username=username
+                                            )
                 scan_dump.save()
             OpenVas_Parser.updated_xml_parser(project_id=project_id,
                                               scan_id=scan_id,
                                               root=root_xml,
                                               username=username
                                               )
+            messages.success(request, "File Uploaded")
             return HttpResponseRedirect(reverse('networkscanners:index'))
         elif scanner == "nessus":
             date_time = datetime.now()
@@ -518,7 +499,8 @@ def OpenVAS_xml_upload(request):
                                                 project_id=project_id,
                                                 username=username,
                                                 )
-            return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
+            messages.success(request, "File Uploaded")
+            return HttpResponseRedirect(reverse('nessus:nessus_list'))
         elif scanner == "nmap":
             tree = ET.parse(xml_file)
             root_xml = tree.getroot()
@@ -527,6 +509,7 @@ def OpenVAS_xml_upload(request):
                                    project_id=project_id,
                                    username=username,
                                    )
+            messages.success(request, "File Uploaded")
             return HttpResponseRedirect(reverse('tools:nmap_scan'))
 
     return render(request,
@@ -568,7 +551,6 @@ def net_scan_schedule(request):
         project_id = request.POST.get('project_id')
         scanner = request.POST.get('scanner')
         periodic_task_value = request.POST.get('periodic_task_value')
-
 
         if periodic_task_value == 'HOURLY':
             periodic_time = Task.HOURLY
@@ -640,171 +622,6 @@ def del_net_scan_schedule(request):
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse('networkscanners:net_scan_schedule'))
-
-
-def nessus_scan(request):
-    """
-
-    :param request:
-    :return:
-    """
-    username = request.user.username
-    all_scan = nessus_scan_db.objects.filter(username=username)
-
-    return render(request,
-                  'nessus_scan.html',
-                  {'all_scan': all_scan}
-                  )
-
-
-def nessus_vuln_details(request):
-    """
-
-    :param request:
-    :return:
-    """
-    username = request.user.username
-    jira_url = None
-    jira = jirasetting.objects.filter(username=username)
-    for d in jira:
-        jira_url = d.jira_server
-
-    scanid = ""
-    if request.method == 'GET':
-        scanid = request.GET['scan_id']
-    print("scansss"), scanid
-
-    if request.method == 'POST':
-        vuln_id = request.POST.get('vuln_id')
-        scan_id = request.POST.get('scan_id')
-        false_positive = request.POST.get('false')
-        status = request.POST.get('status')
-
-        nessus_report_db.objects.filter(username=username, scan_id=scan_id,
-                                        vul_id=vuln_id).update(false_positive=false_positive, vuln_status=status)
-
-        if false_positive == 'Yes':
-            vuln_info = nessus_report_db.objects.filter(username=username, scan_id=scan_id, vul_id=vuln_id)
-            for vi in vuln_info:
-                scan_ip = vi.scan_ip
-                plugin_name = vi.plugin_name
-                severity = vi.severity
-                port = vi.port
-                dup_data = scan_ip + plugin_name + severity + port
-                false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                nessus_report_db.objects.filter(scan_id=scan_id, username=username,
-                                                vul_id=vuln_id).update(false_positive=false_positive,
-                                                                       vuln_status='Close',
-                                                                       false_positive_hash=false_positive_hash)
-        ov_all_vul = nessus_report_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
-        total_vul = len(ov_all_vul)
-        total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
-        total_high = len(ov_all_vul.filter(risk_factor="High"))
-        total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
-        total_low = len(ov_all_vul.filter(risk_factor="Low"))
-        total_info = len(ov_all_vul.filter(risk_factor="Informational"))
-        total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
-
-        nessus_scan_db.objects.filter(username=username, scan_id=scan_id) \
-            .update(total_vul=total_vul,
-                    critical_total=total_critical,
-                    high_total=total_high,
-                    medium_total=total_medium,
-                    low_total=total_low,
-                    info_total=total_info,
-                    total_dup=total_duplicate,
-                    )
-
-        return HttpResponseRedirect(
-            reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % scan_id)
-
-    all_vuln = nessus_report_db.objects.filter(username=username, scan_id=scanid,
-                                               false_positive='No')
-
-    all_vuln_closed = nessus_report_db.objects.filter(username=username, scan_id=scanid, vuln_status='Closed',
-                                                      false_positive='No')
-
-    all_false_vul = nessus_report_db.objects.filter(username=username, scan_id=scanid,
-                                                    false_positive='Yes')
-    return render(request,
-                  'nessus_vuln_details.html',
-                  {'all_vuln': all_vuln,
-                   'scan_id': scanid,
-                   'jira_url': jira_url,
-                   'all_false_vul': all_false_vul,
-                   'all_vuln_closed': all_vuln_closed
-                   })
-
-
-def delete_nessus_scan(request):
-    username = request.user.username
-    if request.method == "POST":
-        scan_id = request.POST.get('scan_id')
-        del_vuln = request.POST.get('del_vuln')
-
-        scan_item = str(scan_id)
-        taskid = scan_item.replace(" ", "")
-        target_split = taskid.split(',')
-        split_length = target_split.__len__()
-        print("split_length"), split_length
-        for i in range(0, split_length):
-            task_id = target_split.__getitem__(i)
-
-            del_rep = nessus_report_db.objects.filter(username=username, scan_id=task_id)
-            del_rep.delete()
-            del_scan = nessus_scan_db.objects.filter(username=username, scan_id=task_id)
-            del_scan.delete()
-
-    return HttpResponseRedirect(reverse('networkscanners:nessus_scan'))
-
-
-def delete_nessus_vuln(request):
-    username = request.user.username
-    if request.method == "POST":
-        vuln_id = request.POST.get("del_vuln")
-        un_scanid = request.POST.get("scan_id")
-        print("scan_iddd"), un_scanid
-
-        scan_item = str(vuln_id)
-        value = scan_item.replace(" ", "")
-        value_split = value.split(',')
-        split_length = value_split.__len__()
-        print("split_length"), split_length
-        for i in range(0, split_length):
-            vuln_id = value_split.__getitem__(i)
-            delete_vuln = nessus_report_db.objects.filter(username=username, vul_id=vuln_id)
-            delete_vuln.delete()
-        ov_all_vul = nessus_report_db.objects.filter(username=username, scan_id=un_scanid).order_by('scan_id')
-        total_vul = len(ov_all_vul)
-        total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
-        total_high = len(ov_all_vul.filter(risk_factor="High"))
-        total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
-        total_low = len(ov_all_vul.filter(risk_factor="Low"))
-
-        nessus_scan_db.objects.filter(username=username, scan_id=un_scanid) \
-            .update(total_vul=total_vul,
-                    critical_total=total_critical,
-                    high_total=total_high,
-                    medium_total=total_medium,
-                    low_total=total_low)
-
-        return HttpResponseRedirect(reverse('networkscanners:nessus_vuln_details') + '?scan_id=%s' % un_scanid)
-
-
-def nessus_vuln_check(request):
-    username = request.user.username
-    """
-    Get the detailed vulnerability information.
-    :param request:
-    :return:
-    """
-    if request.method == 'GET':
-        id_vul = request.GET['vuln_id']
-    else:
-        id_vul = ''
-    vul_dat = nessus_report_db.objects.filter(username=username, vul_id=id_vul)
-
-    return render(request, 'nessus_vuln_data.html', {'vul_dat': vul_dat})
 
 
 def nv_setting(request):

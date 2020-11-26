@@ -16,7 +16,7 @@
 
 from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
     netsparker_scan_db, webinspect_scan_db, acunetix_scan_db
-from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db
+from networkscanners.models import openvas_scan_db, ov_scan_result_db, nessus_scan_db
 from projects.models import project_db
 from webscanners.serializers import WebScanSerializer, \
     WebScanResultSerializer, \
@@ -31,7 +31,7 @@ from webscanners.serializers import WebScanSerializer, \
 
 from staticscanners.serializers import findbugsStatusSerializer, RetirejsStatusSerializer, ClairStatusSerializer, \
     DependencycheckStatusSerializer, NodejsscanSatatusSerializer, NpmauditStatusSerializer, TrivyStatusSerializer, \
-    BanditScanStatusSerializer
+    BanditScanStatusSerializer, CheckmarxStatusSerializer
 
 from rest_framework import status
 from webscanners.zapscanner.views import launch_zap_scan
@@ -63,16 +63,21 @@ from stronghold.decorators import public
 from webscanners.arachniscanner.views import launch_arachni_scan
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, \
     findbugs_report_parser, clair_json_report_parser, trivy_json_report_parser, npm_audit_report_json, \
-    nodejsscan_report_json, tfsec_report_parser
+    nodejsscan_report_json, tfsec_report_parser, whitesource_json_report_parser, checkmarx_xml_report_parser, \
+    gitlab_sca_json_report_parser, gitlab_sast_json_report_parser, semgrep_json_report_parser, \
+    gitlab_container_json_report_parser
 from lxml import etree
 from staticscanners.models import dependencycheck_scan_db, findbugs_scan_db, clair_scan_db, trivy_scan_db, \
-    npmaudit_scan_db, nodejsscan_scan_db, tfsec_scan_db, tfsec_scan_results_db
+    npmaudit_scan_db, nodejsscan_scan_db, tfsec_scan_db, tfsec_scan_results_db, whitesource_scan_results_db, \
+    whitesource_scan_db, checkmarx_scan_db, gitlabsast_scan_db, gitlabsast_scan_results_db, gitlabsca_scan_results_db, \
+    gitlabsca_scan_db, semgrepscan_scan_db, gitlabcontainerscan_scan_db
 from tools.models import nikto_result_db
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from scanners.scanner_parser.compliance_parser import inspec_json_parser
 from scanners.scanner_parser.compliance_parser import dockle_json_parser
 from compliance.models import inspec_scan_db, dockle_scan_db
 from scanners.scanner_parser.network_scanner import Nessus_Parser, OpenVas_Parser
+from projects.models import month_db
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -156,7 +161,7 @@ class NetworkScan(generics.ListCreateAPIView):
     """
     Network Scan API call to perform scan.
     """
-    queryset = scan_save_db.objects.all()
+    queryset = openvas_scan_db.objects.all()
     serializer_class = NetworkScanSerializer
 
     def get(self, request, format=None, **kwargs):
@@ -166,7 +171,7 @@ class NetworkScan(generics.ListCreateAPIView):
 
         """
         username = request.user.username
-        all_scans = scan_save_db.objects.filter(username=username)
+        all_scans = openvas_scan_db.objects.filter(username=username)
         serialized_scans = NetworkScanSerializer(all_scans, many=True)
         return Response(serialized_scans.data)
 
@@ -229,6 +234,8 @@ class Project(generics.CreateAPIView):
             project_owner = request.data.get("project_owner", )
             project_disc = request.data.get("project_disc", )
 
+            date_time = datetime.datetime.now()
+
             all_project = project_db.objects.filter(project_name=project_name, username=username)
 
             for project in all_project:
@@ -239,15 +246,43 @@ class Project(generics.CreateAPIView):
                 return Response({"message": "Project already existed", "project_id": _project_id})
 
             else:
-                save_project = project_db(project_name=project_name,
+                save_project = project_db(username=username,
+                                          project_name=project_name,
                                           project_id=project_id,
                                           project_start=project_start,
                                           project_end=project_end,
                                           project_owner=project_owner,
                                           project_disc=project_disc,
-                                          username=username
-                                          )
+                                          date_time=date_time,
+                                          total_vuln=0,
+                                          total_high=0,
+                                          total_medium=0,
+                                          total_low=0,
+                                          total_open=0,
+                                          total_false=0,
+                                          total_close=0,
+                                          total_net=0,
+                                          total_web=0,
+                                          total_static=0,
+                                          high_net=0,
+                                          high_web=0,
+                                          high_static=0,
+                                          medium_net=0,
+                                          medium_web=0,
+                                          medium_static=0,
+                                          low_net=0,
+                                          low_web=0,
+                                          low_static=0)
                 save_project.save()
+
+                save_months_data = month_db(username=username,
+                                            project_id=project_id,
+                                            month=datetime.datetime.now().month,
+                                            high=0,
+                                            medium=0,
+                                            low=0
+                                            )
+                save_months_data.save()
 
                 if not project_name:
                     return Response({"error": "No name passed"})
@@ -797,6 +832,28 @@ class UpladScanResult(APIView):
                              "scan_id": scan_id,
                              "scanner": scanner
                              })
+
+        elif scanner == 'checkmarx':
+            date_time = datetime.datetime.now()
+            scan_dump = checkmarx_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            root_xml = ET.fromstring(file)
+            checkmarx_xml_report_parser.checkmarx_report_xml(data=root_xml,
+                                                             project_id=project_id,
+                                                             scan_id=scan_id,
+                                                             username=username)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
         elif scanner == 'clair':
             date_time = datetime.datetime.now()
             scan_dump = clair_scan_db(
@@ -835,6 +892,72 @@ class UpladScanResult(APIView):
                                                        scan_id=scan_id,
                                                        data=data,
                                                        username=username)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'gitlabsca':
+            date_time = datetime.datetime.now()
+            scan_dump = gitlabsca_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = json.loads(file)
+            gitlab_sca_json_report_parser.gitlabsca_report_json(project_id=project_id,
+                                                                scan_id=scan_id,
+                                                                data=data,
+                                                                username=username)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'gitlabsast':
+            date_time = datetime.datetime.now()
+            scan_dump = gitlabsast_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = json.loads(file)
+            gitlab_sast_json_report_parser.gitlabsast_report_json(project_id=project_id,
+                                                                  scan_id=scan_id,
+                                                                  data=data,
+                                                                  username=username)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'gitlabcontainerscan':
+            date_time = datetime.datetime.now()
+            scan_dump = gitlabcontainerscan_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = json.loads(file)
+            gitlab_container_json_report_parser.gitlabcontainerscan_report_json(project_id=project_id,
+                                                                                scan_id=scan_id,
+                                                                                data=data,
+                                                                                username=username)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
@@ -885,6 +1008,28 @@ class UpladScanResult(APIView):
                              "scanner": scanner
                              })
 
+        elif scanner == 'semgrepscan':
+            date_time = datetime.datetime.now()
+            scan_dump = semgrepscan_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = json.loads(file)
+            semgrep_json_report_parser.semgrep_report_json(project_id=project_id,
+                                                           scan_id=scan_id,
+                                                           data=data,
+                                                           username=username)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
         elif scanner == 'tfsec':
             date_time = datetime.datetime.now()
             scan_dump = tfsec_scan_db(
@@ -901,6 +1046,28 @@ class UpladScanResult(APIView):
                                                   scan_id=scan_id,
                                                   data=data,
                                                   username=username)
+            return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'whitesource':
+            date_time = datetime.datetime.now()
+            scan_dump = whitesource_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = json.loads(file)
+            whitesource_json_report_parser.whitesource_report_json(project_id=project_id,
+                                                                   scan_id=scan_id,
+                                                                   data=data,
+                                                                   username=username)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
@@ -982,12 +1149,12 @@ class UpladScanResult(APIView):
             root_xml_en = ET.fromstring(en_root_xml)
             hosts = OpenVas_Parser.get_hosts(root_xml_en)
             for host in hosts:
-                scan_dump = scan_save_db(scan_ip=host,
-                                         scan_id=host,
-                                         date_time=date_time,
-                                         project_id=project_id,
-                                         scan_status=scan_status,
-                                         username=username)
+                scan_dump = openvas_scan_db(scan_ip=host,
+                                            scan_id=host,
+                                            date_time=date_time,
+                                            project_id=project_id,
+                                            scan_status=scan_status,
+                                            username=username)
                 scan_dump.save()
             OpenVas_Parser.updated_xml_parser(project_id=project_id,
                                               scan_id=scan_id,

@@ -20,7 +20,7 @@ import uuid
 import hashlib
 from datetime import datetime
 from django.shortcuts import HttpResponse
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 
@@ -32,6 +32,7 @@ def xml_parser(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    date_time = datetime.now()
     fileName = 'Na'
     filePath = 'Na'
     evidenceCollected = 'Na'
@@ -140,6 +141,60 @@ def xml_parser(data, project_id, scan_id, username):
                                             severity = 'Medium'
                                         elif severity_dat == 'LOW':
                                             severity = 'Low'
+                        elif pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.4.xsd':
+                            for dc22 in vuln:
+
+                                if dc22.tag == '{%s}name' % pt:
+                                    name = dc22.text
+
+                                if dc22.tag == '{%s}description' % pt:
+                                    description = dc22.text
+
+                                if dc22.tag == '{%s}vulnerableSoftware' % pt:
+                                    vulnerableSoftware = dc22.text
+
+                                for vuln_dat in dc22:
+                                    for d in vuln_dat:
+                                        if d.tag == '{%s}url' % pt:
+                                            references = d.text
+
+                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                        cwe = vuln_dat.text
+                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                        severity_dat = vuln_dat.text
+                                        if severity_dat == 'HIGH':
+                                            severity = 'High'
+                                        elif severity_dat == 'MEDIUM':
+                                            severity = 'Medium'
+                                        elif severity_dat == 'LOW':
+                                            severity = 'Low'
+                        elif pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd':
+                            for dc22 in vuln:
+
+                                if dc22.tag == '{%s}name' % pt:
+                                    name = dc22.text
+
+                                if dc22.tag == '{%s}description' % pt:
+                                    description = dc22.text
+
+                                if dc22.tag == '{%s}vulnerableSoftware' % pt:
+                                    vulnerableSoftware = dc22.text
+
+                                for vuln_dat in dc22:
+                                    for d in vuln_dat:
+                                        if d.tag == '{%s}url' % pt:
+                                            references = d.text
+
+                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                        cwe = vuln_dat.text
+                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                        severity_dat = vuln_dat.text
+                                        if severity_dat == 'HIGH':
+                                            severity = 'High'
+                                        elif severity_dat == 'MEDIUM':
+                                            severity = 'Medium'
+                                        elif severity_dat == 'LOW':
+                                            severity = 'Low'
 
                         else:
                             for vulner in vuln:
@@ -189,70 +244,119 @@ def xml_parser(data, project_id, scan_id, username):
                             dup_hash=duplicate_hash).values('dup_hash')
                         lenth_match = len(match_dup)
 
-                        if lenth_match == 1:
-                            duplicate_vuln = 'Yes'
-                        elif lenth_match == 0:
+                        if lenth_match == 0:
                             duplicate_vuln = 'No'
+
+                            false_p = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                     false_positive_hash=duplicate_hash)
+                            fp_lenth_match = len(false_p)
+
+                            if fp_lenth_match == 1:
+                                false_positive = 'Yes'
+                            else:
+                                false_positive = 'No'
+
+                            if cwe == 'Na':
+                                cwe = name
+
+                            save_all = dependencycheck_scan_results_db(
+                                # date_time=date_time,
+                                vuln_id=vul_id,
+                                scan_id=scan_id,
+                                date_time=date_time,
+                                project_id=project_id,
+                                fileName=fileName,
+                                filePath=filePath,
+                                evidenceCollected=evidenceCollected,
+                                name=name,
+                                cvssScore=cvssScore,
+                                cvssAccessVector=cvssAccessVector,
+                                cvssAccessComplexity=cvssAccessComplexity,
+                                cvssAuthenticationr=cvssAuthenticationr,
+                                cvssConfidentialImpact=cvssConfidentialImpact,
+                                cvssIntegrityImpact=cvssIntegrityImpact,
+                                cvssAvailabilityImpact=cvssAvailabilityImpact,
+                                severity=severity,
+                                cwe=cwe,
+                                description=description,
+                                references=references,
+                                vulnerableSoftware=vulnerableSoftware,
+                                vul_col=vul_col,
+                                vuln_status='Open',
+                                dup_hash=duplicate_hash,
+                                vuln_duplicate=duplicate_vuln,
+                                false_positive=false_positive,
+                                username=username,
+                            )
+                            save_all.save()
+
                         else:
-                            duplicate_vuln = 'None'
+                            duplicate_vuln = 'Yes'
 
-                        false_p = dependencycheck_scan_results_db.objects.filter(username=username,
-                            false_positive_hash=duplicate_hash)
-                        fp_lenth_match = len(false_p)
+                            false_p = dependencycheck_scan_results_db.objects.filter(username=username,
+                                                                                     false_positive_hash=duplicate_hash)
+                            fp_lenth_match = len(false_p)
 
-                        if fp_lenth_match == 1:
-                            false_positive = 'Yes'
-                        else:
-                            false_positive = 'No'
+                            if fp_lenth_match == 1:
+                                false_positive = 'Yes'
+                            else:
+                                false_positive = 'No'
 
-                        if cwe == 'Na':
-                            cwe = name
+                            if cwe == 'Na':
+                                cwe = name
 
-                        save_all = dependencycheck_scan_results_db(
-                            # date_time=date_time,
-                            vuln_id=vul_id,
-                            scan_id=scan_id,
-                            project_id=project_id,
-                            fileName=fileName,
-                            filePath=filePath,
-                            evidenceCollected=evidenceCollected,
-                            name=name,
-                            cvssScore=cvssScore,
-                            cvssAccessVector=cvssAccessVector,
-                            cvssAccessComplexity=cvssAccessComplexity,
-                            cvssAuthenticationr=cvssAuthenticationr,
-                            cvssConfidentialImpact=cvssConfidentialImpact,
-                            cvssIntegrityImpact=cvssIntegrityImpact,
-                            cvssAvailabilityImpact=cvssAvailabilityImpact,
-                            severity=severity,
-                            cwe=cwe,
-                            description=description,
-                            references=references,
-                            vulnerableSoftware=vulnerableSoftware,
-                            vul_col=vul_col,
-                            vuln_status='Open',
-                            dup_hash=duplicate_hash,
-                            vuln_duplicate=duplicate_vuln,
-                            false_positive=false_positive,
-                            username=username,
-                        )
-                        save_all.save()
+                            save_all = dependencycheck_scan_results_db(
+                                # date_time=date_time,
+                                vuln_id=vul_id,
+                                scan_id=scan_id,
+                                date_time=date_time,
+                                project_id=project_id,
+                                fileName=fileName,
+                                filePath=filePath,
+                                evidenceCollected=evidenceCollected,
+                                name=name,
+                                cvssScore=cvssScore,
+                                cvssAccessVector=cvssAccessVector,
+                                cvssAccessComplexity=cvssAccessComplexity,
+                                cvssAuthenticationr=cvssAuthenticationr,
+                                cvssConfidentialImpact=cvssConfidentialImpact,
+                                cvssIntegrityImpact=cvssIntegrityImpact,
+                                cvssAvailabilityImpact=cvssAvailabilityImpact,
+                                severity=severity,
+                                cwe=cwe,
+                                description=description,
+                                references=references,
+                                vulnerableSoftware=vulnerableSoftware,
+                                vul_col=vul_col,
+                                vuln_status='Duplicate',
+                                dup_hash=duplicate_hash,
+                                vuln_duplicate=duplicate_vuln,
+                                false_positive="Duplicate",
+                                username=username,
+                            )
+                            save_all.save()
+
+
         all_dependency_data = dependencycheck_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+
+        duplicate_count = dependencycheck_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                                             vuln_duplicate='Yes')
 
         total_vul = len(all_dependency_data)
         total_high = len(all_dependency_data.filter(severity="High"))
         total_medium = len(all_dependency_data.filter(severity="Medium"))
         total_low = len(all_dependency_data.filter(severity="Low"))
-        total_duplicate = len(all_dependency_data.filter(vuln_duplicate='Yes'))
+        total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
 
         dependencycheck_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-            total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
+            date_time=date_time,
+            total_vul=total_vul,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
             total_dup=total_duplicate
         )
-
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - DependencyCheck Report Uploaded'
     message = 'DependencyCheck Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

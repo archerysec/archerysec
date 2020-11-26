@@ -29,13 +29,18 @@ from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_
     findbugs_scan_db, findbugs_scan_results_db, \
     bandit_scan_db, bandit_scan_results_db, clair_scan_db, clair_scan_results_db, \
     trivy_scan_db, trivy_scan_results_db, npmaudit_scan_db, npmaudit_scan_results_db, nodejsscan_scan_results_db, \
-    nodejsscan_scan_db, tfsec_scan_results_db, tfsec_scan_db
+    nodejsscan_scan_db, tfsec_scan_results_db, tfsec_scan_db, checkmarx_scan_results_db, checkmarx_scan_db, \
+    whitesource_scan_db, whitesource_scan_results_db, gitlabsca_scan_results_db, gitlabsast_scan_results_db, \
+    gitlabsca_scan_db, gitlabsast_scan_db, semgrepscan_scan_results_db, semgrepscan_scan_db, \
+    gitlabcontainerscan_scan_results_db, gitlabcontainerscan_scan_db
 from compliance.models import inspec_scan_results_db, inspec_scan_db, dockle_scan_db, dockle_scan_results_db
-from networkscanners.models import scan_save_db, ov_scan_result_db, nessus_scan_db, nessus_report_db
+from networkscanners.models import openvas_scan_db, ov_scan_result_db, nessus_scan_db, nessus_targets_db, nessus_scan_results_db
 import datetime
 from manual_scan.models import manual_scan_results_db, manual_scans_db
+from projects.models import month_db
 from itertools import chain
 from django.urls import reverse
+from dashboard.scans_data import scans_query
 
 project_dat = None
 
@@ -56,12 +61,47 @@ def create(request):
         project_disc = request.POST.get("project_disc", )
         date_time = datetime.datetime.now()
 
-        save_project = project_db(username=username, project_name=project_name, project_id=project_id,
-                                  project_start=project_date, project_end=project_end,
-                                  project_owner=project_owner, project_disc=project_disc, date_time=date_time)
+        save_project = project_db(username=username,
+                                  project_name=project_name,
+                                  project_id=project_id,
+                                  project_start=project_date,
+                                  project_end=project_end,
+                                  project_owner=project_owner,
+                                  project_disc=project_disc,
+                                  date_time=date_time,
+                                  total_vuln=0,
+                                  total_high=0,
+                                  total_medium=0,
+                                  total_low=0,
+                                  total_open=0,
+                                  total_false=0,
+                                  total_close=0,
+                                  total_net=0,
+                                  total_web=0,
+                                  total_static=0,
+                                  high_net=0,
+                                  high_web=0,
+                                  high_static=0,
+                                  medium_net=0,
+                                  medium_web=0,
+                                  medium_static=0,
+                                  low_net=0,
+                                  low_web=0,
+                                  low_static=0)
         save_project.save()
 
-        # messages.success(request, "Project Created")
+        messages.success(request, "Project Created")
+        all_month_data_display = month_db.objects.filter(username=username)
+
+        if len(all_month_data_display) == 0:
+            save_months_data = month_db(username=username,
+                                        project_id=project_id,
+                                        month=datetime.datetime.now().month,
+                                        high=0,
+                                        medium=0,
+                                        low=0
+                                        )
+            save_months_data.save()
 
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
 
@@ -69,8 +109,6 @@ def create(request):
 
 
 def projects(request):
-    username = request.user.username
-    all_projects = project_db.objects.filter(username=username)
 
     if request.method == 'POST':
         project_id = request.POST.get("proj_id", )
@@ -148,6 +186,36 @@ def projects(request):
         tfsec_result = tfsec_scan_results_db.objects.filter(project_id=project_id)
         tfsec_result.delete()
 
+        whitesource = whitesource_scan_db.objects.filter(project_id=project_id)
+        whitesource.delete()
+        whitesource_result = whitesource_scan_results_db.objects.filter(project_id=project_id)
+        whitesource_result.delete()
+
+        gitlabsca = gitlabsca_scan_db.objects.filter(project_id=project_id)
+        gitlabsca.delete()
+        gitlabsca_result = gitlabsca_scan_results_db.objects.filter(project_id=project_id)
+        gitlabsca_result.delete()
+
+        gitlabsast = gitlabsast_scan_db.objects.filter(project_id=project_id)
+        gitlabsast.delete()
+        gitlabsast_result = gitlabsast_scan_results_db.objects.filter(project_id=project_id)
+        gitlabsast_result.delete()
+
+        gitlabcontainerscan = gitlabcontainerscan_scan_db.objects.filter(project_id=project_id)
+        gitlabcontainerscan.delete()
+        gitlabcontainerscan_result = gitlabcontainerscan_scan_results_db.objects.filter(project_id=project_id)
+        gitlabcontainerscan_result.delete()
+
+        checkmarx = checkmarx_scan_db.objects.filter(project_id=project_id)
+        checkmarx.delete()
+        checkmarx_result = checkmarx_scan_results_db.objects.filter(project_id=project_id)
+        checkmarx_result.delete()
+
+        semgrepscan = semgrepscan_scan_db.objects.filter(project_id=project_id)
+        semgrepscan.delete()
+        semgrepscan_result = semgrepscan_scan_results_db.objects.filter(project_id=project_id)
+        semgrepscan_result.delete()
+
         inspec = inspec_scan_db.objects.filter(project_id=project_id)
         inspec.delete()
         inspec_result = inspec_scan_results_db.objects.filter(project_id=project_id)
@@ -158,7 +226,7 @@ def projects(request):
         dockle_result = dockle_scan_results_db.objects.filter(project_id=project_id)
         dockle_result.delete()
 
-        openvas = scan_save_db.objects.filter(project_id=project_id)
+        openvas = openvas_scan_db.objects.filter(project_id=project_id)
         openvas.delete()
         openvas_result = ov_scan_result_db.objects.filter(project_id=project_id)
         openvas_result.delete()
@@ -166,8 +234,11 @@ def projects(request):
         nessus = nessus_scan_db.objects.filter(project_id=project_id)
         nessus.delete()
 
-        nessus_result = nessus_report_db.objects.filter(project_id=project_id)
+        nessus_result = nessus_targets_db.objects.filter(project_id=project_id)
         nessus_result.delete()
+
+        nessus_scan_results = nessus_scan_results_db.objects.filter(project_id=project_id)
+        nessus_scan_results.delete()
 
         pentest = manual_scan_results_db.objects.filter(project_id=project_id)
         pentest.delete()
@@ -175,7 +246,10 @@ def projects(request):
         pentest_dat = manual_scans_db.objects.filter(project_id=project_id)
         pentest_dat.delete()
 
-        # messages.success(request, "Deleted Project")
+        month_db_del = month_db.objects.filter(project_id=project_id)
+        month_db_del.delete()
+
+        messages.warning(request, "Project Deleted")
 
         return HttpResponseRedirect(reverse('dashboard:dashboard'))
 

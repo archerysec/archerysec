@@ -1,0 +1,41 @@
+name: ArcherySec CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Setup
+        run: |
+          ./setup.sh
+
+  push_to_registry:
+      name: Push Docker image to Docker Hub
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out the repo
+          uses: actions/checkout@v2
+        - name: Integration test
+          run: |
+           bash integration-test.sh || exit 1
+        - name: Push to Docker Hub
+          uses: docker/build-push-action@v1
+          with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
+            repository: archerysec/archerysec
+            tag_with_ref: true

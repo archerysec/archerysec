@@ -16,9 +16,9 @@
 
 import datetime
 import uuid
-from networkscanners.models import nessus_report_db, nessus_scan_db
+from networkscanners.models import nessus_scan_db, nessus_scan_results_db, nessus_targets_db
 import hashlib
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 agent = "NA"
@@ -45,6 +45,12 @@ port = "NA"
 ip = ''
 false_positive = None
 vuln_color = None
+total_vul = 'na'
+total_high = 'na'
+total_medium = 'na'
+total_low = 'na'
+target = ''
+report_name = ''
 
 
 def updated_nessus_parser(root, project_id, scan_id, username):
@@ -54,30 +60,31 @@ def updated_nessus_parser(root, project_id, scan_id, username):
         risk_factor, script_version, solution, \
         synopsis, plugin_output, see_also, scan_ip, \
         pluginName, pluginID, protocol, severity, \
-        svc_name, pluginFamily, port, vuln_color
+        svc_name, pluginFamily, port, vuln_color, total_vul, total_high, total_medium, total_low, target, report_name
+
+    date_time = datetime.datetime.now()
 
     for data in root:
-        for reportHost in data.iter('ReportHost'):
-            print("reportHost = " + str(reportHost.attrib))
-            try:
-                for key, value in reportHost.items():
-                    scan_ip = value
-                    print("IP = " + str(scan_ip))
-
-            except:
-                continue
+        if data.tag == 'Report':
+            report_name = data.attrib['name']
 
             scan_status = "100"
-            date_time = datetime.datetime.now()
             scan_dump = nessus_scan_db(
-                scan_ip=scan_ip,
-                scan_id=scan_ip,
+                report_name=report_name,
+                target=target,
+                scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
                 username=username
             )
             scan_dump.save()
+        for reportHost in data.iter('ReportHost'):
+            try:
+                for key, value in reportHost.items():
+                    target = value
+            except:
+                continue
 
             for ReportItem in reportHost.iter('ReportItem'):
                 for key, value in ReportItem.attrib.items():
@@ -155,93 +162,179 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                     plugin_output = ReportItem.find('plugin_output').text
                 except:
                     plugin_output = "NA"
-                vul_id = uuid.uuid4()
-                dup_data = scan_ip + plugin_name + severity + port
-                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                match_dup = nessus_report_db.objects.filter(username=username,
-                    dup_hash=duplicate_hash).values('dup_hash').distinct()
-                lenth_match = len(match_dup)
-                if severity == '0':
-                    vuln_color = 'info'
-                if severity == '1':
-                    vuln_color = 'info'
-                if severity == '2':
+                vuln_id = uuid.uuid4()
+
+                if risk_factor == 'Critical':
+                    vuln_color = 'danger'
+                    risk_factor = 'High'
+                elif risk_factor == 'High':
+                    vuln_color = 'danger'
+                    risk_factor = 'High'
+                elif risk_factor == 'Medium':
                     vuln_color = 'warning'
-                if severity == '3':
-                    vuln_color = 'danger'
-                if severity == '4':
-                    vuln_color = 'danger'
-                if lenth_match == 1:
-                    duplicate_vuln = 'Yes'
-                elif lenth_match == 0:
+                    risk_factor = 'Medium'
+                elif risk_factor == 'Low':
+                    vuln_color = 'info'
+                    risk_factor = 'Low'
+                else:
+                    risk_factor = 'Low'
+                    vuln_color = 'info'
+
+                dup_data = target + plugin_name + severity + port
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+                match_dup = nessus_scan_results_db.objects.filter(username=username,
+                                                                  dup_hash=duplicate_hash).values('dup_hash').distinct()
+                lenth_match = len(match_dup)
+
+                if lenth_match == 0:
                     duplicate_vuln = 'No'
-                else:
-                    duplicate_vuln = 'None'
-                global false_positive
-                false_p = nessus_report_db.objects.filter(username=username,
-                    false_positive_hash=duplicate_hash)
-                fp_lenth_match = len(false_p)
-                if fp_lenth_match == 1:
-                    false_positive = 'Yes'
-                else:
-                    false_positive = 'No'
-                if risk_factor == 'None':
-                    risk_factor = 'Informational'
-                all_data_save = nessus_report_db(project_id=project_id,
-                                                 scan_id=scan_ip,
-                                                 scan_ip=scan_ip,
-                                                 vul_id=vul_id,
-                                                 agent=agent,
-                                                 description=description,
-                                                 fname=fname,
-                                                 plugin_modification_date=plugin_modification_date,
-                                                 plugin_name=plugin_name,
-                                                 plugin_publication_date=plugin_publication_date,
-                                                 plugin_type=plugin_type,
-                                                 risk_factor=risk_factor,
-                                                 script_version=script_version,
-                                                 see_also=see_also,
-                                                 solution=solution,
-                                                 synopsis=synopsis,
-                                                 plugin_output=plugin_output,
-                                                 pluginName=pluginName,
-                                                 pluginID=pluginID,
-                                                 protocol=protocol,
-                                                 severity=severity,
-                                                 svc_name=svc_name,
-                                                 pluginFamily=pluginFamily,
-                                                 port=port,
-                                                 false_positive=false_positive,
-                                                 vuln_status='Open',
-                                                 dup_hash=duplicate_hash,
-                                                 vuln_duplicate=duplicate_vuln,
-                                                 severity_color=vuln_color,
-                                                 username=username,
-                                                 )
-                all_data_save.save()
-                print("RESULTS = " + str(all_data_save.scan_id))
-                del_na = nessus_report_db.objects.filter(username=username, plugin_name='NA')
-                del_na.delete()
 
-                ov_all_vul = nessus_report_db.objects.filter(username=username, scan_id=scan_ip).order_by('scan_ip')
-                total_vul = len(ov_all_vul)
-                total_critical = len(ov_all_vul.filter(risk_factor="Critical"))
-                total_high = len(ov_all_vul.filter(risk_factor="High"))
-                total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
-                total_low = len(ov_all_vul.filter(risk_factor="Low"))
-                total_info = len(ov_all_vul.filter(risk_factor="Informational"))
-                total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
+                    global false_positive
+                    false_p = nessus_scan_results_db.objects.filter(username=username,
+                                                                    false_positive_hash=duplicate_hash)
+                    fp_lenth_match = len(false_p)
+                    if fp_lenth_match == 1:
+                        false_positive = 'Yes'
+                    else:
+                        false_positive = 'No'
+                    if risk_factor == 'None':
+                        risk_factor = 'Low'
 
-                nessus_scan_db.objects.filter(username=username, scan_id=scan_ip) \
-                    .update(total_vul=total_vul,
-                            critical_total=total_critical,
-                            high_total=total_high,
-                            medium_total=total_medium,
-                            low_total=total_low,
-                            info_total=total_info,
-                            total_dup=total_duplicate,
-                            scan_ip=scan_ip,
-                            )
+                    all_data_save = nessus_scan_results_db(project_id=project_id,
+                                                           report_name=report_name,
+                                                           scan_id=scan_id,
+                                                           date_time=date_time,
+                                                           target=target,
+                                                           vuln_id=vuln_id,
+                                                           agent=agent,
+                                                           description=description,
+                                                           fname=fname,
+                                                           plugin_modification_date=plugin_modification_date,
+                                                           plugin_name=plugin_name,
+                                                           plugin_publication_date=plugin_publication_date,
+                                                           plugin_type=plugin_type,
+                                                           risk_factor=risk_factor,
+                                                           script_version=script_version,
+                                                           see_also=see_also,
+                                                           solution=solution,
+                                                           synopsis=synopsis,
+                                                           plugin_output=plugin_output,
+                                                           pluginName=pluginName,
+                                                           pluginID=pluginID,
+                                                           protocol=protocol,
+                                                           severity=severity,
+                                                           svc_name=svc_name,
+                                                           pluginFamily=pluginFamily,
+                                                           port=port,
+                                                           false_positive=false_positive,
+                                                           vuln_status='Open',
+                                                           dup_hash=duplicate_hash,
+                                                           vuln_duplicate=duplicate_vuln,
+                                                           severity_color=vuln_color,
+                                                           username=username,
+                                                           )
+                    all_data_save.save()
+                    del_na = nessus_scan_results_db.objects.filter(username=username, plugin_name='NA')
+                    del_na.delete()
+
+                else:
+                    duplicate_vuln = 'Yes'
+
+                    all_data_save = nessus_scan_results_db(project_id=project_id,
+                                                           scan_id=scan_id,
+                                                           target=target,
+                                                           vuln_id=vuln_id,
+                                                           date_time=date_time,
+                                                           agent=agent,
+                                                           description=description,
+                                                           fname=fname,
+                                                           plugin_modification_date=plugin_modification_date,
+                                                           plugin_name=plugin_name,
+                                                           plugin_publication_date=plugin_publication_date,
+                                                           plugin_type=plugin_type,
+                                                           risk_factor=risk_factor,
+                                                           script_version=script_version,
+                                                           see_also=see_also,
+                                                           solution=solution,
+                                                           synopsis=synopsis,
+                                                           plugin_output=plugin_output,
+                                                           pluginName=pluginName,
+                                                           pluginID=pluginID,
+                                                           protocol=protocol,
+                                                           severity=severity,
+                                                           svc_name=svc_name,
+                                                           pluginFamily=pluginFamily,
+                                                           port=port,
+                                                           false_positive='Duplicate',
+                                                           vuln_status='Duplicate',
+                                                           dup_hash=duplicate_hash,
+                                                           vuln_duplicate=duplicate_vuln,
+                                                           severity_color=vuln_color,
+                                                           username=username,
+                                                           )
+                    all_data_save.save()
+                    del_na = nessus_scan_results_db.objects.filter(username=username, plugin_name='NA')
+                    del_na.delete()
+                    ov_all_vul = nessus_scan_results_db.objects.filter(username=username, scan_id=scan_id)
+                    total_duplicate = len(ov_all_vul.filter(vuln_duplicate='Yes'))
+                    nessus_scan_db.objects.filter(username=username, scan_id=scan_id) \
+                        .update(
+                        total_dup=total_duplicate,
+                        target=target,
+                    )
+
+            target_filter = nessus_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                                  target=target,
+                                                                  vuln_status='Open',
+                                                                  vuln_duplicate='No'
+                                                                  )
+
+            duplicate_count = nessus_scan_results_db.objects.filter(username=username,
+                                                                    scan_id=scan_id,
+                                                                    target=target,
+                                                                    vuln_duplicate='Yes')
+
+            target_total_vuln = len(target_filter)
+            target_total_high = len(target_filter.filter(risk_factor="High"))
+            target_total_medium = len(target_filter.filter(risk_factor="Medium"))
+            target_total_low = len(target_filter.filter(risk_factor="Low"))
+            target_total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+            target_scan_dump = nessus_targets_db(
+                report_name=report_name,
+                target=target,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                username=username,
+                total_vuln=target_total_vuln,
+                total_high=target_total_high,
+                total_medium=target_total_medium,
+                total_low=target_total_low,
+                total_dup=target_total_duplicate,
+            )
+            target_scan_dump.save()
+        ov_all_vul = nessus_scan_results_db.objects.filter(username=username, scan_id=scan_id,
+                                                           vuln_status='Open',
+                                                           vuln_duplicate='No'
+                                                           )
+        duplicate_count_report = nessus_scan_results_db.objects.filter(username=username,
+                                                                       scan_id=scan_id,
+                                                                       vuln_duplicate='Yes')
+        total_vuln = len(ov_all_vul)
+        total_high = len(ov_all_vul.filter(risk_factor="High"))
+        total_medium = len(ov_all_vul.filter(risk_factor="Medium"))
+        total_low = len(ov_all_vul.filter(risk_factor="Low"))
+        total_duplicate = len(duplicate_count_report.filter(vuln_duplicate='Yes'))
+
+        nessus_scan_db.objects.filter(username=username, scan_id=scan_id) \
+            .update(total_vuln=total_vuln,
+                    total_high=total_high,
+                    total_medium=total_medium,
+                    total_low=total_low,
+                    total_dup=total_duplicate,
+                    target=target,
+                    )
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - Nessus Report Uploaded'
     message = 'Nessus Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

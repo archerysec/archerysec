@@ -3,7 +3,7 @@
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script type="text/javascript">
 
@@ -11,26 +11,28 @@
         $("input:checkbox").prop('checked', $(this).prop("checked"));
     });
     $(document).ready(function() {
-        $("button").click(function(){
-            var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
-            $.each($("input[name='del_scan_id']:checked"), function(){
-                scan_id.push($(this).val());
-            });
+        $('.btn-danger').click(function(){
+            if (confirm('Are you sure you want to delete this?')) {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_scan_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
 
-            var json_scanid = scan_id.join(", ");
-            $.ajax({
-                type:'POST',
-                <!--contentType: 'application/json; charset=utf-8',-->
-                url:'{% url 'banditscanner:del_bandit_scan' %}',
-                data:{
-                   scan_id: json_scanid,
-                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-                },
-                sucess:function(){
+                var json_scanid = scan_id.join(", ");
+                $.ajax({
+                    type:'POST',
+                    <!--contentType: 'application/json; charset=utf-8',-->
+                    url:'{% url 'banditscanner:del_bandit_scan' %}',
+                    data:{
+                       scan_id: json_scanid,
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
 
-                }
-            });
-            setTimeout(location.reload(), 6000);
+                    }
+                });
+                setTimeout(location.reload(), 6000);
+            }
         });
 
     });
@@ -69,11 +71,10 @@
                                 <th>Status</th>
                                 <th>Date Time</th>
                                 <th>Total Vulnerability</th>
-                                <th>SEVERITY_HIGH</th>
-                                <th>SEVERITY_MEDIUM</th>
+                                <th>high_vul</th>
+                                <th>medium_vul</th>
                                 <th>SEVERITY_LOW</th>
                                 <th>Duplicates</th>
-                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>{% for data in all_bandit_scan %}
@@ -92,6 +93,7 @@
                                 <td>
                                     <a href="{% url 'banditscanner:banditscan_list_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
                                 </td>
+                            {% csrf_token %}
                                 <td width="20%">
                                             <div>
                                                 <div class="d-flex no-block align-items-center">
@@ -105,19 +107,11 @@
                                             </div>
                                         </td>
                                 <td>{{data.date_time}}</td>
-                                <td><span class="badge badge-pill badge-dark">{{data.total_vuln}}</span></td>
-                                <td><span class="badge badge-pill badge-danger">{{data.SEVERITY_HIGH}}</span></td>
-                                <td><span class="badge badge-pill badge-warning">{{data.SEVERITY_MEDIUM}}</span></td>
-                                <td><span class="badge badge-pill badge-info">{{data.SEVERITY_LOW}}</span></td>
+                                <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>
                                 <td><span class="badge badge-pill badge-danger">{{data.total_dup}}</span></td>
-                                <td>
-                                    <form action="{% url 'banditscanner:del_bandit_scan' %}" method="post" class="forms-sample">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>
-                                        <!--<input type="hidden" name="scan_url" value="{{data.scan_url}}"/>-->
-                                         <button class="btn btn-danger btn-mini"><i class="fas fa-trash"></i></button>
-                                    </form>
-                                </td>
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -130,4 +124,21 @@
         </div>
     </div>
 </div>
+<script src="/static/matrix-admin-bt4/assets/libs/toastr/build/toastr.min.js"></script>
+<script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>
+
+<script>
+        $(window).load(function() {
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'alert-success' %}
+                        toastr.success('{{ message }}');
+                    {% endif %}
+                    {% if message.tags == 'alert-danger' %}
+                        toastr.error('{{ message }}');
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        });
+</script>
 {% endblock %}

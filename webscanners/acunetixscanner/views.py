@@ -40,12 +40,12 @@ def acunetix_list_vuln(request):
         scan_id = None
 
     acunetix_all_vul = acunetix_scan_result_db.objects.filter(username=username,
-        scan_id=scan_id, vuln_status='Open').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
-                                                    'vuln_status').distinct()
+        scan_id=scan_id).values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
+                                                    'vuln_status').distinct().exclude(vuln_status='Duplicate')
 
     acunetix_all_vul_close = acunetix_scan_result_db.objects.filter(username=username,
-        scan_id=scan_id, vuln_status='Close').values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
-                                                     'vuln_status').distinct()
+        scan_id=scan_id).values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
+                                                     'vuln_status').distinct().exclude(vuln_status='Duplicate')
 
     return render(request,
                   'acunetixscanner/acunetix_list_vuln.html',
@@ -126,7 +126,7 @@ def acunetix_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 acunetix_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                        scan_id=scan_id).update(false_positive=false_positive,
-                                                                               vuln_status='Close',
+                                                                               vuln_status='Closed',
                                                                                false_positive_hash=false_positive_hash
                                                                                )
 
@@ -146,7 +146,7 @@ def acunetix_vuln_out(request):
                     medium_vul=total_medium,
                     low_vul=total_low,
                     info_vul=total_info,
-                    total_dup=total_duplicate,
+
                     )
 
         return HttpResponseRedirect(
@@ -154,22 +154,13 @@ def acunetix_vuln_out(request):
 
     vuln_data = acunetix_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                        VulnName=name,
-                                                       vuln_status='Open',
-                                                       false_positive='No')
-    vuln_data_closed = acunetix_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                              VulnName=name,
-                                                              vuln_status='Closed',
-                                                              false_positive='No')
-    false_data = acunetix_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                        VulnName=name,
-                                                        false_positive='Yes')
+                                                       ).exclude(vuln_status='Duplicate')
+
 
     return render(request,
                   'acunetixscanner/acunetix_vuln_out.html',
                   {'vuln_data': vuln_data,
-                   'false_data': false_data,
                    'jira_url': jira_url,
-                   'vuln_data_closed': vuln_data_closed
                    })
 
 
@@ -303,18 +294,22 @@ def export(request):
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
-        zap_resource = AcunetixResource()
-        queryset = acunetix_scan_result_db.objects.filter(username=username, scan_id=scan_id)
-        dataset = zap_resource.export(queryset)
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+
+        arcunetix_resource = AcunetixResource()
+        queryset = acunetix_scan_result_db.objects.filter(username=username, scan_id__in=value_split)
+        dataset = arcunetix_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % 'arcunetix_results'
             return response
         if report_type == 'json':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % 'arcunetix_results'
             return response
         if report_type == 'yaml':
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
-            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % 'arcunetix_results'
             return response

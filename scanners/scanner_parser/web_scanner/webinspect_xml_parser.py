@@ -18,6 +18,8 @@
 from webscanners.models import webinspect_scan_result_db, webinspect_scan_db
 import uuid
 import hashlib
+from datetime import datetime
+from dashboard.views import trend_update
 
 from webscanners.zapscanner.views import email_sch_notify
 
@@ -59,7 +61,7 @@ def xml_parser(root,
         RawResponse, \
         SectionText, \
         vuln_id, severity_name, vul_col
-
+    date_time = datetime.now()
     for data in root:
         for issues in data:
             for issue in issues:
@@ -106,7 +108,7 @@ def xml_parser(root,
                 vuln_id = uuid.uuid4()
 
             if Severity == "4":
-                Severity = 'Critical'
+                Severity = 'High'
                 vul_col = "danger"
 
             elif Severity == "3":
@@ -121,42 +123,69 @@ def xml_parser(root,
                 Severity = 'Low'
                 vul_col = "info"
 
-            elif Severity == '0':
-                Severity = 'Information'
+            else:
+                Severity = 'Low'
                 vul_col = "info"
 
             dup_data = Name + url + Severity
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
             match_dup = webinspect_scan_result_db.objects.filter(username=username,
-                dup_hash=duplicate_hash).values('dup_hash').distinct()
+                                                                 dup_hash=duplicate_hash).values('dup_hash').distinct()
             lenth_match = len(match_dup)
 
-            if lenth_match == 1:
-                duplicate_vuln = 'Yes'
-            elif lenth_match == 0:
+            if lenth_match == 0:
                 duplicate_vuln = 'No'
-            else:
-                duplicate_vuln = 'None'
 
-            false_p = webinspect_scan_result_db.objects.filter(username=username,
-                false_positive_hash=duplicate_hash)
-            fp_lenth_match = len(false_p)
+                false_p = webinspect_scan_result_db.objects.filter(username=username,
+                                                                   false_positive_hash=duplicate_hash)
+                fp_lenth_match = len(false_p)
 
-            global false_positive
-            if fp_lenth_match == 1:
-                false_positive = 'Yes'
-            elif lenth_match == 0:
-                false_positive = 'No'
-            else:
-                false_positive = 'No'
+                global false_positive
+                if fp_lenth_match == 1:
+                    false_positive = 'Yes'
+                elif lenth_match == 0:
+                    false_positive = 'No'
+                else:
+                    false_positive = 'No'
 
-            if Name is None:
-                print(Name)
+                if Name is None:
+                    print(Name)
+                else:
+                    dump_data = webinspect_scan_result_db(scan_id=scan_id,
+                                                          vuln_id=vuln_id,
+                                                          vuln_url=url,
+                                                          date_time=date_time,
+                                                          host=Host,
+                                                          port=Port,
+                                                          attackmethod=AttackMethod,
+                                                          vulnerablesession=VulnerableSession,
+                                                          triggerSession=TriggerSession,
+                                                          vulnerabilityID=VulnerabilityID,
+                                                          severity=Severity,
+                                                          name=Name,
+                                                          reportSection=ReportSection,
+                                                          highlightSelections=HighlightSelections,
+                                                          rawResponse=RawResponse,
+                                                          SectionText=SectionText,
+                                                          severity_name=severity_name,
+                                                          vuln_color=vul_col,
+                                                          false_positive=false_positive,
+                                                          vuln_status='Open',
+                                                          dup_hash=duplicate_hash,
+                                                          vuln_duplicate=duplicate_vuln,
+                                                          project_id=project_id,
+                                                          username=username
+                                                          )
+                    dump_data.save()
+
             else:
+                duplicate_vuln = 'Yes'
+
                 dump_data = webinspect_scan_result_db(scan_id=scan_id,
                                                       vuln_id=vuln_id,
                                                       vuln_url=url,
+                                                      date_time=date_time,
                                                       host=Host,
                                                       port=Port,
                                                       attackmethod=AttackMethod,
@@ -171,8 +200,8 @@ def xml_parser(root,
                                                       SectionText=SectionText,
                                                       severity_name=severity_name,
                                                       vuln_color=vul_col,
-                                                      false_positive=false_positive,
-                                                      vuln_status='Open',
+                                                      false_positive='Duplicate',
+                                                      vuln_status='Duplicate',
                                                       dup_hash=duplicate_hash,
                                                       vuln_duplicate=duplicate_vuln,
                                                       project_id=project_id,
@@ -183,16 +212,20 @@ def xml_parser(root,
         webinspect_all_vul = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                                       false_positive='No')
 
+        duplicate_count = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
+                                                                   vuln_duplicate='Yes')
+
         total_critical = len(webinspect_all_vul.filter(severity='Critical'))
         total_high = len(webinspect_all_vul.filter(severity="High"))
         total_medium = len(webinspect_all_vul.filter(severity="Medium"))
         total_low = len(webinspect_all_vul.filter(severity="Low"))
         total_info = len(webinspect_all_vul.filter(severity="Information"))
-        total_duplicate = len(webinspect_all_vul.filter(severity='Yes'))
+        total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
         total_vul = total_critical + total_high + total_medium + total_low + total_info
 
         webinspect_scan_db.objects.filter(username=username,
                                           scan_id=scan_id).update(total_vul=total_vul,
+                                                                  date_time=date_time,
                                                                   high_vul=total_high,
                                                                   medium_vul=total_medium,
                                                                   low_vul=total_low,
@@ -200,6 +233,8 @@ def xml_parser(root,
                                                                   info_vul=total_info,
                                                                   total_dup=total_duplicate
                                                                   )
+    trend_update(username=username)
+
     subject = 'Archery Tool Scan Status - Webinspect Report Uploaded'
     message = 'Webinspect Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

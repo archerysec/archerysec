@@ -16,21 +16,9 @@
 
 """archerysecurity URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import url, include
+from django.urls import include, path
 from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token
@@ -38,49 +26,55 @@ from rest_framework_jwt.views import refresh_jwt_token
 import notifications.urls
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^webscanners/', include('webscanners.urls')),
-    url(r'^zapscanner/', include('webscanners.zapscanner.urls')),
-    url(r'^acunetixscanner/', include('webscanners.acunetixscanner.urls')),
-    url(r'^burpscanner/', include('webscanners.burpscanner.urls')),
-    url(r'^arachniscanner/', include('webscanners.arachniscanner.urls')),
-    url(r'^netsparkerscanner/', include('webscanners.netsparkerscanner.urls')),
-    url(r'^webinspectscanner/', include('webscanners.webinspectscanner.urls')),
-    url(r'^projects/', include('projects.urls')),
-    url(r'^networkscanners/', include('networkscanners.urls')),
-    url(r'^staticscanners/', include('staticscanners.urls')),
-    url(r'^banditscanner/', include('staticscanners.banditscanner.urls')),
-    url(r'^dependencycheck/', include('staticscanners.dependencycheck.urls')),
-    url(r'^findbugs/', include('staticscanners.findbugs.urls')),
-    url(r'^clair/', include('staticscanners.clair.urls')),
-    url(r'^trivy/', include('staticscanners.trivy.urls')),
-    url(r'^npmaudit/', include('staticscanners.npmaudit.urls')),
-    url(r'^nodejsscan/', include('staticscanners.nodejsscan.urls')),
-    url(r'^tfsec/', include('staticscanners.tfsec.urls')),
-    url(r'^inspec/', include('compliance.inspec.urls')),
-    url(r'^dockle/', include('compliance.dockle.urls')),
-    url(r'^retirejsscanner/', include('staticscanners.retirejsscan.urls')),
-    url(r'^api/', include('archeryapi.urls')),
-    # url(r'^scanapi/', include('APIScan.urls')),
-    url(r'^vfeed/', include('vFeedgui.urls')),
-    url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
+    path('admin/', admin.site.urls),
+    path('webscanners/', include('webscanners.urls')),
+    path('zapscanner/', include('webscanners.zapscanner.urls')),
+    path('acunetixscanner/', include('webscanners.acunetixscanner.urls')),
+    path('burpscanner/', include('webscanners.burpscanner.urls')),
+    path('arachniscanner/', include('webscanners.arachniscanner.urls')),
+    path('netsparkerscanner/', include('webscanners.netsparkerscanner.urls')),
+    path('webinspectscanner/', include('webscanners.webinspectscanner.urls')),
+    path('projects/', include('projects.urls')),
+    path('networkscanners/', include('networkscanners.urls')),
+    path('staticscanners/', include('staticscanners.urls')),
+    path('banditscanner/', include('staticscanners.banditscanner.urls')),
+    path('dependencycheck/', include('staticscanners.dependencycheck.urls')),
+    path('findbugs/', include('staticscanners.findbugs.urls')),
+    path('clair/', include('staticscanners.clair.urls')),
+    path('trivy/', include('staticscanners.trivy.urls')),
+    path('gitlabsast/', include('staticscanners.gitlabsast.urls')),
+    path('gitlabcontainerscan/', include('staticscanners.gitlabcontainerscan.urls')),
+    path('gitlabsca/', include('staticscanners.gitlabsca.urls')),
+    path('npmaudit/', include('staticscanners.npmaudit.urls')),
+    path('nodejsscan/', include('staticscanners.nodejsscan.urls')),
+    path('semgrepscan/', include('staticscanners.semgrep.urls')),
+    path('tfsec/', include('staticscanners.tfsec.urls')),
+    path('whitesource/', include('staticscanners.whitesource.urls')),
+    path('checkmarx/', include('staticscanners.checkmarx.urls')),
+    path('inspec/', include('compliance.inspec.urls')),
+    path('dockle/', include('compliance.dockle.urls')),
+    path('retirejsscanner/', include('staticscanners.retirejsscan.urls')),
+    path('api/', include('archeryapi.urls')),
+    # path('scanapi/', include('APIScan.urls')),
+    path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
+    path('nessus/', include('networkscanners.nessus.urls')),
 
     # Default url
-    url(r'', include('dashboard.urls')),
+    path(r'', include('dashboard.urls')),
 
     # API authentication
-    url(r'^api-token-auth/', obtain_jwt_token),
-    url(r'^api-token-verify/', verify_jwt_token),
-    url(r'^api-token-refresh/', refresh_jwt_token),
+    path('api-token-auth/', obtain_jwt_token),
+    path('api-token-verify/', verify_jwt_token),
+    path('api-token-refresh/', refresh_jwt_token),
 
     # JIRA
-    url(r'^jira/', include('jiraticketing.urls')),
+    path('jira/', include('jiraticketing.urls')),
 
     # Tools App
-    url(r'^tools/', include('tools.urls')),
+    path('tools/', include('tools.urls')),
 
     # Manual App
-    url(r'^manual_scan/', include('manual_scan.urls')),
+    path('manual_scan/', include('manual_scan.urls')),
 ]
 
 urlpatterns = urlpatterns + \
@@ -90,5 +84,5 @@ if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns = [
-                      url(r'^__debug__/', include(debug_toolbar.urls)),
+                      path('__debug__/', include(debug_toolbar.urls)),
                   ] + urlpatterns

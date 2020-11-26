@@ -41,10 +41,10 @@ def webinspect_list_vuln(request):
         scan_id = None
 
     webinspect_all_vul = webinspect_scan_result_db.objects.filter(
-        username=username, scan_id=scan_id, vuln_status='Open')
+        username=username, scan_id=scan_id).exclude(vuln_status='Duplicate')
 
     webinspect_all_vul_close = webinspect_scan_result_db.objects.filter(
-        username=username, scan_id=scan_id, vuln_status='Close')
+        username=username, scan_id=scan_id, vuln_status='Close').exclude(vuln_status='Duplicate')
 
     return render(request,
                   'webinspectscanner/webinspect_list_vuln.html',
@@ -125,7 +125,7 @@ def webinspect_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 webinspect_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                          scan_id=scan_id).update(false_positive=false_positive,
-                                                                                 vuln_status='Close',
+                                                                                 vuln_status='Closed',
                                                                                  false_positive_hash=false_positive_hash
                                                                                  )
 
@@ -146,7 +146,7 @@ def webinspect_vuln_out(request):
                                                                   low_vul=total_low,
                                                                   critical_vul=total_critical,
                                                                   info_vul=total_info,
-                                                                  total_dup=total_duplicate
+
                                                                   )
 
         return HttpResponseRedirect(
@@ -154,22 +154,12 @@ def webinspect_vuln_out(request):
 
     vuln_data = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                          name=name,
-                                                         vuln_status='Open',
-                                                         false_positive='No')
-    vuln_data_closed = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                                name=name,
-                                                                vuln_status='Closed',
-                                                                false_positive='No')
-    false_data = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                          name=name,
-                                                          false_positive='Yes')
+                                                        ).exclude(vuln_status='Duplicate')
 
     return render(request,
                   'webinspectscanner/webinspect_vuln_out.html',
                   {'vuln_data': vuln_data,
-                   'false_data': false_data,
                    'jira_url': jira_url,
-                   'vuln_data_closed': vuln_data_closed
                    })
 
 
@@ -304,18 +294,22 @@ def export(request):
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+
         zap_resource = WebinspectResource()
-        queryset = webinspect_scan_result_db.objects.filter(username=username, scan_id=scan_id)
+        queryset = webinspect_scan_result_db.objects.filter(username=username, scan_id__in=value_split)
         dataset = zap_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % "webinspect_results"
             return response
         if report_type == 'json':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % 'webinspect_results'
             return response
         if report_type == 'yaml':
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
-            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % 'webinspect_results'
             return response

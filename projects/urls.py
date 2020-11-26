@@ -14,22 +14,22 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from projects import views
 
 app_name = 'projects'
 
 urlpatterns = [
-    url(r'^create/$',
+    path('create/',
         views.create,
         name='create'),
-    url(r'^create_form/$',
+    path('create_form/',
         views.create_form,
         name='create_form'),
-    url(r'^$',
+    path('',
         views.projects,
         name='projects'),
-    url(r'^project_edit/$',
+    path('project_edit/',
         views.project_edit,
         name='project_edit'),
 ]

@@ -18,7 +18,8 @@
 from webscanners.models import arachni_scan_db, arachni_scan_result_db
 import uuid
 import hashlib
-
+from datetime import datetime
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 name = ""
@@ -58,13 +59,14 @@ false_positive = None
 
 
 def xml_parser(root, project_id, scan_id, username, target_url):
+    date_time = datetime.now()
     global name, description, remedy_guidance, remedy_code, severity, check, digest, references, \
         vector, remarks, page, signature, \
         proof, trusted, platform_type, platform_name, url, action, \
         body, vuln_id, vul_col, ref_key, ref_values, vector_input_key, vector_input_values, vector_source_key, vector_source_values, page_body_data, request_url, request_method, request_raw, response_ip, response_raw_headers
 
     for issue in root:
-        for data in issue.getchildren():
+        for data in issue:
             if data.tag == "issue":
                 for vuln in data:
                     vuln_id = uuid.uuid4()
@@ -203,12 +205,12 @@ def xml_parser(root, project_id, scan_id, username, target_url):
                         severity = "Low"
                         vul_col = "info"
 
-                    elif severity == 'informational':
-                        severity = "Informational"
+                    else:
+                        severity = "Low"
                         vul_col = "info"
 
                     for extra_data in vuln:
-                        for extra_vuln in extra_data.getchildren():
+                        for extra_vuln in extra_data:
                             if extra_vuln.tag == "url":
 
                                 if extra_vuln.text is None:
@@ -235,74 +237,112 @@ def xml_parser(root, project_id, scan_id, username, target_url):
                                                                   dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)
 
-                if lenth_match == 1:
-                    duplicate_vuln = 'Yes'
-                elif lenth_match == 0:
+                if lenth_match == 0:
                     duplicate_vuln = 'No'
+
+                    false_p = arachni_scan_result_db.objects.filter(username=username,
+                                                                    false_positive_hash=duplicate_hash)
+                    fp_lenth_match = len(false_p)
+
+                    global false_positive
+                    if fp_lenth_match == 1:
+                        false_positive = 'Yes'
+                    elif fp_lenth_match == 0:
+                        false_positive = 'No'
+                    else:
+                        false_positive = "No"
+
+                    dump_data = arachni_scan_result_db(vuln_id=vuln_id,
+                                                       scan_id=scan_id,
+                                                       date_time=date_time,
+                                                       vuln_color=vul_col,
+                                                       project_id=project_id,
+                                                       name=name, description=description,
+                                                       remedy_guidance=remedy_guidance,
+                                                       severity=severity,
+                                                       proof=proof,
+                                                       url=url,
+                                                       action=action,
+                                                       body=body,
+                                                       ref_key=ref_key,
+                                                       ref_value=ref_values,
+                                                       vector_input_values=vector_input_values,
+                                                       vector_source_key=vector_source_key,
+                                                       vector_source_values=vector_source_values,
+                                                       page_body_data=page_body_data,
+                                                       request_url=request_url,
+                                                       request_method=request_method,
+                                                       request_raw=request_raw,
+                                                       response_ip=response_ip,
+                                                       response_raw_headers=response_raw_headers,
+                                                       vector_input_key=vector_input_key,
+                                                       false_positive=false_positive,
+                                                       vuln_status='Open',
+                                                       dup_hash=duplicate_hash,
+                                                       vuln_duplicate=duplicate_vuln,
+                                                       username=username
+                                                       )
+                    dump_data.save()
+
                 else:
-                    duplicate_vuln = 'None'
+                    duplicate_vuln = 'Yes'
 
-                false_p = arachni_scan_result_db.objects.filter(username=username,
-                                                                false_positive_hash=duplicate_hash)
-                fp_lenth_match = len(false_p)
+                    dump_data = arachni_scan_result_db(vuln_id=vuln_id,
+                                                       scan_id=scan_id,
+                                                       date_time=date_time,
+                                                       vuln_color=vul_col,
+                                                       project_id=project_id,
+                                                       name=name, description=description,
+                                                       remedy_guidance=remedy_guidance,
+                                                       severity=severity,
+                                                       proof=proof,
+                                                       url=url,
+                                                       action=action,
+                                                       body=body,
+                                                       ref_key=ref_key,
+                                                       ref_value=ref_values,
+                                                       vector_input_values=vector_input_values,
+                                                       vector_source_key=vector_source_key,
+                                                       vector_source_values=vector_source_values,
+                                                       page_body_data=page_body_data,
+                                                       request_url=request_url,
+                                                       request_method=request_method,
+                                                       request_raw=request_raw,
+                                                       response_ip=response_ip,
+                                                       response_raw_headers=response_raw_headers,
+                                                       vector_input_key=vector_input_key,
+                                                       false_positive='Duplicate',
+                                                       vuln_status='Duplicate',
+                                                       dup_hash=duplicate_hash,
+                                                       vuln_duplicate=duplicate_vuln,
+                                                       username=username
+                                                       )
+                    dump_data.save()
 
-                global false_positive
-                if fp_lenth_match == 1:
-                    false_positive = 'Yes'
-                elif fp_lenth_match == 0:
-                    false_positive = 'No'
-                else:
-                    false_positive = "No"
 
-                dump_data = arachni_scan_result_db(vuln_id=vuln_id,
-                                                   scan_id=scan_id, 
-                                                   vuln_color=vul_col,
-                                                   project_id=project_id,
-                                                   name=name, description=description,
-                                                   remedy_guidance=remedy_guidance,
-                                                   severity=severity,
-                                                   proof=proof,
-                                                   url=url,
-                                                   action=action,
-                                                   body=body,
-                                                   ref_key=ref_key,
-                                                   ref_value=ref_values,
-                                                   vector_input_values=vector_input_values,
-                                                   vector_source_key=vector_source_key,
-                                                   vector_source_values=vector_source_values,
-                                                   page_body_data=page_body_data,
-                                                   request_url=request_url,
-                                                   request_method=request_method,
-                                                   request_raw=request_raw,
-                                                   response_ip=response_ip,
-                                                   response_raw_headers=response_raw_headers,
-                                                   vector_input_key=vector_input_key,
-                                                   false_positive=false_positive,
-                                                   vuln_status='Open',
-                                                   dup_hash=duplicate_hash,
-                                                   vuln_duplicate=duplicate_vuln,
-                                                   username=username
-                                                   )
-                dump_data.save()
 
     arachni_all_vul = arachni_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+
+    duplicate_count = arachni_scan_result_db.objects.filter(username=username, scan_id=scan_id, vuln_duplicate='Yes')
 
     total_high = len(arachni_all_vul.filter(severity="High"))
     total_medium = len(arachni_all_vul.filter(severity="Medium"))
     total_low = len(arachni_all_vul.filter(severity="Low"))
     total_info = len(arachni_all_vul.filter(severity="Informational"))
-    total_duplicate = len(arachni_all_vul.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
     total_vul = total_high + total_medium + total_low + total_info
 
     arachni_scan_db.objects.filter(scan_id=scan_id, username=username).update(
         url=target_url,
         total_vul=total_vul,
+        date_time=date_time,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,
         info_vul=total_info,
         total_dup=total_duplicate,
     )
+    trend_update(username=username)
 
     subject = 'Archery Tool Scan Status - Arachni Report Uploaded'
     message = 'Arachni Scanner has completed the scan ' \

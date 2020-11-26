@@ -69,7 +69,8 @@ def burp_setting(request):
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
         burpapikey = request.POST.get("burpapikey")
-        save_burp_settings = burp_setting_db(username=username, burp_url=burphost, burp_port=burport, burp_api_key=burpapikey)
+        save_burp_settings = burp_setting_db(username=username, burp_url=burphost, burp_port=burport,
+                                             burp_api_key=burpapikey)
         save_burp_settings.save()
 
         host = 'http://' + burphost + ':' + burport + '/'
@@ -187,16 +188,18 @@ def burp_list_vuln(request):
     else:
         scan_id = None
     burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                      vuln_status='Open').values('name',
-                                                                                 'severity',
-                                                                                 'severity_color',
-                                                                                 'scan_id').distinct()
+                                                      ).values('name',
+                                                               'severity',
+                                                               'severity_color',
+                                                               'vuln_status',
+                                                               'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     burp_all_vul_close = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                            vuln_status='Closed').values('name',
-                                                                                         'severity',
-                                                                                         'severity_color',
-                                                                                         'scan_id').distinct()
+                                                            ).values('name',
+                                                                     'severity',
+                                                                     'severity_color',
+                                                                     'vuln_status',
+                                                                     'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request,
                   'burpscanner/burp_list_vuln.html',
@@ -259,10 +262,11 @@ def burp_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 burp_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                    scan_id=scan_id).update(false_positive=false_positive,
-                                                                           vuln_status='Close',
+                                                                           vuln_status='Closed',
                                                                            false_positive_hash=false_positive_hash
                                                                            )
-        burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
+        burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+                                                          vuln_status='Open')
         total_vul = len(burp_all_vul)
         total_high = len(burp_all_vul.filter(severity="High"))
         total_medium = len(burp_all_vul.filter(severity="Medium"))
@@ -284,25 +288,10 @@ def burp_vuln_out(request):
     vuln_data = burp_scan_result_db.objects.filter(username=username,
                                                    scan_id=scan_id,
                                                    name=name,
-                                                   false_positive='No',
-                                                   vuln_status='Open'
-                                                   )
-    vuln_close_data = burp_scan_result_db.objects.filter(username=username,
-                                                         scan_id=scan_id,
-                                                         name=name,
-                                                         false_positive='No',
-                                                         vuln_status='Closed'
-                                                         )
-
-    false_data = burp_scan_result_db.objects.filter(username=username,
-                                                    scan_id=scan_id,
-                                                    name=name,
-                                                    false_positive='Yes')
+                                                   ).exclude(vuln_status='Duplicate')
 
     return render(request, 'burpscanner/burp_vuln_out.html', {'vuln_data': vuln_data,
-                                                              'false_data': false_data,
                                                               'jira_url': jira_url,
-                                                              'vuln_close_data': vuln_close_data
                                                               })
 
 
@@ -351,15 +340,18 @@ def del_burp_vuln(request):
             vuln_id = value_split.__getitem__(i)
             delete_vuln = burp_scan_result_db.objects.filter(username=username, vuln_id=vuln_id)
             delete_vuln.delete()
-        burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=un_scanid).values('name', 'severity',
-                                                                                    'severity_color').distinct()
+        burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=un_scanid).values('name',
+                                                                                                       'severity',
+                                                                                                       'severity_color').distinct()
         total_vul = len(burp_all_vul)
         total_high = len(burp_all_vul.filter(severity="High"))
         total_medium = len(burp_all_vul.filter(severity="Medium"))
         total_low = len(burp_all_vul.filter(severity="Low"))
 
-        burp_scan_db.objects.filter(username=username, scan_id=un_scanid).update(total_vul=total_vul, high_vul=total_high,
-                                                              medium_vul=total_medium, low_vul=total_low)
+        burp_scan_db.objects.filter(username=username, scan_id=un_scanid).update(total_vul=total_vul,
+                                                                                 high_vul=total_high,
+                                                                                 medium_vul=total_medium,
+                                                                                 low_vul=total_low)
 
         return HttpResponseRedirect(reverse('burpscanner:burp_vuln_list') + '?scan_id=%s' % un_scanid)
 
@@ -374,18 +366,22 @@ def export(request):
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+
         zap_resource = BurpResource()
-        queryset = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id)
+        queryset = burp_scan_result_db.objects.filter(username=username, scan_id__in=value_split)
         dataset = zap_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % 'burp_results'
             return response
         if report_type == 'json':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % 'burp_results'
             return response
         if report_type == 'yaml':
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
-            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % 'burp_results'
             return response

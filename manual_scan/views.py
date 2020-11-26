@@ -23,9 +23,11 @@ from datetime import datetime
 from projects.models import project_db
 from manual_scan.models import VulnerabilityData
 import uuid
-
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
+from .forms import *
+from django.contrib import messages
 
 
 def list_scan(request):
@@ -68,6 +70,9 @@ def add_list_scan(request):
             username=username,
         )
         dump_scan.save()
+
+        messages.success(request, "Target Added")
+
         return HttpResponseRedirect(reverse('manual_scan:list_scan'))
 
     return render(request,
@@ -123,7 +128,7 @@ def add_vuln(request):
         scanid = request.GET['scan_id']
         project_id = request.GET['project_id']
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.FILES['poc']:
         vuln_name = request.POST.get('vuln_name')
         severity = request.POST.get('vuln_severity')
         vuln_url = request.POST.get('vuln_instance')
@@ -132,8 +137,15 @@ def add_vuln(request):
         reference = request.POST.get('vuln_reference')
         scan_id = request.POST.get('scan_id')
         project_id = request.POST.get('project_id')
+        pentest_type = request.POST.get('pentest_type')
+        poc = request.FILES['poc']
+        poc_description = request.POST.get('poc_description')
         date_time = datetime.now()
         vuln_id = uuid.uuid4()
+
+        fs = FileSystemStorage()
+        filename = fs.save(poc.name, poc)
+        uploaded_poc_url = fs.url(filename)
 
         if severity == "High":
             severity_color = "danger"
@@ -154,7 +166,11 @@ def add_vuln(request):
             solution=solution,
             reference=reference,
             scan_id=scan_id,
+            pentest_type=pentest_type,
+            vuln_status='Open',
             project_id=project_id,
+            Poc_Img=uploaded_poc_url,
+            poc_description=poc_description,
             username=username,
         )
         dump_data.save()
@@ -262,13 +278,48 @@ def edit_vuln(request):
         )
         return HttpResponseRedirect(
             reverse('manual_scan:vuln_list') + '?scan_id=%(scan_id)s&project_id=%(project_id)s' % {'scan_id': scan_id,
-                                                                                       'project_id': project_id})
+                                                                                                   'project_id': project_id})
 
     return render(request, 'edit_vuln.html',
                   {'vuln_data': vuln_data,
                    'vuln_id': vuln_id,
                    'project_id': project_id
                    })
+
+
+def manual_vuln_data(request):
+    username = request.user.username
+
+    if request.method == 'POST':
+        vuln_id = request.POST.get('vuln_id')
+        status = request.POST.get('status')
+        scan_id = request.POST.get('scan_id')
+        project_id = request.POST.get('project_id')
+        date_time = datetime.now()
+
+        manual_scan_results_db.objects.filter(username=username, vuln_id=vuln_id).update(
+            vuln_status=status,
+            date_time=date_time,
+        )
+        all_scan_data = manual_scan_results_db.objects.filter(username=username, scan_id=scan_id, vuln_status='Open')
+
+        total_vuln = len(all_scan_data)
+        total_high = len(all_scan_data.filter(severity="High"))
+        total_medium = len(all_scan_data.filter(severity="Medium"))
+        total_low = len(all_scan_data.filter(severity="Low"))
+
+        manual_scans_db.objects.filter(username=username, scan_id=scan_id).update(
+            date_time=date_time,
+            total_vul=total_vuln,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            username=username,
+        )
+
+    return HttpResponseRedirect(
+        reverse('manual_scan:vuln_list') + '?scan_id=%(scan_id)s&project_id=%(project_id)s' % {'scan_id': scan_id,
+                                                                                               'project_id': project_id})
 
 
 def del_vuln(request):
@@ -307,7 +358,8 @@ def del_vuln(request):
             low_vul=total_low,
         )
 
-        return HttpResponseRedirect(reverse('manual_scan:vuln_list') + '?scan_id=%s&project_id=%s' % (scan_id, project_id))
+        return HttpResponseRedirect(
+            reverse('manual_scan:vuln_list') + '?scan_id=%s&project_id=%s' % (scan_id, project_id))
 
 
 def del_scan(request):
@@ -332,6 +384,8 @@ def del_scan(request):
 
             del_scan_info = manual_scans_db.objects.filter(username=username, scan_id=scan_id)
             del_scan_info.delete()
+
+            messages.warning(request, "Target Deleted")
 
         return HttpResponseRedirect(reverse('manual_scan:list_scan'))
 

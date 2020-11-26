@@ -66,12 +66,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
     'debug_toolbar',
-    'easy_pdf',
     'dashboard',
     'background_task',
     'sitetree',
     'import_export',
-    'vFeedgui',
     'compliance',
     'notifications',
 
@@ -214,6 +212,9 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 # DJANGO_NOTIFICATIONS_CONFIG = {'USE_JSONFIELD': True}
 
 DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv("EMAIL_HOST")

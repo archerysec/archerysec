@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url, include
+from django.urls import include, path
 from rest_framework import routers
 from archeryapi import views
 from rest_framework.documentation import include_docs_urls
@@ -36,30 +36,30 @@ router = routers.DefaultRouter()
 app_name = 'archeryapi'
 
 urlpatterns = [
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION, public=True, )),
-    url(r'webscan/', views.WebScan.as_view()),
-    url(r'networkscan/', views.NetworkScan.as_view()),
-    url(r'networkscanresult', views.NetworkScanResult.as_view()),
-    url(r'project/', views.Project.as_view()),
-    url(r'webscanresult/', views.WebScanResult.as_view()),
-    url(r'zapscanstatus/', views.ZapScanStatus.as_view()),
-    url(r'burpscanstatus/', views.BurpScanStatus.as_view()),
-    url(r'arachniscanstatus/', views.ArachniScanStatus.as_view()),
-    url(r'dependencycheckscanstatus/', views.DependencycheckScanStatus.as_view()),
-    url(r'findbugscanstatus/', views.FindbugsScanStatus.as_view()),
-    url(r'retirejsscanstatus/', views.RetirejsScanStatus.as_view()),
-    url(r'clairscanstatus/', views.ClairScanStatus.as_view()),
-    url(r'nodejsscanstatus/', views.NodejsScanStatus.as_view()),
-    url(r'npmauditscanstatus', views.NpmauditScanStatus.as_view()),
-    url(r'trivyscanstatus', views.TrivyScanStatus.as_view()),
-    url(r'banditscanstatus', views.BanditScanStatus.as_view()),
-    url(r'netsparkerscanstatus/', views.NetsparkerScanStatus.as_view()),
-    url(r'webinspectscanstatus/', views.WebinspectScanStatus.as_view()),
-    url(r'acunetixscanresult/', views.AcunetixScanStatus.as_view()),
-    url(r'uploadscan/', views.UpladScanResult.as_view()),
-    url(r'zapstatusupdate/', views.UpdateZapStatus.as_view()),
-    url(r'createuser/', views.CreateUsers.as_view())
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION, public=True, )),
+    path('webscan/', views.WebScan.as_view()),
+    path('networkscan/', views.NetworkScan.as_view()),
+    path('networkscanresult/', views.NetworkScanResult.as_view()),
+    path('project/', views.Project.as_view()),
+    path('webscanresult/', views.WebScanResult.as_view()),
+    path('zapscanstatus/', views.ZapScanStatus.as_view()),
+    path('burpscanstatus/', views.BurpScanStatus.as_view()),
+    path('arachniscanstatus/', views.ArachniScanStatus.as_view()),
+    path('dependencycheckscanstatus/', views.DependencycheckScanStatus.as_view()),
+    path('findbugscanstatus/', views.FindbugsScanStatus.as_view()),
+    path('retirejsscanstatus/', views.RetirejsScanStatus.as_view()),
+    path('clairscanstatus/', views.ClairScanStatus.as_view()),
+    path('nodejsscanstatus/', views.NodejsScanStatus.as_view()),
+    path('npmauditscanstatus/', views.NpmauditScanStatus.as_view()),
+    path('trivyscanstatus/', views.TrivyScanStatus.as_view()),
+    path('banditscanstatus/', views.BanditScanStatus.as_view()),
+    path('netsparkerscanstatus/', views.NetsparkerScanStatus.as_view()),
+    path('webinspectscanstatus/', views.WebinspectScanStatus.as_view()),
+    path('acunetixscanresult/', views.AcunetixScanStatus.as_view()),
+    path('uploadscan/', views.UpladScanResult.as_view()),
+    path('zapstatusupdate/', views.UpdateZapStatus.as_view()),
+    path('createuser/', views.CreateUsers.as_view())
 
 ]
 

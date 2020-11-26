@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from staticscanners.models import tfsec_scan_results_db, tfsec_scan_db
 import hashlib
 from staticscanners.resources import tfsecResource
@@ -45,11 +45,12 @@ def list_vuln(request):
     # tfsec_all_vuln = tfsec_scan_results_db.objects.filter(scan_id=scan_id)
 
     tfsec_all_vuln = tfsec_scan_results_db.objects.filter(username=username,
-        scan_id=scan_id, vuln_status='Open').values(
+                                                          scan_id=scan_id).values(
         'rule_id',
         'severity',
         'vul_col',
-        'scan_id').distinct()
+        'vuln_status',
+        'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request, 'tfsec/tfsec_list_vuln.html',
                   {'tfsec_all_vuln': tfsec_all_vuln}
@@ -94,11 +95,12 @@ def tfsec_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 tfsec_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                      scan_id=scan_id).update(false_positive=false_positive,
-                                                                             vuln_status='Close',
+                                                                             vuln_status='Closed',
                                                                              false_positive_hash=false_positive_hash
                                                                              )
 
-        all_tfsec_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No', vuln_status='Open')
+        all_tfsec_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+                                                              vuln_status='Open')
 
         total_vul = len(all_tfsec_data)
         total_high = len(all_tfsec_data.filter(severity='High'))
@@ -107,34 +109,21 @@ def tfsec_vuln_data(request):
         total_duplicate = len(all_tfsec_data.filter(vuln_duplicate='Yes'))
 
         tfsec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-            total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+            total_vul=total_vul,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
         )
 
         return HttpResponseRedirect(
             reverse('tfsec:tfsec_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     tfsec_vuln_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                           rule_id=test_name,
-                                                           vuln_status='Open',
-                                                           false_positive='No'
-                                                           )
+                                                           rule_id=test_name).exclude(vuln_status='Duplicate')
 
-    vuln_data_closed = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                            rule_id=test_name,
-                                                            vuln_status='Closed',
-                                                            false_positive='No')
-    false_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                      rule_id=test_name,
-                                                      false_positive='Yes')
 
     return render(request, 'tfsec/tfsec_vuln_data.html',
                   {'tfsec_vuln_data': tfsec_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed,
                    'jira_url': jira_url
                    })
 
@@ -154,9 +143,9 @@ def tfsec_details(request):
         vuln_id = None
 
     tfsec_vuln_details = tfsec_scan_results_db.objects.filter(username=username,
-        scan_id=scan_id,
-        vuln_id=vuln_id
-    )
+                                                              scan_id=scan_id,
+                                                              vuln_id=vuln_id
+                                                              )
 
     return render(request, 'tfsec/tfsec_vuln_details.html',
                   {'tfsec_vuln_details': tfsec_vuln_details}
@@ -216,10 +205,9 @@ def tfsec_del_vuln(request):
 
         tfsec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
         )
 
         return HttpResponseRedirect(reverse('tfsec:tfsec_all_vuln') + '?scan_id=%s' % scan_id)
@@ -236,18 +224,22 @@ def export(request):
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+
         tfsec_resource = tfsecResource()
-        queryset = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id)
+        queryset = tfsec_scan_results_db.objects.filter(username=username, scan_id__in=value_split)
         dataset = tfsec_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % 'tfsec_results'
             return response
         if report_type == 'json':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % 'tfsec_results'
             return response
         if report_type == 'yaml':
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
-            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % 'tfsec_results'
             return response

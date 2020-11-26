@@ -15,7 +15,7 @@
 # This file is part of ArcherySec Project.
 
 from openvas_lib import VulnscanManager, VulnscanException
-from networkscanners.models import scan_save_db, ov_scan_result_db
+from networkscanners.models import openvas_scan_db, ov_scan_result_db
 from django.utils import timezone
 import time
 import os
@@ -121,12 +121,12 @@ class OpenVAS_Plugin:
                     scanner.get_scan_status(str(scan_id))) + ') Scan progress: ' + str(
                     scanner.get_progress(str(scan_id))) + ' %')
                 status = float(scanner.get_progress(str(scan_id)))
-                scan_save_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+                openvas_scan_db.objects.filter(scan_id=scan_id).update(scan_status=status)
                 previous = current
             time.sleep(5)
 
         status = "100"
-        scan_save_db.objects.filter(username=self.username, scan_id=scan_id).update(scan_status=status)
+        openvas_scan_db.objects.filter(username=self.username, scan_id=scan_id).update(scan_status=status)
 
         return status
 
@@ -205,7 +205,7 @@ def vuln_an_id(scan_id, project_id, username):
                 else:
                     description = r.text
 
-            for rr in r.getchildren():
+            for rr in r:
                 if rr.tag == "family":
                     global family
                     if rr.text is None:
@@ -313,7 +313,7 @@ def vuln_an_id(scan_id, project_id, username):
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
 
-        scan_save_db.objects.filter(username=username, scan_id=scan_id). \
+        openvas_scan_db.objects.filter(username=username, scan_id=scan_id). \
             update(total_vul=total_vul,
                    high_total=total_high,
                    medium_total=total_medium,

@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('openvas_host', models.TextField(blank=True)),
                 ('openvas_port', models.IntegerField(blank=True)),
-                ('openvas_enabled', models.NullBooleanField(blank=True)),
+                ('openvas_enabled', models.BooleanField(blank=True)),
                 ('openvas_user', models.TextField(blank=True)),
                 ('openvas_password', django_cryptography.fields.encrypt(models.CharField(verbose_name=models.CharField(max_length=500)))),
             ],

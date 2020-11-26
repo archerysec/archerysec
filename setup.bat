@@ -62,7 +62,7 @@ where python >nul 2>&1 && (
 
   echo [INSTALL] Installing Requirements
 
-  pip install --no-cache-dir -r requirements_setup.txt
+  pip install --no-cache-dir -r requirements.txt
   
   echo [Static] Copy static files
    

@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.shortcuts import render, render_to_response, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render,  HttpResponse, HttpResponseRedirect
 from staticscanners.models import nodejsscan_scan_results_db, nodejsscan_scan_db
 import hashlib
 from staticscanners.resources import nodejsscanResource
@@ -45,11 +45,12 @@ def list_vuln(request):
     # nodejsscan_all_vuln = nodejsscan_scan_results_db.objects.filter(scan_id=scan_id)
 
     nodejsscan_all_vuln = nodejsscan_scan_results_db.objects.filter(username=username,
-                                                                    scan_id=scan_id, vuln_status='Open').values(
+                                                                    scan_id=scan_id).values(
         'title',
         'severity',
         'vul_col',
-        'scan_id').distinct()
+        'vuln_status',
+        'scan_id').distinct().exclude(vuln_status='Duplicate')
 
     return render(request, 'nodejsscan/nodejsscan_list_vuln.html',
                   {'nodejsscan_all_vuln': nodejsscan_all_vuln}
@@ -93,7 +94,7 @@ def nodejsscan_vuln_data(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 nodejsscan_scan_results_db.objects.filter(username=username, vuln_id=vuln_id,
                                                           scan_id=scan_id).update(false_positive=false_positive,
-                                                                                  vuln_status='Close',
+                                                                                  vuln_status='Closed',
                                                                                   false_positive_hash=false_positive_hash
                                                                                   )
 
@@ -108,11 +109,11 @@ def nodejsscan_vuln_data(request):
         total_duplicate = len(all_nodejsscan_data.filter(vuln_duplicate='Yes'))
 
         nodejsscan_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-            total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+            total_vul=total_vul,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+
         )
 
         return HttpResponseRedirect(
@@ -120,22 +121,12 @@ def nodejsscan_vuln_data(request):
 
     nodejsscan_vuln_data = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                      title=test_name,
-                                                                     vuln_status='Open',
-                                                                     false_positive='No'
-                                                                     )
+                                                                     ).exclude(vuln_status='Duplicate')
 
-    vuln_data_closed = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 title=test_name,
-                                                                 vuln_status='Closed',
-                                                                 false_positive='No')
-    false_data = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                           title=test_name,
-                                                           false_positive='Yes')
 
     return render(request, 'nodejsscan/nodejsscan_vuln_data.html',
                   {'nodejsscan_vuln_data': nodejsscan_vuln_data,
-                   'false_data': false_data,
-                   'vuln_data_closed': vuln_data_closed,
+
                    'jira_url': jira_url
                    })
 
@@ -217,10 +208,10 @@ def nodejsscan_del_vuln(request):
 
         nodejsscan_scan_db.objects.filter(username=username, scan_id=scan_id).update(
             total_vuln=total_vul,
-            SEVERITY_HIGH=total_high,
-            SEVERITY_MEDIUM=total_medium,
-            SEVERITY_LOW=total_low,
-            total_dup=total_duplicate
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+
         )
 
         return HttpResponseRedirect(reverse('nodejsscan:nodejsscan_all_vuln') + '?scan_id=%s' % scan_id)
@@ -236,18 +227,22 @@ def export(request):
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+
         nodejsscan_resource = nodejsscanResource()
-        queryset = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id)
+        queryset = nodejsscan_scan_results_db.objects.filter(username=username, scan_id__in=value_split)
         dataset = nodejsscan_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % 'nodejsscan_results'
             return response
         if report_type == 'json':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % 'nodejsscan_results'
             return response
         if report_type == 'yaml':
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
-            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % 'nodejsscan_results'
             return response

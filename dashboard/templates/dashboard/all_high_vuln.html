@@ -193,6 +193,42 @@
                                 </tr>
                                 {% endfor %}
 
+                                {% for data in gitlabsca_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'gitlabsca:gitlabsca_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in gitlabsast_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'gitlabsast:gitlabsast_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in gitlabcontainerscan_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'gitlabcontainerscan:gitlabcontainerscan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.message}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
                                 {% for data in npmaudit_all_high %}
                                 <tr data-target="#">
 
@@ -217,6 +253,18 @@
                                 </tr>
                                 {% endfor %}
 
+                                {% for data in semgrepscan_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'semgrepscan:semgrepscan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.check_id}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
                                  {% for data in tfsec_all_high %}
                                 <tr data-target="#">
 
@@ -225,6 +273,30 @@
                                     </td>
                                     <td>{{data.scanner}}</td>
                                     <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in whitesource_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'whitesource:whitesource_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.filename}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in checkmarx_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'checkmarx:checkmarx_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.file_name}}</td>
                                     <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
                                 </tr>
                                 {% endfor %}
@@ -248,10 +320,10 @@
                                 {% for data in nessus_all_high %}
                                 <tr data-target="#">
 
-                                    <td><a href="{% url 'networkscanners:nessus_vuln_check' %}?vuln_id={{data.vul_id}}">{{data.plugin_name}}</a>
+                                    <td><a href="{% url 'nessus:nessus_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.plugin_name}}</a>
                                     </td>
                                     <td>{{data.scanner}}</td>
-                                    <td>{{data.scan_ip}}</td>
+                                    <td>{{data.target}}</td>
                                     <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.risk_factor}}</span></td>
                                 </tr>
                                 {% endfor %}
@@ -275,7 +347,7 @@
                                        <a href="{% url 'manual_scan:vuln_details' %}?vuln_id={{data.vuln_id}}">{{data.vuln_name}}</a>
                                     </td>
                                     <td>Pentest</td>
-                                    <td></td>
+                                    <td>{{data.vuln_url}}</td>
                                     <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span></td>
                                 </tr>
                                 {% endfor %}

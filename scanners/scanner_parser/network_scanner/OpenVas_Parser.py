@@ -14,11 +14,11 @@
 #
 # This file is part of ArcherySec Project.
 
-from networkscanners.models import ov_scan_result_db, scan_save_db
+from networkscanners.models import ov_scan_result_db, openvas_scan_db
 from datetime import datetime
 import uuid
 import hashlib
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 name = ''
@@ -90,7 +90,7 @@ def updated_xml_parser(root, project_id, scan_id, username):
                     description = "NA"
                 else:
                     description = r.text
-            for rr in r.getchildren():
+            for rr in r:
                 if rr.tag == "family":
                     global family
                     if rr.text is None:
@@ -195,15 +195,15 @@ def updated_xml_parser(root, project_id, scan_id, username):
         total_low = len(openvas_vul.filter(threat="Low"))
         total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
         total_vul = total_high + total_medium + total_low
-        scan_save_db.objects.filter(username=username, scan_id=host). \
+        openvas_scan_db.objects.filter(username=username, scan_id=host). \
             update(total_vul=total_vul,
-                   high_total=total_high,
-                   medium_total=total_medium,
-                   low_total=total_low,
+                   high_vul=total_high,
+                   medium_vul=total_medium,
+                   low_vul=total_low,
                    total_dup=total_duplicate,
                    scan_ip=host,
                    )
-
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - OpenVAS Report Uploaded'
     message = 'OpenVAS Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

@@ -14,13 +14,13 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners import views
 
 app_name = 'staticscanners'
 
 urlpatterns = [
-    url(r'^report_import/',
+    path('report_import/',
         views.report_import,
         name='report_import'),
 ]

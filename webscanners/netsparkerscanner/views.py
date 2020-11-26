@@ -40,7 +40,7 @@ def netsparker_list_vuln(request):
         scan_id = None
 
     netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username,
-        scan_id=scan_id)
+                                                                  scan_id=scan_id).exclude(vuln_status='Duplicate')
 
     return render(request,
                   'netsparkerscanner/netsparker_list_vuln.html',
@@ -116,11 +116,12 @@ def netsparker_vuln_out(request):
                 false_positive_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
                 netsparker_scan_result_db.objects.filter(username=username, vuln_id=vuln_id,
                                                          scan_id=scan_id).update(false_positive=false_positive,
-                                                                                 vuln_status='Close',
+                                                                                 vuln_status='Closed',
                                                                                  false_positive_hash=false_positive_hash
                                                                                  )
 
-        netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No',
+        netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
+                                                                      false_positive='No',
                                                                       vuln_status='Open')
 
         total_critical = len(netsparker_all_vul.filter(severity='Critical'))
@@ -132,38 +133,26 @@ def netsparker_vuln_out(request):
         total_vul = total_critical + total_high + total_medium + total_low + total_info
 
         netsparker_scan_db.objects.filter(username=username, scan_id=scan_id).update(total_vul=total_vul,
-                                                                  high_vul=total_high,
-                                                                  medium_vul=total_medium,
-                                                                  low_vul=total_low,
-                                                                  critical_vul=total_critical,
-                                                                  info_vul=total_info,
-                                                                  total_dup=total_duplicate,
-                                                                  )
+                                                                                     high_vul=total_high,
+                                                                                     medium_vul=total_medium,
+                                                                                     low_vul=total_low,
+                                                                                     critical_vul=total_critical,
+                                                                                     info_vul=total_info,
+
+                                                                                     )
 
         return HttpResponseRedirect(
             reverse('netsparkerscanner:netsparker_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
     vuln_data = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                          type=name,
-                                                         false_positive='No',
-                                                         vuln_status='Open'
-                                                         )
+                                                         ).exclude(vuln_status='Duplicate')
 
-    vuln_data_close = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                               type=name,
-                                                               false_positive='No',
-                                                               vuln_status='Closed')
-
-    false_data = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
-                                                          type=name,
-                                                          false_positive='Yes')
 
     return render(request,
                   'netsparkerscanner/netsparker_vuln_out.html',
                   {'vuln_data': vuln_data,
-                   'false_data': false_data,
                    'jira_url': jira_url,
-                   'vuln_data_close': vuln_data_close
                    })
 
 
@@ -298,18 +287,22 @@ def export(request):
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(',')
+
         netsparker_resource = NetsparkerResource()
-        queryset = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id)
+        queryset = netsparker_scan_result_db.objects.filter(username=username, scan_id__in=value_split)
         dataset = netsparker_resource.export(queryset)
         if report_type == 'csv':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.csv"' % 'netsparker_results'
             return response
         if report_type == 'json':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="%s.json"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.json"' % 'netsparker_results'
             return response
         if report_type == 'yaml':
             response = HttpResponse(dataset.yaml, content_type='application/x-yaml')
-            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % scan_id
+            response['Content-Disposition'] = 'attachment; filename="%s.yaml"' % 'netsparker_results'
             return response
