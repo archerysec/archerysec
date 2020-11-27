@@ -27,7 +27,7 @@ categories:
   - title: '🚩 Security'
     labels:
       - 'security'
-change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+change-template: '- $TITLE (#$NUMBER)'
 template: |
   **Disclaimer**: This is an automatically generated changelog draft for ArcherySec releases.
   $CHANGES
