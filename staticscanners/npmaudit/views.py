@@ -48,7 +48,7 @@ def list_vuln(request):
         'scan_id',
         'vuln_status',
         'vul_col',
-    ).distinct().exclude(vuln_status='Duplicate')
+    ).distinct()
 
     return render(request, 'npmaudit/npmaudit_list_vuln.html',
                   {'npmaudit_all_vuln': npmaudit_all_vuln}
@@ -117,7 +117,7 @@ def npmaudit_vuln_data(request):
             reverse('npmaudit:npmaudit_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     npmaudit_vuln_data = npmaudit_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 title=test_name).exclude(vuln_status='Duplicate')
+                                                                 title=test_name)
 
 
     return render(request, 'npmaudit/npmaudit_vuln_data.html',

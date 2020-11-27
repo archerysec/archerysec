@@ -41,11 +41,11 @@ def acunetix_list_vuln(request):
 
     acunetix_all_vul = acunetix_scan_result_db.objects.filter(username=username,
         scan_id=scan_id).values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
-                                                    'vuln_status').distinct().exclude(vuln_status='Duplicate')
+                                                    'vuln_status')
 
     acunetix_all_vul_close = acunetix_scan_result_db.objects.filter(username=username,
         scan_id=scan_id).values('VulnName', 'VulnSeverity', 'vuln_color', 'scan_id',
-                                                     'vuln_status').distinct().exclude(vuln_status='Duplicate')
+                                                     'vuln_status')
 
     return render(request,
                   'acunetixscanner/acunetix_list_vuln.html',
@@ -154,7 +154,7 @@ def acunetix_vuln_out(request):
 
     vuln_data = acunetix_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                        VulnName=name,
-                                                       ).exclude(vuln_status='Duplicate')
+                                                       )
 
 
     return render(request,

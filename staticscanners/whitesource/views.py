@@ -48,7 +48,7 @@ def list_vuln(request):
         'severity',
         'vul_col',
         'vuln_status',
-        'scan_id').distinct().exclude(vuln_status='Duplicate')
+        'scan_id').distinct()
 
     return render(request, 'whitesource/whitesource_list_vuln.html',
                   {'whitesource_all_vuln': whitesource_all_vuln}
@@ -117,7 +117,7 @@ def whitesource_vuln_data(request):
             reverse('whitesource:whitesource_vuln_data') + '?scan_id=%s&name=%s' % (scan_id, vuln_name))
 
     whitesource_vuln_data = whitesource_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                       name=name).exclude(vuln_status='Duplicate')
+                                                                       name=name)
 
     return render(request, 'whitesource/whitesource_vuln_data.html',
                   {'whitesource_vuln_data': whitesource_vuln_data,

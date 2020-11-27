@@ -42,7 +42,7 @@ def list_vuln(request):
     else:
         scan_id = None
 
-    gitlabcontainerscan_all_vuln = gitlabcontainerscan_scan_results_db.objects.filter(scan_id=scan_id, username=username).exclude(vuln_status='Duplicate')
+    gitlabcontainerscan_all_vuln = gitlabcontainerscan_scan_results_db.objects.filter(scan_id=scan_id, username=username)
 
     return render(request, 'gitlabcontainerscan/gitlabcontainerscan_list_vuln.html',
                   {'gitlabcontainerscan_all_vuln': gitlabcontainerscan_all_vuln}
@@ -110,7 +110,7 @@ def gitlabcontainerscan_vuln_data(request):
             reverse('gitlabcontainerscan:gitlabcontainerscan_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     gitlabcontainerscan_vuln_data = gitlabcontainerscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                     message=test_name).exclude(vuln_status='Duplicate')
+                                                                     message=test_name)
 
     return render(request, 'gitlabcontainerscan/gitlabcontainerscan_vuln_data.html',
                   {'gitlabcontainerscan_vuln_data': gitlabcontainerscan_vuln_data,

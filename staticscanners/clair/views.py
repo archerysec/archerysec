@@ -42,7 +42,7 @@ def list_vuln(request):
     else:
         scan_id = None
 
-    clair_all_vuln = clair_scan_results_db.objects.filter(username=username, scan_id=scan_id).exclude(vuln_status='Duplicate')
+    clair_all_vuln = clair_scan_results_db.objects.filter(username=username, scan_id=scan_id)
 
     return render(request, 'clair/clairscan_list_vuln.html',
                   {'clair_all_vuln': clair_all_vuln}
@@ -112,7 +112,7 @@ def clair_vuln_data(request):
 
     clair_vuln_data = clair_scan_results_db.objects.filter(username=username,
                                                            scan_id=scan_id,
-                                                           Name=test_name).exclude(vuln_status='Duplicate')
+                                                           Name=test_name)
 
 
     return render(request, 'clair/clairscan_vuln_data.html',

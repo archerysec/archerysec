@@ -238,14 +238,14 @@ def arachni_list_vuln(request):
                                 'severity',
                                 'vuln_color',
                                 'vuln_status',
-                                'scan_id').distinct().exclude(vuln_status='Duplicate')
+                                'scan_id').distinct()
 
     arachni_all_vul_close = arachni_scan_result_db.objects.filter(username=username,
         scan_id=scan_id, vuln_status='Closed').values('name',
                                                       'severity',
                                                       'vuln_color',
                                                       'vuln_status',
-                                                      'scan_id').distinct().exclude(vuln_status='Duplicate')
+                                                      'scan_id').distinct()
 
     return render(request,
                   'arachniscanner/arachni_list_vuln.html',
@@ -354,7 +354,7 @@ def arachni_vuln_out(request):
     vuln_data = arachni_scan_result_db.objects.filter(username=username,
                                                       scan_id=scan_id,
                                                       name=name,
-                                                      ).exclude(vuln_status='Duplicate')
+                                                      )
 
 
     return render(request,

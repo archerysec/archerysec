@@ -50,7 +50,7 @@ def list_vuln(request):
         'severity',
         'vul_col',
         'vuln_status',
-        'scan_id').distinct().exclude(vuln_status='Duplicate')
+        'scan_id').distinct()
 
     return render(request, 'semgrepscan/semgrepscan_list_vuln.html',
                   {'semgrepscan_all_vuln': semgrepscan_all_vuln}
@@ -121,7 +121,7 @@ def semgrepscan_vuln_data(request):
             reverse('semgrepscan:semgrepscan_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     semgrepscan_vuln_data = semgrepscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                       check_id=test_name).exclude(vuln_status='Duplicate')
+                                                                       check_id=test_name)
 
 
     return render(request, 'semgrepscan/semgrepscan_vuln_data.html',

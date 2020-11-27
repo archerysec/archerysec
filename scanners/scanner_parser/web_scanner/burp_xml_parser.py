@@ -53,6 +53,7 @@ issue_description = ''
 issue_remediation = ''
 issue_reference = ''
 issue_vulnerability_classifications = ''
+url = ''
 
 
 def burp_scan_data(root, project_id, scan_id, username):

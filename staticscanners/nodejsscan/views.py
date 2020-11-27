@@ -50,7 +50,7 @@ def list_vuln(request):
         'severity',
         'vul_col',
         'vuln_status',
-        'scan_id').distinct().exclude(vuln_status='Duplicate')
+        'scan_id').distinct()
 
     return render(request, 'nodejsscan/nodejsscan_list_vuln.html',
                   {'nodejsscan_all_vuln': nodejsscan_all_vuln}
@@ -121,7 +121,7 @@ def nodejsscan_vuln_data(request):
 
     nodejsscan_vuln_data = nodejsscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                      title=test_name,
-                                                                     ).exclude(vuln_status='Duplicate')
+                                                                     )
 
 
     return render(request, 'nodejsscan/nodejsscan_vuln_data.html',
