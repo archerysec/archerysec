@@ -42,7 +42,7 @@ def list_vuln(request):
     else:
         scan_id = None
 
-    trivy_all_vuln = trivy_scan_results_db.objects.filter(scan_id=scan_id, username=username).exclude(vuln_status='Duplicate')
+    trivy_all_vuln = trivy_scan_results_db.objects.filter(scan_id=scan_id, username=username)
 
     return render(request, 'trivy/trivyscan_list_vuln.html',
                   {'trivy_all_vuln': trivy_all_vuln}
@@ -111,7 +111,7 @@ def trivy_vuln_data(request):
 
     trivy_vuln_data = trivy_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                            VulnerabilityID=test_name
-                                                           ).exclude(vuln_status='Duplicate')
+                                                           )
 
     return render(request, 'trivy/trivyscan_vuln_data.html',
                   {'trivy_vuln_data': trivy_vuln_data,

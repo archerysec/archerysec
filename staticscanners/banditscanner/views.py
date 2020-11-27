@@ -58,7 +58,7 @@ def banditscan_list_vuln(request):
         'scan_id',
         'vuln_status',
         'vul_col',
-    ).distinct().exclude(vuln_status='Duplicate')
+    ).distinct()
 
     return render(request, 'banditscanner/banditscan_list_vuln.html',
                   {'bandit_all_vuln': bandit_all_vuln,
@@ -129,7 +129,7 @@ def banditscan_vuln_data(request):
 
     bandit_vuln_data = bandit_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                              test_name=test_name,
-                                                             ).exclude(vuln_status='Duplicate')
+                                                             )
 
 
     return render(request, 'banditscanner/banditscan_vuln_data.html',

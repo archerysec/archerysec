@@ -19,6 +19,7 @@
                                     <thead>
                                     <tr>
                                         <th>Vulnerability</th>
+                                        <th>Status</th>
                                         <th>Risk</th>
                                     </tr>
                                     </thead>
@@ -27,6 +28,12 @@
                                         <td>
                                             <a href="{% url 'acunetixscanner:acunetix_vuln_out' %}?scan_id={{data.scan_id}}&scan_name={{data.VulnName}}">{{data.VulnName}}</a>
                                         </td>
+                                        {% if data.vuln_status == 'Open' %}
+                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                        <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>
+                                        {% endif %}
                                         <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.VulnSeverity}}</span>
                                         </td>
                                     </tr>

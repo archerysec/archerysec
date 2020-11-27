@@ -122,6 +122,11 @@ $(document).on('click', '.confirm-delete', function(){
                                             </form>
                                         </td>
                                         {% endif %}
+                                    {% if data.false_positive == 'Duplicate' %}
+                                            <td>
+                                            NA
+                                        </td>
+                                        {% endif %}
                                         <td>{{data.vuln_status}}</td>
                                         <td class="confirm-delete">
                                             <div>
@@ -156,6 +161,11 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                                 <button class="btn btn-info btn-mini">Open</button>
                                             </form>
+                                        </td>
+                                    {% endif %}
+                                    {% if data.vuln_status == 'Duplicate' %}
+                                        <td>
+                                            NA
                                         </td>
                                     {% endif %}
                                     </tr>

@@ -18,6 +18,7 @@
                                     <thead>
                             <tr>
                                 <th>Vulnerability</th>
+                                <th>Status</th>
                                 <th>Risk</th>
                             </tr>
                             </thead>
@@ -25,6 +26,12 @@
                             <tr data-target="#">
                                 <td><a href="{% url 'zapscanner:zap_vuln_details' %}?scan_id={{data.scan_id}}&scan_name={{data.name}}">{{data.name}}</a>
                                 </td>
+                                {% if data.vuln_status == 'Open' %}
+                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                        <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>
+                                        {% endif %}
                                 <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.risk}}</span></td>
                             </tr>
                             {% endfor %}

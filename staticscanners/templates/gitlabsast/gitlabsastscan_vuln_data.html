@@ -118,7 +118,17 @@ $(document).on('click', '.confirm-delete', function(){
                                             </form>
                                         </td>
                                         {% endif %}
-                                        <td>{{data.vuln_status}}</td>
+                                    {% if data.false_positive == 'Duplicate' %}
+                                        <td>
+                                            NA
+                                        </td>
+                                    {% endif %}
+                                        {% if data.vuln_status == 'Open' %}
+                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                        <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>
+                                        {% endif %}
                                         <td class="confirm-delete">
                                             <div>
                                                 <form action="{% url 'gitlabsast:gitlabsast_del_vuln' %}" method="POST"
@@ -155,6 +165,11 @@ $(document).on('click', '.confirm-delete', function(){
                                             </form>
                                         </td>
                                         {% endif %}
+                                    {% if data.vuln_status == 'Duplicate' %}
+                                        <td>
+                                            NA
+                                        </td>
+                                    {% endif %}
                                     </tr>
                                     {% endfor %}
                                     </tbody>

@@ -192,14 +192,14 @@ def burp_list_vuln(request):
                                                                'severity',
                                                                'severity_color',
                                                                'vuln_status',
-                                                               'scan_id').distinct().exclude(vuln_status='Duplicate')
+                                                               'scan_id').distinct()
 
     burp_all_vul_close = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id,
                                                             ).values('name',
                                                                      'severity',
                                                                      'severity_color',
                                                                      'vuln_status',
-                                                                     'scan_id').distinct().exclude(vuln_status='Duplicate')
+                                                                     'scan_id').distinct()
 
     return render(request,
                   'burpscanner/burp_list_vuln.html',
@@ -288,7 +288,7 @@ def burp_vuln_out(request):
     vuln_data = burp_scan_result_db.objects.filter(username=username,
                                                    scan_id=scan_id,
                                                    name=name,
-                                                   ).exclude(vuln_status='Duplicate')
+                                                   )
 
     return render(request, 'burpscanner/burp_vuln_out.html', {'vuln_data': vuln_data,
                                                               'jira_url': jira_url,

@@ -50,7 +50,7 @@ def list_vuln(request):
         'severity',
         'vul_col',
         'vuln_status',
-        'scan_id').distinct().exclude(vuln_status='Duplicate')
+        'scan_id').distinct()
 
     return render(request, 'tfsec/tfsec_list_vuln.html',
                   {'tfsec_all_vuln': tfsec_all_vuln}
@@ -119,7 +119,7 @@ def tfsec_vuln_data(request):
             reverse('tfsec:tfsec_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     tfsec_vuln_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                           rule_id=test_name).exclude(vuln_status='Duplicate')
+                                                           rule_id=test_name)
 
 
     return render(request, 'tfsec/tfsec_vuln_data.html',
