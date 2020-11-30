@@ -252,7 +252,7 @@ class ZAPScanner:
             )
             for data in all_excluded:
                 excluded_url = data.exclude_url
-                print("excluded url "), excluded_url
+                print("excluded url ", excluded_url)
         except Exception as e:
             print(e)
 
@@ -284,8 +284,8 @@ class ZAPScanner:
 
         except Exception as e:
             print(e)
-        print("All cookies"), all_cookies
-        print("Target URL---"), self.target_url
+        print("All cookies", all_cookies)
+        print("Target URL---", self.target_url)
 
         try:
             self.zap.replacer.add_rule(
@@ -309,7 +309,7 @@ class ZAPScanner:
         spider_id = ""
 
         try:
-            print("targets:-----"), self.target_url
+            print("targets:-----", self.target_url)
             try:
                 spider_id = self.zap.spider.scan(self.target_url)
             except Exception as e:
@@ -401,7 +401,7 @@ class ZAPScanner:
         try:
             while int(self.zap.ascan.status(scan_id)) < 100:
                 scan_status = self.zap.ascan.status(scan_id)
-                print("ZAP Scan Status:"), scan_status
+                print("ZAP Scan Status:", scan_status)
                 time.sleep(10)
                 zap_scans_db.objects.filter(
                     scan_scanid=un_scanid
