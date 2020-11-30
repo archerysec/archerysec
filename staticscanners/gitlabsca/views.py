@@ -42,7 +42,7 @@ def list_vuln(request):
     else:
         scan_id = None
 
-    gitlabsca_all_vuln = gitlabsca_scan_results_db.objects.filter(scan_id=scan_id, username=username).exclude(vuln_status='Duplicate')
+    gitlabsca_all_vuln = gitlabsca_scan_results_db.objects.filter(scan_id=scan_id, username=username)
 
     return render(request, 'gitlabsca/gitlabscascan_list_vuln.html',
                   {'gitlabsca_all_vuln': gitlabsca_all_vuln}
@@ -111,7 +111,7 @@ def gitlabsca_vuln_data(request):
             reverse('gitlabsca:gitlabsca_vuln_data') + '?scan_id=%s&test_name=%s' % (scan_id, vuln_name))
 
     gitlabsca_vuln_data = gitlabsca_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                     message=test_name).exclude(vuln_status='Duplicate')
+                                                                     message=test_name)
 
 
     return render(request, 'gitlabsca/gitlabscascan_vuln_data.html',

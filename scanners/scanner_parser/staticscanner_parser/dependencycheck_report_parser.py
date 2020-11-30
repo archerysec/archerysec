@@ -20,7 +20,7 @@ import uuid
 import hashlib
 from datetime import datetime
 from django.shortcuts import HttpResponse
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 
@@ -356,7 +356,7 @@ def xml_parser(data, project_id, scan_id, username):
             low_vul=total_low,
             total_dup=total_duplicate
         )
-
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - DependencyCheck Report Uploaded'
     message = 'DependencyCheck Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

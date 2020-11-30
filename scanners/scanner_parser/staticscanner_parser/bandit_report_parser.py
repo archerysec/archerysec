@@ -20,7 +20,7 @@ import uuid
 from networkscanners.models import nessus_report_db, nessus_scan_db
 import hashlib
 from datetime import datetime
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 scan_id = None
@@ -220,7 +220,7 @@ def bandit_report_json(data, project_id, scan_id, username):
             low_vul=total_low,
             total_dup=total_duplicate
         )
-
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - Bandit Report Uploaded'
     message = 'Bandit Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

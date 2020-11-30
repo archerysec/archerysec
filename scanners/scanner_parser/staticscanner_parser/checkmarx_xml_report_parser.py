@@ -20,7 +20,7 @@ import hashlib
 from datetime import datetime
 from projects.models import month_db
 import json
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 vul_col = ''
@@ -159,6 +159,7 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
         low_vul=total_low,
         total_dup=total_duplicate
     )
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - checkmarx Report Uploaded'
     message = 'checkmarx Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

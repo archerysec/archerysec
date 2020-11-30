@@ -20,6 +20,7 @@ import hashlib
 import ast
 from webscanners.zapscanner.views import email_sch_notify
 from datetime import datetime
+from dashboard.views import trend_update
 
 spider_status = "0"
 scans_status = "0"
@@ -135,7 +136,7 @@ def xml_parser(username, root, project_id, scan_id):
             print(name)
         else:
             dup_data = name + risk + scan_url
-            print(dup_data)
+
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
             match_dup = zap_scan_results_db.objects.filter(
                 dup_hash=duplicate_hash).values('dup_hash').distinct()
@@ -268,6 +269,8 @@ def xml_parser(username, root, project_id, scan_id):
                     low_vul=total_low,
                     total_dup=total_duplicate
                     )
+
+    trend_update(username=username)
 
     subject = 'Archery Tool Scan Status - ZAP Report Uploaded'
     message = 'ZAP Scanner has completed the scan ' \

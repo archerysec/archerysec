@@ -14,32 +14,32 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from webscanners.netsparkerscanner import views
 
 app_name = 'netsparkerscanner'
 
 urlpatterns = [
     # All netsparker URL's
-    url(r'^netsparker_list_vuln',
+    path('netsparker_list_vuln/',
         views.netsparker_list_vuln,
         name='netsparker_list_vuln'),
-    url(r'^netsparker_scan_list',
+    path('netsparker_scan_list/',
         views.netsparker_scan_list,
         name='netsparker_scan_list'),
-    url(r'^netsparker_vuln_data',
+    path('netsparker_vuln_data/',
         views.netsparker_vuln_data,
         name='netsparker_vuln_data'),
-    url(r'^netsparker_vuln_out',
+    path('netsparker_vuln_out/',
         views.netsparker_vuln_out,
         name='netsparker_vuln_out'),
-    url(r'^del_netsparker_scan',
+    path('del_netsparker_scan/',
         views.del_netsparker_scan,
         name='del_netsparker_scan'),
-    url(r'^netsparker_del_vuln',
+    path('netsparker_del_vuln/',
         views.netsparker_del_vuln,
         name='netsparker_del_vuln'),
-    url(r'^export',
+    path('export/',
         views.export,
         name='export'),
 

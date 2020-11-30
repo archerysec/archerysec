@@ -19,7 +19,7 @@ from webscanners.models import arachni_scan_db, arachni_scan_result_db
 import uuid
 import hashlib
 from datetime import datetime
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 name = ""
@@ -66,7 +66,7 @@ def xml_parser(root, project_id, scan_id, username, target_url):
         body, vuln_id, vul_col, ref_key, ref_values, vector_input_key, vector_input_values, vector_source_key, vector_source_values, page_body_data, request_url, request_method, request_raw, response_ip, response_raw_headers
 
     for issue in root:
-        for data in issue.getchildren():
+        for data in issue:
             if data.tag == "issue":
                 for vuln in data:
                     vuln_id = uuid.uuid4()
@@ -210,7 +210,7 @@ def xml_parser(root, project_id, scan_id, username, target_url):
                         vul_col = "info"
 
                     for extra_data in vuln:
-                        for extra_vuln in extra_data.getchildren():
+                        for extra_vuln in extra_data:
                             if extra_vuln.tag == "url":
 
                                 if extra_vuln.text is None:
@@ -342,6 +342,7 @@ def xml_parser(root, project_id, scan_id, username, target_url):
         info_vul=total_info,
         total_dup=total_duplicate,
     )
+    trend_update(username=username)
 
     subject = 'Archery Tool Scan Status - Arachni Report Uploaded'
     message = 'Arachni Scanner has completed the scan ' \

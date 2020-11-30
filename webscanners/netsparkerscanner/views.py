@@ -40,7 +40,7 @@ def netsparker_list_vuln(request):
         scan_id = None
 
     netsparker_all_vul = netsparker_scan_result_db.objects.filter(username=username,
-                                                                  scan_id=scan_id).exclude(vuln_status='Duplicate')
+                                                                  scan_id=scan_id)
 
     return render(request,
                   'netsparkerscanner/netsparker_list_vuln.html',
@@ -144,9 +144,10 @@ def netsparker_vuln_out(request):
         return HttpResponseRedirect(
             reverse('netsparkerscanner:netsparker_vuln_out') + '?scan_id=%s&scan_name=%s' % (scan_id, vuln_name))
 
-    vuln_data = netsparker_scan_result_db.objects.filter(username=username, scan_id=scan_id,
+    vuln_data = netsparker_scan_result_db.objects.filter(username=username,
+                                                         scan_id=scan_id,
                                                          type=name,
-                                                         ).exclude(vuln_status='Duplicate')
+                                                         )
 
 
     return render(request,

@@ -118,7 +118,7 @@ def inspec_report_json(data, project_id, scan_id, username):
             inspec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
                 total_vuln=total_vul,
                 inspec_failed=inspec_failed,
-                inspec_passed=inspec_failed,
+                inspec_passed=inspec_passed,
                 inspec_skipped=inspec_skipped,
                 total_dup=total_duplicate
             )

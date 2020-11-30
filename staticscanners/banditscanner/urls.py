@@ -14,34 +14,34 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.banditscanner import views
 
 app_name = 'banditscanner'
 
 urlpatterns = [
     # Bandit scan list
-    url(r'^banditscans_list',
+    path('banditscans_list/',
         views.banditscans_list,
         name='banditscans_list'),
 
-    url(r'^banditscan_list_vuln',
+    path('banditscan_list_vuln/',
         views.banditscan_list_vuln,
         name='banditscan_list_vuln'),
 
-    url(r'^banditscan_vuln_data',
+    path('banditscan_vuln_data/',
         views.banditscan_vuln_data,
         name='banditscan_vuln_data'),
 
-    url(r'^banditscan_details',
+    path('banditscan_details/',
         views.banditscan_details,
         name='banditscan_details'),
 
-    url(r'^del_bandit_scan',
+    path('del_bandit_scan/',
         views.del_bandit_scan,
         name='del_bandit_scan'),
 
-    url(r'^bandit_del_vuln',
+    path('bandit_del_vuln/',
         views.bandit_del_vuln,
         name='bandit_del_vuln'),
 ]

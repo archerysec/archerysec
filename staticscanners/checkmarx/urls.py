@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.checkmarx import views
 
 app_name = 'checkmarx'
@@ -22,30 +22,30 @@ app_name = 'checkmarx'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^checkmarx_list',
+    path('checkmarx_list/',
         views.checkmarx_list,
         name='checkmarx_list'),
 
-    url(r'^checkmarx_all_vuln',
+    path('checkmarx_all_vuln/',
         views.list_vuln,
         name='checkmarx_all_vuln'),
 
-    url(r'^checkmarx_vuln_data',
+    path('checkmarx_vuln_data/',
         views.checkmarx_vuln_data,
         name='checkmarx_vuln_data'),
 
-    url(r'^checkmarx_details',
+    path('checkmarx_details/',
         views.checkmarx_details,
         name='checkmarx_details'),
 
-    url(r'^del_checkmarx',
+    path('del_checkmarx/',
         views.del_checkmarx,
         name='del_checkmarx'),
 
-    url(r'^checkmarx_del_vuln',
+    path('checkmarx_del_vuln/',
         views.checkmarx_del_vuln,
         name='checkmarx_del_vuln'),
-    url(r'^export',
+    path('export/',
         views.export,
         name='export'),
 ]

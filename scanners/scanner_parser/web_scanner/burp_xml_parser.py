@@ -22,7 +22,7 @@ from django.shortcuts import HttpResponse
 from webscanners import email_notification
 import hashlib
 from datetime import datetime
-
+from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
 project_id = None
@@ -53,6 +53,7 @@ issue_description = ''
 issue_remediation = ''
 issue_reference = ''
 issue_vulnerability_classifications = ''
+url = ''
 
 
 def burp_scan_data(root, project_id, scan_id, username):
@@ -71,7 +72,7 @@ def burp_scan_data(root, project_id, scan_id, username):
         vul_col, severity, name, path, host, location, \
         confidence, types, serialNumber, request_datas, response_datas, url
     for issue in root:
-        for data in issue.getchildren():
+        for data in issue:
             vuln_id = uuid.uuid4()
             if data.tag == "serialNumber":
                 global serialNumber
@@ -302,6 +303,7 @@ def burp_scan_data(root, project_id, scan_id, username):
         info_vul=total_info,
         total_dup=total_duplicate
     )
+    trend_update(username=username)
     subject = 'Archery Tool Scan Status - Burp Report Uploaded'
     message = 'Burp Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \

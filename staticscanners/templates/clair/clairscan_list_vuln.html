@@ -20,6 +20,7 @@
                             <thead>
                             <tr>
                                 <th>Vulnerability</th>
+                                <th>Status</th>
                                 <th>Risk</th>
                             </tr>
                             </thead>
@@ -28,6 +29,12 @@
                                 <td>
                                     <a href="{% url 'clair:clair_vuln_data' %}?scan_id={{data.scan_id}}&test_name={{data.Name}}">{{data.Name}}</a>
                                 </td>
+                                {% if data.vuln_status == 'Open' %}
+                                <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                {% endif %}
+                                {% if data.vuln_status == 'Duplicate' %}
+                                <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>
+                                {% endif %}
                                 <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
                             </tr>
                             {% endfor %}

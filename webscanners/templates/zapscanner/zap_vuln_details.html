@@ -30,7 +30,7 @@
                     sucess:function(){
                     }
                 });
-                setTimeout(function(){location.reload();},1000);
+                setTimeout(location.reload(), 8000);
             }
         });
 
@@ -71,7 +71,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>JIRA Ticket</th>
                                         <th>False Positive</th>
                                         <th>Status</th>
-                                        <th></th>
+                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>{% for data in zap_all_vul %}
@@ -117,6 +117,11 @@ $(document).on('click', '.confirm-delete', function(){
                                             </form>
                                         </td>
                                       {% endif %}
+                                    {% if data.false_positive == 'Duplicate' %}
+                                        <td>
+                                            NA
+                                        </td>
+                                      {% endif %}
                                         <td>{{ data.vuln_status }}</td>
                                         {% if data.vuln_status == 'Open' %}
                                         <td>
@@ -141,6 +146,11 @@ $(document).on('click', '.confirm-delete', function(){
                                             <button class="btn btn-info btn-mini">Open</button>
                                         </form>
                                     </td>
+                                    {% endif %}
+                                    {% if data.vuln_status == 'Duplicate' %}
+                                        <td>
+                                            NA
+                                        </td>
                                     {% endif %}
                                     </tr>
                                     {% endfor %}

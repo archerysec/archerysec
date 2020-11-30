@@ -70,6 +70,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         </label></th>
                                         <th>URL</th>
                                         <th>Date</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -89,7 +90,8 @@ $(document).on('click', '.confirm-delete', function(){
                                         <td><a href="/tools/nikto_result_vul/?scan_id={{data.scan_id}}">
                                             {{ data.scan_url}}</a>
                                         </td>
-                                        <td>{{data.date_time}}</td>
+                                        <td><span class="badge badge-pill badge-dark">{{data.date_time}}</span></td>
+                                        <td><span class="badge badge-pill badge-purple">{{data.nikto_status}}</span></td>
                                         <td class="confirm-delete">
                                             <form action="/tools/nikto_scan_del/" method="post" class="forms-sample">
 

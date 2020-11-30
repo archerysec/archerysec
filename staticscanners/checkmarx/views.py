@@ -43,11 +43,12 @@ def list_vuln(request):
         scan_id = None
 
     checkmarx_all_vuln = checkmarx_scan_results_db.objects.filter(username=username,
-                                                                  scan_id=scan_id, vuln_status='Open').values(
+                                                                  scan_id=scan_id,).values(
         'name',
         'severity',
         'vul_col',
-        'scan_id').distinct().exclude(vuln_status='Duplicate')
+        'scan_id',
+    'vuln_status')
 
     return render(request, 'checkmarx/checkmarx_list_vuln.html',
                   {'checkmarx_all_vuln': checkmarx_all_vuln}
@@ -115,7 +116,7 @@ def checkmarx_vuln_data(request):
             reverse('checkmarx:checkmarx_vuln_data') + '?scan_id=%s&name=%s' % (scan_id, vuln_name))
 
     checkmarx_vuln_data = checkmarx_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                   name=name).exclude(vuln_status='Duplicate')
+                                                                   name=name)
 
 
     return render(request, 'checkmarx/checkmarx_vuln_data.html',

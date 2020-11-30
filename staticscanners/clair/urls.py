@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.conf.urls import url
+from django.urls import include, path
 from staticscanners.clair import views
 
 app_name = 'clair'
@@ -22,30 +22,30 @@ app_name = 'clair'
 urlpatterns = [
     # Bandit scan list
 
-    url(r'^clair_list',
+    path('clair_list/',
         views.clair_list,
         name='clair_list'),
 
-    url(r'^clair_all_vuln',
+    path('clair_all_vuln/',
         views.list_vuln,
         name='clair_all_vuln'),
 
-    url(r'^clair_vuln_data',
+    path('clair_vuln_data/',
         views.clair_vuln_data,
         name='clair_vuln_data'),
 
-    url(r'^clair_details',
+    path('clair_details/',
         views.clair_details,
         name='clair_details'),
 
-    url(r'^del_clair',
+    path('del_clair/',
         views.del_clair,
         name='del_clair'),
 
-    url(r'^clair_del_vuln',
+    path('clair_del_vuln/',
         views.clair_del_vuln,
         name='clair_del_vuln'),
-    url(r'^export',
+    path('export/',
         views.export,
         name='export'),
 ]

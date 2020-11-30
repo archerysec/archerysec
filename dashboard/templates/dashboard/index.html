@@ -2,8 +2,10 @@
 {% load static %}
 
 {% block body %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel="stylesheet">
     <div class="page-wrapper">
         <div class="container-fluid">
+        {% if total_count_project.total_vuln__sum >= 0 %}
             <div class="row">
                 <!-- Column -->
                 <div class="col-md-6 col-lg-2 col-xlg-3">
@@ -136,6 +138,7 @@
                     </div>
                 </div>
             </div>
+        {% endif %}
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -390,6 +393,25 @@
             return confirm('Are you sure you want to delete this?');
         })
 
+    </script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/static/matrix-admin-bt4/assets/libs/toastr/build/toastr.min.js"></script>
+    <script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>
+
+    <script>
+        $(window).load(function() {
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'alert-success' %}
+                        toastr.success('{{ message }}');
+                    {% endif %}
+                    {% if message.tags == 'alert-warning' %}
+                        toastr.warning('{{ message }}');
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        });
     </script>
 
 {% endblock %}
