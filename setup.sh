@@ -55,7 +55,8 @@ else
     echo '[ERROR] Failed to create virtualenv. Please install ArcherySec requirements mentioned in Documentation.'
     exit 1
 fi
-
+echo '[INSTALL] openvas_lib from github'
+python3 -m pip install git+https://github.com/archerysec/openvas_lib.git
 echo '[INSTALL] Installing Requirements'
 pip install -r requirements.txt
 echo 'Collect static files'
