@@ -43,7 +43,7 @@ lxml
 MarkupSafe
 mccabe
 oauthlib
-openvas-lib==1.1.4
+openvas_lib==1.1.4
 ordereddict
 pbr
 pdfrw
