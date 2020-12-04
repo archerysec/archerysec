@@ -78,19 +78,25 @@ from scanners.scanner_parser.compliance_parser import dockle_json_parser
 from compliance.models import inspec_scan_db, dockle_scan_db
 from scanners.scanner_parser.network_scanner import Nessus_Parser, OpenVas_Parser
 from projects.models import month_db
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class WebScan(generics.ListCreateAPIView):
     queryset = zap_scans_db.objects.all()
     serializer_class = WebScanSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    search_fields = ('scan_url',)
+    filter_fields = ('project_id',)
 
     def get(self, request, format=None, **kwargs):
         """
             GET List all scans and check status.
         """
         username = request.user.username
-        all_scans = zap_scans_db.objects.filter(username=username)
-        serialized_scans = WebScanSerializer(all_scans, many=True)
+        queryset = self.get_queryset()
+        filter_backends = self.filter_queryset(queryset.filter(username=username))
+        serialized_scans = WebScanSerializer(filter_backends, many=True)
         return Response(serialized_scans.data)
 
     def post(self, request, format=None, **kwargs):
@@ -163,6 +169,9 @@ class NetworkScan(generics.ListCreateAPIView):
     """
     queryset = openvas_scan_db.objects.all()
     serializer_class = NetworkScanSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    search_fields = ('scan_ip')
+    filter_fields = ('project_id',)
 
     def get(self, request, format=None, **kwargs):
 
@@ -171,8 +180,9 @@ class NetworkScan(generics.ListCreateAPIView):
 
         """
         username = request.user.username
-        all_scans = openvas_scan_db.objects.filter(username=username)
-        serialized_scans = NetworkScanSerializer(all_scans, many=True)
+        queryset = self.get_queryset()
+        filter_backends = self.filter_queryset(queryset.filter(username=username))
+        serialized_scans = NetworkScanSerializer(filter_backends, many=True)
         return Response(serialized_scans.data)
 
     def post(self, request, format=None, **kwargs):
