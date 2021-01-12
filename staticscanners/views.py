@@ -467,7 +467,8 @@ def report_import(request):
                                                                       )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('twistlock:twistlock_list'))
-            except:
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(request, 'report_import.html', {'all_project': all_project})
 

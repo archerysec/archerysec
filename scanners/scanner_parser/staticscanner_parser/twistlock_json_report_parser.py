@@ -33,6 +33,7 @@ Title = ''
 Description = ''
 Severity = ''
 References = ''
+false_positive = ''
 
 
 def twistlock_report_json(data, project_id, scan_id, username):
@@ -93,7 +94,7 @@ def twistlock_report_json(data, project_id, scan_id, username):
     ]
     }
     """
-
+    global false_positive
     date_time = datetime.now()
     vul_col = ''
 
@@ -207,10 +208,11 @@ def twistlock_report_json(data, project_id, scan_id, username):
             )
             save_all.save()
         else:
+            print("duplicate")
             duplicate_vuln = 'Yes'
 
             save_all = twistlock_scan_results_db(
-               vuln_id=vul_id,
+                vuln_id=vul_id,
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
