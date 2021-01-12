@@ -56,6 +56,7 @@ urlpatterns = [
     path('retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     path('api/', include('archeryapi.urls')),
     path('twistlock/', include('staticscanners.twistlock.urls')),
+    path('brakeman/', include('staticscanners.brakeman.urls')),
 
     # path('scanapi/', include('APIScan.urls')),
     path('inbox/notifications/', include(notifications.urls, namespace='notifications')),

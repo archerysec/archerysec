@@ -67,7 +67,10 @@ from staticscanners.models import dependencycheck_scan_db, \
     gitlabcontainerscan_scan_db, \
     gitlabcontainerscan_scan_results_db, \
     twistlock_scan_db, \
-    twistlock_scan_results_db
+    twistlock_scan_results_db, \
+    brakeman_scan_db, \
+    brakeman_scan_results_db
+
 
 # Network Scanners db models   
 from networkscanners.models import openvas_scan_db, \
@@ -319,12 +322,13 @@ def proj_data(request):
     checkmarx = checkmarx_scan_db.objects.filter(username=username, project_id=project_id)
     bandit = bandit_scan_db.objects.filter(username=username, project_id=project_id)
     twistlock = twistlock_scan_db.objects.filter(username=username, project_id=project_id)
+    brakeman = brakeman_scan_db.objects.filter(username=username, project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
 
     # add you scanner into chain <scannername>
     static_scan = chain(dependency_check, findbugs, clair, trivy, gitlabsast, gitlabcontainerscan, gitlabsca, npmaudit,
-                        nodejsscan, semgrepscan, tfsec, whitesource, checkmarx, bandit, twistlock)
+                        nodejsscan, semgrepscan, tfsec, whitesource, checkmarx, bandit, twistlock, brakeman)
 
     
     openvas_dat = openvas_scan_db.objects.filter(username=username, project_id=project_id)
@@ -396,6 +400,7 @@ def proj_data(request):
                    'trivy': trivy,
                    'gitlabsast': gitlabsast,
                    'twistlock': twistlock,
+                   'brakeman': brakeman,
                    'gitlabcontainerscan': gitlabcontainerscan,
                    'gitlabsca': gitlabsca,
                    'npmaudit': npmaudit,
@@ -431,6 +436,8 @@ def proj_data(request):
                        scans_query.all_gitlabsast(username=username, project_id=project_id, query='total')),
                     'all_twistlock_scan': int(
                        scans_query.all_twistlock(username=username, project_id=project_id, query='total')),
+                    'all_brakeman_scan': int(
+                       scans_query.all_brakeman(username=username, project_id=project_id, query='total')),
                    'all_gitlabcontainerscan_scan': int(
                        scans_query.all_gitlabcontainerscan(username=username, project_id=project_id, query='total')),
                    'all_gitlabsca_scan': int(
@@ -597,6 +604,16 @@ def proj_data(request):
                    'all_twistlock_medium': twistlock_scan_db.objects.filter(username=username,
                                                                               project_id=project_id).aggregate(
                        Sum('medium_vul')),
+                    
+                    'all_brakeman_high': brakeman_scan_db.objects.filter(username=username,
+                                                                            project_id=project_id).aggregate(
+                       Sum('high_vul')),
+                   'all_brakeman_low': brakeman_scan_db.objects.filter(username=username,
+                                                                           project_id=project_id).aggregate(
+                       Sum('low_vul')),
+                   'all_brakeman_medium': brakeman_scan_db.objects.filter(username=username,
+                                                                              project_id=project_id).aggregate(
+                       Sum('medium_vul')),
 
                    'all_gitlabcontainerscan_high': gitlabcontainerscan_scan_db.objects.filter(username=username,
                                                                                               project_id=project_id).aggregate(
@@ -705,6 +722,7 @@ def all_high_vuln(request):
     checkmarx_all_high = ''
     openvas_all_high = ''
     nessus_all_high = ''
+    brakeman_all_high = ''
 
     username = request.user.username
     all_notify = Notification.objects.unread()
@@ -735,6 +753,8 @@ def all_high_vuln(request):
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='No')
 
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='No')
+
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, false_positive='No')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           false_positive='No')
@@ -780,6 +800,8 @@ def all_high_vuln(request):
 
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, vuln_status='Closed')
 
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, vuln_status='Closed')
+
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           vuln_status='Closed')
 
@@ -823,6 +845,8 @@ def all_high_vuln(request):
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='Yes')
 
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='Yes')
+
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, false_positive='Yes')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           false_positive='Yes')
@@ -874,6 +898,8 @@ def all_high_vuln(request):
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='No')
 
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='No')
+
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, false_positive='No')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           false_positive='No')
@@ -940,6 +966,10 @@ def all_high_vuln(request):
                                                                         false_positive='No')
 
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='High',
+                                                                        project_id=project_id,
+                                                                        false_positive='No')
+
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, severity='High',
                                                                         project_id=project_id,
                                                                         false_positive='No')
 
@@ -1022,6 +1052,9 @@ def all_high_vuln(request):
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='Medium',
                                                                         project_id=project_id)
 
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, severity='Medium',
+        project_id=project_id)
+
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           Severity='Medium',
                                                                                           project_id=project_id)
@@ -1087,6 +1120,9 @@ def all_high_vuln(request):
 
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='Low',
                                                                         project_id=project_id)
+        
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                        project_id=project_id)
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           Severity='Low',
@@ -1148,6 +1184,8 @@ def all_high_vuln(request):
 
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id)
 
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, project_id=project_id)
+
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           project_id=project_id)
 
@@ -1203,6 +1241,9 @@ def all_high_vuln(request):
                                                                         false_positive='Yes')
 
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        false_positive='Yes')
+
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                         false_positive='Yes')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
@@ -1272,6 +1313,9 @@ def all_high_vuln(request):
         twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                         vuln_status='Closed')
 
+        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        vuln_status='Closed')
+
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           project_id=project_id,
                                                                                           vuln_status='Closed')
@@ -1324,6 +1368,7 @@ def all_high_vuln(request):
                    'trivy_all_high': trivy_all_high,
                    'gitlabsast_all_high': gitlabsast_all_high,
                    'twistlock_all_high': twistlock_all_high,
+                   'brakeman_all_high': brakeman_all_high,
                    'gitlabcontainerscan_all_high': gitlabcontainerscan_all_high,
                    'gitlabsca_all_high': gitlabsca_all_high,
                    'npmaudit_all_high': npmaudit_all_high,
