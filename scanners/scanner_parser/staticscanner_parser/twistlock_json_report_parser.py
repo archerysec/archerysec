@@ -13,16 +13,16 @@
 # Twitter: @anandtiwarics
 #
 # This file is part of ArcherySec Project.
-
+ 
 from staticscanners.models import twistlock_scan_db, twistlock_scan_results_db
 import uuid
 import hashlib
 from datetime import datetime
 import json
-
+ 
 from webscanners.zapscanner.views import email_sch_notify
 from dashboard.views import trend_update
-
+ 
 vul_col = ''
 Target = ''
 VulnerabilityID = ''
@@ -34,17 +34,16 @@ Description = ''
 Severity = ''
 References = ''
 false_positive = ''
-
-
+ 
 def twistlock_report_json(data, project_id, scan_id, username):
     """
-
+ 
     :param data:
     :param project_id:
     :param scan_id:
     :return:
     """
-
+ 
     """
     {
     "results": [
@@ -97,9 +96,9 @@ def twistlock_report_json(data, project_id, scan_id, username):
     global false_positive
     date_time = datetime.now()
     vul_col = ''
-
+ 
     # Parser for above json data
-
+ 
     vuln = data['results'][0]['vulnerabilities']
     
     for vuln_data in vuln:
@@ -107,39 +106,39 @@ def twistlock_report_json(data, project_id, scan_id, username):
             name = vuln_data['id']
         except Exception as e:
             name = "Not Found"
-
+ 
         try:
             cvss = vuln_data['cvss']
         except Exception as e:
             cvss = "Not Found"
-
+ 
         try:
             vector = vuln_data['vector']
         except Exception as e:
             vector = "Not Found"
-
+ 
         try:
             description = vuln_data['description']
         except Exception as e:
             description = "Not Found"
-
+ 
         try:
             severity = vuln_data['severity']
             if severity == 'critical':
                 severity = 'High'
         except Exception as e:
             severity = "Not Found"
-
+ 
         try:
             packageName = vuln_data['packageName']
         except Exception as e:
             packageName = "Not Found"
-
+ 
         try:
             packageVersion = vuln_data['packageVersion']
         except Exception as e:
             packageVersion = "Not Found"
-
+ 
         try:
             link = vuln_data['link']
         except Exception as e:
@@ -148,44 +147,44 @@ def twistlock_report_json(data, project_id, scan_id, username):
         if severity == "Critical":
             severity = 'High'
             vul_col = "danger"
-
+ 
         if severity == "High":
             vul_col = "danger"
-
+ 
         elif severity == 'Medium':
             vul_col = "warning"
-
+ 
         elif severity == 'Low':
             vul_col = "info"
-
+ 
         elif severity == 'Unknown':
             severity = "Low"
             vul_col = "info"
-
+ 
         elif severity == 'Everything else':
             severity = "Low"
             vul_col = "info"
-
+ 
         vul_id = uuid.uuid4()
-
+ 
         dup_data = str(name) + str(severity) + str(packageName)
-
+ 
         duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-
+ 
         match_dup = twistlock_scan_results_db.objects.filter(username=username, dup_hash=duplicate_hash).values('dup_hash')
         lenth_match = len(match_dup)
-
+ 
         if lenth_match == 0:
             duplicate_vuln = 'No'
-
+ 
             false_p = twistlock_scan_results_db.objects.filter(username=username, false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
-
+ 
             if fp_lenth_match == 1:
                 false_positive = 'Yes'
             else:
                 false_positive = 'No'
-
+ 
             save_all = twistlock_scan_results_db(
                 vuln_id=vul_id,
                 scan_id=scan_id,
@@ -197,7 +196,7 @@ def twistlock_report_json(data, project_id, scan_id, username):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 username=username,
-
+ 
                 name=name,
                 cvss=cvss,
                 description=description,
@@ -208,21 +207,20 @@ def twistlock_report_json(data, project_id, scan_id, username):
             )
             save_all.save()
         else:
-            print("duplicate")
             duplicate_vuln = 'Yes'
-
+ 
             save_all = twistlock_scan_results_db(
                 vuln_id=vul_id,
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
-                vuln_status='Open',
+                vuln_status='Duplicate',
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive=false_positive,
+                false_positive='Duplicate',
                 username=username,
-
+ 
                 name=name,
                 cvss=cvss,
                 description=description,
@@ -232,18 +230,18 @@ def twistlock_report_json(data, project_id, scan_id, username):
                 link=link,
             )
             save_all.save()
-
+ 
     all_findbugs_data = twistlock_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                   false_positive='No', vuln_duplicate='No')
-
+ 
     duplicate_count = twistlock_scan_results_db.objects.filter(username=username, scan_id=scan_id, vuln_duplicate='Yes')
-
+ 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(Severity="High"))
     total_medium = len(all_findbugs_data.filter(Severity="Medium"))
     total_low = len(all_findbugs_data.filter(Severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
-
+ 
     twistlock_scan_db.objects.filter(scan_id=scan_id).update(username=username,
                                                               date_time=date_time,
                                                               total_vul=total_vul,
@@ -257,5 +255,5 @@ def twistlock_report_json(data, project_id, scan_id, username):
     message = 'twistlock Scanner has completed the scan ' \
               '  %s <br> Total: %s <br>High: %s <br>' \
               'Medium: %s <br>Low %s' % (Target, total_vul, total_high, total_medium, total_low)
-
+ 
     email_sch_notify(subject=subject, message=message)
