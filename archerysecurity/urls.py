@@ -55,6 +55,8 @@ urlpatterns = [
     path('dockle/', include('compliance.dockle.urls')),
     path('retirejsscanner/', include('staticscanners.retirejsscan.urls')),
     path('api/', include('archeryapi.urls')),
+    path('twistlock/', include('staticscanners.twistlock.urls')),
+
     # path('scanapi/', include('APIScan.urls')),
     path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
     path('nessus/', include('networkscanners.nessus.urls')),

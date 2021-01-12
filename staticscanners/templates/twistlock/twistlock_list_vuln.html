@@ -1,0 +1,53 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Vulnerability List</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="twistlock_scans_list" class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th>Vulnerability</th>
+                                <th>Status</th>
+                                <th>Risk</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in twistlock_all_vuln %}
+                            <tr data-target="#">
+                                <td>
+                                    <a href="{% url 'twistlock:twistlock_vuln_data' %}?scan_id={{data.scan_id}}&test_name={{data.name}}">{{data.name}}</a>
+                                </td>
+                                {% if data.vuln_status == 'Open' %}
+                                <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                {% endif %}
+                                {% if data.vuln_status == 'Closed' %}
+                                <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                {% endif %}
+                                {% if data.vuln_status == 'Duplicate' %}
+                                <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>
+                                {% endif %}
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

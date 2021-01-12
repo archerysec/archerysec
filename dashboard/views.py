@@ -20,6 +20,8 @@
 from __future__ import unicode_literals
 
 from django.db.models import Sum
+
+# Add your Web scanner db
 from webscanners.models import zap_scans_db, \
     burp_scan_db, \
     arachni_scan_db, \
@@ -30,9 +32,13 @@ from webscanners.models import zap_scans_db, \
     arachni_scan_result_db, \
     netsparker_scan_result_db, \
     webinspect_scan_result_db, \
-    acunetix_scan_db, acunetix_scan_result_db
+    acunetix_scan_db, \
+    acunetix_scan_result_db
+
+# Add Pentest db
 from manual_scan.models import manual_scans_db, manual_scan_results_db
 
+# Add Static Scanners db models
 from staticscanners.models import dependencycheck_scan_db, \
     bandit_scan_db, bandit_scan_results_db, \
     findbugs_scan_db, \
@@ -59,7 +65,11 @@ from staticscanners.models import dependencycheck_scan_db, \
     gitlabsca_scan_db, \
     gitlabsca_scan_results_db, \
     gitlabcontainerscan_scan_db, \
-    gitlabcontainerscan_scan_results_db
+    gitlabcontainerscan_scan_results_db, \
+    twistlock_scan_db, \
+    twistlock_scan_results_db
+
+# Network Scanners db models   
 from networkscanners.models import openvas_scan_db, \
     nessus_scan_db, \
     ov_scan_result_db, \
@@ -284,6 +294,8 @@ def proj_data(request):
         project_id = ''
 
     project_dat = project_db.objects.filter(username=username, project_id=project_id)
+
+    # Web scanners project data <scannername>
     burp = burp_scan_db.objects.filter(username=username, project_id=project_id)
     zap = zap_scans_db.objects.filter(username=username, project_id=project_id)
     arachni = arachni_scan_db.objects.filter(username=username, project_id=project_id)
@@ -291,6 +303,7 @@ def proj_data(request):
     netsparker = netsparker_scan_db.objects.filter(username=username, project_id=project_id)
     acunetix = acunetix_scan_db.objects.filter(username=username, project_id=project_id)
 
+    # Static scanners project data <scannername>
     dependency_check = dependencycheck_scan_db.objects.filter(username=username, project_id=project_id)
     findbugs = findbugs_scan_db.objects.filter(username=username, project_id=project_id)
     clair = clair_scan_db.objects.filter(username=username, project_id=project_id)
@@ -305,10 +318,15 @@ def proj_data(request):
     whitesource = whitesource_scan_db.objects.filter(username=username, project_id=project_id)
     checkmarx = checkmarx_scan_db.objects.filter(username=username, project_id=project_id)
     bandit = bandit_scan_db.objects.filter(username=username, project_id=project_id)
+    twistlock = twistlock_scan_db.objects.filter(username=username, project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
+
+    # add you scanner into chain <scannername>
     static_scan = chain(dependency_check, findbugs, clair, trivy, gitlabsast, gitlabcontainerscan, gitlabsca, npmaudit,
-                        nodejsscan, semgrepscan, tfsec, whitesource, checkmarx, bandit)
+                        nodejsscan, semgrepscan, tfsec, whitesource, checkmarx, bandit, twistlock)
+
+    
     openvas_dat = openvas_scan_db.objects.filter(username=username, project_id=project_id)
     nessus_dat = nessus_scan_db.objects.filter(username=username, project_id=project_id)
 
@@ -337,6 +355,8 @@ def proj_data(request):
     total = all_high, all_medium, all_low
 
     tota_vuln = sum(total)
+
+    # add your scanner into render <scannername>
 
     return render(request,
                   'dashboard/project.html',
@@ -375,6 +395,7 @@ def proj_data(request):
                    'clair': clair,
                    'trivy': trivy,
                    'gitlabsast': gitlabsast,
+                   'twistlock': twistlock,
                    'gitlabcontainerscan': gitlabcontainerscan,
                    'gitlabsca': gitlabsca,
                    'npmaudit': npmaudit,
@@ -387,6 +408,7 @@ def proj_data(request):
                    'network_dat': network_dat,
                    'all_zap_scan': int(scans_query.all_zap(username=username, project_id=project_id, query='total')),
                    'all_burp_scan': int(scans_query.all_burp(username=username, project_id=project_id, query='total')),
+                   # add your scanner name <scannername>
                    'all_arachni_scan': int(
                        scans_query.all_arachni(username=username, project_id=project_id, query='total')),
                    'all_acunetix_scan': int(
@@ -407,6 +429,8 @@ def proj_data(request):
                        scans_query.all_trivy(username=username, project_id=project_id, query='total')),
                    'all_gitlabsast_scan': int(
                        scans_query.all_gitlabsast(username=username, project_id=project_id, query='total')),
+                    'all_twistlock_scan': int(
+                       scans_query.all_twistlock(username=username, project_id=project_id, query='total')),
                    'all_gitlabcontainerscan_scan': int(
                        scans_query.all_gitlabcontainerscan(username=username, project_id=project_id, query='total')),
                    'all_gitlabsca_scan': int(
@@ -551,6 +575,8 @@ def proj_data(request):
                        Sum('low_vul')),
                    'all_trivy_medium': trivy_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
                        Sum('medium_vul')),
+                    
+                    # add your scanner accrodingly <scannername>
 
                    'all_gitlabsast_high': gitlabsast_scan_db.objects.filter(username=username,
                                                                             project_id=project_id).aggregate(
@@ -559,6 +585,16 @@ def proj_data(request):
                                                                            project_id=project_id).aggregate(
                        Sum('low_vul')),
                    'all_gitlabsast_medium': gitlabsast_scan_db.objects.filter(username=username,
+                                                                              project_id=project_id).aggregate(
+                       Sum('medium_vul')),
+
+                    'all_twistlock_high': twistlock_scan_db.objects.filter(username=username,
+                                                                            project_id=project_id).aggregate(
+                       Sum('high_vul')),
+                   'all_twistlock_low': twistlock_scan_db.objects.filter(username=username,
+                                                                           project_id=project_id).aggregate(
+                       Sum('low_vul')),
+                   'all_twistlock_medium': twistlock_scan_db.objects.filter(username=username,
                                                                               project_id=project_id).aggregate(
                        Sum('medium_vul')),
 
@@ -645,6 +681,7 @@ def proj_data(request):
 
 
 def all_high_vuln(request):
+    # add your scanner gloabl variable <scannername>
     zap_all_high = ''
     arachni_all_high = ''
     webinspect_all_high = ''
@@ -657,6 +694,7 @@ def all_high_vuln(request):
     clair_all_high = ''
     trivy_all_high = ''
     gitlabsast_all_high = ''
+    twistlock_all_high = ''
     gitlabcontainerscan_all_high = ''
     gitlabsca_all_high = ''
     npmaudit_all_high = ''
@@ -676,7 +714,7 @@ def all_high_vuln(request):
     else:
         project_id = ''
         severity = ''
-
+    # add your scanner name here <scannername>
     if severity == 'All':
         zap_all_high = zap_scan_results_db.objects.filter(username=username, false_positive='No')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, false_positive='No')
@@ -695,6 +733,8 @@ def all_high_vuln(request):
         trivy_all_high = trivy_scan_results_db.objects.filter(username=username, false_positive='No')
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='No')
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='No')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           false_positive='No')
@@ -718,6 +758,7 @@ def all_high_vuln(request):
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username)
 
+    # add your scanner name here <scannername>
     elif severity == 'All_Closed':
         zap_all_high = zap_scan_results_db.objects.filter(username=username, vuln_status='Closed')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, vuln_status='Closed')
@@ -736,6 +777,8 @@ def all_high_vuln(request):
         trivy_all_high = trivy_scan_results_db.objects.filter(username=username, vuln_status='Closed')
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, vuln_status='Closed')
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, vuln_status='Closed')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           vuln_status='Closed')
@@ -759,7 +802,7 @@ def all_high_vuln(request):
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username)
 
-
+    # add your scanner name here <scannername>
     elif severity == 'All_False_Positive':
         zap_all_high = zap_scan_results_db.objects.filter(username=username, false_positive='Yes')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, false_positive='Yes')
@@ -778,6 +821,8 @@ def all_high_vuln(request):
         trivy_all_high = trivy_scan_results_db.objects.filter(username=username, false_positive='Yes')
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='Yes')
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='Yes')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           false_positive='Yes')
@@ -816,6 +861,7 @@ def all_high_vuln(request):
         burp_all_high = burp_scan_result_db.objects.filter(username=username, false_positive='No')
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, pentest_type='web')
 
+    # add your scanner name here <scannername>
     elif severity == 'Static':
         dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
                                                                                   false_positive='No')
@@ -826,6 +872,8 @@ def all_high_vuln(request):
         trivy_all_high = trivy_scan_results_db.objects.filter(username=username, false_positive='No')
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='No')
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='No')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           false_positive='No')
@@ -847,6 +895,8 @@ def all_high_vuln(request):
 
 
     elif severity == 'High':
+
+        # add your scanner name here <scannername>
 
         zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           risk='High',
@@ -886,6 +936,10 @@ def all_high_vuln(request):
                                                               false_positive='No')
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, Severity='High',
+                                                                        project_id=project_id,
+                                                                        false_positive='No')
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='High',
                                                                         project_id=project_id,
                                                                         false_positive='No')
 
@@ -934,6 +988,8 @@ def all_high_vuln(request):
 
         # All Medium
 
+        # add your scanner name here <scannername>
+
         zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           risk='Medium')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -961,6 +1017,9 @@ def all_high_vuln(request):
                                                               project_id=project_id)
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, Severity='Medium',
+                                                                        project_id=project_id)
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='Medium',
                                                                         project_id=project_id)
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
@@ -997,6 +1056,7 @@ def all_high_vuln(request):
 
     # All Low
     elif severity == 'Low':
+        # add your scanner name here <scannername>
 
         zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           risk='Low')
@@ -1023,6 +1083,9 @@ def all_high_vuln(request):
         trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Low', project_id=project_id)
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, Severity='Low',
+                                                                        project_id=project_id)
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='Low',
                                                                         project_id=project_id)
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
@@ -1057,6 +1120,7 @@ def all_high_vuln(request):
                                                                  project_id=project_id)
 
     elif severity == 'Total':
+        # add your scanner name here <scannername>
         zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           )
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -1082,6 +1146,8 @@ def all_high_vuln(request):
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, project_id=project_id)
 
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id)
+
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
                                                                                           project_id=project_id)
 
@@ -1105,6 +1171,7 @@ def all_high_vuln(request):
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, project_id=project_id)
 
     elif severity == 'False':
+        # add your scanner name here <scannername>
         zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           false_positive='Yes')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -1133,6 +1200,9 @@ def all_high_vuln(request):
                                                               false_positive='Yes')
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        false_positive='Yes')
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                         false_positive='Yes')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
@@ -1168,6 +1238,7 @@ def all_high_vuln(request):
         pentest_all_high = ''
 
     elif severity == 'Close':
+        # add your scanner name here <scannername>
         zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                           vuln_status='Closed')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -1196,6 +1267,9 @@ def all_high_vuln(request):
                                                               vuln_status='Closed')
 
         gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                        vuln_status='Closed')
+
+        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                         vuln_status='Closed')
 
         gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
@@ -1234,6 +1308,7 @@ def all_high_vuln(request):
     else:
         return HttpResponseRedirect(reverse('dashboard:proj_data' + '?project_id=%s' % project_id))
 
+    # add your scanner name here <scannername>
     return render(request,
                   'dashboard/all_high_vuln.html',
                   {'zap_all_high': zap_all_high,
@@ -1248,6 +1323,7 @@ def all_high_vuln(request):
                    'clair_all_high': clair_all_high,
                    'trivy_all_high': trivy_all_high,
                    'gitlabsast_all_high': gitlabsast_all_high,
+                   'twistlock_all_high': twistlock_all_high,
                    'gitlabcontainerscan_all_high': gitlabcontainerscan_all_high,
                    'gitlabsca_all_high': gitlabsca_all_high,
                    'npmaudit_all_high': npmaudit_all_high,
