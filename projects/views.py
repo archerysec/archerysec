@@ -32,7 +32,9 @@ from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_
     nodejsscan_scan_db, tfsec_scan_results_db, tfsec_scan_db, checkmarx_scan_results_db, checkmarx_scan_db, \
     whitesource_scan_db, whitesource_scan_results_db, gitlabsca_scan_results_db, gitlabsast_scan_results_db, \
     gitlabsca_scan_db, gitlabsast_scan_db, semgrepscan_scan_results_db, semgrepscan_scan_db, \
-    gitlabcontainerscan_scan_results_db, gitlabcontainerscan_scan_db
+    gitlabcontainerscan_scan_results_db, gitlabcontainerscan_scan_db, \
+        twistlock_scan_results_db, twistlock_scan_db, \
+            brakeman_scan_db, brakeman_scan_results_db
 from compliance.models import inspec_scan_results_db, inspec_scan_db, dockle_scan_db, dockle_scan_results_db
 from networkscanners.models import openvas_scan_db, ov_scan_result_db, nessus_scan_db, nessus_targets_db, nessus_scan_results_db
 import datetime
@@ -115,7 +117,7 @@ def projects(request):
 
         del_proj = project_db.objects.filter(project_id=project_id)
         del_proj.delete()
-
+        # add your scanner db models
         burp = burp_scan_db.objects.filter(project_id=project_id)
         burp.delete()
         burp_result_data = burp_scan_result_db.objects.filter(project_id=project_id)
@@ -200,6 +202,18 @@ def projects(request):
         gitlabsast.delete()
         gitlabsast_result = gitlabsast_scan_results_db.objects.filter(project_id=project_id)
         gitlabsast_result.delete()
+
+        brakeman = brakeman_scan_db.objects.filter(project_id=project_id)
+        brakeman.delete()
+        brakeman_result = brakeman_scan_results_db.objects.filter(project_id=project_id)
+        brakeman_result.delete()
+
+        twistlock = twistlock_scan_db.objects.filter(project_id=project_id)
+        twistlock.delete()
+        twistlock_result = twistlock_scan_results_db.objects.filter(project_id=project_id)
+        twistlock_result.delete()
+
+
 
         gitlabcontainerscan = gitlabcontainerscan_scan_db.objects.filter(project_id=project_id)
         gitlabcontainerscan.delete()

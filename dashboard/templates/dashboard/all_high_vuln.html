@@ -53,6 +53,18 @@
                                 <!--zap-->
                                 <tbody>
                                 <!-- add your scanner here  -->
+                                {% for data in brakeman_all_high %}
+                                    <tr data-target="#">
+     
+                                        <td>
+                                            <a href="{% url 'brakeman:brakeman_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                        </td>
+                                        <td>{{data.scanner}}</td>
+                                        <td>{{data.file}}</td>
+                                        <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.severity}}</span></td>
+                                    </tr>
+                                    {% endfor %}
+    
                                 {% for data in twistlock_all_high %}
                                 <tr data-target="#">
 
