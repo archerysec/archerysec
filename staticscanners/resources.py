@@ -18,7 +18,7 @@ from import_export import resources
 from staticscanners.models import dependencycheck_scan_results_db, \
     findbugs_scan_results_db, clair_scan_results_db, trivy_scan_results_db, npmaudit_scan_results_db, \
     nodejsscan_scan_results_db, tfsec_scan_db, tfsec_scan_results_db, whitesource_scan_results_db, \
-    checkmarx_scan_results_db, gitlabsca_scan_results_db, gitlabsast_scan_results_db, semgrepscan_scan_results_db
+    checkmarx_scan_results_db, gitlabsca_scan_results_db, gitlabsast_scan_results_db, semgrepscan_scan_results_db, twistlock_scan_results_db
 from compliance.models import inspec_scan_results_db, dockle_scan_results_db
 
 
@@ -95,3 +95,8 @@ class GitlabscaResource(resources.ModelResource):
 class SemgrepResource(resources.ModelResource):
     class Meta:
         model = semgrepscan_scan_results_db
+
+
+class twistlockResource(resources.ModelResource):
+    class Meta:
+        model = twistlock_scan_results_db

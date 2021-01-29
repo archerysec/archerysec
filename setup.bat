@@ -52,6 +52,8 @@ where python >nul 2>&1 && (
 
   python -m pip install --upgrade pip wheel
 
+  .\venv\Scripts\activate && python -m pip install git+https://github.com/archerysec/openvas_lib.git
+
 
 
   set LIB=C:\Program Files\OpenSSL-Win64\lib;%LIB%

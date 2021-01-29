@@ -51,7 +51,21 @@
                                 </tr>
                                 </thead>
                                 <!--zap-->
-                                <tbody>{% for data in zap_all_high %}
+                                <tbody>
+                                <!-- add your scanner here  -->
+                                {% for data in twistlock_all_high %}
+                                <tr data-target="#">
+
+                                    <td>
+                                        <a href="{% url 'twistlock:twistlock_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                    </td>
+                                    <td>{{data.scanner}}</td>
+                                    <td>{{data.packageName}}</td>
+                                    <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                                </tr>
+                                {% endfor %}
+
+                                {% for data in zap_all_high %}
                                 <tr>
                                     <td>
                                         <a href="{% url 'zapscanner:zap_vuln_check' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
