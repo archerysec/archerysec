@@ -20,6 +20,50 @@ from django.db import models
 
 
 # Create your models here.
+
+class StaticScansDb(models.Model):
+    project_name = models.TextField(blank=True, null=True)
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    scan_date = models.TextField(blank=True)
+    scan_status = models.TextField(blank=True)
+    project_id = models.UUIDField(blank=True)
+    total_vul = models.IntegerField(blank=True, null=True)
+    critical_vul = models.IntegerField(blank=True, null=True)
+    high_vul = models.IntegerField(blank=True, null=True)
+    medium_vul = models.IntegerField(blank=True, null=True)
+    low_vul = models.IntegerField(blank=True, null=True)
+    info_vul = models.IntegerField(blank=True, null=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    rescan = models.TextField(blank=True, null=True)
+    total_dup = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)
+    scanner = models.CharField(max_length=256, null=True)
+
+
+class StaticScanResultsDb(models.Model):
+    scan_id = models.UUIDField(blank=True)
+    rescan_id = models.TextField(blank=True, null=True)
+    project_id = models.UUIDField(blank=True)
+    date_time = models.DateTimeField(blank=True, null=True)
+    vuln_id = models.UUIDField(blank=True)
+    false_positive = models.TextField(null=True, blank=True)
+    severity_color = models.TextField(blank=True)
+    dup_hash = models.TextField(null=True, blank=True)
+    vuln_duplicate = models.TextField(null=True, blank=True)
+    false_positive_hash = models.TextField(null=True, blank=True)
+    vuln_status = models.TextField(null=True, blank=True)
+    jira_ticket = models.TextField(null=True, blank=True)
+    title = models.TextField(blank=True, null=True)
+    severity = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    references = models.TextField(blank=True, null=True)
+    fileName = models.TextField(blank=True, null=True)
+    filePath = models.TextField(blank=True, null=True)
+    solution = models.TextField(blank=True)
+    scanner = models.TextField(default='Dependency Check', editable=False)
+    username = models.CharField(max_length=256, null=True)
+
 class bandit_scan_db(models.Model):
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)

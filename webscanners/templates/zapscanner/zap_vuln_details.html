@@ -67,7 +67,7 @@ $(document).on('click', '.confirm-delete', function(){
                                             <span class="checkmark"></span>
                                         </label></th>
                                         <th>Vulnerability</th>
-                                        <th>Risk</th>
+                                        <th>Severity</th>
                                         <th>JIRA Ticket</th>
                                         <th>False Positive</th>
                                         <th>Status</th>
@@ -88,9 +88,9 @@ $(document).on('click', '.confirm-delete', function(){
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'zapscanner:zap_vuln_check' %}?vuln_id={{data.vuln_id}}">{{data.name}}</a>
+                                            <a href="{% url 'zapscanner:zap_vuln_check' %}?vuln_id={{data.vuln_id}}">{{data.title}}</a>
                                         </td>
-                                        <td><span class="badge badge-pill badge-{{data.vuln_color}}">{{data.risk}}</span></td>
+                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span></td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
                                         {% if data.false_positive == 'No' %}
@@ -99,7 +99,7 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="Yes">
                                                 <input type="hidden" name="status" value="{{data.vuln_status}}">
-                                                <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                                 <button class="btn btn-outline-info btn-mini">Yes</button>
                                             </form>
@@ -111,7 +111,7 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Open">
-                                                <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                                 <button class="btn btn-info btn-mini">No</button>
                                             </form>
@@ -129,7 +129,7 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Closed">
-                                                <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                                 <button class="btn btn-outline-info btn-mini">Close</button>
                                             </form>
@@ -141,7 +141,7 @@ $(document).on('click', '.confirm-delete', function(){
                                             <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                             <input type="hidden" name="false" value="No">
                                             <input type="hidden" name="status" value="Open">
-                                            <input type="hidden" name="vuln_name" value="{{data.name}}">
+                                            <input type="hidden" name="vuln_name" value="{{data.title}}">
                                             <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                             <button class="btn btn-info btn-mini">Open</button>
                                         </form>

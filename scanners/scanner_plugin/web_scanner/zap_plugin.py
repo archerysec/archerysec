@@ -21,8 +21,10 @@ import time
 import uuid
 import json
 import ast
+import re
 from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db
 import hashlib
+
 try:
     from scanners.scanner_parser.web_scanner import zap_xml_parser
 except Exception as e:
@@ -35,8 +37,8 @@ from datetime import datetime
 
 # ZAP Database import
 
-from webscanners.models import zap_scan_results_db, \
-    zap_scans_db, \
+from webscanners.models import WebScanResultsDb, \
+    WebScansDb, \
     zap_spider_db, \
     cookie_db, \
     excluded_db
@@ -72,8 +74,9 @@ risk = ''
 vul_col = ''
 all_vuln = ''
 
-
 import socket
+
+
 # Getting a random free tcp port in python using sockets
 
 def get_free_tcp_port():
@@ -403,14 +406,14 @@ class ZAPScanner:
                 scan_status = self.zap.ascan.status(scan_id)
                 print("ZAP Scan Status:", scan_status)
                 time.sleep(10)
-                zap_scans_db.objects.filter(
+                WebScansDb.objects.filter(
                     scan_scanid=un_scanid
                 ).update(vul_status=scan_status)
         except Exception as e:
             print(e)
 
         scan_status = 100
-        zap_scans_db.objects.filter(
+        WebScansDb.objects.filter(
             scan_scanid=un_scanid
         ).update(
             vul_status=scan_status
@@ -544,68 +547,60 @@ class ZAPScanner:
 
                 dup_data = name + risk + target_url
                 duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-                match_dup = zap_scan_results_db.objects.filter(
+                match_dup = WebScanResultsDb.objects.filter(
                     dup_hash=duplicate_hash).values('dup_hash').distinct()
                 lenth_match = len(match_dup)
 
                 vuln_id = uuid.uuid4()
                 if lenth_match == 0:
                     duplicate_vuln = 'No'
-                    dump_data = zap_scan_results_db(vuln_id=vuln_id,
-                                                    vuln_color=vul_col,
-                                                    scan_id=un_scanid,
-                                                    project_id=project_id,
-                                                    confidence=confidence,
-                                                    wascid=wascid,
-                                                    risk=risk,
-                                                    reference=reference,
-                                                    url=url,
-                                                    name=name,
-                                                    solution=solution,
-                                                    param=url,
-                                                    sourceid=sourceid,
-                                                    pluginId=pluginId,
-                                                    alert=alert,
-                                                    description=description,
-                                                    false_positive='No',
-                                                    rescan='No',
-                                                    vuln_status='Open',
-                                                    dup_hash=duplicate_hash,
-                                                    vuln_duplicate=duplicate_vuln,
-                                                    evidence=evidence,
-                                                    username=username
-                                                    )
+                    dump_data = WebScanResultsDb(vuln_id=vuln_id,
+                                                 severity_color=vul_col,
+                                                 scan_id=un_scanid,
+                                                 project_id=project_id,
+                                                 severity=risk,
+                                                 reference=reference,
+                                                 url=target_url,
+                                                 title=name,
+                                                 solution=solution,
+                                                 instance=evidence,
+                                                 description=description,
+                                                 false_positive='No',
+                                                 jira_ticket='NA',
+                                                 rescan='No',
+                                                 vuln_status='Open',
+                                                 dup_hash=duplicate_hash,
+                                                 vuln_duplicate=duplicate_vuln,
+                                                 scanner='zap',
+                                                 username=username
+                                                 )
                     dump_data.save()
                 else:
                     duplicate_vuln = 'Yes'
 
-                    dump_data = zap_scan_results_db(vuln_id=vuln_id,
-                                                    vuln_color=vul_col,
-                                                    scan_id=un_scanid,
-                                                    project_id=project_id,
-                                                    confidence=confidence,
-                                                    wascid=wascid,
-                                                    risk=risk,
-                                                    reference=reference,
-                                                    url=url,
-                                                    name=name,
-                                                    solution=solution,
-                                                    param=url,
-                                                    sourceid=sourceid,
-                                                    pluginId=pluginId,
-                                                    alert=alert,
-                                                    description=description,
-                                                    false_positive='Duplicate',
-                                                    rescan='No',
-                                                    vuln_status='Duplicate',
-                                                    dup_hash=duplicate_hash,
-                                                    vuln_duplicate=duplicate_vuln,
-                                                    evidence=evidence,
-                                                    username=username
-                                                    )
+                    dump_data = WebScanResultsDb(vuln_id=vuln_id,
+                                                 severity_color=vul_col,
+                                                 scan_id=un_scanid,
+                                                 project_id=project_id,
+                                                 severity=risk,
+                                                 reference=reference,
+                                                 url=target_url,
+                                                 title=name,
+                                                 solution=solution,
+                                                 instance='na',
+                                                 description=description,
+                                                 false_positive='Duplicate',
+                                                 jira_ticket='NA',
+                                                 rescan='No',
+                                                 vuln_status='Duplicate',
+                                                 dup_hash=duplicate_hash,
+                                                 vuln_duplicate=duplicate_vuln,
+                                                 scanner='zap',
+                                                 username=username
+                                                 )
                     dump_data.save()
 
-                false_p = zap_scan_results_db.objects.filter(
+                false_p = WebScanResultsDb.objects.filter(
                     false_positive_hash=duplicate_hash)
                 fp_lenth_match = len(false_p)
 
@@ -614,20 +609,22 @@ class ZAPScanner:
                 else:
                     false_positive = 'No'
 
-                vul_dat = zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id)
+                vul_dat = WebScanResultsDb.objects.filter(username=username, vuln_id=vuln_id, scanner='zap')
                 full_data = []
                 for data in vul_dat:
                     key = 'Evidence'
-                    value = data.evidence
-                    instance = key + ': ' + value
+                    value = data.instance
+                    dd = re.sub(r"<[^>]*>", " ", value)
+                    instance = key + ': ' + dd
                     full_data.append(instance)
                 removed_list_data = ','.join(full_data)
-                zap_scan_results_db.objects.filter(username=username, vuln_id=vuln_id).update(param=full_data)
+                WebScanResultsDb.objects.filter(username=username, vuln_id=vuln_id).update(instance=full_data)
 
-            zap_all_vul = zap_scan_results_db.objects.filter(username=username, scan_id=un_scanid, false_positive='No')
+            zap_all_vul = WebScanResultsDb.objects.filter(username=username, scan_id=un_scanid, false_positive='No',
+                                                          scanner='zap')
 
-            duplicate_count = zap_scan_results_db.objects.filter(username=username, scan_id=un_scanid,
-                                                                 vuln_duplicate='Yes')
+            duplicate_count = WebScanResultsDb.objects.filter(username=username, scan_id=un_scanid,
+                                                              vuln_duplicate='Yes')
 
             total_high = len(zap_all_vul.filter(risk="High"))
             total_medium = len(zap_all_vul.filter(risk="Medium"))
@@ -636,7 +633,7 @@ class ZAPScanner:
             total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
             total_vul = total_high + total_medium + total_low + total_info
 
-            zap_scans_db.objects.filter(username=username, scan_scanid=un_scanid) \
+            WebScansDb.objects.filter(username=username, scan_scanid=un_scanid) \
                 .update(total_vul=total_vul,
                         date_time=date_time,
                         high_vul=total_high,
@@ -647,7 +644,7 @@ class ZAPScanner:
                         scan_url=target_url
                         )
             if total_vul == total_duplicate:
-                zap_scans_db.objects.filter(username=username, scan_scanid=un_scanid) \
+                WebScansDb.objects.filter(username=username, scan_scanid=un_scanid) \
                     .update(total_vul=total_vul,
                             date_time=date_time,
                             high_vul=total_high,
@@ -655,7 +652,6 @@ class ZAPScanner:
                             low_vul=total_low,
                             total_dup=total_duplicate
                             )
-
 
     def zap_shutdown(self):
         """

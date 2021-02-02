@@ -12,12 +12,12 @@
                  <div class="col-md-auto">
                     <div class="float-right">
                         <!-- Large modal -->
-                        <a href="/jira/submit_jira_ticket/?summary={{data.name}}&description={{data.description}}%0a%0a%0a Vulnerable URL: {{data.url}} %0a%0a Vulnerable Parameter: {{data.param}} %0a%0a Solution: {{data.solution}} %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.requestHeader }}&scanner=zap&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
+                        <a href="/jira/submit_jira_ticket/?summary={{data.title}}&description={{data.description}}%0a%0a%0a Vulnerable URL: {{data.url}} %0a%0a Vulnerable Parameter: {{data.param}} %0a%0a Solution: {{data.solution}} %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.requestHeader }}&scanner=zap&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
                class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
 
                     </div>
                 </div>
-                <h1>{{data.name}}</h1>
+                <h1>{{data.title}}</h1>
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
@@ -51,13 +51,11 @@
                             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    <table class="table table-bordered data-table table-fixed">
-                                        {% for data in evi %}
-                                        <tr>
-                                            <td>{{data}}<br></td>
-                                        </tr>
-                                        {% endfor %}
-                                    </table>
+                                    <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody id="instance"></tbody>
+                                            </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -101,6 +99,20 @@
         </div>
     </div>
 </div>
+     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+        <script type="text/javascript">
+            var json = {{ data.instance | safe }}
+            $.each(json, function (key, data) {
+
+                $.each(data, function (key2, data2) {
+                    var tbody = document.getElementById('instance');
+                    var tr = "<tr>";
+                    tr += "<td>" + key2 + "</td>" + "<td>" + data2.toString() + "</td></tr>";
+                    tbody.innerHTML += tr;
+                });
+
+            });
+        </script>
 {% endfor %}
 
 {% endblock %}

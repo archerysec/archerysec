@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from webscanners.models import zap_scans_db, zap_scan_results_db, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
+from webscanners.models import WebScansDb, WebScanResultsDb, burp_scan_db, burp_scan_result_db, arachni_scan_db, \
     netsparker_scan_db, webinspect_scan_db, acunetix_scan_db
 from networkscanners.models import openvas_scan_db, ov_scan_result_db, nessus_scan_db
 from projects.models import project_db
@@ -86,7 +86,7 @@ from staticscanners.models import twistlock_scan_db, twistlock_scan_results_db
 
 
 class WebScan(generics.ListCreateAPIView):
-    queryset = zap_scans_db.objects.all()
+    queryset = WebScansDb.objects.all()
     serializer_class = WebScanSerializer
 
     def get(self, request, format=None, **kwargs):
@@ -94,7 +94,7 @@ class WebScan(generics.ListCreateAPIView):
             GET List all scans and check status.
         """
         username = request.user.username
-        all_scans = zap_scans_db.objects.filter(username=username)
+        all_scans = WebScansDb.objects.filter(username=username)
         serialized_scans = WebScanSerializer(all_scans, many=True)
         return Response(serialized_scans.data)
 
@@ -296,7 +296,7 @@ class Project(generics.CreateAPIView):
 
 
 class WebScanResult(generics.ListCreateAPIView):
-    queryset = zap_scan_results_db.objects.all()
+    queryset = WebScanResultsDb.objects.all()
     serializer_class = WebScanResultSerializer
 
     def post(self, request, format=None, **kwargs):
@@ -307,7 +307,7 @@ class WebScanResult(generics.ListCreateAPIView):
         serializer = WebScanResultSerializer(data=request.data)
         if serializer.is_valid():
             scan_id = request.data.get('scan_id', )
-            zap_scan = zap_scan_results_db.objects.filter(username=username, scan_id=scan_id)
+            zap_scan = WebScanResultsDb.objects.filter(username=username, scan_id=scan_id)
             burp_scan = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id)
             all_scans = chain(zap_scan, burp_scan)
             serialized_scans = WebScanResultSerializer(all_scans, many=True)
@@ -327,7 +327,7 @@ class ZapScanStatus(generics.ListCreateAPIView):
         serializer = WebScanStatusSerializer(data=request.data)
         if serializer.is_valid():
             scan_id = request.data.get('scan_scanid', )
-            zap_scan = zap_scans_db.objects.filter(username=username, scan_scanid=scan_id)
+            zap_scan = WebScansDb.objects.filter(username=username, scan_scanid=scan_id)
             all_scans = chain(zap_scan)
             serialized_scans = WebScanStatusSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
@@ -608,7 +608,7 @@ class CreateUsers(generics.CreateAPIView):
 
 
 class UpdateZapStatus(generics.CreateAPIView):
-    queryset = zap_scans_db.objects.all()
+    queryset = WebScansDb.objects.all()
 
     def post(self, request, format=None, **kwargs):
         username = request.user.username
@@ -618,7 +618,7 @@ class UpdateZapStatus(generics.CreateAPIView):
         if serializer.is_valid():
             scan_id = request.data.get("scan_id")
             scan_status = request.data.get("scan_status")
-            zap_scans_db.objects.filter(username=username, scan_scanid=scan_id).update(vul_status=scan_status)
+            WebScansDb.objects.filter(username=username, scan_scanid=scan_id).update(vul_status=scan_status)
             return Response({"message": "ZAP Scanner status updated %s", "Scan Status": scan_status})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -637,14 +637,14 @@ class UpladScanResult(APIView):
         # add your scanner here
         if scanner == "zap_scan":
             date_time = datetime.datetime.now()
-            scan_dump = zap_scans_db(scan_url=scan_url,
-                                     scan_scanid=scan_id,
-                                     date_time=date_time,
-                                     project_id=project_id,
-                                     vul_status=scan_status,
-                                     rescan='No',
-                                     username=username
-                                     )
+            scan_dump = WebScansDb(username=username,
+                                   scan_url=scan_url,
+                                   scan_id=scan_id,
+                                   date_time=date_time,
+                                   project_id=project_id,
+                                   scan_status=scan_status,
+                                   rescan='No',
+                                   scanner='zap')
             scan_dump.save()
             root_xml = ET.fromstring(file)
             en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')

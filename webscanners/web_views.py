@@ -24,7 +24,7 @@ from django.contrib.auth.models import User
 from django.core import signing
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.shortcuts import render,  HttpResponse
+from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_protect
 from selenium import webdriver
 from stronghold.decorators import public
@@ -42,7 +42,7 @@ from webscanners.models import \
     burp_scan_db, \
     arachni_scan_db, \
     task_schedule_db, \
-    acunetix_scan_db
+    acunetix_scan_db, WebScanResultsDb, WebScansDb
 from background_task import background
 from datetime import datetime
 from background_task.models import Task
@@ -249,7 +249,7 @@ def index(request):
     """
     username = request.user.username
     all_urls = zap_spider_db.objects.filter(username=username)
-    all_scans = zap_scans_db.objects.filter(username=username)
+    all_scans = WebScansDb.objects.filter(username=username)
     all_spider_results = zap_spider_results.objects.filter(username=username)
     all_excluded_url = excluded_db.objects.filter(username=username)
     all_cookies = cookie_db.objects.filter(username=username)
@@ -757,13 +757,14 @@ def xml_upload(request):
                 root_xml = tree.getroot()
                 en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
                 root_xml_en = ET.fromstring(en_root_xml)
-                scan_dump = zap_scans_db(username=username,
-                                         scan_url=scan_url,
-                                         scan_scanid=scan_id,
-                                         date_time=date_time,
-                                         project_id=project_id,
-                                         vul_status=scan_status,
-                                         rescan='No')
+                scan_dump = WebScansDb(username=username,
+                                       scan_url=scan_url,
+                                       scan_id=scan_id,
+                                       date_time=date_time,
+                                       project_id=project_id,
+                                       scan_status=scan_status,
+                                       rescan='No',
+                                       scanner='zap')
                 scan_dump.save()
                 zap_xml_parser.xml_parser(username=username,
                                           project_id=project_id,
@@ -771,7 +772,8 @@ def xml_upload(request):
                                           root=root_xml_en)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
-            except:
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(request, 'upload_xml.html', {'all_project': all_project})
 

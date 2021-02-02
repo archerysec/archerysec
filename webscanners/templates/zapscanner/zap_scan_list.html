@@ -23,14 +23,14 @@
                     <!--contentType: 'application/json; charset=utf-8',-->
                     url:'{% url 'zapscanner:del_zap_scan' %}',
                     data:{
-                       scan_scanid: json_scanid,
+                       scan_id: json_scanid,
                        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                     },
                     sucess:function(){
 
                     }
                 });
-                setTimeout(location.reload(), 6000);
+                setTimeout(function(){location.reload();},1000);
             }
         });
 
@@ -120,7 +120,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>Info</th>
                                         <th>Duplicates</th>
 {#                                        <th></th>#}
-                                        <th></th>
+{#                                        <th></th>#}
                                     </tr>
                                     </thead>
                                     <tbody>{% for data in all_scans %}
@@ -129,7 +129,7 @@ $(document).on('click', '.confirm-delete', function(){
                                             <form>
                                                 <label class="customcheckbox">
                                                     <input type="checkbox" class="listCheckbox"
-                                                           value="{{data.scan_scanid}}"
+                                                           value="{{data.scan_id}}"
                                                            name="del_scan_id"
                                                            onClick="reload">
                                                     <span class="checkmark"></span>
@@ -137,7 +137,7 @@ $(document).on('click', '.confirm-delete', function(){
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'zapscanner:zap_list_vuln' %}?scan_id={{data.scan_scanid}}">{{data.scan_url}}</a>
+                                            <a href="{% url 'zapscanner:zap_list_vuln' %}?scan_id={{data.scan_id}}">{{data.scan_url}}</a>
                                         </td>
                                         <td width="20%">
                                             <div>
@@ -165,25 +165,25 @@ $(document).on('click', '.confirm-delete', function(){
 {#                                                  class="forms-sample">#}
 {##}
 {#                                                {% csrf_token %}#}
-{#                                                <input type="hidden" name="scan_id" value="{{data.scan_scanid}}"/>#}
+{#                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}"/>#}
 {#                                                <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>#}
 {##}
 {#                                                <button class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i>#}
 {#                                                </button>#}
 {#                                            </form>#}
 {#                                        </td>#}
-                                        <td class="confirm-delete">
-                                            <form action="{% url 'zapscanner:del_zap_scan' %}" method="post"
-                                                  class="forms-sample">
-
-                                                {% csrf_token %}
-                                                <input type="hidden" name="scan_scanid"
-                                                       value="{{data.scan_scanid}}"/>
-                                                <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>
-                                                <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i>
-                                                </button>
-                                            </form>
-                                        </td>
+{#                                        <td class="confirm-delete">#}
+{#                                            <form action="{% url 'zapscanner:del_zap_scan' %}" method="post"#}
+{#                                                  class="forms-sample">#}
+{##}
+{#                                                {% csrf_token %}#}
+{#                                                <input type="hidden" name="scan_id"#}
+{#                                                       value="{{data.scan_id}}"/>#}
+{#                                                <input type="hidden" name="scan_url" value="{{data.scan_url}}"/>#}
+{#                                                <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i>#}
+{#                                                </button>#}
+{#                                            </form>#}
+{#                                        </td>#}
 
                                         {% endfor %}
                                     </tbody>

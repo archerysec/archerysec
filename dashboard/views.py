@@ -22,12 +22,12 @@ from __future__ import unicode_literals
 from django.db.models import Sum
 
 # Add your Web scanner db
-from webscanners.models import zap_scans_db, \
+from webscanners.models import WebScansDb, \
     burp_scan_db, \
     arachni_scan_db, \
     netsparker_scan_db, \
     webinspect_scan_db, \
-    zap_scan_results_db, \
+    WebScanResultsDb, \
     burp_scan_result_db, \
     arachni_scan_result_db, \
     netsparker_scan_result_db, \
@@ -300,7 +300,7 @@ def proj_data(request):
 
     # Web scanners project data <scannername>
     burp = burp_scan_db.objects.filter(username=username, project_id=project_id)
-    zap = zap_scans_db.objects.filter(username=username, project_id=project_id)
+    zap = WebScansDb.objects.filter(username=username, project_id=project_id, scanner='zap')
     arachni = arachni_scan_db.objects.filter(username=username, project_id=project_id)
     webinspect = webinspect_scan_db.objects.filter(username=username, project_id=project_id)
     netsparker = netsparker_scan_db.objects.filter(username=username, project_id=project_id)
@@ -475,11 +475,11 @@ def proj_data(request):
                    'inspec_dat': inspec_dat,
                    'dockle_dat': dockle_dat,
 
-                   'all_zap_high': zap_scans_db.objects.filter(username=username, project_id=project_id).aggregate(
+                   'all_zap_high': WebScansDb.objects.filter(scanner='zap', username=username, project_id=project_id).aggregate(
                        Sum('high_vul')),
-                   'all_zap_low': zap_scans_db.objects.filter(username=username, project_id=project_id).aggregate(
+                   'all_zap_low': WebScansDb.objects.filter(scanner='zap', username=username, project_id=project_id).aggregate(
                        Sum('low_vul')),
-                   'all_zap_medium': zap_scans_db.objects.filter(username=username, project_id=project_id).aggregate(
+                   'all_zap_medium': WebScansDb.objects.filter(scanner='zap', username=username, project_id=project_id).aggregate(
                        Sum('medium_vul')),
 
                    'all_webinspect_high': webinspect_scan_db.objects.filter(username=username,
@@ -734,7 +734,7 @@ def all_high_vuln(request):
         severity = ''
     # add your scanner name here <scannername>
     if severity == 'All':
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, false_positive='No')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, false_positive='No', scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, false_positive='No')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, false_positive='No')
 
@@ -780,7 +780,7 @@ def all_high_vuln(request):
 
     # add your scanner name here <scannername>
     elif severity == 'All_Closed':
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, vuln_status='Closed')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, vuln_status='Closed', scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, vuln_status='Closed')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, vuln_status='Closed')
 
@@ -826,7 +826,7 @@ def all_high_vuln(request):
 
     # add your scanner name here <scannername>
     elif severity == 'All_False_Positive':
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, false_positive='Yes')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, false_positive='Yes', scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, false_positive='Yes')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, false_positive='Yes')
 
@@ -876,7 +876,7 @@ def all_high_vuln(request):
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, pentest_type='network')
 
     elif severity == 'Web':
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, false_positive='No')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, false_positive='No', scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, false_positive='No')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, false_positive='No')
 
@@ -924,9 +924,10 @@ def all_high_vuln(request):
 
         # add your scanner name here <scannername>
 
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          risk='High',
-                                                          false_positive='No')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, project_id=project_id,
+                                                          severity='High',
+                                                          false_positive='No',
+                                                       scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                  severity='High',
                                                                  false_positive='No')
@@ -1020,8 +1021,8 @@ def all_high_vuln(request):
 
         # add your scanner name here <scannername>
 
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          risk='Medium')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, project_id=project_id,
+                                                          severity='Medium', scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                  severity='Medium')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -1091,8 +1092,8 @@ def all_high_vuln(request):
     elif severity == 'Low':
         # add your scanner name here <scannername>
 
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          risk='Low')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, project_id=project_id,
+                                                          severity='Low', scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                  severity='Low')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -1157,8 +1158,8 @@ def all_high_vuln(request):
 
     elif severity == 'Total':
         # add your scanner name here <scannername>
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          )
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, project_id=project_id,
+                                                          scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                  )
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -1210,8 +1211,8 @@ def all_high_vuln(request):
 
     elif severity == 'False':
         # add your scanner name here <scannername>
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          false_positive='Yes')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, project_id=project_id,
+                                                          false_positive='Yes', scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                  false_positive='Yes')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
@@ -1280,8 +1281,8 @@ def all_high_vuln(request):
 
     elif severity == 'Close':
         # add your scanner name here <scannername>
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          vuln_status='Closed')
+        zap_all_high = WebScanResultsDb.objects.filter(username=username, project_id=project_id,
+                                                          vuln_status='Closed', scanner='zap')
         arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
                                                                  vuln_status='Closed')
         webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
