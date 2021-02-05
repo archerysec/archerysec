@@ -40,7 +40,7 @@ from webscanners.models import zap_scan_results_db, \
     zap_spider_db, \
     cookie_db, \
     excluded_db
-
+from kubernetes import client, config
 from archerysettings import load_settings
 
 # Global Variables
@@ -102,23 +102,92 @@ def zap_local():
     return random_port
 
 
-def zap_connect(random_port, username):
+def create_deployment_service(deployment_name):
+    random_port = str(get_free_tcp_port())
+    # Configureate Pod template container
+    container = client.V1Container(
+        name="zaproxy",
+        image="owasp/zap2docker-stable",
+        command=["zap.sh"],
+        args=['-daemon', '-config', 'api.disablekey=false', '-config', 'api.key=' + zap_api_key,
+              '-port', random_port, '-host', '0.0.0.0', '-config', 'api.addrs.addr.name=.*', '-config',
+              'api.addrs.addr.regex=true'],
+        ports=[client.V1ContainerPort(container_port=int(random_port))],
+        resources=client.V1ResourceRequirements(
+            requests={"cpu": "100m", "memory": "200Mi"},
+            limits={"cpu": "500m", "memory": "500Mi"}
+        )
+    )
+    # Create and configurate a spec section
+    template = client.V1PodTemplateSpec(
+        metadata=client.V1ObjectMeta(labels={'app': 'zap-app', 'name': 'zap-application'}),
+        spec=client.V1PodSpec(containers=[container]))
+    print(template)
+    # Create the specification of deployment
+    spec = client.V1DeploymentSpec(
+        replicas=1,
+        template=template,
+        selector={'matchLabels': {'app': 'zap-app', 'name': 'zap-application'}})
+    # Instantiate the deployment object
+    deployment = client.V1Deployment(
+        api_version="apps/v1",
+        kind="Deployment",
+        metadata=client.V1ObjectMeta(name=deployment_name, labels={'app': 'archerysec-app'}),
+        spec=spec)
+
+    config.load_kube_config()
+    apps_v1 = client.AppsV1Api()
+
+    api_response = apps_v1.create_namespaced_deployment(
+        body=deployment,
+        namespace="default")
+    print("Deployment created. status='%s'" % str(api_response.status))
+
+    # Create Service
+
+    core_v1_api = client.CoreV1Api()
+    body = client.V1Service(
+        api_version="v1",
+        kind="Service",
+        metadata=client.V1ObjectMeta(name=deployment_name, labels={'app': 'zap-app', 'name': 'zap-application'}
+                                     ),
+        spec=client.V1ServiceSpec(
+            selector={"app": "zap-app", "name": "zap-application"},
+            ports=[client.V1ServicePort(
+                port=int(random_port),
+                target_port=int(random_port)
+            )]
+        )
+    )
+    # Creation of the Deployment in specified namespace
+    # (Can replace "default" with a namespace you may have created)
+    core_v1_api.create_namespaced_service(namespace="default", body=body)
+
+    return random_port
+
+
+def zap_connect(random_port, username, zap_host, zap_kub):
     all_zap = zap_settings_db.objects.filter(username=username)
 
     zap_api_key = 'dwed23wdwedwwefw4rwrfw'
-    zap_hosts = '127.0.0.1'
+    zap_hosts = zap_host
     zap_ports = '8090'
     zap_enabled = False
 
     for zap in all_zap:
         zap_enabled = zap.enabled
 
-    if zap_enabled is False:
+    if zap_kub is True:
+        zap_api_key = 'dwed23wdwedwwefw4rwrfw'
+        zap_hosts = zap_host
+        zap_ports = random_port
+
+    elif zap_enabled is False:
         zap_api_key = 'dwed23wdwedwwefw4rwrfw'
         zap_hosts = '127.0.0.1'
         zap_ports = random_port
 
-    if zap_enabled is True:
+    elif zap_enabled is True:
         for zap in all_zap:
             zap_api_key = zap.zap_api
             zap_hosts = zap.zap_url
@@ -130,8 +199,8 @@ def zap_connect(random_port, username):
     return zap
 
 
-def zap_replacer(target_url, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_replacer(target_url, random_port, username, zap_host, zap_kub):
+    zap = zap_connect(random_port=random_port, username=username, zap_host=zap_host, zap_kub=zap_kub)
     try:
         zap.replacer.remove_rule(description=target_url, apikey=zap_api_key)
     except Exception as e:
@@ -140,32 +209,32 @@ def zap_replacer(target_url, random_port, username):
     return
 
 
-def zap_spider_thread(count, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_spider_thread(count, random_port, username, zap_host, zap_kub):
+    zap = zap_connect(random_port=random_port, username=username, zap_host=zap_host, zap_kub=zap_kub)
 
     zap.spider.set_option_thread_count(count, apikey=zap_api_key)
 
     return
 
 
-def zap_scan_thread(count, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_scan_thread(count, random_port, username, zap_host, zap_kub):
+    zap = zap_connect(random_port=random_port, username=username, zap_host=zap_host, zap_kub=zap_kub)
 
     zap.ascan.set_option_thread_per_host(count, apikey=zap_api_key)
 
     return
 
 
-def zap_spider_setOptionMaxDepth(count, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_spider_setOptionMaxDepth(count, random_port, username, zap_host, zap_kub):
+    zap = zap_connect(random_port=random_port, username=username, zap_host=zap_host, zap_kub=zap_kub)
 
     zap.spider.set_option_max_depth(count, apikey=zap_api_key)
 
     return
 
 
-def zap_scan_setOptionHostPerScan(count, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_scan_setOptionHostPerScan(count, random_port, username, zap_host, zap_kub):
+    zap = zap_connect(random_port=random_port, username=username, zap_host=zap_host, zap_kub=zap_kub)
 
     zap.ascan.set_option_host_per_scan(count, apikey=zap_api_key)
 
@@ -225,7 +294,7 @@ class ZAPScanner:
 
     """ Connect with ZAP scanner global variable """
 
-    def __init__(self, target_url, project_id, rescan_id, rescan, random_port, username):
+    def __init__(self, target_url, project_id, rescan_id, rescan, random_port, username, zap_host, zap_kub):
         """
 
         :param target_url: Target URL parameter.
@@ -236,7 +305,10 @@ class ZAPScanner:
         self.rescan_id = rescan_id
         self.rescan = rescan
         self.username = username
-        self.zap = zap_connect(random_port=random_port, username=username)
+        self.zap_host = zap_host
+        self.zap_kub = zap_kub
+
+        self.zap = zap_connect(random_port=random_port, username=username, zap_host=zap_host, zap_kub=zap_kub)
 
     def exclude_url(self):
         """

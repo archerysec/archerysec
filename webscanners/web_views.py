@@ -535,7 +535,8 @@ def setting(request):
                     while True:
                         try:
                             # Connection Test
-                            zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                            zap_connect = zap_plugin.zap_connect(random_port, username=username, zap_host='127.0.0.1',
+                                                                 zap_kub=False)
                             zap_connect.spider.scan(url=target_url)
                         except Exception as e:
                             print("ZAP Connection Not Found, re-try after 5 sec")
@@ -544,7 +545,8 @@ def setting(request):
                         break
             else:
                 try:
-                    zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                    zap_connect = zap_plugin.zap_connect(random_port, username=username, zap_host='127.0.0.1',
+                                                         zap_kub=False)
                     zap_connect.spider.scan(url=target_url)
                     zap_info = True
                 except:

@@ -41,11 +41,20 @@ from django.conf import settings
 from archerysettings.models import email_db
 import ast
 from django.urls import reverse
+from kubernetes import client, config
 
 scans_status = None
 to_mail = ''
 scan_id = None
 scan_name = None
+import random
+import string
+
+
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
 
 
 def email_notify(user, subject, message):
@@ -85,23 +94,38 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     :param project_id: Project ID
     :return:
     """
+    deployment_name = get_random_string(6)
+
     username = user.username
     zap_enabled = False
-    random_port = '8091'
+    random_port = '8090'
+    try:
+        config.load_kube_config()
+        zap_kub = True
+    except Exception as e:
+        print(e)
+        zap_kub = False
 
     all_zap = zap_settings_db.objects.filter(username=username)
     for zap in all_zap:
         zap_enabled = zap.enabled
 
-    if zap_enabled is False:
-        print("started local instence")
-        random_port = zap_plugin.zap_local()
+    if zap_kub is True:
+        # config.load_kube_config()
+        # apps_v1 = client.AppsV1Api()
+        print("kubernetes pods starting")
+        print(deployment_name)
+        random_port = zap_plugin.create_deployment_service(deployment_name=deployment_name)
+        print(random_port)
 
         for i in range(0, 100):
             while True:
                 try:
                     # Connection Test
-                    zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                    zap_connect = zap_plugin.zap_connect(random_port,
+                                                         username=username,
+                                                         zap_host=deployment_name,
+                                                         zap_kub=zap_kub)
                     zap_connect.spider.scan(url=target_url)
                 except Exception as e:
                     print("ZAP Connection Not Found, re-try after 5 sec")
@@ -109,14 +133,38 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
                     continue
                 break
 
-    zap_plugin.zap_spider_thread(count=20, random_port=random_port, username=username)
-    zap_plugin.zap_spider_setOptionMaxDepth(count=5, random_port=random_port, username=username)
+    elif zap_enabled is False:
+        print("started local instence")
+        random_port = zap_plugin.zap_local()
 
-    zap_plugin.zap_scan_thread(count=30, random_port=random_port, username=username)
-    zap_plugin.zap_scan_setOptionHostPerScan(count=3, random_port=random_port, username=username)
+        for i in range(0, 100):
+            while True:
+                try:
+                    # Connection Test
+                    zap_connect = zap_plugin.zap_connect(random_port, username=username, zap_host=deployment_name,
+                                                         zap_kub=zap_kub)
+                    zap_connect.spider.scan(url=target_url)
+                except Exception as e:
+                    print("ZAP Connection Not Found, re-try after 5 sec")
+                    time.sleep(5)
+                    continue
+                break
+    zap_plugin.zap_spider_thread(count=20, random_port=random_port, username=username, zap_host=deployment_name,
+                                 zap_kub=zap_kub)
+    zap_plugin.zap_spider_setOptionMaxDepth(count=5, random_port=random_port, username=username,
+                                            zap_host=deployment_name,
+                                            zap_kub=zap_kub)
+
+    zap_plugin.zap_scan_thread(count=30, random_port=random_port, username=username, zap_host=deployment_name,
+                               zap_kub=zap_kub)
+    zap_plugin.zap_scan_setOptionHostPerScan(count=3, random_port=random_port, username=username,
+                                             zap_host=deployment_name,
+                                             zap_kub=zap_kub)
 
     # Load ZAP Plugin
-    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan, random_port=random_port, username=username)
+    zap = zap_plugin.ZAPScanner(target_url, project_id, rescan_id, rescan, random_port=random_port, username=username,
+                                zap_host=deployment_name,
+                                zap_kub=zap_kub)
     zap.exclude_url()
     time.sleep(3)
     zap.cookies()
@@ -175,7 +223,16 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         total_high = data.high_vul
         total_medium = data.medium_vul
         total_low = data.low_vul
-
+    if zap_kub is True:
+        config.load_kube_config()
+        apps_v1 = client.AppsV1Api()
+        api_response = apps_v1.delete_namespaced_deployment(
+            name=str(deployment_name),
+            namespace="default",
+            body=client.V1DeleteOptions(
+                propagation_policy='Foreground',
+                grace_period_seconds=5))
+        print("Deployment deleted. status='%s'" % str(api_response.status))
     if zap_enabled is False:
         zap.zap_shutdown()
 
@@ -199,7 +256,8 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, 
     random_port = '8090'
 
     # Connection Test
-    zap_connect = zap_plugin.zap_connect(random_port, username='')
+    zap_connect = zap_plugin.zap_connect(random_port, username='', zap_host='',
+                                                         zap_kub='')
 
     try:
         zap_connect.spider.scan(url=target_url)
