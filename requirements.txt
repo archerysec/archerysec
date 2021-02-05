@@ -78,3 +78,4 @@ django-import-export
 django-s3-storage
 jsonfield
 waitress
+kubernetes
