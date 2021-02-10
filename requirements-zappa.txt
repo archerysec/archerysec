@@ -17,7 +17,7 @@ configparser==3.5.0
 coreapi==2.3.3
 coreapi-cli==1.0.9
 coreschema==0.0.4
-cryptography==3.2
+cryptography==3.3.2
 cssselect2==0.2.1
 defusedxml
 diff-match-patch==20181111
