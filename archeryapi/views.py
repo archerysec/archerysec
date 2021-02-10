@@ -1189,7 +1189,7 @@ class UpladScanResult(APIView):
                              "scan_id": scan_id,
                              "scanner": scanner
                              })
-        
+
         elif scanner == 'twistlock':
             date_time = datetime.datetime.now()
             scan_dump = twistlock_scan_db(
@@ -1203,15 +1203,14 @@ class UpladScanResult(APIView):
             scan_dump.save()
             data = json.loads(file)
             gitlab_sast_json_report_parser.twistlock_report_json(project_id=project_id,
-                                                                  scan_id=scan_id,
-                                                                  data=data,
-                                                                  username=username)
+                                                                 scan_id=scan_id,
+                                                                 data=data,
+                                                                 username=username)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
                              "scanner": scanner
                              })
-
 
         elif scanner == 'brakeman':
             date_time = datetime.datetime.now()
@@ -1226,14 +1225,13 @@ class UpladScanResult(APIView):
             scan_dump.save()
             data = json.loads(file)
             brakeman_json_report_parser.brakeman_report_json(project_id=project_id,
-                                                                  scan_id=scan_id,
-                                                                  data=data,
-                                                                  username=username)
+                                                             scan_id=scan_id,
+                                                             data=data,
+                                                             username=username)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
                              "scanner": scanner
                              })
-
 
         return Response({"message": "Scan Data Uploaded"})
