@@ -59,6 +59,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from staticscanners.models import bandit_scan_db, retirejs_scan_db
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import TemporaryUploadedFile
 from stronghold.decorators import public
 from webscanners.arachniscanner.views import launch_arachni_scan
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, \
@@ -620,14 +621,18 @@ class UpdateZapStatus(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UpladScanResult(APIView):
+class UploadScanResult(APIView):
     parser_classes = (MultiPartParser,)
 
     def post(self, request, format=None):
         username = request.user.username
         project_id = request.data.get("project_id")
         scanner = request.data.get("scanner")
-        file = request.data.get("filename")
+        if type(request.data.get("filename")) == TemporaryUploadedFile:
+            file = request.data.get("filename").read().decode("utf-8")
+        else:
+            file = request.data.get("filename")
+
         scan_url = request.data.get("scan_url")
         scan_id = uuid.uuid4()
         scan_status = "100"

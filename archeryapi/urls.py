@@ -57,7 +57,7 @@ urlpatterns = [
     path('netsparkerscanstatus/', views.NetsparkerScanStatus.as_view()),
     path('webinspectscanstatus/', views.WebinspectScanStatus.as_view()),
     path('acunetixscanresult/', views.AcunetixScanStatus.as_view()),
-    path('uploadscan/', views.UpladScanResult.as_view()),
+    path('uploadscan/', views.UploadScanResult.as_view()),
     path('zapstatusupdate/', views.UpdateZapStatus.as_view()),
     path('createuser/', views.CreateUsers.as_view())
 
