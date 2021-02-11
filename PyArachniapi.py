@@ -16,7 +16,6 @@ class arachniAPI(object):
         self.port = port
         self.username_api = ""
         self.password_api = ""
- 
     def scan(self):
         """
         :return: Information about all active scans, grouped by their id.
