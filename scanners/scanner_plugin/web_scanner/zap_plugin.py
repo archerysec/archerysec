@@ -458,7 +458,6 @@ class ZAPScanner:
             zap_enabled = zap.enabled
 
         if zap_enabled is False:
-            print(all_vuln)
             root_xml = ET.fromstring(all_vuln)
             en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
             root_xml_en = ET.fromstring(en_root_xml)
