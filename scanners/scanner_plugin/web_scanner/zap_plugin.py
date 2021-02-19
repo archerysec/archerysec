@@ -33,8 +33,6 @@ import subprocess
 import sys
 from datetime import datetime
 
-from django.core.serializers.json import DjangoJSONEncoder
-
 # ZAP Database import
 
 from webscanners.models import zap_scan_results_db, \
@@ -105,13 +103,8 @@ def zap_local():
 
 
 def zap_connect(random_port, username):
-    print(username)
     all_zap = zap_settings_db.objects.filter(username=username)
 
-    blog = zap_settings_db.objects.filter(username=username).values()
-    print(json.dumps(list(blog), cls=DjangoJSONEncoder))
-
-    # print(all_zap.values())
     zap_api_key = ''
     zap_hosts = '127.0.0.1'
     zap_ports = '8090'
@@ -119,8 +112,6 @@ def zap_connect(random_port, username):
 
 
     for zap in all_zap:
-        print(zap)
-        print(zap.enabled)
         zap_enabled = zap.enabled
 
     if zap_enabled is False:
@@ -130,7 +121,6 @@ def zap_connect(random_port, username):
 
     if zap_enabled is True:
         for zap in all_zap:
-            print(zap)
             zap_api_key = zap.zap_api
             zap_hosts = zap.zap_url
             zap_ports = zap.zap_port
