@@ -59,7 +59,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from staticscanners.models import bandit_scan_db, retirejs_scan_db
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from django.contrib.auth.models import User
-from django.core.files.uploadedfile import TemporaryUploadedFile
+from django.core.files.uploadedfile import UploadedFile
 from stronghold.decorators import public
 from webscanners.arachniscanner.views import launch_arachni_scan
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, \
@@ -628,7 +628,7 @@ class UploadScanResult(APIView):
         username = request.user.username
         project_id = request.data.get("project_id")
         scanner = request.data.get("scanner")
-        if isinstance(request.data.get("filename"),TemporaryUploadedFile):
+        if isinstance(request.data.get("filename"), UploadedFile):
             file = request.data.get("filename").read().decode("utf-8")
         else:
             file = request.data.get("filename")
