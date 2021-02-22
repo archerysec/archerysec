@@ -628,7 +628,7 @@ class UploadScanResult(APIView):
         username = request.user.username
         project_id = request.data.get("project_id")
         scanner = request.data.get("scanner")
-        if type(request.data.get("filename")) == TemporaryUploadedFile:
+        if isinstance(request.data.get("filename"),TemporaryUploadedFile):
             file = request.data.get("filename").read().decode("utf-8")
         else:
             file = request.data.get("filename")
