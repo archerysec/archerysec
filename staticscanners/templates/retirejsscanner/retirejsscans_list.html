@@ -90,7 +90,7 @@
                                     </form>
                                 </td>
                                 <td>
-                                    <a href="{% url 'banditscanner:banditscan_list_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                    <a href="{% url 'banditscanner:banditscan_list_vuln' %}?scan_id={{data.scan_id}}">{% firstof data.project_name 'None' %}</a>
                                 </td>
                                 <td width="20%">
                                     <div class="progress progress-info{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">

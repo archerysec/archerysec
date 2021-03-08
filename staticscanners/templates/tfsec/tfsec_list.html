@@ -130,7 +130,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'tfsec:tfsec_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                            <a href="{% url 'tfsec:tfsec_all_vuln' %}?scan_id={{data.scan_id}}">{% firstof data.project_name 'None' %}</a>
                                         </td>
                                         <td width="20%">
                                             <div>
