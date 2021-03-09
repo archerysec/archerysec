@@ -14,7 +14,8 @@ class arachniAPI(object):
 
         self.host = host
         self.port = port
-
+        self.username_api = ""
+        self.password_api = ""
     def scan(self):
         """
         :return: Information about all active scans, grouped by their id.
@@ -150,9 +151,12 @@ class arachniAPI(object):
             if method == 'POST' or method == 'PUT':
                 headers.update({'Content-Type': 'application/json'})
         try:
-            response = requests.request(method=method, url=self.host + ':' + self.port + url, params=params,
+            if self.username_api != "":
+                response = requests.request(method=method, url=self.host + ':' + self.port + url, params=params,
+                                        headers=headers, data=data, auth=(self.username_api,self.password_api))
+            else:
+                response = requests.request(method=method, url=self.host + ':' + self.port + url, params=params,
                                         headers=headers, data=data)
-
             try:
                 response.raise_for_status()
 
