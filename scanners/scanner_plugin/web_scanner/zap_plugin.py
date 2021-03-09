@@ -105,10 +105,11 @@ def zap_local():
 def zap_connect(random_port, username):
     all_zap = zap_settings_db.objects.filter(username=username)
 
-    zap_api_key = 'dwed23wdwedwwefw4rwrfw'
+    zap_api_key = ''
     zap_hosts = '127.0.0.1'
     zap_ports = '8090'
     zap_enabled = False
+
 
     for zap in all_zap:
         zap_enabled = zap.enabled

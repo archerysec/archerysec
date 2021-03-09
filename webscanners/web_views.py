@@ -276,7 +276,7 @@ def index(request):
 
 
 @background(schedule=60)
-def task(target_url, project_id, scanner):
+def task(target_url, project_id, scanner, **kwargs):
     rescan_id = ''
     rescan = 'No'
     target__split = target_url.split(',')
@@ -288,7 +288,7 @@ def task(target_url, project_id, scanner):
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_schudle_zap_scan,
-                args=(target, project_id, rescan_id, rescan, scan_id))
+                args=(target, project_id, rescan_id, rescan, scan_id, kwargs["username"]))
             thread.daemon = True
             thread.start()
         elif scanner == 'burp_scan':
@@ -296,7 +296,7 @@ def task(target_url, project_id, scanner):
             do_scan = burp_plugin.burp_scans(
                 project_id,
                 target,
-                scan_id, user='admin')
+                scan_id, user=kwargs["username"])
             thread = threading.Thread(
                 target=do_scan.scan_launch,
             )
@@ -360,17 +360,17 @@ def web_scan_schedule(request):
 
             if scanner == 'zap_scan':
                 if periodic_task_value == 'None':
-                    my_task = task(target, project_id, scanner, schedule=dt_obj)
+                    my_task = task(target, project_id, scanner, schedule=dt_obj, username=username)
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
                 else:
 
-                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
+                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None, username=username)
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
             elif scanner == 'burp_scan':
                 if periodic_task_value == 'None':
-                    my_task = task(target, project_id, scanner, schedule=dt_obj)
+                    my_task = task(target, project_id, scanner, schedule=dt_obj, username=username)
                     task_id = my_task.id
                 else:
                     my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
@@ -408,7 +408,7 @@ def del_web_scan_schedule(request):
             task_id = target_split.__getitem__(i)
             del_task = task_schedule_db.objects.filter(task_id=task_id, username=username)
             del_task.delete()
-            del_task_schedule = Task.objects.filter(id=task_id, username=username)
+            del_task_schedule = Task.objects.filter(id=task_id)
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse('webscanners:web_scan_schedule'))

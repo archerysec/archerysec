@@ -126,7 +126,7 @@ class OpenVAS_Plugin:
             time.sleep(5)
 
         status = "100"
-        openvas_scan_db.objects.filter(username=self.username, scan_id=scan_id).update(scan_status=status)
+        openvas_scan_db.objects.filter(scan_id=scan_id).update(scan_status=status)
 
         return status
 
@@ -315,12 +315,11 @@ def vuln_an_id(scan_id, project_id, username):
 
         openvas_scan_db.objects.filter(username=username, scan_id=scan_id). \
             update(total_vul=total_vul,
-                   high_total=total_high,
-                   medium_total=total_medium,
+                   high_vul=total_high,
+                   medium_vul=total_medium,
                    log_total=log_total,
                    low_total=total_low,
                    total_dup=total_duplicate,
-
                    )
 
         for row in ov_scan_result_db.objects.filter(username=username):

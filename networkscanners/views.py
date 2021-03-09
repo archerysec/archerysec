@@ -193,7 +193,7 @@ def scan_vul_details(request):
                    })
 
 
-def openvas_scanner(scan_ip, project_id, sel_profile, user):
+def openvas_scanner(scan_ip, project_id, sel_profile, username):
     """
     The function is launch the OpenVAS scans.
     :param scan_ip:
@@ -201,6 +201,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     :param sel_profile:
     :return:
     """
+    user = User.objects.get(username=username)
     username = user.username
     openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile, username=username)
     try:
@@ -243,9 +244,9 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     total_low = ''
     for openvas in all_openvas:
         all_vuln = openvas.total_vul
-        total_high = openvas.high_total
-        total_medium = openvas.medium_total
-        total_low = openvas.low_total
+        total_high = openvas.high_vul
+        total_medium = openvas.medium_vul
+        total_low = openvas.low_vul
 
     subject = 'Archery Tool Notification'
     message = 'OpenVAS Scan Completed  <br>' \
@@ -420,9 +421,9 @@ def del_vuln(request):
 
         openvas_scan_db.objects.filter(username=username, scan_id=un_scanid) \
             .update(total_vul=total_vul,
-                    high_total=total_high,
-                    medium_total=total_medium,
-                    low_total=total_low)
+                    high_vul=total_high,
+                    medium_vul=total_medium,
+                    low_vul=total_low)
 
         return HttpResponseRedirect(reverse('networkscanners:vul_details') + '?scan_id=%s' % un_scanid)
 
@@ -518,7 +519,7 @@ def OpenVAS_xml_upload(request):
 
 
 @background(schedule=60)
-def task(target_ip, project_id, scanner):
+def task(target_ip, project_id, scanner, user):
     rescan_id = ''
     rescan = 'No'
     sel_profile = ''
@@ -528,7 +529,7 @@ def task(target_ip, project_id, scanner):
     for i in range(0, split_length):
         target = target__split.__getitem__(i)
         if scanner == 'open_vas':
-            thread = threading.Thread(target=openvas_scanner, args=(target, project_id, sel_profile))
+            thread = threading.Thread(target=openvas_scanner, args=(target, project_id, sel_profile, user))
             thread.daemon = True
             thread.start()
 
@@ -544,6 +545,8 @@ def net_scan_schedule(request):
     username = request.user.username
     all_scans_db = project_db.objects.filter(username=username)
     all_scheduled_scans = task_schedule_db.objects.filter(username=username)
+
+    user = request.user
 
     if request.method == 'POST':
         scan_ip = request.POST.get('ip')
@@ -577,11 +580,11 @@ def net_scan_schedule(request):
 
             if scanner == 'open_vas':
                 if periodic_task_value == 'None':
-                    my_task = task(target, project_id, scanner, schedule=dt_obj)
+                    my_task = task(target, project_id, scanner, username, schedule=dt_obj)
                     task_id = my_task.id
                     print("Savedddddd taskid"), task_id
                 else:
-                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
+                    my_task = task(target, project_id, scanner, username, repeat=periodic_time, repeat_until=None)
                     task_id = my_task.id
                     print("Savedddddd taskid"), task_id
 
@@ -618,7 +621,7 @@ def del_net_scan_schedule(request):
             task_id = target_split.__getitem__(i)
             del_task = task_schedule_db.objects.filter(username=username, task_id=task_id)
             del_task.delete()
-            del_task_schedule = Task.objects.filter(id=task_id, username=username)
+            del_task_schedule = Task.objects.filter(id=task_id)
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse('networkscanners:net_scan_schedule'))
