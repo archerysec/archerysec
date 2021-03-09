@@ -8,7 +8,7 @@
 <script type="text/javascript">
     function toreport(){
         var uuid = [];
-        $.each($("input[name='del_scan_id']:checked"), function(){            
+        $.each($("input[name='del_scan_id']:checked"), function(){
             uuid.push($(this).val());
         });
         //alert(uuid.join(", "));
@@ -141,7 +141,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'dependencycheck:dependencycheck_all_vuln' %}?scan_id={{data.scan_id}}">{{data.project_name}}</a>
+                                            <a href="{% url 'dependencycheck:dependencycheck_all_vuln' %}?scan_id={{data.scan_id}}">{% firstof data.project_name 'None' %}</a>
                                         </td>
                                         <td width="20%">
                                             <div>
