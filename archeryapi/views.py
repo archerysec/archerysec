@@ -59,6 +59,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from staticscanners.models import bandit_scan_db, retirejs_scan_db
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import bandit_report_json
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import UploadedFile
 from stronghold.decorators import public
 from webscanners.arachniscanner.views import launch_arachni_scan
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, \
@@ -185,7 +186,6 @@ class NetworkScan(generics.ListCreateAPIView):
            Current user's identity endpoint.
 
         """
-        username = request.user.username
         user = request.user
         serializer = NetworkScanSerializer(data=request.data)
         if serializer.is_valid():
@@ -612,8 +612,6 @@ class UpdateZapStatus(generics.CreateAPIView):
 
     def post(self, request, format=None, **kwargs):
         username = request.user.username
-        _scan_id = None
-        _scan_status = None
         serializer = ZapScanStatusDataSerializers(data=request.data)
         if serializer.is_valid():
             scan_id = request.data.get("scan_id")
@@ -623,14 +621,18 @@ class UpdateZapStatus(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UpladScanResult(APIView):
+class UploadScanResult(APIView):
     parser_classes = (MultiPartParser,)
 
     def post(self, request, format=None):
         username = request.user.username
         project_id = request.data.get("project_id")
         scanner = request.data.get("scanner")
-        file = request.data.get("filename")
+        if isinstance(request.data.get("filename"), UploadedFile):
+            file = request.data.get("filename").read().decode("utf-8")
+        else:
+            file = request.data.get("filename")
+
         scan_url = request.data.get("scan_url")
         scan_id = uuid.uuid4()
         scan_status = "100"
@@ -1189,7 +1191,7 @@ class UpladScanResult(APIView):
                              "scan_id": scan_id,
                              "scanner": scanner
                              })
-        
+
         elif scanner == 'twistlock':
             date_time = datetime.datetime.now()
             scan_dump = twistlock_scan_db(
@@ -1203,15 +1205,14 @@ class UpladScanResult(APIView):
             scan_dump.save()
             data = json.loads(file)
             gitlab_sast_json_report_parser.twistlock_report_json(project_id=project_id,
-                                                                  scan_id=scan_id,
-                                                                  data=data,
-                                                                  username=username)
+                                                                 scan_id=scan_id,
+                                                                 data=data,
+                                                                 username=username)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
                              "scanner": scanner
                              })
-
 
         elif scanner == 'brakeman':
             date_time = datetime.datetime.now()
@@ -1226,14 +1227,13 @@ class UpladScanResult(APIView):
             scan_dump.save()
             data = json.loads(file)
             brakeman_json_report_parser.brakeman_report_json(project_id=project_id,
-                                                                  scan_id=scan_id,
-                                                                  data=data,
-                                                                  username=username)
+                                                             scan_id=scan_id,
+                                                             data=data,
+                                                             username=username)
             return Response({"message": "Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
                              "scanner": scanner
                              })
-
 
         return Response({"message": "Scan Data Uploaded"})
