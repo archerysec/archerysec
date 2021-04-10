@@ -12,7 +12,7 @@ coreschema
 cryptography
 cssselect2
 defusedxml
-Django
+Django==3.1.7
 django-appconf
 django-background-tasks
 django-compat
