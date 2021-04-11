@@ -1127,16 +1127,6 @@ class UploadScanResult(APIView):
                              })
 
         elif scanner == 'nessus':
-            date_time = datetime.datetime.now()
-            scan_dump = nessus_scan_db(
-                scan_ip=scan_url,
-                scan_id=scan_id,
-                date_time=date_time,
-                project_id=project_id,
-                scan_status=scan_status,
-                username=username
-            )
-            scan_dump.save()
             root_xml = ET.fromstring(file)
             en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
             root_xml_en = ET.fromstring(en_root_xml)
