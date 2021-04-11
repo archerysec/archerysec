@@ -12,7 +12,7 @@ coreschema
 cryptography
 cssselect2
 defusedxml
-Django==3.1.7
+Django==3.1.8
 django-appconf
 django-background-tasks
 django-compat
@@ -25,6 +25,7 @@ django-sitetree
 django-stronghold
 djangorestframework
 djangorestframework-jwt
+drf-jwt
 dnspython
 enum34
 future
