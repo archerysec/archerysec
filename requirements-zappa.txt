@@ -88,7 +88,7 @@ python-slugify==1.2.4
 python-taint==0.40
 python-whois==0.6.2
 pytz==2017.3
-PyYAML==5.1
+PyYAML==5.4
 reportlab==3.4.0
 requests==2.20.0
 requests-oauthlib==0.8.0
