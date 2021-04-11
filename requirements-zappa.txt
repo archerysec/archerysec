@@ -54,7 +54,7 @@ ipaddress==1.0.18
 isort==4.3.17
 itypes==1.1.0
 jdcal==1.4.1
-Jinja2==2.10.1
+Jinja2==2.11.3
 jira==2.0.0
 jmespath==0.9.3
 jsonfield==2.0.2
