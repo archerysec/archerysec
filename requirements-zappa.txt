@@ -93,7 +93,7 @@ reportlab==3.4.0
 requests==2.20.0
 requests-oauthlib==0.8.0
 requests-toolbelt==0.8.0
-rsa==3.4.2
+rsa==4.2
 s3transfer==0.2.1
 selenium==3.8.0
 singledispatch==3.4.0.3
