@@ -30,6 +30,8 @@ class zap_settings_db(models.Model):
 class arachni_settings_db(models.Model):
     arachni_url = models.TextField(blank=True, null=True)
     arachni_port = models.TextField(blank=True, null=True)
+    arachni_user = models.TextField(blank=True, null=True)
+    arachni_pass = models.TextField(blank=True, null=True)
     username = models.CharField(max_length=256, null=True)
 
 

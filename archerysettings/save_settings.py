@@ -153,7 +153,7 @@ class SaveSettings:
             return e
         return f.close()
 
-    def save_arachni_settings(self, arachnihost, arachniport):
+    def save_arachni_settings(self, arachnihost, arachniport, arachniuser, arachnipass):
         """
 
         :param arachnihost:
@@ -165,6 +165,8 @@ class SaveSettings:
 
         save_arachnisettings = arachni_settings_db(arachni_url=arachnihost,
                                                    arachni_port=arachniport,
+                                                   arachni_user=arachniuser,
+                                                   arachni_pass=arachnipass
                                                    )
         save_arachnisettings.save()
 

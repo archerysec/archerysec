@@ -198,6 +198,22 @@
                                                                    value="{{ arachni_ports }}" placeholder="Enter Arachni API Endpoint Port">
                                                         </div>
                                                     </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API User</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ arachni_user }}" placeholder="Enter Arachni API Endpoint User">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Pass</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ arachni_pass }}" placeholder="Enter Arachni API Endpoint Pass">
+                                                        </div>
+                                                    </div>
                                                     <a class="btn btn-primary" href="{% url 'arachniscanner:arachni_settings' %}"
                                                        role="button">Edit</a>
                                                     <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}

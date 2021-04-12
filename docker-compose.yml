@@ -60,18 +60,20 @@ services:
     expose:
     # ZAP is running on 8090, we want it to be accessible by our tools
       - "8090"
+    environment:
+      - ZAP_PORT=8090
     links:
       - archerysec
     container_name: zapscanner
 
 
   arachni:
-    image: ahannigan/docker-arachni
-    #build: ../arachni
+    image: arachni/arachni
     ports:
       - "9292:9292"
       - "7331:7331"
-    command: bin/arachni_rest_server --address 0.0.0.0
+    environment:
+      - ARACHNI_PARAMS="--authentication-username arachni --authentication-password password --verbose --reroute-to-logfile --debug 3"
     links:
       - archerysec
     container_name: arachniscanner
