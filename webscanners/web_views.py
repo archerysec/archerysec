@@ -457,14 +457,20 @@ def setting(request):
     # Loading Arachni Settings
     arachni_hosts = ''
     arachni_ports = ''
+    arachni_user = ''
+    arachni_pass = ''
 
     all_arachni = arachni_settings_db.objects.filter(username=username)
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
+        arachni_user =  arachni.arachni_user
+        arachni_pass = arachni.arachni_pass
 
     arachni_hosts = arachni_hosts
     arachni_ports = arachni_ports
+    arachni_user = arachni_user
+    arachni_pass = arachni_pass
 
     # Loading NMAP Vulners Settings
     nv_enabled = False
@@ -574,12 +580,17 @@ def setting(request):
             global scan_run_id, scan_status
             arachni_hosts = None
             arachni_ports = None
+            arachni_user = None
+            arachni_pass = None
             all_arachni = arachni_settings_db.objects.filter(username=username)
             for arachni in all_arachni:
                 arachni_hosts = arachni.arachni_url
                 arachni_ports = arachni.arachni_port
+                arachni_user = arachni.arachni_user
+                arachni_pass = arachni.arachni_pass
 
-            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports)
+
+            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports, arachni_user, arachni_pass)
 
             check = []
             data = {
@@ -633,6 +644,8 @@ def setting(request):
                    'zap_enable': zap_enable,
                    'arachni_hosts': arachni_hosts,
                    'arachni_ports': arachni_ports,
+                   'arachni_user': arachni_user,
+                   'arachni_pass': arachni_pass,
                    'lod_ov_user': lod_ov_user,
                    'lod_ov_pass': lod_ov_pass,
                    'lod_ov_host': lod_ov_host,

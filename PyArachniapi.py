@@ -10,12 +10,12 @@ import json
 
 
 class arachniAPI(object):
-    def __init__(self, host, port):
+    def __init__(self, host, port, username_api,password_api):
 
         self.host = host
         self.port = port
-        self.username_api = ""
-        self.password_api = ""
+        self.username_api = username_api
+        self.password_api = password_api
     def scan(self):
         """
         :return: Information about all active scans, grouped by their id.
