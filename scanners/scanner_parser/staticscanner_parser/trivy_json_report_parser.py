@@ -46,137 +46,137 @@ def trivy_report_json(data, project_id, scan_id, username):
     vul_col = ''
     for vuln_data in data:
         vuln = vuln_data['Vulnerabilities']
+        if vuln is not None:
+            for issue in vuln:
+                try:
+                    VulnerabilityID = issue['VulnerabilityID']
+                except Exception as e:
+                    VulnerabilityID = "Not Found"
+                    print(e)
+                try:
+                    PkgName = issue['PkgName']
+                except Exception as e:
+                    PkgName = "Not Found"
+                    print(e)
+                try:
+                    InstalledVersion = issue['InstalledVersion']
+                except Exception as e:
+                    InstalledVersion = "Not Found"
+                    print(e)
+                try:
+                    FixedVersion = issue['FixedVersion']
+                except Exception as e:
+                    FixedVersion = "Not Found"
+                    print(e)
+                try:
+                    Title = issue['Title']
+                except Exception as e:
+                    Title = "Not Found"
+                    print(e)
+                try:
+                    Description = issue['Description']
+                except Exception as e:
+                    Description = "Not Found"
+                    print(e)
+                try:
+                    Severity = issue['Severity']
+                except Exception as e:
+                    Severity = "Not Found"
+                    print(e)
+                try:
+                    References = issue['References']
+                except Exception as e:
+                    References = "Not Found"
+                    print(e)
 
-        for issue in vuln:
-            try:
-                VulnerabilityID = issue['VulnerabilityID']
-            except Exception as e:
-                VulnerabilityID = "Not Found"
-                print(e)
-            try:
-                PkgName = issue['PkgName']
-            except Exception as e:
-                PkgName = "Not Found"
-                print(e)
-            try:
-                InstalledVersion = issue['InstalledVersion']
-            except Exception as e:
-                InstalledVersion = "Not Found"
-                print(e)
-            try:
-                FixedVersion = issue['FixedVersion']
-            except Exception as e:
-                FixedVersion = "Not Found"
-                print(e)
-            try:
-                Title = issue['Title']
-            except Exception as e:
-                Title = "Not Found"
-                print(e)
-            try:
-                Description = issue['Description']
-            except Exception as e:
-                Description = "Not Found"
-                print(e)
-            try:
-                Severity = issue['Severity']
-            except Exception as e:
-                Severity = "Not Found"
-                print(e)
-            try:
-                References = issue['References']
-            except Exception as e:
-                References = "Not Found"
-                print(e)
+                if Severity == "CRITICAL":
+                    Severity = 'High'
+                    vul_col = "danger"
 
-            if Severity == "CRITICAL":
-                Severity = 'High'
-                vul_col = "danger"
+                if Severity == "HIGH":
+                    Severity = 'High'
+                    vul_col = "danger"
 
-            if Severity == "HIGH":
-                Severity = 'High'
-                vul_col = "danger"
+                if Severity == 'MEDIUM':
+                    Severity = 'Medium'
+                    vul_col = "warning"
 
-            if Severity == 'MEDIUM':
-                Severity = 'Medium'
-                vul_col = "warning"
+                if Severity == 'LOW':
+                    Severity = 'Low'
+                    vul_col = "info"
 
-            if Severity == 'LOW':
-                Severity = 'Low'
-                vul_col = "info"
+                if Severity == 'UNKNOWN':
+                    Severity = 'Low'
+                    vul_col = "info"
 
-            if Severity == 'UNKNOWN':
-                Severity = 'Low'
-                vul_col = "info"
+                vul_id = uuid.uuid4()
 
-            vul_id = uuid.uuid4()
+                dup_data = str(VulnerabilityID) + str(Severity) + str(PkgName)
 
-            dup_data = str(VulnerabilityID) + str(Severity) + str(PkgName)
+                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+                match_dup = trivy_scan_results_db.objects.filter(username=username,
+                                                                 dup_hash=duplicate_hash).values('dup_hash')
+                lenth_match = len(match_dup)
 
-            match_dup = trivy_scan_results_db.objects.filter(username=username,
-                                                             dup_hash=duplicate_hash).values('dup_hash')
-            lenth_match = len(match_dup)
+                if lenth_match == 0:
+                    duplicate_vuln = 'No'
 
-            if lenth_match == 0:
-                duplicate_vuln = 'No'
+                    false_p = trivy_scan_results_db.objects.filter(username=username,
+                                                                   false_positive_hash=duplicate_hash)
+                    fp_lenth_match = len(false_p)
 
-                false_p = trivy_scan_results_db.objects.filter(username=username,
-                                                               false_positive_hash=duplicate_hash)
-                fp_lenth_match = len(false_p)
+                    if fp_lenth_match == 1:
+                        false_positive = 'Yes'
+                    else:
+                        false_positive = 'No'
 
-                if fp_lenth_match == 1:
-                    false_positive = 'Yes'
+                    save_all = trivy_scan_results_db(
+                        vuln_id=vul_id,
+                        scan_id=scan_id,
+                        date_time=date_time,
+                        project_id=project_id,
+                        VulnerabilityID=VulnerabilityID,
+                        PkgName=PkgName,
+                        InstalledVersion=InstalledVersion,
+                        FixedVersion=FixedVersion,
+                        Title=Title,
+                        Description=Description,
+                        Severity=Severity,
+                        References=References,
+                        vul_col=vul_col,
+                        vuln_status='Open',
+                        dup_hash=duplicate_hash,
+                        vuln_duplicate=duplicate_vuln,
+                        false_positive=false_positive,
+                        username=username,
+                    )
+                    save_all.save()
+
                 else:
-                    false_positive = 'No'
+                    duplicate_vuln = 'Yes'
 
-                save_all = trivy_scan_results_db(
-                    vuln_id=vul_id,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    VulnerabilityID=VulnerabilityID,
-                    PkgName=PkgName,
-                    InstalledVersion=InstalledVersion,
-                    FixedVersion=FixedVersion,
-                    Title=Title,
-                    Description=Description,
-                    Severity=Severity,
-                    References=References,
-                    vul_col=vul_col,
-                    vuln_status='Open',
-                    dup_hash=duplicate_hash,
-                    vuln_duplicate=duplicate_vuln,
-                    false_positive=false_positive,
-                    username=username,
-                )
-                save_all.save()
-
-            else:
-                duplicate_vuln = 'Yes'
-
-                save_all = trivy_scan_results_db(
-                    vuln_id=vul_id,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    VulnerabilityID=VulnerabilityID,
-                    PkgName=PkgName,
-                    InstalledVersion=InstalledVersion,
-                    FixedVersion=FixedVersion,
-                    Title=Title,
-                    Description=Description,
-                    Severity=Severity,
-                    References=References,
-                    vul_col=vul_col,
-                    vuln_status='Duplicate',
-                    dup_hash=duplicate_hash,
-                    vuln_duplicate=duplicate_vuln,
-                    false_positive='Duplicate',
-                    username=username,
-                )
-                save_all.save()
+                    save_all = trivy_scan_results_db(
+                        vuln_id=vul_id,
+                        scan_id=scan_id,
+                        date_time=date_time,
+                        project_id=project_id,
+                        VulnerabilityID=VulnerabilityID,
+                        PkgName=PkgName,
+                        InstalledVersion=InstalledVersion,
+                        FixedVersion=FixedVersion,
+                        Title=Title,
+                        Description=Description,
+                        Severity=Severity,
+                        References=References,
+                        vul_col=vul_col,
+                        vuln_status='Duplicate',
+                        dup_hash=duplicate_hash,
+                        vuln_duplicate=duplicate_vuln,
+                        false_positive='Duplicate',
+                        username=username,
+                    )
+                    save_all.save()
 
         all_findbugs_data = trivy_scan_results_db.objects.filter(username=username, scan_id=scan_id,
                                                                  false_positive='No')
