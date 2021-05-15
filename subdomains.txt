@@ -1,3 +1,0 @@
-blog.archerysec.com
-developers.archerysec.com
-docs.archerysec.com
