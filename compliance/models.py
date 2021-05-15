@@ -84,7 +84,7 @@ class inspec_scan_results_db(models.Model):
     controls_results_backtrace = models.TextField(null=True, blank=True)
     controls_tags_audit_text = models.TextField(null=True, blank=True)
 
-    scanner = models.TextField(default='inspec', editable=False)
+    scanner = models.TextField(default="inspec", editable=False)
     username = models.CharField(max_length=256, null=True)
 
 
@@ -119,12 +119,10 @@ class dockle_scan_results_db(models.Model):
     false_positive_hash = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
 
-    scanner = models.TextField(default='dockle', editable=False)
+    scanner = models.TextField(default="dockle", editable=False)
     username = models.CharField(max_length=256, null=True)
 
     code = models.TextField(blank=True, null=True)
     title = models.TextField(blank=True, null=True)
     level = models.TextField(blank=True, null=True)
     alerts = models.TextField(blank=True, null=True)
-
-

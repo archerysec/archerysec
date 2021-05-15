@@ -8,11 +8,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0007_status_db'),
+        ("webscanners", "0007_status_db"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='status_db',
+            name="status_db",
         ),
     ]

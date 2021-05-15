@@ -14,32 +14,33 @@
 #
 # This file is part of ArcherySec Project.
 
-from webscanners.models import WebScanResultsDb, WebScansDb
-import uuid
-import hashlib
 import ast
+import hashlib
 import json
 import re
-from webscanners.zapscanner.views import email_sch_notify
+import uuid
 from datetime import datetime
+
 from dashboard.views import trend_update
 from scanners.vuln_checker import check_false_positive
+from webscanners.models import WebScanResultsDb, WebScansDb
+from utility.email_notify import email_sch_notify
 
-vul_col = ''
-title = ''
-risk = ''
-reference = ''
-url = ''
-solution = ''
-instance = ''
-alert = ''
-desc = ''
-riskcode = ''
-vuln_id = ''
-false_positive = ''
-duplicate_hash = ''
-duplicate_vuln = ''
-scan_url = ''
+vul_col = ""
+title = ""
+risk = ""
+reference = ""
+url = ""
+solution = ""
+instance = ""
+alert = ""
+desc = ""
+riskcode = ""
+vuln_id = ""
+false_positive = ""
+duplicate_hash = ""
+duplicate_vuln = ""
+scan_url = ""
 
 
 def xml_parser(username, root, project_id, scan_id):
@@ -51,27 +52,13 @@ def xml_parser(username, root, project_id, scan_id):
     :return:
     """
     date_time = datetime.now()
-    global vul_col, \
-        risk, \
-        reference, \
-        url, \
-        solution, \
-        instance, \
-        alert, \
-        desc, \
-        riskcode, \
-        vuln_id, \
-        false_positive, \
-        duplicate_hash, \
-        duplicate_vuln, \
-        scan_url, \
-        title
+    global vul_col, risk, reference, url, solution, instance, alert, desc, riskcode, vuln_id, false_positive, duplicate_hash, duplicate_vuln, scan_url, title
 
     for child in root:
         d = child.attrib
-        scan_url = d['name']
+        scan_url = d["name"]
 
-    for alert in root.iter('alertitem'):
+    for alert in root.iter("alertitem"):
         inst = []
         for vuln in alert:
             vuln_id = uuid.uuid4()
@@ -97,10 +84,10 @@ def xml_parser(username, root, project_id, scan_id):
             if riskcode == "3":
                 vul_col = "danger"
                 risk = "High"
-            elif riskcode == '2':
+            elif riskcode == "2":
                 vul_col = "warning"
                 risk = "Medium"
-            elif riskcode == '1':
+            elif riskcode == "1":
                 vul_col = "info"
                 risk = "Low"
             else:
@@ -109,17 +96,23 @@ def xml_parser(username, root, project_id, scan_id):
         if title == "None":
             print(title)
         else:
-            duplicate_hash = check_false_positive(title=title, severity=risk, scan_url=scan_url)
-            match_dup = WebScanResultsDb.objects.filter(dup_hash=duplicate_hash).values('dup_hash').distinct()
+            duplicate_hash = check_false_positive(
+                title=title, severity=risk, scan_url=scan_url
+            )
+            match_dup = (
+                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+                .values("dup_hash")
+                .distinct()
+            )
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
-                duplicate_vuln = 'No'
-                vuln_status = 'Open'
+                duplicate_vuln = "No"
+                vuln_status = "Open"
             else:
-                duplicate_vuln = 'Yes'
-                false_positive = 'Duplicate'
-                vuln_status = 'Duplicate'
+                duplicate_vuln = "Yes"
+                false_positive = "Duplicate"
+                vuln_status = "Duplicate"
 
             data_store = WebScanResultsDb(
                 vuln_id=vuln_id,
@@ -135,63 +128,71 @@ def xml_parser(username, root, project_id, scan_id):
                 description=desc,
                 severity=risk,
                 false_positive=false_positive,
-                jira_ticket='NA',
+                jira_ticket="NA",
                 vuln_status=vuln_status,
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                scanner='zap',
-                username=username
+                scanner="zap",
+                username=username,
             )
 
             data_store.save()
 
             false_p = WebScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash)
+                false_positive_hash=duplicate_hash
+            )
             fp_lenth_match = len(false_p)
 
             if fp_lenth_match == 1:
-                false_positive = 'Yes'
+                false_positive = "Yes"
             else:
-                false_positive = 'No'
+                false_positive = "No"
 
-    zap_all_vul = WebScanResultsDb.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+    zap_all_vul = WebScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, false_positive="No"
+    )
 
-    duplicate_count = WebScanResultsDb.objects.filter(username=username, scan_id=scan_id, vuln_duplicate='Yes')
+    duplicate_count = WebScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+    )
 
     total_high = len(zap_all_vul.filter(severity="High"))
     total_medium = len(zap_all_vul.filter(severity="Medium"))
     total_low = len(zap_all_vul.filter(severity="Low"))
     total_info = len(zap_all_vul.filter(severity="Informational"))
-    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
     total_vul = total_high + total_medium + total_low + total_info
 
-    WebScansDb.objects.filter(username=username, scan_id=scan_id) \
-        .update(total_vul=total_vul,
-                date_time=date_time,
-                high_vul=total_high,
-                medium_vul=total_medium,
-                low_vul=total_low,
-                info_vul=total_info,
-                total_dup=total_duplicate,
-                scan_url=scan_url
-                )
+    WebScansDb.objects.filter(username=username, scan_id=scan_id).update(
+        total_vul=total_vul,
+        date_time=date_time,
+        high_vul=total_high,
+        medium_vul=total_medium,
+        low_vul=total_low,
+        info_vul=total_info,
+        total_dup=total_duplicate,
+        scan_url=scan_url,
+    )
     if total_vul == total_duplicate:
-        WebScansDb.objects.filter(username=username, scan_id=scan_id) \
-            .update(total_vul=total_vul,
-                    date_time=date_time,
-                    high_vul=total_high,
-                    medium_vul=total_medium,
-                    low_vul=total_low,
-                    total_dup=total_duplicate
-                    )
+        WebScansDb.objects.filter(username=username, scan_id=scan_id).update(
+            total_vul=total_vul,
+            date_time=date_time,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            total_dup=total_duplicate,
+        )
 
     trend_update(username=username)
 
-    subject = 'Archery Tool Scan Status - ZAP Report Uploaded'
-    message = 'ZAP Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % (scan_url, total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - ZAP Report Uploaded"
+    message = (
+        "ZAP Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (scan_url, total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)
 
-    print('updated zap')
+    print("updated zap")

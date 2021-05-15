@@ -15,12 +15,17 @@
 # This file is part of ArcherySec Project.
 
 from rest_framework import serializers
-from .models import zap_scans_db
+
+from .models import WebScansDb
 
 
 class WebScanSerializer(serializers.Serializer):
-    scan_url = serializers.URLField(required=True, help_text=("Proper domain should be provided"))
-    project_id = serializers.UUIDField(required=True, help_text=("Project ID should be provided"))
+    scan_url = serializers.URLField(
+        required=True, help_text=("Proper domain should be provided")
+    )
+    project_id = serializers.UUIDField(
+        required=True, help_text=("Project ID should be provided")
+    )
     scan_scanid = serializers.UUIDField(read_only=True)
     # vul_num = serializers.CharField(read_only=True)
     vul_status = serializers.IntegerField(read_only=True)

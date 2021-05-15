@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0004_zap_scans_db_info_vul'),
+        ("webscanners", "0004_zap_scans_db_info_vul"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='arachni_scan_db',
-            name='info_vul',
+            model_name="arachni_scan_db",
+            name="info_vul",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

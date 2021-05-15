@@ -14,28 +14,29 @@
 #
 # This file is part of ArcherySec Project.
 
-from networkscanners.models import ov_scan_result_db, openvas_scan_db
-from datetime import datetime
-import uuid
 import hashlib
-from dashboard.views import trend_update
-from webscanners.zapscanner.views import email_sch_notify
+import uuid
+from datetime import datetime
 
-name = ''
-creation_time = ''
-modification_time = ''
-host = ''
-port = ''
-threat = ''
-severity = ''
-description = ''
-family = ''
-cvss_base = ''
-cve = ''
-bid = ''
-xref = ''
-tags = ''
-banner = ''
+from dashboard.views import trend_update
+from networkscanners.models import openvas_scan_db, ov_scan_result_db
+from utility.email_notify import email_sch_notify
+
+name = ""
+creation_time = ""
+modification_time = ""
+host = ""
+port = ""
+threat = ""
+severity = ""
+description = ""
+family = ""
+cvss_base = ""
+cve = ""
+bid = ""
+xref = ""
+tags = ""
+banner = ""
 vuln_color = None
 
 
@@ -136,78 +137,88 @@ def updated_xml_parser(root, project_id, scan_id, username):
         date_time = datetime.now()
         vul_id = uuid.uuid4()
         dup_data = name + host + severity + port
-        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
-        match_dup = ov_scan_result_db.objects.filter(username=username,
-            vuln_duplicate=duplicate_hash).values('vuln_duplicate').distinct()
+        duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
+        match_dup = (
+            ov_scan_result_db.objects.filter(
+                username=username, vuln_duplicate=duplicate_hash
+            )
+            .values("vuln_duplicate")
+            .distinct()
+        )
         lenth_match = len(match_dup)
-        vuln_color = ''
-        if threat == 'High':
-            vuln_color = 'danger'
-        elif threat == 'Medium':
-            vuln_color = 'warning'
-        elif threat == 'Low':
-            vuln_color = 'info'
-        elif threat == 'Log':
-            vuln_color = 'info'
+        vuln_color = ""
+        if threat == "High":
+            vuln_color = "danger"
+        elif threat == "Medium":
+            vuln_color = "warning"
+        elif threat == "Low":
+            vuln_color = "info"
+        elif threat == "Log":
+            vuln_color = "info"
         if lenth_match == 1:
-            duplicate_vuln = 'Yes'
+            duplicate_vuln = "Yes"
         elif lenth_match == 0:
-            duplicate_vuln = 'No'
+            duplicate_vuln = "No"
         else:
-            duplicate_vuln = 'None'
-        false_p = ov_scan_result_db.objects.filter(username=username,
-            false_positive_hash=duplicate_hash)
+            duplicate_vuln = "None"
+        false_p = ov_scan_result_db.objects.filter(
+            username=username, false_positive_hash=duplicate_hash
+        )
         fp_lenth_match = len(false_p)
         if fp_lenth_match == 1:
-            false_positive = 'Yes'
+            false_positive = "Yes"
         else:
-            false_positive = 'No'
-        save_all = ov_scan_result_db(scan_id=host,
-                                     vul_id=vul_id,
-                                     name=name,
-                                     creation_time=creation_time,
-                                     modification_time=modification_time,
-                                     host=host,
-                                     port=port,
-                                     threat=threat,
-                                     severity=severity,
-                                     description=description,
-                                     family=family,
-                                     cvss_base=cvss_base,
-                                     cve=cve,
-                                     bid=bid,
-                                     xref=xref,
-                                     tags=tags,
-                                     banner=banner,
-                                     date_time=date_time,
-                                     false_positive=false_positive,
-                                     vuln_status='Open',
-                                     dup_hash=duplicate_hash,
-                                     vuln_duplicate=duplicate_vuln,
-                                     project_id=project_id,
-                                     vuln_color=vuln_color,
-                                     username=username,
-                                     )
+            false_positive = "No"
+        save_all = ov_scan_result_db(
+            scan_id=host,
+            vul_id=vul_id,
+            name=name,
+            creation_time=creation_time,
+            modification_time=modification_time,
+            host=host,
+            port=port,
+            threat=threat,
+            severity=severity,
+            description=description,
+            family=family,
+            cvss_base=cvss_base,
+            cve=cve,
+            bid=bid,
+            xref=xref,
+            tags=tags,
+            banner=banner,
+            date_time=date_time,
+            false_positive=false_positive,
+            vuln_status="Open",
+            dup_hash=duplicate_hash,
+            vuln_duplicate=duplicate_vuln,
+            project_id=project_id,
+            vuln_color=vuln_color,
+            username=username,
+        )
         save_all.save()
         openvas_vul = ov_scan_result_db.objects.filter(username=username, scan_id=host)
         total_high = len(openvas_vul.filter(threat="High"))
         total_medium = len(openvas_vul.filter(threat="Medium"))
         total_low = len(openvas_vul.filter(threat="Low"))
-        total_duplicate = len(openvas_vul.filter(vuln_duplicate='Yes'))
+        total_duplicate = len(openvas_vul.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low
-        openvas_scan_db.objects.filter(username=username, scan_id=host). \
-            update(total_vul=total_vul,
-                   high_vul=total_high,
-                   medium_vul=total_medium,
-                   low_vul=total_low,
-                   total_dup=total_duplicate,
-                   scan_ip=host,
-                   )
+        openvas_scan_db.objects.filter(username=username, scan_id=host).update(
+            total_vul=total_vul,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            total_dup=total_duplicate,
+            scan_ip=host,
+        )
     trend_update(username=username)
-    subject = 'Archery Tool Scan Status - OpenVAS Report Uploaded'
-    message = 'OpenVAS Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % (scan_id, total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - OpenVAS Report Uploaded"
+    message = (
+        "OpenVAS Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (scan_id, total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)
 

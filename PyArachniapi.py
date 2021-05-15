@@ -5,8 +5,9 @@ __contributors__ = ["Anand Tiwari"]
 __status__ = "Production"
 __license__ = "MIT"
 
-import requests
 import json
+
+import requests
 
 
 class arachniAPI(object):
@@ -19,7 +20,7 @@ class arachniAPI(object):
         """
         :return: Information about all active scans, grouped by their id.
         """
-        return self._request('GET', '/scans')
+        return self._request("GET", "/scans")
 
     def scan_launch(self, data):
         """
@@ -88,7 +89,7 @@ class arachniAPI(object):
             }
         :return: Perform a new scan
         """
-        return self._request('POST', '/scans', data=data)
+        return self._request("POST", "/scans", data=data)
 
     def scan_status(self, id):
         """
@@ -96,7 +97,7 @@ class arachniAPI(object):
         :param id:
         :return:
         """
-        return self._request('GET', '/scans/%s' % id)
+        return self._request("GET", "/scans/%s" % id)
 
     def scan_summary(self, id):
         """
@@ -104,7 +105,7 @@ class arachniAPI(object):
         :param id:
         :return:
         """
-        return self._request('GET', '/scans/%s/summary' % id)
+        return self._request("GET", "/scans/%s/summary" % id)
 
     def scan_pause(self, id):
         """
@@ -113,7 +114,7 @@ class arachniAPI(object):
         :return:
         """
 
-        return self._request('PUT', '/scans/%s/pause' % id)
+        return self._request("PUT", "/scans/%s/pause" % id)
 
     def scan_resume(self, id):
 
@@ -121,13 +122,13 @@ class arachniAPI(object):
         :param id:
         :return:
         """
-        return self._request('PUT', '/scans/%s/resume' % id)
+        return self._request("PUT", "/scans/%s/resume" % id)
 
     def scan_xml_report(self, id):
         """
         :return:
         """
-        return self._request('GET', '/scans/%s/report.xml' % id)
+        return self._request("GET", "/scans/%s/report.xml" % id)
 
     def stop_scan(self, id):
         """
@@ -135,7 +136,7 @@ class arachniAPI(object):
         :param id:
         :return:
         """
-        return self._request('DELETE', '/scans/%s', id)
+        return self._request("DELETE", "/scans/%s", id)
 
     def _request(self, method, url, params=None, headers=None, data=None):
         """Common handler for all the HTTP requests."""
@@ -144,14 +145,17 @@ class arachniAPI(object):
 
         # set default headers
         if not headers:
-            headers = {
-                'accept': '*/*'
-            }
-            if method == 'POST' or method == 'PUT':
-                headers.update({'Content-Type': 'application/json'})
+            headers = {"accept": "*/*"}
+            if method == "POST" or method == "PUT":
+                headers.update({"Content-Type": "application/json"})
         try:
-            response = requests.request(method=method, url=self.host + ':' + self.port + url, params=params,
-                                        headers=headers, data=data)
+            response = requests.request(
+                method=method,
+                url=self.host + ":" + self.port + url,
+                params=params,
+                headers=headers,
+                data=data,
+            )
 
             try:
                 response.raise_for_status()
@@ -164,26 +168,36 @@ class arachniAPI(object):
                     except ValueError:
                         data = response.content
                 else:
-                    data = ''
+                    data = ""
 
-                return arachniResponse(success=success, response_code=response_code, data=data)
+                return arachniResponse(
+                    success=success, response_code=response_code, data=data
+                )
             except ValueError as e:
-                return arachniResponse(success=False, message="JSON response could not be decoded {}.".format(e))
+                return arachniResponse(
+                    success=False,
+                    message="JSON response could not be decoded {}.".format(e),
+                )
             except requests.exceptions.HTTPError as e:
                 if response.status_code == 400:
-                    return arachniResponse(success=False, response_code=400, message='Bad Request')
+                    return arachniResponse(
+                        success=False, response_code=400, message="Bad Request"
+                    )
                 else:
                     return arachniResponse(
-                        message='There was an error while handling the request. {}'.format(response.content),
-                        success=False)
+                        message="There was an error while handling the request. {}".format(
+                            response.content
+                        ),
+                        success=False,
+                    )
         except Exception as e:
-            return arachniResponse(success=False, message='Eerror is %s' % e)
+            return arachniResponse(success=False, message="Eerror is %s" % e)
 
 
 class arachniResponse(object):
     """Container for all arachni REST API response, even errors."""
 
-    def __init__(self, success, message='OK', response_code=-1, data=None):
+    def __init__(self, success, message="OK", response_code=-1, data=None):
         self.message = message
         self.success = success
         self.response_code = response_code
@@ -198,6 +212,8 @@ class arachniResponse(object):
     def data_json(self, pintu=False):
         """Returns the data as a valid JSON String."""
         if pintu:
-            return json.dumps(self.data, sort_keys=True, indent=4, separators=(',', ': '))
+            return json.dumps(
+                self.data, sort_keys=True, indent=4, separators=(",", ": ")
+            )
         else:
             return json.dumps(self.data)

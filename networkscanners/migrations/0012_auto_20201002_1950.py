@@ -6,51 +6,51 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0011_auto_20201002_1855'),
+        ("networkscanners", "0011_auto_20201002_1855"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='nessus_scan_db',
-            old_name='SEVERITY_HIGH',
-            new_name='total_high',
+            model_name="nessus_scan_db",
+            old_name="SEVERITY_HIGH",
+            new_name="total_high",
         ),
         migrations.RenameField(
-            model_name='nessus_scan_db',
-            old_name='SEVERITY_LOW',
-            new_name='total_low',
+            model_name="nessus_scan_db",
+            old_name="SEVERITY_LOW",
+            new_name="total_low",
         ),
         migrations.RenameField(
-            model_name='nessus_scan_db',
-            old_name='SEVERITY_MEDIUM',
-            new_name='total_medium',
+            model_name="nessus_scan_db",
+            old_name="SEVERITY_MEDIUM",
+            new_name="total_medium",
         ),
         migrations.RemoveField(
-            model_name='nessus_scan_db',
-            name='critical_total',
+            model_name="nessus_scan_db",
+            name="critical_total",
         ),
         migrations.RemoveField(
-            model_name='nessus_scan_db',
-            name='high_total',
+            model_name="nessus_scan_db",
+            name="high_total",
         ),
         migrations.RemoveField(
-            model_name='nessus_scan_db',
-            name='info_total',
+            model_name="nessus_scan_db",
+            name="info_total",
         ),
         migrations.RemoveField(
-            model_name='nessus_scan_db',
-            name='low_total',
+            model_name="nessus_scan_db",
+            name="low_total",
         ),
         migrations.RemoveField(
-            model_name='nessus_scan_db',
-            name='medium_total',
+            model_name="nessus_scan_db",
+            name="medium_total",
         ),
         migrations.RemoveField(
-            model_name='nessus_scan_db',
-            name='total_vul',
+            model_name="nessus_scan_db",
+            name="total_vul",
         ),
         migrations.RemoveField(
-            model_name='nessus_scan_results_db',
-            name='vul_id',
+            model_name="nessus_scan_results_db",
+            name="vul_id",
         ),
     ]

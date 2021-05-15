@@ -14,23 +14,25 @@
 #
 # This file is part of ArcherySec Project.
 
-from staticscanners.models import semgrepscan_scan_db, semgrepscan_scan_results_db
-import uuid
 import hashlib
-from datetime import datetime
 import json
-from dashboard.views import trend_update
-from webscanners.zapscanner.views import email_sch_notify
+import uuid
+from datetime import datetime
 
-vul_col = ''
-Target = ''
-PkgName = ''
-InstalledVersion = ''
-FixedVersion = ''
-Title = ''
-Description = ''
-Severity = ''
-References = ''
+from dashboard.views import trend_update
+from staticscanners.models import (StaticScanResultsDb,
+                                   StaticScansDb)
+from utility.email_notify import email_sch_notify
+
+vul_col = ""
+Target = ""
+PkgName = ""
+InstalledVersion = ""
+FixedVersion = ""
+Title = ""
+Description = ""
+Severity = ""
+References = ""
 
 
 def semgrep_report_json(data, project_id, scan_id, username):
@@ -42,97 +44,99 @@ def semgrep_report_json(data, project_id, scan_id, username):
     :return:
     """
     date_time = datetime.now()
-    vul_col = ''
+    vul_col = ""
 
-    vuln = data['results']
+    vuln = data["results"]
 
     for vuln_data in vuln:
         try:
-            check_id = vuln_data['check_id']
+            check_id = vuln_data["check_id"]
         except Exception as e:
-            check_id = 'Not Found'
+            check_id = "Not Found"
 
         try:
-            path = vuln_data['path']
+            path = vuln_data["path"]
         except Exception as e:
-            path = 'Not Found'
+            path = "Not Found"
 
         try:
-            start = vuln_data['start']
+            start = vuln_data["start"]
         except Exception as e:
-            start = 'Not Found'
+            start = "Not Found"
 
         try:
-            end = vuln_data['end']
+            end = vuln_data["end"]
         except Exception as e:
-            end = 'Not Found'
+            end = "Not Found"
 
         try:
-            message = vuln_data['extra']['message']
+            message = vuln_data["extra"]["message"]
         except Exception as e:
-            message = 'Not Found'
+            message = "Not Found"
 
         try:
-            metavars = vuln_data['extra']['metavars']
+            metavars = vuln_data["extra"]["metavars"]
         except Exception as e:
-            metavars = 'Not Found'
+            metavars = "Not Found"
 
         try:
-            metadata = vuln_data['extra']['metadata']
+            metadata = vuln_data["extra"]["metadata"]
         except Exception as e:
-            metadata = 'Not Found'
+            metadata = "Not Found"
 
         try:
-            severity = vuln_data['extra']['severity']
+            severity = vuln_data["extra"]["severity"]
         except Exception as e:
-            severity = 'Not Found'
+            severity = "Not Found"
 
         try:
-            lines = vuln_data['extra']['lines']
+            lines = vuln_data["extra"]["lines"]
         except Exception as e:
-            lines = 'Not Found'
+            lines = "Not Found"
 
         if severity == "ERROR":
             severity = "High"
             vul_col = "danger"
 
-        elif severity == 'WARNING':
-            severity = 'Medium'
+        elif severity == "WARNING":
+            severity = "Medium"
             vul_col = "warning"
 
-        elif severity == 'INFORMATION':
-            severity = 'Low'
+        elif severity == "INFORMATION":
+            severity = "Low"
             vul_col = "info"
 
         vul_id = uuid.uuid4()
 
         dup_data = str(check_id) + str(severity) + str(path)
 
-        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = semgrepscan_scan_results_db.objects.filter(username=username,
-                                                               dup_hash=duplicate_hash).values('dup_hash')
+        match_dup = StaticScanResultsDb.objects.filter(
+            username=username, dup_hash=duplicate_hash
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
-            duplicate_vuln = 'No'
+            duplicate_vuln = "No"
 
-            false_p = semgrepscan_scan_results_db.objects.filter(username=username,
-                                                                 false_positive_hash=duplicate_hash)
+            false_p = StaticScanResultsDb.objects.filter(
+                username=username, false_positive_hash=duplicate_hash
+            )
             fp_lenth_match = len(false_p)
 
             if fp_lenth_match == 1:
-                false_positive = 'Yes'
+                false_positive = "Yes"
             else:
-                false_positive = 'No'
+                false_positive = "No"
 
-            save_all = semgrepscan_scan_results_db(
+            save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
-                vuln_status='Open',
+                vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
@@ -149,18 +153,18 @@ def semgrep_report_json(data, project_id, scan_id, username):
             save_all.save()
 
         else:
-            duplicate_vuln = 'Yes'
+            duplicate_vuln = "Yes"
 
-            save_all = semgrepscan_scan_results_db(
+            save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
-                vuln_status='Duplicate',
+                vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive='Duplicate',
+                false_positive="Duplicate",
                 check_id=check_id,
                 path=path,
                 severity=severity,
@@ -173,30 +177,35 @@ def semgrep_report_json(data, project_id, scan_id, username):
             )
             save_all.save()
 
-    all_findbugs_data = semgrepscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                   false_positive='No')
+    all_findbugs_data = StaticScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, false_positive="No"
+    )
 
-    duplicate_count = semgrepscan_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 vuln_duplicate='Yes')
+    duplicate_count = StaticScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+    )
 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
     total_low = len(all_findbugs_data.filter(severity="Low"))
-    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    semgrepscan_scan_db.objects.filter(username=username, scan_id=scan_id).update(
+    StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
         total_vul=total_vul,
         date_time=date_time,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,
-        total_dup=total_duplicate
+        total_dup=total_duplicate,
     )
     trend_update(username=username)
-    subject = 'Archery Tool Scan Status - semgrep Report Uploaded'
-    message = 'semgrep Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % ("semgrep", total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - semgrep Report Uploaded"
+    message = (
+        "semgrep Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % ("semgrep", total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)

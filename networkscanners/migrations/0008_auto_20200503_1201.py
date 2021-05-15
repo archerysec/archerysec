@@ -6,33 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0007_nessus_report_db_severity_color'),
+        ("networkscanners", "0007_nessus_report_db_severity_color"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='nessus_report_db',
-            name='username',
+            model_name="nessus_report_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='nessus_scan_db',
-            name='username',
+            model_name="nessus_scan_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='ov_scan_result_db',
-            name='username',
+            model_name="ov_scan_result_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='scan_save_db',
-            name='username',
+            model_name="scan_save_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='task_schedule_db',
-            name='username',
+            model_name="task_schedule_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
     ]

@@ -15,21 +15,14 @@
 # This file is part of ArcherySec Project.
 
 from django.urls import include, path
+
 from projects import views
 
-app_name = 'projects'
+app_name = "projects"
 
 urlpatterns = [
-    path('create/',
-        views.create,
-        name='create'),
-    path('create_form/',
-        views.create_form,
-        name='create_form'),
-    path('',
-        views.projects,
-        name='projects'),
-    path('project_edit/',
-        views.project_edit,
-        name='project_edit'),
+    path("create/", views.create, name="create"),
+    path("create_form/", views.create_form, name="create_form"),
+    path("", views.projects, name="projects"),
+    path("project_edit/", views.project_edit, name="project_edit"),
 ]

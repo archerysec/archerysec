@@ -8,23 +8,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('compliance', '0005_inspec_scan_results_db_controls_tags_audit_text'),
+        ("compliance", "0005_inspec_scan_results_db_controls_tags_audit_text"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='inspec_scan_db',
-            name='inspec_failed',
+            model_name="inspec_scan_db",
+            name="inspec_failed",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='inspec_scan_db',
-            name='inspec_passed',
+            model_name="inspec_scan_db",
+            name="inspec_passed",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='inspec_scan_db',
-            name='inspec_skipped',
+            model_name="inspec_scan_db",
+            name="inspec_skipped",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

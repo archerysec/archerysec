@@ -13,15 +13,17 @@
 # Twitter: @anandtiwarics
 #
 # This file is part of ArcherySec Project.
-from builtins import len
-
-from staticscanners.models import dependencycheck_scan_db, dependencycheck_scan_results_db
-import uuid
 import hashlib
+import uuid
+from builtins import len
 from datetime import datetime
+
 from django.shortcuts import HttpResponse
+
 from dashboard.views import trend_update
-from webscanners.zapscanner.views import email_sch_notify
+from staticscanners.models import (StaticScansDb,
+                                   StaticScanResultsDb)
+from utility.email_notify import email_sch_notify
 
 
 def xml_parser(data, project_id, scan_id, username):
@@ -33,196 +35,211 @@ def xml_parser(data, project_id, scan_id, username):
     :return:
     """
     date_time = datetime.now()
-    fileName = 'Na'
-    filePath = 'Na'
-    evidenceCollected = 'Na'
-    name = 'Na'
-    cvssScore = 'Na'
-    cvssAccessVector = 'Na'
-    cvssAccessComplexity = 'Na'
-    cvssAuthenticationr = 'Na'
-    cvssConfidentialImpact = 'Na'
-    cvssIntegrityImpact = 'Na'
-    cvssAvailabilityImpact = 'Na'
-    severity = 'Na'
-    cwe = 'Na'
-    description = 'Na'
-    references = 'Na'
-    vulnerableSoftware = 'Na'
-    vul_col = 'Na'
+    fileName = "Na"
+    filePath = "Na"
+    evidenceCollected = "Na"
+    name = "Na"
+    cvssScore = "Na"
+    cvssAccessVector = "Na"
+    cvssAccessComplexity = "Na"
+    cvssAuthenticationr = "Na"
+    cvssConfidentialImpact = "Na"
+    cvssIntegrityImpact = "Na"
+    cvssAvailabilityImpact = "Na"
+    severity = "Na"
+    cwe = "Na"
+    description = "Na"
+    references = "Na"
+    vulnerableSoftware = "Na"
+    vul_col = "Na"
 
-    pt = data.xpath('namespace-uri(.)')
+    pt = data.xpath("namespace-uri(.)")
     # root = data.getroot()
     inst = []
     for scan in data:
         for dependencies in scan:
             for dependency in dependencies:
-                if dependency.tag == '{%s}fileName' % pt:
+                if dependency.tag == "{%s}fileName" % pt:
                     fileName = dependency.text
-                if dependency.tag == '{%s}filePath' % pt:
+                if dependency.tag == "{%s}filePath" % pt:
                     filePath = dependency.text
-                if dependency.tag == '{%s}evidenceCollected' % pt:
+                if dependency.tag == "{%s}evidenceCollected" % pt:
                     evidenceCollected = dependency.text
                 for vuln in dependency:
-                    if vuln.tag == '{%s}vulnerability' % pt:
-                        if pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.0.xsd':
+                    if vuln.tag == "{%s}vulnerability" % pt:
+                        if (
+                            pt
+                            == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.0.xsd"
+                        ):
                             for vulner in vuln:
-                                if vulner.tag == '{%s}name' % pt:
+                                if vulner.tag == "{%s}name" % pt:
                                     name = vulner.text
-                                if vulner.tag == '{%s}description' % pt:
+                                if vulner.tag == "{%s}description" % pt:
                                     description = vulner.text
-                                if vulner.tag == '{%s}references' % pt:
+                                if vulner.tag == "{%s}references" % pt:
                                     references = vulner.text
-                                if vulner.tag == '{%s}vulnerableSoftware' % pt:
+                                if vulner.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = vulner.text
                                 for vuln_dat in vulner:
-                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                    if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                    if vuln_dat.tag == "{%s}severity" % pt:
                                         severity_dat = vuln_dat.text
-                                        if severity_dat == 'HIGH':
-                                            severity = 'High'
-                                        elif severity_dat == 'MEDIUM':
-                                            severity = 'Medium'
-                                        elif severity_dat == 'LOW':
-                                            severity = 'Low'
+                                        if severity_dat == "HIGH":
+                                            severity = "High"
+                                        elif severity_dat == "MEDIUM":
+                                            severity = "Medium"
+                                        elif severity_dat == "LOW":
+                                            severity = "Low"
 
-                        elif pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.2.xsd':
+                        elif (
+                            pt
+                            == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.2.xsd"
+                        ):
                             for dc22 in vuln:
 
-                                if dc22.tag == '{%s}name' % pt:
+                                if dc22.tag == "{%s}name" % pt:
                                     name = dc22.text
 
-                                if dc22.tag == '{%s}description' % pt:
+                                if dc22.tag == "{%s}description" % pt:
                                     description = dc22.text
 
-                                if dc22.tag == '{%s}vulnerableSoftware' % pt:
+                                if dc22.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = dc22.text
 
                                 for vuln_dat in dc22:
                                     for d in vuln_dat:
-                                        if d.tag == '{%s}url' % pt:
+                                        if d.tag == "{%s}url" % pt:
                                             references = d.text
 
-                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                    if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                    if vuln_dat.tag == "{%s}severity" % pt:
                                         severity_dat = vuln_dat.text
-                                        if severity_dat == 'HIGH':
-                                            severity = 'High'
-                                        elif severity_dat == 'MEDIUM':
-                                            severity = 'Medium'
-                                        elif severity_dat == 'LOW':
-                                            severity = 'Low'
-                        elif pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.3.xsd':
+                                        if severity_dat == "HIGH":
+                                            severity = "High"
+                                        elif severity_dat == "MEDIUM":
+                                            severity = "Medium"
+                                        elif severity_dat == "LOW":
+                                            severity = "Low"
+                        elif (
+                            pt
+                            == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.3.xsd"
+                        ):
                             for dc22 in vuln:
 
-                                if dc22.tag == '{%s}name' % pt:
+                                if dc22.tag == "{%s}name" % pt:
                                     name = dc22.text
 
-                                if dc22.tag == '{%s}description' % pt:
+                                if dc22.tag == "{%s}description" % pt:
                                     description = dc22.text
 
-                                if dc22.tag == '{%s}vulnerableSoftware' % pt:
+                                if dc22.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = dc22.text
 
                                 for vuln_dat in dc22:
                                     for d in vuln_dat:
-                                        if d.tag == '{%s}url' % pt:
+                                        if d.tag == "{%s}url" % pt:
                                             references = d.text
 
-                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                    if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                    if vuln_dat.tag == "{%s}severity" % pt:
                                         severity_dat = vuln_dat.text
-                                        if severity_dat == 'HIGH':
-                                            severity = 'High'
-                                        elif severity_dat == 'MEDIUM':
-                                            severity = 'Medium'
-                                        elif severity_dat == 'LOW':
-                                            severity = 'Low'
-                        elif pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.4.xsd':
+                                        if severity_dat == "HIGH":
+                                            severity = "High"
+                                        elif severity_dat == "MEDIUM":
+                                            severity = "Medium"
+                                        elif severity_dat == "LOW":
+                                            severity = "Low"
+                        elif (
+                            pt
+                            == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.4.xsd"
+                        ):
                             for dc22 in vuln:
 
-                                if dc22.tag == '{%s}name' % pt:
+                                if dc22.tag == "{%s}name" % pt:
                                     name = dc22.text
 
-                                if dc22.tag == '{%s}description' % pt:
+                                if dc22.tag == "{%s}description" % pt:
                                     description = dc22.text
 
-                                if dc22.tag == '{%s}vulnerableSoftware' % pt:
+                                if dc22.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = dc22.text
 
                                 for vuln_dat in dc22:
                                     for d in vuln_dat:
-                                        if d.tag == '{%s}url' % pt:
+                                        if d.tag == "{%s}url" % pt:
                                             references = d.text
 
-                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                    if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                    if vuln_dat.tag == "{%s}severity" % pt:
                                         severity_dat = vuln_dat.text
-                                        if severity_dat == 'HIGH':
-                                            severity = 'High'
-                                        elif severity_dat == 'MEDIUM':
-                                            severity = 'Medium'
-                                        elif severity_dat == 'LOW':
-                                            severity = 'Low'
-                        elif pt == 'https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd':
+                                        if severity_dat == "HIGH":
+                                            severity = "High"
+                                        elif severity_dat == "MEDIUM":
+                                            severity = "Medium"
+                                        elif severity_dat == "LOW":
+                                            severity = "Low"
+                        elif (
+                            pt
+                            == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd"
+                        ):
                             for dc22 in vuln:
 
-                                if dc22.tag == '{%s}name' % pt:
+                                if dc22.tag == "{%s}name" % pt:
                                     name = dc22.text
 
-                                if dc22.tag == '{%s}description' % pt:
+                                if dc22.tag == "{%s}description" % pt:
                                     description = dc22.text
 
-                                if dc22.tag == '{%s}vulnerableSoftware' % pt:
+                                if dc22.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = dc22.text
 
                                 for vuln_dat in dc22:
                                     for d in vuln_dat:
-                                        if d.tag == '{%s}url' % pt:
+                                        if d.tag == "{%s}url" % pt:
                                             references = d.text
 
-                                    if vuln_dat.tag == '{%s}cwe' % pt:
+                                    if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == '{%s}severity' % pt:
+                                    if vuln_dat.tag == "{%s}severity" % pt:
                                         severity_dat = vuln_dat.text
-                                        if severity_dat == 'HIGH':
-                                            severity = 'High'
-                                        elif severity_dat == 'MEDIUM':
-                                            severity = 'Medium'
-                                        elif severity_dat == 'LOW':
-                                            severity = 'Low'
+                                        if severity_dat == "HIGH":
+                                            severity = "High"
+                                        elif severity_dat == "MEDIUM":
+                                            severity = "Medium"
+                                        elif severity_dat == "LOW":
+                                            severity = "Low"
 
                         else:
                             for vulner in vuln:
-                                if vulner.tag == '{%s}name' % pt:
+                                if vulner.tag == "{%s}name" % pt:
                                     name = vulner.text
-                                if vulner.tag == '{%s}cvssScore' % pt:
+                                if vulner.tag == "{%s}cvssScore" % pt:
                                     cvssScore = vulner.text
-                                if vulner.tag == '{%s}cvssAccessVector' % pt:
+                                if vulner.tag == "{%s}cvssAccessVector" % pt:
                                     cvssAccessVector = vulner.text
-                                if vulner.tag == '{%s}cvssAccessComplexity' % pt:
+                                if vulner.tag == "{%s}cvssAccessComplexity" % pt:
                                     cvssAccessComplexity = vulner.text
-                                if vulner.tag == '{%s}cvssAuthenticationr' % pt:
+                                if vulner.tag == "{%s}cvssAuthenticationr" % pt:
                                     cvssAuthenticationr = vulner.text
-                                if vulner.tag == '{%s}cvssConfidentialImpact' % pt:
+                                if vulner.tag == "{%s}cvssConfidentialImpact" % pt:
                                     cvssConfidentialImpact = vulner.text
-                                if vulner.tag == '{%s}cvssIntegrityImpact' % pt:
+                                if vulner.tag == "{%s}cvssIntegrityImpact" % pt:
                                     cvssIntegrityImpact = vulner.text
-                                if vulner.tag == '{%s}cvssAvailabilityImpact' % pt:
+                                if vulner.tag == "{%s}cvssAvailabilityImpact" % pt:
                                     cvssAvailabilityImpact = vulner.text
-                                if vulner.tag == '{%s}severity' % pt:
+                                if vulner.tag == "{%s}severity" % pt:
                                     severity = vulner.text
-                                if vulner.tag == '{%s}cwe' % pt:
+                                if vulner.tag == "{%s}cwe" % pt:
                                     cwe = vulner.text
-                                if vulner.tag == '{%s}description' % pt:
+                                if vulner.tag == "{%s}description" % pt:
                                     description = vulner.text
-                                if vulner.tag == '{%s}references' % pt:
+                                if vulner.tag == "{%s}references" % pt:
                                     references = vulner.text
-                                if vulner.tag == '{%s}vulnerableSoftware' % pt:
+                                if vulner.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = vulner.text
 
                         date_time = datetime.now()
@@ -231,35 +248,39 @@ def xml_parser(data, project_id, scan_id, username):
                         if severity == "High":
                             vul_col = "danger"
 
-                        elif severity == 'Medium':
+                        elif severity == "Medium":
                             vul_col = "warning"
 
-                        elif severity == 'Low':
+                        elif severity == "Low":
                             vul_col = "info"
 
                         dup_data = name + fileName + severity
-                        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+                        duplicate_hash = hashlib.sha256(
+                            dup_data.encode("utf-8")
+                        ).hexdigest()
 
-                        match_dup = dependencycheck_scan_results_db.objects.filter(username=username,
-                            dup_hash=duplicate_hash).values('dup_hash')
+                        match_dup = StaticScanResultsDb.objects.filter(
+                            username=username, dup_hash=duplicate_hash
+                        ).values("dup_hash")
                         lenth_match = len(match_dup)
 
                         if lenth_match == 0:
-                            duplicate_vuln = 'No'
+                            duplicate_vuln = "No"
 
-                            false_p = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                     false_positive_hash=duplicate_hash)
+                            false_p = StaticScanResultsDb.objects.filter(
+                                username=username, false_positive_hash=duplicate_hash
+                            )
                             fp_lenth_match = len(false_p)
 
                             if fp_lenth_match == 1:
-                                false_positive = 'Yes'
+                                false_positive = "Yes"
                             else:
-                                false_positive = 'No'
+                                false_positive = "No"
 
-                            if cwe == 'Na':
+                            if cwe == "Na":
                                 cwe = name
 
-                            save_all = dependencycheck_scan_results_db(
+                            save_all = StaticScanResultsDb(
                                 # date_time=date_time,
                                 vuln_id=vul_id,
                                 scan_id=scan_id,
@@ -282,7 +303,7 @@ def xml_parser(data, project_id, scan_id, username):
                                 references=references,
                                 vulnerableSoftware=vulnerableSoftware,
                                 vul_col=vul_col,
-                                vuln_status='Open',
+                                vuln_status="Open",
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 false_positive=false_positive,
@@ -291,21 +312,22 @@ def xml_parser(data, project_id, scan_id, username):
                             save_all.save()
 
                         else:
-                            duplicate_vuln = 'Yes'
+                            duplicate_vuln = "Yes"
 
-                            false_p = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                     false_positive_hash=duplicate_hash)
+                            false_p = StaticScanResultsDb.objects.filter(
+                                username=username, false_positive_hash=duplicate_hash
+                            )
                             fp_lenth_match = len(false_p)
 
                             if fp_lenth_match == 1:
-                                false_positive = 'Yes'
+                                false_positive = "Yes"
                             else:
-                                false_positive = 'No'
+                                false_positive = "No"
 
-                            if cwe == 'Na':
+                            if cwe == "Na":
                                 cwe = name
 
-                            save_all = dependencycheck_scan_results_db(
+                            save_all = StaticScanResultsDb(
                                 # date_time=date_time,
                                 vuln_id=vul_id,
                                 scan_id=scan_id,
@@ -328,7 +350,7 @@ def xml_parser(data, project_id, scan_id, username):
                                 references=references,
                                 vulnerableSoftware=vulnerableSoftware,
                                 vul_col=vul_col,
-                                vuln_status='Duplicate',
+                                vuln_status="Duplicate",
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 false_positive="Duplicate",
@@ -336,31 +358,37 @@ def xml_parser(data, project_id, scan_id, username):
                             )
                             save_all.save()
 
+        all_dependency_data = StaticScanResultsDb.objects.filter(
+            username=username, scan_id=scan_id, false_positive="No"
+        )
 
-        all_dependency_data = dependencycheck_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
-
-        duplicate_count = dependencycheck_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                             vuln_duplicate='Yes')
+        duplicate_count = StaticScanResultsDb.objects.filter(
+            username=username, scan_id=scan_id, vuln_duplicate="Yes"
+        )
 
         total_vul = len(all_dependency_data)
         total_high = len(all_dependency_data.filter(severity="High"))
         total_medium = len(all_dependency_data.filter(severity="Medium"))
         total_low = len(all_dependency_data.filter(severity="Low"))
-        total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+        total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-        dependencycheck_scan_db.objects.filter(username=username, scan_id=scan_id).update(
+        StaticScanResultsDb.objects.filter(
+            username=username, scan_id=scan_id
+        ).update(
             date_time=date_time,
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,
-            total_dup=total_duplicate
+            total_dup=total_duplicate,
         )
     trend_update(username=username)
-    subject = 'Archery Tool Scan Status - DependencyCheck Report Uploaded'
-    message = 'DependencyCheck Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % (name, total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - DependencyCheck Report Uploaded"
+    message = (
+        "DependencyCheck Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s" % (name, total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)
 

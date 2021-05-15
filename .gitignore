@@ -21,3 +21,4 @@ package-lock.json
 nikto_output
 htmlcov
 .coverage
+openvas_lib-master

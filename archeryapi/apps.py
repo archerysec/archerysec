@@ -20,4 +20,4 @@ from django.apps import AppConfig
 
 
 class ArcheryapiConfig(AppConfig):
-    name = 'archeryapi'
+    name = "archeryapi"

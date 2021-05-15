@@ -20,4 +20,4 @@ from django.apps import AppConfig
 
 
 class StaticscannersConfig(AppConfig):
-    name = 'staticscanners'
+    name = "staticscanners"

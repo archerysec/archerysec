@@ -14,65 +14,59 @@
 #
 # This file is part of ArcherySec Project.
 
+import json
+import os
 import threading
 import time
 import uuid
+from datetime import datetime
+
 import defusedxml.ElementTree as ET
-from django.contrib import auth
-from django.contrib import messages
+from background_task import background
+from background_task.models import Task
+from django.contrib import auth, messages
 from django.contrib.auth.models import User
 from django.core import signing
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import HttpResponse, render
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_protect
+from jira import JIRA
+from lxml import etree
+from notifications.models import Notification
+from PyBurprestapi import burpscanner
 from selenium import webdriver
 from stronghold.decorators import public
-from archerysettings import load_settings, save_settings
-from projects.models import project_db
-from scanners.scanner_parser.web_scanner import zap_xml_parser, \
-    arachni_xml_parser, netsparker_xml_parser, webinspect_xml_parser, acunetix_xml_parser, burp_xml_parser
-# from scanners.scanner_plugin.web_scanner import burp_plugin
-from scanners.scanner_plugin.web_scanner import zap_plugin, burp_plugin
-from webscanners.models import \
-    zap_scans_db, \
-    zap_spider_db, \
-    zap_spider_results, \
-    cookie_db, excluded_db, \
-    burp_scan_db, \
-    arachni_scan_db, \
-    task_schedule_db, \
-    acunetix_scan_db, WebScanResultsDb, WebScansDb
-from background_task import background
-from datetime import datetime
-from background_task.models import Task
-import os
-from jiraticketing.models import jirasetting
-from webscanners.models import netsparker_scan_db, \
-    webinspect_scan_db
-from webscanners.zapscanner.views import launch_schudle_zap_scan
-from archerysettings.models import zap_settings_db, \
-    burp_setting_db, \
-    nmap_vulners_setting_db, \
-    arachni_settings_db, email_db
-from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser, \
-    checkmarx_xml_report_parser
-from lxml import etree
-from staticscanners.models import dependencycheck_scan_db, \
-    findbugs_scan_db, checkmarx_scan_results_db, checkmarx_scan_db
-from tools.models import nikto_result_db
-import codecs
-from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
-from notifications.models import Notification
-from django.urls import reverse
-from PyBurprestapi import burpscanner
-from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin
-import json
-import PyArachniapi
-from jira import JIRA
-import signal
 
-setting_file = os.getcwd() + '/' + 'apidata.json'
+import PyArachniapi
+from archerysettings import load_settings
+from archerysettings.models import (arachni_settings_db,
+                                    email_db, nmap_vulners_setting_db,
+                                    zap_settings_db)
+from jiraticketing.models import jirasetting
+from projects.models import project_db
+from scanners.scanner_parser.staticscanner_parser import (
+    checkmarx_xml_report_parser, dependencycheck_report_parser,
+    findbugs_report_parser)
+from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
+from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
+                                                 arachni_xml_parser,
+                                                 burp_xml_parser,
+                                                 netsparker_xml_parser,
+                                                 webinspect_xml_parser,
+                                                 zap_xml_parser)
+from scanners.scanner_plugin.network_scanner.openvas_plugin import \
+    OpenVAS_Plugin
+from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
+from staticscanners.models import (StaticScansDb)
+from tools.models import nikto_result_db
+from webscanners.models import (WebScansDb, cookie_db,
+                                excluded_db,
+                                task_schedule_db)
+from webscanners.zapscanner.views import launch_schudle_zap_scan
+
+setting_file = os.getcwd() + "/" + "apidata.json"
 
 # All global variable
 spider_status = "0"
@@ -138,7 +132,7 @@ def login(request):
     """
     c = {}
     c.update(request)
-    return render(request, "login.html", c)
+    return render(request, "login/login.html", c)
 
 
 @public
@@ -148,16 +142,24 @@ def auth_view(request):
     :param request:
     :return:
     """
-    username = request.POST.get('username', '', )
-    password = request.POST.get('password', '', )
+    username = request.POST.get(
+        "username",
+        "",
+    )
+    password = request.POST.get(
+        "password",
+        "",
+    )
     user = auth.authenticate(username=username, password=password)
 
     if user is not None:
         auth.login(request, user)
-        return HttpResponseRedirect(reverse('dashboard:dashboard'))
+        return HttpResponseRedirect(reverse("dashboard:dashboard"))
     else:
-        messages.add_message(request, messages.ERROR, 'Please check your login details and try again.')
-        return HttpResponseRedirect(reverse('webscanners:login'))
+        messages.add_message(
+            request, messages.ERROR, "Please check your login details and try again."
+        )
+        return HttpResponseRedirect(reverse("webscanners:login"))
 
 
 @public
@@ -168,7 +170,7 @@ def logout(request):
     :return:
     """
     auth.logout(request)
-    return render(request, 'logout.html')
+    return render(request, "logout/logout.html")
 
 
 @public
@@ -178,24 +180,24 @@ def signup(request):
     :param request:
     :return:
     """
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        email = request.POST.get('email')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        email = request.POST.get("email")
         user_c = User.objects.filter(username=username)
         if user_c:
-            messages.add_message(request, messages.ERROR, 'User already exists')
-            return HttpResponseRedirect(reverse('webscanners:signup'))
+            messages.add_message(request, messages.ERROR, "User already exists")
+            return HttpResponseRedirect(reverse("webscanners:signup"))
         else:
             user = User.objects.create_user(username, email, password)
             user.save()
-        return HttpResponseRedirect(reverse('webscanners:login'))
+        return HttpResponseRedirect(reverse("webscanners:login"))
 
-    return render(request, 'signup.html')
+    return render(request, "signup/signup.html")
 
 
 def error_404_view(request):
-    return render(request, '404.html')
+    return render(request, "404.html")
 
 
 def loggedin(request):
@@ -204,15 +206,7 @@ def loggedin(request):
     :param request:
     :return:
     """
-    return render(request, 'webscanner.html')
-
-
-def invalid_login():
-    """
-    Validate user login.
-    :return:
-    """
-    return render('invalid_login.html')
+    return render(request, "webscanners/webscanner.html")
 
 
 def del_notify(request):
@@ -220,13 +214,13 @@ def del_notify(request):
 
     :return:
     """
-    if request.method == 'GET':
-        notify_id = request.GET['notify_id']
+    if request.method == "GET":
+        notify_id = request.GET["notify_id"]
 
         notify_del = Notification.objects.filter(id=notify_id)
         notify_del.delete()
 
-    return HttpResponseRedirect(reverse('dashboard:dashboard'))
+    return HttpResponseRedirect(reverse("dashboard:dashboard"))
 
 
 def del_all_notify(request):
@@ -234,11 +228,11 @@ def del_all_notify(request):
 
     :return:
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         notify_del = Notification.objects.all()
         notify_del.delete()
 
-    return HttpResponseRedirect(reverse('dashboard:dashboard'))
+    return HttpResponseRedirect(reverse("dashboard:dashboard"))
 
 
 def index(request):
@@ -248,9 +242,7 @@ def index(request):
     :return:
     """
     username = request.user.username
-    all_urls = zap_spider_db.objects.filter(username=username)
     all_scans = WebScansDb.objects.filter(username=username)
-    all_spider_results = zap_spider_results.objects.filter(username=username)
     all_excluded_url = excluded_db.objects.filter(username=username)
     all_cookies = cookie_db.objects.filter(username=username)
 
@@ -258,45 +250,42 @@ def index(request):
 
     all_notify = Notification.objects.unread()
 
-    return render(request,
-                  'webscanner.html',
-                  {
-                      'all_urls': all_urls,
-                      'spider_status': spider_status,
-                      'scans_status': scans_status,
-                      'all_scans': all_scans,
-                      'all_spider_results': all_spider_results,
-                      'spider_alert': spider_alert,
-                      'all_excluded_url': all_excluded_url,
-                      'all_cookies': all_cookies,
-                      'all_scans_db': all_scans_db,
-                      'message': all_notify
-                  }
-                  )
+    return render(
+        request,
+        "webscanners/webscanner.html",
+        {
+            "spider_status": spider_status,
+            "scans_status": scans_status,
+            "all_scans": all_scans,
+            "spider_alert": spider_alert,
+            "all_excluded_url": all_excluded_url,
+            "all_cookies": all_cookies,
+            "all_scans_db": all_scans_db,
+            "message": all_notify,
+        },
+    )
 
 
 @background(schedule=60)
 def task(target_url, project_id, scanner):
-    rescan_id = ''
-    rescan = 'No'
-    target__split = target_url.split(',')
+    rescan_id = ""
+    rescan = "No"
+    target__split = target_url.split(",")
     split_length = target__split.__len__()
     for i in range(0, split_length):
         target = target__split.__getitem__(i)
         # noinspection PyInterpreter
-        if scanner == 'zap_scan':
+        if scanner == "zap_scan":
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_schudle_zap_scan,
-                args=(target, project_id, rescan_id, rescan, scan_id))
+                args=(target, project_id, rescan_id, rescan, scan_id),
+            )
             thread.daemon = True
             thread.start()
-        elif scanner == 'burp_scan':
+        elif scanner == "burp_scan":
             scan_id = uuid.uuid4()
-            do_scan = burp_plugin.burp_scans(
-                project_id,
-                target,
-                scan_id, user='admin')
+            do_scan = burp_plugin.burp_scans(project_id, target, scan_id, user="admin")
             thread = threading.Thread(
                 target=do_scan.scan_launch,
             )
@@ -307,8 +296,8 @@ def task(target_url, project_id, scanner):
 
 
 def web_task_launch(request):
-    if request.method == 'GET':
-        task_time = request.GET['time']
+    if request.method == "GET":
+        task_time = request.GET["time"]
 
         t = Task.objects.all()
         # t.delete()
@@ -331,62 +320,79 @@ def web_scan_schedule(request):
     all_scans_db = project_db.objects.filter(username=username)
     all_scheduled_scans = task_schedule_db.objects.filter(username=username)
 
-    if request.method == 'POST':
-        scan_url = request.POST.get('url')
-        scan_schedule_time = request.POST.get('datetime')
-        project_id = request.POST.get('project_id')
-        scanner = request.POST.get('scanner')
+    if request.method == "POST":
+        scan_url = request.POST.get("url")
+        scan_schedule_time = request.POST.get("datetime")
+        project_id = request.POST.get("project_id")
+        scanner = request.POST.get("scanner")
         # periodic_task = request.POST.get('periodic_task')
-        periodic_task_value = request.POST.get('periodic_task_value')
+        periodic_task_value = request.POST.get("periodic_task_value")
         # periodic_task = 'Yes'
-        if periodic_task_value == 'HOURLY':
+        if periodic_task_value == "HOURLY":
             periodic_time = Task.HOURLY
-        elif periodic_task_value == 'DAILY':
+        elif periodic_task_value == "DAILY":
             periodic_time = Task.DAILY
-        elif periodic_task_value == 'WEEKLY':
+        elif periodic_task_value == "WEEKLY":
             periodic_time = Task.WEEKLY
-        elif periodic_task_value == 'EVERY_2_WEEKS':
+        elif periodic_task_value == "EVERY_2_WEEKS":
             periodic_time = Task.EVERY_2_WEEKS
-        elif periodic_task_value == 'EVERY_4_WEEKS':
+        elif periodic_task_value == "EVERY_4_WEEKS":
             periodic_time = Task.EVERY_4_WEEKS
         else:
             periodic_time = None
         dt_str = scan_schedule_time
-        dt_obj = datetime.strptime(dt_str, '%d/%m/%Y %H:%M:%S %p')
-        target__split = scan_url.split(',')
+        dt_obj = datetime.strptime(dt_str, "%d/%m/%Y %H:%M:%S %p")
+        target__split = scan_url.split(",")
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
 
-            if scanner == 'zap_scan':
-                if periodic_task_value == 'None':
+            if scanner == "zap_scan":
+                if periodic_task_value == "None":
                     my_task = task(target, project_id, scanner, schedule=dt_obj)
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
                 else:
 
-                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
+                    my_task = task(
+                        target,
+                        project_id,
+                        scanner,
+                        repeat=periodic_time,
+                        repeat_until=None,
+                    )
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
-            elif scanner == 'burp_scan':
-                if periodic_task_value == 'None':
+            elif scanner == "burp_scan":
+                if periodic_task_value == "None":
                     my_task = task(target, project_id, scanner, schedule=dt_obj)
                     task_id = my_task.id
                 else:
-                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
+                    my_task = task(
+                        target,
+                        project_id,
+                        scanner,
+                        repeat=periodic_time,
+                        repeat_until=None,
+                    )
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
-            save_scheadule = task_schedule_db(username=username, task_id=task_id, target=target,
-                                              schedule_time=scan_schedule_time,
-                                              project_id=project_id,
-                                              scanner=scanner,
-                                              periodic_task=periodic_task_value)
+            save_scheadule = task_schedule_db(
+                username=username,
+                task_id=task_id,
+                target=target,
+                schedule_time=scan_schedule_time,
+                project_id=project_id,
+                scanner=scanner,
+                periodic_task=periodic_task_value,
+            )
             save_scheadule.save()
 
-    return render(request, 'web_scan_schedule.html',
-                  {'all_scans_db': all_scans_db,
-                   'all_scheduled_scans': all_scheduled_scans}
-                  )
+    return render(
+        request,
+        "webscanners/web_scan_schedule.html",
+        {"all_scans_db": all_scans_db, "all_scheduled_scans": all_scheduled_scans},
+    )
 
 
 def del_web_scan_schedule(request):
@@ -397,21 +403,23 @@ def del_web_scan_schedule(request):
     """
     username = request.user.username
     if request.method == "POST":
-        task_id = request.POST.get('task_id')
+        task_id = request.POST.get("task_id")
 
         scan_item = str(task_id)
         taskid = scan_item.replace(" ", "")
-        target_split = taskid.split(',')
+        target_split = taskid.split(",")
         split_length = target_split.__len__()
         print("split_length", split_length)
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
-            del_task = task_schedule_db.objects.filter(task_id=task_id, username=username)
+            del_task = task_schedule_db.objects.filter(
+                task_id=task_id, username=username
+            )
             del_task.delete()
             del_task_schedule = Task.objects.filter(id=task_id, username=username)
             del_task_schedule.delete()
 
-    return HttpResponseRedirect(reverse('webscanners:web_scan_schedule'))
+    return HttpResponseRedirect(reverse("webscanners:web_scan_schedule"))
 
 
 def setting(request):
@@ -438,9 +446,9 @@ def setting(request):
     lod_ov_enabled = settings.openvas_enabled()
 
     # Loading ZAP Settings
-    zap_api_key = ''
-    zap_hosts = ''
-    zap_ports = ''
+    zap_api_key = ""
+    zap_hosts = ""
+    zap_ports = ""
     zap_enable = False
 
     all_zap = zap_settings_db.objects.filter(username=username)
@@ -455,8 +463,8 @@ def setting(request):
     zap_port = zap_ports
 
     # Loading Arachni Settings
-    arachni_hosts = ''
-    arachni_ports = ''
+    arachni_hosts = ""
+    arachni_ports = ""
 
     all_arachni = arachni_settings_db.objects.filter(username=username)
     for arachni in all_arachni:
@@ -509,33 +517,35 @@ def setting(request):
 
     username = request.user.username
     zap_enabled = False
-    random_port = '8091'
-    target_url = 'https://archerysec.com'
-    zap_info = ''
-    burp_info = ''
-    openvas_info = ''
-    arachni_info = ''
-    jira_info = ''
+    random_port = "8091"
+    target_url = "https://archerysec.com"
+    zap_info = ""
+    burp_info = ""
+    openvas_info = ""
+    arachni_info = ""
+    jira_info = ""
 
-    if request.method == 'POST':
-        setting_of = request.POST.get('setting_of')
-        if setting_of == 'zap':
+    if request.method == "POST":
+        setting_of = request.POST.get("setting_of")
+        if setting_of == "zap":
             all_zap = zap_settings_db.objects.filter(username=username)
             for zap in all_zap:
                 zap_enabled = zap.enabled
 
             if zap_enabled is False:
-                zap_info = 'Disabled'
+                zap_info = "Disabled"
                 try:
                     random_port = zap_plugin.zap_local()
                 except:
-                    return render(request, 'setting.html', {'zap_info': zap_info})
+                    return render(request, "setting/setting.html", {"zap_info": zap_info})
 
                 for i in range(0, 100):
                     while True:
                         try:
                             # Connection Test
-                            zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                            zap_connect = zap_plugin.zap_connect(
+                                random_port, username=username
+                            )
                             zap_connect.spider.scan(url=target_url)
                         except Exception as e:
                             print("ZAP Connection Not Found, re-try after 5 sec")
@@ -549,8 +559,8 @@ def setting(request):
                     zap_info = True
                 except:
                     zap_info = False
-        if setting_of == 'burp':
-            host = 'http://' + burp_host + ':' + burp_port + '/'
+        if setting_of == "burp":
+            host = "http://" + burp_host + ":" + burp_port + "/"
 
             bi = burpscanner.BurpApi(host, burp_api_key)
 
@@ -560,17 +570,19 @@ def setting(request):
             else:
                 burp_info = True
 
-        if setting_of == 'openvas':
-            sel_profile = ''
+        if setting_of == "openvas":
+            sel_profile = ""
 
-            openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile, username=username)
+            openvas = OpenVAS_Plugin(
+                scan_ip, project_id, sel_profile, username=username
+            )
             try:
                 openvas.connect()
                 openvas_info = True
             except:
                 openvas_info = False
 
-        if setting_of == 'arachni':
+        if setting_of == "arachni":
             global scan_run_id, scan_status
             arachni_hosts = None
             arachni_ports = None
@@ -582,12 +594,7 @@ def setting(request):
             arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports)
 
             check = []
-            data = {
-                "url": 'https://archerysec.com',
-                "checks": check,
-                "audit": {
-                }
-            }
+            data = {"url": "https://archerysec.com", "checks": check, "audit": {}}
             d = json.dumps(data)
 
             scan_launch = arachni.scan_launch(d)
@@ -597,13 +604,13 @@ def setting(request):
                 scan_data = scan_launch.data
 
                 for key, value in scan_data.items():
-                    if key == 'id':
+                    if key == "id":
                         scan_run_id = value
                 arachni_info = True
             except Exception:
                 arachni_info = False
 
-        if setting_of == 'jira':
+        if setting_of == "jira":
             global jira_projects, jira_ser
             jira_setting = jirasetting.objects.filter(username=username)
 
@@ -615,10 +622,12 @@ def setting(request):
             jira_username = signing.loads(username)
             jira_password = signing.loads(password)
 
-            options = {'server': jira_server}
+            options = {"server": jira_server}
             try:
 
-                jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), timeout=5)
+                jira_ser = JIRA(
+                    options, basic_auth=(jira_username, jira_password), timeout=5
+                )
                 jira_projects = jira_ser.projects()
                 print(len(jira_projects))
                 jira_info = True
@@ -626,36 +635,40 @@ def setting(request):
                 print(e)
                 jira_info = False
 
-    return render(request, 'setting.html',
-                  {'apikey': lod_apikey,
-                   'zapath': zap_host,
-                   'zap_port': zap_port,
-                   'zap_enable': zap_enable,
-                   'arachni_hosts': arachni_hosts,
-                   'arachni_ports': arachni_ports,
-                   'lod_ov_user': lod_ov_user,
-                   'lod_ov_pass': lod_ov_pass,
-                   'lod_ov_host': lod_ov_host,
-                   'lod_ov_enabled': lod_ov_enabled,
-                   'lod_ov_port': lod_ov_port,
-                   'burp_path': burp_host,
-                   'burp_port': burp_port,
-                   'burp_api_key': burp_api_key,
-                   'all_email': all_email,
-                   'jira_server': jira_server,
-                   'jira_username': jira_username,
-                   'jira_password': jira_password,
-                   'nv_enabled': nv_enabled,
-                   'nv_version': nv_version,
-                   'nv_online': nv_online,
-                   'nv_timing': nv_timing,
-                   'message': all_notify,
-                   'zap_info': zap_info,
-                   'burp_info': burp_info,
-                   'openvas_info': openvas_info,
-                   'arachni_info': arachni_info,
-                   'jira_info': jira_info
-                   })
+    return render(
+        request,
+        "setting/setting.html",
+        {
+            "apikey": lod_apikey,
+            "zapath": zap_host,
+            "zap_port": zap_port,
+            "zap_enable": zap_enable,
+            "arachni_hosts": arachni_hosts,
+            "arachni_ports": arachni_ports,
+            "lod_ov_user": lod_ov_user,
+            "lod_ov_pass": lod_ov_pass,
+            "lod_ov_host": lod_ov_host,
+            "lod_ov_enabled": lod_ov_enabled,
+            "lod_ov_port": lod_ov_port,
+            "burp_path": burp_host,
+            "burp_port": burp_port,
+            "burp_api_key": burp_api_key,
+            "all_email": all_email,
+            "jira_server": jira_server,
+            "jira_username": jira_username,
+            "jira_password": jira_password,
+            "nv_enabled": nv_enabled,
+            "nv_version": nv_version,
+            "nv_online": nv_online,
+            "nv_timing": nv_timing,
+            "message": all_notify,
+            "zap_info": zap_info,
+            "burp_info": burp_info,
+            "openvas_info": openvas_info,
+            "arachni_info": arachni_info,
+            "jira_info": jira_info,
+        },
+    )
 
 
 def email_setting(request):
@@ -668,7 +681,7 @@ def email_setting(request):
     # Load Email Setting function
     all_email = email_db.objects.filter(username=username)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         subject = request.POST.get("email_subject")
         from_message = request.POST.get("email_message")
         email_to = request.POST.get("to_email")
@@ -682,10 +695,9 @@ def email_setting(request):
             recipient_list=email_to,
         )
         save_email.save()
-        return HttpResponseRedirect(reverse('webscanners:setting'))
+        return HttpResponseRedirect(reverse("webscanners:setting"))
 
-    return render(request, 'email_setting_form.html', {'all_email': all_email}
-                  )
+    return render(request, "setting/email_setting_form.html", {"all_email": all_email})
 
 
 def burp_scan_launch(request):
@@ -697,26 +709,26 @@ def burp_scan_launch(request):
     user = request.user
     username = request.user.username
     if request.POST.get("url"):
-        target_url = request.POST.get('url')
-        project_id = request.POST.get('project_id')
-        target__split = target_url.split(',')
+        target_url = request.POST.get("url")
+        project_id = request.POST.get("project_id")
+        target__split = target_url.split(",")
         split_length = target__split.__len__()
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
             print("Targets", target)
             scan_id = uuid.uuid4()
             date_time = datetime.now()
-            scan_dump = burp_scan_db(username=username,
-                                     scan_id=scan_id,
-                                     project_id=project_id,
-                                     url=target,
-                                     date_time=date_time)
+            scan_dump = WebScansDb(
+                username=username,
+                scan_id=scan_id,
+                project_id=project_id,
+                url=target,
+                date_time=date_time,
+                scanner='Burp'
+            )
             scan_dump.save()
             try:
-                do_scan = burp_plugin.burp_scans(
-                    project_id,
-                    target,
-                    scan_id, user)
+                do_scan = burp_plugin.burp_scans(project_id, target, scan_id, user)
                 # do_scan.scan_lauch(project_id,
                 #                    target,
                 #                    scan_id)
@@ -730,7 +742,7 @@ def burp_scan_launch(request):
             except Exception as e:
                 print(e)
 
-    return render(request, 'burpscanner/burp_scan_list.html')
+    return render(request, "webscanners/burpscanner/burp_scan_list.html")
 
 
 def xml_upload(request):
@@ -745,7 +757,7 @@ def xml_upload(request):
     if request.method == "POST":
         project_id = request.POST.get("project_id")
         scanner = request.POST.get("scanner")
-        xml_file = request.FILES['xmlfile']
+        xml_file = request.FILES["xmlfile"]
         scan_url = request.POST.get("scan_url")
         scan_id = uuid.uuid4()
         scan_status = "100"
@@ -755,27 +767,33 @@ def xml_upload(request):
                 date_time = datetime.now()
 
                 root_xml = tree.getroot()
-                en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+                en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
+                    "ascii", "ignore"
+                )
                 root_xml_en = ET.fromstring(en_root_xml)
-                scan_dump = WebScansDb(username=username,
-                                       scan_url=scan_url,
-                                       scan_id=scan_id,
-                                       date_time=date_time,
-                                       project_id=project_id,
-                                       scan_status=scan_status,
-                                       rescan='No',
-                                       scanner='zap')
+                scan_dump = WebScansDb(
+                    username=username,
+                    scan_url=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    rescan="No",
+                    scanner="zap",
+                )
                 scan_dump.save()
-                zap_xml_parser.xml_parser(username=username,
-                                          project_id=project_id,
-                                          scan_id=scan_id,
-                                          root=root_xml_en)
+                zap_xml_parser.xml_parser(
+                    username=username,
+                    project_id=project_id,
+                    scan_id=scan_id,
+                    root=root_xml_en,
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('zapscanner:zap_scan_list'))
+                return HttpResponseRedirect(reverse("webscanners:list_scans"))
             except Exception as e:
                 print(e)
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
         elif scanner == "burp_scan":
             try:
@@ -783,24 +801,29 @@ def xml_upload(request):
                 # Burp scan XML parser
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
-                en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+                en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
+                    "ascii", "ignore"
+                )
                 root_xml_en = ET.fromstring(en_root_xml)
-                scan_dump = burp_scan_db(username=username,
-                                         url=scan_url,
-                                         scan_id=scan_id,
-                                         date_time=date_time,
-                                         project_id=project_id,
-                                         scan_status=scan_status)
+                scan_dump = WebScansDb(
+                    username=username,
+                    scan_url=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    scanner='Burp'
+                )
                 scan_dump.save()
-                burp_xml_parser.burp_scan_data(root_xml_en,
-                                               project_id,
-                                               scan_id,
-                                               username=username)
+                burp_xml_parser.burp_scan_data(
+                    root_xml_en, project_id, scan_id, username=username
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('burpscanner:burp_scan_list'))
-            except:
+                return HttpResponseRedirect(reverse("webscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
         elif scanner == "arachni":
             try:
@@ -808,175 +831,194 @@ def xml_upload(request):
 
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
-                scan_dump = arachni_scan_db(username=username,
-                                            url=scan_url,
-                                            scan_id=scan_id,
-                                            date_time=date_time,
-                                            project_id=project_id,
-                                            scan_status=scan_status)
+                scan_dump = WebScansDb(
+                    username=username,
+                    scan_url=scan_url,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    scanner='Arachni'
+                )
                 scan_dump.save()
-                arachni_xml_parser.xml_parser(username=username,
-                                              project_id=project_id,
-                                              scan_id=scan_id,
-                                              root=root_xml,
-                                              target_url=scan_url)
+                arachni_xml_parser.xml_parser(
+                    username=username,
+                    project_id=project_id,
+                    scan_id=scan_id,
+                    root=root_xml,
+                    target_url=scan_url,
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('arachniscanner:arachni_scan_list'))
-            except:
+                return HttpResponseRedirect(reverse("webscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
-        elif scanner == 'netsparker':
+        elif scanner == "netsparker":
             try:
                 date_time = datetime.now()
 
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
-                scan_dump = netsparker_scan_db(
+                scan_dump = WebScansDb(
                     username=username,
-                    url=scan_url,
+                    scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    scan_status=scan_status
+                    scan_status=scan_status,
                 )
                 scan_dump.save()
-                netsparker_xml_parser.xml_parser(project_id=project_id,
-                                                 scan_id=scan_id,
-                                                 root=root_xml, username=username)
+                netsparker_xml_parser.xml_parser(
+                    project_id=project_id,
+                    scan_id=scan_id,
+                    root=root_xml,
+                    username=username,
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('netsparkerscanner:netsparker_scan_list'))
-            except:
+                return HttpResponseRedirect(
+                    reverse("webscanners:list_scans")
+                )
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
-        elif scanner == 'webinspect':
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
+        elif scanner == "webinspect":
             try:
                 date_time = datetime.now()
 
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
-                scan_dump = webinspect_scan_db(
+                scan_dump = WebScansDb(
                     username=username,
-                    url=scan_url,
+                    scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    scan_status=scan_status
+                    scan_status=scan_status,
                 )
                 scan_dump.save()
-                webinspect_xml_parser.xml_parser(project_id=project_id,
-                                                 scan_id=scan_id,
-                                                 root=root_xml,
-                                                 username=username)
+                webinspect_xml_parser.xml_parser(
+                    project_id=project_id,
+                    scan_id=scan_id,
+                    root=root_xml,
+                    username=username,
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('webinspectscanner:webinspect_scan_list'))
-            except:
+                return HttpResponseRedirect(
+                    reverse("webscanners:list_scans")
+                )
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
-        elif scanner == 'acunetix':
+        elif scanner == "acunetix":
             try:
                 date_time = datetime.now()
 
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
-                scan_dump = acunetix_scan_db(
+                scan_dump = WebScansDb(
                     username=username,
                     url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    scan_status=scan_status
+                    scan_status=scan_status,
                 )
                 scan_dump.save()
-                acunetix_xml_parser.xml_parser(username=username,
-                                               project_id=project_id,
-                                               scan_id=scan_id,
-                                               root=root_xml)
+                acunetix_xml_parser.xml_parser(
+                    username=username,
+                    project_id=project_id,
+                    scan_id=scan_id,
+                    root=root_xml,
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('acunetixscanner:acunetix_scan_list'))
+                return HttpResponseRedirect(
+                    reverse("webscanners:list_scans")
+                )
             except:
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
-        elif scanner == 'dependencycheck':
+        elif scanner == "dependencycheck":
             try:
                 date_time = datetime.now()
 
                 data = etree.parse(xml_file)
                 root = data.getroot()
-                scan_dump = dependencycheck_scan_db(
+                scan_dump = StaticScansDb(
                     project_name=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
-                    username=username
+                    username=username,
+                    scanner='Dependencycheck'
                 )
                 scan_dump.save()
-                dependencycheck_report_parser.xml_parser(project_id=project_id,
-                                                         scan_id=scan_id,
-                                                         data=root,
-                                                         username=username
-                                                         )
+                dependencycheck_report_parser.xml_parser(
+                    project_id=project_id, scan_id=scan_id, data=root, username=username,
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('dependencycheck:dependencycheck_list'))
+                return HttpResponseRedirect(
+                    reverse("dependencycheck:dependencycheck_list")
+                )
             except:
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
-        elif scanner == 'checkmarx':
+        elif scanner == "checkmarx":
             try:
                 date_time = datetime.now()
 
                 data = etree.parse(xml_file)
                 root = data.getroot()
-                scan_dump = checkmarx_scan_db(
+                scan_dump = StaticScansDb(
                     project_name=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
-                    username=username
+                    username=username,
                 )
                 scan_dump.save()
-                checkmarx_xml_report_parser.checkmarx_report_xml(project_id=project_id,
-                                                                 scan_id=scan_id,
-                                                                 data=root,
-                                                                 username=username
-                                                                 )
+                checkmarx_xml_report_parser.checkmarx_report_xml(
+                    project_id=project_id, scan_id=scan_id, data=root, username=username
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('checkmarx:checkmarx_list'))
+                return HttpResponseRedirect(reverse("checkmarx:checkmarx_list"))
             except:
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
-        elif scanner == 'findbugs':
+        elif scanner == "findbugs":
             try:
                 date_time = datetime.now()
 
                 tree = ET.parse(xml_file)
                 root = tree.getroot()
-                scan_dump = findbugs_scan_db(
+                scan_dump = StaticScansDb(
                     project_name=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
-                    username=username
+                    username=username,
                 )
                 scan_dump.save()
-                findbugs_report_parser.xml_parser(project_id=project_id,
-                                                  scan_id=scan_id,
-                                                  root=root,
-                                                  username=username)
+                findbugs_report_parser.xml_parser(
+                    project_id=project_id, scan_id=scan_id, root=root, username=username
+                )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('findbugs:findbugs_list'))
+                return HttpResponseRedirect(reverse("findbugs:findbugs_list"))
             except:
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
-        elif scanner == 'nikto':
+        elif scanner == "nikto":
             try:
                 date_time = datetime.now()
                 scan_dump = nikto_result_db(
@@ -989,12 +1031,12 @@ def xml_upload(request):
 
                 nikto_html_parser(xml_file, project_id, scan_id, username=username)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse('tools:nikto'))
+                return HttpResponseRedirect(reverse("tools:nikto"))
             except:
                 messages.error(request, "File Not Supported")
-                return render(request, 'upload_xml.html', {'all_project': all_project})
+                return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
-    return render(request, 'upload_xml.html', {'all_project': all_project})
+    return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
 
 def add_cookies(request):
@@ -1004,26 +1046,29 @@ def add_cookies(request):
     :return:
     """
     username = request.user.username
-    if request.method == 'POST':
-        target_url = request.POST.get('url')
-        target_cookies = request.POST.get('cookies')
-        all_cookie_url = cookie_db.objects.filter(Q(url__icontains=target_url, username=username))
+    if request.method == "POST":
+        target_url = request.POST.get("url")
+        target_cookies = request.POST.get("cookies")
+        all_cookie_url = cookie_db.objects.filter(
+            Q(url__icontains=target_url, username=username)
+        )
         for da in all_cookie_url:
             global cookies
             cookies = da.url
 
         if cookies == target_url:
-            cookie_db.objects.filter(Q(url__icontains=target_url, username=username)).update(cookie=target_cookies)
-            return HttpResponseRedirect(reverse('webscanners:index'))
+            cookie_db.objects.filter(
+                Q(url__icontains=target_url, username=username)
+            ).update(cookie=target_cookies)
+            return HttpResponseRedirect(reverse("webscanners:index"))
         else:
-            data_dump = cookie_db(url=target_url,
-                                  cookie=target_cookies,
-                                  username=username
-                                  )
+            data_dump = cookie_db(
+                url=target_url, cookie=target_cookies, username=username
+            )
             data_dump.save()
-            return HttpResponseRedirect(reverse('webscanners:index'))
+            return HttpResponseRedirect(reverse("webscanners:index"))
 
-    return render(request, 'cookie_add.html')
+    return render(request, "webscanners/cookie_add.html")
 
 
 def slem(driver, url):
@@ -1036,7 +1081,9 @@ def slem(driver, url):
     global new_uri
     new_uri = url
     try:
-        driver.get(url, )
+        driver.get(
+            url,
+        )
     except Exception as e:
         print("Error Got !!!")
     return
@@ -1049,14 +1096,14 @@ def save_cookie(driver):
     :return:
     """
     all_cookies = driver.get_cookies()
-    f = open('cookies.txt', 'w+')
+    f = open("cookies.txt", "w+")
     for cookie in all_cookies:
-        cookie_value = cookie['name'] + '=' + cookie['value'] + ';'
+        cookie_value = cookie["name"] + "=" + cookie["value"] + ";"
         f.write(cookie_value)
     f.close()
     driver.close()
 
-    return HttpResponseRedirect(reverse('webscanners:index'))
+    return HttpResponseRedirect(reverse("webscanners:index"))
 
 
 def cookies_list(request):
@@ -1068,16 +1115,16 @@ def cookies_list(request):
     username = request.user.username
     all_cookies = cookie_db.objects.filter(username=username)
 
-    return render(request, 'cookies_list.html', {'all_cookies': all_cookies})
+    return render(request, "webscanners/cookies_list.html", {"all_cookies": all_cookies})
 
 
 def del_cookies(request):
     username = request.user.username
-    if request.method == 'POST':
-        cookie_url = request.POST.get('url')
+    if request.method == "POST":
+        cookie_url = request.POST.get("url")
         cookies_item = str(cookie_url)
         cooki_split = cookies_item.replace(" ", "")
-        target_split = cooki_split.split(',')
+        target_split = cooki_split.split(",")
         split_length = target_split.__len__()
         print("split_length", split_length)
         for i in range(0, split_length):
@@ -1086,9 +1133,9 @@ def del_cookies(request):
             del_cookie = cookie_db.objects.filter(url=cookies_target, username=username)
             del_cookie.delete()
             zap_plugin.zap_replacer(target_url=cookies_target)
-        return HttpResponseRedirect(reverse('webscanners:cookies_list'))
+        return HttpResponseRedirect(reverse("webscanners:cookies_list"))
 
-    return render(request, 'cookies_list.html')
+    return render(request, "webscanners/cookies_list.html")
 
 
 def sel_login(request):
@@ -1098,38 +1145,47 @@ def sel_login(request):
     :return:
     """
     username = request.user.username
-    action_vul = request.POST.get("action", )
-    url_da = request.POST.get("url_login", )
+    action_vul = request.POST.get(
+        "action",
+    )
+    url_da = request.POST.get(
+        "url_login",
+    )
     if action_vul == "open_page":
         global driver
         driver = webdriver.Firefox()
         slem(driver, url_da)
     elif action_vul == "save_cookie":
         save_cookie(driver)
-        read_f = open('cookies.txt', 'r')
+        read_f = open("cookies.txt", "r")
 
         for cookie_data in read_f:
 
             print(cookie_data)
-            all_cookie_url = cookie_db.objects.filter(Q(url__icontains=new_uri, username=username))
+            all_cookie_url = cookie_db.objects.filter(
+                Q(url__icontains=new_uri, username=username)
+            )
             for da in all_cookie_url:
                 global cookies
                 cookies = da.url
 
             if cookies == new_uri:
-                cookie_db.objects.filter(Q(url__icontains=new_uri, username=username)).update(cookie=cookie_data)
-                return HttpResponseRedirect(reverse('webscanners:index'))
+                cookie_db.objects.filter(
+                    Q(url__icontains=new_uri, username=username)
+                ).update(cookie=cookie_data)
+                return HttpResponseRedirect(reverse("webscanners:index"))
             else:
-                data_dump = cookie_db(url=new_uri,
-                                      cookie=cookie_data,
-                                      username=username,
-                                      )
+                data_dump = cookie_db(
+                    url=new_uri,
+                    cookie=cookie_data,
+                    username=username,
+                )
                 data_dump.save()
-                return HttpResponseRedirect(reverse('webscanners:index'))
+                return HttpResponseRedirect(reverse("webscanners:index"))
         # messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
-        return HttpResponseRedirect(reverse('webscanners:index'))
-    return render(request, 'webscanner.html')
+        return HttpResponseRedirect(reverse("webscanners:index"))
+    return render(request, "webscanners/webscanner.html")
 
 
 def exclude_url(request):
@@ -1139,13 +1195,16 @@ def exclude_url(request):
     :return:
     """
     username = request.user.username
-    exclud = request.POST.get("exclude_url", )
-    exclude_save = excluded_db(exclude_url=exclud,
-                               username=username
-                               )
+    exclud = request.POST.get(
+        "exclude_url",
+    )
+    exclude_save = excluded_db(exclude_url=exclud, username=username)
     exclude_save.save()
 
-    return render(request, 'webscanner.html', )
+    return render(
+        request,
+        "webscanners/webscanner.html",
+    )
 
 
 def exluded_url_list(request):
@@ -1157,18 +1216,22 @@ def exluded_url_list(request):
     username = request.user.username
     all_excluded_url = excluded_db.objects.filter(username=username)
 
-    if request.method == 'POST':
-        exclude_url = request.POST.get('exclude_url')
+    if request.method == "POST":
+        exclude_url = request.POST.get("exclude_url")
         exluded_item = str(exclude_url)
         exclude_split = exluded_item.replace(" ", "")
-        target_split = exclude_split.split(',')
+        target_split = exclude_split.split(",")
         split_length = target_split.__len__()
         for i in range(0, split_length):
             exclude_target = target_split.__getitem__(i)
 
-            del_excluded = excluded_db.objects.filter(username=username, exclude_url=exclude_target)
+            del_excluded = excluded_db.objects.filter(
+                username=username, exclude_url=exclude_target
+            )
             del_excluded.delete()
 
-            return HttpResponseRedirect(reverse('zapscanner:excluded_url_list'))
+            return HttpResponseRedirect(reverse("zapscanner:excluded_url_list"))
 
-    return render(request, 'excludedurl_list.html', {'all_excluded_url': all_excluded_url})
+    return render(
+        request, "webscanners/excludedurl_list.html", {"all_excluded_url": all_excluded_url}
+    )

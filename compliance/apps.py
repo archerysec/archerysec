@@ -20,4 +20,4 @@ from django.apps import AppConfig
 
 
 class ComplainceConfig(AppConfig):
-    name = 'complaince'
+    name = "complaince"

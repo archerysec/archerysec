@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0011_auto_20190408_1502'),
+        ("webscanners", "0011_auto_20190408_1502"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='burp_scan_result_db',
-            name='severity_color',
+            model_name="burp_scan_result_db",
+            name="severity_color",
             field=models.TextField(blank=True, null=True),
         ),
     ]

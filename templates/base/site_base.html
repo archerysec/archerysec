@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'logo.png' %}">
+    <title>ArcherySec</title>
+    <link href="{% static 'matrix-admin-bt4/dist/css/style.min.css' %}" rel="stylesheet">
+    <link href="{% static 'matrix-admin-bt4/dist/css/slider.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'matrix-admin-bt4/assets/libs/select2/dist/css/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'matrix-admin-bt4/assets/extra-libs/multicheck/multicheck.css' %}">
+    <link href="{% static 'matrix-admin-bt4/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.css' %}" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="{% static 'matrix-admin-bt4/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
+</head>
+
+<body>
+<div class="preloader">
+    <div class="lds-ripple">
+        <div class="lds-pos"></div>
+        <div class="lds-pos"></div>
+    </div>
+</div>
+<div id="main-wrapper">
+    {% include 'base/head.html' %}
+    {% include 'base/aside.html' %}
+    {% block body %}
+    {% endblock %}
+</div>
+
+
+<script src="{% static 'matrix-admin-bt4/assets/libs/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/libs/popper.js/dist/umd/popper.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/libs/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/extra-libs/sparkline/sparkline.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/dist/js/waves.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/dist/js/sidebarmenu.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/dist/js/custom.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/extra-libs/multicheck/datatable-checkbox-init.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/extra-libs/multicheck/jquery.multicheck.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/extra-libs/DataTables/datatables.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/libs/select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/libs/select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'matrix-admin-bt4/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
+
+<!--<script src="{% static 'matrix-admin-bt4/dist/js/jquery-1.9.1.min.js' %}"></script>-->
+<script>
+        /****************************************
+         *       Basic Table                   *
+         ****************************************/
+        $('#zero_config').DataTable();
+        $('#zero_config1').DataTable();
+        $('#zero_config2').DataTable();
+        $('#zero_config3').DataTable();
+        $('#zero_config4').DataTable();
+        $('#zero_config5').DataTable();
+        $('#vuln_details').DataTable();
+        $('#zap_scans_list').DataTable();
+        $('#zap_scans_list_false').DataTable();
+        $('#zap_scans_list_close').DataTable();
+        $('#burp_scan_list').DataTable();
+        $('#burp_scans_list').DataTable();
+        $('#burp_scans_false').DataTable();
+        $('#burp_scans_close').DataTable();
+
+        $('#acunetix_scans_list').DataTable();
+        $('#acunetix_scans_false').DataTable();
+        $('#acunetix_scans_close').DataTable();
+
+        $('#netspaker_scans_list').DataTable();
+        $('#netspaker_scans_false').DataTable();
+        $('#netspaker_scans_close').DataTable();
+
+        $('#arachni_scans_list').DataTable();
+        $('#arachni_scans_false').DataTable();
+        $('#arachni_scans_close').DataTable();
+
+        $('#webinspect_scans_list').DataTable();
+        $('#webinspect_scans_false').DataTable();
+        $('#webinspect_scans_close').DataTable();
+
+        $('#acunetix_scans_list').DataTable();
+        $('#acunetix_scans_false').DataTable();
+        $('#acunetix_scans_close').DataTable();
+
+        $('#excluded_url').DataTable();
+        $('#cookies_list').DataTable();
+        $('#excluded_url').DataTable();
+
+        $('#openvas_scan_list').DataTable();
+        $('#openvas_scan_false').DataTable();
+        $('#openvas_scan_close').DataTable();
+
+        $('#nessus_scans_list').DataTable();
+        $('#nessus_scans_false').DataTable();
+        $('#nessus_scans_close').DataTable();
+
+        $('#dependencycheck_scans_list').DataTable();
+        $('#dependencycheck_scans_false').DataTable();
+        $('#dependencycheck_scans_close').DataTable();
+
+        $('#findbugs_scans_list').DataTable();
+        $('#findbugs_scans_false').DataTable();
+        $('#findbugs_scans_close').DataTable();
+
+        $('#clair_scans_list').DataTable();
+        $('#clair_scans_false').DataTable();
+        $('#clair_scans_false').DataTable();
+
+        $('#trivy_scans_list').DataTable();
+        $('#trivy_scans_false').DataTable();
+        $('#trivy_scans_false').DataTable();
+        $('#trivy_scans_close').DataTable();
+
+        $('#npmaudit_scans_list').DataTable();
+        $('#npmaudit_scans_false').DataTable();
+        $('#npmaudit_scans_false').DataTable();
+        $('#npmaudit_scans_close').DataTable();
+
+        $('#nodejsscan_scans_list').DataTable();
+        $('#nodejsscan_scans_false').DataTable();
+        $('#nodejsscan_scans_close').DataTable();
+
+        $('#semgrepscan_scans_list').DataTable();
+        $('#semgrepscan_scans_false').DataTable();
+        $('#semgrepscan_scans_close').DataTable();
+
+        $('#openvas_scan_list').DataTable();
+        $('#openvas_scan_list').DataTable();
+        $('#openvas_scan_list').DataTable();
+        $('#openvas_scan_list').DataTable();
+
+        
+        $('#tfsec_scans_list').DataTable();
+        $('#tfsec_scans_false').DataTable();
+        $('#tfsec_scans_false').DataTable();
+        $('#tfsec_scans_close').DataTable();
+
+        $('#whitesource_scans_list').DataTable();
+        $('#whitesource_scans_false').DataTable();
+        $('#whitesource_scans_close').DataTable();
+
+        $('#checkmarx_scans_list').DataTable();
+        $('#checkmarx_scans_false').DataTable();
+        $('#checkmarx_scans_close').DataTable();
+
+        $('#gitlabsast_scans_list').DataTable();
+        $('#gitlabsast_scans_false').DataTable();
+        $('#gitlabsast_scans_close').DataTable();
+
+        $('#twistlock_scans_list').DataTable();
+        $('#twistlock_scans_false').DataTable();
+        $('#twistlock_scans_close').DataTable();
+
+        $('#brakeman_scans_list').DataTable();
+        $('#brakeman_scans_false').DataTable();
+        $('#brakeman_scans_close').DataTable();
+
+        $('#gitlabcontainerscan_scans_list').DataTable();
+        $('#gitlabcontainerscan_scans_false').DataTable();
+        $('#gitlabcontainerscan_scans_close').DataTable();
+
+        $('#gitlabsca_scans_list').DataTable();
+        $('#gitlabsca_scans_false').DataTable();
+        $('#gitlabsca_scans_close').DataTable();
+
+        $('#bandit_scan_list').DataTable();
+        $('#bandit_scan_false').DataTable();
+        $('#bandit_scan_close').DataTable();
+
+        $('#netsparker_scans_list').DataTable();
+
+        $('#inspec_scans_list').DataTable();
+        $('#dockle_scans_list').DataTable();
+
+        $('#pentest_list').DataTable();
+        $('#30_Days').DataTable();
+
+        $('#scans_list').DataTable();
+        $('#scans_false').DataTable();
+        $('#scans_close').DataTable();
+
+
+
+
+
+        $('#nikto_scan_list').DataTable();
+        $('#sslscan_scans_list').DataTable();
+        $('#nmap_scans_list').DataTable();
+
+        $('#manual_scans_list').DataTable();
+
+        $('#scan_schedule').DataTable();
+
+
+$(".select2").select2();
+</script>
+</body>
+<footer class="footer text-center">
+    All Rights Reserved by Anand Tiwari. Developed by <a href="https://github.com/anandtiwarics/">Anand Tiwari</a>.<br>
+                                        ArcherySec v2.0.1
+</footer>
+</html>

@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0002_project_db_username'),
+        ("projects", "0002_project_db_username"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project_db',
-            name='total_high',
+            model_name="project_db",
+            name="total_high",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='project_db',
-            name='total_low',
+            model_name="project_db",
+            name="total_low",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='project_db',
-            name='total_vuln',
+            model_name="project_db",
+            name="total_vuln",
             field=models.TextField(null=True),
         ),
     ]

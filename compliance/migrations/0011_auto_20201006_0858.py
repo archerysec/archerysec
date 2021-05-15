@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('compliance', '0010_auto_20201004_1522'),
+        ("compliance", "0010_auto_20201004_1522"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='inspec_scan_db',
-            old_name='SEVERITY_HIGH',
-            new_name='high_vul',
+            model_name="inspec_scan_db",
+            old_name="SEVERITY_HIGH",
+            new_name="high_vul",
         ),
         migrations.RenameField(
-            model_name='inspec_scan_db',
-            old_name='SEVERITY_MEDIUM',
-            new_name='medium_vul',
+            model_name="inspec_scan_db",
+            old_name="SEVERITY_MEDIUM",
+            new_name="medium_vul",
         ),
     ]

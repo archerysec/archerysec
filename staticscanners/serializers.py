@@ -136,6 +136,7 @@ class WhitesourceStatusSerializer(serializers.Serializer):
     medium_vul = serializers.IntegerField(read_only=True)
     low_vul = serializers.IntegerField(read_only=True)
 
+
 class CheckmarxStatusSerializer(serializers.Serializer):
     scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
     rescan_id = serializers.UUIDField(read_only=True)
@@ -149,6 +150,7 @@ class CheckmarxStatusSerializer(serializers.Serializer):
     high_vul = serializers.IntegerField(read_only=True)
     medium_vul = serializers.IntegerField(read_only=True)
     low_vul = serializers.IntegerField(read_only=True)
+
 
 class NpmauditStatusSerializer(serializers.Serializer):
     scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))

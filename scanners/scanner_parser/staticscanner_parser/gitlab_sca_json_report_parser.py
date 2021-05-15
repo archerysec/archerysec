@@ -14,24 +14,25 @@
 #
 # This file is part of ArcherySec Project.
 
-from staticscanners.models import gitlabsca_scan_db, gitlabsca_scan_results_db
-import uuid
 import hashlib
-from datetime import datetime
 import json
-from dashboard.views import trend_update
-from webscanners.zapscanner.views import email_sch_notify
+import uuid
+from datetime import datetime
 
-vul_col = ''
-Target = ''
-VulnerabilityID = ''
-PkgName = ''
-InstalledVersion = ''
-FixedVersion = ''
-Title = ''
-Description = ''
-Severity = ''
-References = ''
+from dashboard.views import trend_update
+from staticscanners.models import StaticScansDb, StaticScanResultsDb
+from utility.email_notify import email_sch_notify
+
+vul_col = ""
+Target = ""
+VulnerabilityID = ""
+PkgName = ""
+InstalledVersion = ""
+FixedVersion = ""
+Title = ""
+Description = ""
+Severity = ""
+References = ""
 
 
 def gitlabsca_report_json(data, project_id, scan_id, username):
@@ -44,74 +45,74 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
     """
     date_time = datetime.now()
 
-    vul_col = ''
+    vul_col = ""
 
-    vuln = data['vulnerabilities']
+    vuln = data["vulnerabilities"]
 
     for vuln_data in vuln:
         try:
-            name = vuln_data['name']
+            name = vuln_data["name"]
         except Exception as e:
             name = "Not Found"
 
         try:
-            message = vuln_data['message']
+            message = vuln_data["message"]
         except Exception as e:
             message = "Not Found"
 
         try:
-            description = vuln_data['description']
+            description = vuln_data["description"]
         except Exception as e:
             description = "Not Found"
 
         try:
-            cve = vuln_data['cve']
+            cve = vuln_data["cve"]
         except Exception as e:
             cve = "Not Found"
 
         try:
-            scanner = vuln_data['scanner']
+            scanner = vuln_data["scanner"]
         except Exception as e:
             scanner = "Not Found"
 
         try:
-            location = vuln_data['location']
+            location = vuln_data["location"]
         except Exception as e:
             location = "Not Found"
 
         try:
-            identifiers = vuln_data['identifiers']
+            identifiers = vuln_data["identifiers"]
         except Exception as e:
             identifiers = "Not Found"
 
         try:
-            severity = vuln_data['severity']
+            severity = vuln_data["severity"]
         except Exception as e:
             severity = "Not Found"
 
         try:
-            file = vuln_data['location']['file']
+            file = vuln_data["location"]["file"]
         except Exception as e:
             file = "Not Found"
 
         if severity == "Critical":
-            severity = 'High'
+            severity = "High"
             vul_col = "danger"
 
         elif severity == "High":
             vul_col = "danger"
 
-        elif severity == 'Medium':
+        elif severity == "Medium":
             vul_col = "warning"
 
-        elif severity == 'Low':
+        elif severity == "Low":
             vul_col = "info"
 
-        elif severity == 'Unknown':
+        elif severity == "Unknown":
             severity = "Low"
             vul_col = "info"
 
-        elif severity == 'Everything else':
+        elif severity == "Everything else":
             severity = "Low"
             vul_col = "info"
 
@@ -119,25 +120,27 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
 
         dup_data = str(message) + str(severity) + str(file)
 
-        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = gitlabsca_scan_results_db.objects.filter(username=username, dup_hash=duplicate_hash).values(
-            'dup_hash')
+        match_dup = StaticScanResultsDb.objects.filter(
+            username=username, dup_hash=duplicate_hash
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
-            duplicate_vuln = 'No'
+            duplicate_vuln = "No"
 
-            false_p = gitlabsca_scan_results_db.objects.filter(username=username,
-                                                               false_positive_hash=duplicate_hash)
+            false_p = StaticScanResultsDb.objects.filter(
+                username=username, false_positive_hash=duplicate_hash
+            )
             fp_lenth_match = len(false_p)
 
             if fp_lenth_match == 1:
-                false_positive = 'Yes'
+                false_positive = "Yes"
             else:
-                false_positive = 'No'
+                false_positive = "No"
 
-            save_all = gitlabsca_scan_results_db(
+            save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
                 date_time=date_time,
                 scan_id=scan_id,
@@ -152,7 +155,7 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
                 Severity=severity,
                 identifiers=identifiers,
                 vul_col=vul_col,
-                vuln_status='Open',
+                vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
@@ -161,9 +164,9 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
             save_all.save()
 
         else:
-            duplicate_vuln = 'Yes'
+            duplicate_vuln = "Yes"
 
-            save_all = gitlabsca_scan_results_db(
+            save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
                 scan_id=scan_id,
                 date_time=date_time,
@@ -178,38 +181,44 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
                 Severity=severity,
                 identifiers=identifiers,
                 vul_col=vul_col,
-                vuln_status='Duplicate',
+                vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive='Duplicate',
+                false_positive="Duplicate",
                 username=username,
             )
             save_all.save()
 
-    all_findbugs_data = gitlabsca_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                 false_positive='No')
+    all_findbugs_data = StaticScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, false_positive="No"
+    )
 
-    duplicate_count = gitlabsca_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                               vuln_duplicate='Yes')
+    duplicate_count = StaticScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+    )
 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(Severity="High"))
     total_medium = len(all_findbugs_data.filter(Severity="Medium"))
     total_low = len(all_findbugs_data.filter(Severity="Low"))
-    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    gitlabsca_scan_db.objects.filter(scan_id=scan_id).update(username=username,
-                                                             date_time=date_time,
-                                                             total_vul=total_vul,
-                                                             high_vul=total_high,
-                                                             medium_vul=total_medium,
-                                                             low_vul=total_low,
-                                                             total_dup=total_duplicate
-                                                             )
+    StaticScansDb.objects.filter(scan_id=scan_id).update(
+        username=username,
+        date_time=date_time,
+        total_vul=total_vul,
+        high_vul=total_high,
+        medium_vul=total_medium,
+        low_vul=total_low,
+        total_dup=total_duplicate,
+    )
     trend_update(username=username)
-    subject = 'Archery Tool Scan Status - GitLab Dependency Report Uploaded'
-    message = 'GitLab Dependency Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % (Target, total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - GitLab Dependency Report Uploaded"
+    message = (
+        "GitLab Dependency Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (Target, total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)

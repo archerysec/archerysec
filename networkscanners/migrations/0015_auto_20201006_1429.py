@@ -6,27 +6,27 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0014_auto_20201004_1522'),
+        ("networkscanners", "0014_auto_20201004_1522"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='scan_save_db',
-            new_name='openvas_scan_db',
+            old_name="scan_save_db",
+            new_name="openvas_scan_db",
         ),
         migrations.RenameField(
-            model_name='openvas_scan_db',
-            old_name='high_total',
-            new_name='high_vul',
+            model_name="openvas_scan_db",
+            old_name="high_total",
+            new_name="high_vul",
         ),
         migrations.RenameField(
-            model_name='openvas_scan_db',
-            old_name='low_total',
-            new_name='low_vul',
+            model_name="openvas_scan_db",
+            old_name="low_total",
+            new_name="low_vul",
         ),
         migrations.RenameField(
-            model_name='openvas_scan_db',
-            old_name='medium_total',
-            new_name='medium_vul',
+            model_name="openvas_scan_db",
+            old_name="medium_total",
+            new_name="medium_vul",
         ),
     ]

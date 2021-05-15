@@ -18,10 +18,12 @@ from rest_framework import serializers
 
 
 class NetworkScanSerializer(serializers.Serializer):
-    scan_ip = serializers.IPAddressField(required=True,
-                                         help_text="Network IP should be provided")
-    project_id = serializers.UUIDField(required=True,
-                                       help_text="Project ID should be provided")
+    scan_ip = serializers.IPAddressField(
+        required=True, help_text="Network IP should be provided"
+    )
+    project_id = serializers.UUIDField(
+        required=True, help_text="Project ID should be provided"
+    )
     target_id = serializers.UUIDField(read_only=True)
     scan_id = serializers.UUIDField(read_only=True)
     scan_status = serializers.CharField(read_only=True)
@@ -34,8 +36,7 @@ class NetworkScanSerializer(serializers.Serializer):
 
 
 class NetworkScanResultSerializer(serializers.Serializer):
-    scan_id = serializers.UUIDField(required=True,
-                                    help_text="Provide ScanId")
+    scan_id = serializers.UUIDField(required=True, help_text="Provide ScanId")
     vul_id = serializers.UUIDField(read_only=True)
     name = serializers.CharField(read_only=True)
     owner = serializers.CharField(read_only=True)

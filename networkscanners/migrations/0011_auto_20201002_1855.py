@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0010_auto_20201002_1836'),
+        ("networkscanners", "0010_auto_20201002_1836"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='nessus_scan_results_db',
-            name='vul_id',
+            model_name="nessus_scan_results_db",
+            name="vul_id",
             field=models.TextField(blank=True, null=True),
         ),
     ]

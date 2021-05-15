@@ -15,8 +15,8 @@
 # This file is part of ArcherySec Project.
 
 from import_export import resources
-from networkscanners.models import ov_scan_result_db,\
-    nessus_scan_results_db
+
+from networkscanners.models import nessus_scan_results_db, ov_scan_result_db
 
 
 class OpenvasResource(resources.ModelResource):
@@ -27,4 +27,3 @@ class OpenvasResource(resources.ModelResource):
 class NessusResource(resources.ModelResource):
     class Meta:
         model = nessus_scan_results_db
-

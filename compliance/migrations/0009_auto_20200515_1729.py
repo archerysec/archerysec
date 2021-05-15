@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('compliance', '0008_dockle_scan_db_dockle_scan_results_db'),
+        ("compliance", "0008_dockle_scan_db_dockle_scan_results_db"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='dockle_scan_db',
-            old_name='inspec_info',
-            new_name='dockle_info',
+            model_name="dockle_scan_db",
+            old_name="inspec_info",
+            new_name="dockle_info",
         ),
         migrations.RenameField(
-            model_name='dockle_scan_db',
-            old_name='inspec_pass',
-            new_name='dockle_pass',
+            model_name="dockle_scan_db",
+            old_name="inspec_pass",
+            new_name="dockle_pass",
         ),
     ]

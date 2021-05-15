@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('compliance', '0006_auto_20190403_1224'),
+        ("compliance", "0006_auto_20190403_1224"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='inspec_scan_db',
-            name='username',
+            model_name="inspec_scan_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='inspec_scan_results_db',
-            name='username',
+            model_name="inspec_scan_results_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
     ]

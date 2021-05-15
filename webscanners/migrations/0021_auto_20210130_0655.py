@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0020_auto_20210130_0530'),
+        ("webscanners", "0020_auto_20210130_0530"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='webscanresultsdb',
-            name='instance',
+            model_name="webscanresultsdb",
+            name="instance",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='webscanresultsdb',
-            name='reference',
+            model_name="webscanresultsdb",
+            name="reference",
             field=models.TextField(blank=True),
         ),
     ]

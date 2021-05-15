@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('manual_scan', '0002_vulnerabilitydata'),
+        ("manual_scan", "0002_vulnerabilitydata"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='manual_scan_results_db',
-            name='project_id',
+            model_name="manual_scan_results_db",
+            name="project_id",
             field=models.UUIDField(blank=True, null=True),
         ),
     ]

@@ -6,20 +6,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('compliance', '0012_auto_20201006_0939'),
+        ("compliance", "0012_auto_20201006_0939"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='inspec_scan_db',
-            name='high_vul',
+            model_name="inspec_scan_db",
+            name="high_vul",
         ),
         migrations.RemoveField(
-            model_name='inspec_scan_db',
-            name='low_vul',
+            model_name="inspec_scan_db",
+            name="low_vul",
         ),
         migrations.RemoveField(
-            model_name='inspec_scan_db',
-            name='medium_vul',
+            model_name="inspec_scan_db",
+            name="medium_vul",
         ),
     ]

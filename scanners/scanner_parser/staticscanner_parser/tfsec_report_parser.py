@@ -14,16 +14,17 @@
 #
 # This file is part of ArcherySec Project.
 
-from staticscanners.models import tfsec_scan_db, tfsec_scan_results_db
-import uuid
 import hashlib
-from datetime import datetime
 import json
-from dashboard.views import trend_update
-from webscanners.zapscanner.views import email_sch_notify
+import uuid
+from datetime import datetime
 
-vul_col = ''
-severity = ''
+from dashboard.views import trend_update
+from staticscanners.models import StaticScansDb, StaticScanResultsDb
+from utility.email_notify import email_sch_notify
+
+vul_col = ""
+severity = ""
 
 
 def tfsec_report_json(data, project_id, scan_id, username):
@@ -36,56 +37,58 @@ def tfsec_report_json(data, project_id, scan_id, username):
     """
     date_time = datetime.now()
     global vul_col
-    for vuln in data['results']:
-        rule_id = vuln['rule_id']
-        link = vuln['link']
-        filename = vuln['location']['filename']
-        start_line = vuln['location']['start_line']
-        end_line = vuln['location']['end_line']
-        description = vuln['description']
-        severity = vuln['severity']
+    for vuln in data["results"]:
+        rule_id = vuln["rule_id"]
+        link = vuln["link"]
+        filename = vuln["location"]["filename"]
+        start_line = vuln["location"]["start_line"]
+        end_line = vuln["location"]["end_line"]
+        description = vuln["description"]
+        severity = vuln["severity"]
 
         if severity == "ERROR":
-            severity = 'High'
+            severity = "High"
             vul_col = "danger"
 
-        elif severity == 'WARNING':
-            severity = 'Medium'
+        elif severity == "WARNING":
+            severity = "Medium"
             vul_col = "warning"
 
-        elif severity == 'INFO':
-            severity = 'Info'
+        elif severity == "INFO":
+            severity = "Info"
             vul_col = "info"
 
         vul_id = uuid.uuid4()
 
         dup_data = str(rule_id) + str(severity) + str(filename)
 
-        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+        duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = tfsec_scan_results_db.objects.filter(username=username,
-                                                         dup_hash=duplicate_hash).values('dup_hash')
+        match_dup = StaticScanResultsDb.objects.filter(
+            username=username, dup_hash=duplicate_hash
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
-            duplicate_vuln = 'No'
+            duplicate_vuln = "No"
 
-            false_p = tfsec_scan_results_db.objects.filter(username=username,
-                                                           false_positive_hash=duplicate_hash)
+            false_p = StaticScanResultsDb.objects.filter(
+                username=username, false_positive_hash=duplicate_hash
+            )
             fp_lenth_match = len(false_p)
 
             if fp_lenth_match == 1:
-                false_positive = 'Yes'
+                false_positive = "Yes"
             else:
-                false_positive = 'No'
+                false_positive = "No"
 
-            save_all = tfsec_scan_results_db(
+            save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
-                vuln_status='Open',
+                vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
@@ -101,18 +104,18 @@ def tfsec_report_json(data, project_id, scan_id, username):
             save_all.save()
 
         else:
-            duplicate_vuln = 'Yes'
+            duplicate_vuln = "Yes"
 
-            save_all = tfsec_scan_results_db(
+            save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
                 vul_col=vul_col,
-                vuln_status='Duplicate',
+                vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive='Duplicate',
+                false_positive="Duplicate",
                 rule_id=rule_id,
                 filename=filename,
                 severity=severity,
@@ -124,29 +127,35 @@ def tfsec_report_json(data, project_id, scan_id, username):
             )
             save_all.save()
 
-    all_findbugs_data = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+    all_findbugs_data = StaticScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, false_positive="No"
+    )
 
-    duplicate_count = tfsec_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                           vuln_duplicate='Yes')
+    duplicate_count = StaticScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+    )
 
     total_vul = len(all_findbugs_data)
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
     total_low = len(all_findbugs_data.filter(severity="Low"))
-    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    tfsec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
+    StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
         total_vul=total_vul,
         date_time=date_time,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,
-        total_dup=total_duplicate
+        total_dup=total_duplicate,
     )
     trend_update(username=username)
-    subject = 'Archery Tool Scan Status - tfsec Report Uploaded'
-    message = 'tfsec Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % ("tfsec", total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - tfsec Report Uploaded"
+    message = (
+        "tfsec Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % ("tfsec", total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)
