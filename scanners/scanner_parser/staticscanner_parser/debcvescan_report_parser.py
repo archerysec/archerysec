@@ -88,13 +88,8 @@ def debcvescan_report_json(data, project_id, scan_id, username):
             vul_col = "info"
             severity = "Low"
 
-        elif severity == 'Unknown':
-            severity = "Low"
-            vul_col = "info"
-
         else:
-            severity = "No"
-            vul_col = "info"
+            continue
 
         vul_id = uuid.uuid4()
 
