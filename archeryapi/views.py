@@ -85,6 +85,8 @@ from projects.models import month_db
 from scanners.scanner_parser.staticscanner_parser import twistlock_json_report_parser
 from staticscanners.models import twistlock_scan_db, twistlock_scan_results_db
 
+from scanners.scanner_parser.staticscanner_parser import debcvescan_report_parser
+from staticscanners.models import debcvescan_scan_db, debcvescan_scan_results_db
 
 class WebScan(generics.ListCreateAPIView):
     queryset = zap_scans_db.objects.all()
@@ -1221,6 +1223,28 @@ class UploadScanResult(APIView):
                                                              data=data,
                                                              username=username)
             return Response({"message": "Scan Data Uploaded",
+                             "project_id": project_id,
+                             "scan_id": scan_id,
+                             "scanner": scanner
+                             })
+
+        elif scanner == 'debcve':
+            date_time = datetime.datetime.now()
+            scan_dump = debcvescan_scan_db(
+                project_name=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                username=username
+            )
+            scan_dump.save()
+            data = json.loads(file)
+            debcvescan_report_parser.debcvescan_report_json(project_id=project_id,
+                                                             scan_id=scan_id,
+                                                             data=data,
+                                                             username=username)
+            return Response({"message": "Debian CVE Scan Data Uploaded",
                              "project_id": project_id,
                              "scan_id": scan_id,
                              "scanner": scanner

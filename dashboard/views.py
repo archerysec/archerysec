@@ -323,6 +323,7 @@ def proj_data(request):
     bandit = bandit_scan_db.objects.filter(username=username, project_id=project_id)
     twistlock = twistlock_scan_db.objects.filter(username=username, project_id=project_id)
     brakeman = brakeman_scan_db.objects.filter(username=username, project_id=project_id)
+    debcve = debcvescan_scan_db.objects.filter(username=username, project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
 

@@ -59,6 +59,7 @@ urlpatterns = [
     path('api/', include('archeryapi.urls')),
     path('twistlock/', include('staticscanners.twistlock.urls')),
     path('brakeman/', include('staticscanners.brakeman.urls')),
+    path('debcvescan/', include('staticscanners.debcvescan.urls')),
 
     # path('scanapi/', include('APIScan.urls')),
     path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
