@@ -43,15 +43,53 @@ def inspec_report_json(data, project_id, scan_id, username):
                     controls_id = con['id']
                     controls_title = con['title']
                     controls_desc = con['desc']
-                    controls_descriptions = con['descriptions'][0]['data']
+                    controls_descriptions = ""
+                    try:
+                        controls_descriptions = con['descriptions'][0]['data'] 
+                    except:
+                        ontrols_descriptions = controls_desc
+
                     controls_impact = con['impact']
                     controls_refs = con['refs']
-                    controls_tags_severity = con['tags']['severity']
-                    controls_tags_cis_id = con['tags']['cis_id']
-                    controls_tags_cis_control = con['tags']['cis_control']
-                    controls_tags_cis_level = con['tags']['cis_level']
-                    controls_tags_audit = con['tags']['audit text']
-                    controls_tags_fix = con['tags']['fix']
+
+                    try:
+                        controls_tags_severity = con['tags']['severity']
+                    except:
+                        controls_tags_severity= "INFO"
+
+                    try:
+                        controls_tags_cis_id = con['tags']['severity']
+                    except:
+                        controls_tags_cis_id= "None"
+                    try:
+                        controls_tags_cis_control = con['tags']['cis_control']
+                    except:
+                        controls_tags_cis_control= "None"
+                    try:
+                        controls_tags_cis_level = con['tags']['cis_level']
+                    except:
+                        controls_tags_cis_level= "None"
+                    try:
+                        controls_tags_audit = con['tags']['audit text']
+                    except:
+                        controls_tags_audit= "None"
+                    try:
+                        controls_tags_fix = con['tags']['fix']
+                    except:
+                        controls_tags_fix= "None"
+                                                                                                                        
+                   # controls_tags_cis_id = con['tags']['cis_id'] ? con['tags']['cis_id'] : "None"
+                   # controls_tags_cis_control = con['tags']['cis_control'] ? con['tags']['cis_control'] : "None"
+                   # controls_tags_cis_level = con['tags']['cis_level'] ? con['tags']['cis_level'] : "None"
+                   # controls_tags_audit = con['tags']['audit text'] ? con['tags']['audit text'] : "None"
+                   # controls_tags_fix = con['tags']['fix'] ? con['tags']['fix'] : "None"
+                    # controls_tags_severity = "INFO"
+                    # controls_tags_cis_id = "None"
+                    # controls_tags_cis_control = "None"
+                    # controls_tags_cis_level = "None"
+                    # controls_tags_audit = "None"
+                    # controls_tags_fix = "None"
+
                     controls_code = con['code']
                     controls_source_location = con['source_location']['line']
                     for res in con['results']:
