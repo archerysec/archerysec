@@ -86,7 +86,7 @@ from scanners.scanner_parser.staticscanner_parser import twistlock_json_report_p
 from staticscanners.models import twistlock_scan_db, twistlock_scan_results_db
 
 from scanners.scanner_parser.staticscanner_parser import debcvescan_report_parser
-from staticscanners.models import debcvescan_scan_db, debcvescan_scan_results_db
+from staticscanners.models import debcvescan_scan_db
 
 class WebScan(generics.ListCreateAPIView):
     queryset = zap_scans_db.objects.all()

@@ -14,7 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
-from django.urls import include, path
+from django.urls import path
 from staticscanners.debcvescan import views
 
 app_name = 'debcvescan'

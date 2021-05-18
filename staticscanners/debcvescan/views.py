@@ -17,7 +17,6 @@
 from django.shortcuts import render,  HttpResponse, HttpResponseRedirect
 from staticscanners.models import debcvescan_scan_db, debcvescan_scan_results_db
 import hashlib
-from staticscanners.resources import debcveResource
 from django.urls import reverse
 from jiraticketing.models import jirasetting
 
@@ -25,6 +24,7 @@ from jiraticketing.models import jirasetting
 def debcvescan_list(request):
     """
     debcvescan_list Scan list.
+
     :param request:
     :return:
     """
@@ -145,6 +145,7 @@ def debcvescan_details(request):
 def del_debcvescan(request):
     """
     Delete debcvescan Scans.
+
     :param request:
     :return:
     """
@@ -169,6 +170,7 @@ def del_debcvescan(request):
 def debcvescan_del_vuln(request):
     """
     The function Delete the debcvescan Vulnerability.
+    
     :param request:
     :return:
     """

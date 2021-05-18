@@ -24,6 +24,7 @@ from django.urls import reverse
 def dependencycheck_list(request):
     """
     dependencycheck Scan list.
+    
     :param request:
     :return:
     """

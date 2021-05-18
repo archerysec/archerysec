@@ -18,7 +18,6 @@ from staticscanners.models import debcvescan_scan_db, debcvescan_scan_results_db
 import uuid
 import hashlib
 from datetime import datetime
-import json
 from dashboard.views import trend_update
 from webscanners.zapscanner.views import email_sch_notify
 
@@ -36,7 +35,6 @@ References = ''
 
 def debcvescan_report_json(data, project_id, scan_id, username):
     """
-
     :param data:
     :param project_id:
     :param scan_id:

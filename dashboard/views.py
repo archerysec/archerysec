@@ -68,6 +68,7 @@ from staticscanners.models import dependencycheck_scan_db, \
     gitlabcontainerscan_scan_results_db, \
     twistlock_scan_db, \
     twistlock_scan_results_db, \
+    debcvescan_scan_db, \
     brakeman_scan_db, \
     brakeman_scan_results_db
 
@@ -402,6 +403,7 @@ def proj_data(request):
                    'gitlabsast': gitlabsast,
                    'twistlock': twistlock,
                    'brakeman': brakeman,
+                   'debcve': debcve,
                    'gitlabcontainerscan': gitlabcontainerscan,
                    'gitlabsca': gitlabsca,
                    'npmaudit': npmaudit,
