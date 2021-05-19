@@ -50,6 +50,9 @@ def debcvescan_report_json(data, project_id, scan_id, username):
             description = vuln_data['description']
         except Exception as e:
             description = "Not Found"
+        
+        if "DISPUTED" in description:
+            continue
 
         try:
             cve = vuln_data['cve']
