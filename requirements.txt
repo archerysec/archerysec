@@ -18,7 +18,7 @@ cryptography==3.4.7
 cssselect2==0.4.1
 defusedxml==0.7.1
 diff-match-patch==20200713
-Django==3.1.8
+Django==3.1.12
 django-appconf==1.0.4
 django-background-tasks==1.2.5
 django-compat==1.0.15
@@ -95,7 +95,7 @@ tablib==3.0.0
 tinycss2==1.1.0
 toml==0.10.2
 uritemplate==3.0.1
-urllib3==1.26.4
+urllib3==1.26.5
 waitress==2.0.0
 webencodings==0.5.1
 whitenoise==5.2.0
