@@ -68,7 +68,9 @@ from staticscanners.models import dependencycheck_scan_db, \
     gitlabcontainerscan_scan_db, \
     gitlabcontainerscan_scan_results_db, \
     brakeman_scan_db, \
-    brakeman_scan_results_db
+    brakeman_scan_results_db, \
+    debcvescan_scan_db, \
+    debcvescan_scan_results_db
 
 from networkscanners.models import openvas_scan_db, \
     nessus_scan_db, \
@@ -144,49 +146,95 @@ def all_<scannername>(username, project_id, query):
 
 """
 
+def all_debcvescan(username, project_id, query):
+    all_debcvescan = None
+    if query == 'total':
+        all_debcvescan_scan = debcvescan_scan_db.objects.filter(username=username, project_id=project_id). \
+            aggregate(Sum('total_vul'))
+
+        for key, value in all_debcvescan_scan.items():
+            if value is None:
+                all_debcvescan = '0'
+            else:
+                all_debcvescan = value
+
+    elif query == 'high':
+
+        all_debcvescan_high = debcvescan_scan_db.objects.filter(username=username, project_id=project_id). \
+            aggregate(Sum('high_vul'))
+
+        for key, value in all_debcvescan_high.items():
+            if value is None:
+                all_debcvescan = '0'
+            else:
+                all_debcvescan = value
+
+    elif query == 'medium':
+        all_debcvescan_medium = debcvescan_scan_db.objects.filter(username=username, project_id=project_id). \
+            aggregate(Sum('medium_vul'))
+
+        for key, value in all_debcvescan_medium.items():
+            if value is None:
+                all_debcvescan = '0'
+            else:
+                all_debcvescan = value
+
+    elif query == 'low':
+        all_debcvescan_low = debcvescan_scan_db.objects.filter(username=username, project_id=project_id). \
+            aggregate(Sum('low_vul'))
+
+        for key, value in all_debcvescan_low.items():
+            if value is None:
+                all_debcvescan = '0'
+            else:
+                all_debcvescan = value
+
+    return all_debcvescan
+
+
 def all_brakeman(username, project_id, query):
     all_brakeman = None
     if query == 'total':
         all_brakeman_scan = brakeman_scan_db.objects.filter(username=username, project_id=project_id). \
             aggregate(Sum('total_vul'))
- 
+
         for key, value in all_brakeman_scan.items():
             if value is None:
                 all_brakeman = '0'
             else:
                 all_brakeman = value
- 
+
     elif query == 'high':
- 
+
         all_brakeman_high = brakeman_scan_db.objects.filter(username=username, project_id=project_id). \
             aggregate(Sum('high_vul'))
- 
+
         for key, value in all_brakeman_high.items():
             if value is None:
                 all_brakeman = '0'
             else:
                 all_brakeman = value
- 
+
     elif query == 'medium':
         all_brakeman_medium = brakeman_scan_db.objects.filter(username=username, project_id=project_id). \
             aggregate(Sum('medium_vul'))
- 
+
         for key, value in all_brakeman_medium.items():
             if value is None:
                 all_brakeman = '0'
             else:
                 all_brakeman = value
- 
+
     elif query == 'low':
         all_brakeman_low = brakeman_scan_db.objects.filter(username=username, project_id=project_id). \
             aggregate(Sum('low_vul'))
- 
+
         for key, value in all_brakeman_low.items():
             if value is None:
                 all_brakeman = '0'
             else:
                 all_brakeman = value
- 
+
     return all_brakeman
 
 
@@ -1510,6 +1558,7 @@ def all_vuln(username, project_id, query):
                    int(all_whitesource(username=username, project_id=project_id, query=query)) + \
                    int(all_checkmarx(username=username, project_id=project_id, query=query)) + \
                    int(all_bandit(username=username, project_id=project_id, query=query)) + \
+                   int(all_debcvescan(username=username, project_id=project_id, query=query)) + \
                    int(all_manual_scan(username=username, project_id=project_id, query=query))
     elif query == 'high':
         # add your scanner name <scannername>
@@ -1538,6 +1587,7 @@ def all_vuln(username, project_id, query):
                    int(all_whitesource(username=username, project_id=project_id, query=query)) + \
                    int(all_checkmarx(username=username, project_id=project_id, query=query)) + \
                    int(all_bandit(username=username, project_id=project_id, query=query)) + \
+                   int(all_debcvescan(username=username, project_id=project_id, query=query)) + \
                    int(all_manual_scan(username=username, project_id=project_id, query=query))
     elif query == 'medium':
         # add your scanner name here <scannername>
@@ -1566,6 +1616,7 @@ def all_vuln(username, project_id, query):
                    int(all_whitesource(username=username, project_id=project_id, query=query)) + \
                    int(all_checkmarx(username=username, project_id=project_id, query=query)) + \
                    int(all_bandit(username=username, project_id=project_id, query=query)) + \
+                   int(all_debcvescan(username=username, project_id=project_id, query=query)) + \
                    int(all_manual_scan(username=username, project_id=project_id, query=query))
     elif query == 'low':
         # add your scannername here <scannername>
@@ -1594,6 +1645,7 @@ def all_vuln(username, project_id, query):
                    int(all_whitesource(username=username, project_id=project_id, query=query)) + \
                    int(all_checkmarx(username=username, project_id=project_id, query=query)) + \
                    int(all_bandit(username=username, project_id=project_id, query=query)) + \
+                   int(all_debcvescan(username=username, project_id=project_id, query=query)) + \
                    int(all_manual_scan(username=username, project_id=project_id, query=query))
 
     return all_vuln
@@ -1699,6 +1751,7 @@ def all_static(username, project_id, query):
             all_twistlock(username=username, project_id=project_id, query=query)) + int(
             all_brakeman(username=username, project_id=project_id, query=query)) + int(
             all_gitlabcontainerscan(username=username, project_id=project_id, query=query)) + int(
+            all_debcvescan(username=username, project_id=project_id, query=query)) + int(
             all_gitlabsca(username=username, project_id=project_id, query=query))
     elif query == 'high':
         # add your scanner name here <scannername>
@@ -1717,6 +1770,7 @@ def all_static(username, project_id, query):
             all_twistlock(username=username, project_id=project_id, query=query)) + int(
             all_brakeman(username=username, project_id=project_id, query=query)) + int(
             all_gitlabcontainerscan(username=username, project_id=project_id, query=query)) + int(
+            all_debcvescan(username=username, project_id=project_id, query=query)) + int(
             all_gitlabsca(username=username, project_id=project_id, query=query))
     elif query == 'medium':
         # add your scanner name here <scannername>
@@ -1735,6 +1789,7 @@ def all_static(username, project_id, query):
             all_twistlock(username=username, project_id=project_id, query=query)) + int(
             all_brakeman(username=username, project_id=project_id, query=query)) + int(
             all_gitlabcontainerscan(username=username, project_id=project_id, query=query)) + int(
+            all_debcvescan(username=username, project_id=project_id, query=query)) + int(
             all_gitlabsca(username=username, project_id=project_id, query=query))
     elif query == 'low':
         # add your scanner name here <scannername>
@@ -1753,6 +1808,7 @@ def all_static(username, project_id, query):
             all_twistlock(username=username, project_id=project_id, query=query)) + int(
             all_brakeman(username=username, project_id=project_id, query=query)) + int(
             all_gitlabcontainerscan(username=username, project_id=project_id, query=query)) + int(
+            all_debcvescan(username=username, project_id=project_id, query=query)) + int(
             all_gitlabsca(username=username, project_id=project_id, query=query))
 
     return all_static
@@ -1830,6 +1886,8 @@ def all_vuln_count(username, project_id, query):
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='High',
                                                                  project_id=project_id)
+        debcvescan_all_high = debcvescan_scan_results_db.objects.filter(username=username, severity='High',
+                                                                 project_id=project_id)
         # add your scanner name here <scannername>
         all_data = chain(zap_all_high,
                          burp_all_high,
@@ -1856,7 +1914,8 @@ def all_vuln_count(username, project_id, query):
                          netsparker_all_high,
                          nessus_all_high,
                          pentest_all_high,
-                         bandit_all_high
+                         bandit_all_high,
+                         debcvescan_all_high
                          )
 
     elif query == 'Medium':
@@ -1931,6 +1990,8 @@ def all_vuln_count(username, project_id, query):
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Medium',
                                                                  project_id=project_id)
+        debcvescan_all_high = debcvescan_scan_results_db.objects.filter(username=username, severity='Medium',
+                                                                 project_id=project_id)
         # add your scannername here <scannername>
         all_data = chain(zap_all_high,
                          burp_all_high,
@@ -1957,7 +2018,8 @@ def all_vuln_count(username, project_id, query):
                          netsparker_all_high,
                          nessus_all_high,
                          bandit_all_high,
-                         pentest_all_high
+                         pentest_all_high,
+                         debcvescan_all_high
                          )
 
         # dataset = resource.export(all_data)
@@ -2029,6 +2091,8 @@ def all_vuln_count(username, project_id, query):
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Low',
                                                                  project_id=project_id)
+        debcvescan_all_high = debcvescan_scan_results_db.objects.filter(username=username, severity='Low',
+                                                                 project_id=project_id)
         # add your scanner name <scannername>
         all_data = chain(zap_all_high,
                          burp_all_high,
@@ -2055,7 +2119,8 @@ def all_vuln_count(username, project_id, query):
                          netsparker_all_high,
                          nessus_all_high,
                          bandit_all_high,
-                         pentest_all_high
+                         pentest_all_high,
+                         debcvescan_all_high
                          )
 
         # dataset = resource.export(all_data)
@@ -2112,6 +2177,8 @@ def all_vuln_count(username, project_id, query):
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, project_id=project_id)
 
+        debcvescan_all_high = debcvescan_scan_results_db.objects.filter(username=username, project_id=project_id)
+
         # add your scanner name <scannername>
         all_data = chain(zap_all_high,
                          burp_all_high,
@@ -2138,7 +2205,8 @@ def all_vuln_count(username, project_id, query):
                          netsparker_all_high,
                          nessus_all_high,
                          bandit_all_high,
-                         pentest_all_high
+                         pentest_all_high,
+                         debcvescan_all_high
                          )
 
     elif query == 'False':
@@ -2206,6 +2274,8 @@ def all_vuln_count(username, project_id, query):
                                                             false_positive='Yes')
         nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                 false_positive='Yes')
+        debcvescan_all_high = debcvescan_scan_results_db.objects.filter(username=username, project_id=project_id,
+                                                                false_positive='Yes')
         # add your scanner name <scannername>
         all_data = chain(zap_all_high,
                          burp_all_high,
@@ -2230,7 +2300,8 @@ def all_vuln_count(username, project_id, query):
                          checkmarx_all_high,
                          openvas_all_high,
                          netsparker_all_high,
-                         nessus_all_high
+                         nessus_all_high,
+                         debcvescan_all_high
                          )
 
     elif query == 'Close':

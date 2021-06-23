@@ -25,6 +25,7 @@ from staticscanners.models import retirejs_scan_results_db, \
     tfsec_scan_db, whitesource_scan_db, gitlabsast_scan_db, gitlabsca_scan_db, gitlabcontainerscan_scan_db, \
     semgrepscan_scan_db
 # from staticscanners.models import <scannername>_scan_db
+from staticscanners.models import debcvescan_scan_db
 from staticscanners.models import brakeman_scan_db
 from staticscanners.models import twistlock_scan_db
 from compliance.models import inspec_scan_db, dockle_scan_db
@@ -53,6 +54,7 @@ from django.contrib import messages
 
 
 # Create your views here.
+from scanners.scanner_parser.staticscanner_parser import debcvescan_report_parser
 
 
 def report_import(request):
@@ -496,6 +498,31 @@ def report_import(request):
                 return HttpResponseRedirect(reverse('brakeman:brakeman_list'))
             except Exception as e:
                 print(e)
+                messages.error(request, "File Not Supported")
+                return render(request, 'report_import.html', {'all_project': all_project})
+
+        if scanner == "debcve":
+            try:
+                date_time = datetime.now()
+
+                j = json_file.read()
+                data = json.loads(j)
+                scan_dump = debcvescan_scan_db(project_name=project_name,
+                                                        scan_id=scan_id,
+                                                        date_time=date_time,
+                                                        project_id=project_id,
+                                                        scan_status=scan_status,
+                                                        username=username,
+                                                        )
+                scan_dump.save()
+                debcvescan_report_parser.debcvescan_report_json(project_id=project_id,
+                                                                                    scan_id=scan_id,
+                                                                                    data=data,
+                                                                                    username=username
+                                                                                    )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse('debcvescan:debcvescan_list'))
+            except:
                 messages.error(request, "File Not Supported")
                 return render(request, 'report_import.html', {'all_project': all_project})
 

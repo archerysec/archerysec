@@ -68,6 +68,7 @@ from staticscanners.models import dependencycheck_scan_db, \
     gitlabcontainerscan_scan_results_db, \
     twistlock_scan_db, \
     twistlock_scan_results_db, \
+    debcvescan_scan_db, \
     brakeman_scan_db, \
     brakeman_scan_results_db
 
@@ -323,6 +324,7 @@ def proj_data(request):
     bandit = bandit_scan_db.objects.filter(username=username, project_id=project_id)
     twistlock = twistlock_scan_db.objects.filter(username=username, project_id=project_id)
     brakeman = brakeman_scan_db.objects.filter(username=username, project_id=project_id)
+    debcve = debcvescan_scan_db.objects.filter(username=username, project_id=project_id)
 
     web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
 
@@ -401,6 +403,7 @@ def proj_data(request):
                    'gitlabsast': gitlabsast,
                    'twistlock': twistlock,
                    'brakeman': brakeman,
+                   'debcve': debcve,
                    'gitlabcontainerscan': gitlabcontainerscan,
                    'gitlabsca': gitlabsca,
                    'npmaudit': npmaudit,

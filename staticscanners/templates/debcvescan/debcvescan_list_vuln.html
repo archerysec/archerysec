@@ -1,0 +1,51 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Vulnerability List</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="debcvescan_scans_list" class="table table-bordered data-table table-fixed" width="100%">
+                            <thead>
+                            <tr>
+                                <th>CVE</th>
+                                <th>Description</th>
+                                <th>Package</th>
+                                <th>Current version</th>
+                                <th>Fixed version</th>
+                                <th>Severity</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in debcvescan_all_vuln %}
+                            <tr data-target="#">
+                                <td>
+                                    <a href="{% url 'debcvescan:debcvescan_vuln_data' %}?scan_id={{data.scan_id}}&test_name={{data.cve}}">{{data.cve}}</a>
+                                </td>
+                                <td>{{data.description}}</td>
+                                <td>{{data.package}}</td>
+                                <td>{{data.package_ver}}</td>
+                                <td>{{data.fix_ver}}</td>
+                                <td><span class="badge badge-pill badge-{{data.vul_col}}">{{data.Severity}}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

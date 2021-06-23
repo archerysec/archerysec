@@ -69,7 +69,11 @@
                 <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
                                             href="javascript:void(0)" aria-expanded="false"><i
                         class="fas fa-file-code"></i><span class="hide-menu">Static Scan</span></a>
-                    <ul aria-expanded="false" class="collapse first-level">
+                        <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item"><a href="{% url 'debcvescan:debcvescan_list' %}"
+                                class="sidebar-link"><i
+                                class="fas fa-dna"></i><span class="hide-menu"> Debian CVE Scans </span></a></li>
+
                         <li class="sidebar-item"><a href="{% url 'banditscanner:banditscans_list' %}"
                                                     class="sidebar-link"><i
                                 class="fas fa-dna"></i><span class="hide-menu"> Bandit Scans </span></a></li>

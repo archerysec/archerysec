@@ -57,9 +57,10 @@ from archerysettings.models import zap_settings_db, \
     arachni_settings_db, email_db
 from scanners.scanner_parser.staticscanner_parser import dependencycheck_report_parser, findbugs_report_parser, \
     checkmarx_xml_report_parser
+
 from lxml import etree
 from staticscanners.models import dependencycheck_scan_db, \
-    findbugs_scan_db, checkmarx_scan_results_db, checkmarx_scan_db
+    findbugs_scan_db, checkmarx_scan_results_db, checkmarx_scan_db, debcvescan_scan_results_db
 from tools.models import nikto_result_db
 import codecs
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
