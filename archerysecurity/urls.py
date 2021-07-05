@@ -42,7 +42,7 @@ urlpatterns = [
     path(
         "inbox/notifications/", include(notifications.urls, namespace="notifications")
     ),
-    path("nessus/", include("networkscanners.nessus.urls")),
+    # path("nessus/", include("networkscanners.nessus.urls")),
     # Default url
     path(r"", include("dashboard.urls")),
     # API authentication

@@ -1,22 +1,20 @@
-
-
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-{% for data in nessus_vuln_details %}
+{% for data in vul_dat %}
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                 <div class="col-md-auto">
+                  <div class="col-md-auto">
                     <div class="float-right">
                         <!-- Large modal -->
-                         <a href="/jira/submit_jira_ticket/?summary={{ data.plugin_name }}&description={{data.description}}%0a%0a%0a Vulnerable Host: {{data.scan_ip}} %0a%0a Vulnerable Port: {{data.port}} %0a%0a Solution: {{data.solution}} %0a%0a Archery URL: {SERVERIP}/networkscanners/nessus_vuln_check/?vuln_id={{data.vul_id}} %0a%0a Request Header: {{ data.request_raw }}&scanner=nessus&vuln_id={{data.vul_id}}&scan_id={{data.scan_id}} "
+                        <a href="/jira/submit_jira_ticket/?summary={{ data.test_name }}&description={{data.issue_text }}%0a%0a%0a Vulnerable File: {{data.filename}} %0a%0a Vulnerable Code: {{data.code }} %0a%0a Solution:  %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=bandit&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
                class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
 
                     </div>
                 </div>
-                <h1>{{ data.plugin_name }}</h1>
+                <h1>{{ data.title }}</h1>
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
@@ -33,16 +31,8 @@
                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                     {{data.description}}
-                                    <br>
-                                    <br>
-                                    <pre>{{data.plugin_output|safe}}</pre>
-                                    <br>
-                                    {{data.synopsis}}
-                                    <br>
-                                    <br>
-                                    <strong> Plugin Modification Date : </strong>{{data.plugin_modification_date}}<br><br>
-                        <strong> Plugin Publication Date : </strong>{{data.plugin_publication_date}}<br><br>
+                                    {{data.description | safe}}
+
                                 </div>
                             </div>
                         </div>
@@ -60,25 +50,8 @@
                                  data-parent="#accordionExample">
                                 <div class="card-body">
                                     <div class="col-md-6">
-                                    <table class="table table-bordered data-table table-fixed">
-                                        <thead>
-                                            <tr>
-                                                <td>IP</td>
-                                                <td>Port</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>
-                                                {{data.target}}
-                                            </td>
-                                            <td>
-                                                {{data.port}}
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                        </div>
+                                        File: {{data.fileName}}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -95,25 +68,24 @@
                             <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                     <pre>{{data.solution}}</pre>
+                                   <a href="{{data.solution | safe}}">{{data.solution | safe}}</a>
                                 </div>
                             </div>
                         </div>
-
                         <div class="card m-b-0 border-top">
-                            <div class="card-header" id="heading7">
+                            <div class="card-header" id="headingFour">
                                 <h5 class="mb-0">
-                                    <a class="collapsed" data-toggle="collapse" data-target="#collapse7"
-                                       aria-expanded="false" aria-controls="collapse7">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseFour"
+                                       aria-expanded="false" aria-controls="collapseFour">
                                         <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Family</span>
+                                        <span>References</span>
                                     </a>
                                 </h5>
                             </div>
-                            <div id="collapse7" class="collapse" aria-labelledby="heading7"
+                            <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                     <pre>{{data.fname}}</pre>
+                                   <a href="{{data.references | safe}}">{{data.references | safe}}</a>
                                 </div>
                             </div>
                         </div>

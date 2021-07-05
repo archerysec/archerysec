@@ -6,3 +6,5 @@ scanners/zap.log
 *Postman*
 archerysecurity/local_settings.py
 static/
+server.log.1
+server.log

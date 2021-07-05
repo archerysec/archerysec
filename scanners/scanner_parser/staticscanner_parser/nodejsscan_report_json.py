@@ -69,10 +69,8 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
             vul_id = uuid.uuid4()
 
             dup_data = str(title) + str(severity) + str(filename) + str(line)
-            print(dup_data)
 
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
-            print(duplicate_hash)
 
             match_dup = StaticScanResultsDb.objects.filter(
                 username=username, dup_hash=duplicate_hash
@@ -97,21 +95,18 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
                     title=title,
-                    filename=filename,
+                    fileName=filename,
                     severity=severity,
-                    path=path,
-                    sha2=sha2,
-                    tag=tag,
-                    description=description,
-                    line=line,
-                    lines=lines,
+                    filePath=path,
+                    description=str(description) + '\n\n' + str(line) + '\n\n' + str(lines),
                     username=username,
+                    scanner='Nodejsscan'
                 )
                 save_all.save()
 
@@ -123,21 +118,18 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive="Duplicate",
+                    false_positive='Duplicate',
                     title=title,
-                    filename=filename,
+                    fileName=filename,
                     severity=severity,
-                    path=path,
-                    sha2=sha2,
-                    tag=tag,
-                    description=description,
-                    line=line,
-                    lines=lines,
+                    filePath=path,
+                    description=str(description) + '\n\n' + str(line) + '\n\n' + str(lines),
                     username=username,
+                    scanner='Nodejsscan'
                 )
                 save_all.save()
 
@@ -162,11 +154,12 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
+            scanner='Nodejsscan'
         )
         trend_update(username=username)
-        subject = "Archery Tool Scan Status - Trivy Report Uploaded"
+        subject = "Archery Tool Scan Status - Nodejsscan Report Uploaded"
         message = (
-            "Trivy Scanner has completed the scan "
+            "Nodejsscan Scanner has completed the scan "
             "  %s <br> Total: %s <br>High: %s <br>"
             "Medium: %s <br>Low %s"
             % ("Nodejsscan", total_vul, total_high, total_medium, total_low)

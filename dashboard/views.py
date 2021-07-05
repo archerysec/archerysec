@@ -34,9 +34,6 @@ from dashboard.scans_data import scans_query
 # Add Pentest db
 from manual_scan.models import manual_scan_results_db, manual_scans_db
 # Network Scanners db models
-from networkscanners.models import (nessus_report_db, nessus_scan_db,
-                                    nessus_scan_results_db, openvas_scan_db,
-                                    ov_scan_result_db)
 from projects.models import Month, MonthSqlite, month_db, project_db
 # Add Static Scanners db models
 from staticscanners.models import (StaticScanResultsDb, StaticScansDb)

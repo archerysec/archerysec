@@ -46,8 +46,6 @@ echo '[INSTALL] openvas_lib from github'
 python3 -m pip install git+https://github.com/archerysec/openvas_lib.git
 echo '[INSTALL] Installing Requirements'
 pip install --no-cache-dir --use-deprecated=legacy-resolver -r requirements.txt
-echo 'Collect static files'
-python manage.py collectstatic
 echo '[INSTALL] Migrating Database'
 python manage.py makemigrations
 python manage.py migrate

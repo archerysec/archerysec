@@ -15,7 +15,6 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
-import json
 import uuid
 from datetime import datetime
 
@@ -33,6 +32,10 @@ Title = ""
 Description = ""
 Severity = ""
 References = ""
+total_vul = ''
+total_high = ''
+total_medium = ''
+total_low = ''
 
 
 def trivy_report_json(data, project_id, scan_id, username):
@@ -43,6 +46,7 @@ def trivy_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    global total_vul, total_high, total_medium, total_low
     date_time = datetime.now()
     vul_col = ""
     for vuln_data in data:
@@ -139,20 +143,18 @@ def trivy_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    VulnerabilityID=VulnerabilityID,
-                    PkgName=PkgName,
-                    InstalledVersion=InstalledVersion,
-                    FixedVersion=FixedVersion,
-                    Title=Title,
-                    Description=Description,
-                    Severity=Severity,
-                    References=References,
-                    vul_col=vul_col,
+                    fileName=PkgName,
+                    title=VulnerabilityID,
+                    description=str(Description) + str(Title) + '\n\n' + str(VulnerabilityID) + '\n\n' + str(PkgName) + '\n\n' + str(InstalledVersion) + '\n\n' + str(FixedVersion),
+                    severity=Severity,
+                    references=References,
+                    severity_color=vul_col,
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
                     username=username,
+                    scanner='Trivy'
                 )
                 save_all.save()
 
@@ -164,20 +166,18 @@ def trivy_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    VulnerabilityID=VulnerabilityID,
-                    PkgName=PkgName,
-                    InstalledVersion=InstalledVersion,
-                    FixedVersion=FixedVersion,
-                    Title=Title,
-                    Description=Description,
-                    Severity=Severity,
-                    References=References,
-                    vul_col=vul_col,
+                    fileName=PkgName,
+                    title=VulnerabilityID,
+                    description=str(Description) + str(Title) + '\n\n' + str(VulnerabilityID) + '\n\n' + str(PkgName) + '\n\n' + str(InstalledVersion) + '\n\n' + str(FixedVersion),
+                    severity=Severity,
+                    references=References,
+                    severity_color=vul_col,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive="Duplicate",
+                    false_positive='Duplicate',
                     username=username,
+                    scanner='Trivy'
                 )
                 save_all.save()
 
@@ -190,9 +190,9 @@ def trivy_report_json(data, project_id, scan_id, username):
         )
 
         total_vul = len(all_findbugs_data)
-        total_high = len(all_findbugs_data.filter(Severity="High"))
-        total_medium = len(all_findbugs_data.filter(Severity="Medium"))
-        total_low = len(all_findbugs_data.filter(Severity="Low"))
+        total_high = len(all_findbugs_data.filter(severity="High"))
+        total_medium = len(all_findbugs_data.filter(severity="Medium"))
+        total_low = len(all_findbugs_data.filter(severity="Low"))
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
         StaticScansDb.objects.filter(scan_id=scan_id).update(
@@ -203,6 +203,7 @@ def trivy_report_json(data, project_id, scan_id, username):
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
+            scanner='Trivy'
         )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - Trivy Report Uploaded"

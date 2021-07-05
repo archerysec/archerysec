@@ -966,7 +966,8 @@ def xml_upload(request):
                 return HttpResponseRedirect(
                     reverse("dependencycheck:dependencycheck_list")
                 )
-            except:
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
@@ -990,7 +991,8 @@ def xml_upload(request):
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("checkmarx:checkmarx_list"))
-            except:
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 
@@ -1014,7 +1016,8 @@ def xml_upload(request):
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("findbugs:findbugs_list"))
-            except:
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 

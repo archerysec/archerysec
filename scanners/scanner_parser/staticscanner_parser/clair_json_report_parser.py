@@ -23,6 +23,7 @@ from staticscanners.models import StaticScansDb, StaticScanResultsDb
 from utility.email_notify import email_sch_notify
 
 vul_col = ""
+Name = ''
 
 
 def clair_report_json(data, project_id, scan_id, username):
@@ -33,13 +34,8 @@ def clair_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
-
-    # d = data['Vulnerabilities']['Medium']
-    #
-    # for dd in d:
-    #     print dd['Name']
     date_time = datetime.now()
-    global vul_col
+    global vul_col, Name
     try:
         high = data["Vulnerabilities"]["High"]
         for vuln in high:
@@ -114,20 +110,20 @@ def clair_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
@@ -139,20 +135,20 @@ def clair_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive="Duplicate",
-                    vul_col=vul_col,
+                    false_positive='Duplicate',
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
@@ -235,20 +231,20 @@ def clair_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
@@ -260,20 +256,20 @@ def clair_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive="Duplicate",
-                    vul_col=vul_col,
+                    false_positive='Duplicate',
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
@@ -355,20 +351,20 @@ def clair_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
@@ -380,26 +376,26 @@ def clair_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive="Duplicate",
-                    vul_col=vul_col,
+                    false_positive='Duplicate',
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
     except Exception:
         print("Low Vulnerability Not found")
-        low = data["vulnerabilities"]
+        low = data["Vulnerabilities"]['Low']
 
         for vuln in low:
             vul_id = uuid.uuid4()
@@ -482,20 +478,20 @@ def clair_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
@@ -507,20 +503,20 @@ def clair_report_json(data, project_id, scan_id, username):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive="Duplicate",
-                    vul_col=vul_col,
+                    false_positive='Duplicate',
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
         # pass
@@ -534,9 +530,9 @@ def clair_report_json(data, project_id, scan_id, username):
     )
 
     total_vul = len(all_clair_data)
-    total_high = len(all_clair_data.filter(Severity="High"))
-    total_medium = len(all_clair_data.filter(Severity="Medium"))
-    total_low = len(all_clair_data.filter(Severity="Low"))
+    total_high = len(all_clair_data.filter(severity="High"))
+    total_medium = len(all_clair_data.filter(severity="Medium"))
+    total_low = len(all_clair_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
@@ -546,13 +542,14 @@ def clair_report_json(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Clair'
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - Clair Report Uploaded"
     message = (
-        "Clair Scanner has completed the scan "
-        "  %s <br> Total: %s <br>High: %s <br>"
-        "Medium: %s <br>Low %s" % (Name, total_vul, total_high, total_medium, total_low)
+            "Clair Scanner has completed the scan "
+            "  %s <br> Total: %s <br>High: %s <br>"
+            "Medium: %s <br>Low %s" % (Name, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

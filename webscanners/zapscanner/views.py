@@ -297,7 +297,7 @@ def zap_scan(request):
             return HttpResponse(status=200)
         return HttpResponse(status=200)
 
-    return render(request, "zapscanner/zap_scan_list.html")
+    return render(request, "webscanners/zapscanner/zap_scan_list.html")
 
 
 def zap_settings(request):
@@ -326,7 +326,7 @@ def zap_settings(request):
 
     return render(
         request,
-        "zapscanner/zap_settings_form.html",
+        "webscanners/zapscanner/zap_settings_form.html",
         {
             "zap_apikey": zap_api_key,
             "zap_host": zap_hosts,
@@ -377,7 +377,7 @@ def zap_setting_update(request):
     #                      messages.SUCCESS,
     #                      'ZAP Setting Updated ')
 
-    return render(request, "zapscanner/zap_settings_form.html")
+    return render(request, "webscanners/zapscanner/zap_settings_form.html")
 
 
 def slem(driver, url):
@@ -424,7 +424,7 @@ def cookies_list(request):
     username = request.user.username
     all_cookies = cookie_db.objects.filter(username=username)
 
-    return render(request, "cookies_list.html", {"all_cookies": all_cookies})
+    return render(request, "webscanners/cookies_list.html", {"all_cookies": all_cookies})
 
 
 def del_cookies(request):
@@ -443,7 +443,7 @@ def del_cookies(request):
             zap_plugin.zap_replacer(target_url=cookies_target, random_port="8090")
         return HttpResponseRedirect(reverse("webscanners:index"))
 
-    return render(request, "cookies_list.html")
+    return render(request, "webscanners/cookies_list.html")
 
 
 def sel_login(request):
@@ -493,7 +493,7 @@ def sel_login(request):
         # messages.add_message(request, messages.SUCCESS, 'Cookies stored')
 
         return HttpResponseRedirect(reverse("webscanners:index"))
-    return render(request, "webscanner.html")
+    return render(request, "webscanners/webscanner.html")
 
 
 def exclude_url(request):
@@ -511,7 +511,7 @@ def exclude_url(request):
 
     return render(
         request,
-        "webscanner.html",
+        "webscanners/webscanner.html",
     )
 
 def exluded_url_list(request):
@@ -540,7 +540,7 @@ def exluded_url_list(request):
         return HttpResponseRedirect(reverse("zapscanner:excluded_url_list"))
 
     return render(
-        request, "excludedurl_list.html", {"all_excluded_url": all_excluded_url}
+        request, "webscanners/excludedurl_list.html", {"all_excluded_url": all_excluded_url}
     )
 
 def zap_scan_pdf_gen(request):
@@ -568,7 +568,7 @@ def zap_scan_pdf_gen(request):
 
         return render_to_pdf_response(
             request,
-            template=str("zapscanner/zap_scan_pdf_gen.html"),
+            template=str("webscanners/zapscanner/zap_scan_pdf_gen.html"),
             download_filename=None,
             content_type="application/pdf",
             context={

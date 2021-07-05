@@ -32,8 +32,6 @@ from stronghold.decorators import public
 from archeryapi.serializers import CreateUser
 from compliance.models import dockle_scan_db, inspec_scan_db
 from networkscanners import views
-from networkscanners.models import (nessus_scan_db, openvas_scan_db,
-                                    ov_scan_result_db)
 from networkscanners.serializers import (NetworkScanResultSerializer,
                                          NetworkScanSerializer)
 from projects.models import month_db, project_db
@@ -83,6 +81,7 @@ from webscanners.serializers import (AcunetixStatusSerializer,
                                      WebScanStatusSerializer,
                                      ZapScanStatusDataSerializers)
 from webscanners.zapscanner.views import launch_zap_scan
+from networkscanners.models import NetworkScanResultsDb, NetworkScanDb
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -167,7 +166,7 @@ class NetworkScan(generics.ListCreateAPIView):
     Network Scan API call to perform scan.
     """
 
-    queryset = openvas_scan_db.objects.all()
+    # queryset = openvas_scan_db.objects.all()
     serializer_class = NetworkScanSerializer
 
     def get(self, request, format=None, **kwargs):
@@ -177,7 +176,7 @@ class NetworkScan(generics.ListCreateAPIView):
 
         """
         username = request.user.username
-        all_scans = openvas_scan_db.objects.filter(username=username)
+        all_scans = NetworkScanDb.objects.filter(username=username)
         serialized_scans = NetworkScanSerializer(all_scans, many=True)
         return Response(serialized_scans.data)
 
@@ -650,7 +649,7 @@ class AcunetixScanStatus(generics.ListCreateAPIView):
 
 
 class NetworkScanResult(generics.ListCreateAPIView):
-    queryset = ov_scan_result_db.objects.all()
+    queryset = NetworkScanResultsDb.objects.all()
     serializer_class = NetworkScanResultSerializer
 
     def post(self, request, format=None, **kwargs):
@@ -663,7 +662,7 @@ class NetworkScanResult(generics.ListCreateAPIView):
             scan_id = request.data.get(
                 "scan_id",
             )
-            all_scans = ov_scan_result_db.objects.filter(
+            all_scans = NetworkScanResultsDb.objects.filter(
                 username=username, scan_id=scan_id
             )
             serialized_scans = NetworkScanResultSerializer(all_scans, many=True)
@@ -1284,13 +1283,14 @@ class UpladScanResult(APIView):
 
         elif scanner == "nessus":
             date_time = datetime.datetime.now()
-            scan_dump = nessus_scan_db(
-                scan_ip=scan_url,
+            scan_dump = NetworkScanDb(
+                ip=scan_url,
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
                 username=username,
+                scanner='Nessus'
             )
             scan_dump.save()
             root_xml = ET.fromstring(file)
@@ -1322,7 +1322,7 @@ class UpladScanResult(APIView):
             root_xml_en = ET.fromstring(en_root_xml)
             hosts = OpenVas_Parser.get_hosts(root_xml_en)
             for host in hosts:
-                scan_dump = openvas_scan_db(
+                scan_dump = NetworkScanDb(
                     scan_ip=host,
                     scan_id=host,
                     date_time=date_time,

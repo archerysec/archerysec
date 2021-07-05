@@ -26,8 +26,6 @@ from django.db.models import Sum
 from compliance.models import dockle_scan_db, inspec_scan_db
 # import pentest database db <scannername>
 from manual_scan.models import manual_scan_results_db, manual_scans_db
-from networkscanners.models import (nessus_scan_db, nessus_scan_results_db,
-                                    openvas_scan_db, ov_scan_result_db)
 # import static scanners database model db <scannername>
 from staticscanners.models import (StaticScansDb, StaticScanResultsDb)
 # import your web scanners db <scannername>
@@ -550,7 +548,7 @@ def all_vuln_count(scanner, username, project_id, severity):
         username=username, project_id=project_id, severity=severity, scanner=scanner
     )
 
-    all_net_high = ov_scan_result_db.objects.filter(
+    all_net_high = NetworkScanResultsDb.objects.filter(
         username=username, threat=severity, project_id=project_id, scanner=scanner
     )
 

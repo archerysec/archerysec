@@ -15,7 +15,6 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
-import json
 import uuid
 from datetime import datetime
 
@@ -95,32 +94,18 @@ def whitesource_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                vul_col=vul_col,
+                severity_color=vul_col,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
-                name=name,
+                title=name,
                 severity=severity,
-                score=score,
-                cvss3_severity=cvss3_severity,
-                cvss3_score=cvss3_score,
-                publishDate=publishDate,
-                lastUpdatedDate=lastUpdatedDate,
-                scoreMetadataVector=scoreMetadataVector,
-                url=url,
-                description=description,
-                project=project,
-                product=product,
-                cvss3Attributes=cvss3Attributes,
-                library=library,
-                topFix=topFix,
-                # allFixes=allFixes,
-                filename=filename,
-                sha1=sha1,
-                version=version,
-                groupId=groupId,
+                references=url,
+                description=str(description) + '\n\n' + str(score) + '\n\n' + str(library) + '\n\n' + str(topFix) + '\n\n',
+                fileName=filename,
                 username=username,
+                scanner='Whitesource'
             )
             save_all.save()
 
@@ -132,32 +117,18 @@ def whitesource_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                vul_col=vul_col,
+                severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive="Duplicate",
-                name=name,
+                false_positive='Duplicate',
+                title=name,
                 severity=severity,
-                score=score,
-                cvss3_severity=cvss3_severity,
-                cvss3_score=cvss3_score,
-                publishDate=publishDate,
-                lastUpdatedDate=lastUpdatedDate,
-                scoreMetadataVector=scoreMetadataVector,
-                url=url,
-                description=description,
-                project=project,
-                product=product,
-                cvss3Attributes=cvss3Attributes,
-                library=library,
-                topFix=topFix,
-                # allFixes=allFixes,
-                filename=filename,
-                sha1=sha1,
-                version=version,
-                groupId=groupId,
+                references=url,
+                description=str(description) + '\n\n' + str(score) + '\n\n' + str(library) + '\n\n' + str(topFix) + '\n\n',
+                fileName=filename,
                 username=username,
+                scanner='Whitesource'
             )
             save_all.save()
 
@@ -183,6 +154,7 @@ def whitesource_report_json(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Whitesource'
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - whitesource Report Uploaded"

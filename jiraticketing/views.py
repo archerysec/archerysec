@@ -24,7 +24,7 @@ from jira import JIRA
 from notifications.signals import notify
 
 from jiraticketing.models import jirasetting
-from networkscanners.models import nessus_report_db, ov_scan_result_db
+from networkscanners.models import NetworkScanResultsDb
 # from staticscanners.models import (bandit_scan_results_db,
 #                                    clair_scan_results_db,
 #                                    dependencycheck_scan_results_db,
@@ -273,14 +273,14 @@ def submit_jira_ticket(request):
         #     )
 
         elif scanner == "open_vas":
-            ov_scan_result_db.objects.filter(
+            NetworkScanResultsDb.objects.filter(
                 username=r_username, vul_id=vuln_id
             ).update(jira_ticket=new_issue)
             return HttpResponseRedirect(
                 reverse("networkscanners:vul_details") + "?scan_id=%s" % scan_id
             )
         elif scanner == "nessus":
-            nessus_report_db.objects.filter(username=r_username, vul_id=vuln_id).update(
+            NetworkScanResultsDb.objects.filter(username=r_username, vul_id=vuln_id).update(
                 jira_ticket=new_issue
             )
             return HttpResponseRedirect(

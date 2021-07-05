@@ -33,6 +33,10 @@ vul_col = ""
 lenth_match = ""
 duplicate_hash = ""
 vul_id = ""
+total_vul = ''
+total_high = ''
+total_medium = ''
+total_low = ''
 
 
 def xml_parser(root, project_id, scan_id, username):
@@ -44,7 +48,7 @@ def xml_parser(root, project_id, scan_id, username):
     :return:
     """
     date_time = datetime.now()
-    global name, classname, risk, ShortMessage, LongMessage, sourcepath, vul_col, ShortDescription, Details, lenth_match, duplicate_hash, vul_id
+    global name, classname, risk, ShortMessage, LongMessage, sourcepath, vul_col, ShortDescription, Details, lenth_match, duplicate_hash, vul_id, total_vul, total_high, total_medium, total_low
     # print root
     for bug in root:
         if bug.tag == "BugInstance":
@@ -74,7 +78,7 @@ def xml_parser(root, project_id, scan_id, username):
                     vul_col = "warning"
 
                 elif priority == "3":
-                    risk = "Medium"
+                    risk = "Low"
                     vul_col = "info"
 
                 vul_id = uuid.uuid4()
@@ -106,19 +110,17 @@ def xml_parser(root, project_id, scan_id, username):
                     date_time=date_time,
                     scan_id=scan_id,
                     project_id=project_id,
-                    name=name,
-                    priority=priority,
-                    ShortMessage=ShortMessage,
-                    LongMessage=LongMessage,
-                    classname=classname,
-                    sourcepath=sourcepath,
-                    vul_col=vul_col,
+                    title=name,
+                    severity=risk,
+                    description=str(ShortMessage) + '\n\n' + str(LongMessage) + '\n\n' + str(classname),
+                    fileName=sourcepath,
+                    severity_color=vul_col,
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    risk=risk,
                     username=username,
+                    scanner='Findbugs',
                 )
                 save_all.save()
 
@@ -127,22 +129,20 @@ def xml_parser(root, project_id, scan_id, username):
 
                 save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
-                    scan_id=scan_id,
                     date_time=date_time,
+                    scan_id=scan_id,
                     project_id=project_id,
-                    name=name,
-                    priority=priority,
-                    ShortMessage=ShortMessage,
-                    LongMessage=LongMessage,
-                    classname=classname,
-                    sourcepath=sourcepath,
-                    vul_col=vul_col,
+                    title=name,
+                    severity=risk,
+                    description=str(ShortMessage) + '\n\n' + str(LongMessage) + '\n\n' + str(classname),
+                    fileName=sourcepath,
+                    severity_color=vul_col,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive="Duplicate",
-                    risk=risk,
+                    false_positive='Duplicate',
                     username=username,
+                    scanner='Findbugs',
                 )
                 save_all.save()
 
@@ -156,10 +156,9 @@ def xml_parser(root, project_id, scan_id, username):
                     Details = BugPattern.text
 
                 StaticScanResultsDb.objects.filter(
-                    username=username, scan_id=scan_id, name=name
+                    username=username, scan_id=scan_id, title=name
                 ).update(
-                    ShortDescription=ShortDescription,
-                    Details=Details,
+                    description=str(Details) + '\n\n' + str(ShortMessage) + '\n\n' + str(LongMessage) + '\n\n' + str(classname),
                 )
 
         all_findbugs_data = StaticScanResultsDb.objects.filter(
@@ -171,9 +170,9 @@ def xml_parser(root, project_id, scan_id, username):
         )
 
         total_vul = len(all_findbugs_data)
-        total_high = len(all_findbugs_data.filter(priority="1"))
-        total_medium = len(all_findbugs_data.filter(priority="2"))
-        total_low = len(all_findbugs_data.filter(priority="3"))
+        total_high = len(all_findbugs_data.filter(severity="High"))
+        total_medium = len(all_findbugs_data.filter(severity="Medium"))
+        total_low = len(all_findbugs_data.filter(severity="Low"))
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
         StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
@@ -183,6 +182,7 @@ def xml_parser(root, project_id, scan_id, username):
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
+            scanner='Findbugs'
         )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - Findbugs Report Uploaded"

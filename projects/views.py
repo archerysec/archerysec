@@ -28,9 +28,6 @@ from compliance.models import (dockle_scan_db, dockle_scan_results_db,
                                inspec_scan_db, inspec_scan_results_db)
 from dashboard.scans_data import scans_query
 from manual_scan.models import manual_scan_results_db, manual_scans_db
-from networkscanners.models import (nessus_scan_db, nessus_scan_results_db,
-                                    nessus_targets_db, openvas_scan_db,
-                                    ov_scan_result_db)
 from projects.models import month_db, project_db, project_scan_db
 from staticscanners.models import (StaticScansDb, StaticScanResultsDb)
 from webscanners.models import (WebScanResultsDb, WebScansDb)
@@ -157,13 +154,13 @@ def projects(request):
         openvas_result = ov_scan_result_db.objects.filter(project_id=project_id)
         openvas_result.delete()
 
-        nessus = nessus_scan_db.objects.filter(project_id=project_id)
+        nessus = NetworkScanDb.objects.filter(project_id=project_id)
         nessus.delete()
 
-        nessus_result = nessus_targets_db.objects.filter(project_id=project_id)
+        nessus_result = NetworkScanDb.objects.filter(project_id=project_id)
         nessus_result.delete()
 
-        nessus_scan_results = nessus_scan_results_db.objects.filter(
+        nessus_scan_results = NetworkScanResultsDb.objects.filter(
             project_id=project_id
         )
         nessus_scan_results.delete()

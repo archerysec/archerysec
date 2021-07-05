@@ -16,8 +16,6 @@
 
 
 import hashlib
-import json
-import pprint
 import uuid
 from datetime import datetime
 
@@ -128,19 +126,17 @@ def retirejs_report_json(data, project_id, scan_id, username):
             false_positive = "No"
         save_all = StaticScanResultsDb(
             scan_id=scan_id,
-            # rescan_id = rescan_id,
             date_time=date_time,
             scan_date=date_time,
             project_id=project_id,
             vuln_id=vul_id,
-            # source_line=source_line,
-            file=files,
-            component=component,
-            CVE=cve,
-            issue=issue,
-            bug=bug,
-            summary=summary,
-            info=info,
+            fileName=files,
+            #component=component,
+            #CVE=cve,
+            title=issue,
+            #bug=bug,
+            description=summary,
+            #info=info,
             severity=severity,
             # false_positive=false_positive,
             vuln_status="Open",
@@ -148,6 +144,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
             # vuln_duplicate=duplicate_vuln,
             # version=version,
             username=username,
+            scanner='Retirejs'
         )
         save_all.save()
         trend_update(username=username)

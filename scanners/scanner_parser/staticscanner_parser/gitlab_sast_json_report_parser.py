@@ -15,7 +15,6 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
-import json
 import uuid
 from datetime import datetime
 
@@ -50,15 +49,11 @@ def gitlabsast_report_json(data, project_id, scan_id, username):
     vuln = data["vulnerabilities"]
 
     for vuln_data in vuln:
-        try:
-            name = vuln_data["name"]
-        except Exception as e:
-            name = "Not Found"
 
         try:
-            message = vuln_data["message"]
+            name = vuln_data["message"]
         except Exception as e:
-            message = "Not Found"
+            name = "Not Found"
 
         try:
             description = vuln_data["description"]
@@ -118,7 +113,7 @@ def gitlabsast_report_json(data, project_id, scan_id, username):
 
         vul_id = uuid.uuid4()
 
-        dup_data = str(message) + str(severity) + str(file)
+        dup_data = str(name) + str(severity) + str(file)
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -145,21 +140,18 @@ def gitlabsast_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                name=name,
-                message=message,
-                description=description,
-                cve=cve,
-                gl_scanner=scanner,
-                location=location,
-                file=file,
-                Severity=severity,
-                identifiers=identifiers,
-                vul_col=vul_col,
+                title=name,
+                description=str(description) + '\n\n' + str(scanner),
+                filePath=location,
+                fileName=file,
+                severity=severity,
+                severity_color=vul_col,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 username=username,
+                scanner='Gitlabsast'
             )
             save_all.save()
         else:
@@ -168,23 +160,20 @@ def gitlabsast_report_json(data, project_id, scan_id, username):
             save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
                 scan_id=scan_id,
-                project_id=project_id,
                 date_time=date_time,
-                name=name,
-                message=message,
+                project_id=project_id,
+                title=name,
                 description=description,
-                cve=cve,
-                gl_scanner=scanner,
-                location=location,
-                file=file,
-                Severity=severity,
-                identifiers=identifiers,
-                vul_col=vul_col,
+                filePath=location,
+                fileName=file,
+                severity=severity,
+                severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive="Duplicate",
+                false_positive='Duplicate',
                 username=username,
+                scanner='Gitlabsast'
             )
             save_all.save()
 
@@ -197,9 +186,9 @@ def gitlabsast_report_json(data, project_id, scan_id, username):
     )
 
     total_vul = len(all_findbugs_data)
-    total_high = len(all_findbugs_data.filter(Severity="High"))
-    total_medium = len(all_findbugs_data.filter(Severity="Medium"))
-    total_low = len(all_findbugs_data.filter(Severity="Low"))
+    total_high = len(all_findbugs_data.filter(severity="High"))
+    total_medium = len(all_findbugs_data.filter(severity="Medium"))
+    total_low = len(all_findbugs_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     StaticScansDb.objects.filter(scan_id=scan_id).update(
@@ -210,6 +199,7 @@ def gitlabsast_report_json(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Gitlabsast'
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - GitLab SAST Report Uploaded"

@@ -15,7 +15,6 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
-import json
 import uuid
 from datetime import datetime
 
@@ -87,19 +86,18 @@ def tfsec_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                vul_col=vul_col,
+                severity_color=vul_col,
+                title=rule_id,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
-                rule_id=rule_id,
-                filename=filename,
+                fileName=filename,
                 severity=severity,
-                description=description,
-                link=link,
-                start_line=start_line,
-                end_line=end_line,
+                description=str(description) + '\n\n' + str(rule_id) + '\n\n' + str(start_line) + '\n\n' + str(end_line),
+                references=link,
                 username=username,
+                scanner='Tfsec'
             )
             save_all.save()
 
@@ -111,19 +109,18 @@ def tfsec_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                vul_col=vul_col,
+                title=rule_id,
+                severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive="Duplicate",
-                rule_id=rule_id,
-                filename=filename,
+                false_positive='Duplicate',
+                fileName=filename,
                 severity=severity,
-                description=description,
-                link=link,
-                start_line=start_line,
-                end_line=end_line,
+                description=str(description) + '\n\n' + str(rule_id) + '\n\n' + str(start_line) + '\n\n' + str(end_line),
+                references=link,
                 username=username,
+                scanner='Tfsec'
             )
             save_all.save()
 
@@ -148,6 +145,7 @@ def tfsec_report_json(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Tfsec'
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - tfsec Report Uploaded"

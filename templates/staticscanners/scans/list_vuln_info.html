@@ -20,7 +20,7 @@
                 $.ajax({
                     type:'POST',
                     <!--contentType: 'application/json; charset=utf-8',-->
-                    url:'{% url 'nessus:nessus_del_vuln' %}',
+                    url:'{% url 'staticscanners:vuln_delete' %}',
                     data:{
                        del_vuln: json_scanid,
                        scan_id: $('input[name=scan_id]').val(),
@@ -34,6 +34,7 @@
         });
 
     });
+
 
 
 $(document).on('click', '.confirm-delete', function(){
@@ -58,16 +59,16 @@ $(document).on('click', '.confirm-delete', function(){
                         <br>
                         <div class="row">
                             <div class="table-responsive">
-                                <table id="nessus_scans_list" class="table table-bordered data-table">
+                                <table id="bandit_scan_list" class="table table-bordered data-table table-fixed" width="100%">
                                     <thead>
                                     <tr>
                                         <th><label class="customcheckbox m-b-20">
                                             <input type="checkbox" id="mainCheckbox">
                                             <span class="checkmark"></span>
                                         </label></th>
-                                        <th>Name</th>
-                                        <th>Severity</th>
-                                        <th>Port</th>
+                                        <th>Vulnerability</th>
+                                        <th>Filename</th>
+                                        <th>Risk</th>
                                         <th>JIRA Ticket</th>
                                         <th>False Positive</th>
                                         <th>Status</th>
@@ -75,7 +76,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>Mark</th>
                                     </tr>
                                     </thead>
-                                    <tbody>{% for data in nessus_vuln_data %}
+                                    <tbody>{% for data in vuln_data %}
                                     <tr data-target="#">
                                         <td>
                                             <form>
@@ -89,32 +90,37 @@ $(document).on('click', '.confirm-delete', function(){
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'nessus:nessus_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}">{{data.plugin_name}}</a>
+                                            <a href="{% url 'staticscanners:scan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}&scanner={{ data.scanner }}">{{data.title}}</a>
                                         </td>
-
-                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.risk_factor}}</span></td>
-                                        <td>{{ data.port }}</td>
+                                        <td>{{data.fileName}}</td>
+                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
+                                        </td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
+                                        </td>
                                         {% if data.false_positive == 'No' %}
                                         <td>
-                                            <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">{% csrf_token %}
+                                            <form method="POST" action="{% url 'staticscanners:list_vuln_info' %}">
+                                                {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="Yes">
-                                                <input type="hidden" name="status" value="Closed">
+                                                <input type="hidden" name="status" value="Open">
+                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <input type="hidden" name="scanner" value="{{data.scanner}}">
                                                 <button class="btn btn-outline-info btn-mini">Yes</button>
                                             </form>
                                         </td>
                                         {% endif %}
                                     {% if data.false_positive == 'Yes' %}
                                         <td>
-                                            <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">
+                                            <form method="POST" action="{% url 'staticscanners:list_vuln_info' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Open">
-                                                <input type="hidden" name="vuln_name" value="{{data.plugin_name}}">
+                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <input type="hidden" name="scanner" value="{{data.scanner}}">
                                                 <button class="btn btn-info btn-mini">No</button>
                                             </form>
                                         </td>
@@ -124,7 +130,10 @@ $(document).on('click', '.confirm-delete', function(){
                                             NA
                                         </td>
                                     {% endif %}
-                                        {% if data.vuln_status == 'Open' %}
+                                        {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                        {% endif %}
+                                    {% if data.vuln_status == 'Open' %}
                                         <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
                                         {% endif %}
                                         {% if data.vuln_status == 'Duplicate' %}
@@ -132,12 +141,12 @@ $(document).on('click', '.confirm-delete', function(){
                                         {% endif %}
                                         <td class="confirm-delete">
                                             <div>
-                                                <form action="{% url 'nessus:nessus_del_vuln' %}" method="POST"
+                                                <form action="{% url 'staticscanners:vuln_delete' %}" method="POST"
                                                       class="form-horizontal">
                                                     {% csrf_token %}
-                                                    <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
+                                                    <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                     <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                    <input type="hidden" name="target" value="{{data.target}}">
+                                                    <input type="hidden" name="scanner" value="{{ data.scanner }}">
                                                     <button class="btn btn-warning btn-mini"><i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -145,32 +154,35 @@ $(document).on('click', '.confirm-delete', function(){
                                         </td>
                                     {% if data.vuln_status == 'Open' %}
                                         <td>
-                                            <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">{% csrf_token %}
+                                            <form method="POST" action="{% url 'staticscanners:list_vuln_info' %}">
+                                                {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Closed">
-                                                <input type="hidden" name="vuln_name" value="{{data.plugin_name}}">
+                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <input type="hidden" name="scanner" value="{{data.scanner}}">
                                                 <button class="btn btn-outline-info btn-mini">Close</button>
+                                            </form>
+                                        </td>
+                                    {% endif %}
+                                    {% if data.vuln_status == 'Closed' %}
+                                        <td>
+                                            <form method="POST" action="{% url 'staticscanners:list_vuln_info' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                <input type="hidden" name="false" value="No">
+                                                <input type="hidden" name="status" value="Open">
+                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
+                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <input type="hidden" name="scanner" value="{{data.scanner}}">
+                                                <button class="btn btn-info btn-mini">Open</button>
                                             </form>
                                         </td>
                                     {% endif %}
                                     {% if data.vuln_status == 'Duplicate' %}
                                         <td>
                                             NA
-                                        </td>
-                                    {% endif %}
-                                    {% if data.vuln_status == 'Closed' %}
-                                        <td>
-                                            <form method="POST" action="{% url 'nessus:nessus_vuln_data' %}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                                <input type="hidden" name="false" value="No">
-                                                <input type="hidden" name="status" value="Open">
-                                                <input type="hidden" name="vuln_name" value="{{data.plugin_name}}">
-                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-info btn-mini">Open</button>
-                                            </form>
                                         </td>
                                     {% endif %}
                                     </tr>
@@ -185,5 +197,4 @@ $(document).on('click', '.confirm-delete', function(){
         </div>
     </div>
 </div>
-
 {% endblock %}

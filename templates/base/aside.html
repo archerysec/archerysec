@@ -18,10 +18,10 @@
                         <li class="sidebar-item"><a href="{% url 'webscanners:list_scans' %}" class="sidebar-link"><i
                                 class=" fas fa-play"></i><span class="hide-menu"> Dynamic Scans </span></a>
                         </li>
-{#                        <li class="sidebar-item"><a href="{% url 'staticscanners:list_scans' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-cubes"></i><span class="hide-menu"> Static Scans </span></a></li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'infrastructure:list_scans' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-cubes"></i><span class="hide-menu"> Infrastructure Scans </span></a></li>#}
+                        <li class="sidebar-item"><a href="{% url 'staticscanners:list_scans' %}" class="sidebar-link"><i
+                                class="fas fa-cubes"></i><span class="hide-menu"> Static Scans </span></a></li>
+                        <li class="sidebar-item"><a href="{% url 'networkscanners:list_scans' %}" class="sidebar-link"><i
+                                class="fas fa-cubes"></i><span class="hide-menu"> Infrastructure Scans </span></a></li>
                     </ul>
                 </li>
 
@@ -40,20 +40,7 @@
                 <!-- Dynamic Scans -->
 
 
-                <!--Infrastructure Scan-->
-                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
-                                            href="javascript:void(0)" aria-expanded="false"><i
-                        class="fas fa-sitemap"></i><span class="hide-menu">Infrastructure Scans</span></a>
-                    <ul aria-expanded="false" class="collapse  first-level">
-                        <li class="sidebar-item"><a href="{% url 'networkscanners:index' %}" class="sidebar-link"><i
-                                class="fas fa-server"></i><span class="hide-menu"> OpenVAS Scans </span></a>
-                        </li>
-                        <li class="sidebar-item"><a href="{% url 'nessus:nessus_list' %}" class="sidebar-link"><i
-                                class="fas fa-assistive-listening-systems"></i><span
-                                class="hide-menu"> Nessus Scans </span></a>
-                        </li>
-                    </ul>
-                </li>
+
 
                 <!--Static Scan-->
 {#                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"#}

@@ -15,7 +15,6 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
-import json
 import uuid
 from datetime import datetime
 
@@ -136,27 +135,24 @@ def npmaudit_report_json(data, project_id, scan_id, username):
                 date_time=date_time,
                 scan_id=scan_id,
                 project_id=project_id,
-                vul_col=vul_col,
+                severity_color=vul_col,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
-                version=vuln_versions,
                 title=title,
-                found_by=found_by,
-                reported_by=reported_by,
-                module_name=module_name,
-                cves=cves,
-                vulnerable_versions=vulnerable_versions,
-                patched_versions=patched_versions,
-                overview=overview,
-                recommendation=recommendation,
+                description=str(overview) + '\n\n'
+                            + str(vuln_versions)
+                            + '\n\n' + str(reported_by)
+                            + '\n\n' + str(module_name)
+                            + '\n\n' + str(cves) + '\n\n'
+                            + str(vuln_versions)
+                            + '\n\n' + str(patched_versions),
+                solution=recommendation,
                 references=references,
-                access=access,
                 severity=severity,
-                cwe=cwe,
-                url=url,
                 username=username,
+                scanner='Npmaudit'
             )
             save_all.save()
 
@@ -168,27 +164,24 @@ def npmaudit_report_json(data, project_id, scan_id, username):
                 date_time=date_time,
                 scan_id=scan_id,
                 project_id=project_id,
-                vul_col=vul_col,
+                severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive="Duplicate",
-                version=vuln_versions,
+                false_positive='Duplicate',
                 title=title,
-                found_by=found_by,
-                reported_by=reported_by,
-                module_name=module_name,
-                cves=cves,
-                vulnerable_versions=vulnerable_versions,
-                patched_versions=patched_versions,
-                overview=overview,
-                recommendation=recommendation,
+                description=str(overview) + '\n\n'
+                            + str(vuln_versions)
+                            + '\n\n' + str(reported_by)
+                            + '\n\n' + str(module_name)
+                            + '\n\n' + str(cves) + '\n\n'
+                            + str(vuln_versions)
+                            + '\n\n' + str(patched_versions),
+                solution=recommendation,
                 references=references,
-                access=access,
                 severity=severity,
-                cwe=cwe,
-                url=url,
                 username=username,
+                scanner='Npmaudit'
             )
             save_all.save()
 
@@ -213,14 +206,15 @@ def npmaudit_report_json(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Npmaudit'
     )
     trend_update(username=username)
-    subject = "Archery Tool Scan Status - Trivy Report Uploaded"
+    subject = "Archery Tool Scan Status - Npmaudit Report Uploaded"
     message = (
-        "Trivy Scanner has completed the scan "
-        "  %s <br> Total: %s <br>High: %s <br>"
-        "Medium: %s <br>Low %s"
-        % ("npm-audit", total_vul, total_high, total_medium, total_low)
+            "Npmaudit Scanner has completed the scan "
+            "  %s <br> Total: %s <br>High: %s <br>"
+            "Medium: %s <br>Low %s"
+            % ("npm-audit", total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

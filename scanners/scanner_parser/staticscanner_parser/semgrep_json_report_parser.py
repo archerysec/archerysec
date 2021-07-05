@@ -135,20 +135,17 @@ def semgrep_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                vul_col=vul_col,
+                title=check_id,
+                severity_color=vul_col,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
-                check_id=check_id,
-                path=path,
+                fileName=path,
                 severity=severity,
-                message=message,
-                end=end,
-                metavars=metavars,
-                metadata=metadata,
-                lines=lines,
+                description=str(message) + '\n\n' + str(check_id) + '\n\n' + str(end) + '\n\n' + str(metavars) + '\n\n' + str(metadata) + '\n\n' + str(lines),
                 username=username,
+                scanner='Sempgrep'
             )
             save_all.save()
 
@@ -160,20 +157,17 @@ def semgrep_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                vul_col=vul_col,
+                title=check_id,
+                severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive="Duplicate",
-                check_id=check_id,
-                path=path,
+                false_positive='Duplicate',
+                fileName=path,
                 severity=severity,
-                message=message,
-                end=end,
-                metavars=metavars,
-                metadata=metadata,
-                lines=lines,
+                description=str(message) + '\n\n' + str(check_id) + '\n\n' + str(end) + '\n\n' + str(metavars) + '\n\n' + str(metadata) + '\n\n' + str(lines),
                 username=username,
+                scanner='Semgrep'
             )
             save_all.save()
 
@@ -198,6 +192,7 @@ def semgrep_report_json(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Semgrep'
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - semgrep Report Uploaded"

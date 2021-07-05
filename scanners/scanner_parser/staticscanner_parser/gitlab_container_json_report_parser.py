@@ -15,7 +15,6 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
-import json
 import uuid
 from datetime import datetime
 
@@ -49,11 +48,8 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
 
     vuln = data["vulnerabilities"]
 
+
     for vuln_data in vuln:
-        try:
-            name = vuln_data["name"]
-        except Exception as e:
-            name = "Not Found"
 
         try:
             message = vuln_data["message"]
@@ -71,12 +67,12 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
             cve = "Not Found"
 
         try:
-            scanner = vuln_data["scanner"]
+            scanner = vuln_data["scanner"]['name']
         except Exception as e:
             scanner = "Not Found"
 
         try:
-            location = vuln_data["location"]
+            location = vuln_data["location"]['dependency']
         except Exception as e:
             location = "Not Found"
 
@@ -91,9 +87,16 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
             severity = "Not Found"
 
         try:
-            file = vuln_data["location"]["file"]
+            file = vuln_data["location"]["dependency"]['package']['name']
         except Exception as e:
             file = "Not Found"
+
+        try:
+            version = vuln_data["location"]["dependency"]['version']
+        except Exception as e:
+            version = "Not Found"
+
+        full_location = str(file) + str(version)
 
         if severity == "Critical":
             severity = "High"
@@ -118,7 +121,7 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
 
         vul_id = uuid.uuid4()
 
-        dup_data = str(message) + str(severity) + str(file)
+        dup_data = str(message) + str(severity) + str(full_location)
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -145,21 +148,17 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                name=name,
-                message=message,
-                description=description,
-                cve=cve,
-                gl_scanner=scanner,
-                location=location,
-                file=file,
-                Severity=severity,
-                identifiers=identifiers,
-                vul_col=vul_col,
+                title=message,
+                description=str(description) + '\n\n' + str(scanner) + str(location),
+                fileName=full_location,
+                severity=severity,
+                severity_color=vul_col,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 username=username,
+                scanner='Gitlabcontainerscan'
             )
             save_all.save()
         else:
@@ -170,21 +169,17 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                name=name,
-                message=message,
-                description=description,
-                cve=cve,
-                gl_scanner=scanner,
-                location=location,
-                file=file,
-                Severity=severity,
-                identifiers=identifiers,
-                vul_col=vul_col,
+                title=message,
+                description=str(description) + '\n\n' + str(scanner) + str(location),
+                fileName=full_location,
+                severity=severity,
+                severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive="Duplicate",
+                false_positive='Duplicate',
                 username=username,
+                scanner='Gitlabcontainerscan'
             )
             save_all.save()
 
@@ -197,18 +192,19 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
     )
 
     total_vul = len(all_findbugs_data)
-    total_high = len(all_findbugs_data.filter(Severity="High"))
-    total_medium = len(all_findbugs_data.filter(Severity="Medium"))
-    total_low = len(all_findbugs_data.filter(Severity="Low"))
+    total_high = len(all_findbugs_data.filter(severity="High"))
+    total_medium = len(all_findbugs_data.filter(severity="Medium"))
+    total_low = len(all_findbugs_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    StaticScanResultsDb.objects.filter(scan_id=scan_id).update(
+    StaticScansDb.objects.filter(scan_id=scan_id).update(
         username=username,
         total_vul=total_vul,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Gitlabcontainerscan'
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - GitLab Container Scan Report Uploaded"

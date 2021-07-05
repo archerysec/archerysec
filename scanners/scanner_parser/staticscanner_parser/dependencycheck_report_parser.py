@@ -25,6 +25,10 @@ from staticscanners.models import (StaticScansDb,
                                    StaticScanResultsDb)
 from utility.email_notify import email_sch_notify
 
+total_vul = ''
+total_high = ''
+total_medium = ''
+total_low = ''
 
 def xml_parser(data, project_id, scan_id, username):
     """
@@ -34,18 +38,12 @@ def xml_parser(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
+    global total_vul, total_high, total_medium, total_low
     date_time = datetime.now()
     fileName = "Na"
     filePath = "Na"
     evidenceCollected = "Na"
     name = "Na"
-    cvssScore = "Na"
-    cvssAccessVector = "Na"
-    cvssAccessComplexity = "Na"
-    cvssAuthenticationr = "Na"
-    cvssConfidentialImpact = "Na"
-    cvssIntegrityImpact = "Na"
-    cvssAvailabilityImpact = "Na"
     severity = "Na"
     cwe = "Na"
     description = "Na"
@@ -217,20 +215,6 @@ def xml_parser(data, project_id, scan_id, username):
                             for vulner in vuln:
                                 if vulner.tag == "{%s}name" % pt:
                                     name = vulner.text
-                                if vulner.tag == "{%s}cvssScore" % pt:
-                                    cvssScore = vulner.text
-                                if vulner.tag == "{%s}cvssAccessVector" % pt:
-                                    cvssAccessVector = vulner.text
-                                if vulner.tag == "{%s}cvssAccessComplexity" % pt:
-                                    cvssAccessComplexity = vulner.text
-                                if vulner.tag == "{%s}cvssAuthenticationr" % pt:
-                                    cvssAuthenticationr = vulner.text
-                                if vulner.tag == "{%s}cvssConfidentialImpact" % pt:
-                                    cvssConfidentialImpact = vulner.text
-                                if vulner.tag == "{%s}cvssIntegrityImpact" % pt:
-                                    cvssIntegrityImpact = vulner.text
-                                if vulner.tag == "{%s}cvssAvailabilityImpact" % pt:
-                                    cvssAvailabilityImpact = vulner.text
                                 if vulner.tag == "{%s}severity" % pt:
                                     severity = vulner.text
                                 if vulner.tag == "{%s}cwe" % pt:
@@ -281,80 +265,46 @@ def xml_parser(data, project_id, scan_id, username):
                                 cwe = name
 
                             save_all = StaticScanResultsDb(
-                                # date_time=date_time,
                                 vuln_id=vul_id,
                                 scan_id=scan_id,
                                 date_time=date_time,
                                 project_id=project_id,
                                 fileName=fileName,
                                 filePath=filePath,
-                                evidenceCollected=evidenceCollected,
-                                name=name,
-                                cvssScore=cvssScore,
-                                cvssAccessVector=cvssAccessVector,
-                                cvssAccessComplexity=cvssAccessComplexity,
-                                cvssAuthenticationr=cvssAuthenticationr,
-                                cvssConfidentialImpact=cvssConfidentialImpact,
-                                cvssIntegrityImpact=cvssIntegrityImpact,
-                                cvssAvailabilityImpact=cvssAvailabilityImpact,
+                                title=name,
                                 severity=severity,
-                                cwe=cwe,
-                                description=description,
+                                description=str(description) + '\n\n' + str(evidenceCollected) + '\n\n' + str(vulnerableSoftware),
                                 references=references,
-                                vulnerableSoftware=vulnerableSoftware,
-                                vul_col=vul_col,
+                                severity_color=vul_col,
                                 vuln_status="Open",
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 false_positive=false_positive,
                                 username=username,
+                                scanner='Dependencycheck'
                             )
                             save_all.save()
 
                         else:
                             duplicate_vuln = "Yes"
-
-                            false_p = StaticScanResultsDb.objects.filter(
-                                username=username, false_positive_hash=duplicate_hash
-                            )
-                            fp_lenth_match = len(false_p)
-
-                            if fp_lenth_match == 1:
-                                false_positive = "Yes"
-                            else:
-                                false_positive = "No"
-
-                            if cwe == "Na":
-                                cwe = name
-
                             save_all = StaticScanResultsDb(
-                                # date_time=date_time,
                                 vuln_id=vul_id,
                                 scan_id=scan_id,
                                 date_time=date_time,
                                 project_id=project_id,
                                 fileName=fileName,
                                 filePath=filePath,
-                                evidenceCollected=evidenceCollected,
-                                name=name,
-                                cvssScore=cvssScore,
-                                cvssAccessVector=cvssAccessVector,
-                                cvssAccessComplexity=cvssAccessComplexity,
-                                cvssAuthenticationr=cvssAuthenticationr,
-                                cvssConfidentialImpact=cvssConfidentialImpact,
-                                cvssIntegrityImpact=cvssIntegrityImpact,
-                                cvssAvailabilityImpact=cvssAvailabilityImpact,
+                                title=name,
                                 severity=severity,
-                                cwe=cwe,
-                                description=description,
+                                description=str(description) + '\n\n' + str(evidenceCollected) + '\n\n' + str(vulnerableSoftware),
                                 references=references,
-                                vulnerableSoftware=vulnerableSoftware,
-                                vul_col=vul_col,
+                                severity_color=vul_col,
                                 vuln_status="Duplicate",
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
-                                false_positive="Duplicate",
+                                false_positive='Duplicate',
                                 username=username,
+                                scanner='Dependencycheck'
                             )
                             save_all.save()
 
@@ -372,7 +322,7 @@ def xml_parser(data, project_id, scan_id, username):
         total_low = len(all_dependency_data.filter(severity="Low"))
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-        StaticScanResultsDb.objects.filter(
+        StaticScansDb.objects.filter(
             username=username, scan_id=scan_id
         ).update(
             date_time=date_time,
@@ -381,6 +331,7 @@ def xml_parser(data, project_id, scan_id, username):
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
+            scanner='Dependencycheck'
         )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - DependencyCheck Report Uploaded"

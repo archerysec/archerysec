@@ -23,7 +23,9 @@ from django.utils import timezone
 from openvas_lib import VulnscanException, VulnscanManager
 
 from archerysettings.models import openvas_setting_db
-from networkscanners.models import openvas_scan_db, ov_scan_result_db
+from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
+from scanners.scanner_parser.network_scanner.OpenVas_Parser import updated_xml_parser
+
 
 name = ""
 creation_time = ""
@@ -131,14 +133,14 @@ class OpenVAS_Plugin:
                     + " %"
                 )
                 status = float(scanner.get_progress(str(scan_id)))
-                openvas_scan_db.objects.filter(scan_id=scan_id).update(
+                NetworkScanDb.objects.filter(scan_id=scan_id).update(
                     scan_status=status
                 )
                 previous = current
             time.sleep(5)
 
         status = "100"
-        openvas_scan_db.objects.filter(username=self.username, scan_id=scan_id).update(
+        NetworkScanDb.objects.filter(username=self.username, scan_id=scan_id).update(
             scan_status=status
         )
 
@@ -163,191 +165,136 @@ def vuln_an_id(scan_id, project_id, username):
     scanner = VulnscanManager(str(ov_ip), str(ov_user), str(ov_pass))
     openvas_results = scanner.get_raw_xml(str(scan_id))
 
-    for openvas in openvas_results.findall(".//result"):
-        for r in openvas:
-            if r.tag == "name":
-                global name
-                if r.text is None:
-                    name = "NA"
-                else:
-                    name = r.text
+    updated_xml_parser(
+        project_id=project_id, scan_id=scan_id, root=openvas_results, username=username
+    )
 
-            if r.tag == "creation_time":
-                global creation_time
-                if r.text is None:
-                    creation_time = "NA"
-                else:
-                    creation_time = r.text
-
-            if r.tag == "modification_time":
-                global modification_time
-                if r.text is None:
-                    modification_time = "NA"
-                else:
-                    modification_time = r.text
-            if r.tag == "host":
-                global host
-                if r.text is None:
-                    host = "NA"
-                else:
-                    host = r.text
-
-            if r.tag == "port":
-                global port
-                if r.text is None:
-                    port = "NA"
-                else:
-                    port = r.text
-            if r.tag == "threat":
-                global threat
-                if r.text is None:
-                    threat = "NA"
-                else:
-                    threat = r.text
-            if r.tag == "severity":
-                global severity
-                if r.text is None:
-                    severity = "NA"
-                else:
-                    severity = r.text
-            if r.tag == "description":
-                global description
-                if r.text is None:
-                    description = "NA"
-                else:
-                    description = r.text
-
-            for rr in r:
-                if rr.tag == "family":
-                    global family
-                    if rr.text is None:
-                        family = "NA"
-                    else:
-                        family = rr.text
-                if rr.tag == "cvss_base":
-                    global cvss_base
-                    if rr.text is None:
-                        cvss_base = "NA"
-                    else:
-                        cvss_base = rr.text
-                if rr.tag == "cve":
-                    global cve
-                    if rr.text is None:
-                        cve = "NA"
-                    else:
-                        cve = rr.text
-                if rr.tag == "bid":
-                    global bid
-                    if rr.text is None:
-                        bid = "NA"
-                    else:
-                        bid = rr.text
-
-                if rr.tag == "xref":
-                    global xref
-                    if rr.text is None:
-                        xref = "NA"
-                    else:
-                        xref = rr.text
-
-                if rr.tag == "tags":
-                    global tags
-                    if rr.text is None:
-                        tags = "NA"
-                    else:
-                        tags = rr.text
-                if rr.tag == "type":
-                    global banner
-                    if rr.text is None:
-                        banner = "NA"
-                    else:
-                        banner = rr.text
-
-        date_time = timezone.now()
-        vul_id = uuid.uuid4()
-
-        dup_data = name + host + severity + port
-        duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
-
-        match_dup = (
-            ov_scan_result_db.objects.filter(
-                username=username, vuln_duplicate=duplicate_hash
-            )
-            .values("vuln_duplicate")
-            .distinct()
-        )
-        lenth_match = len(match_dup)
-
-        if lenth_match == 1:
-            duplicate_vuln = "Yes"
-        elif lenth_match == 0:
-            duplicate_vuln = "No"
-        else:
-            duplicate_vuln = "None"
-
-        false_p = ov_scan_result_db.objects.filter(
-            username=username, false_positive_hash=duplicate_hash
-        )
-        fp_lenth_match = len(false_p)
-
-        if fp_lenth_match == 1:
-            false_positive = "Yes"
-        else:
-            false_positive = "No"
-
-        save_all = ov_scan_result_db(
-            scan_id=scan_id,
-            vul_id=vul_id,
-            name=name,
-            creation_time=creation_time,
-            modification_time=modification_time,
-            host=host,
-            port=port,
-            threat=threat,
-            severity=severity,
-            description=description,
-            family=family,
-            cvss_base=cvss_base,
-            cve=cve,
-            bid=bid,
-            xref=xref,
-            tags=tags,
-            banner=banner,
-            date_time=date_time,
-            false_positive=false_positive,
-            vuln_status="Open",
-            dup_hash=duplicate_hash,
-            vuln_duplicate=duplicate_vuln,
-            project_id=project_id,
-            username=username,
-        )
-        save_all.save()
-
-        openvas_vul = ov_scan_result_db.objects.filter(
-            username=username, scan_id=scan_id
-        )
-
-        total_high = len(openvas_vul.filter(threat="High"))
-        total_medium = len(openvas_vul.filter(threat="Medium"))
-        total_low = len(openvas_vul.filter(threat="Low"))
-        log_total = len(openvas_vul.filter(threat="Log"))
-        total_duplicate = len(openvas_vul.filter(vuln_duplicate="Yes"))
-        total_vul = total_high + total_medium + total_low
-
-        openvas_scan_db.objects.filter(username=username, scan_id=scan_id).update(
-            total_vul=total_vul,
-            high_total=total_high,
-            medium_total=total_medium,
-            log_total=log_total,
-            low_total=total_low,
-            total_dup=total_duplicate,
-        )
-
-        for row in ov_scan_result_db.objects.filter(username=username):
-            if (
-                ov_scan_result_db.objects.filter(
-                    username=username, name=row.name, port=row.port, scan_id=scan_id
-                ).count()
-                > 1
-            ):
-                row.delete()
+    # for openvas in openvas_results.findall(".//result"):
+    #     for r in openvas:
+    #         if r.tag == "name":
+    #             global name
+    #             if r.text is None:
+    #                 name = "NA"
+    #             else:
+    #                 name = r.text
+    #
+    #         if r.tag == "host":
+    #             global host
+    #             if r.text is None:
+    #                 host = "NA"
+    #             else:
+    #                 host = r.text
+    #
+    #         if r.tag == "port":
+    #             global port
+    #             if r.text is None:
+    #                 port = "NA"
+    #             else:
+    #                 port = r.text
+    #         if r.tag == "threat":
+    #             global threat
+    #             if r.text is None:
+    #                 threat = "NA"
+    #             else:
+    #                 threat = r.text
+    #         if r.tag == "severity":
+    #             global severity
+    #             if r.text is None:
+    #                 severity = "NA"
+    #             else:
+    #                 severity = r.text
+    #         if r.tag == "description":
+    #             global description
+    #             if r.text is None:
+    #                 description = "NA"
+    #             else:
+    #                 description = r.text
+    #
+    #     date_time = timezone.now()
+    #     vul_id = uuid.uuid4()
+    #
+    #     dup_data = name + host + severity + port
+    #     duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
+    #
+    #     match_dup = (
+    #         NetworkScanResultsDb.objects.filter(
+    #             username=username, vuln_duplicate=duplicate_hash
+    #         )
+    #         .values("vuln_duplicate")
+    #         .distinct()
+    #     )
+    #     lenth_match = len(match_dup)
+    #
+    #     if lenth_match == 1:
+    #         duplicate_vuln = "Yes"
+    #     elif lenth_match == 0:
+    #         duplicate_vuln = "No"
+    #     else:
+    #         duplicate_vuln = "None"
+    #
+    #     false_p = NetworkScanResultsDb.objects.filter(
+    #         username=username, false_positive_hash=duplicate_hash
+    #     )
+    #     fp_lenth_match = len(false_p)
+    #
+    #     if fp_lenth_match == 1:
+    #         false_positive = "Yes"
+    #     else:
+    #         false_positive = "No"
+    #
+    #     save_all = NetworkScanResultsDb(
+    #         scan_id=scan_id,
+    #         vul_id=vul_id,
+    #         name=name,
+    #         creation_time=creation_time,
+    #         modification_time=modification_time,
+    #         host=host,
+    #         port=port,
+    #         threat=threat,
+    #         severity=severity,
+    #         description=description,
+    #         family=family,
+    #         cvss_base=cvss_base,
+    #         cve=cve,
+    #         bid=bid,
+    #         xref=xref,
+    #         tags=tags,
+    #         banner=banner,
+    #         date_time=date_time,
+    #         false_positive=false_positive,
+    #         vuln_status="Open",
+    #         dup_hash=duplicate_hash,
+    #         vuln_duplicate=duplicate_vuln,
+    #         project_id=project_id,
+    #         username=username,
+    #     )
+    #     save_all.save()
+    #
+    #     openvas_vul = NetworkScanResultsDb.objects.filter(
+    #         username=username, scan_id=scan_id
+    #     )
+    #
+    #     total_high = len(openvas_vul.filter(threat="High"))
+    #     total_medium = len(openvas_vul.filter(threat="Medium"))
+    #     total_low = len(openvas_vul.filter(threat="Low"))
+    #     log_total = len(openvas_vul.filter(threat="Log"))
+    #     total_duplicate = len(openvas_vul.filter(vuln_duplicate="Yes"))
+    #     total_vul = total_high + total_medium + total_low
+    #
+    #     NetworkScanDb.objects.filter(username=username, scan_id=scan_id).update(
+    #         total_vul=total_vul,
+    #         high_total=total_high,
+    #         medium_total=total_medium,
+    #         log_total=log_total,
+    #         low_total=total_low,
+    #         total_dup=total_duplicate,
+    #     )
+    #
+    #     for row in NetworkScanResultsDb.objects.filter(username=username):
+    #         if (
+    #             NetworkScanResultsDb.objects.filter(
+    #                 username=username, name=row.name, port=row.port, scan_id=scan_id
+    #             ).count()
+    #             > 1
+    #         ):
+    #             row.delete()

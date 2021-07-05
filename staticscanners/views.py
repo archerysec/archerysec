@@ -47,6 +47,7 @@ from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser impor
     clair_report_json
 from scanners.scanner_parser.staticscanner_parser.retirejss_json_parser import \
     retirejs_report_json
+from scanners.scanner_parser.staticscanner_parser.tfsec_report_parser import tfsec_report_json
 from scanners.scanner_parser.staticscanner_parser.trivy_json_report_parser import trivy_report_json
 from scanners.scanner_parser.staticscanner_parser.npm_audit_report_json import npmaudit_report_json
 # from staticscanners.models import <scannername>_scan_db
@@ -72,7 +73,7 @@ def list_vuln(request):
 
     return render(
         request,
-        "scans/list_vuln.html",
+        "staticscanners/scans/list_vuln.html",
         {
             "all_vuln": all_vuln,
             "scan_id": scan_id,
@@ -91,7 +92,7 @@ def list_scans(request):
 
     all_notify = Notification.objects.unread()
 
-    return render(request, "scans/list_scans.html", {"all_scans": scan_list, "message": all_notify})
+    return render(request, "staticscanners/scans/list_scans.html", {"all_scans": scan_list, "message": all_notify})
 
 
 def list_vuln_info(request):
@@ -132,9 +133,9 @@ def list_vuln_info(request):
             )
             for vi in vuln_info:
                 name = vi.title
-                url = vi.url
+                url = vi.fileName
                 severity = vi.severity
-                dup_data = name + url + severity
+                dup_data = str(name) + str(url) + str(severity)
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
@@ -166,7 +167,7 @@ def list_vuln_info(request):
             total_dup=total_dup
         )
         return HttpResponseRedirect(
-            reverse("webscanners:list_vuln_info") + "?scan_id=%s&scan_name=%s&scanner=%s" % (
+            reverse("staticscanners:list_vuln_info") + "?scan_id=%s&scan_name=%s&scanner=%s" % (
                 scan_id, vuln_name, scanner)
         )
 
@@ -177,7 +178,7 @@ def list_vuln_info(request):
         scanner=scanner
     )
 
-    return render(request, "scans/list_vuln_info.html", {"vuln_data": vuln_data, "jira_url": jira_url})
+    return render(request, "staticscanners/scans/list_vuln_info.html", {"vuln_data": vuln_data, "jira_url": jira_url})
 
 
 def scan_details(request):
@@ -197,7 +198,7 @@ def scan_details(request):
         username=username, vuln_id=vuln_id, scanner=scanner
     ).order_by("vuln_id")
 
-    return render(request, "scans/vuln_details.html", {"vul_dat": vul_dat})
+    return render(request, "staticscanners/scans/vuln_details.html", {"vul_dat": vul_dat})
 
 
 def scan_delete(request):
@@ -224,7 +225,7 @@ def scan_delete(request):
                 username=username, scan_id=scan_id
             )
             item_results.delete()
-        return HttpResponseRedirect(reverse("webscanners:list_scans"))
+        return HttpResponseRedirect(reverse("staticscanners:list_scans"))
 
 
 def vuln_delete(request):
@@ -270,7 +271,7 @@ def vuln_delete(request):
             info_vul=total_info,
         )
         return HttpResponseRedirect(
-            reverse("webscanners:list_vuln") + "?scan_id=%s&scanner=%s" % (scan_id, scanner)
+            reverse("staticscanners:list_vuln") + "?scan_id=%s&scanner=%s" % (scan_id, scanner)
         )
 
 
@@ -318,7 +319,7 @@ def upload(project_name, scan_id, date_time, project_id, scan_status, scanner, u
         npmaudit_report_json(
             data=data, project_id=project_id, scan_id=scan_id, username=username
         )
-    elif scanner == 'Ndejsscan':
+    elif scanner == 'Nodejsscan':
         nodejsscan_report_json(
             data=data, project_id=project_id, scan_id=scan_id, username=username
         )
@@ -327,7 +328,7 @@ def upload(project_name, scan_id, date_time, project_id, scan_status, scanner, u
             data=data, project_id=project_id, scan_id=scan_id, username=username
         )
     elif scanner == 'Tfsec':
-        nodejsscan_report_json(
+        tfsec_report_json(
             data=data, project_id=project_id, scan_id=scan_id, username=username
         )
     elif scanner == 'Whitesource':
@@ -395,8 +396,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -412,8 +414,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -429,8 +432,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scanss"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -446,8 +450,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -463,8 +468,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -480,8 +486,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -497,8 +504,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -514,8 +522,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -531,8 +540,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -548,8 +558,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -565,8 +576,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -582,11 +594,12 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
-                    request, "report_import.html", {"all_project": all_project}
+                    request, "staticscanners/report_import.html", {"all_project": all_project}
                 )
 
         if scanner == "gitlabcontainerscan_scan":
@@ -599,8 +612,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -616,8 +630,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -633,8 +648,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}
@@ -649,8 +665,9 @@ def report_import(request):
 
                 upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except:
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(
                     request, "staticscanners/report_import.html", {"all_project": all_project}

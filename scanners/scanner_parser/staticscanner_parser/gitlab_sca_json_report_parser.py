@@ -50,15 +50,11 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
     vuln = data["vulnerabilities"]
 
     for vuln_data in vuln:
-        try:
-            name = vuln_data["name"]
-        except Exception as e:
-            name = "Not Found"
 
         try:
-            message = vuln_data["message"]
+            name = vuln_data["message"]
         except Exception as e:
-            message = "Not Found"
+            name = "Not Found"
 
         try:
             description = vuln_data["description"]
@@ -145,21 +141,17 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
                 date_time=date_time,
                 scan_id=scan_id,
                 project_id=project_id,
-                name=name,
-                message=message,
+                title=name,
                 description=description,
-                cve=cve,
-                gl_scanner=scanner,
-                location=location,
-                file=file,
-                Severity=severity,
-                identifiers=identifiers,
-                vul_col=vul_col,
+                fileName=file,
+                severity=severity,
+                severity_color=vul_col,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 username=username,
+                scanner='Gitlabsca'
             )
             save_all.save()
 
@@ -168,24 +160,20 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
 
             save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
-                scan_id=scan_id,
                 date_time=date_time,
+                scan_id=scan_id,
                 project_id=project_id,
-                name=name,
-                message=message,
+                title=name,
                 description=description,
-                cve=cve,
-                gl_scanner=scanner,
-                location=location,
-                file=file,
-                Severity=severity,
-                identifiers=identifiers,
-                vul_col=vul_col,
+                fileName=file,
+                severity=severity,
+                severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive="Duplicate",
+                false_positive='Duplicate',
                 username=username,
+                scanner='Gitlabsca'
             )
             save_all.save()
 
@@ -198,9 +186,9 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
     )
 
     total_vul = len(all_findbugs_data)
-    total_high = len(all_findbugs_data.filter(Severity="High"))
-    total_medium = len(all_findbugs_data.filter(Severity="Medium"))
-    total_low = len(all_findbugs_data.filter(Severity="Low"))
+    total_high = len(all_findbugs_data.filter(severity="High"))
+    total_medium = len(all_findbugs_data.filter(severity="Medium"))
+    total_low = len(all_findbugs_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     StaticScansDb.objects.filter(scan_id=scan_id).update(
@@ -211,6 +199,7 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Gitlabsca'
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - GitLab Dependency Report Uploaded"

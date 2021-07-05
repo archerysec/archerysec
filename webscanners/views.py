@@ -41,7 +41,7 @@ def list_vuln(request):
 
     return render(
         request,
-        "scans/list_vuln.html",
+        "webscanners/scans/list_vuln.html",
         {
             "all_vuln": all_vuln,
             "scan_id": scan_id,
@@ -55,7 +55,7 @@ def list_scans(request):
 
     all_notify = Notification.objects.unread()
 
-    return render(request, "scans/list_scans.html", {"all_scans": scan_list, "message": all_notify})
+    return render(request, "webscanners/scans/list_scans.html", {"all_scans": scan_list, "message": all_notify})
 
 
 def list_vuln_info(request):
@@ -136,7 +136,7 @@ def list_vuln_info(request):
         scanner=scanner
     )
 
-    return render(request, "scans/list_vuln_info.html", {"vuln_data": vuln_data, "jira_url": jira_url})
+    return render(request, "webscanners/scans/list_vuln_info.html", {"vuln_data": vuln_data, "jira_url": jira_url})
 
 
 def scan_details(request):
@@ -151,7 +151,7 @@ def scan_details(request):
         username=username, vuln_id=vuln_id, scanner=scanner
     ).order_by("vuln_id")
 
-    return render(request, "scans/vuln_details.html", {"vul_dat": vul_dat})
+    return render(request, "webscanners/scans/vuln_details.html", {"vul_dat": vul_dat})
 
 
 def scan_delete(request):

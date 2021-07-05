@@ -15,7 +15,6 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
-import json
 import uuid
 from datetime import datetime
 
@@ -195,19 +194,18 @@ def twistlock_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                vul_col=vul_col,
+                severity_color=vul_col,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 username=username,
-                name=name,
-                cvss=cvss,
-                description=description,
-                Severity=severity,
-                packageName=packageName,
-                packageVersion=packageVersion,
-                link=link,
+                title=name,
+                description=str(description) + '\n\n' + str(cvss) + '\n\n' + str(packageVersion),
+                severity=severity,
+                fileName=packageName,
+                references=link,
+                scanner='Twistlock',
             )
             save_all.save()
         else:
@@ -218,19 +216,18 @@ def twistlock_report_json(data, project_id, scan_id, username):
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                vul_col=vul_col,
+                severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive="Duplicate",
+                false_positive='Duplicate',
                 username=username,
-                name=name,
-                cvss=cvss,
-                description=description,
-                Severity=severity,
-                packageName=packageName,
-                packageVersion=packageVersion,
-                link=link,
+                title=name,
+                description=description + '\n\n' + cvss + '\n\n' + packageVersion,
+                severity=severity,
+                fileName=packageName,
+                references=link,
+                scanner='Twistlock',
             )
             save_all.save()
 
@@ -243,9 +240,9 @@ def twistlock_report_json(data, project_id, scan_id, username):
     )
 
     total_vul = len(all_findbugs_data)
-    total_high = len(all_findbugs_data.filter(Severity="High"))
-    total_medium = len(all_findbugs_data.filter(Severity="Medium"))
-    total_low = len(all_findbugs_data.filter(Severity="Low"))
+    total_high = len(all_findbugs_data.filter(severity="High"))
+    total_medium = len(all_findbugs_data.filter(severity="Medium"))
+    total_low = len(all_findbugs_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     StaticScansDb.objects.filter(scan_id=scan_id).update(
@@ -256,6 +253,7 @@ def twistlock_report_json(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
+        scanner='Twistlock'
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - twistlock Report Uploaded"

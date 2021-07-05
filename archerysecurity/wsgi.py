@@ -24,13 +24,16 @@ https://docs.djangoproject.com/en/1.11/howto/deployment/wsgi/
 """
 
 import os
+import warnings
+
 
 from django.core.wsgi import get_wsgi_application
+from archerysecurity.settings import base
+from whitenoise import WhiteNoise
 
-# from whitenoise.django import DjangoWhiteNoise
 
-
+warnings.filterwarnings('ignore', category=UserWarning, module='cffi')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "archerysecurity.settings.base")
 
-application = get_wsgi_application()
-# application = DjangoWhiteNoise(application)
+static = os.path.join(base.BASE_DIR, 'static')
+application = WhiteNoise(get_wsgi_application(), root='templates/static', prefix='static/')
