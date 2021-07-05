@@ -32,7 +32,7 @@ def nmap_vulners_scan(request):
     username = request.user.username
     all_nmap = nmap_scan_db.objects.filter(username=username)
 
-    return render(request, "nmap_scan.html", {"all_nmap": all_nmap, "is_vulners": True})
+    return render(request, "tools/nmap_scan.html", {"all_nmap": all_nmap, "is_vulners": True})
 
 
 def nmap_vulners(request):
@@ -62,7 +62,7 @@ def nmap_vulners(request):
             username=username, ip_address=ip_address
         )
 
-    return render(request, "nmap_vulners_list.html", {"all_nmap": all_nmap})
+    return render(request, "tools/nmap_vulners_list.html", {"all_nmap": all_nmap})
 
 
 def nmap_vulners_port(request):
@@ -90,6 +90,6 @@ def nmap_vulners_port(request):
 
     return render(
         request,
-        "nmap_vulners_port_list.html",
+        "tools/nmap_vulners_port_list.html",
         {"ip": ip_address, "port": port, "cve_info": cve_info},
     )

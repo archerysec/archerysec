@@ -86,7 +86,7 @@ def sslscan(request):
             dump_scans.save()
             return HttpResponseRedirect(reverse("tools:sslscan"))
 
-    return render(request, "sslscan_list.html", {"all_sslscan": all_sslscan})
+    return render(request, "tools/sslscan_list.html", {"all_sslscan": all_sslscan})
 
 
 def sslscan_result(request):
@@ -103,7 +103,7 @@ def sslscan_result(request):
             username=username, scan_id=scan_id
         )
 
-    return render(request, "sslscan_result.html", {"scan_result": scan_result})
+    return render(request, "tools/sslscan_result.html", {"scan_result": scan_result})
 
 
 def sslcan_del(request):
@@ -129,7 +129,7 @@ def sslcan_del(request):
             )
             del_scan.delete()
 
-    return HttpResponseRedirect("/tools/sslscan/")
+    return HttpResponseRedirect(reverse("tools:sslscan"))
 
 
 def nikto(request):
@@ -230,7 +230,7 @@ def nikto(request):
                 except Exception as e:
                     print(e)
 
-    return render(request, "nikto_scan_list.html", {"all_nikto": all_nikto})
+    return render(request, "tools/nikto_scan_list.html", {"all_nikto": all_nikto})
 
 
 def nikto_result(request):
@@ -239,12 +239,13 @@ def nikto_result(request):
     :param request:
     :return:
     """
+    scan_result = ''
     username = request.user.username
     if request.method == "GET":
         scan_id = request.GET["scan_id"]
         scan_result = nikto_result_db.objects.filter(username=username, scan_id=scan_id)
 
-    return render(request, "nikto_scan_result.html", {"scan_result": scan_result})
+    return render(request, "tools/nikto_scan_result.html", {"scan_result": scan_result})
 
 
 def nikto_result_vul(request):
@@ -253,6 +254,7 @@ def nikto_result_vul(request):
     :param request:
     :return:
     """
+    scan_id = ''
     username = request.user.username
     if request.method == "GET":
         scan_id = request.GET["scan_id"]
@@ -302,7 +304,7 @@ def nikto_result_vul(request):
 
     return render(
         request,
-        "nikto_vuln_list.html",
+        "tools/nikto_vuln_list.html",
         {
             "scan_result": scan_result,
             "vuln_data": vuln_data,
@@ -363,7 +365,7 @@ def nikto_scan_del(request):
             del_scan = nikto_vuln_db.objects.filter(username=username, scan_id=_scan_id)
             del_scan.delete()
 
-    return HttpResponseRedirect("/tools/nikto/")
+    return HttpResponseRedirect(reverse("tools:nikto"))
 
 
 def nmap_scan(request):
@@ -374,7 +376,7 @@ def nmap_scan(request):
     username = request.user.username
     all_nmap = nmap_scan_db.objects.filter(username=username)
 
-    return render(request, "nmap_scan.html", {"all_nmap": all_nmap})
+    return render(request, "tools/nmap_scan.html", {"all_nmap": all_nmap})
 
 
 def nmap(request):
@@ -431,7 +433,7 @@ def nmap(request):
 
         return HttpResponseRedirect("/tools/nmap_scan/")
 
-    return render(request, "nmap_list.html", {"all_nmap": all_nmap})
+    return render(request, "tools/nmap_list.html", {"all_nmap": all_nmap})
 
 
 def nmap_result(request):
@@ -447,7 +449,7 @@ def nmap_result(request):
         scan_id = request.GET["scan_id"]
         scan_result = nmap_result_db.objects.filter(username=username, scan_id=scan_id)
 
-    return render(request, "nmap_scan_result.html", {"scan_result": scan_result})
+    return render(request, "tools/nmap_scan_result.html", {"scan_result": scan_result})
 
 
 def nmap_scan_del(request):
@@ -475,4 +477,4 @@ def nmap_scan_del(request):
             del_scan = nmap_scan_db.objects.filter(username=username, scan_ip=vuln_id)
             del_scan.delete()
 
-    return HttpResponseRedirect("/tools/nmap_scan/")
+    return HttpResponseRedirect(reverse("tools:nmap_scan"))

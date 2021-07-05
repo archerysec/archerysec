@@ -527,6 +527,7 @@ def net_scan_schedule(request):
     :param request:
     :return:
     """
+    task_id = ''
     username = request.user.username
     all_scans_db = project_db.objects.filter(username=username)
     all_scheduled_scans = task_schedule_db.objects.filter(username=username)
