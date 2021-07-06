@@ -335,14 +335,6 @@ def upload(project_name, scan_id, date_time, project_id, scan_status, scanner, u
         whitesource_report_json(
             data=data, project_id=project_id, scan_id=scan_id, username=username
         )
-    elif scanner == 'Inpsec':
-        inspec_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
-        )
-    elif scanner == 'Dockle':
-        dockle_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
-        )
     elif scanner == 'Gitlabsast':
         gitlabsast_report_json(
             data=data, project_id=project_id, scan_id=scan_id, username=username
@@ -554,17 +546,24 @@ def report_import(request):
 
                 j = json_file.read()
                 data = json.loads(j)
-                scanner = 'Inpsec'
-
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                scan_dump = inspec_scan_db(project_name=project_name,
+                                           scan_id=scan_id,
+                                           date_time=date_time,
+                                           project_id=project_id,
+                                           scan_status=scan_status,
+                                           username=username
+                                           )
+                scan_dump.save()
+                inspec_report_json(data=data,
+                                   project_id=project_id,
+                                   scan_id=scan_id,
+                                   username=username
+                                   )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
+                return HttpResponseRedirect(reverse('inspec:inspec_list'))
+            except:
                 messages.error(request, "File Not Supported")
-                return render(
-                    request, "staticscanners/report_import.html", {"all_project": all_project}
-                )
+                return render(request, 'staticscanners/report_import.html', {'all_project': all_project})
 
         if scanner == "dockle_scan":
             try:
@@ -572,17 +571,24 @@ def report_import(request):
 
                 j = json_file.read()
                 data = json.loads(j)
-                scanner = 'Dockle'
-
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                scan_dump = dockle_scan_db(project_name=project_name,
+                                           scan_id=scan_id,
+                                           date_time=date_time,
+                                           project_id=project_id,
+                                           scan_status=scan_status,
+                                           username=username
+                                           )
+                scan_dump.save()
+                dockle_report_json(data=data,
+                                   project_id=project_id,
+                                   scan_id=scan_id,
+                                   username=username
+                                   )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
+                return HttpResponseRedirect(reverse('dockle:dockle_list'))
+            except:
                 messages.error(request, "File Not Supported")
-                return render(
-                    request, "staticscanners/report_import.html", {"all_project": all_project}
-                )
+                return render(request, 'staticscanners/report_import.html', {'all_project': all_project})
 
         if scanner == "gitlabsast_scan":
             try:
