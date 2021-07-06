@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+{#<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>#}
 <script type="text/javascript">
 
     $("#checkAll").change(function () {
@@ -90,7 +90,7 @@ $(document).on('click', '.confirm-delete', function(){
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'networkscanners:scan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}&scanner={{ data.scanner }}">{{data.title}}</a>
+                                            <a href="{% url 'networkscanners:scan_details' %}?scan_id={{data.scan_id}}&vuln_id={{data.vuln_id}}&ip={{ data.ip }}&scanner={{ data.scanner }}">{{data.title}}</a>
                                         </td>
 
                                         <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span></td>
@@ -101,9 +101,10 @@ $(document).on('click', '.confirm-delete', function(){
                                             <form method="POST" action="{% url 'networkscanners:list_vuln_info' %}">{% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="Yes">
-                                                <input type="hidden" name="scanner" value="Nessus">
+                                                <input type="hidden" name="scanner" value={{data.scanner}}>
                                                 <input type="hidden" name="status" value="Closed">
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <input type="hidden" name="ip" value="{{data.ip}}">
                                                 <button class="btn btn-outline-info btn-mini">Yes</button>
                                             </form>
                                         </td>
@@ -115,8 +116,9 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Open">
-                                                <input type="hidden" name="scanner" value="Nessus">
+                                                <input type="hidden" name="scanner" value={{data.scanner}}>
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <input type="hidden" name="ip" value="{{data.ip}}">
                                                 <button class="btn btn-info btn-mini">No</button>
                                             </form>
                                         </td>
@@ -143,7 +145,8 @@ $(document).on('click', '.confirm-delete', function(){
                                                     <input type="hidden" name="del_vuln" value="{{data.vuln_id}}">
                                                     <input type="hidden" name="scan_id" value="{{data.scan_id}}">
                                                     <input type="hidden" name="target" value="{{data.target}}">
-                                                    <input type="hidden" name="scanner" value="Nessus">
+                                                    <input type="hidden" name="scanner" value={{data.scanner}}>
+                                                    <input type="hidden" name="ip" value="{{data.ip}}">
                                                     <button class="btn btn-warning btn-mini"><i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -155,8 +158,9 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Closed">
-                                                <input type="hidden" name="scanner" value="Nessus">
+                                                <input type="hidden" name="scanner" value={{data.scanner}}>
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <input type="hidden" name="ip" value="{{data.ip}}">
                                                 <button class="btn btn-outline-info btn-mini">Close</button>
                                             </form>
                                         </td>
@@ -173,8 +177,9 @@ $(document).on('click', '.confirm-delete', function(){
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
                                                 <input type="hidden" name="status" value="Open">
-                                                <input type="hidden" name="scanner" value="Nessus">
+                                                <input type="hidden" name="scanner" value={{data.scanner}}>
                                                 <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                <input type="hidden" name="ip" value="{{data.ip}}">
                                                 <button class="btn btn-info btn-mini">Open</button>
                                             </form>
                                         </td>

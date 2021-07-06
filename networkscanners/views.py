@@ -100,6 +100,7 @@ def list_vuln_info(request):
     scan_id = None
     name = None
     scanner = None
+    ip = ''
 
     username = request.user.username
     jira_url = None
@@ -111,12 +112,14 @@ def list_vuln_info(request):
     if request.method == "GET":
         scan_id = request.GET["scan_id"]
         scanner = request.GET['scanner']
+        ip = request.GET['ip']
     if request.method == "POST":
         false_positive = request.POST.get("false")
         status = request.POST.get("status")
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
         scanner = request.POST.get("scanner")
+        ip = request.POST.get("ip")
         NetworkScanResultsDb.objects.filter(
             username=username, vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
         ).update(false_positive=false_positive, vuln_status=status)
@@ -161,13 +164,14 @@ def list_vuln_info(request):
             total_dup=total_dup
         )
         return HttpResponseRedirect(
-            reverse("networkscanners:list_vuln_info") + "?scan_id=%s&scanner=%s" % (scan_id, scanner)
+            reverse("networkscanners:list_vuln_info") + "?scan_id=%s&ip=%s&scanner=%s" % (scan_id, ip, scanner)
         )
 
     vuln_data = NetworkScanResultsDb.objects.filter(
         username=username,
         scan_id=scan_id,
-        scanner=scanner
+        scanner=scanner,
+        ip=ip
     )
 
     return render(request, "networkscanners/scans/list_vuln_info.html", {"vuln_data": vuln_data, "jira_url": jira_url})
