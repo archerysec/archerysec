@@ -922,10 +922,11 @@ def xml_upload(request):
                 root_xml = tree.getroot()
                 scan_dump = WebScansDb(
                     username=username,
-                    url=scan_url,
+                    scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
+                    scanner='Acunetix',
                     scan_status=scan_status,
                 )
                 scan_dump.save()
@@ -939,7 +940,8 @@ def xml_upload(request):
                 return HttpResponseRedirect(
                     reverse("webscanners:list_scans")
                 )
-            except:
+            except Exception as e:
+                print(e)
                 messages.error(request, "File Not Supported")
                 return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
 

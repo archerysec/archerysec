@@ -231,54 +231,24 @@ def xml_parser(root, project_id, scan_id, username):
                             false_positive = "No"
 
                         dump_data = WebScanResultsDb(
-                            username=username,
-                            scan_id=scan_id,
-                            project_id=project_id,
+
                             vuln_id=vuln_id,
+                            scan_id=scan_id,
+                            url=FullURL,
+                            title=VulnName,
+                            description=str(VulnDescription) + str(VulnDetails) + str(VulnTechnicalDetails),
+                            instance=str(VulnParameter) + str(VulnAffects),
+                            reference=VulnReferences,
+                            project_id=project_id,
+                            severity_color=vul_col,
+                            severity=risk,
                             date_time=date_time,
                             false_positive=false_positive,
-                            vuln_color=vul_col,
-                            vuln_status="Open",
+                            vuln_status='Open',
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
-                            ScanName=ScanName,
-                            ScanShortName=ScanShortName,
-                            ScanStartURL=ScanStartURL,
-                            ScanStartTime=ScanStartTime,
-                            ScanFinishTime=ScanFinishTime,
-                            ScanScanTime=ScanScanTime,
-                            ScanAborted=ScanAborted,
-                            ScanResponsive=ScanResponsive,
-                            ScanBanner=ScanBanner,
-                            ScanOs=ScanOs,
-                            ScanWebServer=ScanWebServer,
-                            ScanTechnologies=ScanTechnologies,
-                            ScanCrawler=ScanCrawler,
-                            ScanReportItems=ScanReportItems,
-                            VulnName=VulnName,
-                            VulnModuleName=VulnModuleName,
-                            VulnDetails=VulnDetails,
-                            VulnAffects=VulnAffects,
-                            VulnParameter=VulnParameter,
-                            VulnAOP_SourceFile=VulnAOP_SourceFile,
-                            VulnAOP_SourceLine=VulnAOP_SourceLine,
-                            VulnAOP_Additional=VulnAOP_Additional,
-                            VulnIsFalsePositive=VulnIsFalsePositive,
-                            VulnSeverity=risk,
-                            VulnType=VulnType,
-                            VulnImpact=VulnImpact,
-                            VulnDescription=VulnDescription,
-                            VulnDetailedInformation=VulnDetailedInformation,
-                            VulnRecommendation=VulnRecommendation,
-                            VulnTechnicalDetails=VulnTechnicalDetails,
-                            VulnCWEList=VulnCWEList,
-                            VulnCVEList=VulnCVEList,
-                            VulnCVSS=VulnCVSS,
-                            VulnCVSS3=VulnCVSS3,
-                            VulnReferences=VulnReferences,
-                            UriName=UriName,
-                            VulnUrl=VulnUrl,
-                            VulnFullUrl=FullURL,
+                            scanner='Acunetix',
+                            username=username,
                         )
                         dump_data.save()
 
@@ -286,54 +256,23 @@ def xml_parser(root, project_id, scan_id, username):
                         duplicate_vuln = "Yes"
 
                         dump_data = WebScanResultsDb(
-                            username=username,
-                            scan_id=scan_id,
-                            project_id=project_id,
                             vuln_id=vuln_id,
+                            scan_id=scan_id,
+                            url=VulnUrl,
+                            title=VulnName,
+                            description=str(VulnDescription) + str(VulnDetails) + str(VulnTechnicalDetails),
+                            instance=str(VulnParameter) + str(VulnAffects),
+                            reference=VulnReferences,
+                            project_id=project_id,
+                            severity_color=vul_col,
+                            severity=risk,
                             date_time=date_time,
-                            false_positive="Duplicate",
-                            vuln_color=vul_col,
-                            vuln_status="Duplicate",
+                            false_positive='Duplicate',
+                            vuln_status='Duplicate',
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
-                            ScanName=ScanName,
-                            ScanShortName=ScanShortName,
-                            ScanStartURL=ScanStartURL,
-                            ScanStartTime=ScanStartTime,
-                            ScanFinishTime=ScanFinishTime,
-                            ScanScanTime=ScanScanTime,
-                            ScanAborted=ScanAborted,
-                            ScanResponsive=ScanResponsive,
-                            ScanBanner=ScanBanner,
-                            ScanOs=ScanOs,
-                            ScanWebServer=ScanWebServer,
-                            ScanTechnologies=ScanTechnologies,
-                            ScanCrawler=ScanCrawler,
-                            ScanReportItems=ScanReportItems,
-                            VulnName=VulnName,
-                            VulnModuleName=VulnModuleName,
-                            VulnDetails=VulnDetails,
-                            VulnAffects=VulnAffects,
-                            VulnParameter=VulnParameter,
-                            VulnAOP_SourceFile=VulnAOP_SourceFile,
-                            VulnAOP_SourceLine=VulnAOP_SourceLine,
-                            VulnAOP_Additional=VulnAOP_Additional,
-                            VulnIsFalsePositive=VulnIsFalsePositive,
-                            VulnSeverity=risk,
-                            VulnType=VulnType,
-                            VulnImpact=VulnImpact,
-                            VulnDescription=VulnDescription,
-                            VulnDetailedInformation=VulnDetailedInformation,
-                            VulnRecommendation=VulnRecommendation,
-                            VulnTechnicalDetails=VulnTechnicalDetails,
-                            VulnCWEList=VulnCWEList,
-                            VulnCVEList=VulnCVEList,
-                            VulnCVSS=VulnCVSS,
-                            VulnCVSS3=VulnCVSS3,
-                            VulnReferences=VulnReferences,
-                            UriName=UriName,
-                            VulnUrl=VulnUrl,
-                            VulnFullUrl=FullURL,
+                            scanner='Acunetix',
+                            username=username,
                         )
                         dump_data.save()
 
@@ -345,11 +284,11 @@ def xml_parser(root, project_id, scan_id, username):
         username=username, scan_id=scan_id, vuln_duplicate="Yes"
     )
 
-    total_high = len(acunetix_all_vul.filter(VulnSeverity="High"))
-    total_medium = len(acunetix_all_vul.filter(VulnSeverity="Medium"))
-    total_low = len(acunetix_all_vul.filter(VulnSeverity="Low"))
-    total_info = len(acunetix_all_vul.filter(VulnSeverity="Informational"))
-    total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
+    total_high = len(acunetix_all_vul.filter(severity="High"))
+    total_medium = len(acunetix_all_vul.filter(severity="Medium"))
+    total_low = len(acunetix_all_vul.filter(severity="Low"))
+    total_info = len(acunetix_all_vul.filter(severity="Informational"))
+    total_duplicate = len(duplicate_count.filter(severity="Yes"))
     total_vul = total_high + total_medium + total_low + total_info
 
     # cal_total_vuln = total_high + total_medium + total_low + total_info
@@ -362,7 +301,7 @@ def xml_parser(root, project_id, scan_id, username):
         low_vul=total_low,
         info_vul=total_info,
         total_dup=total_duplicate,
-        url=ScanStartURL,
+        scan_url=ScanStartURL,
     )
     trend_update(username=username)
     subject = "Archery Tool Scan Status - Acunetix Report Uploaded"
