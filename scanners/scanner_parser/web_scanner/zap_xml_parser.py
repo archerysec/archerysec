@@ -132,7 +132,7 @@ def xml_parser(username, root, project_id, scan_id):
                 vuln_status=vuln_status,
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                scanner="zap",
+                scanner="Zap",
                 username=username,
             )
 

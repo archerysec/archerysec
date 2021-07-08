@@ -779,7 +779,7 @@ def xml_upload(request):
                     project_id=project_id,
                     scan_status=scan_status,
                     rescan="No",
-                    scanner="zap",
+                    scanner="Zap",
                 )
                 scan_dump.save()
                 zap_xml_parser.xml_parser(
@@ -868,6 +868,7 @@ def xml_upload(request):
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
+                    scanner='Netsparker'
                 )
                 scan_dump.save()
                 netsparker_xml_parser.xml_parser(
@@ -897,6 +898,7 @@ def xml_upload(request):
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
+                    scanner='Webinspect',
                 )
                 scan_dump.save()
                 webinspect_xml_parser.xml_parser(

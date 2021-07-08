@@ -197,7 +197,6 @@ def xml_parser(root, project_id, scan_id, username):
             low_vul=total_low,
             info_vul=total_info,
             total_dup=total_duplicate,
-            scanner='Webinspect',
         )
     trend_update(username=username)
 
