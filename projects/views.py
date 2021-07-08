@@ -149,11 +149,6 @@ def projects(request):
         dockle_result = dockle_scan_results_db.objects.filter(project_id=project_id)
         dockle_result.delete()
 
-        openvas = openvas_scan_db.objects.filter(project_id=project_id)
-        openvas.delete()
-        openvas_result = ov_scan_result_db.objects.filter(project_id=project_id)
-        openvas_result.delete()
-
         nessus = NetworkScanDb.objects.filter(project_id=project_id)
         nessus.delete()
 

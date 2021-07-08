@@ -33,162 +33,6 @@ all_high_stat = ""
 data = ""
 
 
-def all_sast_dat(scanner, username, project_id, query):
-    all_sast = None
-    if query == "total":
-        all_sast_scan = StaticScansDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("total_vul"))
-
-        for key, value in all_sast_scan.items():
-            if value is None:
-                all_sast = "0"
-            else:
-                all_sast = value
-
-    elif query == "high":
-
-        all_sast_high = StaticScansDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("high_vul"))
-
-        for key, value in all_sast_high.items():
-            if value is None:
-                all_sast = "0"
-            else:
-                all_sast = value
-
-    elif query == "medium":
-        all_sast_medium = StaticScansDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("medium_vul"))
-
-        for key, value in all_sast_medium.items():
-            if value is None:
-                all_sast = "0"
-            else:
-                all_sast = value
-
-    elif query == "low":
-        all_sast_low = StaticScansDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("low_vul"))
-
-        for key, value in all_sast_low.items():
-            if value is None:
-                all_sast = "0"
-            else:
-                all_sast = value
-
-    return all_sast
-
-
-def all_web_dat(scanner, username, project_id, query):
-    all_web = None
-
-    if query == "total":
-        all_web_scan = WebScansDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("total_vul"))
-
-        for key, value in all_web_scan.items():
-            if value is None:
-                all_web = "0"
-            else:
-                all_web = value
-
-    elif query == "high":
-        all_web_high = WebScansDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("high_vul"))
-
-        for key, value in all_web_high.items():
-            if value is None:
-                all_web = "0"
-            else:
-                all_web = value
-
-        def all_web_scan():
-            WebScansDb.objects.filter(
-                username=username, project_id=project_id, scanner=scanner
-            ).aggregate(Sum("high_vul"))
-            return all_web_scan
-
-    elif query == "medium":
-        all_web_medium = WebScansDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("medium_vul"))
-
-        for key, value in all_web_medium.items():
-            if value is None:
-                all_web = "0"
-            else:
-                all_web = value
-
-    elif query == "low":
-        all_web_low = WebScansDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("low_vul"))
-
-        for key, value in all_web_low.items():
-            if value is None:
-                all_web = "0"
-            else:
-                all_web = value
-
-    return all_web
-
-
-def all_net_dat(scanner, username, project_id, query):
-    all_net = None
-    if query == "total":
-        all_net_scan = NetworkScanDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("total_vul"))
-
-        for key, value in all_net_scan.items():
-            if value is None:
-                all_net = "0"
-            else:
-                all_net = value
-
-    elif query == "high":
-
-        all_net_high = NetworkScanDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("high_vul"))
-
-        for key, value in all_net_high.items():
-            if value is None:
-                all_net = "0"
-            else:
-                all_net = value
-
-    elif query == "medium":
-        all_net_medium = NetworkScanDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("medium_vul"))
-
-        for key, value in all_net_medium.items():
-            if value is None:
-                all_net = "0"
-            else:
-                all_net = value
-
-    elif query == "low":
-        all_net_low = NetworkScanDb.objects.filter(
-            username=username, project_id=project_id, scanner=scanner
-        ).aggregate(Sum("low_vul"))
-
-        for key, value in all_net_low.items():
-            if value is None:
-                all_net = "0"
-            else:
-                all_net = value
-
-    return all_net
-
-
 def all_manual_scan(username, project_id, query):
     all_manual_scan = None
     if query == "total":
@@ -343,18 +187,30 @@ def all_vuln(username, project_id, query):
     all_vuln = 0
 
     if query == "total":
+        try:
+            all_sast_scan = int(StaticScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_sast_scan = 0
 
-        all_sast_scan = int(StaticScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        try:
+            all_dast_scan = int(WebScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_dast_scan = 0
 
-        all_dast_scan = int(WebScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        try:
 
-        all_net_scan = int(NetworkScanDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("total_vul"))['total_vul__sum'])
+            all_net_scan = int(NetworkScanDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_net_scan = 0
 
         all_vuln = (
                 int(all_sast_scan)
@@ -363,18 +219,27 @@ def all_vuln(username, project_id, query):
                 + int(all_manual_scan(username=username, project_id=project_id, query=query))
         )
     elif query == "high":
+        try:
+            all_sast_scan = int(StaticScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_sast_scan = 0
 
-        all_sast_scan = int(StaticScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        try:
+            all_dast_scan = int(WebScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        except Exception as e:
+            all_dast_scan = 0
 
-        all_dast_scan = int(WebScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("high_vul"))['high_vul__sum'])
-
-        all_net_scan = int(NetworkScanDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        try:
+            all_net_scan = int(NetworkScanDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        except Exception as e:
+            all_net_scan = 0
 
         all_vuln = (
                 int(all_sast_scan)
@@ -384,17 +249,30 @@ def all_vuln(username, project_id, query):
         )
     elif query == "medium":
 
-        all_sast_scan = int(StaticScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        try:
+            all_sast_scan = int(StaticScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_sast_scan = 0
 
-        all_dast_scan = int(WebScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        try:
+            all_dast_scan = int(WebScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_dast_scan = 0
 
-        all_net_scan = int(NetworkScanDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        try:
+            all_net_scan = int(NetworkScanDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+
+        except Exception as e:
+            print(e)
+            all_net_scan = 0
 
         all_vuln = (
                 int(all_sast_scan)
@@ -403,17 +281,29 @@ def all_vuln(username, project_id, query):
                 + int(all_manual_scan(username=username, project_id=project_id, query=query))
         )
     elif query == "low":
-        all_sast_scan = int(StaticScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        try:
+            all_sast_scan = int(StaticScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_sast_scan = 0
 
-        all_dast_scan = int(WebScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        try:
+            all_dast_scan = int(WebScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_dast_scan = 0
 
-        all_net_scan = int(NetworkScanDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        try:
+            all_net_scan = int(NetworkScanDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_net_scan = 0
 
         all_vuln = (
                 int(all_sast_scan)
@@ -428,24 +318,42 @@ def all_web(username, project_id, query):
     all_web = 0
 
     if query == 'total':
-        all_web = int(WebScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("total_vul"))['total_vul__sum'])
+
+        try:
+            all_web = int(WebScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("total_vul"))['total_vul__sum'])
+
+        except Exception as e:
+            print(e)
+            all_web = 0
 
     elif query == 'high':
-        all_web = int(WebScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        try:
+            all_web = int(WebScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_web = 0
 
     elif query == 'medium':
-        all_web = int(WebScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        try:
+            all_web = int(WebScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_web = 0
 
     elif query == 'low':
-        all_web = int(WebScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        try:
+            all_web = int(WebScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_web = 0
 
     return all_web
 
@@ -454,22 +362,39 @@ def all_net(username, project_id, query):
     all_net = 0
 
     if query == 'total':
-        all_net = int(NetworkScanDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        try:
+            all_net = int(NetworkScanDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_net = 0
+
     elif query == 'high':
-        all_net = int(NetworkScanDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        try:
+            all_net = int(NetworkScanDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_net = 0
     elif query == 'medium':
-        all_net = int(NetworkScanDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        try:
+            all_net = int(NetworkScanDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_net = 0
 
     elif query == 'low':
-        all_net = int(NetworkScanDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        try:
+            all_net = int(NetworkScanDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_net = 0
 
     return all_net
 
@@ -494,25 +419,40 @@ def all_compliance(username, project_id, query):
 
 def all_static(username, project_id, query):
     all_static = 0
-    # add your scannername <scannername>
-    # all_<scannername>(username=username, project_id=project_id, query=query)) + int(
+
     if query == 'total':
-        all_static = int(StaticScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        try:
+            all_static = int(StaticScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("total_vul"))['total_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_static = 0
     elif query == 'high':
-        all_static = int(StaticScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        try:
+            all_static = int(StaticScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("high_vul"))['high_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_static = 0
     elif query == 'medium':
-        all_static = int(StaticScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        try:
+            all_static = int(StaticScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("medium_vul"))['medium_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_static = 0
 
     elif query == 'low':
-        all_static = int(StaticScansDb.objects.filter(
-            username=username, project_id=project_id
-        ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        try:
+            all_static = int(StaticScansDb.objects.filter(
+                username=username, project_id=project_id
+            ).aggregate(Sum("low_vul"))['low_vul__sum'])
+        except Exception as e:
+            print(e)
+            all_static = 0
 
     return all_static
 
