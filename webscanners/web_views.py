@@ -562,7 +562,11 @@ def setting(request):
         if setting_of == "burp":
             host = "http://" + burp_host + ":" + burp_port + "/"
 
-            bi = burpscanner.BurpApi(host, burp_api_key)
+            try:
+                bi = burpscanner.BurpApi(host, burp_api_key)
+            except:
+                burp_info = False
+                return burp_info
 
             issue_list = bi.issue_definitions()
             if issue_list.data is None:
@@ -618,9 +622,17 @@ def setting(request):
                 jira_url = jira.jira_server
                 username = jira.jira_username
                 password = jira.jira_password
-            jira_server = jira_url
-            jira_username = signing.loads(username)
-            jira_password = signing.loads(password)
+
+                if jira_url is None:
+                    print("No jira url found")
+
+            try:
+
+                jira_server = jira_url
+                jira_username = signing.loads(username)
+                jira_password = signing.loads(password)
+            except:
+                jira_info = False
 
             options = {"server": jira_server}
             try:

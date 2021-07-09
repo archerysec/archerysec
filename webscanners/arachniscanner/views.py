@@ -227,7 +227,7 @@ def arachni_scan(request):
             thread.daemon = True
             thread.start()
 
-    return render(request, "arachniscanner/arachni_scan_list.html")
+    return render(request, "webscanners/arachniscanner/arachni_scan_list.html")
 
 
 def arachni_settings(request):
@@ -248,7 +248,7 @@ def arachni_settings(request):
 
     return render(
         request,
-        "arachniscanner/arachni_settings_form.html",
+        "webscanners/arachniscanner/arachni_settings_form.html",
         {
             "arachni_host": arachni_hosts,
             "arachni_port": arachni_ports,
@@ -279,7 +279,7 @@ def arachni_setting_update(request):
 
         return HttpResponseRedirect(reverse("webscanners:setting"))
 
-    return render(request, "arachniscanner/arachni_settings_form.html")
+    return render(request, "webscanners/arachniscanner/arachni_settings_form.html")
 
 
 def export(request):

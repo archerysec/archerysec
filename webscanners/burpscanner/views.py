@@ -111,7 +111,7 @@ def burp_setting(request):
 
     return render(
         request,
-        "burpscanner/burp_setting_form.html",
+        "webscanners/burpscanner/burp_setting_form.html",
         {"burp_url": burp_url, "burp_port": burp_port, "burp_api_key": burp_api_key},
     )
 
@@ -147,7 +147,7 @@ def burp_scan_launch(request):
             except Exception as e:
                 print(e)
 
-    return render(request, "burpscanner/burp_scan_list.html")
+    return render(request, "webscanners/burpscanner/burp_scan_list.html")
 
 
 def export(request):
