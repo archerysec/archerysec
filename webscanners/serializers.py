@@ -26,9 +26,9 @@ class WebScanSerializer(serializers.Serializer):
     project_id = serializers.UUIDField(
         required=True, help_text=("Project ID should be provided")
     )
-    scan_scanid = serializers.UUIDField(read_only=True)
+    scan_id = serializers.UUIDField(read_only=True)
     # vul_num = serializers.CharField(read_only=True)
-    vul_status = serializers.IntegerField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
     total_vul = serializers.CharField(read_only=True)
     high_vul = serializers.CharField(read_only=True)
     medium_vul = serializers.CharField(read_only=True)
@@ -102,9 +102,9 @@ class UploadScanSerializer(serializers.Serializer):
 class WebScanStatusSerializer(serializers.Serializer):
     scan_url = serializers.URLField(read_only=True)
     project_id = serializers.UUIDField(read_only=True)
-    scan_scanid = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+    scan_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
     vul_num = serializers.CharField(read_only=True)
-    vul_status = serializers.IntegerField(read_only=True)
+    scan_status = serializers.IntegerField(read_only=True)
     total_vul = serializers.CharField(read_only=True)
     high_vul = serializers.CharField(read_only=True)
     medium_vul = serializers.CharField(read_only=True)

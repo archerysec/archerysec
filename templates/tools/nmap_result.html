@@ -19,7 +19,7 @@
                 <ul class="dropdown-menu">
                     <!--<li><a href="/webscanners/edit_burp_vuln/?vuln_id={{data.vuln_id}}"><i-->
                     <!--class="icon-pencil"></i> Edit </a></li>-->
-                    <!--<li><a href="/del_scan/?scan_scanid={{data.scan_scanid}}"><i-->
+                    <!--<li><a href="/del_scan/?scan_scanid={{data.scan_id}}"><i-->
                     <!--class="icon-trash"></i> Delete</a></li>-->
                     <li>
                         <a href="/jira/submit_jira_ticket/?summary=SSLScan Result&description=Vulnerable URL: {{ data.scan_url }} %0a%0a SSLScan Output: {{ data.sslscan_output }} &scanner=SSLScan&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "><i

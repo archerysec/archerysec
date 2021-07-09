@@ -754,7 +754,7 @@ def burp_scan_launch(request):
             except Exception as e:
                 print(e)
 
-    return render(request, "webscanners/burpscanner/burp_scan_list.html")
+    return render(request, "webscanners/scans/list_scans.html")
 
 
 def xml_upload(request):

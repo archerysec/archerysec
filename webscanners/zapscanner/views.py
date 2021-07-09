@@ -107,8 +107,8 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
             date_time=date_time,
             rescan_id=rescan_id,
             rescan=rescan,
-            vul_status="0",
-            scanner="zap",
+            scan_status="0",
+            scanner="Zap",
         )
 
         save_all_scan.save()
@@ -212,8 +212,8 @@ def launch_schudle_zap_scan(
             date_time=date_time,
             rescan_id=rescan_id,
             rescan=rescan,
-            vul_status="0",
-            scanner="zap",
+            scan_status="0",
+            scanner="Zap",
         )
 
         save_all_scan.save()

@@ -35,7 +35,8 @@ from archerysettings.models import burp_setting_db
 from jiraticketing.models import jirasetting
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from webscanners.models import (WebScansDb,
-                                WebScanResultsDb)
+                                WebScanResultsDb,
+                                burp_issue_definitions)
 from webscanners.resources import BurpResource
 
 burp_url = None
@@ -86,6 +87,9 @@ def burp_setting(request):
 
         json_issue_data = json.dumps(issue_list.data)
         issues = json.loads(json_issue_data)
+
+        all_data = burp_issue_definitions.objects.filter(username=username)
+        all_data.delete()
 
         try:
             for issue_dat in issues:
@@ -147,7 +151,7 @@ def burp_scan_launch(request):
             except Exception as e:
                 print(e)
 
-    return render(request, "webscanners/burpscanner/burp_scan_list.html")
+    return render(request, "webscanners/scans/list_scans.html")
 
 
 def export(request):

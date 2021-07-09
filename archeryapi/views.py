@@ -358,7 +358,7 @@ class ZapScanStatus(generics.ListCreateAPIView):
             scan_id = request.data.get(
                 "scan_scanid",
             )
-            zap_scan = WebScansDb.objects.filter(username=username, scan_scanid=scan_id)
+            zap_scan = WebScansDb.objects.filter(username=username, scan_id=scan_id)
             all_scans = chain(zap_scan)
             serialized_scans = WebScanStatusSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
@@ -703,8 +703,8 @@ class UpdateZapStatus(generics.CreateAPIView):
         if serializer.is_valid():
             scan_id = request.data.get("scan_id")
             scan_status = request.data.get("scan_status")
-            WebScansDb.objects.filter(username=username, scan_scanid=scan_id).update(
-                vul_status=scan_status
+            WebScansDb.objects.filter(username=username, scan_id=scan_id).update(
+                scan_status=scan_status
             )
             return Response(
                 {"message": "ZAP Scanner status updated %s", "Scan Status": scan_status}

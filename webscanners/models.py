@@ -112,3 +112,12 @@ class task_schedule_db(models.Model):
     scanner = models.TextField(blank=True, null=True)
     periodic_task = models.TextField(blank=True, null=True)
     username = models.CharField(max_length=256, null=True)
+
+class burp_issue_definitions(models.Model):
+    remediation = models.TextField(blank=True, null=True)
+    issue_type_id = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    reference = models.TextField(blank=True, null=True)
+    vulnerability_classifications = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    username = models.CharField(max_length=256, null=True)

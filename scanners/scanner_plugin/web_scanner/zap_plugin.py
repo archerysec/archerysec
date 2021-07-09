@@ -412,14 +412,14 @@ class ZAPScanner:
                 scan_status = self.zap.ascan.status(scan_id)
                 print("ZAP Scan Status:", scan_status)
                 time.sleep(10)
-                WebScansDb.objects.filter(scan_scanid=un_scanid).update(
-                    vul_status=scan_status
+                WebScansDb.objects.filter(scan_id=un_scanid).update(
+                    scan_status=scan_status
                 )
         except Exception as e:
             print(e)
 
         scan_status = 100
-        WebScansDb.objects.filter(scan_scanid=un_scanid).update(vul_status=scan_status)
+        WebScansDb.objects.filter(scan_id=un_scanid).update(scan_status=scan_status)
         return scan_status
 
     def zap_scan_result(self, target_url, username):
@@ -573,11 +573,10 @@ class ZAPScanner:
                         description=description,
                         false_positive="No",
                         jira_ticket="NA",
-                        rescan="No",
                         vuln_status="Open",
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
-                        scanner="zap",
+                        scanner="Zap",
                         username=username,
                     )
                     dump_data.save()
@@ -598,11 +597,10 @@ class ZAPScanner:
                         description=description,
                         false_positive="Duplicate",
                         jira_ticket="NA",
-                        rescan="No",
                         vuln_status="Duplicate",
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
-                        scanner="zap",
+                        scanner="Zap",
                         username=username,
                     )
                     dump_data.save()
@@ -618,7 +616,7 @@ class ZAPScanner:
                     false_positive = "No"
 
                 vul_dat = WebScanResultsDb.objects.filter(
-                    username=username, vuln_id=vuln_id, scanner="zap"
+                    username=username, vuln_id=vuln_id, scanner="Zap"
                 )
                 full_data = []
                 for data in vul_dat:
@@ -633,21 +631,21 @@ class ZAPScanner:
                 ).update(instance=full_data)
 
             zap_all_vul = WebScanResultsDb.objects.filter(
-                username=username, scan_id=un_scanid, false_positive="No", scanner="zap"
+                username=username, scan_id=un_scanid, false_positive="No", scanner="Zap"
             )
 
             duplicate_count = WebScanResultsDb.objects.filter(
                 username=username, scan_id=un_scanid, vuln_duplicate="Yes"
             )
 
-            total_high = len(zap_all_vul.filter(risk="High"))
-            total_medium = len(zap_all_vul.filter(risk="Medium"))
-            total_low = len(zap_all_vul.filter(risk="Low"))
-            total_info = len(zap_all_vul.filter(risk="Informational"))
+            total_high = len(zap_all_vul.filter(severity="High"))
+            total_medium = len(zap_all_vul.filter(severity="Medium"))
+            total_low = len(zap_all_vul.filter(severity="Low"))
+            total_info = len(zap_all_vul.filter(severity="Informational"))
             total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
             total_vul = total_high + total_medium + total_low + total_info
 
-            WebScansDb.objects.filter(username=username, scan_scanid=un_scanid).update(
+            WebScansDb.objects.filter(username=username, scan_id=un_scanid).update(
                 total_vul=total_vul,
                 date_time=date_time,
                 high_vul=total_high,
@@ -659,7 +657,7 @@ class ZAPScanner:
             )
             if total_vul == total_duplicate:
                 WebScansDb.objects.filter(
-                    username=username, scan_scanid=un_scanid
+                    username=username, scan_id=un_scanid
                 ).update(
                     total_vul=total_vul,
                     date_time=date_time,
