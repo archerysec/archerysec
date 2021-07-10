@@ -114,7 +114,7 @@ def gitlabsca_report_json(data, project_id, scan_id, username):
 
         vul_id = uuid.uuid4()
 
-        dup_data = str(message) + str(severity) + str(file)
+        dup_data = str(name) + str(severity) + str(file)
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
