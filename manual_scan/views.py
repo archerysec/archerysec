@@ -123,13 +123,14 @@ def add_vuln(request):
     scanid = None
     severity_color = None
     project_id = None
+    uploaded_poc_url = ''
     username = request.user.username
 
     if request.method == "GET":
         scanid = request.GET["scan_id"]
         project_id = request.GET["project_id"]
 
-    if request.method == "POST" and request.FILES["poc"]:
+    if request.method == "POST":
         vuln_name = request.POST.get("vuln_name")
         severity = request.POST.get("vuln_severity")
         vuln_url = request.POST.get("vuln_instance")
@@ -139,14 +140,15 @@ def add_vuln(request):
         scan_id = request.POST.get("scan_id")
         project_id = request.POST.get("project_id")
         pentest_type = request.POST.get("pentest_type")
-        poc = request.FILES["poc"]
+        poc = request.FILES.get('poc', False)
         poc_description = request.POST.get("poc_description")
         date_time = datetime.now()
         vuln_id = uuid.uuid4()
 
         fs = FileSystemStorage()
-        filename = fs.save(poc.name, poc)
-        uploaded_poc_url = fs.url(filename)
+        if poc is not False:
+            filename = fs.save(poc.name, poc)
+            uploaded_poc_url = fs.url(filename)
 
         if severity == "High":
             severity_color = "danger"

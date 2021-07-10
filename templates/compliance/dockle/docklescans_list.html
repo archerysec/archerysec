@@ -39,8 +39,6 @@
     </script>
 
 
-    <div class="page-wrapper">
-        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -55,29 +53,28 @@
                             </div>
                             <br>
                             <br>
-                            <div class="float-right">
-                                <form action="{% url 'dockle:export' %}" method="post"
-                                      class="forms-sample">
-                                    {% csrf_token %}
-                                    <div class="form-row align-items-center">
-                                        <div class="col-auto my-1">
-                                            <select name="type" class="custom-select mr-sm-2"
-                                                    id="inlineFormCustomSelect">
-                                                <option value="csv" selected>CSV</option>
-                                                <option value="json">JSON</option>
-                                                <option value="yaml">YAML</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-auto my-1">
-                                            <input type="hidden" name="scan_id"
-                                                   value="{% for data in all_dockle_scan %}{{ data.scan_id }}{% endfor %}"/>
-                                            <button type="submit" class="btn btn-primary"><i
-                                                    class="fas fa-arrow-alt-circle-down"></i></button>
-                                        </div>
-                                    </div>
-                                </form>
-
-                            </div>
+{#                            <div class="float-right">#}
+{#                                <form action="{% url 'dockle:export' %}" method="post"#}
+{#                                      class="forms-sample">#}
+{#                                    {% csrf_token %}#}
+{#                                    <div class="form-row align-items-center">#}
+{#                                        <div class="col-auto my-1">#}
+{#                                            <select name="type" class="custom-select mr-sm-2"#}
+{#                                                    id="inlineFormCustomSelect">#}
+{#                                                <option value="csv" selected>CSV</option>#}
+{#                                                <option value="json">JSON</option>#}
+{#                                                <option value="yaml">YAML</option>#}
+{#                                            </select>#}
+{#                                        </div>#}
+{#                                        <div class="col-auto my-1">#}
+{#                                            <input type="hidden" name="scan_id"#}
+{#                                                   value="{% for data in all_dockle_scan %}{{ data.scan_id }}{% endfor %}"/>#}
+{#                                            <button type="submit" class="btn btn-primary"><i#}
+{#                                                    class="fas fa-arrow-alt-circle-down"></i></button>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </form>#}
+{#                            </div>#}
                             <br>
                             <div class="d-md-flex align-items-center">
                                 <h1 class="card-title">dockle Scan List</h1>
@@ -170,8 +167,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+
 {#<script src="/static/matrix-admin-bt4/assets/libs/toastr/build/toastr.min.js"></script>#}
 {#<script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>#}
 

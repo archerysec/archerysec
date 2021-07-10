@@ -477,7 +477,7 @@ def xml_upload(request):
                 project_id=project_id, scan_id=scan_id, root=root_xml, username=username
             )
             messages.success(request, "File Uploaded")
-            return HttpResponseRedirect(reverse("networkscanners:index"))
+            return HttpResponseRedirect(reverse("networkscanners:list_scans"))
         elif scanner == "nessus":
             date_time = datetime.now()
             tree = ET.parse(xml_file)

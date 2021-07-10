@@ -5,7 +5,7 @@
                 <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
                                             href="{% url 'dashboard:dashboard' %}" aria-expanded="false"><i
                         class="fas fa-tachometer-alt"></i><span class="hide-menu">Dashboard</span></a></li>
-
+                <li class="my-2 mx-3 border-top"></li>
                 <!-- Manual Scans -->
                 <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
                                             href="{% url 'manual_scan:list_scan' %}" aria-expanded="false"><i
@@ -20,7 +20,8 @@
                         </li>
                         <li class="sidebar-item"><a href="{% url 'staticscanners:list_scans' %}" class="sidebar-link"><i
                                 class="fas fas fa-code"></i><span class="hide-menu"> Static Scans </span></a></li>
-                        <li class="sidebar-item"><a href="{% url 'networkscanners:list_scans' %}" class="sidebar-link"><i
+                        <li class="sidebar-item"><a href="{% url 'networkscanners:list_scans' %}"
+                                                    class="sidebar-link"><i
                                 class="fas fa-cubes"></i><span class="hide-menu"> Infrastructure Scans </span></a></li>
                     </ul>
                 </li>
@@ -37,66 +38,6 @@
                     </ul>
                 </li>
 
-                <!-- Dynamic Scans -->
-
-
-
-
-                <!--Static Scan-->
-{#                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"#}
-{#                                            href="javascript:void(0)" aria-expanded="false"><i#}
-{#                        class="fas fa-file-code"></i><span class="hide-menu">Static Scan</span></a>#}
-{#                    <ul aria-expanded="false" class="collapse first-level">#}
-{#                        <li class="sidebar-item"><a href="{% url 'banditscanner:banditscans_list' %}"#}
-{#                                                    class="sidebar-link"><i#}
-{#                                class="fas fa-dna"></i><span class="hide-menu"> Bandit Scans </span></a></li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'dependencycheck:dependencycheck_list' %}"#}
-{#                                                    class="sidebar-link"><i#}
-{#                                class="fas fa-random"></i><span class="hide-menu"> Dependency Check </span></a>#}
-{#                        <li class="sidebar-item"><a href="{% url 'findbugs:findbugs_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-bug"></i><span class="hide-menu">FindBugs </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'clair:clair_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-code"></i><span class="hide-menu">Clair </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'trivy:trivy_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-code"></i><span class="hide-menu">Trivy </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'npmaudit:npmaudit_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-random"></i><span class="hide-menu">npm-audit </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'nodejsscan:nodejsscan_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-random"></i><span class="hide-menu">Nodejs Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'semgrepscan:semgrepscan_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-random"></i><span class="hide-menu">semgrep Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'tfsec:tfsec_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-book"></i><span class="hide-menu">tfsec Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'whitesource:whitesource_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-book"></i><span class="hide-menu">Whitesource Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'checkmarx:checkmarx_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-book"></i><span class="hide-menu">Checkmarx Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'gitlabsast:gitlabsast_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-book"></i><span class="hide-menu">GitLab SAST Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'gitlabcontainerscan:gitlabcontainerscan_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-book"></i><span class="hide-menu">GitLab Container Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'gitlabsca:gitlabsca_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-book"></i><span class="hide-menu">GitLab Dependency Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'twistlock:twistlock_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-book"></i><span class="hide-menu">twistlock SAST Scan </span></a>#}
-{#                        </li>#}
-{#                        <li class="sidebar-item"><a href="{% url 'brakeman:brakeman_list' %}" class="sidebar-link"><i#}
-{#                                class="fas fa-book"></i><span class="hide-menu">brakeman Scan </span></a>#}
-{#                        </li>#}
-{#                    </ul>#}
-{#                </li>#}
                 <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
                                             href="#" aria-expanded="false"><i
                         class="fas fa-list-ul"></i><span class="hide-menu">Compliance Scans</span></a>
@@ -123,23 +64,28 @@
 
                     </ul>
                 </li>
-
-                <!--<li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"-->
-                                            <!--href="javascript:void(0)" aria-expanded="false"><i-->
-                        <!--class="mdi mdi-move-resize-variant"></i><span class="hide-menu">OSINT Scan </span></a>-->
-                    <!--<ul aria-expanded="false" class="collapse  first-level">-->
-                        <!--<li class="sidebar-item"><a href="/osintscan/domain_list/" class="sidebar-link"><i-->
-                                <!--class="mdi mdi-view-dashboard"></i><span class="hide-menu"> Domain List </span></a>-->
-                        <!--</li>-->
-                        <!--<li class="sidebar-item"><a href="/osintscan/domain_osint/" class="sidebar-link"><i-->
-                                <!--class="mdi mdi-multiplication-box"></i><span class="hide-menu"> Domain OSINT </span></a>-->
-                        <!--</li>-->
-
-                    <!--</ul>-->
-                <!--</li>-->
+                <li class="my-3 mx-3 border-top"></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="/webscanners/setting/" aria-expanded="false"><i
+                        class="ti-settings m-r-5 m-l-5"></i><span class="hide-menu">Settings</span></a>
+                </li>
+                <li class="sidebar-item"><a class="sidebar-link" href="https://docs.archerysec.com/" target="_blank"
+                                            aria-expanded="false"><i
+                        class="fas fa-book"></i><span class="hide-menu">Documents</span></a>
+                </li>
+                <li class="my-3 mx-3 border-top"></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="https://github.com/archerysec/archerysec/releases/tag/v2.0.1" target="_blank"
+                                            aria-expanded="false"><i
+                        class="fas fa-external-link-alt"></i><span class="hide-menu">Changelogs</span></a>
+                </li>
             </ul>
         </nav>
         <!-- End Sidebar navigation -->
+        <div class="my-3 mx-3">
+            <ul>
+                Version v2.0.2
+            </ul>
+        </div>
+
     </div>
     <!-- End Sidebar scroll-->
 </aside>

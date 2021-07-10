@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html dir="ltr" lang="en">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -36,8 +36,16 @@
 <div id="main-wrapper">
     {% include 'base/head.html' %}
     {% include 'base/aside.html' %}
+    <div class="page-wrapper">
+    <div class="container-fluid">
     {% block body %}
     {% endblock %}
+    </div>
+    <footer class="footer text-center">
+            All Rights Reserved by Anand Tiwari. Developed by <a href="https://github.com/anandtiwarics/">Anand
+            Tiwari</a>.<br>
+        </footer>
+    </div>
 </div>
 
 
@@ -205,8 +213,4 @@
     $(".select2").select2();
 </script>
 </body>
-<footer class="footer text-center">
-    All Rights Reserved by Anand Tiwari. Developed by <a href="https://github.com/anandtiwarics/">Anand Tiwari</a>.<br>
-    ArcherySec v2.0.1
-</footer>
 </html>
