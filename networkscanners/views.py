@@ -256,7 +256,7 @@ def vuln_delete(request):
         )
 
 
-def openvas_scanner(scan_ip, project_id, sel_profile, user):
+def openvas_scanner(scan_ip, project_id, sel_profile, username):
     """
     The function is launch the OpenVAS scans.
     :param scan_ip:
@@ -264,6 +264,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     :param sel_profile:
     :return:
     """
+    user = User.objects.get(username=username)
     username = user.username
     openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile, username=username)
     try:
@@ -307,9 +308,9 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     total_low = ""
     for openvas in all_openvas:
         all_vuln = openvas.total_vul
-        total_high = openvas.high_total
-        total_medium = openvas.medium_total
-        total_low = openvas.low_total
+        total_high = openvas.high_vul
+        total_medium = openvas.medium_vul
+        total_low = openvas.low_vul
 
     subject = "Archery Tool Notification"
     message = (
@@ -621,7 +622,7 @@ def del_net_scan_schedule(request):
                 username=username, task_id=task_id
             )
             del_task.delete()
-            del_task_schedule = Task.objects.filter(id=task_id, username=username)
+            del_task_schedule = Task.objects.filter(id=task_id)
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse("networkscanners:net_scan_schedule"))

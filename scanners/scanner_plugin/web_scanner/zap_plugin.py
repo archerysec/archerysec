@@ -123,6 +123,7 @@ def zap_connect(random_port, username):
     zap_ports = "8090"
     zap_enabled = False
 
+
     for zap in all_zap:
         zap_enabled = zap.enabled
 

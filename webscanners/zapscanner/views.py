@@ -177,7 +177,7 @@ def launch_schudle_zap_scan(
     random_port = "8090"
 
     # Connection Test
-    zap_connect = zap_plugin.zap_connect(random_port, username="")
+    zap_connect = zap_plugin.zap_connect(random_port, username=username)
 
     try:
         zap_connect.spider.scan(url=target_url)

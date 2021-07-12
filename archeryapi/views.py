@@ -174,7 +174,6 @@ class NetworkScan(generics.ListCreateAPIView):
         Current user's identity endpoint.
 
         """
-        username = request.user.username
         user = request.user
         serializer = NetworkScanDbSerializer(data=request.data)
         if serializer.is_valid():
@@ -381,8 +380,6 @@ class UpdateZapStatus(generics.CreateAPIView):
 
     def post(self, request, format=None, **kwargs):
         username = request.user.username
-        _scan_id = None
-        _scan_status = None
         serializer = ZapScanStatusDataSerializers(data=request.data)
         if serializer.is_valid():
             scan_id = request.data.get("scan_id")

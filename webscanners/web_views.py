@@ -267,10 +267,10 @@ def index(request):
 
 
 @background(schedule=60)
-def task(target_url, project_id, scanner):
-    rescan_id = ""
-    rescan = "No"
-    target__split = target_url.split(",")
+def task(target_url, project_id, scanner, **kwargs):
+    rescan_id = ''
+    rescan = 'No'
+    target__split = target_url.split(',')
     split_length = target__split.__len__()
     for i in range(0, split_length):
         target = target__split.__getitem__(i)
@@ -279,13 +279,15 @@ def task(target_url, project_id, scanner):
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_schudle_zap_scan,
-                args=(target, project_id, rescan_id, rescan, scan_id),
-            )
+                args=(target, project_id, rescan_id, rescan, scan_id, kwargs["username"]))
             thread.daemon = True
             thread.start()
         elif scanner == "burp_scan":
             scan_id = uuid.uuid4()
-            do_scan = burp_plugin.burp_scans(project_id, target, scan_id, user="admin")
+            do_scan = burp_plugin.burp_scans(
+                project_id,
+                target,
+                scan_id, user=kwargs["username"])
             thread = threading.Thread(
                 target=do_scan.scan_launch,
             )
@@ -347,25 +349,19 @@ def web_scan_schedule(request):
         for i in range(0, split_length):
             target = target__split.__getitem__(i)
 
-            if scanner == "zap_scan":
-                if periodic_task_value == "None":
-                    my_task = task(target, project_id, scanner, schedule=dt_obj)
+            if scanner == 'zap_scan':
+                if periodic_task_value == 'None':
+                    my_task = task(target, project_id, scanner, schedule=dt_obj, username=username)
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
                 else:
 
-                    my_task = task(
-                        target,
-                        project_id,
-                        scanner,
-                        repeat=periodic_time,
-                        repeat_until=None,
-                    )
+                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None, username=username)
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
-            elif scanner == "burp_scan":
-                if periodic_task_value == "None":
-                    my_task = task(target, project_id, scanner, schedule=dt_obj)
+            elif scanner == 'burp_scan':
+                if periodic_task_value == 'None':
+                    my_task = task(target, project_id, scanner, schedule=dt_obj, username=username)
                     task_id = my_task.id
                 else:
                     my_task = task(
@@ -416,7 +412,7 @@ def del_web_scan_schedule(request):
                 task_id=task_id, username=username
             )
             del_task.delete()
-            del_task_schedule = Task.objects.filter(id=task_id, username=username)
+            del_task_schedule = Task.objects.filter(id=task_id)
             del_task_schedule.delete()
 
     return HttpResponseRedirect(reverse("webscanners:web_scan_schedule"))
@@ -463,16 +459,22 @@ def setting(request):
     zap_port = zap_ports
 
     # Loading Arachni Settings
-    arachni_hosts = ""
-    arachni_ports = ""
+    arachni_hosts = ''
+    arachni_ports = ''
+    arachni_user = ''
+    arachni_pass = ''
 
     all_arachni = arachni_settings_db.objects.filter(username=username)
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
+        arachni_user =  arachni.arachni_user
+        arachni_pass = arachni.arachni_pass
 
     arachni_hosts = arachni_hosts
     arachni_ports = arachni_ports
+    arachni_user = arachni_user
+    arachni_pass = arachni_pass
 
     # Loading NMAP Vulners Settings
     nv_enabled = False
@@ -590,12 +592,17 @@ def setting(request):
             global scan_run_id, scan_status
             arachni_hosts = None
             arachni_ports = None
+            arachni_user = None
+            arachni_pass = None
             all_arachni = arachni_settings_db.objects.filter(username=username)
             for arachni in all_arachni:
                 arachni_hosts = arachni.arachni_url
                 arachni_ports = arachni.arachni_port
+                arachni_user = arachni.arachni_user
+                arachni_pass = arachni.arachni_pass
 
-            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports)
+
+            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports, arachni_user, arachni_pass)
 
             check = []
             data = {"url": "https://archerysec.com", "checks": check, "audit": {}}
@@ -647,40 +654,38 @@ def setting(request):
                 print(e)
                 jira_info = False
 
-    return render(
-        request,
-        "setting/setting.html",
-        {
-            "apikey": lod_apikey,
-            "zapath": zap_host,
-            "zap_port": zap_port,
-            "zap_enable": zap_enable,
-            "arachni_hosts": arachni_hosts,
-            "arachni_ports": arachni_ports,
-            "lod_ov_user": lod_ov_user,
-            "lod_ov_pass": lod_ov_pass,
-            "lod_ov_host": lod_ov_host,
-            "lod_ov_enabled": lod_ov_enabled,
-            "lod_ov_port": lod_ov_port,
-            "burp_path": burp_host,
-            "burp_port": burp_port,
-            "burp_api_key": burp_api_key,
-            "all_email": all_email,
-            "jira_server": jira_server,
-            "jira_username": jira_username,
-            "jira_password": jira_password,
-            "nv_enabled": nv_enabled,
-            "nv_version": nv_version,
-            "nv_online": nv_online,
-            "nv_timing": nv_timing,
-            "message": all_notify,
-            "zap_info": zap_info,
-            "burp_info": burp_info,
-            "openvas_info": openvas_info,
-            "arachni_info": arachni_info,
-            "jira_info": jira_info,
-        },
-    )
+    return render(request, 'setting.html',
+                  {'apikey': lod_apikey,
+                   'zapath': zap_host,
+                   'zap_port': zap_port,
+                   'zap_enable': zap_enable,
+                   'arachni_hosts': arachni_hosts,
+                   'arachni_ports': arachni_ports,
+                   'arachni_user': arachni_user,
+                   'arachni_pass': arachni_pass,
+                   'lod_ov_user': lod_ov_user,
+                   'lod_ov_pass': lod_ov_pass,
+                   'lod_ov_host': lod_ov_host,
+                   'lod_ov_enabled': lod_ov_enabled,
+                   'lod_ov_port': lod_ov_port,
+                   'burp_path': burp_host,
+                   'burp_port': burp_port,
+                   'burp_api_key': burp_api_key,
+                   'all_email': all_email,
+                   'jira_server': jira_server,
+                   'jira_username': jira_username,
+                   'jira_password': jira_password,
+                   'nv_enabled': nv_enabled,
+                   'nv_version': nv_version,
+                   'nv_online': nv_online,
+                   'nv_timing': nv_timing,
+                   'message': all_notify,
+                   'zap_info': zap_info,
+                   'burp_info': burp_info,
+                   'openvas_info': openvas_info,
+                   'arachni_info': arachni_info,
+                   'jira_info': jira_info
+                   })
 
 
 def email_setting(request):

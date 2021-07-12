@@ -157,6 +157,9 @@ def vuln_an_id(scan_id, project_id, username):
 
     all_openvas = openvas_setting_db.objects.filter(username=username)
 
+    scan_status = "100"
+    date_time = datetime.now()
+
     for openvas in all_openvas:
         ov_user = openvas.user
         ov_pass = openvas.password
@@ -165,136 +168,22 @@ def vuln_an_id(scan_id, project_id, username):
     scanner = VulnscanManager(str(ov_ip), str(ov_user), str(ov_pass))
     openvas_results = scanner.get_raw_xml(str(scan_id))
 
-    updated_xml_parser(
-        project_id=project_id, scan_id=scan_id, root=openvas_results, username=username
-    )
+    hosts = OpenVas_Parser.get_hosts(openvas_results)
 
-    # for openvas in openvas_results.findall(".//result"):
-    #     for r in openvas:
-    #         if r.tag == "name":
-    #             global name
-    #             if r.text is None:
-    #                 name = "NA"
-    #             else:
-    #                 name = r.text
-    #
-    #         if r.tag == "host":
-    #             global host
-    #             if r.text is None:
-    #                 host = "NA"
-    #             else:
-    #                 host = r.text
-    #
-    #         if r.tag == "port":
-    #             global port
-    #             if r.text is None:
-    #                 port = "NA"
-    #             else:
-    #                 port = r.text
-    #         if r.tag == "threat":
-    #             global threat
-    #             if r.text is None:
-    #                 threat = "NA"
-    #             else:
-    #                 threat = r.text
-    #         if r.tag == "severity":
-    #             global severity
-    #             if r.text is None:
-    #                 severity = "NA"
-    #             else:
-    #                 severity = r.text
-    #         if r.tag == "description":
-    #             global description
-    #             if r.text is None:
-    #                 description = "NA"
-    #             else:
-    #                 description = r.text
-    #
-    #     date_time = timezone.now()
-    #     vul_id = uuid.uuid4()
-    #
-    #     dup_data = name + host + severity + port
-    #     duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
-    #
-    #     match_dup = (
-    #         NetworkScanResultsDb.objects.filter(
-    #             username=username, vuln_duplicate=duplicate_hash
-    #         )
-    #         .values("vuln_duplicate")
-    #         .distinct()
-    #     )
-    #     lenth_match = len(match_dup)
-    #
-    #     if lenth_match == 1:
-    #         duplicate_vuln = "Yes"
-    #     elif lenth_match == 0:
-    #         duplicate_vuln = "No"
-    #     else:
-    #         duplicate_vuln = "None"
-    #
-    #     false_p = NetworkScanResultsDb.objects.filter(
-    #         username=username, false_positive_hash=duplicate_hash
-    #     )
-    #     fp_lenth_match = len(false_p)
-    #
-    #     if fp_lenth_match == 1:
-    #         false_positive = "Yes"
-    #     else:
-    #         false_positive = "No"
-    #
-    #     save_all = NetworkScanResultsDb(
-    #         scan_id=scan_id,
-    #         vul_id=vul_id,
-    #         name=name,
-    #         creation_time=creation_time,
-    #         modification_time=modification_time,
-    #         host=host,
-    #         port=port,
-    #         threat=threat,
-    #         severity=severity,
-    #         description=description,
-    #         family=family,
-    #         cvss_base=cvss_base,
-    #         cve=cve,
-    #         bid=bid,
-    #         xref=xref,
-    #         tags=tags,
-    #         banner=banner,
-    #         date_time=date_time,
-    #         false_positive=false_positive,
-    #         vuln_status="Open",
-    #         dup_hash=duplicate_hash,
-    #         vuln_duplicate=duplicate_vuln,
-    #         project_id=project_id,
-    #         username=username,
-    #     )
-    #     save_all.save()
-    #
-    #     openvas_vul = NetworkScanResultsDb.objects.filter(
-    #         username=username, scan_id=scan_id
-    #     )
-    #
-    #     total_high = len(openvas_vul.filter(threat="High"))
-    #     total_medium = len(openvas_vul.filter(threat="Medium"))
-    #     total_low = len(openvas_vul.filter(threat="Low"))
-    #     log_total = len(openvas_vul.filter(threat="Log"))
-    #     total_duplicate = len(openvas_vul.filter(vuln_duplicate="Yes"))
-    #     total_vul = total_high + total_medium + total_low
-    #
-    #     NetworkScanDb.objects.filter(username=username, scan_id=scan_id).update(
-    #         total_vul=total_vul,
-    #         high_total=total_high,
-    #         medium_total=total_medium,
-    #         log_total=log_total,
-    #         low_total=total_low,
-    #         total_dup=total_duplicate,
-    #     )
-    #
-    #     for row in NetworkScanResultsDb.objects.filter(username=username):
-    #         if (
-    #             NetworkScanResultsDb.objects.filter(
-    #                 username=username, name=row.name, port=row.port, scan_id=scan_id
-    #             ).count()
-    #             > 1
-    #         ):
-    #             row.delete()
+    del_old = openvas_scan_db.objects.filter(scan_id=scan_id)
+    del_old.delete()
+
+    for host in hosts:
+        scan_dump = openvas_scan_db(scan_ip=host,
+                                    scan_id=host,
+                                    date_time=date_time,
+                                    project_id=project_id,
+                                    scan_status=scan_status,
+                                    username=username
+                                    )
+        scan_dump.save()
+    OpenVas_Parser.updated_xml_parser(project_id=project_id,
+                                      scan_id=scan_id,
+                                      root=openvas_results,
+                                      username=username
+                                      )

@@ -11,10 +11,12 @@ import requests
 
 
 class arachniAPI(object):
-    def __init__(self, host, port):
+    def __init__(self, host, port, username_api, password_api):
 
         self.host = host
         self.port = port
+        self.username_api = username_api
+        self.password_api = password_api
 
     def scan(self):
         """
@@ -149,14 +151,12 @@ class arachniAPI(object):
             if method == "POST" or method == "PUT":
                 headers.update({"Content-Type": "application/json"})
         try:
-            response = requests.request(
-                method=method,
-                url=self.host + ":" + self.port + url,
-                params=params,
-                headers=headers,
-                data=data,
-            )
-
+            if self.username_api != "":
+                response = requests.request(method=method, url=self.host + ':' + self.port + url, params=params,
+                                            headers=headers, data=data, auth=(self.username_api, self.password_api))
+            else:
+                response = requests.request(method=method, url=self.host + ':' + self.port + url, params=params,
+                                            headers=headers, data=data)
             try:
                 response.raise_for_status()
 

@@ -50,8 +50,10 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
+        arachni_user = arachni.arachni_user
+        arachni_pass = arachni.arachni_pass
 
-    arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports)
+    arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports, arachni_user, arachni_pass)
     check = [
         "xss_event",
         "xss",
@@ -239,21 +241,26 @@ def arachni_settings(request):
     username = request.user.username
     arachni_hosts = None
     arachni_ports = None
+    arachni_user= None
+    arachni_pass = None
 
     all_arachni = arachni_settings_db.objects.filter(username=username)
     for arachni in all_arachni:
         # global arachni_api_key, arachni_hosts, arachni_ports
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
+        arachni_user = arachni.arachni_user
+        arachni_pass = arachni.arachni_pass
 
-    return render(
-        request,
-        "webscanners/arachniscanner/arachni_settings_form.html",
-        {
-            "arachni_host": arachni_hosts,
-            "arachni_port": arachni_ports,
-        },
-    )
+    return render(request,
+                  'arachniscanner/arachni_settings_form.html',
+                  {
+                      'arachni_host': arachni_hosts,
+                      'arachni_port': arachni_ports,
+                      'arachni_user': arachni_user,
+                      'arachni_pass': arachni_pass
+                  }
+                  )
 
 
 def arachni_setting_update(request):
@@ -263,17 +270,17 @@ def arachni_setting_update(request):
     :return:
     """
     username = request.user.username
-    if request.method == "POST":
-        arachnihost = request.POST.get(
-            "arachnihost",
-        )
-        port = request.POST.get(
-            "arachniport",
-        )
+    if request.method == 'POST':
+        arachnihost = request.POST.get("arachnihost", )
+        port = request.POST.get("arachniport", )
+        user =  request.POST.get("arachniuser", )
+        password = request.POST.get("arachnipass", )
         save_data = arachni_settings_db(
             username=username,
             arachni_url=arachnihost,
             arachni_port=port,
+            arachni_user=user,
+            arachni_pass=password
         )
         save_data.save()
 

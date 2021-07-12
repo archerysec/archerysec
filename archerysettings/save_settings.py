@@ -160,7 +160,7 @@ class SaveSettings:
             return e
         return f.close()
 
-    def save_arachni_settings(self, arachnihost, arachniport):
+    def save_arachni_settings(self, arachnihost, arachniport, arachniuser, arachnipass):
         """
 
         :param arachnihost:
