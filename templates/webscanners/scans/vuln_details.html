@@ -48,7 +48,7 @@
                                 </h5>
                             </div>
 
-                            {% if data.scanner == 'zap' %}
+                            {% if data.scanner == 'Zap' %}
                             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
@@ -59,7 +59,32 @@
                                     </div>
                                 </div>
                             </div>
+                            {% elif data.scanner == 'Arachni' %}
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody id="instance"></tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% elif data.scanner == 'Acunetix' %}
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="card-body">
+{#                                            <table class="table table-bordered">#}
+{#                                                <tbody id="instance"></tbody>#}
+{#                                            </table>#}
+                                        {{ data.instance }}
+                                    </div>
+                                </div>
+                            </div>
                             {% else %}
+
                             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
