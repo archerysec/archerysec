@@ -1,0 +1,408 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block body %}
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Dynamic Scan </h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <form id="start_scan" class="form-horizontal">{% csrf_token %}
+                                        <div class="card-body">
+                                            <h4 class="card-title"></h4>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 text-right control-label col-form-label">URL's</label>
+                                                <div class="col-sm-9">
+                                                    <textarea class="form-control" type="text" name="url" id="url"
+                                                              value="{{ url }}"
+                                                              placeholder="http://website.com,http://website2.com,http://website3.com"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title"></h5>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 text-right control-label col-form-label">Projects</label>
+                                                    <div class="col-md-9">
+                                                        <select id="project_id" name="project_id"
+                                                                class="select2 form-control custom-select"
+                                                                style="width: 100%; height:36px;">
+                                                            {% for data in all_scans_db %}
+                                                            <option value="{{data.project_id}}">{{data.project_name}}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="controls">
+                                                    <input type="submit" class="btn btn-primary" value="Launch">
+                                                    <a href="{% url 'webscanners:web_scan_schedule' %}" class="btn btn-success">Scan
+                                                        Schedule</a>
+                                                </div>
+                                                <div id='status'></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h5 class="card-title">Scanners </h5>
+                        </div>
+                        <br>
+                        <p>Select your scanner(s) from the ones available:</p>
+                        <div class="custom-control custom-control-inline">
+                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                 style="width: 200px;">
+                                <label>
+                                    <input name="optradio1" type="checkbox"><span>ZAP Scanner</span>
+                                </label>
+                            </div>
+                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                 style="width: 200px;">
+                                <label>
+                                    <input name="optradio2" type="checkbox"><span>Burp Scanner</span>
+                                </label>
+                            </div>
+                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                 style="width: 200px;">
+                                <label>
+                                    <input name="optradio3" type="checkbox"><span>SSLScan</span>
+                                </label>
+                            </div>
+                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                 style="width: 200px;">
+                                <label>
+                                    <input name="optradio4" type="checkbox"><span>Nikto</span>
+                                </label>
+                            </div>
+                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                 style="width: 200px;">
+                                <label>
+                                    <input name="optradio5" type="checkbox"><span>Arachni</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="{% url 'webscanners:cookie_add' %}" target="_blank" class="btn btn-primary btn-mini"><i
+                                        class="icon-upload-alt"></i> Add Cookies</a>
+                            </div>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="{% url 'zapscanner:cookies_list' %}" target="_blank" class="btn btn-secondary btn-mini"><i
+                                        class="icon-upload-alt"></i>Cookies List</a>
+                            </div>
+                        </div>
+                        <div class="d-md-flex align-items-center">
+                            <h5 class="card-title">Add Cookies </h5>
+                        </div>
+                        <br>
+                        <div class="row-fluid">
+                            <div class="card-body">
+                                <p>Get cookies from the Browser</p>
+                                <form id="open_login" class="form-horizontal">{% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 text-right control-label col-form-label">URL</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" name="url_login"
+                                                   value="{{ url_login }}">
+                                            <input type="hidden" name="action"
+                                                   value="open_page">
+                                            <input type="submit" class="btn btn-primary"
+                                                   value="Login">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="{% url 'zapscanner:excluded_url_list' %}" target="_blank" class="btn btn-primary btn-mini"><i
+                                        class="icon-upload-alt"></i>Exclude URL List</a>
+                            </div>
+                        </div>
+                        <div class="d-md-flex align-items-center">
+                            <h5 class="card-title">Exclude URL's </h5>
+                        </div>
+                        <br>
+                        <div class="row-fluid">
+                            <div class="card-body">
+                                <p>Note: Exclude logout url for authenticated dynamic web scanning.</p>
+                                <form id="exclude_url" class="form-horizontal">{% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 text-right control-label col-form-label">URL</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" name="exclude_url"
+                                                   value="{{ exclude_url }}">
+                                            <input type="submit" class="btn btn-primary"
+                                                   value="Exclude">
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h5 class="card-title">Excluded URL's </h5>
+                        </div>
+                        <br>
+                        <div class="table-responsive">
+                            <!--<table id="vuln_details" class="table table-striped table-bordered" width="100%">-->
+                            <table id="excluded_url" class="table table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    <th>URL</th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in all_excluded_url %}
+                                <tr data-target="#">
+                                    <td>{{data.exclude_url}}</td>
+                                </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+<script>
+     function my_special_notification_callback(data) {
+    for (var i=0; i < data.unread_list.length; i++) {
+        msg = data.unread_list[i];
+        console.log(msg);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+{#<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>#}
+
+<script type="text/javascript">
+
+ $(document).on('submit', '#start_scan', function(e){
+        var opt = false;
+        e.preventDefault();
+        if ($('[name="optradio1"]').is(':checked')){
+            opt = true;
+            $.ajax({
+                type:'POST',
+                url:'{% url 'zapscanner:zap_scan' %}',
+                data:{
+
+                   url:$('#url').val(),
+                   project_id:$('#project_id').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                success:function(){
+
+                    setTimeout(function(){
+                    location.reload();
+                        }, 5000);
+                 }
+            });
+
+       }
+
+       if ($('[name="optradio2"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'{% url 'burpscanner:burp_launch_scan' %}',
+                    data:{
+
+                       url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+
+       if ($('[name="optradio3"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'{% url 'tools:sslscan' %}',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+       if ($('[name="optradio4"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'{% url 'tools:nikto' %}',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+       if ($('[name="optradio5"]').is(':checked')){
+           opt = true;
+           $.ajax({
+                    type:'POST',
+                    url:'{% url 'arachniscanner:arachni_scan_launch' %}',
+                    data:{
+
+                       scan_url:$('#url').val(),
+                       project_id:$('#project_id').val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+           });
+       }
+
+	if (opt) {
+		$('#status').text('Scan launched.').css	({'color': '#5bb75b', 'margin-left': '200px'});
+	} else {
+		$('#status').text("The scan can't launched: no scanner selected.").css({'color': '#b94a48', 'margin-left': '200px'});
+	}
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+<script>
+function myFunction() {
+    document.getElementById("start_scan").reset();
+}
+
+$(document).on('submit', '#open_login', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'{% url 'zapscanner:sel_login' %}',
+                data:{
+                   url_login:$('input[name=url_login]').val(),
+                   action:$('input[name=action]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
+$(document).on('submit', '#save_cookies', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'{% url 'zapscanner:sel_login' %}',
+                data:{
+                   url_login:$('input[name=url_login]').val(),
+                   action:$('input[name=action2]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
+$(document).on('submit', '#exclude_url', function(e){
+        e.preventDefault();
+            $.ajax({
+                type:'POST',
+                url:'{% url 'webscanners:exclude_url' %}',
+                data:{
+                   exclude_url:$('input[name=exclude_url]').val(),
+                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                },
+                sucess:function(){
+
+                }
+            });
+        this.reset();
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+{% endblock %}

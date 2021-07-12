@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('compliance', '0002_auto_20190308_0551'),
+        ("compliance", "0002_auto_20190308_0551"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='inspec_scan_results_db',
-            name='controls_results_backtrace',
+            model_name="inspec_scan_results_db",
+            name="controls_results_backtrace",
             field=models.TextField(blank=True, null=True),
         ),
     ]

@@ -14,24 +14,29 @@
 #
 # This file is part of ArcherySec Project.
 
-from staticscanners.models import findbugs_scan_db, findbugs_scan_results_db
-import uuid
 import hashlib
+import uuid
 from datetime import datetime
-from dashboard.views import trend_update
-from webscanners.zapscanner.views import email_sch_notify
 
-Details = 'NA'
-classname = 'NA'
-ShortMessage = 'NA'
-sourcepath = 'NA'
-sourcefile = 'NA'
-LongMessage = 'NA'
-name = ''
-vul_col = ''
-lenth_match = ''
-duplicate_hash = ''
-vul_id = ''
+from dashboard.views import trend_update
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
+from utility.email_notify import email_sch_notify
+
+Details = "NA"
+classname = "NA"
+ShortMessage = "NA"
+sourcepath = "NA"
+sourcefile = "NA"
+LongMessage = "NA"
+name = ""
+vul_col = ""
+lenth_match = ""
+duplicate_hash = ""
+vul_id = ""
+total_vul = ''
+total_high = ''
+total_medium = ''
+total_low = ''
 
 
 def xml_parser(root, project_id, scan_id, username):
@@ -43,145 +48,149 @@ def xml_parser(root, project_id, scan_id, username):
     :return:
     """
     date_time = datetime.now()
-    global name, classname, risk, ShortMessage, LongMessage, sourcepath, vul_col, \
-        ShortDescription, Details, lenth_match, duplicate_hash, vul_id
+    global name, classname, risk, ShortMessage, LongMessage, sourcepath, vul_col, ShortDescription, Details, lenth_match, duplicate_hash, vul_id, total_vul, total_high, total_medium, total_low
     # print root
     for bug in root:
-        if bug.tag == 'BugInstance':
-            name = bug.attrib['type']
-            priority = bug.attrib['priority']
+        if bug.tag == "BugInstance":
+            name = bug.attrib["type"]
+            priority = bug.attrib["priority"]
             for BugInstance in bug:
-                if BugInstance.tag == 'ShortMessage':
+                if BugInstance.tag == "ShortMessage":
                     global ShortMessage
                     ShortMessage = BugInstance.text
-                if BugInstance.tag == 'LongMessage':
+                if BugInstance.tag == "LongMessage":
                     global LongMessage
                     LongMessage = BugInstance.text
-                if BugInstance.tag == 'Class':
+                if BugInstance.tag == "Class":
                     global classname
-                    classname = BugInstance.attrib['classname']
-                if BugInstance.tag == 'SourceLine':
+                    classname = BugInstance.attrib["classname"]
+                if BugInstance.tag == "SourceLine":
                     global sourcepath, sourcefile
-                    sourcepath = BugInstance.attrib['sourcepath']
-                    sourcefile = BugInstance.attrib['sourcefile']
+                    sourcepath = BugInstance.attrib["sourcepath"]
+                    sourcefile = BugInstance.attrib["sourcefile"]
 
                 if priority == "1":
-                    risk = 'High'
+                    risk = "High"
                     vul_col = "danger"
 
-                elif priority == '2':
-                    risk = 'Medium'
+                elif priority == "2":
+                    risk = "Medium"
                     vul_col = "warning"
 
-                elif priority == '3':
-                    risk = 'Medium'
+                elif priority == "3":
+                    risk = "Low"
                     vul_col = "info"
 
                 vul_id = uuid.uuid4()
 
                 dup_data = name + classname + risk
 
-                duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-                match_dup = findbugs_scan_results_db.objects.filter(username=username,
-                                                                    dup_hash=duplicate_hash).values('dup_hash')
+                match_dup = StaticScanResultsDb.objects.filter(
+                    username=username, dup_hash=duplicate_hash
+                ).values("dup_hash")
                 lenth_match = len(match_dup)
 
             if lenth_match == 0:
-                duplicate_vuln = 'No'
+                duplicate_vuln = "No"
 
-                false_p = findbugs_scan_results_db.objects.filter(username=username,
-                                                                  false_positive_hash=duplicate_hash)
+                false_p = StaticScanResultsDb.objects.filter(
+                    username=username, false_positive_hash=duplicate_hash
+                )
                 fp_lenth_match = len(false_p)
 
                 if fp_lenth_match == 1:
-                    false_positive = 'Yes'
+                    false_positive = "Yes"
                 else:
-                    false_positive = 'No'
+                    false_positive = "No"
 
-                save_all = findbugs_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     date_time=date_time,
                     scan_id=scan_id,
                     project_id=project_id,
-                    name=name,
-                    priority=priority,
-                    ShortMessage=ShortMessage,
-                    LongMessage=LongMessage,
-                    classname=classname,
-                    sourcepath=sourcepath,
-                    vul_col=vul_col,
-                    vuln_status='Open',
+                    title=name,
+                    severity=risk,
+                    description=str(ShortMessage) + '\n\n' + str(LongMessage) + '\n\n' + str(classname),
+                    fileName=sourcepath,
+                    severity_color=vul_col,
+                    vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    risk=risk,
-                    username=username
+                    username=username,
+                    scanner='Findbugs',
                 )
                 save_all.save()
 
             else:
-                duplicate_vuln = 'Yes'
+                duplicate_vuln = "Yes"
 
-                save_all = findbugs_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
-                    scan_id=scan_id,
                     date_time=date_time,
+                    scan_id=scan_id,
                     project_id=project_id,
-                    name=name,
-                    priority=priority,
-                    ShortMessage=ShortMessage,
-                    LongMessage=LongMessage,
-                    classname=classname,
-                    sourcepath=sourcepath,
-                    vul_col=vul_col,
-                    vuln_status='Duplicate',
+                    title=name,
+                    severity=risk,
+                    description=str(ShortMessage) + '\n\n' + str(LongMessage) + '\n\n' + str(classname),
+                    fileName=sourcepath,
+                    severity_color=vul_col,
+                    vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive='Duplicate',
-                    risk=risk,
-                    username=username
+                    username=username,
+                    scanner='Findbugs',
                 )
                 save_all.save()
 
-        if bug.tag == 'BugPattern':
+        if bug.tag == "BugPattern":
             for BugPattern in bug:
-                name = bug.attrib['type']
-                if BugPattern.tag == 'ShortDescription':
+                name = bug.attrib["type"]
+                if BugPattern.tag == "ShortDescription":
                     ShortDescription = BugPattern.text
-                if BugPattern.tag == 'Details':
+                if BugPattern.tag == "Details":
                     global Details
                     Details = BugPattern.text
 
-                findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id, name=name).update(
-                    ShortDescription=ShortDescription,
-                    Details=Details,
+                StaticScanResultsDb.objects.filter(
+                    username=username, scan_id=scan_id, title=name
+                ).update(
+                    description=str(Details) + '\n\n' + str(ShortMessage) + '\n\n' + str(LongMessage) + '\n\n' + str(classname),
                 )
 
-        all_findbugs_data = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                    false_positive='No')
+        all_findbugs_data = StaticScanResultsDb.objects.filter(
+            username=username, scan_id=scan_id, false_positive="No"
+        )
 
-        duplicate_count = findbugs_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                             vuln_duplicate='Yes')
+        duplicate_count = StaticScanResultsDb.objects.filter(
+            username=username, scan_id=scan_id, vuln_duplicate="Yes"
+        )
 
         total_vul = len(all_findbugs_data)
-        total_high = len(all_findbugs_data.filter(priority="1"))
-        total_medium = len(all_findbugs_data.filter(priority="2"))
-        total_low = len(all_findbugs_data.filter(priority="3"))
-        total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+        total_high = len(all_findbugs_data.filter(severity="High"))
+        total_medium = len(all_findbugs_data.filter(severity="Medium"))
+        total_low = len(all_findbugs_data.filter(severity="Low"))
+        total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-        findbugs_scan_db.objects.filter(username=username, scan_id=scan_id).update(
+        StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
             total_vul=total_vul,
             date_time=date_time,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,
-            total_dup=total_duplicate
+            total_dup=total_duplicate,
+            scanner='Findbugs'
         )
     trend_update(username=username)
-    subject = 'Archery Tool Scan Status - Findbugs Report Uploaded'
-    message = 'Findbugs Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % (scan_id, total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - Findbugs Report Uploaded"
+    message = (
+        "Findbugs Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (scan_id, total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)

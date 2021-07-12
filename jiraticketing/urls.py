@@ -15,16 +15,12 @@
 # This file is part of ArcherySec Project.
 
 from django.urls import include, path
+
 from jiraticketing import views
 
-app_name = 'jiraticketing'
+app_name = "jiraticketing"
 
 urlpatterns = [
-    path('jira_setting/',
-        views.jira_setting,
-        name='jira_setting'),
-    path('submit_jira_ticket/',
-        views.submit_jira_ticket,
-        name='submit_jira_ticket'),
-
+    path("jira_setting/", views.jira_setting, name="jira_setting"),
+    path("submit_jira_ticket/", views.submit_jira_ticket, name="submit_jira_ticket"),
 ]

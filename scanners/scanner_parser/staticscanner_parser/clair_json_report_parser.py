@@ -14,14 +14,17 @@
 #
 # This file is part of ArcherySec Project.
 
-from staticscanners.models import clair_scan_db, clair_scan_results_db
-import uuid
 import hashlib
+import uuid
 from datetime import datetime
-from dashboard.views import trend_update
-from webscanners.zapscanner.views import email_sch_notify
 
-vul_col = ''
+from dashboard.views import trend_update
+from staticscanners.models import StaticScansDb, StaticScanResultsDb
+from utility.email_notify import email_sch_notify
+
+vul_col = ""
+Name = ''
+
 
 def clair_report_json(data, project_id, scan_id, username):
     """
@@ -31,54 +34,49 @@ def clair_report_json(data, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
-
-    # d = data['Vulnerabilities']['Medium']
-    #
-    # for dd in d:
-    #     print dd['Name']
     date_time = datetime.now()
-    global vul_col
+    global vul_col, Name
     try:
-        high = data['Vulnerabilities']['High']
+        high = data["Vulnerabilities"]["High"]
         for vuln in high:
             vul_id = uuid.uuid4()
             try:
-                Name = vuln['Name']
+                Name = vuln["Name"]
 
             except Exception:
                 Name = "Not Found"
 
             try:
-                NamespaceName = vuln['NamespaceName']
+                NamespaceName = vuln["NamespaceName"]
             except Exception:
                 NamespaceName = "Not Found"
 
             try:
-                Description = vuln['Description']
+                Description = vuln["Description"]
             except Exception:
                 Description = "Not Found"
 
             try:
-                Link = vuln['Link']
+                Link = vuln["Link"]
             except Exception:
                 Link = "Not Found"
 
             try:
-                Severity = vuln['Severity']
+                Severity = vuln["Severity"]
             except Exception:
                 Severity = "Not Found"
             try:
-                Metadata = vuln['Metadata']
+                Metadata = vuln["Metadata"]
             except Exception:
                 Metadata = "Not Found"
 
             try:
-                FeatureName = vuln['FeatureName']
+                FeatureName = vuln["FeatureName"]
             except Exception:
                 FeatureName = "Not Found"
 
             try:
-                FeatureVersion = vuln['FeatureVersion']
+                FeatureVersion = vuln["FeatureVersion"]
             except Exception:
                 FeatureName = "Not Found"
 
@@ -87,71 +85,72 @@ def clair_report_json(data, project_id, scan_id, username):
 
             dup_data = Name + Severity + NamespaceName
 
-            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = clair_scan_results_db.objects.filter(username=username,
-                dup_hash=duplicate_hash).values('dup_hash')
+            match_dup = StaticScanResultsDb.objects.filter(
+                username=username, dup_hash=duplicate_hash
+            ).values("dup_hash")
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
-                duplicate_vuln = 'No'
+                duplicate_vuln = "No"
 
-                false_p = clair_scan_results_db.objects.filter(username=username,
-                                                               false_positive_hash=duplicate_hash)
+                false_p = StaticScanResultsDb.objects.filter(
+                    username=username, false_positive_hash=duplicate_hash
+                )
                 fp_lenth_match = len(false_p)
 
                 if fp_lenth_match == 1:
-                    false_positive = 'Yes'
+                    false_positive = "Yes"
                 else:
-                    false_positive = 'No'
+                    false_positive = "No"
 
-                save_all = clair_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
-                    vuln_status='Open',
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
+                    vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    vul_col=vul_col,
-                    username=username
+                    severity_color=vul_col,
+                    username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
             else:
-                duplicate_vuln = 'Yes'
+                duplicate_vuln = "Yes"
 
-                save_all = clair_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
-                    vuln_status='Duplicate',
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
+                    vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive='Duplicate',
-                    vul_col=vul_col,
-                    username=username
+                    severity_color=vul_col,
+                    username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
-
 
     except Exception:
         print("High Vulnerability Not Found")
@@ -159,45 +158,45 @@ def clair_report_json(data, project_id, scan_id, username):
 
     try:
 
-        medium = data['Vulnerabilities']['Medium']
+        medium = data["Vulnerabilities"]["Medium"]
         for vuln in medium:
             vul_id = uuid.uuid4()
             try:
-                Name = vuln['Name']
+                Name = vuln["Name"]
             except Exception:
                 Name = "Not Found"
 
             try:
-                NamespaceName = vuln['NamespaceName']
+                NamespaceName = vuln["NamespaceName"]
             except Exception:
                 NamespaceName = "Not Found"
 
             try:
-                Description = vuln['Description']
+                Description = vuln["Description"]
             except Exception:
                 Description = "Not Found"
 
             try:
-                Link = vuln['Link']
+                Link = vuln["Link"]
             except Exception:
                 Link = "Not Found"
 
             try:
-                Severity = vuln['Severity']
+                Severity = vuln["Severity"]
             except Exception:
                 Severity = "Not Found"
             try:
-                Metadata = vuln['Metadata']
+                Metadata = vuln["Metadata"]
             except Exception:
                 Metadata = "Not Found"
 
             try:
-                FeatureName = vuln['FeatureName']
+                FeatureName = vuln["FeatureName"]
             except Exception:
                 FeatureName = "Not Found"
 
             try:
-                FeatureVersion = vuln['FeatureVersion']
+                FeatureVersion = vuln["FeatureVersion"]
             except Exception:
                 FeatureName = "Not Found"
 
@@ -206,69 +205,71 @@ def clair_report_json(data, project_id, scan_id, username):
 
             dup_data = Name + Severity + NamespaceName
 
-            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = clair_scan_results_db.objects.filter(username=username,
-                dup_hash=duplicate_hash).values('dup_hash')
+            match_dup = StaticScanResultsDb.objects.filter(
+                username=username, dup_hash=duplicate_hash
+            ).values("dup_hash")
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
 
-                duplicate_vuln = 'No'
+                duplicate_vuln = "No"
 
-                false_p = clair_scan_results_db.objects.filter(username=username,
-                                                               false_positive_hash=duplicate_hash)
+                false_p = StaticScanResultsDb.objects.filter(
+                    username=username, false_positive_hash=duplicate_hash
+                )
                 fp_lenth_match = len(false_p)
 
                 if fp_lenth_match == 1:
-                    false_positive = 'Yes'
+                    false_positive = "Yes"
                 else:
-                    false_positive = 'No'
+                    false_positive = "No"
 
-                save_all = clair_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
-                    vuln_status='Open',
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
+                    vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
             else:
-                duplicate_vuln = 'Yes'
+                duplicate_vuln = "Yes"
 
-                save_all = clair_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
-                    vuln_status='Duplicate',
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
+                    vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive='Duplicate',
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
@@ -277,46 +278,46 @@ def clair_report_json(data, project_id, scan_id, username):
         # pass
 
     try:
-        low = data['Vulnerabilities']['Low']
+        low = data["Vulnerabilities"]["Low"]
 
         for vuln in low:
             vul_id = uuid.uuid4()
             try:
-                Name = vuln['Name']
+                Name = vuln["Name"]
             except Exception:
                 Name = "Not Found"
 
             try:
-                NamespaceName = vuln['NamespaceName']
+                NamespaceName = vuln["NamespaceName"]
             except Exception:
                 NamespaceName = "Not Found"
 
             try:
-                Description = vuln['Description']
+                Description = vuln["Description"]
             except Exception:
                 Description = "Not Found"
 
             try:
-                Link = vuln['Link']
+                Link = vuln["Link"]
             except Exception:
                 Link = "Not Found"
 
             try:
-                Severity = vuln['Severity']
+                Severity = vuln["Severity"]
             except Exception:
                 Severity = "Not Found"
             try:
-                Metadata = vuln['Metadata']
+                Metadata = vuln["Metadata"]
             except Exception:
                 Metadata = "Not Found"
 
             try:
-                FeatureName = vuln['FeatureName']
+                FeatureName = vuln["FeatureName"]
             except Exception:
                 FeatureName = "Not Found"
 
             try:
-                FeatureVersion = vuln['FeatureVersion']
+                FeatureVersion = vuln["FeatureVersion"]
             except Exception:
                 FeatureName = "Not Found"
 
@@ -325,113 +326,115 @@ def clair_report_json(data, project_id, scan_id, username):
 
             dup_data = Name + Severity + NamespaceName
 
-            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = clair_scan_results_db.objects.filter(
-                dup_hash=duplicate_hash).values('dup_hash')
+            match_dup = StaticScanResultsDb.objects.filter(
+                dup_hash=duplicate_hash
+            ).values("dup_hash")
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
-                duplicate_vuln = 'No'
+                duplicate_vuln = "No"
 
-                false_p = clair_scan_results_db.objects.filter(username=username,
-                                                               false_positive_hash=duplicate_hash)
+                false_p = StaticScanResultsDb.objects.filter(
+                    username=username, false_positive_hash=duplicate_hash
+                )
                 fp_lenth_match = len(false_p)
 
                 if fp_lenth_match == 1:
-                    false_positive = 'Yes'
+                    false_positive = "Yes"
                 else:
-                    false_positive = 'No'
+                    false_positive = "No"
 
-                save_all = clair_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
-                    vuln_status='Open',
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
+                    vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
             else:
-                duplicate_vuln = 'Yes'
+                duplicate_vuln = "Yes"
 
-                save_all = clair_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
-                    vuln_status='Duplicate',
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
+                    vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive='Duplicate',
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
     except Exception:
         print("Low Vulnerability Not found")
-        low = data['vulnerabilities']
+        low = data["Vulnerabilities"]['Low']
 
         for vuln in low:
             vul_id = uuid.uuid4()
             try:
-                Name = vuln['vulnerability']
+                Name = vuln["vulnerability"]
             except Exception:
                 Name = "Not Found"
 
             try:
-                NamespaceName = vuln['namespace']
+                NamespaceName = vuln["namespace"]
             except Exception:
                 NamespaceName = "Not Found"
 
             try:
-                Description = vuln['description']
+                Description = vuln["description"]
             except Exception:
                 Description = "Not Found"
 
             try:
-                Link = vuln['link']
+                Link = vuln["link"]
             except Exception:
                 Link = "Not Found"
 
             try:
-                Severity = vuln['severity']
+                Severity = vuln["severity"]
             except Exception:
                 Severity = "Not Found"
             try:
-                Metadata = vuln['Metadata']
+                Metadata = vuln["Metadata"]
             except Exception:
                 Metadata = "Not Found"
 
             try:
-                FeatureName = vuln['featurename']
+                FeatureName = vuln["featurename"]
             except Exception:
                 FeatureName = "Not Found"
 
             try:
-                FeatureVersion = vuln['featureversion']
+                FeatureVersion = vuln["featureversion"]
             except Exception:
                 FeatureName = "Not Found"
 
@@ -450,95 +453,103 @@ def clair_report_json(data, project_id, scan_id, username):
 
             dup_data = Name + Severity + NamespaceName
 
-            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = clair_scan_results_db.objects.filter(username=username,
-                dup_hash=duplicate_hash).values('dup_hash')
+            match_dup = StaticScanResultsDb.objects.filter(
+                username=username, dup_hash=duplicate_hash
+            ).values("dup_hash")
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
-                duplicate_vuln = 'No'
+                duplicate_vuln = "No"
 
-                false_p = clair_scan_results_db.objects.filter(username=username,
-                                                               false_positive_hash=duplicate_hash)
+                false_p = StaticScanResultsDb.objects.filter(
+                    username=username, false_positive_hash=duplicate_hash
+                )
                 fp_lenth_match = len(false_p)
 
                 if fp_lenth_match == 1:
-                    false_positive = 'Yes'
+                    false_positive = "Yes"
                 else:
-                    false_positive = 'No'
+                    false_positive = "No"
 
-                save_all = clair_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
-                    vuln_status='Open',
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
+                    vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
 
             else:
-                duplicate_vuln = 'Yes'
+                duplicate_vuln = "Yes"
 
-                save_all = clair_scan_results_db(
+                save_all = StaticScanResultsDb(
                     vuln_id=vul_id,
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    Name=Name,
-                    NamespaceName=NamespaceName,
-                    Description=Description,
-                    Link=Link,
-                    Severity=Severity,
-                    Metadata=Metadata,
-                    FeatureName=FeatureName,
-                    FeatureVersion=FeatureVersion,
-                    vuln_status='Duplicate',
+                    title=Name,
+                    description=str(Description) + '\n\n' \
+                                + str(NamespaceName) + '\n\n' \
+                                + str(Metadata) + '\n\n' \
+                                + str(FeatureName),
+                    references=Link,
+                    severity=Severity,
+                    vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive='Duplicate',
-                    vul_col=vul_col,
+                    severity_color=vul_col,
                     username=username,
+                    scanner='Clair'
                 )
                 save_all.save()
         # pass
 
-    all_clair_data = clair_scan_results_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+    all_clair_data = StaticScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, false_positive="No"
+    )
 
-    duplicate_count = clair_scan_results_db.objects.filter(username=username, scan_id=scan_id,
-                                                                     vuln_duplicate='Yes')
+    duplicate_count = StaticScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+    )
 
     total_vul = len(all_clair_data)
-    total_high = len(all_clair_data.filter(Severity='High'))
-    total_medium = len(all_clair_data.filter(Severity='Medium'))
-    total_low = len(all_clair_data.filter(Severity='Low'))
-    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
+    total_high = len(all_clair_data.filter(severity="High"))
+    total_medium = len(all_clair_data.filter(severity="Medium"))
+    total_low = len(all_clair_data.filter(severity="Low"))
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    clair_scan_db.objects.filter(username=username, scan_id=scan_id).update(
+    StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
         total_vul=total_vul,
         high_vul=total_high,
         date_time=date_time,
         medium_vul=total_medium,
         low_vul=total_low,
-        total_dup=total_duplicate
+        total_dup=total_duplicate,
+        scanner='Clair'
     )
     trend_update(username=username)
-    subject = 'Archery Tool Scan Status - Clair Report Uploaded'
-    message = 'Clair Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % (Name, total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - Clair Report Uploaded"
+    message = (
+            "Clair Scanner has completed the scan "
+            "  %s <br> Total: %s <br>High: %s <br>"
+            "Medium: %s <br>Low %s" % (Name, total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)

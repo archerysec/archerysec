@@ -9,26 +9,33 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='inspec_scans_db',
+            name="inspec_scans_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('scan_url', models.URLField(blank=True)),
-                ('scan_id', models.TextField(blank=True)),
-                ('code_desc', models.TextField(blank=True)),
-                ('status', models.TextField(blank=True)),
-                ('total_vul', models.IntegerField(blank=True, null=True)),
-                ('high_vul', models.IntegerField(blank=True, null=True)),
-                ('medium_vul', models.IntegerField(blank=True, null=True)),
-                ('low_vul', models.IntegerField(blank=True, null=True)),
-                ('info_vul', models.IntegerField(blank=True, null=True)),
-                ('project_id', models.UUIDField(null=True)),
-                ('date_time', models.DateTimeField(null=True)),
-                ('total_dup', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("scan_url", models.URLField(blank=True)),
+                ("scan_id", models.TextField(blank=True)),
+                ("code_desc", models.TextField(blank=True)),
+                ("status", models.TextField(blank=True)),
+                ("total_vul", models.IntegerField(blank=True, null=True)),
+                ("high_vul", models.IntegerField(blank=True, null=True)),
+                ("medium_vul", models.IntegerField(blank=True, null=True)),
+                ("low_vul", models.IntegerField(blank=True, null=True)),
+                ("info_vul", models.IntegerField(blank=True, null=True)),
+                ("project_id", models.UUIDField(null=True)),
+                ("date_time", models.DateTimeField(null=True)),
+                ("total_dup", models.TextField(blank=True, null=True)),
             ],
         ),
     ]

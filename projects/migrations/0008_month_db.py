@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0007_project_db_total_false'),
+        ("projects", "0007_project_db_total_false"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='month_db',
+            name="month_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('month', models.TextField(blank=True)),
-                ('high', models.TextField(blank=True)),
-                ('medium', models.TextField(blank=True)),
-                ('low', models.TextField(blank=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("month", models.TextField(blank=True)),
+                ("high", models.TextField(blank=True)),
+                ("medium", models.TextField(blank=True)),
+                ("low", models.TextField(blank=True)),
             ],
         ),
     ]

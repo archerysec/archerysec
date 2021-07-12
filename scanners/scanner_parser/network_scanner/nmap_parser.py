@@ -15,10 +15,11 @@
 # This file is part of ArcherySec Project.
 
 from __future__ import print_function
-from __future__ import print_function
-import hashlib
+
 import datetime
+import hashlib
 import uuid
+
 from tools.models import nmap_result_db, nmap_scan_db
 
 ip_address = None
@@ -51,88 +52,69 @@ def xml_parser(root, project_id, scan_id, username):
     :param scan_id:
     :return:
     """
-    global ip_address, \
-        port, \
-        protocol, \
-        used_state, \
-        used_portid, \
-        used_proto, \
-        state, \
-        reason, \
-        reason_ttl, \
-        version, \
-        extrainfo, \
-        name, \
-        conf, \
-        method, \
-        cpe, \
-        type_p, \
-        osfamily, \
-        vendor, \
-        osgen, \
-        accuracy
+    global ip_address, port, protocol, used_state, used_portid, used_proto, state, reason, reason_ttl, version, extrainfo, name, conf, method, cpe, type_p, osfamily, vendor, osgen, accuracy
 
     for nmap in root:
         for scaninfo in nmap:
-            if scaninfo.tag == 'address':
+            if scaninfo.tag == "address":
                 ip = scaninfo.attrib
                 for key, value in ip.items():
-                    if key == 'addrtype':
-                        if value == 'ipv4':
+                    if key == "addrtype":
+                        if value == "ipv4":
                             for key, value in ip.items():
-                                if key == 'addr':
+                                if key == "addr":
                                     ip_address = value
             for s in scaninfo:
                 # print s.tag
-                if s.tag == 'port':
+                if s.tag == "port":
                     p = s.attrib
                     for key, value in p.items():
                         # print key
-                        if key == 'portid':
+                        if key == "portid":
                             port = value
                             print(port)
-                        if key == 'protocol':
+                        if key == "protocol":
                             protocol = value
 
-                if s.tag == 'portused':
+                if s.tag == "portused":
                     p = s.attrib
                     for key, value in p.items():
                         # print key, value
-                        if key == 'state':
+                        if key == "state":
                             used_state = value
-                        if key == 'portid':
+                        if key == "portid":
                             used_portid = value
-                        if key == 'proto':
+                        if key == "proto":
                             used_proto = value
 
                 for ss in s:
                     sat = ss.attrib
                     for key, value in sat.items():
-                        if key == 'state':
+                        if key == "state":
                             state = value
-                        if key == 'reason':
+                        if key == "reason":
                             reason = value
-                        if key == 'reason_ttl':
+                        if key == "reason_ttl":
                             reason_ttl = value
-                        if key == 'version':
+                        if key == "version":
                             version = value
-                        if key == 'extrainfo':
+                        if key == "extrainfo":
                             extrainfo = value
-                        if key == 'name':
+                        if key == "name":
                             name = value
-                        if key == 'conf':
+                        if key == "conf":
                             conf = value
-                        if key == 'method':
+                        if key == "method":
                             method = value
-                        if key == 'type':
+                        if key == "type":
                             type_p = value
-                        if key == 'osfamily':
+                        if key == "osfamily":
                             osfamily = value
-                        if key == 'vendor':
+                        if key == "vendor":
                             vendor = value
-                        if key == 'osgen':
+                        if key == "osgen":
                             osgen = value
-                        if key == 'accuracy':
+                        if key == "accuracy":
                             accuracy = value
 
                     for sss in ss:
@@ -161,46 +143,55 @@ def xml_parser(root, project_id, scan_id, username):
                     used_state=used_state,
                     used_portid=used_portid,
                     used_proto=used_proto,
-                    username=username
+                    username=username,
                 )
                 dump_data.save()
 
     for nmap in root:
         for scaninfo in nmap:
             # print scaninfo.tag, scaninfo.attrib
-            if scaninfo.tag == 'address':
+            if scaninfo.tag == "address":
                 ip = scaninfo.attrib
                 for key, value in ip.items():
-                    if key == 'addrtype':
-                        if value == 'ipv4':
+                    if key == "addrtype":
+                        if value == "ipv4":
                             for key, value in ip.items():
-                                if key == 'addr':
+                                if key == "addr":
                                     ip_address = value
 
-                                    all_data = nmap_result_db.objects.filter(ip_address=ip_address, username=username)
+                                    all_data = nmap_result_db.objects.filter(
+                                        ip_address=ip_address, username=username
+                                    )
                                     # for a in all_data:
                                     #     global total_ports, ports_p
                                     #     ports_p = a.port
                                     total_ports = len(all_data)
                                     # print(total_ports)
 
-                                    all_open_p = nmap_result_db.objects.filter(username=username, ip_address=ip_address,
-                                                                               state='open')
+                                    all_open_p = nmap_result_db.objects.filter(
+                                        username=username,
+                                        ip_address=ip_address,
+                                        state="open",
+                                    )
                                     # for p in all_open_p:
                                     #     global total_open_p
                                     total_open_p = len(all_open_p)
                                     # print(total_open_p)
 
-                                    all_close_p = nmap_result_db.objects.filter(username=username, ip_address=ip_address,
-                                                                                state='closed')
+                                    all_close_p = nmap_result_db.objects.filter(
+                                        username=username,
+                                        ip_address=ip_address,
+                                        state="closed",
+                                    )
                                     total_close_p = len(all_close_p)
 
-                                    save_scan = nmap_scan_db(scan_id=scan_id,
-                                                             project_id=project_id,
-                                                             scan_ip=ip_address,
-                                                             total_ports=total_ports,
-                                                             total_open_ports=total_open_p,
-                                                             total_close_ports=total_close_p,
-                                                             username=username
-                                                             )
+                                    save_scan = nmap_scan_db(
+                                        scan_id=scan_id,
+                                        project_id=project_id,
+                                        scan_ip=ip_address,
+                                        total_ports=total_ports,
+                                        total_open_ports=total_open_p,
+                                        total_close_ports=total_close_p,
+                                        username=username,
+                                    )
                                     save_scan.save()

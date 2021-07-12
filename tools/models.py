@@ -62,7 +62,6 @@ class nikto_vuln_db(models.Model):
     username = models.CharField(max_length=256, null=True)
 
 
-
 # Nmap tool models
 class nmap_scan_db(models.Model):
     scan_id = models.TextField(blank=True, null=True)
@@ -98,6 +97,7 @@ class nmap_result_db(models.Model):
     used_portid = models.TextField(blank=True, null=True)
     used_proto = models.TextField(blank=True, null=True)
     username = models.CharField(max_length=256, null=True)
+
 
 # NOTE[gmedian]: just base on the previous existing table in order not to make anything non-working
 class nmap_vulners_port_result_db(nmap_result_db):

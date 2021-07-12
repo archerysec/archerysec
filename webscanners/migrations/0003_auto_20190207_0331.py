@@ -8,38 +8,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0002_auto_20181031_0022'),
+        ("webscanners", "0002_auto_20181031_0022"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='acunetix_scan_result_db',
-            name='scanner',
-            field=models.TextField(default='Acunetix', editable=False),
+            model_name="acunetix_scan_result_db",
+            name="scanner",
+            field=models.TextField(default="Acunetix", editable=False),
         ),
         migrations.AddField(
-            model_name='arachni_scan_result_db',
-            name='scanner',
-            field=models.TextField(default='Arachni', editable=False),
+            model_name="arachni_scan_result_db",
+            name="scanner",
+            field=models.TextField(default="Arachni", editable=False),
         ),
         migrations.AddField(
-            model_name='burp_scan_result_db',
-            name='scanner',
-            field=models.TextField(default='Burp Scanner', editable=False),
+            model_name="burp_scan_result_db",
+            name="scanner",
+            field=models.TextField(default="Burp Scanner", editable=False),
         ),
         migrations.AddField(
-            model_name='netsparker_scan_result_db',
-            name='scanner',
-            field=models.TextField(default='Netsparker', editable=False),
+            model_name="netsparker_scan_result_db",
+            name="scanner",
+            field=models.TextField(default="Netsparker", editable=False),
         ),
         migrations.AddField(
-            model_name='webinspect_scan_result_db',
-            name='scanner',
-            field=models.TextField(default='Webinspect', editable=False),
+            model_name="webinspect_scan_result_db",
+            name="scanner",
+            field=models.TextField(default="Webinspect", editable=False),
         ),
         migrations.AddField(
-            model_name='zap_scan_results_db',
-            name='scanner',
-            field=models.TextField(default='ZAP Scanner', editable=False),
+            model_name="zap_scan_results_db",
+            name="scanner",
+            field=models.TextField(default="ZAP Scanner", editable=False),
         ),
     ]

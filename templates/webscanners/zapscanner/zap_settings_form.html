@@ -1,0 +1,70 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">ZAP Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="widget-box">
+                                        <form  method="POST" action="{% url 'zapscanner:zap_setting_update' %}">
+                                            {% csrf_token %}
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label">Enable API</label>
+                                                <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b" style="float: right;">
+                                                    <label>
+                                                        <input name="zap_enabled" {% if zap_enabled == "True" %} value="on" checked="checked" {% endif %} type="checkbox"><span></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                                <div class="form-group row">
+                                                    <label
+                                                            class="col-sm-4 col-form-label">Zap API Key</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" name="apikey" value="{{ zap_apikey }}" class="form-control"
+                                           placeholder="API Key"/>
+                                                        <small><em>Skip ZAP API Key if not enabled</em></small>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label
+                                                            class="col-sm-4 col-form-label">Zap API Host</label>
+                                                    <div class="col-sm-6">
+                                    <input type="text" name="zappath" value="{{ zap_host }}" class="form-control"
+                                           placeholder="Zap API Host"/>
+                                                        <small><em>ZAP API Host address (Ex.127.0.0.1)</em></small>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label
+                                                            class="col-sm-4 col-form-label">Zap API Port</label>
+                                                    <div class="col-sm-6">
+                                    <input type="text" name="port" value="{{ zap_port }}" class="form-control"
+                                           placeholder="PORT"/>
+                                                        <small><em>ZAP API Port (Ex. 8080)</em></small>
+                                                    </div>
+                                                </div>
+                                                <div class="form-actions">
+                                                    <button type="submit" class="btn btn-success">Save</button>
+                                                </div>
+                                                </form>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

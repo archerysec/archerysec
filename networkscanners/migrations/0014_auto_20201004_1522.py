@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0013_nessus_targets_db'),
+        ("networkscanners", "0013_nessus_targets_db"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='nessus_report_db',
-            name='date_time',
+            model_name="nessus_report_db",
+            name="date_time",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='nessus_scan_results_db',
-            name='date_time',
+            model_name="nessus_scan_results_db",
+            name="date_time",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

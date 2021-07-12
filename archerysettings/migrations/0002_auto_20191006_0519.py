@@ -8,18 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('archerysettings', '0001_initial'),
+        ("archerysettings", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='zap_settings_db',
-            name='zap_api',
-            field=models.TextField(default='dwed23wdwedwwefw4rwrfw'),
+            model_name="zap_settings_db",
+            name="zap_api",
+            field=models.TextField(default="dwed23wdwedwwefw4rwrfw"),
         ),
         migrations.AlterField(
-            model_name='zap_settings_db',
-            name='zap_port',
+            model_name="zap_settings_db",
+            name="zap_port",
             field=models.IntegerField(default=8090),
         ),
     ]

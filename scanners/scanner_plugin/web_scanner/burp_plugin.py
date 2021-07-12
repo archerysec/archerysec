@@ -14,23 +14,27 @@
 #
 # This file is part of ArcherySec Project.
 
-from PyBurprestapi import burpscanner
+import base64
+import hashlib
 import json
 import time
-import base64
-from webscanners.models import burp_scan_db, burp_scan_result_db, burp_issue_definitions
 import uuid
-from django.shortcuts import HttpResponse
-from webscanners import email_notification
-import hashlib
-from archerysettings.models import burp_setting_db
 from datetime import datetime
-from notifications.signals import notify
-from django.conf import settings
-from archerysettings.models import email_db
-from django.core.mail import send_mail
 
-to_mail = ''
+from django.conf import settings
+from django.core.mail import send_mail
+from django.shortcuts import HttpResponse
+from notifications.signals import notify
+from PyBurprestapi import burpscanner
+
+from archerysettings.models import burp_setting_db, email_db
+from webscanners import email_notification
+from webscanners.models import (WebScansDb,
+                                WebScanResultsDb)
+from webscanners.models import burp_issue_definitions
+
+to_mail = ""
+
 
 def email_notify(user, subject, message):
     global to_mail
@@ -43,7 +47,7 @@ def email_notify(user, subject, message):
     try:
         send_mail(subject, message, email_from, recipient_list)
     except Exception as e:
-        notify.send(user, recipient=user, verb='Email Settings Not Configured')
+        notify.send(user, recipient=user, verb="Email Settings Not Configured")
         pass
 
 
@@ -109,49 +113,55 @@ class burp_scans(object):
             burp_api_key = data.burp_api_key
 
         date_time = datetime.now()
-        scan_dump = burp_scan_db(username=self.user.username,
-                                 scan_id=self.scan_id,
-                                 project_id=self.project_id,
-                                 url=self.scan_url,
-                                 date_time=date_time)
+        scan_dump = WebScansDb(
+            username=self.user.username,
+            scan_id=self.scan_id,
+            project_id=self.project_id,
+            scan_url=self.scan_url,
+            date_time=date_time,
+            scanner='Burp'
+        )
         scan_dump.save()
 
-        host = 'http://' + burp_host + ':' + burp_port + '/'
+        host = "http://" + burp_host + ":" + burp_port + "/"
         bi = burpscanner.BurpApi(host, burp_api_key)
         data = '{"urls":["%s"]}' % self.scan_url
         response = bi.scan(data)
         scan_data = response.response_headers
-        burp_scan_id = scan_data['location']
+        burp_scan_id = scan_data["location"]
 
         # Email Notification
-        message = 'Burp Scan Launched '
-        subject = 'Archery Burp Scan Notification'
+        message = "Burp Scan Launched "
+        subject = "Archery Burp Scan Notification"
         email_notify(user=self.user, subject=subject, message=message)
 
         # Dashboard Notification
-        notify.send(self.user, recipient=self.user, verb='Burp Scan Launched')
+        notify.send(self.user, recipient=self.user, verb="Burp Scan Launched")
 
         scan_info = bi.scan_info(burp_scan_id)
         json_scan_data = json.dumps(scan_info.data)
         scan_info_data = json.loads(json_scan_data)
-        scan_status = scan_info_data['scan_metrics']['crawl_and_audit_progress']
+        scan_status = scan_info_data["scan_metrics"]["crawl_and_audit_progress"]
         print(scan_status)
 
-        while (int(scan_status) < 100):
+        while int(scan_status) < 100:
             scan_info = bi.scan_info(burp_scan_id)
             json_scan_data = json.dumps(scan_info.data)
             scan_info_data = json.loads(json_scan_data)
-            scan_status = scan_info_data['scan_metrics']['crawl_and_audit_progress']
+            scan_status = scan_info_data["scan_metrics"]["crawl_and_audit_progress"]
             print("Scan Status:", scan_status)
-            burp_scan_db.objects.filter(username=self.user.username,
-                                        scan_id=self.scan_id).update(scan_status=scan_status)
+            WebScansDb.objects.filter(
+                username=self.user.username, scan_id=self.scan_id, scanner='Burp'
+            ).update(scan_status=scan_status)
             time.sleep(5)
 
         scan_info = bi.scan_info(burp_scan_id)
         json_scan_data = json.dumps(scan_info.data)
         scan_info_data = json.loads(json_scan_data)
-        scan_data = scan_info_data['issue_events']
-        do_scan_dat = burp_scans(self.project_id, self.scan_url, self.scan_id, self.user)
+        scan_data = scan_info_data["issue_events"]
+        do_scan_dat = burp_scans(
+            self.project_id, self.scan_url, self.scan_id, self.user
+        )
         do_scan_dat.burp_scan_data(scan_data)
 
     def burp_scan_data(self, scan_data):
@@ -248,8 +258,8 @@ class burp_scans(object):
             dup_data = name + path + severity
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-            match_dup = burp_scan_result_db.objects.filter(username=self.user.username,
-                dup_hash=duplicate_hash).values('dup_hash').distinct()
+            match_dup = WebScansDb.objects.filter(username=self.user.username,
+                                                           dup_hash=duplicate_hash).values('dup_hash').distinct()
             lenth_match = len(match_dup)
 
             if lenth_match == 1:
@@ -259,67 +269,65 @@ class burp_scans(object):
             else:
                 duplicate_vuln = 'None'
 
-            false_p = burp_scan_result_db.objects.filter(username=self.user.username,
-                false_positive_hash=duplicate_hash)
+            false_p = WebScansDb.objects.filter(username=self.user.username,
+                                                         false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
+            details = str(issue_description) + str('\n') + str(request_datas) + str('\n\n') + str(response_datas) + str(
+                '\n\n') + str('\n\n') + str(issue_description) + str('\n\n') + str(issue_vulnerability_classifications)
             global false_positive
             if fp_lenth_match == 1:
-                false_positive = 'Yes'
+                false_positive = "Yes"
             elif lenth_match == 0:
-                false_positive = 'No'
+                false_positive = "No"
             else:
-                false_positive = 'No'
-
+                false_positive = "No"
+            date_time = datetime.now()
             try:
-                data_dump = burp_scan_result_db(
+                data_dump = WebScanResultsDb(
                     scan_id=self.scan_id,
-                    project_id=self.project_id,
                     vuln_id=vuln_id,
-                    name=name,
-                    path=path,
-                    severity=severity,
+                    url=url,
+                    title=name,
+                    solution=issue_remediation,
+                    description=details,
+                    reference=issue_reference,
+                    project_id=self.project_id,
                     severity_color=vul_col,
-                    confidence=confidence,
+                    severity=severity,
+                    date_time=date_time,
                     false_positive=false_positive,
-                    vuln_status='Open',
+                    vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    type_index=type_index,
-                    serial_number=serial_number,
-                    origin=origin,
-                    caption=caption,
-                    request_response_url=url,
-                    request_response_request_type=request_type,
-                    request_response_request_data=request_datas,
-                    request_response_response_type=response_type,
-                    request_response_response_data=response_datas,
-                    was_redirect_followed=was_redirect_followed,
-                    description=issue_description,
-                    remediation=issue_remediation,
-                    reference=issue_reference,
-                    vulnerability_classifications=issue_vulnerability_classifications,
-                    username=self.user.username
+                    scanner='Burp',
+                    username=self.user.username,
                 )
                 data_dump.save()
             except Exception as e:
                 print(e)
-        burp_all_vul = burp_scan_result_db.objects.filter(username=self.user.username,
-                                                          scan_id=self.scan_id).values('name', 'severity'
-                                                                                       ).distinct()
+        burp_all_vul = (
+            WebScanResultsDb.objects.filter(
+                username=self.user.username, scan_id=self.scan_id
+            )
+            .values("title", "severity")
+            .distinct()
+        )
         total_vul = len(burp_all_vul)
         total_high = len(burp_all_vul.filter(severity="High"))
         total_medium = len(burp_all_vul.filter(severity="Medium"))
         total_low = len(burp_all_vul.filter(severity="Low"))
         total_info = len(burp_all_vul.filter(severity="Info"))
-        total_duplicate = len(burp_all_vul.filter(vuln_duplicate='Yes'))
-        burp_scan_db.objects.filter(username=self.user.username, scan_id=self.scan_id).update(
+        total_duplicate = len(burp_all_vul.filter(vuln_duplicate="Yes"))
+        WebScansDb.objects.filter(
+            username=self.user.username, scan_id=self.scan_id, scanner='Burp'
+        ).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,
             info_vul=total_info,
-            total_dup=total_duplicate
+            total_dup=total_duplicate,
         )
         try:
             email_notification.email_notify()

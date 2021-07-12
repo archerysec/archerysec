@@ -1,0 +1,119 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+    {#<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>#}
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <br>
+                    {#                        <div class="float-right">#}
+                    {#                            <form action="{% url 'dashboard:export' %}" method="post"#}
+                    {#                                  class="forms-sample">#}
+                    {#                                {% csrf_token %}#}
+                    {#                                <div class="form-row align-items-center">#}
+                    {#                                    <div class="col-auto my-1">#}
+                    {#                                        <select name="type" class="custom-select mr-sm-2" id="inlineFormCustomSelect">#}
+                    {#                                            <option value="csv" selected>CSV</option>#}
+                    {#                                            <option value="json">JSON</option>#}
+                    {#                                            <option value="yaml">YAML</option>#}
+                    {#                                        </select>#}
+                    {#                                    </div>#}
+                    {#                                    <div class="col-auto my-1">#}
+                    {#                                        <input type="hidden" name="project_id" value="{{project_id}}"/>#}
+                    {#                                        <input type="hidden" name="severity" value="{{severity}}"/>#}
+                    {#                                        <button type="submit" class="btn btn-primary"><i#}
+                    {#                                                class="fas fa-arrow-alt-circle-down"></i></button>#}
+                    {#                                    </div>#}
+                    {#                                </div>#}
+                    {#                            </form>#}
+                    {#                        </div>#}
+                    <div class="d-md-flex align-items-center">
+                        <h1 class="card-title">{{ severity }} Vulnerability List</h1>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table id="vuln_details" class="table table-striped table-bordered" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Vulnerability</th>
+                                    <th>Scanner</th>
+                                    <th>URL/IP</th>
+                                    <th>Risk</th>
+
+                                </tr>
+                                </thead>
+                                <!--zap-->
+                                <tbody>
+                                <!-- add your scanner here  -->
+                                {% for data in sast_all_high %}
+                                    <tr data-target="#">
+
+                                        <td>
+                                            <a href="{% url 'staticscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&scan_name={{ data.title }}&scanner={{ data.scanner }}">{{ data.title }}</a>
+                                        </td>
+                                        <td>{{ data.scanner }}</td>
+                                        <td>{{ data.fileName }}</td>
+                                        <td><span
+                                                class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+                                {% for data in web_all_high %}
+                                    <tr data-target="#">
+
+                                        <td>
+                                            <a href="{% url 'webscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&scan_name={{ data.title }}&scanner={{ data.scanner }}">{{ data.title }}</a>
+                                        </td>
+                                        <td>{{ data.scanner }}</td>
+                                        <td>{{ data.url }}</td>
+                                        <td><span
+                                                class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+
+                                {% for data in net_all_high %}
+                                    <tr data-target="#">
+
+                                        <td>
+                                            <a href="{% url 'networkscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&ip={{ data.ip }}&scanner={{ data.scanner }}">{{ data.title }}</a>
+                                        </td>
+                                        <td>{{ data.scanner }}</td>
+                                        <td>{{ data.ip }}</td>
+                                        <td><span
+                                                class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+                                {% for data in pentest_all_high %}
+                                    <tr data-target="#">
+
+                                        <td>
+                                            <a href="{% url 'manual_scan:vuln_details' %}?vuln_id={{ data.vuln_id }}">{{ data.vuln_name }}</a>
+                                        </td>
+                                        <td>Pentest</td>
+                                        <td>{{ data.vuln_url }}</td>
+                                        <td><span
+                                                class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

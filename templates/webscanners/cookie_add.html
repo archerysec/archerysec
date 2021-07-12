@@ -1,0 +1,41 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+        <div class="row justify-content-md-center">
+           <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Add Cookies</h1>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <form class="form-horizontal" method="POST" action="{% url 'webscanners:cookie_add' %}">{% csrf_token %}
+                                <div class="form-group">
+                                    <label class="control-label">URL :</label>
+                                    <div class="controls">
+                                        <input type="text" name="url" class="form-control"
+                                               placeholder="URL"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Cookies :</label>
+                                    <div class="controls">
+                                   <textarea class="form-control" rows="5" style="min-width: 70%"
+                                             name="cookies"
+                                   ></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

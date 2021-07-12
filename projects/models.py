@@ -17,7 +17,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.db.models import Func, F, Sum
+from django.db.models import F, Func, Sum
 
 
 class project_db(models.Model):
@@ -52,7 +52,7 @@ class project_db(models.Model):
 
 
 class project_scan_db(models.Model):
-    project_url = models.TextField(blank=True) #this is scan url
+    project_url = models.TextField(blank=True)  # this is scan url
     project_ip = models.TextField(blank=True)
     scan_type = models.TextField(blank=True)
     project_id = models.TextField(blank=True)
@@ -60,14 +60,16 @@ class project_scan_db(models.Model):
 
 
 class Month(Func):
-    function = 'EXTRACT'
-    template = '%(function)s(MONTH from %(expressions)s)'
+    function = "EXTRACT"
+    template = "%(function)s(MONTH from %(expressions)s)"
     output_field = models.IntegerField()
 
+
 class MonthSqlite(Func):
-    function = 'STRFTIME'
+    function = "STRFTIME"
     template = '%(function)s("%%m", %(expressions)s)'
     output_field = models.CharField()
+
 
 class month_db(models.Model):
     month = models.TextField(blank=True, null=True)

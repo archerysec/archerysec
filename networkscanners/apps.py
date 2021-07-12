@@ -19,4 +19,4 @@ from django.apps import AppConfig
 
 
 class NetworkscannersConfig(AppConfig):
-    name = 'networkscanners'
+    name = "networkscanners"

@@ -1,0 +1,39 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+{% for data in scan_result %}
+
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{ data.scan_url }}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <h5>SSLScan :</h5>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <pre> {{ data.sslscan_output }} </pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endfor %}
+
+
+
+
+{% endblock %}

@@ -20,8 +20,10 @@ from django.db import models
 
 
 class zap_settings_db(models.Model):
-    zap_url = models.TextField(blank=False, null=False, default='127.0.0.1')
-    zap_api = models.TextField(blank=False, null=False, default='dwed23wdwedwwefw4rwrfw')
+    zap_url = models.TextField(blank=False, null=False, default="127.0.0.1")
+    zap_api = models.TextField(
+        blank=False, null=False, default="dwed23wdwedwwefw4rwrfw"
+    )
     zap_port = models.IntegerField(blank=False, null=False, default=8090)
     enabled = models.BooleanField(blank=False, null=False)
     username = models.CharField(max_length=256, null=True)

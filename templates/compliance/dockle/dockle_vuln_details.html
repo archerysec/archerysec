@@ -1,0 +1,122 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+{% for data in dockle_vuln_details %}
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-auto">
+                    <div class="float-right">
+                        <!-- Large modal -->
+{#                        <button type="button" class="btn btn-primary" data-toggle="modal"#}
+{#                                data-target=".bd-example-modal-lg">Jira Ticket#}
+{#                        </button>#}
+
+                        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h1>{{ data.controls_title }}</h1>
+                <br>
+                <div class="card">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card m-b-0">
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                       aria-controls="collapseOne">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Description</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {{data.controls_desc}}
+                                    <br>
+                                    {{data.controls_tags_audit}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                                       aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Instance</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="col-md-6">
+
+                                        {{data.controls_code}}
+                                        <br>
+                                        <br>
+                                        <strong>Sourc Location:</strong><br>
+                                        {{data.controls_source_location}}
+                                        <br>
+                                        <br>
+
+                                        <strong>Result Status:</strong><br>
+                                        {{data.controls_results_status}}
+                                        <br>
+                                        <br>
+
+                                        <strong>Result Code:</strong><br>
+                                        {{data.controls_results_code_desc}}
+                                        <br>
+                                        <br>
+
+                                        <strong>Run Time:</strong><br>
+                                        {{data.controls_results_run_time}}
+                                        <br>
+                                        <br>
+
+                                        <strong>Start Time:</strong><br>
+                                        {{data.controls_results_start_time}}
+                                        <br>
+                                        <br>
+
+                                        <strong>Message:</strong><br>
+                                        {{data.controls_results_message}}
+                                        <br>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card m-b-0 border-top">
+                            <div class="card-header" id="headingThree">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseThree"
+                                       aria-expanded="false" aria-controls="collapseThree">
+                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span>Solutions</span>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                 data-parent="#accordionExample">
+                                <div class="card-body">
+                                {{data.controls_tags_fix}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endfor %}
+
+{% endblock %}

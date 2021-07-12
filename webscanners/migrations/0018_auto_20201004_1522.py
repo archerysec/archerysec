@@ -6,33 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0017_auto_20200503_1201'),
+        ("webscanners", "0017_auto_20200503_1201"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='acunetix_scan_result_db',
-            name='date_time',
+            model_name="acunetix_scan_result_db",
+            name="date_time",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='arachni_scan_result_db',
-            name='date_time',
+            model_name="arachni_scan_result_db",
+            name="date_time",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='burp_scan_result_db',
-            name='date_time',
+            model_name="burp_scan_result_db",
+            name="date_time",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='netsparker_scan_result_db',
-            name='date_time',
+            model_name="netsparker_scan_result_db",
+            name="date_time",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='webinspect_scan_result_db',
-            name='date_time',
+            model_name="webinspect_scan_result_db",
+            name="date_time",
             field=models.DateTimeField(null=True),
         ),
     ]

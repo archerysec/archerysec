@@ -8,18 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0003_auto_20181101_1604'),
+        ("networkscanners", "0003_auto_20181101_1604"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='nessus_report_db',
-            name='scanner',
-            field=models.TextField(default='Nessus', editable=False),
+            model_name="nessus_report_db",
+            name="scanner",
+            field=models.TextField(default="Nessus", editable=False),
         ),
         migrations.AddField(
-            model_name='ov_scan_result_db',
-            name='scanner',
-            field=models.TextField(default='OpenVAS', editable=False),
+            model_name="ov_scan_result_db",
+            name="scanner",
+            field=models.TextField(default="OpenVAS", editable=False),
         ),
     ]

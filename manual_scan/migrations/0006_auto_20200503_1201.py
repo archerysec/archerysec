@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('manual_scan', '0005_manual_scan_results_db_scan_url'),
+        ("manual_scan", "0005_manual_scan_results_db_scan_url"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='manual_scan_results_db',
-            name='username',
+            model_name="manual_scan_results_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='manual_scans_db',
-            name='username',
+            model_name="manual_scans_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='vulnerabilitydata',
-            name='username',
+            model_name="vulnerabilitydata",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
     ]

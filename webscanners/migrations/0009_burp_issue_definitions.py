@@ -8,17 +8,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0008_delete_status_db'),
+        ("webscanners", "0008_delete_status_db"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='burp_issue_definitions',
+            name="burp_issue_definitions",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('issue_type_id', models.TextField(blank=True, null=True)),
-                ('name', models.TextField(blank=True, null=True)),
-                ('description', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("issue_type_id", models.TextField(blank=True, null=True)),
+                ("name", models.TextField(blank=True, null=True)),
+                ("description", models.TextField(blank=True, null=True)),
             ],
         ),
     ]

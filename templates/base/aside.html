@@ -1,0 +1,91 @@
+<aside class="left-sidebar" data-sidebarbg="skin5">
+    <div class="scroll-sidebar">
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav" class="p-t-30">
+                <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                            href="{% url 'dashboard:dashboard' %}" aria-expanded="false"><i
+                        class="fas fa-tachometer-alt"></i><span class="hide-menu">Dashboard</span></a></li>
+                <li class="my-2 mx-3 border-top"></li>
+                <!-- Manual Scans -->
+                <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                            href="{% url 'manual_scan:list_scan' %}" aria-expanded="false"><i
+                        class="fas fa-laptop"></i><span class="hide-menu">Pentest Activity</span></a></li>
+
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="#" aria-expanded="false"><i
+                        class="far far fa-play-circle"></i><span class="hide-menu">Scans</span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="{% url 'webscanners:list_scans' %}" class="sidebar-link"><i
+                                class=" fas fa-play"></i><span class="hide-menu"> Dynamic Scans </span></a>
+                        </li>
+                        <li class="sidebar-item"><a href="{% url 'staticscanners:list_scans' %}" class="sidebar-link"><i
+                                class="fas fas fa-code"></i><span class="hide-menu"> Static Scans </span></a></li>
+                        <li class="sidebar-item"><a href="{% url 'networkscanners:list_scans' %}"
+                                                    class="sidebar-link"><i
+                                class="fas fa-cubes"></i><span class="hide-menu"> Infrastructure Scans </span></a></li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="#" aria-expanded="false"><i
+                        class="far fa-paper-plane"></i><span class="hide-menu">Launch Scans</span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="{% url 'webscanners:index' %}" class="sidebar-link"><i
+                                class=" fas fa-play"></i><span class="hide-menu"> Dynamic Scans </span></a>
+                        </li>
+                        <li class="sidebar-item"><a href="{% url 'networkscanners:ip_scan' %}" class="sidebar-link"><i
+                                class="fas fa-cubes"></i><span class="hide-menu"> Infrastructure Scans </span></a></li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="#" aria-expanded="false"><i
+                        class="fas fa-list-ul"></i><span class="hide-menu">Compliance Scans</span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="{% url 'inspec:inspec_list' %}" class="sidebar-link"><i
+                                class="mdi mdi-note-plus"></i><span class="hide-menu"> Inspec </span></a></li>
+                        <li class="sidebar-item"><a href="{% url 'dockle:dockle_list' %}" class="sidebar-link"><i
+                                class="mdi mdi-note-plus"></i><span class="hide-menu"> Dockle </span></a></li>
+                    </ul>
+                </li>
+                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
+                                            href="javascript:void(0)" aria-expanded="false"><i
+                        class="fas fa-wrench"></i><span class="hide-menu">Tools </span></a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item"><a href="/tools/sslscan/" class="sidebar-link"><i
+                                class="mdi mdi-emoticon"></i><span class="hide-menu"> SSLScan </span></a>
+                        </li>
+                        <li class="sidebar-item"><a href="/tools/nikto/" class="sidebar-link"><i
+                                class="fas fa-eraser"></i><span
+                                class="hide-menu"> Nikto </span></a></li>
+                        <li class="sidebar-item"><a href="/tools/nmap_vulners_scan/" class="sidebar-link"><i
+                                class="fas fa-shield-alt"></i><span
+                                class="hide-menu"> NMAP </span></a></li>
+
+                    </ul>
+                </li>
+                <li class="my-3 mx-3 border-top"></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="/webscanners/setting/" aria-expanded="false"><i
+                        class="ti-settings m-r-5 m-l-5"></i><span class="hide-menu">Settings</span></a>
+                </li>
+                <li class="sidebar-item"><a class="sidebar-link" href="https://docs.archerysec.com/" target="_blank"
+                                            aria-expanded="false"><i
+                        class="fas fa-book"></i><span class="hide-menu">Documents</span></a>
+                </li>
+                <li class="my-3 mx-3 border-top"></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="https://github.com/archerysec/archerysec/releases/tag/v2.0.1" target="_blank"
+                                            aria-expanded="false"><i
+                        class="fas fa-external-link-alt"></i><span class="hide-menu">Changelogs</span></a>
+                </li>
+            </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+        <div class="my-3 mx-3">
+            <ul>
+                Version v2.0.2
+            </ul>
+        </div>
+
+    </div>
+    <!-- End Sidebar scroll-->
+</aside>

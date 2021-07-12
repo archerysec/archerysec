@@ -9,65 +9,112 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='arachni_settings_db',
+            name="arachni_settings_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('arachni_url', models.TextField(blank=True, null=True)),
-                ('arachni_port', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("arachni_url", models.TextField(blank=True, null=True)),
+                ("arachni_port", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='burp_setting_db',
+            name="burp_setting_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('burp_url', models.TextField(blank=True, null=True)),
-                ('burp_port', models.TextField(blank=True, null=True)),
-                ('burp_api_key', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("burp_url", models.TextField(blank=True, null=True)),
+                ("burp_port", models.TextField(blank=True, null=True)),
+                ("burp_api_key", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='email_db',
+            name="email_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subject', models.TextField(blank=True, null=True)),
-                ('message', models.TextField(blank=True, null=True)),
-                ('recipient_list', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("subject", models.TextField(blank=True, null=True)),
+                ("message", models.TextField(blank=True, null=True)),
+                ("recipient_list", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='nmap_vulners_setting_db',
+            name="nmap_vulners_setting_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('enabled', models.BooleanField()),
-                ('version', models.BooleanField()),
-                ('online', models.BooleanField()),
-                ('timing', models.IntegerField(default=0)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("enabled", models.BooleanField()),
+                ("version", models.BooleanField()),
+                ("online", models.BooleanField()),
+                ("timing", models.IntegerField(default=0)),
             ],
         ),
         migrations.CreateModel(
-            name='openvas_setting_db',
+            name="openvas_setting_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('host', models.TextField(blank=True, null=True)),
-                ('port', models.IntegerField(default=9390)),
-                ('enabled', models.BooleanField()),
-                ('user', models.TextField(blank=True, null=True)),
-                ('password', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("host", models.TextField(blank=True, null=True)),
+                ("port", models.IntegerField(default=9390)),
+                ("enabled", models.BooleanField()),
+                ("user", models.TextField(blank=True, null=True)),
+                ("password", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='zap_settings_db',
+            name="zap_settings_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('zap_url', models.TextField(default='127.0.0.1')),
-                ('zap_api', models.TextField(default='')),
-                ('zap_port', models.TextField(default=8080)),
-                ('enabled', models.BooleanField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("zap_url", models.TextField(default="127.0.0.1")),
+                ("zap_api", models.TextField(default="")),
+                ("zap_port", models.TextField(default=8080)),
+                ("enabled", models.BooleanField()),
             ],
         ),
     ]

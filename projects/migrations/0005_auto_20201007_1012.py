@@ -6,33 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0004_project_db_total_medium'),
+        ("projects", "0004_project_db_total_medium"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project_db',
-            name='total_close',
+            model_name="project_db",
+            name="total_close",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='project_db',
-            name='total_net',
+            model_name="project_db",
+            name="total_net",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='project_db',
-            name='total_open',
+            model_name="project_db",
+            name="total_open",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='project_db',
-            name='total_static',
+            model_name="project_db",
+            name="total_static",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='project_db',
-            name='total_web',
+            model_name="project_db",
+            name="total_web",
             field=models.TextField(null=True),
         ),
     ]

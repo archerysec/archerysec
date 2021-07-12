@@ -9,41 +9,56 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='manual_scan_results_db',
+            name="manual_scan_results_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('vuln_id', models.TextField(blank=True)),
-                ('scan_id', models.TextField(blank=True)),
-                ('rescan_id', models.TextField(blank=True, null=True)),
-                ('vuln_name', models.TextField(blank=True, null=True)),
-                ('severity', models.TextField(blank=True, null=True)),
-                ('severity_color', models.TextField(blank=True, null=True)),
-                ('vuln_url', models.TextField(blank=True, null=True)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('solution', models.TextField(blank=True, null=True)),
-                ('request_header', models.TextField(blank=True, null=True)),
-                ('response_header', models.TextField(blank=True, null=True)),
-                ('reference', models.TextField(blank=True, null=True)),
-                ('vuln_fixed', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("vuln_id", models.TextField(blank=True)),
+                ("scan_id", models.TextField(blank=True)),
+                ("rescan_id", models.TextField(blank=True, null=True)),
+                ("vuln_name", models.TextField(blank=True, null=True)),
+                ("severity", models.TextField(blank=True, null=True)),
+                ("severity_color", models.TextField(blank=True, null=True)),
+                ("vuln_url", models.TextField(blank=True, null=True)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("solution", models.TextField(blank=True, null=True)),
+                ("request_header", models.TextField(blank=True, null=True)),
+                ("response_header", models.TextField(blank=True, null=True)),
+                ("reference", models.TextField(blank=True, null=True)),
+                ("vuln_fixed", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='manual_scans_db',
+            name="manual_scans_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('scan_url', models.URLField(blank=True)),
-                ('scan_id', models.TextField(blank=True)),
-                ('total_vul', models.IntegerField(blank=True, null=True)),
-                ('high_vul', models.IntegerField(blank=True, null=True)),
-                ('medium_vul', models.IntegerField(blank=True, null=True)),
-                ('low_vul', models.IntegerField(blank=True, null=True)),
-                ('project_id', models.UUIDField(null=True)),
-                ('date_time', models.DateTimeField(null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("scan_url", models.URLField(blank=True)),
+                ("scan_id", models.TextField(blank=True)),
+                ("total_vul", models.IntegerField(blank=True, null=True)),
+                ("high_vul", models.IntegerField(blank=True, null=True)),
+                ("medium_vul", models.IntegerField(blank=True, null=True)),
+                ("low_vul", models.IntegerField(blank=True, null=True)),
+                ("project_id", models.UUIDField(null=True)),
+                ("date_time", models.DateTimeField(null=True)),
             ],
         ),
     ]

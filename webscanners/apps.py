@@ -20,4 +20,4 @@ from django.apps import AppConfig
 
 
 class WebscannersConfig(AppConfig):
-    name = 'webscanners'
+    name = "webscanners"

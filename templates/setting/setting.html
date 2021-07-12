@@ -1,0 +1,497 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+        <div class="row justify-content-md-center">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">JIRA Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                            <div class="card-body">
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA Server URL</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ jira_server }}" placeholder="JIRA Endpoint">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA Username</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ jira_username }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA API Token</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ jira_password }}">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="{% url 'jiraticketing:jira_setting' %}"
+                                                       role="button">Edit</a>
+
+                                                <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                     <input type="hidden" name="setting_of" value="jira">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
+                                                </form>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">ZAP Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                            <div class="card-body">
+                                                     <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Enabled</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ zap_enable }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">ZAP API Key</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" readonly class="form-control-plaintext"
+                                                                   value="{{ apikey }}" placeholder="ZAP API KEY">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">ZAP API Host</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ zapath }}" placeholder="ZAP API Endpoint Host">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">ZAP API Port</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ zap_port }}" placeholder="ZAP API Endpoint Port">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="{% url 'zapscanner:zap_settings' %}"
+                                                       role="button">Edit</a>
+
+                                                <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                    <input type="hidden" name="setting_of" value="zap">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
+                                                </form>
+                                            </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Burp Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                            <div class="card-body">
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Burp API Key</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" readonly class="form-control-plaintext"
+                                                                   value="{{ burp_api_key }}" placeholder="Enter Burp API KEY">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Burp Host</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ burp_path }}" placeholder="Enter Burp API Endpoint">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Burp API Port</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ burp_port }}" placeholder="Enter Burp API Port">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="{% url 'burpscanner:burp_setting' %}"
+                                                       role="button">Edit</a>
+                                                 <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                     <input type="hidden" name="setting_of" value="burp">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
+                                                </form>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Arachni Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                            <div class="card-body">
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Host</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ arachni_hosts }}" placeholder="Enter Arachni API Endpoint">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Port</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ arachni_ports }}" placeholder="Enter Arachni API Endpoint Port">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API User</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ arachni_user }}" placeholder="Enter Arachni API Endpoint User">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Pass</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" readonly class="form-control-plaintext"
+                                                                   value="{{ arachni_pass }}" placeholder="Enter Arachni API Endpoint Pass">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="{% url 'arachniscanner:arachni_settings' %}"
+                                                       role="button">Edit</a>
+                                                    <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                    <input type="hidden" name="setting_of" value="arachni">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
+                                                </form>
+
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">OpenVAS</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                            <div class="card-body">
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Host</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ lod_ov_host }}" placeholder="Enter OpenVAS Endpoint Host">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Port</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ lod_ov_port }}" placeholder="Enter OpenVAS Endpoint Port">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Username</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ lod_ov_user }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Password</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ lod_ov_pass }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Enabled</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ lod_ov_enabled }}">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="{% url 'networkscanners:openvas_setting' %}"
+                                                       role="button">Edit</a>
+                                                    <form method="POST" action="{% url 'webscanners:setting' %}">{% csrf_token %}
+                                                    <input type="hidden" name="setting_of" value="openvas">
+                                                    <button type="submit" class="btn btn-pinterest float-right">Test Connection</button>
+                                                </form>
+
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">NMAP Vulners</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Enabled</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ nv_enabled }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Version detection</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{{ nv_version }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Treat all hosts as online <small><em>Skip host discovery</em></small></label>
+
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ nv_online }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Set timing template (higher is faster)<small><em>Value between 0 and 5</em></small></label>
+
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{{ nv_timing }}">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="{% url 'networkscanners:nv_setting' %}"
+                                                       role="button">Edit</a>
+                                                </form>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Email Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Email Subject</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{% for data in all_email %}{{ data.subject }}{% endfor %}" placeholder="Type Email Subject">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">From Email</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly class="form-control-plaintext"
+                                                                   value="{% for data in all_email %}{{ data.message }}{% endfor %}" placeholder="Enter Email ID">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">To Email</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" readonly
+                                                                   class="form-control-plaintext"
+                                                                   value="{% for data in all_email %}{{ data.recipient_list }}{% endfor %}" PLACEHOLDER="Enter Email ID">
+                                                        </div>
+                                                    </div>
+                                                    <a class="btn btn-primary" href="{% url 'webscanners:email_setting' %}"
+                                                       role="button">Edit</a>
+                                                </form>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    {% if zap_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('ZAP Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if zap_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('ZAP Connection Found');
+            });
+    </script>
+    {% endif %}
+    {% if zap_info == 'Disabled' %}
+    <script>
+            $(window).load(function() {
+                toastr.warning('ZAP Connection Disabled');
+            });
+    </script>
+    {% endif %}
+    {% if burp_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('Burp Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if burp_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('Burp Connection Found');
+            });
+    </script>
+    {% endif %}
+
+    {% if openvas_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('OpenVAS Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if openvas_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('OpenVAS Connection Found');
+            });
+    </script>
+    {% endif %}
+
+    {% if arachni_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('Arachni Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if arachni_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('Arachni Connection Found');
+            });
+    </script>
+    {% endif %}
+
+    {% if jira_info == False %}
+    <script>
+            $(window).load(function() {
+                toastr.error('Jira Connection Not Found');
+            });
+    </script>
+    {% endif %}
+    {% if jira_info == True %}
+    <script>
+            $(window).load(function() {
+                toastr.success('Jira Connection Found');
+            });
+    </script>
+    {% endif %}
+
+{% endblock %}

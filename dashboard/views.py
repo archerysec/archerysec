@@ -19,78 +19,24 @@
 
 from __future__ import unicode_literals
 
-from django.db.models import Sum
-
-# Add your Web scanner db
-from webscanners.models import zap_scans_db, \
-    burp_scan_db, \
-    arachni_scan_db, \
-    netsparker_scan_db, \
-    webinspect_scan_db, \
-    zap_scan_results_db, \
-    burp_scan_result_db, \
-    arachni_scan_result_db, \
-    netsparker_scan_result_db, \
-    webinspect_scan_result_db, \
-    acunetix_scan_db, \
-    acunetix_scan_result_db
-
-# Add Pentest db
-from manual_scan.models import manual_scans_db, manual_scan_results_db
-
-# Add Static Scanners db models
-from staticscanners.models import dependencycheck_scan_db, \
-    bandit_scan_db, bandit_scan_results_db, \
-    findbugs_scan_db, \
-    dependencycheck_scan_results_db, \
-    findbugs_scan_results_db, \
-    clair_scan_results_db, \
-    clair_scan_db, \
-    trivy_scan_results_db, \
-    trivy_scan_db, \
-    npmaudit_scan_db, \
-    npmaudit_scan_results_db, \
-    nodejsscan_scan_db, \
-    nodejsscan_scan_results_db, \
-    semgrepscan_scan_db, \
-    semgrepscan_scan_results_db, \
-    tfsec_scan_db, \
-    tfsec_scan_results_db, \
-    whitesource_scan_db, \
-    whitesource_scan_results_db, \
-    checkmarx_scan_db, \
-    checkmarx_scan_results_db, \
-    gitlabsast_scan_db, \
-    gitlabsast_scan_results_db, \
-    gitlabsca_scan_db, \
-    gitlabsca_scan_results_db, \
-    gitlabcontainerscan_scan_db, \
-    gitlabcontainerscan_scan_results_db, \
-    twistlock_scan_db, \
-    twistlock_scan_results_db, \
-    brakeman_scan_db, \
-    brakeman_scan_results_db
-
-
-# Network Scanners db models   
-from networkscanners.models import openvas_scan_db, \
-    nessus_scan_db, \
-    ov_scan_result_db, \
-    nessus_report_db, \
-    nessus_scan_results_db
-from compliance.models import inspec_scan_db, dockle_scan_db
-from projects.models import project_db
-from django.shortcuts import render, HttpResponse, HttpResponseRedirect
-from itertools import chain
 import datetime
-from webscanners.resources import AllResource
-from notifications.models import Notification
+from itertools import chain
+
 from django.contrib.auth import user_logged_in
 from django.contrib.auth.models import User
+from django.db.models import Sum
+from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
+from notifications.models import Notification
+
+from compliance.models import dockle_scan_db, inspec_scan_db
 from dashboard.scans_data import scans_query
-from projects.models import Month, MonthSqlite
-from projects.models import month_db
+from manual_scan.models import manual_scan_results_db, manual_scans_db
+from projects.models import Month, MonthSqlite, month_db, project_db
+from staticscanners.models import (StaticScanResultsDb, StaticScansDb)
+from webscanners.models import (WebScanResultsDb, WebScansDb)
+from networkscanners.models import (NetworkScanResultsDb, NetworkScanDb)
+from webscanners.resources import AllResource
 
 # Create your views here.
 chart = []
@@ -163,13 +109,13 @@ def trend_update(username):
         total_medium = scans_query.all_vuln(username=username, project_id=proj_id, query='medium')
         total_low = scans_query.all_vuln(username=username, project_id=proj_id, query='low')
 
-        total_open = scans_query.all_vuln_count_data(username, proj_id, query='Open')
-        total_close = scans_query.all_vuln_count_data(username, proj_id, query='Closed')
-        total_false = scans_query.all_vuln_count_data(username, proj_id, query='false')
+        total_open = scans_query.all_vuln_count_data(username=username, project_id=proj_id, query='Open')
+        total_close = scans_query.all_vuln_count_data(username=username, project_id=proj_id, query='Closed')
+        total_false = scans_query.all_vuln_count_data(username=username, project_id=proj_id, query='false')
 
-        total_net = scans_query.all_net(username, proj_id, query='total')
-        total_web = scans_query.all_web(username, proj_id, query='total')
-        total_static = scans_query.all_static(username, proj_id, query='total')
+        total_net = scans_query.all_net(username=username, project_id=proj_id, query='total')
+        total_web = scans_query.all_web(username=username, project_id=proj_id, query='total')
+        total_static = scans_query.all_static(username=username, project_id=proj_id, query='total')
 
         high_net = scans_query.all_net(username, proj_id, query='high')
         high_web = scans_query.all_web(username, proj_id, query='high')
@@ -226,7 +172,8 @@ def dashboard(request):
     user = user_logged_in
     all_notify = Notification.objects.unread()
 
-    all_month_data_display = month_db.objects.filter(username=username).values('month', 'high', 'medium', 'low').distinct()
+    all_month_data_display = month_db.objects.filter(username=username).values('month', 'high', 'medium',
+                                                                               'low').distinct()
 
     return render(request,
                   'dashboard/index.html',
@@ -297,51 +244,12 @@ def proj_data(request):
         project_id = ''
 
     project_dat = project_db.objects.filter(username=username, project_id=project_id)
-
-    # Web scanners project data <scannername>
-    burp = burp_scan_db.objects.filter(username=username, project_id=project_id)
-    zap = zap_scans_db.objects.filter(username=username, project_id=project_id)
-    arachni = arachni_scan_db.objects.filter(username=username, project_id=project_id)
-    webinspect = webinspect_scan_db.objects.filter(username=username, project_id=project_id)
-    netsparker = netsparker_scan_db.objects.filter(username=username, project_id=project_id)
-    acunetix = acunetix_scan_db.objects.filter(username=username, project_id=project_id)
-
-    # Static scanners project data <scannername>
-    dependency_check = dependencycheck_scan_db.objects.filter(username=username, project_id=project_id)
-    findbugs = findbugs_scan_db.objects.filter(username=username, project_id=project_id)
-    clair = clair_scan_db.objects.filter(username=username, project_id=project_id)
-    trivy = trivy_scan_db.objects.filter(username=username, project_id=project_id)
-    gitlabsast = gitlabsast_scan_db.objects.filter(username=username, project_id=project_id)
-    gitlabcontainerscan = gitlabcontainerscan_scan_db.objects.filter(username=username, project_id=project_id)
-    gitlabsca = gitlabsca_scan_db.objects.filter(username=username, project_id=project_id)
-    npmaudit = npmaudit_scan_db.objects.filter(username=username, project_id=project_id)
-    nodejsscan = nodejsscan_scan_db.objects.filter(username=username, project_id=project_id)
-    semgrepscan = semgrepscan_scan_db.objects.filter(username=username, project_id=project_id)
-    tfsec = tfsec_scan_db.objects.filter(username=username, project_id=project_id)
-    whitesource = whitesource_scan_db.objects.filter(username=username, project_id=project_id)
-    checkmarx = checkmarx_scan_db.objects.filter(username=username, project_id=project_id)
-    bandit = bandit_scan_db.objects.filter(username=username, project_id=project_id)
-    twistlock = twistlock_scan_db.objects.filter(username=username, project_id=project_id)
-    brakeman = brakeman_scan_db.objects.filter(username=username, project_id=project_id)
-
-    web_scan_dat = chain(burp, zap, arachni, webinspect, netsparker, acunetix)
-
-    # add you scanner into chain <scannername>
-    static_scan = chain(dependency_check, findbugs, clair, trivy, gitlabsast, gitlabcontainerscan, gitlabsca, npmaudit,
-                        nodejsscan, semgrepscan, tfsec, whitesource, checkmarx, bandit, twistlock, brakeman)
-
-    
-    openvas_dat = openvas_scan_db.objects.filter(username=username, project_id=project_id)
-    nessus_dat = nessus_scan_db.objects.filter(username=username, project_id=project_id)
-
-    network_dat = chain(openvas_dat, nessus_dat)
-
+    web_scan_dat = WebScansDb.objects.filter(username=username, project_id=project_id)
+    static_scan = StaticScansDb.objects.filter(username=username, project_id=project_id)
+    network_dat = NetworkScanDb.objects.filter(username=username, project_id=project_id)
     inspec_dat = inspec_scan_db.objects.filter(username=username, project_id=project_id)
-
     dockle_dat = dockle_scan_db.objects.filter(username=username, project_id=project_id)
-
     compliance_dat = chain(inspec_dat, dockle_dat)
-
     all_comp_inspec = inspec_scan_db.objects.filter(username=username, project_id=project_id)
 
     all_comp_dockle = inspec_scan_db.objects.filter(username=username, project_id=project_id)
@@ -359,8 +267,6 @@ def proj_data(request):
     total = all_high, all_medium, all_low
 
     tota_vuln = sum(total)
-
-    # add your scanner into render <scannername>
 
     return render(request,
                   'dashboard/project.html',
@@ -387,76 +293,8 @@ def proj_data(request):
                                                                query='medium'),
                    'all_static_low': scans_query.all_static(username=username, project_id=project_id, query='low'),
                    'static_scan': static_scan,
-                   'zap': zap,
-                   'burp': burp,
-                   'arachni': arachni,
-                   'webinspect': webinspect,
-                   'netsparker': netsparker,
-                   'acunetix': acunetix,
-                   'dependency_check': dependency_check,
-                   'findbugs': findbugs,
-                   'bandit': bandit,
-                   'clair': clair,
-                   'trivy': trivy,
-                   'gitlabsast': gitlabsast,
-                   'twistlock': twistlock,
-                   'brakeman': brakeman,
-                   'gitlabcontainerscan': gitlabcontainerscan,
-                   'gitlabsca': gitlabsca,
-                   'npmaudit': npmaudit,
-                   'nodejsscan': nodejsscan,
-                   'semgrepscan': semgrepscan,
-                   'tfsec': tfsec,
-                   'whitesource': whitesource,
-                   'checkmarx': checkmarx,
                    'pentest': pentest,
                    'network_dat': network_dat,
-                   'all_zap_scan': int(scans_query.all_zap(username=username, project_id=project_id, query='total')),
-                   'all_burp_scan': int(scans_query.all_burp(username=username, project_id=project_id, query='total')),
-                   # add your scanner name <scannername>
-                   'all_arachni_scan': int(
-                       scans_query.all_arachni(username=username, project_id=project_id, query='total')),
-                   'all_acunetix_scan': int(
-                       scans_query.all_acunetix(username=username, project_id=project_id, query='total')),
-                   'all_netsparker_scan': int(
-                       scans_query.all_netsparker(username=username, project_id=project_id, query='total')),
-                   'all_openvas_scan': int(
-                       scans_query.all_openvas(username=username, project_id=project_id, query='total')),
-                   'all_nessus_scan': int(
-                       scans_query.all_nessus(username=username, project_id=project_id, query='total')),
-                   'all_dependency_scan': int(
-                       scans_query.all_dependency(username=username, project_id=project_id, query='total')),
-                   'all_findbugs_scan': int(
-                       scans_query.all_findbugs(username=username, project_id=project_id, query='total')),
-                   'all_clair_scan': int(
-                       scans_query.all_clair(username=username, project_id=project_id, query='total')),
-                   'all_trivy_scan': int(
-                       scans_query.all_trivy(username=username, project_id=project_id, query='total')),
-                   'all_gitlabsast_scan': int(
-                       scans_query.all_gitlabsast(username=username, project_id=project_id, query='total')),
-                    'all_twistlock_scan': int(
-                       scans_query.all_twistlock(username=username, project_id=project_id, query='total')),
-                    'all_brakeman_scan': int(
-                       scans_query.all_brakeman(username=username, project_id=project_id, query='total')),
-                   'all_gitlabcontainerscan_scan': int(
-                       scans_query.all_gitlabcontainerscan(username=username, project_id=project_id, query='total')),
-                   'all_gitlabsca_scan': int(
-                       scans_query.all_gitlabsca(username=username, project_id=project_id, query='total')),
-                   'all_npmaudit_scan': int(
-                       scans_query.all_npmaudit(username=username, project_id=project_id, query='total')),
-                   'all_nodejsscan_scan': int(
-                       scans_query.all_nodejsscan(username=username, project_id=project_id, query='total')),
-                   'all_semgrepscan_scan': int(
-                       scans_query.all_semgrepscan(username=username, project_id=project_id, query='total')),
-                   'all_tfsec_scan': int(
-                       scans_query.all_tfsec(username=username, project_id=project_id, query='total')),
-                   'all_whitesource_scan': int(
-                       scans_query.all_whitesource(username=username, project_id=project_id, query='total')),
-                   'all_checkmarx_scan': int(
-                       scans_query.all_checkmarx(username=username, project_id=project_id, query='total')),
-                   'all_webinspect_scan': int(
-                       scans_query.all_webinspect(username=username, project_id=project_id, query='total')),
-
                    'all_compliance_failed': scans_query.all_compliance(username=username, project_id=project_id,
                                                                        query='failed'),
                    'all_compliance_passed': scans_query.all_compliance(username=username, project_id=project_id,
@@ -465,232 +303,11 @@ def proj_data(request):
                                                                         query='skipped'),
                    'total_compliance': scans_query.all_compliance(username=username, project_id=project_id,
                                                                   query='total'),
-
-                   'openvas_dat': openvas_dat,
-                   'nessus_dat': nessus_dat,
-
                    'all_compliance': all_compliance_seg,
 
                    'compliance_dat': compliance_dat,
                    'inspec_dat': inspec_dat,
                    'dockle_dat': dockle_dat,
-
-                   'all_zap_high': zap_scans_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_zap_low': zap_scans_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_zap_medium': zap_scans_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_webinspect_high': webinspect_scan_db.objects.filter(username=username,
-                                                                            project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_webinspect_low': webinspect_scan_db.objects.filter(username=username,
-                                                                           project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_webinspect_medium': webinspect_scan_db.objects.filter(username=username,
-                                                                              project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_acunetix_high': acunetix_scan_db.objects.filter(username=username,
-                                                                        project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_acunetix_low': acunetix_scan_db.objects.filter(username=username,
-                                                                       project_id=project_id).aggregate(Sum('low_vul')),
-                   'all_acunetix_medium': acunetix_scan_db.objects.filter(username=username,
-                                                                          project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_burp_high': burp_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_burp_low': burp_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_burp_medium': burp_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_arachni_high': arachni_scan_db.objects.filter(username=username,
-                                                                      project_id=project_id).aggregate(Sum('high_vul')),
-                   'all_arachni_low': arachni_scan_db.objects.filter(username=username,
-                                                                     project_id=project_id).aggregate(Sum('low_vul')),
-                   'all_arachni_medium': arachni_scan_db.objects.filter(username=username,
-                                                                        project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_netsparker_high': netsparker_scan_db.objects.filter(username=username,
-                                                                            project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_netsparker_low': netsparker_scan_db.objects.filter(username=username,
-                                                                           project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_netsparker_medium': netsparker_scan_db.objects.filter(username=username,
-                                                                              project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_openvas_high': openvas_scan_db.objects.filter(username=username,
-                                                                      project_id=project_id).aggregate(Sum('high_vul')),
-                   'all_openvas_low': openvas_scan_db.objects.filter(username=username,
-                                                                     project_id=project_id).aggregate(Sum('low_vul')),
-                   'all_openvas_medium': openvas_scan_db.objects.filter(username=username,
-                                                                        project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_nessus_high': nessus_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('total_high')),
-                   'all_nessus_low': nessus_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('total_low')),
-                   'all_nessus_medium': nessus_scan_db.objects.filter(username=username,
-                                                                      project_id=project_id).aggregate(
-                       Sum('total_medium')),
-
-                   'all_dependency_high': dependencycheck_scan_db.objects.filter(username=username,
-                                                                                 project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_dependency_low': dependencycheck_scan_db.objects.filter(username=username,
-                                                                                project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_dependency_medium': dependencycheck_scan_db.objects.filter(username=username,
-                                                                                   project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_findbugs_high': findbugs_scan_db.objects.filter(username=username,
-                                                                        project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_findbugs_low': findbugs_scan_db.objects.filter(username=username,
-                                                                       project_id=project_id).aggregate(Sum('low_vul')),
-                   'all_findbugs_medium': findbugs_scan_db.objects.filter(username=username,
-                                                                          project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_bandit_high': bandit_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_bandit_low': bandit_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_bandit_medium': bandit_scan_db.objects.filter(username=username,
-                                                                      project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_clair_high': clair_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_clair_low': clair_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_clair_medium': clair_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_trivy_high': trivy_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_trivy_low': trivy_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_trivy_medium': trivy_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-                    
-                    # add your scanner accrodingly <scannername>
-
-                   'all_gitlabsast_high': gitlabsast_scan_db.objects.filter(username=username,
-                                                                            project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_gitlabsast_low': gitlabsast_scan_db.objects.filter(username=username,
-                                                                           project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_gitlabsast_medium': gitlabsast_scan_db.objects.filter(username=username,
-                                                                              project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                    'all_twistlock_high': twistlock_scan_db.objects.filter(username=username,
-                                                                            project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_twistlock_low': twistlock_scan_db.objects.filter(username=username,
-                                                                           project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_twistlock_medium': twistlock_scan_db.objects.filter(username=username,
-                                                                              project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-                    
-                    'all_brakeman_high': brakeman_scan_db.objects.filter(username=username,
-                                                                            project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_brakeman_low': brakeman_scan_db.objects.filter(username=username,
-                                                                           project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_brakeman_medium': brakeman_scan_db.objects.filter(username=username,
-                                                                              project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_gitlabcontainerscan_high': gitlabcontainerscan_scan_db.objects.filter(username=username,
-                                                                                              project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_gitlabcontainerscan_low': gitlabcontainerscan_scan_db.objects.filter(username=username,
-                                                                                             project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_gitlabcontainerscan_medium': gitlabcontainerscan_scan_db.objects.filter(username=username,
-                                                                                                project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_gitlabsca_high': gitlabsca_scan_db.objects.filter(username=username,
-                                                                          project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_gitlabsca_low': gitlabsca_scan_db.objects.filter(username=username,
-                                                                         project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_gitlabsca_medium': gitlabsca_scan_db.objects.filter(username=username,
-                                                                            project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_npmaudit_high': npmaudit_scan_db.objects.filter(username=username,
-                                                                        project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_npmaudit_low': npmaudit_scan_db.objects.filter(username=username,
-                                                                       project_id=project_id).aggregate(Sum('low_vul')),
-                   'all_npmaudit_medium': npmaudit_scan_db.objects.filter(username=username,
-                                                                          project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_nodejsscan_high': nodejsscan_scan_db.objects.filter(username=username,
-                                                                            project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_nodejsscan_low': nodejsscan_scan_db.objects.filter(username=username,
-                                                                           project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_nodejsscan_medium': nodejsscan_scan_db.objects.filter(username=username,
-                                                                              project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_semgrepscan_high': semgrepscan_scan_db.objects.filter(username=username,
-                                                                              project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_semgrepscan_low': semgrepscan_scan_db.objects.filter(username=username,
-                                                                             project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_semgrepscan_medium': semgrepscan_scan_db.objects.filter(username=username,
-                                                                                project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_tfsec_high': tfsec_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_tfsec_low': tfsec_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_tfsec_medium': tfsec_scan_db.objects.filter(username=username, project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_whitesource_high': whitesource_scan_db.objects.filter(username=username,
-                                                                              project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_whitesource_low': whitesource_scan_db.objects.filter(username=username,
-                                                                             project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_whitesource_medium': whitesource_scan_db.objects.filter(username=username,
-                                                                                project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
-                   'all_checkmarx_high': checkmarx_scan_db.objects.filter(username=username,
-                                                                          project_id=project_id).aggregate(
-                       Sum('high_vul')),
-                   'all_checkmarx_low': checkmarx_scan_db.objects.filter(username=username,
-                                                                         project_id=project_id).aggregate(
-                       Sum('low_vul')),
-                   'all_checkmarx_medium': checkmarx_scan_db.objects.filter(username=username,
-                                                                            project_id=project_id).aggregate(
-                       Sum('medium_vul')),
-
                    'all_closed_vuln': scans_query.all_vuln_count_data(username, project_id, query='Closed'),
                    'all_false_positive': scans_query.all_vuln_count_data(username, project_id, query='false'),
                    'message': all_notify
@@ -699,30 +316,10 @@ def proj_data(request):
 
 def all_high_vuln(request):
     # add your scanner gloabl variable <scannername>
-    zap_all_high = ''
-    arachni_all_high = ''
-    webinspect_all_high = ''
-    netsparker_all_high = ''
-    acunetix_all_high = ''
-    burp_all_high = ''
-    dependencycheck_all_high = ''
-    findbugs_all_high = ''
-    bandit_all_high = ''
-    clair_all_high = ''
-    trivy_all_high = ''
-    gitlabsast_all_high = ''
-    twistlock_all_high = ''
-    gitlabcontainerscan_all_high = ''
-    gitlabsca_all_high = ''
-    npmaudit_all_high = ''
-    nodejsscan_all_high = ''
-    semgrepscan_all_high = ''
-    tfsec_all_high = ''
-    whitesource_all_high = ''
-    checkmarx_all_high = ''
-    openvas_all_high = ''
-    nessus_all_high = ''
-    brakeman_all_high = ''
+    web_all_high = ''
+    sast_all_high = ''
+    net_all_high = ''
+    pentest_all_high = ''
 
     username = request.user.username
     all_notify = Notification.objects.unread()
@@ -732,286 +329,56 @@ def all_high_vuln(request):
     else:
         project_id = ''
         severity = ''
-    # add your scanner name here <scannername>
     if severity == 'All':
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, false_positive='No')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, false_positive='No')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, false_positive='No')
-
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, false_positive='No')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, false_positive='No')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, false_positive='No')
-
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  false_positive='No')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, false_positive='No')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, false_positive='No')
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          false_positive='No')
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, false_positive='No')
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, false_positive='No')
-
+        web_all_high = WebScanResultsDb.objects.filter(username=username, false_positive='No')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username, false_positive='No')
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username, false_positive='No')
         pentest_all_high = manual_scan_results_db.objects.filter(username=username)
 
-    # add your scanner name here <scannername>
     elif severity == 'All_Closed':
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, vuln_status='Closed')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, vuln_status='Closed')
-
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, vuln_status='Closed')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, vuln_status='Closed')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, vuln_status='Closed')
-
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  vuln_status='Closed')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          vuln_status='Closed')
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, vuln_status='Closed')
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, vuln_status='Closed')
-
+        web_all_high = WebScanResultsDb.objects.filter(username=username, vuln_status='Closed')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username, vuln_status='Closed')
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username, vuln_status='Closed')
         pentest_all_high = manual_scan_results_db.objects.filter(username=username)
 
     # add your scanner name here <scannername>
     elif severity == 'All_False_Positive':
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, false_positive='Yes')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, false_positive='Yes')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, false_positive='Yes')
-
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, false_positive='Yes')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, false_positive='Yes')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, false_positive='Yes')
-
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  false_positive='Yes')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, false_positive='Yes')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, false_positive='Yes')
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          false_positive='Yes')
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, false_positive='Yes')
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, false_positive='Yes')
-
+        web_all_high = WebScanResultsDb.objects.filter(username=username, false_positive='Yes')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username, false_positive='Yes')
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username, false_positive='Yes')
         pentest_all_high = manual_scan_results_db.objects.filter(username=username)
 
     elif severity == 'Network':
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, false_positive='No')
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, false_positive='No')
-        pentest_all_high = manual_scan_results_db.objects.filter(username=username, pentest_type='network')
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username, false_positive='No')
 
     elif severity == 'Web':
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, false_positive='No')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, false_positive='No')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, false_positive='No')
-
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, false_positive='No')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, false_positive='No')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, false_positive='No')
+        web_all_high = WebScanResultsDb.objects.filter(username=username, false_positive='No')
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, pentest_type='web')
 
     # add your scanner name here <scannername>
     elif severity == 'Static':
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  false_positive='No')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, false_positive='No')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, false_positive='No')
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          false_positive='No')
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, false_positive='No')
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, false_positive='No')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username, false_positive='No')
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, pentest_type='static')
-
 
     elif severity == 'High':
 
         # add your scanner name here <scannername>
 
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          risk='High',
-                                                          false_positive='No')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                 severity='High',
-                                                                 false_positive='No')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       severity__in=[
-                                                                           'Critical', 'High'],
-                                                                       false_positive='No')
-
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       severity='High',
-                                                                       false_positive='No')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                   VulnSeverity='High',
-                                                                   false_positive='No')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
+        web_all_high = WebScanResultsDb.objects.filter(username=username,
+                                                       project_id=project_id,
+                                                       severity='High',
+                                                       false_positive='No')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
+                                                           severity='High',
+                                                           false_positive='No')
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
                                                            severity='High',
                                                            false_positive='No')
 
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  project_id=project_id,
-                                                                                  severity='High',
-                                                                                  false_positive='No')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='High',
-                                                                    project_id=project_id,
-                                                                    false_positive='No')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='HIGH',
-                                                                project_id=project_id,
-                                                                false_positive='No')
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='High', project_id=project_id,
-                                                              false_positive='No')
-
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='High', project_id=project_id,
-                                                              false_positive='No')
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, Severity='High',
-                                                                        project_id=project_id,
-                                                                        false_positive='No')
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='High',
-                                                                        project_id=project_id,
-                                                                        false_positive='No')
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, severity='High',
-                                                                        project_id=project_id,
-                                                                        false_positive='No')
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          Severity='High',
-                                                                                          project_id=project_id,
-                                                                                          false_positive='No')
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, Severity='High',
-                                                                      project_id=project_id,
-                                                                      false_positive='No')
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='High',
-                                                                    project_id=project_id,
-                                                                    false_positive='No')
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='High',
-                                                                        project_id=project_id,
-                                                                        false_positive='No')
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='High',
-                                                                          project_id=project_id,
-                                                                          false_positive='No')
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='High', project_id=project_id,
-                                                              false_positive='No')
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='High',
-                                                                          project_id=project_id,
-                                                                          false_positive='No')
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='High',
-                                                                      project_id=project_id,
-                                                                      false_positive='No')
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='High', project_id=project_id,
-                                                            false_positive='No')
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='High',
-                                                                project_id=project_id,
-                                                                false_positive='No')
-
-        pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='High',
+        pentest_all_high = manual_scan_results_db.objects.filter(username=username,
+                                                                 severity='High',
                                                                  project_id=project_id)
 
     elif severity == 'Medium':
@@ -1020,69 +387,15 @@ def all_high_vuln(request):
 
         # add your scanner name here <scannername>
 
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          risk='Medium')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                 severity='Medium')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       severity__in=[
-                                                                           'Medium'])
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       severity='Medium')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                   VulnSeverity='Medium')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
+        web_all_high = WebScanResultsDb.objects.filter(username=username,
+                                                       project_id=project_id,
+                                                       severity='Medium')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
                                                            severity='Medium')
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  project_id=project_id,
-                                                                                  severity='Medium')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Medium',
-                                                                    project_id=project_id)
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='MEDIUM',
-                                                                project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Medium',
-                                                              project_id=project_id)
-
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Medium',
-                                                              project_id=project_id)
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, Severity='Medium',
-                                                                        project_id=project_id)
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='Medium',
-                                                                        project_id=project_id)
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, severity='Medium',
-        project_id=project_id)
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          Severity='Medium',
-                                                                                          project_id=project_id)
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, Severity='Medium',
-                                                                      project_id=project_id)
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Medium',
-                                                                    project_id=project_id)
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Medium',
-                                                                        project_id=project_id)
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='Medium',
-                                                                          project_id=project_id)
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Medium',
-                                                              project_id=project_id)
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Medium',
-                                                                          project_id=project_id)
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='Medium',
-                                                                      project_id=project_id)
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Medium', project_id=project_id)
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='Medium',
-                                                                project_id=project_id)
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
+                                                           severity='Medium')
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Medium',
                                                                  project_id=project_id)
@@ -1091,262 +404,62 @@ def all_high_vuln(request):
     elif severity == 'Low':
         # add your scanner name here <scannername>
 
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          risk='Low')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                 severity='Low')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       severity__in=[
-                                                                           'Low'])
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       severity='Low')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                   VulnSeverity='Low')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
+        web_all_high = WebScanResultsDb.objects.filter(username=username,
+                                                       project_id=project_id,
+                                                       severity='Low')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
                                                            severity='Low')
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  project_id=project_id,
-                                                                                  severity='Low')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, risk='Low',
-                                                                    project_id=project_id)
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, issue_severity='LOW',
-                                                                project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, Severity='Low', project_id=project_id)
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
+                                                           severity='Low')
 
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, Severity='Low', project_id=project_id)
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, Severity='Low',
-                                                                        project_id=project_id)
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, Severity='Low',
-                                                                        project_id=project_id)
-        
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, severity='Low',
-                                                                        project_id=project_id)
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          Severity='Low',
-                                                                                          project_id=project_id)
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, Severity='Low',
-                                                                      project_id=project_id)
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, severity='Low',
-                                                                    project_id=project_id)
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, severity='Low',
-                                                                        project_id=project_id)
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, severity='Low',
-                                                                          project_id=project_id)
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, severity='Low', project_id=project_id)
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, severity='Low',
-                                                                          project_id=project_id)
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, severity='Low',
-                                                                      project_id=project_id)
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, threat='Low', project_id=project_id)
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, risk_factor='Low',
-                                                                project_id=project_id)
-
-        pentest_all_high = manual_scan_results_db.objects.filter(username=username, severity='Low',
+        pentest_all_high = manual_scan_results_db.objects.filter(username=username,
+                                                                 severity='Low',
                                                                  project_id=project_id)
 
     elif severity == 'Total':
         # add your scanner name here <scannername>
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          )
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                 )
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       )
-
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       )
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                   )
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
+        web_all_high = WebScanResultsDb.objects.filter(username=username,
+                                                       project_id=project_id,)
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
                                                            )
-
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  project_id=project_id,
-                                                                                  )
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id)
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          project_id=project_id)
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id)
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id)
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id)
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username,
+                                                              project_id=project_id,
+                                                              )
 
         pentest_all_high = manual_scan_results_db.objects.filter(username=username, project_id=project_id)
 
     elif severity == 'False':
         # add your scanner name here <scannername>
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          false_positive='Yes')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                 false_positive='Yes')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       false_positive='Yes')
-
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       false_positive='Yes')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                   false_positive='Yes')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
+        web_all_high = WebScanResultsDb.objects.filter(username=username,
+                                                       project_id=project_id,
+                                                       false_positive='Yes')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
                                                            false_positive='Yes')
-
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  project_id=project_id,
-                                                                                  false_positive='Yes')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                    false_positive='Yes')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, false_positive='Yes',
-                                                                project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id,
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username,
+                                                              project_id=project_id,
                                                               false_positive='Yes')
-
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                              false_positive='Yes')
-
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                        false_positive='Yes')
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                        false_positive='Yes')
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                        false_positive='Yes')
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          project_id=project_id,
-                                                                                          false_positive='Yes')
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                      false_positive='Yes')
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                    false_positive='Yes')
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                        false_positive='Yes')
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                          false_positive='Yes')
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                              false_positive='Yes')
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                          false_positive='Yes')
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                      false_positive='Yes')
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                            false_positive='Yes')
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                false_positive='Yes')
 
         pentest_all_high = ''
 
     elif severity == 'Close':
         # add your scanner name here <scannername>
-        zap_all_high = zap_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                          vuln_status='Closed')
-        arachni_all_high = arachni_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                 vuln_status='Closed')
-        webinspect_all_high = webinspect_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       vuln_status='Closed')
-
-        netsparker_all_high = netsparker_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                       vuln_status='Closed')
-        acunetix_all_high = acunetix_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                                   vuln_status='Closed')
-        burp_all_high = burp_scan_result_db.objects.filter(username=username, project_id=project_id,
+        web_all_high = WebScanResultsDb.objects.filter(username=username,
+                                                       project_id=project_id,
+                                                       vuln_status='Closed')
+        sast_all_high = StaticScanResultsDb.objects.filter(username=username,
+                                                           project_id=project_id,
                                                            vuln_status='Closed')
-
-        dependencycheck_all_high = dependencycheck_scan_results_db.objects.filter(username=username,
-                                                                                  project_id=project_id,
-                                                                                  vuln_status='Closed')
-        findbugs_all_high = findbugs_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                    vuln_status='Closed')
-        bandit_all_high = bandit_scan_results_db.objects.filter(username=username, vuln_status='Closed',
-                                                                project_id=project_id)
-        clair_all_high = clair_scan_results_db.objects.filter(username=username, project_id=project_id,
+        net_all_high = NetworkScanResultsDb.objects.filter(username=username,
+                                                              project_id=project_id,
                                                               vuln_status='Closed')
 
-        trivy_all_high = trivy_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                              vuln_status='Closed')
+        pentest_all_high = manual_scan_results_db.objects.filter(username=username,
+                                                                 project_id=project_id,
 
-        gitlabsast_all_high = gitlabsast_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                        vuln_status='Closed')
-
-        twistlock_all_high = twistlock_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                        vuln_status='Closed')
-
-        brakeman_all_high = brakeman_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                        vuln_status='Closed')
-
-        gitlabcontainerscan_all_high = gitlabcontainerscan_scan_results_db.objects.filter(username=username,
-                                                                                          project_id=project_id,
-                                                                                          vuln_status='Closed')
-
-        gitlabsca_all_high = gitlabsca_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                      vuln_status='Closed')
-
-        npmaudit_all_high = npmaudit_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                    vuln_status='Closed')
-
-        nodejsscan_all_high = nodejsscan_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                        vuln_status='Closed')
-
-        semgrepscan_all_high = semgrepscan_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                          vuln_status='Closed')
-
-        tfsec_all_high = tfsec_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                              vuln_status='Closed')
-
-        whitesource_all_high = whitesource_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                          vuln_status='Closed')
-
-        checkmarx_all_high = checkmarx_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                      vuln_status='Closed')
-
-        openvas_all_high = ov_scan_result_db.objects.filter(username=username, project_id=project_id,
-                                                            vuln_status='Closed')
-        nessus_all_high = nessus_scan_results_db.objects.filter(username=username, project_id=project_id,
-                                                                vuln_status='Closed')
-
-        pentest_all_high = manual_scan_results_db.objects.filter(username=username, project_id=project_id,
                                                                  vuln_status='Closed')
 
     else:
@@ -1355,33 +468,12 @@ def all_high_vuln(request):
     # add your scanner name here <scannername>
     return render(request,
                   'dashboard/all_high_vuln.html',
-                  {'zap_all_high': zap_all_high,
-                   'arachni_all_high': arachni_all_high,
-                   'webinspect_all_high': webinspect_all_high,
-                   'netsparker_all_high': netsparker_all_high,
-                   'acunetix_all_high': acunetix_all_high,
-                   'burp_all_high': burp_all_high,
-                   'dependencycheck_all_high': dependencycheck_all_high,
-                   'findbugs_all_high': findbugs_all_high,
-                   'bandit_all_high': bandit_all_high,
-                   'clair_all_high': clair_all_high,
-                   'trivy_all_high': trivy_all_high,
-                   'gitlabsast_all_high': gitlabsast_all_high,
-                   'twistlock_all_high': twistlock_all_high,
-                   'brakeman_all_high': brakeman_all_high,
-                   'gitlabcontainerscan_all_high': gitlabcontainerscan_all_high,
-                   'gitlabsca_all_high': gitlabsca_all_high,
-                   'npmaudit_all_high': npmaudit_all_high,
-                   'nodejsscan_all_high': nodejsscan_all_high,
-                   'semgrepscan_all_high': semgrepscan_all_high,
-                   'tfsec_all_high': tfsec_all_high,
-                   'whitesource_all_high': whitesource_all_high,
-                   'checkmarx_all_high': checkmarx_all_high,
-                   'openvas_all_high': openvas_all_high,
-                   'nessus_all_high': nessus_all_high,
+                  {'web_all_high': web_all_high,
+                   'sast_all_high': sast_all_high,
+                   'net_all_high': net_all_high,
+                   'pentest_all_high': pentest_all_high,
                    'project_id': project_id,
                    'severity': severity,
-                   'pentest_all_high': pentest_all_high,
                    'message': all_notify,
                    })
 

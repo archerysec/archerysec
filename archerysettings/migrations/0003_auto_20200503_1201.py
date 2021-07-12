@@ -6,38 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('archerysettings', '0002_auto_20191006_0519'),
+        ("archerysettings", "0002_auto_20191006_0519"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='arachni_settings_db',
-            name='username',
+            model_name="arachni_settings_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='burp_setting_db',
-            name='username',
+            model_name="burp_setting_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='email_db',
-            name='username',
+            model_name="email_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='nmap_vulners_setting_db',
-            name='username',
+            model_name="nmap_vulners_setting_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='openvas_setting_db',
-            name='username',
+            model_name="openvas_setting_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
         migrations.AddField(
-            model_name='zap_settings_db',
-            name='username',
+            model_name="zap_settings_db",
+            name="username",
             field=models.CharField(max_length=256, null=True),
         ),
     ]

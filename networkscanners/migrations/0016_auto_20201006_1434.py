@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0015_auto_20201006_1429'),
+        ("networkscanners", "0015_auto_20201006_1429"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='nessus_scan_db',
-            old_name='total_vuln',
-            new_name='total_vul',
+            model_name="nessus_scan_db",
+            old_name="total_vuln",
+            new_name="total_vul",
         ),
     ]

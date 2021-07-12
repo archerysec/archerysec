@@ -1,0 +1,98 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Upload Reports</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="form-group">
+                                <form class="form-horizontal" method="POST" enctype="multipart/form-data"
+                                      action="{% url 'staticscanners:report_import' %}">{% csrf_token %}
+                                    <div class="card-body">
+                                        <h5 class="card-title"></h5>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 m-t-15">Project</label>
+                                            <div class="col-md-9">
+                                                <select id="project_id" name="project_id"
+                                                        class="select2 form-control custom-select"
+                                                        style="width: 100%; height:36px;">
+                                                    {% for data in all_project %}
+                                                    <option value="{{data.project_id}}">{{data.project_name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-3 m-t-15">Scanner</label>
+                                            <div class="col-md-9">
+                                                <select id="scanner" name="scanner"
+                                                        class="select2 form-control custom-select"
+                                                        style="width: 100%; height:36px;">
+                                                    <!-- add scanners value -->
+                                                    <option value="bandit_scan">Bandit Scanner</option>
+                                                    <option value="retirejs_scan">RetireJS Scanner</option>
+                                                    <option value="clair_scan">Clair Scanner</option>
+                                                    <option value="trivy_scan">Trivy Scanner</option>
+                                                    <option value="npmaudit_scan">npm-audit Scanner</option>
+                                                    <option value="nodejsscan_scan">Nodejs Scanner</option>
+                                                     <option value="tfsec_scan">tfsec Scanner</option>
+                                                     <option value="whitesource_scan">Whitesource Scanner</option>
+                                                    <option value="inspec_scan">Inspec Scanner</option>
+                                                    <option value="dockle_scan">Dockle Scanner</option>
+                                                    <option value="gitlabsast_scan">GitLab SAST Scanner</option>
+                                                    <option value="gitlabsca_scan">GitLab Dependency Scanner</option>
+                                                    <option value="gitlabcontainerscan_scan">GitLab Container Scan</option>
+                                                    <option value="semgrepscan_scan">Semgrep Scan</option>
+                                                    <option value="twistlock_scan">twistlock Scanner</option>
+                                                    <option value="brakeman_scan">brakeman Scanner</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 control-label col-form-label">Project Name</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" name="project_name" class="form-control"
+                                                       placeholder="Name">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 control-label col-form-label">File :</label>
+                                            <div class="col-md-9">
+                                                <input type="file" name="jsonfile">
+                                            </div>
+                                            <small><em>Only JSON File</em></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-success">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+<script>
+        $(window).load(function() {
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'alert-success' %}
+                        toastr.success('{{ message }}');
+                    {% endif %}
+                    {% if message.tags == 'alert-danger' %}
+                        toastr.error('{{ message }}');
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        });
+    </script>
+{% endblock %}

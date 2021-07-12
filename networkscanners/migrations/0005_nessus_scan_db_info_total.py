@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0004_auto_20190207_0342'),
+        ("networkscanners", "0004_auto_20190207_0342"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='nessus_scan_db',
-            name='info_total',
+            model_name="nessus_scan_db",
+            name="info_total",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

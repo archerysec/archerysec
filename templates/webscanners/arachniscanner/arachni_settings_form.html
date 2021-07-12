@@ -1,0 +1,78 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Arachni Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal" method="POST"
+                                              action="{% url 'arachniscanner:arachni_setting_update' %}">{% csrf_token %}
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Host</label>
+                                                        <div class="col-sm-6">
+                                                            <small><em>arachni API Host address (Ex.http://127.0.0.1 or
+                                                                https://127.0.0.1)</em></small>
+                                                            <input type="text" name="arachnihost"
+                                                                   value="{{ arachni_host }}" class="form-control"
+                                                                   placeholder="arachni API Host"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Port</label>
+                                                        <div class="col-sm-6">
+                                                            <small><em>arachni API Port (Ex. 8080)</em></small>
+                                                            <input type="text" name="arachniport"
+                                                                   value="{{ arachni_port }}" class="form-control"
+                                                                   placeholder="PORT"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API User</label>
+                                                        <div class="col-sm-6">
+                                                            <small><em>arachni API User (Ex. user)</em></small>
+                                                            <input type="text" name="arachniuser"
+                                                                   value="{{ arachni_user }}" class="form-control"
+                                                                   placeholder="USER"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">Arachni API Pass</label>
+                                                        <div class="col-sm-6">
+                                                            <small><em>arachni API Pass (Ex. pass)</em></small>
+                                                            <input type="password" name="arachnipass"
+                                                                   value="{{ arachni_pass }}" class="form-control"
+                                                                   placeholder="PASS"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-actions">
+                                                        <button type="submit" class="btn btn-success">Save</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

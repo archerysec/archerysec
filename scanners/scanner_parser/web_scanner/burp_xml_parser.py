@@ -15,15 +15,18 @@
 # This file is part of ArcherySec Project.
 
 import base64
-from webscanners.models import burp_scan_db, burp_scan_result_db, burp_issue_definitions
+import hashlib
 import uuid
+from datetime import datetime
+
 from django.shortcuts import HttpResponse
+
+from dashboard.views import trend_update
 # from django.core.mail import send_mail
 from webscanners import email_notification
-import hashlib
-from datetime import datetime
-from dashboard.views import trend_update
-from webscanners.zapscanner.views import email_sch_notify
+from webscanners.models import (WebScansDb,
+                                WebScanResultsDb)
+from utility.email_notify import email_sch_notify
 
 project_id = None
 target_url = None
@@ -49,11 +52,11 @@ request_datas = ""
 response_datas = ""
 vul_col = ""
 false_positive = None
-issue_description = ''
-issue_remediation = ''
-issue_reference = ''
-issue_vulnerability_classifications = ''
-url = ''
+issue_description = ""
+issue_remediation = ""
+issue_reference = ""
+issue_vulnerability_classifications = ""
+url = ""
 
 
 def burp_scan_data(root, project_id, scan_id, username):
@@ -64,31 +67,12 @@ def burp_scan_data(root, project_id, scan_id, username):
     :param xml_data:
     :return:
     """
-    global vuln_id, burp_status, vul_col, \
-        issue_description, \
-        issue_remediation, \
-        issue_reference, \
-        issue_vulnerability_classifications, \
-        vul_col, severity, name, path, host, location, \
-        confidence, types, serialNumber, request_datas, response_datas, url
+    global vuln_id, burp_status, vul_col, issue_description, issue_remediation, issue_reference, issue_vulnerability_classifications, vul_col, severity, name, path, host, location, confidence, types, serialNumber, request_datas, response_datas, url
     for issue in root:
         for data in issue:
             vuln_id = uuid.uuid4()
-            if data.tag == "serialNumber":
-                global serialNumber
-                if data.text is None:
-                    serialNumber = "NA"
-                else:
-                    serialNumber = data.text
-            if data.tag == "type":
-                global types
-                if data.text is None:
-                    types = "NA"
-                else:
-                    types = data.text
             if data.tag == "name":
                 global name
-
                 if data.text is None:
                     name = "NA"
                 else:
@@ -118,12 +102,6 @@ def burp_scan_data(root, project_id, scan_id, username):
                 else:
                     severity = data.text
 
-            if data.tag == "confidence":
-                global confidence
-                if data.text is None:
-                    confidence = "NA"
-                else:
-                    confidence = data.text
             if data.tag == "requestresponse":
                 global requestresponse
                 if data.text is None:
@@ -173,141 +151,134 @@ def burp_scan_data(root, project_id, scan_id, username):
                 else:
                     issue_vulnerability_classifications = data.text
 
+        details = str(issue_description) + str('\n') + str(request_datas) + str('\n\n') + str(response_datas) + str(
+            '\n\n') + str('\n\n') + str(issue_description) + str('\n\n') + str(issue_vulnerability_classifications)
 
-        if severity == 'High':
+        if severity == "High":
             vul_col = "danger"
-        elif severity == 'Medium':
+        elif severity == "Medium":
             vul_col = "warning"
-        elif severity == 'Low':
+        elif severity == "Low":
             vul_col = "info"
         else:
-            severity = 'Low'
+            severity = "Low"
             vul_col = "info"
 
         vuln_id = uuid.uuid4()
 
-        dup_data = name + host + severity
-        duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+        dup_data = name + host + location + details + severity
+        duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = burp_scan_result_db.objects.filter(username=username,
-                                                       dup_hash=duplicate_hash).values('dup_hash').distinct()
+        match_dup = (
+            WebScanResultsDb.objects.filter(
+                username=username, dup_hash=duplicate_hash, scanner='Burp'
+            )
+                .values("dup_hash")
+                .distinct()
+        )
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
-            duplicate_vuln = 'No'
+            duplicate_vuln = "No"
 
-            false_p = burp_scan_result_db.objects.filter(username=username,
-                                                         false_positive_hash=duplicate_hash)
+            false_p = WebScanResultsDb.objects.filter(
+                username=username, false_positive_hash=duplicate_hash, scanner='Burp'
+            )
             fp_lenth_match = len(false_p)
 
             global false_positive
             if fp_lenth_match == 1:
-                false_positive = 'Yes'
+                false_positive = "Yes"
             elif lenth_match == 0:
-                false_positive = 'No'
+                false_positive = "No"
             else:
-                false_positive = 'No'
+                false_positive = "No"
 
             url = host + location
 
-            # all_issue_definitions = burp_issue_definitions.objects.filter(issue_type_id=types)
-            # for def_data in all_issue_definitions:
-            #     issue_description = def_data.description
-            #     issue_remediation = def_data.remediation
-            #     issue_vulnerability_classifications = def_data.vulnerability_classifications
-            #     issue_reference = def_data.reference
-
             try:
-                data_dump = burp_scan_result_db(
+                data_dump = WebScanResultsDb(
                     scan_id=scan_id,
-                    project_id=project_id,
-                    date_time=date_time,
                     vuln_id=vuln_id,
-                    name=name,
-                    path=path,
-                    severity=severity,
+                    url=url,
+                    title=name,
+                    solution=issue_remediation,
+                    description=details,
+                    reference=issue_reference,
+                    project_id=project_id,
                     severity_color=vul_col,
-                    confidence=confidence,
+                    severity=severity,
+                    date_time=date_time,
                     false_positive=false_positive,
-                    vuln_status='Open',
+                    vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    type_index=types,
-                    serial_number=serialNumber,
-                    origin=host,
-                    request_response_url=url,
-                    request_response_request_data=request_datas,
-                    request_response_response_data=response_datas,
-                    description=issue_description,
-                    remediation=issue_remediation,
-                    reference=issue_reference,
-                    vulnerability_classifications=issue_vulnerability_classifications,
-                    username=username
+                    scanner='Burp',
+                    username=username,
                 )
                 data_dump.save()
             except Exception as e:
                 print(e)
 
         else:
-            duplicate_vuln = 'Yes'
+            duplicate_vuln = "Yes"
 
             try:
-                data_dump = burp_scan_result_db(
+                data_dump = WebScanResultsDb(
                     scan_id=scan_id,
-                    project_id=project_id,
-                    date_time=date_time,
                     vuln_id=vuln_id,
-                    name=name,
-                    path=path,
-                    severity=severity,
+                    url=url,
+                    title=name,
+                    solution=issue_remediation,
+                    description=issue_description,
+                    reference=issue_reference,
+                    project_id=project_id,
                     severity_color=vul_col,
-                    confidence=confidence,
-                    false_positive='Duplicate',
-                    vuln_status='Duplicate',
+                    severity=severity,
+                    date_time=date_time,
+                    false_positive="Duplicate",
+                    vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    type_index=types,
-                    serial_number=serialNumber,
-                    origin=host,
-                    request_response_url=url,
-                    request_response_request_data=request_datas,
-                    request_response_response_data=response_datas,
-                    description=issue_description,
-                    remediation=issue_remediation,
-                    reference=issue_reference,
-                    vulnerability_classifications=issue_vulnerability_classifications,
+                    scanner='Burp',
                     username=username
                 )
                 data_dump.save()
             except Exception as e:
                 print(e)
 
-    burp_all_vul = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id, false_positive='No')
+    burp_all_vul = WebScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, scanner='Burp', false_positive="No"
+    )
 
-    duplicate_count = burp_scan_result_db.objects.filter(username=username, scan_id=scan_id, vuln_duplicate='Yes')
+    duplicate_count = WebScanResultsDb.objects.filter(
+        username=username, scan_id=scan_id, scanner='Burp', vuln_duplicate="Yes"
+    )
 
     total_vul = len(burp_all_vul)
     total_high = len(burp_all_vul.filter(severity="High"))
     total_medium = len(burp_all_vul.filter(severity="Medium"))
     total_low = len(burp_all_vul.filter(severity="Low"))
     total_info = len(burp_all_vul.filter(severity="Information"))
-    total_duplicate = len(duplicate_count.filter(vuln_duplicate='Yes'))
-    burp_scan_db.objects.filter(username=username,
-                                scan_id=scan_id).update(
-        url=host,
+    total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
+    WebScansDb.objects.filter(username=username, scan_id=scan_id, scanner='Burp').update(
+        scan_url=host,
         date_time=date_time,
         total_vul=total_vul,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,
         info_vul=total_info,
-        total_dup=total_duplicate
+        total_dup=total_duplicate,
     )
+    print(host)
     trend_update(username=username)
-    subject = 'Archery Tool Scan Status - Burp Report Uploaded'
-    message = 'Burp Scanner has completed the scan ' \
-              '  %s <br> Total: %s <br>High: %s <br>' \
-              'Medium: %s <br>Low %s' % (host, total_vul, total_high, total_medium, total_low)
+    subject = "Archery Tool Scan Status - Burp Report Uploaded"
+    message = (
+            "Burp Scanner has completed the scan "
+            "  %s <br> Total: %s <br>High: %s <br>"
+            "Medium: %s <br>Low %s" % (host, total_vul, total_high, total_medium, total_low)
+    )
 
     email_sch_notify(subject=subject, message=message)
 

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tools', '0003_auto_20200503_1201'),
+        ("tools", "0003_auto_20200503_1201"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='nikto_result_db',
-            name='nikto_status',
+            model_name="nikto_result_db",
+            name="nikto_status",
             field=models.TextField(blank=True, null=True),
         ),
     ]

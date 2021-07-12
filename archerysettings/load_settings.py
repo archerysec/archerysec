@@ -15,14 +15,16 @@
 # This file is part of ArcherySec Project.
 
 """ Author: Anand Tiwari """
-import os
 import json
+import os
+
 from django.core import signing
-from archerysettings.models import zap_settings_db, burp_setting_db, openvas_setting_db, nmap_vulners_setting_db
+
+from archerysettings.models import (burp_setting_db, nmap_vulners_setting_db,
+                                    openvas_setting_db, zap_settings_db)
 
 
 class ArcherySettings:
-
     def __init__(self, setting_file, username):
         self.setting_file = setting_file
         self.username = username
@@ -131,7 +133,7 @@ class ArcherySettings:
         #     print "Error in setting file as", e
 
         return openvas_host
- 
+
     def openvas_username(self):
         """
         Loading OpenVAS Username from setting file.
@@ -165,7 +167,6 @@ class ArcherySettings:
         for openvas in all_openvas:
             openvas_password = openvas.password
 
-
         return openvas_password
 
     def openvas_port(self):
@@ -176,7 +177,7 @@ class ArcherySettings:
         for openvas in all_openvas:
             openvas_port = openvas.port
         if not isinstance(openvas_port, int):
-            openvas_port=9390
+            openvas_port = 9390
         return openvas_port
 
     def openvas_enabled(self):
@@ -187,7 +188,7 @@ class ArcherySettings:
         for openvas in all_openvas:
             openvas_enabled = openvas.enabled
         if not isinstance(openvas_enabled, bool):
-            openvas_enabled = False 
+            openvas_enabled = False
         return openvas_enabled
 
     def email_subject(self):
@@ -198,9 +199,9 @@ class ArcherySettings:
         email_sub = None
 
         try:
-            with open(self.setting_file, 'r+') as f:
+            with open(self.setting_file, "r+") as f:
                 data = json.load(f)
-                email_sub = data['email_subject']
+                email_sub = data["email_subject"]
         except Exception as e:
             print("Error in setting file as", e)
 
@@ -215,9 +216,9 @@ class ArcherySettings:
         emails_from = None
 
         try:
-            with open(self.setting_file, 'r+') as f:
+            with open(self.setting_file, "r+") as f:
                 data = json.load(f)
-                emails_from = data['from_email']
+                emails_from = data["from_email"]
         except Exception as e:
             print("Error in setting file as"), e
 
@@ -230,9 +231,9 @@ class ArcherySettings:
         """
         emails_to = None
         try:
-            with open(self.setting_file, 'r+') as f:
+            with open(self.setting_file, "r+") as f:
                 data = json.load(f)
-                emails_to = data['to_email']
+                emails_to = data["to_email"]
         except Exception as e:
             print("Error in setting file as", e)
 
@@ -247,7 +248,7 @@ class ArcherySettings:
             nv_enabled = nv.enabled
         print(nv_enabled)
         if not isinstance(nv_enabled, bool):
-            nv_enabled=False
+            nv_enabled = False
         return nv_enabled
 
     def nv_version(self):
@@ -259,7 +260,7 @@ class ArcherySettings:
             nv_version = nv.version
         print(nv_version)
         if not isinstance(nv_version, bool):
-            nv_version=False
+            nv_version = False
         return nv_version
 
     def nv_online(self):
@@ -271,7 +272,7 @@ class ArcherySettings:
             nv_online = nv.online
         print(nv_online)
         if not isinstance(nv_online, bool):
-            nv_online=False
+            nv_online = False
         return nv_online
 
     def nv_timing(self):
@@ -282,10 +283,9 @@ class ArcherySettings:
         for nv in all_nv:
             nv_timing = nv.timing
         if not isinstance(nv_timing, int):
-            nv_timing=0
+            nv_timing = 0
         if nv_timing > 5:
             nv_timing = 5
         elif nv_timing < 0:
             nv_timing = 0
         return nv_timing
-

@@ -1,0 +1,284 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block body %}
+<script>
+$(document).ready(function() {
+    $("#btn1").click(function() {
+
+        var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+        $.each($("input[name='task_id']:checked"), function() {
+            scan_id.push($(this).val());
+        });
+
+        json_scanid = scan_id.join(",");
+        $.ajax({
+            type: 'POST',
+            <!--contentType: 'application/json; charset=utf-8',-->
+            url: '{% url 'webscanners:del_web_scan_schedule' %}',
+            data: {
+                task_id: json_scanid,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function() {
+                setTimeout(location.reload(), 6000);
+            }
+        });
+
+
+    });
+
+});
+
+
+
+
+
+
+
+</script>
+
+<link href="/static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Scan Schedule </h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <form class="form-horizontal" method="POST"
+                                          action="{% url 'webscanners:web_scan_schedule' %}">
+                                        {% csrf_token %}
+                                        <div class="widget-box">
+                                            <!--<div class="widget-content nopadding">-->
+
+                                            <div class="card-body">
+                                                <h4 class="card-title"></h4>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 text-right control-label col-form-label">URL's</label>
+                                                    <div class="col-sm-9">
+                                                    <textarea class="form-control" type="text" name="url" id="url"
+                                                              value="{{ url }}"
+                                                              placeholder="http://website.com,http://website2.com,http://website3.com"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <h4 class="card-title"></h4>
+                                                <div class="form-group row">
+                                                    <label class="control-label">Date & Time :</label>
+                                                    <div class="col-sm-6">
+                                                        <div class="float-right">
+                                                            <div class="controls input-append date form_datetime"
+                                                                 data-date-format="d/mm/yyyy h:ii:ss P"
+                                                                 data-link-field="dtp_input1">
+                                                                <input name="datetime" type="text" value="">
+                                                                <span class="add-on"><i
+                                                                        class="fa fa-calendar"></i></span>
+                                                                <span class="add-on"><i class="icon-th"></i></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <!--<h5 class="card-title"></h5>-->
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 text-right control-label col-form-label">Periodic
+                                                    Scan :</label>
+                                                <div class="col-md-9">
+                                                    <select name="periodic_task_value"
+                                                            class="select2 form-control custom-select"
+                                                            style="width: 100%; height:36px;">
+                                                        <option value="None">None</option>
+                                                        <option value="HOURLY">Task Hourly</option>
+                                                        <option value="DAILY">Task Daily</option>
+                                                        <option value="WEEKLY">Task Weekly</option>
+                                                        <option value="EVERY_2_WEEKS">Task Every 2 Weeks
+                                                        </option>
+                                                        <option value="EVERY_4_WEEKS">Task Every 4 Weeks
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title"></h5>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 text-right control-label col-form-label">Projects</label>
+                                                <div class="col-md-9">
+                                                    <select id="project_id" name="project_id"
+                                                            class="select2 form-control custom-select"
+                                                            style="width: 100%; height:36px;">
+                                                        {% for data in all_scans_db %}
+                                                        <option value="{{data.project_id}}">
+                                                            {{data.project_name}}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-md-flex align-items-center">
+                                            <h5 class="card-title">Scanners </h5>
+                                        </div>
+                                        <br>
+                                        <p>Select your scanner(s) from the ones available:</p>
+                                        <div class="custom-control custom-control-inline">
+                                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                                 style="width: 200px;">
+                                                <label>
+                                                    <input name="scanner" value="zap_scan"
+                                                           type="checkbox"><span>Zap Scanner</span>
+                                                </label>
+                                            </div>
+                                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
+                                                 style="width: 200px;">
+                                                <label>
+                                                    <input name="scanner" value="burp_scan" type="checkbox"><span>Burp Scanner</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+     <div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <br>
+                    <div class="d-md-flex align-items-center">
+                        <h5 class="card-title">Scan Scheduled List</h5>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table id="scan_schedule" class="table table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    <th><label class="customcheckbox m-b-20">
+                                        <input type="checkbox" id="mainCheckbox">
+                                        <span class="checkmark"></span>
+                                    </label></th>
+                                    <th>Target</th>
+                                    <th>Schedule Time</th>
+                                    <th>Project</th>
+                                    <th>Scanner</th>
+                                    <th>Periodic Task</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in all_scheduled_scans %}
+                                <tr data-target="#">
+                                    <td>
+                                        <form>
+                                            <label class="customcheckbox">
+                                                <input type="checkbox" class="listCheckbox"
+                                                       value="{{data.scan_id}}"
+                                                       name="del_scan_id"
+                                                       onClick="reload">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="#">{{data.target}}</a>
+                                    </td>
+                                    <td>
+                                        {{data.schedule_time}}
+                                    </td>
+                                    <td>{{data.project_id}}</td>
+                                    <td>
+                                        {{data.scanner}}
+                                    </td>
+                                    <td>{{data.periodic_task}}</td>
+                                    <td>
+                                        <form action="{% url 'webscanners:del_web_scan_schedule' %}" method="post"
+                                              class="forms-sample">
+
+                                            {% csrf_token %}
+                                            <input type="hidden" name="task_id" value="{{data.task_id}}"/>
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
+
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     </div>
+
+
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript">
+    $('.form_datetime').datetimepicker({
+        //language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		forceParse: 0,
+        showMeridian: 1
+    });
+	$('.form_date').datetimepicker({
+        language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		minView: 2,
+		forceParse: 0
+    });
+	$('.form_time').datetimepicker({
+        language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 1,
+		minView: 0,
+		maxView: 1,
+		forceParse: 0
+    });
+
+
+</script>
+
+{% endblock %}

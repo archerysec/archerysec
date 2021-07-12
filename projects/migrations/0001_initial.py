@@ -9,33 +9,48 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='project_db',
+            name="project_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('project_id', models.TextField(blank=True)),
-                ('project_name', models.TextField(blank=True)),
-                ('project_start', models.TextField(blank=True)),
-                ('project_end', models.TextField(blank=True)),
-                ('project_owner', models.TextField(blank=True)),
-                ('project_disc', models.TextField(blank=True)),
-                ('project_status', models.TextField(blank=True)),
-                ('date_time', models.DateTimeField(null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("project_id", models.TextField(blank=True)),
+                ("project_name", models.TextField(blank=True)),
+                ("project_start", models.TextField(blank=True)),
+                ("project_end", models.TextField(blank=True)),
+                ("project_owner", models.TextField(blank=True)),
+                ("project_disc", models.TextField(blank=True)),
+                ("project_status", models.TextField(blank=True)),
+                ("date_time", models.DateTimeField(null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='project_scan_db',
+            name="project_scan_db",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('project_url', models.TextField(blank=True)),
-                ('project_ip', models.TextField(blank=True)),
-                ('scan_type', models.TextField(blank=True)),
-                ('project_id', models.TextField(blank=True)),
-                ('date_time', models.DateTimeField(null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("project_url", models.TextField(blank=True)),
+                ("project_ip", models.TextField(blank=True)),
+                ("scan_type", models.TextField(blank=True)),
+                ("project_id", models.TextField(blank=True)),
+                ("date_time", models.DateTimeField(null=True)),
             ],
         ),
     ]

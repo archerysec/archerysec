@@ -27,12 +27,12 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    ".."
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".."
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -42,7 +42,7 @@ DEBUG = os.environ.get("DJANGO_DEBUG") == "1"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "SET ME")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -77,47 +77,48 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'stronghold.middleware.LoginRequiredMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "stronghold.middleware.LoginRequiredMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'archerysecurity.urls'
+ROOT_URLCONF = "archerysecurity.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django_settings_export.settings_export',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "django_settings_export.settings_export",
             ],
         },
     },
 ]
 
-MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
-WSGI_APPLICATION = 'archerysecurity.wsgi.application'
+WSGI_APPLICATION = "archerysecurity.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
@@ -126,22 +127,22 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-DEF_TIME_ZONE = 'UTC'
+DEF_TIME_ZONE = "UTC"
 
 USE_TZ = False
 
@@ -151,42 +152,38 @@ USE_I18N = True
 
 USE_L10N = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-info',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
+    messages.DEBUG: "alert-info",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-danger",
 }
 
 STRONGHOLD_PUBLIC_URLS = (
-    r'^/admin.*?$',  # Don't touch the admin pages
-    r'^/accounts/login/$',  # Avoid redirect loop
-    r'^/api.*?$',
-    r'^/o.*?$',
-    r'^/api/createuser/$',
+    r"^/admin.*?$",  # Don't touch the admin pages
+    r"^/accounts/login/$",  # Avoid redirect loop
+    r"^/api.*?$",
+    r"^/o.*?$",
+    r"^/api/createuser/$",
 )
 
-LOGIN_URL = '/login/'
+LOGIN_URL = "/login/"
 
-LOGIN_REDIRECT_URL = '/user/accounts/'
+LOGIN_REDIRECT_URL = "/user/accounts/"
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
     ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ),
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning'
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
 }
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -198,7 +195,7 @@ BACKGROUND_TASK_RUN_ASYNC = True
 REFRESH_TIMER = 5
 
 SETTINGS_EXPORT = [
-    'REFRESH_TIMER',
+    "REFRESH_TIMER",
 ]
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800
@@ -212,14 +209,46 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # DJANGO_NOTIFICATIONS_CONFIG = {'USE_JSONFIELD': True}
 
-DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
+DJANGO_NOTIFICATIONS_CONFIG = {"SOFT_DELETE": True}
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "%(levelname)s:%(name)s: %(message)s "
+            "(%(asctime)s; %(filename)s:%(lineno)d)",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "formatter": "standard",
+            "class": "logging.StreamHandler",
+        },
+        "rotate_file": {
+            "level": "INFO",
+            "formatter": "standard",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "server.log",
+            "encoding": "utf8",
+            "maxBytes": 100000,
+            "backupCount": 1,
+        },
+    },
+    "loggers": {
+        "": {"handlers": ["console", "rotate_file"], "level": "INFO"},
+        "pdfminer": {"level": "CRITICAL"},
+    },
+}

@@ -1,0 +1,58 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+
+        <div class="row justify-content-md-center">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">JIRA Setting</h1>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <form class="form-horizontal" method="POST" action="{% url 'jiraticketing:jira_setting' %}">{% csrf_token %}
+                                            <div class="card-body">
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA Server URL</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" name="jira_url" value="{{ jira_server }}" class="form-control">
+                                                            <small><em>    JIRA Cloud URL (Ex. https://xyz.atlassian.net/)</em></small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA Username</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" name="jira_username" class="form-control"
+                                                                   value="{{ jira_username }}">
+                                                            <small><em>Email ID (Ex. xyz@xyz.com)</em></small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label
+                                                                class="col-sm-4 col-form-label">JIRA API Token</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="password" name="jira_password"
+                                                                   class="form-control"
+                                                                   value="{{ jira_password }}">
+                                                            <small><em>To know more how to generate API Token: https://confluence.atlassian.com/cloud/api-tokens-938839638.html </em></small>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-success">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

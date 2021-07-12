@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('compliance', '0009_auto_20200515_1729'),
+        ("compliance", "0009_auto_20200515_1729"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='dockle_scan_results_db',
-            name='date_time',
+            model_name="dockle_scan_results_db",
+            name="date_time",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='inspec_scan_results_db',
-            name='date_time',
+            model_name="inspec_scan_results_db",
+            name="date_time",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

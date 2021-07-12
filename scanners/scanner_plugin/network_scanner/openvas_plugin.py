@@ -14,40 +14,42 @@
 #
 # This file is part of ArcherySec Project.
 
-from openvas_lib import VulnscanManager, VulnscanException
-from networkscanners.models import openvas_scan_db, ov_scan_result_db
-from django.utils import timezone
-import time
-import os
-import uuid
-from archerysettings.models import openvas_setting_db
 import hashlib
-from datetime import datetime
-from scanners.scanner_parser.network_scanner import OpenVas_Parser
+import os
+import time
+import uuid
 
-name = ''
-creation_time = ''
-modification_time = ''
-host = ''
-port = ''
-threat = ''
-severity = ''
-description = ''
-family = ''
-cvss_base = ''
-cve = ''
-bid = ''
-xref = ''
-tags = ''
-banner = ''
+from django.utils import timezone
+from openvas_lib import VulnscanException, VulnscanManager
+
+from archerysettings.models import openvas_setting_db
+from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
+from scanners.scanner_parser.network_scanner.OpenVas_Parser import updated_xml_parser
+
+
+name = ""
+creation_time = ""
+modification_time = ""
+host = ""
+port = ""
+threat = ""
+severity = ""
+description = ""
+family = ""
+cvss_base = ""
+cve = ""
+bid = ""
+xref = ""
+tags = ""
+banner = ""
 vuln_color = None
-false_positive = ''
-duplicate_hash = ''
-duplicate_vuln = ''
-ov_host = ''
-ov_user = ''
-ov_pass = ''
-ov_port = ''
+false_positive = ""
+duplicate_hash = ""
+duplicate_vuln = ""
+ov_host = ""
+ov_user = ""
+ov_pass = ""
+ov_port = ""
 
 
 class OpenVAS_Plugin:
@@ -83,10 +85,9 @@ class OpenVAS_Plugin:
             ov_host = openvas.host
             ov_port = openvas.port
 
-        scanner = VulnscanManager(str(ov_host),
-                                  str(ov_user),
-                                  str(ov_pass),
-                                  int(ov_port))
+        scanner = VulnscanManager(
+            str(ov_host), str(ov_user), str(ov_pass), int(ov_port)
+        )
         time.sleep(5)
 
         return scanner
@@ -103,8 +104,9 @@ class OpenVAS_Plugin:
 
         else:
             profile = self.sel_profile
-        scan_id, target_id = scanner.launch_scan(target=str(self.scan_ip),
-                                                 profile=str(profile))
+        scan_id, target_id = scanner.launch_scan(
+            target=str(self.scan_ip), profile=str(profile)
+        )
         return scan_id, target_id
 
     def scan_status(self, scanner, scan_id):
@@ -115,20 +117,32 @@ class OpenVAS_Plugin:
         :return:
         """
 
-        previous = ''
+        previous = ""
         while float(scanner.get_progress(str(scan_id))) < 100.0:
-            current = str(scanner.get_scan_status(str(scan_id))) + str(scanner.get_progress(str(scan_id)))
+            current = str(scanner.get_scan_status(str(scan_id))) + str(
+                scanner.get_progress(str(scan_id))
+            )
             if current != previous:
-                print('[Scan ID ' + str(scan_id) + '](' + str(
-                    scanner.get_scan_status(str(scan_id))) + ') Scan progress: ' + str(
-                    scanner.get_progress(str(scan_id))) + ' %')
+                print(
+                    "[Scan ID "
+                    + str(scan_id)
+                    + "]("
+                    + str(scanner.get_scan_status(str(scan_id)))
+                    + ") Scan progress: "
+                    + str(scanner.get_progress(str(scan_id)))
+                    + " %"
+                )
                 status = float(scanner.get_progress(str(scan_id)))
-                openvas_scan_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+                NetworkScanDb.objects.filter(scan_id=scan_id).update(
+                    scan_status=status
+                )
                 previous = current
             time.sleep(5)
 
         status = "100"
-        openvas_scan_db.objects.filter(scan_id=scan_id).update(scan_status=status)
+        NetworkScanDb.objects.filter(username=self.username, scan_id=scan_id).update(
+            scan_status=status
+        )
 
         return status
 
@@ -151,9 +165,7 @@ def vuln_an_id(scan_id, project_id, username):
         ov_pass = openvas.password
         ov_ip = openvas.host
 
-    scanner = VulnscanManager(str(ov_ip),
-                              str(ov_user),
-                              str(ov_pass))
+    scanner = VulnscanManager(str(ov_ip), str(ov_user), str(ov_pass))
     openvas_results = scanner.get_raw_xml(str(scan_id))
 
     hosts = OpenVas_Parser.get_hosts(openvas_results)

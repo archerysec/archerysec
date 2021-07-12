@@ -20,4 +20,4 @@ from django.apps import AppConfig
 
 
 class JiraticketingConfig(AppConfig):
-    name = 'jiraticketing'
+    name = "jiraticketing"
