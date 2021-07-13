@@ -654,7 +654,7 @@ def setting(request):
                 print(e)
                 jira_info = False
 
-    return render(request, 'setting.html',
+    return render(request, 'setting/setting.html',
                   {'apikey': lod_apikey,
                    'zapath': zap_host,
                    'zap_port': zap_port,
