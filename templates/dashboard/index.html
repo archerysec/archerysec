@@ -144,8 +144,8 @@
                         <div class="card-body">
                             <div class="float-right">
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    <a href="{% url 'projects:create_form' %}" class="btn btn-primary btn-mini"><i
-                                            class="icon-upload-alt"></i>Create New Project</a>
+                                    <a href="{% url 'projects:create_form' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Create New Project"><i
+                        class="fas fa-plus-circle"></i> Add Project</a>
                                 </div>
                             </div>
                             <div class="d-md-flex align-items-center">
@@ -209,7 +209,7 @@
                                                         <input type="hidden" name="proj_id"
                                                                value="{{ data.project_id }}"/>
                                                         {% csrf_token %}
-                                                        <button class="btn btn-danger"><i
+                                                        <button class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Project"><i
                                                                 class="m-r-0 mdi mdi-delete"></i></button>
                                                     </form>
                                                 </td>

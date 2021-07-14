@@ -16,8 +16,8 @@
 
 from __future__ import unicode_literals
 
-import ast
-import hashlib
+import json
+import os
 import threading
 import time
 import uuid
@@ -27,15 +27,18 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import HttpResponse, render
 from django.urls import reverse
-from notifications.signals import notify
-from selenium import webdriver
-from utility.email_notify import email_sch_notify
 
-from archerysettings.models import email_db, zap_settings_db
-from jiraticketing.models import jirasetting
-from scanners.scanner_plugin.web_scanner import zap_plugin
-from webscanners.models import (WebScanResultsDb, WebScansDb, cookie_db, excluded_db)
-from webscanners.resources import ZapResource
+from selenium import webdriver
+
+
+from archerysettings.models import (zap_settings_db, settings_db)
+from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
+from webscanners.models import (WebScansDb, cookie_db,
+                                excluded_db,
+                                )
+import uuid
+
+setting_file = os.getcwd() + "/" + "apidata.json"
 
 scans_status = None
 to_mail = ""
@@ -348,6 +351,9 @@ def zap_setting_update(request):
         all_zap = zap_settings_db.objects.filter(username=username)
         all_zap.delete()
 
+        all_zap_data = settings_db.objects.filter(username=username, setting_scanner='Zap')
+        all_zap_data.delete()
+
         if request.POST.get("zap_enabled") == "on":
             zap_enabled = True
         else:
@@ -362,7 +368,18 @@ def zap_setting_update(request):
         port = request.POST.get(
             "port",
         )
+
+        setting_id = uuid.uuid4()
+
+        save_zap_data = settings_db(
+            setting_id=setting_id,
+            setting_scanner='Zap',
+            username=username,
+        )
+        save_zap_data.save()
+
         save_data = zap_settings_db(
+            setting_id=setting_id,
             username=username,
             zap_url=zaphost,
             zap_port=port,
@@ -371,7 +388,51 @@ def zap_setting_update(request):
         )
         save_data.save()
 
-        return HttpResponseRedirect(reverse("webscanners:setting"))
+        username = request.user.username
+        zap_enabled = False
+        random_port = "8091"
+        target_url = "https://archerysec.com"
+        zap_info = ""
+
+        all_zap = zap_settings_db.objects.filter(username=username)
+        for zap in all_zap:
+            zap_enabled = zap.enabled
+
+        if zap_enabled is False:
+            zap_info = "Disabled"
+            try:
+                random_port = zap_plugin.zap_local()
+            except:
+                return render(request, "setting/settings_page.html", {"zap_info": zap_info})
+
+            for i in range(0, 100):
+                while True:
+                    try:
+                        # Connection Test
+                        zap_connect = zap_plugin.zap_connect(
+                            random_port, username=username
+                        )
+                        zap_connect.spider.scan(url=target_url)
+                    except Exception as e:
+                        print("ZAP Connection Not Found, re-try after 5 sec")
+                        time.sleep(5)
+                        continue
+                    break
+        else:
+            try:
+                zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                zap_connect.spider.scan(url=target_url)
+                zap_info = True
+                settings_db.objects.filter(setting_id=setting_id).update(
+                    setting_status=zap_info
+                )
+            except:
+                zap_info = False
+                settings_db.objects.filter(setting_id=setting_id).update(
+                    setting_status=zap_info
+                )
+
+        return HttpResponseRedirect(reverse("archerysettings:settings"))
 
     # messages.add_message(request,
     #                      messages.SUCCESS,

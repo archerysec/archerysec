@@ -194,5 +194,3 @@ def xml_parser(username, root, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
-
-    print("updated zap")

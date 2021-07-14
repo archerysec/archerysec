@@ -40,7 +40,7 @@ from notifications.models import Notification
 from notifications.signals import notify
 
 from archerysettings import load_settings, save_settings
-from archerysettings.models import email_db
+from archerysettings.models import email_db, settings_db
 from jiraticketing.models import jirasetting
 from networkscanners.models import (task_schedule_db)
 from networkscanners.models import (NetworkScanResultsDb, NetworkScanDb)
@@ -386,6 +386,7 @@ def openvas_details(request):
     :param request:
     :return:
     """
+    setting_id = uuid.uuid4()
     save_openvas_setting = save_settings.SaveSettings(api_data, username=username)
     if request.method == "POST":
         if request.POST.get("openvas_enabled") == "on":
@@ -403,9 +404,34 @@ def openvas_details(request):
             openvas_enabled=openvas_enabled,
             openvas_user=openvas_user,
             openvas_password=openvas_password,
+            setting_id=setting_id,
         )
 
-        return HttpResponseRedirect(reverse("webscanners:setting"))
+        save_settings_data = settings_db(
+            setting_id=setting_id,
+            username=username,
+            setting_scanner='Openvas'
+        )
+        save_settings_data.save()
+
+        sel_profile = ""
+
+        openvas = OpenVAS_Plugin(
+            openvas_host, setting_id, sel_profile, username=username
+        )
+        try:
+            openvas.connect()
+            openvas_info = True
+            settings_db.objects.filter(setting_id=setting_id).update(
+                setting_status=openvas_info
+            )
+        except:
+            openvas_info = False
+            settings_db.objects.filter(setting_id=setting_id).update(
+                setting_status=openvas_info
+            )
+
+        return HttpResponseRedirect(reverse("archerysettings:settings"))
 
     return render(
         request,

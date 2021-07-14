@@ -1,5 +1,5 @@
 {% extends 'dashboard/base.html' %}
-
+{% load static %}
 {% block body %}
 <script type="text/javascript">
 
@@ -57,8 +57,8 @@
                     <div class="card-body">
                         <div class="float-right">
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{% url 'webscanners:xml_upload' %}" class="btn btn-primary btn-mini"><i
-                                        class="icon-upload-alt"></i> Upload XML</a>
+                                <a href="{% url 'webscanners:xml_upload' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload XML Report"><i
+                                        class="fas fa-upload"></i> Upload </a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
@@ -139,7 +139,26 @@
                                                 </div>
                                             </div>
                                         </td>
-                                    <td><span class="badge badge-pill badge-cyan">{{ data.scanner }}</span></td>
+                                    <td>{% if data.scanner == 'Zap' %}
+
+                                        <div class="p-1"><img src="/static/tools/zap.png" alt="user" width="20"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="OWASP ZAP"></div></td>
+                                        {% elif data.scanner == 'Burp' %}
+                                        <div class="p-1"><img src="/static/tools/burp.png" alt="user" width="20"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Burp"></div></td>
+                                        {% elif data.scanner == 'Arachni' %}
+                                        <div class="p-1"><img src="/static/tools/arachni.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Arachni"></div></td>
+                                        {% elif data.scanner == 'Netsparker' %}
+                                        <div class="p-1"><img src="/static/tools/netsparker.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Netsparker"></div></td>
+                                {% elif data.scanner == 'Webinspect' %}
+                                        <div class="p-1"><img src="/static/tools/webinspect.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Webinspect"></div></td>
+                                        {% elif data.scanner == 'Acunetix' %}
+                                        <div class="p-1"><img src="/static/tools/acunetix.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Acunetix"></div></td>
+                                        {% endif %}
                                         <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
                                         <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
                                         <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>

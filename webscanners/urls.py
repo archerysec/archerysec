@@ -28,14 +28,14 @@ urlpatterns = [
     path("logout/", web_views.logout, name="logout"),
     path("loggedin/", web_views.loggedin, name="loggedin"),
     path("", web_views.index, name="index"),
-    path("setting/", web_views.setting, name="setting"),
+    # path("setting/", web_views.setting, name="setting"),
     # Burp scans
     path("xml_upload/", web_views.xml_upload, name="xml_upload"),
-    path(
-        "email_setting/",
-        web_views.email_setting,
-        name="email_setting",
-    ),
+    # path(
+    #     "email_setting/",
+    #     web_views.email_setting,
+    #     name="email_setting",
+    # ),
     path(
         "cookie_add/",
         web_views.add_cookies,
