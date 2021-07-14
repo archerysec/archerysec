@@ -23,7 +23,7 @@ from django.core import signing
 from archerysettings.models import (arachni_settings_db, burp_setting_db,
                                     email_db, nmap_vulners_setting_db,
                                     openvas_setting_db, zap_settings_db)
-
+import uuid
 
 class SaveSettings:
     def __init__(self, setting_file, username):
@@ -56,7 +56,7 @@ class SaveSettings:
         )
         save_nv_settings.save()
 
-    def save_zap_settings(self, apikey, zaphost, zaport):
+    def save_zap_settings(self, apikey, zaphost, zaport, setting_id):
         """
         Save ZAP Settings into setting file.
         :param apikey:
@@ -68,11 +68,11 @@ class SaveSettings:
         all_zap.delete()
 
         save_zapsettings = zap_settings_db(
-            zap_url=zaphost, zap_api=apikey, zap_port=zaport, username=self.username
+            zap_url=zaphost, zap_api=apikey, zap_port=zaport, setting_id=setting_id, username=self.username
         )
         save_zapsettings.save()
 
-    def save_burp_settings(self, burphost, burport, burpapikey):
+    def save_burp_settings(self, burphost, burport, burpapikey, setting_id):
         """
         Save Burp Settings into setting file.
         :param burphost:
@@ -87,6 +87,7 @@ class SaveSettings:
             burp_url=burphost,
             burp_port=burport,
             burp_api_key=burpapikey,
+            setting_id=setting_id,
             username=self.username,
         )
         save_burpsettings.save()
@@ -98,6 +99,7 @@ class SaveSettings:
         openvas_enabled,
         openvas_user,
         openvas_password,
+        setting_id
     ):
         """
         Save OpenVAS Settings into Setting files.
@@ -114,6 +116,7 @@ class SaveSettings:
             enabled=openvas_enabled,
             user=openvas_user,
             password=openvas_password,
+            setting_id=setting_id,
             username=self.username,
         )
         openvas_settings.save()
@@ -176,7 +179,7 @@ class SaveSettings:
         )
         save_arachnisettings.save()
 
-    def email_settings(self, subject, message, recipient_list):
+    def email_settings(self, subject, message, recipient_list, setting_id):
         """
 
         :param arachnihost:
@@ -190,6 +193,7 @@ class SaveSettings:
             username=self.username,
             subject=subject,
             message=message,
+            setting_id=setting_id,
             recipient_list=recipient_list,
         )
         save_emailsettings.save()

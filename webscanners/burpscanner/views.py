@@ -31,7 +31,7 @@ from notifications.models import Notification
 from notifications.signals import notify
 from PyBurprestapi import burpscanner
 
-from archerysettings.models import burp_setting_db
+from archerysettings.models import burp_setting_db, settings_db
 from jiraticketing.models import jirasetting
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from webscanners.models import (WebScansDb,
@@ -67,17 +67,27 @@ def burp_setting(request):
         burp_port = data.burp_port
         burp_api_key = data.burp_api_key
 
+    setting_id = uuid.uuid4()
+
     if request.method == "POST":
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
         burpapikey = request.POST.get("burpapikey")
         save_burp_settings = burp_setting_db(
+            setting_id=setting_id,
             username=username,
             burp_url=burphost,
             burp_port=burport,
             burp_api_key=burpapikey,
         )
         save_burp_settings.save()
+
+        setting_dat = settings_db(
+            setting_id=setting_id,
+            username=username,
+            setting_scanner='Burp',
+        )
+        setting_dat.save()
 
         host = "http://" + burphost + ":" + burport + "/"
 
@@ -107,11 +117,14 @@ def burp_setting(request):
                     if key == "vulnerability_classifications":
                         vulnerability_classifications = values
 
+            settings_db.objects.filter(username=username, setting_id=setting_id).update(setting_status=True)
+
         except Exception as e:
             print(e)
+            settings_db.objects.filter(username=username, setting_id=setting_id).update(setting_status=False)
             notify.send(user, recipient=user, verb="Burp Connection Not Found")
 
-        return HttpResponseRedirect(reverse("webscanners:setting"))
+        return HttpResponseRedirect(reverse("archerysettings:settings"))
 
     return render(
         request,

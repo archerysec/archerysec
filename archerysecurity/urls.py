@@ -55,6 +55,9 @@ urlpatterns = [
     path("tools/", include("tools.urls")),
     # Manual App
     path("manual_scan/", include("manual_scan.urls")),
+
+    # settings app
+    path("settings/", include("archerysettings.urls")),
 ]
 
 urlpatterns = urlpatterns + static(

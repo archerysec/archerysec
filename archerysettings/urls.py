@@ -14,14 +14,14 @@
 #
 # This file is part of ArcherySec Project.
 
-from __future__ import unicode_literals
+from django.urls import include, path
 
-from django.db import models
+from archerysettings import views
 
+app_name = "archerysettings"
 
-class jirasetting(models.Model):
-    setting_id = models.UUIDField(blank=True, null=True)
-    jira_server = models.TextField(blank=True, null=True)
-    jira_username = models.TextField(blank=True, null=True)
-    jira_password = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
+urlpatterns = [
+    path("settings/", views.setting, name="settings"),
+    path("del_setting/", views.del_setting, name="del_setting"),
+    path("email_setting/", views.email_setting, name="email_setting")
+]

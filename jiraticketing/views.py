@@ -25,16 +25,9 @@ from notifications.signals import notify
 
 from jiraticketing.models import jirasetting
 from networkscanners.models import NetworkScanResultsDb
-# from staticscanners.models import (bandit_scan_results_db,
-#                                    clair_scan_results_db,
-#                                    dependencycheck_scan_results_db,
-#                                    findbugs_scan_results_db,
-#                                    nodejsscan_scan_results_db,
-#                                    npmaudit_scan_results_db,
-#                                    retirejs_scan_results_db,
-#                                    tfsec_scan_results_db,
-#                                    trivy_scan_results_db)
 from webscanners.models import (WebScanResultsDb)
+from archerysettings.models import settings_db
+import uuid
 
 jira_url = ""
 j_username = ""
@@ -49,6 +42,7 @@ def jira_setting(request):
     :param request:
     :return:
     """
+    setting_id = uuid.uuid4()
     username = request.user.username
     all_jira_settings = jirasetting.objects.filter(username=username)
     for jira in all_jira_settings:
@@ -67,7 +61,16 @@ def jira_setting(request):
 
         j_username = signing.dumps(jira_username)
         password = signing.dumps(jira_password)
+
+        setting_dat = settings_db(
+            username=username,
+            setting_id=setting_id,
+            setting_scanner='Jira',
+        )
+        setting_dat.save()
+
         save_data = jirasetting(
+            setting_id=setting_id,
             username=username,
             jira_server=jira_url,
             jira_username=j_username,
@@ -75,7 +78,26 @@ def jira_setting(request):
         )
         save_data.save()
 
-        return HttpResponseRedirect(reverse("webscanners:setting"))
+        options = {"server": jira_server}
+        try:
+
+            jira_ser = JIRA(
+                options, basic_auth=(jira_username, jira_password), timeout=5
+            )
+            jira_projects = jira_ser.projects()
+            print(len(jira_projects))
+            jira_info = True
+            settings_db.objects.filter(setting_id=setting_id).update(
+                setting_status=jira_info
+            )
+        except Exception as e:
+            print(e)
+            jira_info = False
+            settings_db.objects.filter(setting_id=setting_id).update(
+                setting_status=jira_info
+            )
+
+        return HttpResponseRedirect(reverse("archerysettings:settings"))
 
     return render(
         request,

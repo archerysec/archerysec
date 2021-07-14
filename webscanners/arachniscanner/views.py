@@ -31,7 +31,7 @@ from django.urls import reverse
 from notifications.signals import notify
 
 import PyArachniapi
-from archerysettings.models import arachni_settings_db
+from archerysettings.models import arachni_settings_db, settings_db
 from jiraticketing.models import jirasetting
 from scanners.scanner_parser.web_scanner import arachni_xml_parser
 from webscanners.models import (WebScanResultsDb, WebScansDb)
@@ -253,7 +253,7 @@ def arachni_settings(request):
         arachni_pass = arachni.arachni_pass
 
     return render(request,
-                  'arachniscanner/arachni_settings_form.html',
+                  'webscanners/arachniscanner/arachni_settings_form.html',
                   {
                       'arachni_host': arachni_hosts,
                       'arachni_port': arachni_ports,
@@ -269,22 +269,57 @@ def arachni_setting_update(request):
     :param request:
     :return:
     """
+    setting_id = uuid.uuid4()
     username = request.user.username
     if request.method == 'POST':
         arachnihost = request.POST.get("arachnihost", )
         port = request.POST.get("arachniport", )
-        user =  request.POST.get("arachniuser", )
+        user = request.POST.get("arachniuser", )
         password = request.POST.get("arachnipass", )
+
+        setting_dat = settings_db(
+            username=username,
+            setting_id=setting_id,
+            setting_scanner='Arachni',
+        )
+        setting_dat.save()
+
         save_data = arachni_settings_db(
             username=username,
             arachni_url=arachnihost,
             arachni_port=port,
             arachni_user=user,
-            arachni_pass=password
+            arachni_pass=password,
+            setting_id=setting_id
         )
         save_data.save()
 
-        return HttpResponseRedirect(reverse("webscanners:setting"))
+        arachni = PyArachniapi.arachniAPI(arachnihost, port, user, password)
+
+        check = []
+        data = {"url": "https://archerysec.com", "checks": check, "audit": {}}
+        d = json.dumps(data)
+
+        scan_launch = arachni.scan_launch(d)
+        time.sleep(3)
+
+        try:
+            scan_data = scan_launch.data
+
+            for key, value in scan_data.items():
+                if key == "id":
+                    scan_run_id = value
+            arachni_info = True
+            settings_db.objects.filter(setting_id=setting_id).update(
+                setting_status=arachni_info
+            )
+        except Exception:
+            arachni_info = False
+            settings_db.objects.filter(setting_id=setting_id).update(
+                setting_status=arachni_info
+            )
+
+        return HttpResponseRedirect(reverse("archerysettings:settings"))
 
     return render(request, "webscanners/arachniscanner/arachni_settings_form.html")
 
