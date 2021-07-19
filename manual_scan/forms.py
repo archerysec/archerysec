@@ -1,9 +1,9 @@
 from django import forms
 
-from manual_scan.models import manual_scan_results_db
+from manual_scan.models import ManualScanResultsDb
 
 
 class ManulScanForm(forms.ModelForm):
     class Meta:
-        model = manual_scan_results_db
+        model = ManualScanResultsDb
         fields = ["vuln_name", "Poc_Img"]

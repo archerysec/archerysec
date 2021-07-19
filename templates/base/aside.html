@@ -64,10 +64,14 @@
 
                     </ul>
                 </li>
+
                 <li class="my-3 mx-3 border-top"></li>
+                {% if user.is_superuser == True %}
                 <li class="sidebar-item"><a class="sidebar-link" href="/settings/settings/" aria-expanded="false"><i
                         class="ti-settings m-r-5 m-l-5"></i><span class="hide-menu">Settings</span></a>
                 </li>
+                {% endif %}
+
                 <li class="sidebar-item"><a class="sidebar-link" href="https://docs.archerysec.com/" target="_blank"
                                             aria-expanded="false"><i
                         class="fas fa-book"></i><span class="hide-menu">Documents</span></a>

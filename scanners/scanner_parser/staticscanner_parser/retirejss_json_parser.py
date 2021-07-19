@@ -37,7 +37,7 @@ info = None
 version = None
 
 
-def retirejs_report_json(data, project_id, scan_id, username):
+def retirejs_report_json(data, project_id, scan_id):
     """
 
     :param data:
@@ -100,8 +100,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = (
-            StaticScanResultsDb.objects.filter(
-                username=username, dup_hash=duplicate_hash
+            StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
             )
             .values("dup_hash")
             .distinct()
@@ -115,8 +114,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
         else:
             duplicate_vuln = "None"
 
-        false_p = StaticScanResultsDb.objects.filter(
-            username=username, false_positive_hash=duplicate_hash
+        false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
         )
         fp_lenth_match = len(false_p)
 
@@ -143,8 +141,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
             # dup_hash=duplicate_hash,
             # vuln_duplicate=duplicate_vuln,
             # version=version,
-            username=username,
             scanner='Retirejs'
         )
         save_all.save()
-        trend_update(username=username)
+        trend_update()

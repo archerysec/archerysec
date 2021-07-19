@@ -17,13 +17,19 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from user_management.models import UserProfile
 
 
-class inspec_scan_db(models.Model):
+class InspecScanDb(models.Model):
+
+    class Meta:
+        db_table = "inspecscandb"
+        verbose_name_plural = "Inspec Scans List"
+
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True, null=True)
-    project_id = models.UUIDField(blank=True, null=True)
+    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
     project_name = models.TextField(blank=True, null=True)
     total_vuln = models.IntegerField(blank=True, null=True)
     scan_status = models.IntegerField(blank=True, null=True)
@@ -32,14 +38,19 @@ class inspec_scan_db(models.Model):
     inspec_failed = models.IntegerField(blank=True, null=True)
     inspec_passed = models.IntegerField(blank=True, null=True)
     inspec_skipped = models.IntegerField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
+    updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
-class inspec_scan_results_db(models.Model):
+class InspecScanResultsDb(models.Model):
+
+    class Meta:
+        db_table = 'inspecscanresultdb'
+        verbose_name_plural = "Inspec Scans Data"
+
     scan_id = models.UUIDField(blank=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True)
-    project_id = models.UUIDField(blank=True)
+    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
     vuln_id = models.UUIDField(blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
     false_positive = models.TextField(null=True, blank=True)
@@ -86,13 +97,19 @@ class inspec_scan_results_db(models.Model):
 
     scanner = models.TextField(default="inspec", editable=False)
     username = models.CharField(max_length=256, null=True)
+    updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
-class dockle_scan_db(models.Model):
+class DockleScanDb(models.Model):
+
+    class Meta:
+        db_table = 'docklescandb'
+        verbose_name_plural = "Dockle Scans List"
+
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True, null=True)
-    project_id = models.UUIDField(blank=True, null=True)
+    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
     project_name = models.TextField(blank=True, null=True)
     total_vuln = models.IntegerField(blank=True, null=True)
     scan_status = models.IntegerField(blank=True, null=True)
@@ -103,13 +120,19 @@ class dockle_scan_db(models.Model):
     dockle_info = models.IntegerField(blank=True, null=True)
     dockle_pass = models.IntegerField(blank=True, null=True)
     username = models.CharField(max_length=256, null=True)
+    updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
-class dockle_scan_results_db(models.Model):
+class DockleScanResultsDb(models.Model):
+
+    class Meta:
+        db_table = 'docklescanresultsdb'
+        verbose_name_plural = "Dockle Scans Data"
+
     scan_id = models.UUIDField(blank=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True)
-    project_id = models.UUIDField(blank=True)
+    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
     date_time = models.DateTimeField(blank=True, null=True)
     vuln_id = models.UUIDField(blank=True)
     false_positive = models.TextField(null=True, blank=True)
@@ -126,3 +149,4 @@ class dockle_scan_results_db(models.Model):
     title = models.TextField(blank=True, null=True)
     level = models.TextField(blank=True, null=True)
     alerts = models.TextField(blank=True, null=True)
+    updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)

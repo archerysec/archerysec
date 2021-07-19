@@ -135,21 +135,4 @@
             </div>
         </div>
     </div>
-
-
-
-    <script>
-        $(window).load(function () {
-            {% if messages %}
-                {% for message in messages %}
-                    {% if message.tags == 'alert-success' %}
-                        toastr.success('{{ message }}');
-                    {% endif %}
-                    {% if message.tags == 'alert-danger' %}
-                        toastr.error('{{ message }}');
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        });
-    </script>
 {% endblock %}

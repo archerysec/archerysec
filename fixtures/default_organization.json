@@ -1,0 +1,13 @@
+[
+    {
+        "model": "user_management.Organization",
+        "pk": 1,
+        "fields": {
+            "name": "ArcherySec",
+            "description": "Default Organization",
+            "logo": "archery_logo",
+            "contact": "",
+            "address": "Bangalore"
+        }
+    }
+]

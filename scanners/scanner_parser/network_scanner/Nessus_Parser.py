@@ -55,7 +55,7 @@ target = ""
 report_name = ""
 
 
-def updated_nessus_parser(root, project_id, scan_id, username):
+def updated_nessus_parser(root, project_id, scan_id):
     global agent, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, risk_factor, script_version, solution, synopsis, plugin_output, see_also, scan_ip, pluginName, pluginID, protocol, severity, svc_name, pluginFamily, port, vuln_color, total_vul, total_high, total_medium, total_low, target, report_name
 
     date_time = datetime.datetime.now()
@@ -76,7 +76,6 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                         date_time=date_time,
                         project_id=project_id,
                         scan_status=scan_status,
-                        username=username,
                         scanner='Nessus'
                     )
                     scan_dump.save()
@@ -180,7 +179,7 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
                         match_dup = (
                             NetworkScanResultsDb.objects.filter(
-                                username=username, dup_hash=duplicate_hash
+                                dup_hash=duplicate_hash
                             )
                                 .values("dup_hash")
                                 .distinct()
@@ -192,7 +191,7 @@ def updated_nessus_parser(root, project_id, scan_id, username):
 
                             global false_positive
                             false_p = NetworkScanResultsDb.objects.filter(
-                                username=username, false_positive_hash=duplicate_hash
+                                false_positive_hash=duplicate_hash
                             )
                             fp_lenth_match = len(false_p)
                             if fp_lenth_match == 1:
@@ -218,8 +217,7 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 severity_color=vuln_color,
-                                scanner='Nessus',
-                                username=username,
+                                scanner='Nessus'
                             )
                             all_data_save.save()
 
@@ -242,8 +240,7 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 severity_color=vuln_color,
-                                scanner='Nessus',
-                                username=username,
+                                scanner='Nessus'
                             )
                             all_data_save.save()
             except:
@@ -253,14 +250,12 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                 for key, value in reportHost.items():
                     target = value
                     target_filter = NetworkScanResultsDb.objects.filter(
-                        username=username,
                         ip=target,
                         vuln_status="Open",
                         vuln_duplicate="No",
                     )
 
-                    duplicate_count = NetworkScanResultsDb.objects.filter(
-                        username=username, ip=target, vuln_duplicate="Yes"
+                    duplicate_count = NetworkScanResultsDb.objects.filter( ip=target, vuln_duplicate="Yes"
                     )
 
                     target_total_vuln = len(target_filter)
@@ -270,7 +265,6 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                     target_total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
                     NetworkScanDb.objects.filter(ip=target).update(
                         date_time=date_time,
-                        username=username,
                         total_vul=target_total_vuln,
                         high_vul=target_total_high,
                         medium_vul=target_total_medium,
@@ -279,7 +273,7 @@ def updated_nessus_parser(root, project_id, scan_id, username):
                     )
             except:
                 continue
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - Nessus Report Uploaded"
     message = (
             "Nessus Scanner has completed the scan "

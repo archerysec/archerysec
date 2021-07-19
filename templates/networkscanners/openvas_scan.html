@@ -125,21 +125,4 @@
                 </div>
             </div>
         </div>
-
-{#<script src="/static/matrix-admin-bt4/assets/libs/toastr/build/toastr.min.js"></script>#}
-{#<script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>#}
-<script>
-        $(window).load(function() {
-            {% if messages %}
-                {% for message in messages %}
-                    {% if message.tags == 'alert-success' %}
-                        toastr.success('{{ message }}');
-                    {% endif %}
-                    {% if message.tags == 'alert-danger' %}
-                        toastr.error('{{ message }}');
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        });
-</script>
 {% endblock %}

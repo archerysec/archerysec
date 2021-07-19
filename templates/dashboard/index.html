@@ -20,7 +20,7 @@
                 <div class="col-md-6 col-lg-2 col-xlg-3">
                     <div class="card card-hover">
                         <div class="box bg-warning text-center">
-                            <h1 class="font-light text-white">{{ false_count_project.total_false__sum }}</i></h1>
+                            <h1 class="font-light text-white">{{ false_count_project.total_false__sum }}</h1>
                             <a href="{% url 'dashboard:all_high_vuln' %}?project_id=none&severity=All_False_Positive">
                                 <h6 class="text-white">False Positive</h6></a>
                         </div>
@@ -142,12 +142,14 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
+                         {% if user.is_superuser %}
                             <div class="float-right">
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    <a href="{% url 'projects:create_form' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Create New Project"><i
+                                    <a href="{% url 'projects:project_create' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Create New Project"><i
                         class="fas fa-plus-circle"></i> Add Project</a>
                                 </div>
                             </div>
+                        {% endif %}
                             <div class="d-md-flex align-items-center">
                                 <div>
                                     <h1>Project List</h1>
@@ -164,9 +166,7 @@
                                         <thead>
                                         <tr>
                                             <th>Project</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Owner</th>
+                                            <th>Created By</th>
                                             <th>Total</th>
                                             <th>High</th>
                                             <th>Medium</th>
@@ -178,17 +178,9 @@
                                             <tr data-target="#">
 
                                                 <td>
-                                                    <a href="{% url 'dashboard:proj_data' %}?project_id={{ data.project_id }}">{{ data.project_name }}</a>
+                                                    <a href="{% url 'dashboard:proj_data' %}?uu_id={{ data.uu_id }}">{{ data.project_name }}</a>
                                                 </td>
-                                                <td><span
-                                                        class="badge badge-pill badge-primary">{{ data.project_start }}</span>
-                                                </td>
-                                                <td><span
-                                                        class="badge badge-pill badge-warning">{{ data.project_end }}</span>
-                                                </td>
-                                                <td><span
-                                                        class="badge badge-pill badge-info">{{ data.project_owner }}</span>
-                                                </td>
+                                                <td>{{ data.created_by.name }}</td>
 
                                                 <td><span
                                                         class="badge badge-pill badge-purple">{{ data.total_vuln }}</span>
@@ -205,9 +197,9 @@
 
 
                                                 <td class="confirm-delete">
-                                                    <form action="{% url 'projects:projects' %}" method="POST">
-                                                        <input type="hidden" name="proj_id"
-                                                               value="{{ data.project_id }}"/>
+                                                    <form action="{% url 'projects:project_delete' %}" method="POST">
+                                                        <input type="hidden" name="project_id"
+                                                               value="{{ data.uu_id }}"/>
                                                         {% csrf_token %}
                                                         <button class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Project"><i
                                                                 class="m-r-0 mdi mdi-delete"></i></button>
@@ -396,19 +388,6 @@
 {#    <script src="/static/matrix-admin-bt4/assets/libs/toastr/build/toastr.min.js"></script>#}
 {#    <script src="/static/matrix-admin-bt4/dist/js/custom.min.js"></script>#}
 
-    <script>
-        $(window).load(function() {
-            {% if messages %}
-                {% for message in messages %}
-                    {% if message.tags == 'alert-success' %}
-                        toastr.success('{{ message }}');
-                    {% endif %}
-                    {% if message.tags == 'alert-warning' %}
-                        toastr.warning('{{ message }}');
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        });
-    </script>
+
 
 {% endblock %}

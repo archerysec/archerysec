@@ -19,7 +19,7 @@ import hashlib
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
 
-from compliance.models import dockle_scan_db, dockle_scan_results_db
+from compliance.models import DockleScanDb, DockleScanResultsDb
 from staticscanners.resources import dockleResource
 
 
@@ -29,8 +29,7 @@ def dockle_list(request):
     :param request:
     :return:
     """
-    username = request.user.username
-    all_dockle_scan = dockle_scan_db.objects.filter(username=username)
+    all_dockle_scan = DockleScanDb.objects.filter()
 
     return render(
         request, "compliance/dockle/docklescans_list.html", {"all_dockle_scan": all_dockle_scan}
@@ -41,20 +40,17 @@ def list_vuln(request):
     all_failed = ""
     all_passed = ""
     all_skipped = ""
-    username = request.user.username
     if request.method == "GET":
         scan_id = request.GET["scan_id"]
     else:
         scan_id = None
 
-    dockle_all_vuln = dockle_scan_results_db.objects.filter(
-        username=username, scan_id=scan_id
-    )
-    dockle_all_audit = dockle_scan_results_db.objects.filter(
-        username=username, scan_id=scan_id
-    )
+    dockle_all_vuln = DockleScanResultsDb.objects.filter(scan_id=scan_id
+                                                         )
+    dockle_all_audit = DockleScanResultsDb.objects.filter(scan_id=scan_id
+                                                          )
 
-    all_compliance = dockle_scan_db.objects.filter(username=username, scan_id=scan_id)
+    all_compliance = DockleScanDb.objects.filter(scan_id=scan_id)
 
     return render(
         request,
@@ -72,7 +68,6 @@ def dockle_vuln_data(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "GET":
         scan_id = request.GET["scan_id"]
         vuln_id = request.GET["vuln_id"]
@@ -85,14 +80,12 @@ def dockle_vuln_data(request):
         status = request.POST.get("status")
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
-        dockle_scan_results_db.objects.filter(
-            username=username, vuln_id=vuln_id, scan_id=scan_id
-        ).update(false_positive=false_positive, vuln_status=status)
+        DockleScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
+                                           ).update(false_positive=false_positive, vuln_status=status)
 
         if false_positive == "Yes":
-            vuln_info = dockle_scan_results_db.objects.filter(
-                username=username, scan_id=scan_id, vuln_id=vuln_id
-            )
+            vuln_info = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
+                                                           )
             for vi in vuln_info:
                 Name = vi.Name
                 NamespaceName = vi.NamespaceName
@@ -101,9 +94,8 @@ def dockle_vuln_data(request):
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
-                dockle_scan_results_db.objects.filter(
-                    username=username, vuln_id=vuln_id, scan_id=scan_id
-                ).update(
+                DockleScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
+                                                   ).update(
                     false_positive=false_positive,
                     vuln_status=status,
                     false_positive_hash=false_positive_hash,
@@ -114,24 +106,21 @@ def dockle_vuln_data(request):
             + "?scan_id=%s&test_name=%s" % (scan_id, vuln_id)
         )
 
-    dockle_vuln_data = dockle_scan_results_db.objects.filter(
-        username=username,
+    dockle_vuln_data = DockleScanResultsDb.objects.filter(
         scan_id=scan_id,
         vuln_id=vuln_id,
         vuln_status="Open",
         false_positive="No",
     )
 
-    vuln_data_closed = dockle_scan_results_db.objects.filter(
-        username=username,
+    vuln_data_closed = DockleScanResultsDb.objects.filter(
         scan_id=scan_id,
         vuln_id=vuln_id,
         vuln_status="Closed",
         false_positive="No",
     )
-    false_data = dockle_scan_results_db.objects.filter(
-        username=username, scan_id=scan_id, vuln_id=vuln_id, false_positive="Yes"
-    )
+    false_data = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, false_positive="Yes"
+                                                    )
 
     return render(
         request,
@@ -150,7 +139,6 @@ def dockle_details(request):
     :param request:
     :return:
     """
-    username = request.user.username
 
     if request.method == "GET":
         scan_id = request.GET["scan_id"]
@@ -159,9 +147,8 @@ def dockle_details(request):
         scan_id = None
         vuln_id = None
 
-    dockle_vuln_details = dockle_scan_results_db.objects.filter(
-        username=username, scan_id=scan_id, vuln_id=vuln_id
-    )
+    dockle_vuln_details = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
+                                                             )
 
     return render(
         request,
@@ -178,7 +165,6 @@ def del_dockle(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         scan_id = request.POST.get("scan_id")
         scan_item = str(scan_id)
@@ -188,11 +174,10 @@ def del_dockle(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
-            item = dockle_scan_db.objects.filter(username=username, scan_id=scan_id)
+            item = DockleScanDb.objects.filter(scan_id=scan_id)
             item.delete()
-            item_results = dockle_scan_results_db.objects.filter(
-                username=username, scan_id=scan_id
-            )
+            item_results = DockleScanResultsDb.objects.filter(scan_id=scan_id
+                                                              )
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
         return HttpResponseRedirect(reverse("dockle:dockle_list"))
@@ -204,7 +189,6 @@ def dockle_del_vuln(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         vuln_id = request.POST.get(
             "del_vuln",
@@ -219,13 +203,11 @@ def dockle_del_vuln(request):
         print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = dockle_scan_results_db.objects.filter(
-                username=username, vuln_id=vuln_id
-            )
+            delete_vuln = DockleScanResultsDb.objects.filter(vuln_id=vuln_id
+                                                             )
             delete_vuln.delete()
-        all_dockle_data = dockle_scan_results_db.objects.filter(
-            username=username, scan_id=scan_id
-        )
+        all_dockle_data = DockleScanResultsDb.objects.filter(scan_id=scan_id
+                                                             )
 
         total_vul = len(all_dockle_data)
         total_high = len(all_dockle_data.filter(Severity="High"))
@@ -233,7 +215,7 @@ def dockle_del_vuln(request):
         total_low = len(all_dockle_data.filter(Severity="Low"))
         total_duplicate = len(all_dockle_data.filter(vuln_duplicate="Yes"))
 
-        dockle_scan_db.objects.filter(username=username, scan_id=scan_id).update(
+        DockleScanDb.objects.filter(scan_id=scan_id).update(
             total_vuln=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -251,16 +233,14 @@ def export(request):
     :param request:
     :return:
     """
-    username = request.user.username
 
     if request.method == "POST":
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
 
         dockle_resource = dockleResource()
-        queryset = dockle_scan_results_db.objects.filter(
-            username=username, scan_id=scan_id
-        )
+        queryset = DockleScanResultsDb.objects.filter(scan_id=scan_id
+                                                      )
         dataset = dockle_resource.export(queryset)
         if report_type == "csv":
             response = HttpResponse(dataset.csv, content_type="text/csv")

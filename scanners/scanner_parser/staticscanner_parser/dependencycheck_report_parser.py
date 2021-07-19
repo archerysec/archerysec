@@ -333,7 +333,7 @@ def xml_parser(data, project_id, scan_id, username):
             total_dup=total_duplicate,
             scanner='Dependencycheck'
         )
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - DependencyCheck Report Uploaded"
     message = (
         "DependencyCheck Scanner has completed the scan "

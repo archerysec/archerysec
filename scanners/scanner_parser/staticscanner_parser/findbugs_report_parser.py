@@ -39,7 +39,7 @@ total_medium = ''
 total_low = ''
 
 
-def xml_parser(root, project_id, scan_id, username):
+def xml_parser(root, project_id, scan_id):
     """
 
     :param root:
@@ -87,16 +87,14 @@ def xml_parser(root, project_id, scan_id, username):
 
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-                match_dup = StaticScanResultsDb.objects.filter(
-                    username=username, dup_hash=duplicate_hash
+                match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
                 ).values("dup_hash")
                 lenth_match = len(match_dup)
 
             if lenth_match == 0:
                 duplicate_vuln = "No"
 
-                false_p = StaticScanResultsDb.objects.filter(
-                    username=username, false_positive_hash=duplicate_hash
+                false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
                 )
                 fp_lenth_match = len(false_p)
 
@@ -119,7 +117,6 @@ def xml_parser(root, project_id, scan_id, username):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
-                    username=username,
                     scanner='Findbugs',
                 )
                 save_all.save()
@@ -141,7 +138,6 @@ def xml_parser(root, project_id, scan_id, username):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     false_positive='Duplicate',
-                    username=username,
                     scanner='Findbugs',
                 )
                 save_all.save()
@@ -155,18 +151,15 @@ def xml_parser(root, project_id, scan_id, username):
                     global Details
                     Details = BugPattern.text
 
-                StaticScanResultsDb.objects.filter(
-                    username=username, scan_id=scan_id, title=name
+                StaticScanResultsDb.objects.filter(scan_id=scan_id, title=name
                 ).update(
                     description=str(Details) + '\n\n' + str(ShortMessage) + '\n\n' + str(LongMessage) + '\n\n' + str(classname),
                 )
 
-        all_findbugs_data = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, false_positive="No"
+        all_findbugs_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
         )
 
-        duplicate_count = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, vuln_duplicate="Yes"
+        duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
         )
 
         total_vul = len(all_findbugs_data)
@@ -175,7 +168,7 @@ def xml_parser(root, project_id, scan_id, username):
         total_low = len(all_findbugs_data.filter(severity="Low"))
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-        StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
+        StaticScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
             date_time=date_time,
             high_vul=total_high,
@@ -184,7 +177,7 @@ def xml_parser(root, project_id, scan_id, username):
             total_dup=total_duplicate,
             scanner='Findbugs'
         )
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - Findbugs Report Uploaded"
     message = (
         "Findbugs Scanner has completed the scan "

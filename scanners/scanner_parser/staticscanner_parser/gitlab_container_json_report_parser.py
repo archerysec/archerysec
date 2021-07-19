@@ -35,7 +35,7 @@ Severity = ""
 References = ""
 
 
-def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
+def gitlabcontainerscan_report_json(data, project_id, scan_id):
     """
 
     :param data:
@@ -125,16 +125,14 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = StaticScanResultsDb.objects.filter(
-            username=username, dup_hash=duplicate_hash
+        match_dup = StaticScanResultsDb.objects.filter( dup_hash=duplicate_hash
         ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
-            false_p = StaticScanResultsDb.objects.filter(
-                username=username, false_positive_hash=duplicate_hash
+            false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
 
@@ -157,7 +155,6 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
-                username=username,
                 scanner='Gitlabcontainerscan'
             )
             save_all.save()
@@ -178,17 +175,14 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive='Duplicate',
-                username=username,
                 scanner='Gitlabcontainerscan'
             )
             save_all.save()
 
-    all_findbugs_data = StaticScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, false_positive="No"
+    all_findbugs_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
     )
 
-    duplicate_count = StaticScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+    duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_vul = len(all_findbugs_data)
@@ -198,7 +192,6 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     StaticScansDb.objects.filter(scan_id=scan_id).update(
-        username=username,
         total_vul=total_vul,
         high_vul=total_high,
         medium_vul=total_medium,
@@ -206,7 +199,7 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, username):
         total_dup=total_duplicate,
         scanner='Gitlabcontainerscan'
     )
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - GitLab Container Scan Report Uploaded"
     message = (
         "GitLab Container Scan has completed the scan "

@@ -24,4 +24,3 @@ class jirasetting(models.Model):
     jira_server = models.TextField(blank=True, null=True)
     jira_username = models.TextField(blank=True, null=True)
     jira_password = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)

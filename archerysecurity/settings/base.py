@@ -72,7 +72,11 @@ INSTALLED_APPS = [
     'import_export',
     'compliance',
     'notifications',
-    'rest_framework_jwt'
+    'rest_framework_jwt',
+    'user_management',
+    'authentication',
+    "rest_framework_simplejwt.token_blacklist",
+
 
 ]
 
@@ -154,6 +158,8 @@ USE_L10N = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+AUTH_USER_MODEL = "user_management.UserProfile"
 
 MESSAGE_TAGS = {
     messages.DEBUG: "alert-info",

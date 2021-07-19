@@ -1,11 +1,11 @@
-from archerysettings.models import email_db
+from archerysettings.models import EmailDb
 from django.conf import settings
 from django.core.mail import send_mail
 
 
 def email_sch_notify(subject, message):
     to_mail = ''
-    all_email = email_db.objects.all()
+    all_email = EmailDb.objects.all()
     for email in all_email:
         to_mail = email.recipient_list
 

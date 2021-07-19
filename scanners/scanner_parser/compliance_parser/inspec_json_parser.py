@@ -17,14 +17,14 @@
 
 import uuid
 
-from compliance.models import inspec_scan_db, inspec_scan_results_db
+from compliance.models import InspecScanDb, InspecScanResultsDb
 from utility.email_notify import email_sch_notify
 
 status = None
 controls_results_message = None
 
 
-def inspec_report_json(data, project_id, scan_id, username):
+def inspec_report_json(data, project_id, scan_id):
     """
 
     :param data:
@@ -77,7 +77,7 @@ def inspec_report_json(data, project_id, scan_id, username):
 
                         vul_id = uuid.uuid4()
 
-                        save_all = inspec_scan_results_db(
+                        save_all = InspecScanResultsDb(
                             scan_id=scan_id,
                             project_id=project_id,
                             vul_col=vul_col,
@@ -101,12 +101,12 @@ def inspec_report_json(data, project_id, scan_id, username):
                             controls_results_run_time=controls_results_run_time,
                             controls_results_start_time=controls_results_start_time,
                             controls_results_message=controls_results_message,
-                            username=username,
+
                         )
                         save_all.save()
 
-            all_inspec_data = inspec_scan_results_db.objects.filter(
-                username=username, scan_id=scan_id
+            all_inspec_data = InspecScanResultsDb.objects.filter(
+                scan_id=scan_id
             )
 
             total_vul = len(all_inspec_data)
@@ -121,7 +121,7 @@ def inspec_report_json(data, project_id, scan_id, username):
             )
             total_duplicate = len(all_inspec_data.filter(vuln_duplicate="Yes"))
 
-            inspec_scan_db.objects.filter(username=username, scan_id=scan_id).update(
+            InspecScanDb.objects.filter(scan_id=scan_id).update(
                 total_vuln=total_vul,
                 inspec_failed=inspec_failed,
                 inspec_passed=inspec_passed,

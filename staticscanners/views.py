@@ -27,8 +27,8 @@ from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from jiraticketing.models import jirasetting
 
-from compliance.models import dockle_scan_db, inspec_scan_db
-from projects.models import project_db
+from compliance.models import DockleScanDb, InspecScanDb
+from projects.models import ProjectDb
 from scanners.scanner_parser.compliance_parser.dockle_json_parser import \
     dockle_report_json
 from scanners.scanner_parser.compliance_parser.inspec_json_parser import \
@@ -59,7 +59,6 @@ def list_vuln(request):
     :param request: Take inpute of request from list vuln
     :return: List all vulnerabilities
     """
-    username = request.user.username
     if request.method == "GET":
         scan_id = request.GET["scan_id"]
         scanner = request.GET["scanner"]
@@ -67,8 +66,7 @@ def list_vuln(request):
         scan_id = None
         scanner = None
 
-    all_vuln = StaticScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, scanner=scanner
+    all_vuln = StaticScanResultsDb.objects.filter(scan_id=scan_id, scanner=scanner
     )
 
     return render(
@@ -87,8 +85,7 @@ def list_scans(request):
     :param request:
     :return:
     """
-    username = request.user.username
-    scan_list = StaticScansDb.objects.filter(username=username)
+    scan_list = StaticScansDb.objects.filter()
 
     all_notify = Notification.objects.unread()
 
@@ -104,8 +101,6 @@ def list_vuln_info(request):
     scan_id = None
     name = None
     scanner = None
-
-    username = request.user.username
     jira_url = None
 
     jira = jirasetting.objects.all()
@@ -123,13 +118,11 @@ def list_vuln_info(request):
         scan_id = request.POST.get("scan_id")
         vuln_name = request.POST.get("vuln_name")
         scanner = request.POST.get("scanner")
-        StaticScanResultsDb.objects.filter(
-            username=username, vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+        StaticScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
         ).update(false_positive=false_positive, vuln_status=status)
 
         if false_positive == "Yes":
-            vuln_info = StaticScanResultsDb.objects.filter(
-                username=username, scan_id=scan_id, vuln_id=vuln_id, scanner=scanner
+            vuln_info = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, scanner=scanner
             )
             for vi in vuln_info:
                 name = vi.title
@@ -139,16 +132,14 @@ def list_vuln_info(request):
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
-                StaticScanResultsDb.objects.filter(
-                    username=username, vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+                StaticScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
                 ).update(
                     false_positive=false_positive,
                     vuln_status="Closed",
                     false_positive_hash=false_positive_hash,
                 )
 
-        all_vuln = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, false_positive="No", vuln_status="Open", scanner=scanner
+        all_vuln = StaticScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No", vuln_status="Open", scanner=scanner
         )
 
         total_high = len(all_vuln.filter(severity="High"))
@@ -158,7 +149,7 @@ def list_vuln_info(request):
         total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low + total_info
 
-        StaticScansDb.objects.filter(username=username, scan_id=scan_id, scanner=scanner).update(
+        StaticScansDb.objects.filter(scan_id=scan_id, scanner=scanner).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -172,7 +163,6 @@ def list_vuln_info(request):
         )
 
     vuln_data = StaticScanResultsDb.objects.filter(
-        username=username,
         title=name,
         scan_id=scan_id,
         scanner=scanner
@@ -187,15 +177,13 @@ def scan_details(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "GET":
         vuln_id = request.GET["vuln_id"]
         scanner = request.GET["scanner"]
     else:
         vuln_id = ""
         scanner = ""
-    vul_dat = StaticScanResultsDb.objects.filter(
-        username=username, vuln_id=vuln_id, scanner=scanner
+    vul_dat = StaticScanResultsDb.objects.filter(vuln_id=vuln_id, scanner=scanner
     ).order_by("vuln_id")
 
     return render(request, "staticscanners/scans/vuln_details.html", {"vul_dat": vul_dat})
@@ -207,7 +195,6 @@ def scan_delete(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         scan_id = request.POST.get("scan_id")
 
@@ -219,10 +206,9 @@ def scan_delete(request):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = StaticScansDb.objects.filter(username=username, scan_id=scan_id)
+            item = StaticScansDb.objects.filter(scan_id=scan_id)
             item.delete()
-            item_results = StaticScanResultsDb.objects.filter(
-                username=username, scan_id=scan_id
+            item_results = StaticScanResultsDb.objects.filter(scan_id=scan_id
             )
             item_results.delete()
         return HttpResponseRedirect(reverse("staticscanners:list_scans"))
@@ -234,7 +220,6 @@ def vuln_delete(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
@@ -247,12 +232,10 @@ def vuln_delete(request):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = StaticScanResultsDb.objects.filter(
-                username=username, scanner=scanner, vuln_id=vuln_id
+            delete_vuln = StaticScanResultsDb.objects.filter(scanner=scanner, vuln_id=vuln_id
             )
             delete_vuln.delete()
-        all_vuln = StaticScanResultsDb.objects.filter(
-            username=username, scanner=scanner, scan_id=scan_id
+        all_vuln = StaticScanResultsDb.objects.filter(scanner=scanner, scan_id=scan_id
         )
 
         total_vul = len(all_vuln)
@@ -262,7 +245,7 @@ def vuln_delete(request):
         total_low = len(all_vuln.filter(severity="Low"))
         total_info = len(all_vuln.filter(severity="Information"))
 
-        StaticScansDb.objects.filter(username=username, scan_id=scan_id, scanner=scanner).update(
+        StaticScansDb.objects.filter(scan_id=scan_id, scanner=scanner).update(
             total_vul=total_vul,
             critical_vul=total_critical,
             high_vul=total_high,
@@ -275,7 +258,7 @@ def vuln_delete(request):
         )
 
 
-def upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data):
+def upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data):
     """
 
     :param project_name:
@@ -295,69 +278,68 @@ def upload(project_name, scan_id, date_time, project_id, scan_status, scanner, u
         project_id=project_id,
         scan_status=scan_status,
         scanner=scanner,
-        username=username,
     )
     scan_dump.save()
 
     if scanner == 'Bandit':
         bandit_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Retirejs':
         retirejs_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Clair':
         clair_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Trivy':
         trivy_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Npmaudit':
         npmaudit_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Nodejsscan':
         nodejsscan_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Semgrep':
         semgrep_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Tfsec':
         tfsec_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Whitesource':
         whitesource_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Gitlabsast':
         gitlabsast_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Gitlabcontainerscan':
         gitlabcontainerscan_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Gitlabsca':
         gitlabsast_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Gitlabsca':
         gitlabsca_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Twistlock':
         twistlock_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
     elif scanner == 'Brakeman_scan':
         brakeman_report_json(
-            data=data, project_id=project_id, scan_id=scan_id, username=username
+            data=data, project_id=project_id, scan_id=scan_id
         )
 
 
@@ -367,8 +349,7 @@ def report_import(request):
     :param request:
     :return:
     """
-    username = request.user.username
-    all_project = project_db.objects.filter(username=username)
+    all_project = ProjectDb.objects.filter()
 
     if request.method == "POST":
         project_id = request.POST.get("project_id")
@@ -386,7 +367,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Bandit'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -404,7 +385,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Retirejs'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -440,7 +421,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Trivy'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -458,7 +439,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Npmaudit'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -476,7 +457,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Nodejsscan'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -494,7 +475,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Semgrep'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -530,7 +511,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Whitesource'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -546,18 +527,16 @@ def report_import(request):
 
                 j = json_file.read()
                 data = json.loads(j)
-                scan_dump = inspec_scan_db(project_name=project_name,
-                                           scan_id=scan_id,
-                                           date_time=date_time,
-                                           project_id=project_id,
-                                           scan_status=scan_status,
-                                           username=username
-                                           )
+                scan_dump = InspecScanDb(project_name=project_name,
+                                         scan_id=scan_id,
+                                         date_time=date_time,
+                                         project_id=project_id,
+                                         scan_status=scan_status,
+                                         )
                 scan_dump.save()
                 inspec_report_json(data=data,
                                    project_id=project_id,
                                    scan_id=scan_id,
-                                   username=username
                                    )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('inspec:inspec_list'))
@@ -571,18 +550,16 @@ def report_import(request):
 
                 j = json_file.read()
                 data = json.loads(j)
-                scan_dump = dockle_scan_db(project_name=project_name,
-                                           scan_id=scan_id,
-                                           date_time=date_time,
-                                           project_id=project_id,
-                                           scan_status=scan_status,
-                                           username=username
-                                           )
+                scan_dump = DockleScanDb(project_name=project_name,
+                                         scan_id=scan_id,
+                                         date_time=date_time,
+                                         project_id=project_id,
+                                         scan_status=scan_status,
+                                         )
                 scan_dump.save()
                 dockle_report_json(data=data,
                                    project_id=project_id,
                                    scan_id=scan_id,
-                                   username=username
                                    )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse('dockle:dockle_list'))
@@ -598,7 +575,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Gitlabsast'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -634,7 +611,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Gitlabsca'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -652,7 +629,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Twistlock'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
@@ -669,7 +646,7 @@ def report_import(request):
                 data = json.loads(j)
                 scanner = 'Brakeman_scan'
 
-                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, username, data)
+                upload(project_name, scan_id, date_time, project_id, scan_status, scanner, data)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:

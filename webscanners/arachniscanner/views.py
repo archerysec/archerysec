@@ -31,7 +31,7 @@ from django.urls import reverse
 from notifications.signals import notify
 
 import PyArachniapi
-from archerysettings.models import arachni_settings_db, settings_db
+from archerysettings.models import ArachniSettingsDb, SettingsDb
 from jiraticketing.models import jirasetting
 from scanners.scanner_parser.web_scanner import arachni_xml_parser
 from webscanners.models import (WebScanResultsDb, WebScansDb)
@@ -45,8 +45,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     global scan_run_id, scan_status
     arachni_hosts = None
     arachni_ports = None
-    username = user.username
-    all_arachni = arachni_settings_db.objects.filter(username=username)
+    all_arachni = ArachniSettingsDb.objects.filter()
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
@@ -143,7 +142,6 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
 
     try:
         save_all_scan = WebScansDb(
-            username=username,
             project_id=project_id,
             scan_url=target,
             scan_id=scan_id,
@@ -177,7 +175,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
                 * 100
                 / scan_sum["statistics"]["browser_cluster"]["total_job_time"]
             )
-        WebScansDb.objects.filter(username=username, scan_id=scan_id, scanner='Arachni').update(
+        WebScansDb.objects.filter(scan_id=scan_id, scanner='Arachni').update(
             scan_status=int(status)
         )
         scan_sum = arachni.scan_summary(id=scan_run_id).data
@@ -189,13 +187,12 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         xml_report = arachni.scan_xml_report(id=scan_run_id).data
         root_xml = ET.fromstring(xml_report)
         arachni_xml_parser.xml_parser(
-            username=username,
             project_id=project_id,
             scan_id=scan_id,
             root=root_xml,
             target_url=target,
         )
-        WebScansDb.objects.filter(username=username, scan_id=scan_id, scanner='Arachni').update(
+        WebScansDb.objects.filter(scan_id=scan_id, scanner='Arachni').update(
             scan_status="100"
         )
         print("Data uploaded !!!!")
@@ -238,13 +235,12 @@ def arachni_settings(request):
     :param request:
     :return:
     """
-    username = request.user.username
     arachni_hosts = None
     arachni_ports = None
     arachni_user= None
     arachni_pass = None
 
-    all_arachni = arachni_settings_db.objects.filter(username=username)
+    all_arachni = ArachniSettingsDb.objects.filter()
     for arachni in all_arachni:
         # global arachni_api_key, arachni_hosts, arachni_ports
         arachni_hosts = arachni.arachni_url
@@ -270,22 +266,19 @@ def arachni_setting_update(request):
     :return:
     """
     setting_id = uuid.uuid4()
-    username = request.user.username
     if request.method == 'POST':
         arachnihost = request.POST.get("arachnihost", )
         port = request.POST.get("arachniport", )
         user = request.POST.get("arachniuser", )
         password = request.POST.get("arachnipass", )
 
-        setting_dat = settings_db(
-            username=username,
+        setting_dat = SettingsDb(
             setting_id=setting_id,
             setting_scanner='Arachni',
         )
         setting_dat.save()
 
-        save_data = arachni_settings_db(
-            username=username,
+        save_data = ArachniSettingsDb(
             arachni_url=arachnihost,
             arachni_port=port,
             arachni_user=user,
@@ -310,12 +303,12 @@ def arachni_setting_update(request):
                 if key == "id":
                     scan_run_id = value
             arachni_info = True
-            settings_db.objects.filter(setting_id=setting_id).update(
+            SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=arachni_info
             )
         except Exception:
             arachni_info = False
-            settings_db.objects.filter(setting_id=setting_id).update(
+            SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=arachni_info
             )
 
@@ -329,7 +322,6 @@ def export(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
@@ -339,8 +331,7 @@ def export(request):
         value_split = value.split(",")
 
         zap_resource = ArachniResource()
-        queryset = WebScanResultsDb.objects.filter(
-            username=username, scan_id__in=value_split, scanner='Arachni'
+        queryset = WebScanResultsDb.objects.filter(scan_id__in=value_split, scanner='Arachni'
         )
         dataset = zap_resource.export(queryset)
         if report_type == "csv":

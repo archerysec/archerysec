@@ -45,7 +45,7 @@ false_positive = ''
 target = ''
 
 
-def xml_parser(root, project_id, scan_id, username):
+def xml_parser(root, project_id, scan_id):
     global vuln_url, vuln_type, vuln_severity, vuln_certainty, vuln_rawrequest, vuln_rawresponse, vuln_extrainformation, vuln_classification, vuln_id, vul_col, description, impact, actionsToTake, remedy, requiredSkillsForExploitation, externalReferences, remedyReferences, proofOfConcept, proofs, target
     date_time = datetime.now()
     for data in root:
@@ -131,8 +131,7 @@ def xml_parser(root, project_id, scan_id, username):
         dup_data = str(vuln_type) + str(vuln_url) + str(vuln_severity)
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
         match_dup = (
-            WebScanResultsDb.objects.filter(
-                username=username, dup_hash=duplicate_hash
+            WebScanResultsDb.objects.filter(dup_hash=duplicate_hash
             )
                 .values("dup_hash")
                 .distinct()
@@ -142,8 +141,7 @@ def xml_parser(root, project_id, scan_id, username):
         if lenth_match == 0:
             duplicate_vuln = "No"
 
-            false_p = WebScanResultsDb.objects.filter(
-                username=username, false_positive_hash=duplicate_hash
+            false_p = WebScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
 
@@ -171,7 +169,6 @@ def xml_parser(root, project_id, scan_id, username):
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                username=username,
                 scanner='Netsparker'
             )
             dump_data.save()
@@ -194,16 +191,13 @@ def xml_parser(root, project_id, scan_id, username):
                 reference=externalReferences + '\n\n' + str(remedyReferences),
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                username=username,
                 scanner='Netsparker'
             )
             dump_data.save()
 
-    netsparker_all_vul = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, false_positive="No", scanner='Netsparker'
+    netsparker_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No", scanner='Netsparker'
     )
-    duplicate_count = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, vuln_duplicate="Yes", scanner='Netsparker'
+    duplicate_count = WebScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes", scanner='Netsparker'
     )
 
     total_high = len(netsparker_all_vul.filter(severity="High"))
@@ -213,7 +207,7 @@ def xml_parser(root, project_id, scan_id, username):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
     total_vul = total_high + total_medium + total_low + total_info
 
-    WebScansDb.objects.filter(username=username, scan_id=scan_id).update(
+    WebScansDb.objects.filter(scan_id=scan_id).update(
         total_vul=total_vul,
         date_time=date_time,
         high_vul=total_high,
@@ -224,7 +218,7 @@ def xml_parser(root, project_id, scan_id, username):
         scan_url=target,
         scanner='Netsparker'
     )
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - Netsparker Report Uploaded"
     message = (
             "Netsparker Scanner has completed the scan "

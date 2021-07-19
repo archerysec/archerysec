@@ -28,7 +28,7 @@ vul_col = ""
 severity = ""
 
 
-def nodejsscan_report_json(data, project_id, scan_id, username):
+def nodejsscan_report_json(data, project_id, scan_id):
     """
 
     :param data:
@@ -72,16 +72,14 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
 
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = StaticScanResultsDb.objects.filter(
-                username=username, dup_hash=duplicate_hash
+            match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
             ).values("dup_hash")
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
                 duplicate_vuln = "No"
 
-                false_p = StaticScanResultsDb.objects.filter(
-                    username=username, false_positive_hash=duplicate_hash
+                false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
                 )
                 fp_lenth_match = len(false_p)
 
@@ -105,7 +103,6 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
                     severity=severity,
                     filePath=path,
                     description=str(description) + '\n\n' + str(line) + '\n\n' + str(lines),
-                    username=username,
                     scanner='Nodejsscan'
                 )
                 save_all.save()
@@ -128,17 +125,14 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
                     severity=severity,
                     filePath=path,
                     description=str(description) + '\n\n' + str(line) + '\n\n' + str(lines),
-                    username=username,
                     scanner='Nodejsscan'
                 )
                 save_all.save()
 
-        all_findbugs_data = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, false_positive="No"
+        all_findbugs_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
         )
 
-        duplicate_count = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, vuln_duplicate="Yes"
+        duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
         )
 
         total_vul = len(all_findbugs_data)
@@ -147,7 +141,7 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
         total_low = len(all_findbugs_data.filter(severity="Low"))
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-        StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
+        StaticScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
             date_time=date_time,
             high_vul=total_high,
@@ -156,7 +150,7 @@ def nodejsscan_report_json(data, project_id, scan_id, username):
             total_dup=total_duplicate,
             scanner='Nodejsscan'
         )
-        trend_update(username=username)
+        trend_update()
         subject = "Archery Tool Scan Status - Nodejsscan Report Uploaded"
         message = (
             "Nodejsscan Scanner has completed the scan "

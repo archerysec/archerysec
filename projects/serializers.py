@@ -48,3 +48,8 @@ class ProjectDataSerializers(serializers.Serializer):
     low_net = serializers.IntegerField(read_only=True)
     low_web = serializers.IntegerField(read_only=True)
     low_static = serializers.IntegerField(read_only=True)
+
+
+class ProjectCreateSerializers(serializers.Serializer):
+    project_name = serializers.CharField(required=True, help_text="Project Name")
+    project_disc = serializers.CharField(required=True, help_text="Project Description")

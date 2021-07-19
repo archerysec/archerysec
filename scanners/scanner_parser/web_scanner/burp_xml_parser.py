@@ -59,7 +59,7 @@ issue_vulnerability_classifications = ""
 url = ""
 
 
-def burp_scan_data(root, project_id, scan_id, username):
+def burp_scan_data(root, project_id, scan_id):
     date_time = datetime.now()
     """
     The function parse the burp result as xml data
@@ -170,8 +170,7 @@ def burp_scan_data(root, project_id, scan_id, username):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = (
-            WebScanResultsDb.objects.filter(
-                username=username, dup_hash=duplicate_hash, scanner='Burp'
+            WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, scanner='Burp'
             )
                 .values("dup_hash")
                 .distinct()
@@ -181,8 +180,7 @@ def burp_scan_data(root, project_id, scan_id, username):
         if lenth_match == 0:
             duplicate_vuln = "No"
 
-            false_p = WebScanResultsDb.objects.filter(
-                username=username, false_positive_hash=duplicate_hash, scanner='Burp'
+            false_p = WebScanResultsDb.objects.filter(false_positive_hash=duplicate_hash, scanner='Burp'
             )
             fp_lenth_match = len(false_p)
 
@@ -213,8 +211,7 @@ def burp_scan_data(root, project_id, scan_id, username):
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    scanner='Burp',
-                    username=username,
+                    scanner='Burp'
                 )
                 data_dump.save()
             except Exception as e:
@@ -240,19 +237,16 @@ def burp_scan_data(root, project_id, scan_id, username):
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    scanner='Burp',
-                    username=username
+                    scanner='Burp'
                 )
                 data_dump.save()
             except Exception as e:
                 print(e)
 
-    burp_all_vul = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, scanner='Burp', false_positive="No"
+    burp_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, scanner='Burp', false_positive="No"
     )
 
-    duplicate_count = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, scanner='Burp', vuln_duplicate="Yes"
+    duplicate_count = WebScanResultsDb.objects.filter(scan_id=scan_id, scanner='Burp', vuln_duplicate="Yes"
     )
 
     total_vul = len(burp_all_vul)
@@ -261,7 +255,7 @@ def burp_scan_data(root, project_id, scan_id, username):
     total_low = len(burp_all_vul.filter(severity="Low"))
     total_info = len(burp_all_vul.filter(severity="Information"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
-    WebScansDb.objects.filter(username=username, scan_id=scan_id, scanner='Burp').update(
+    WebScansDb.objects.filter(scan_id=scan_id, scanner='Burp').update(
         scan_url=host,
         date_time=date_time,
         total_vul=total_vul,
@@ -272,7 +266,7 @@ def burp_scan_data(root, project_id, scan_id, username):
         total_dup=total_duplicate,
     )
     print(host)
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - Burp Report Uploaded"
     message = (
             "Burp Scanner has completed the scan "

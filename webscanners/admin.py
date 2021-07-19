@@ -17,5 +17,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from webscanners import models
 
-# Register your models here.
+admin.site.register(models.WebScansDb)
+admin.site.register(models.WebScanResultsDb)

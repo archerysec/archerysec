@@ -27,7 +27,7 @@ from django.shortcuts import HttpResponse
 from notifications.signals import notify
 from PyBurprestapi import burpscanner
 
-from archerysettings.models import burp_setting_db, email_db
+from archerysettings.models import BurpSettingDb, EmailDb
 from webscanners import email_notification
 from webscanners.models import (WebScansDb,
                                 WebScanResultsDb)
@@ -38,7 +38,7 @@ to_mail = ""
 
 def email_notify(user, subject, message):
     global to_mail
-    all_email = email_db.objects.all()
+    all_email = EmailDb.objects.all()
     for email in all_email:
         to_mail = email.recipient_list
 
@@ -104,8 +104,8 @@ class burp_scans(object):
 
         global burp_status, data
 
-        # Load setting parameters from burp_setting_db models
-        all_burp_settings = burp_setting_db.objects.filter(username=self.user.username)
+        # Load setting parameters from BurpSettingDb models
+        all_burp_settings = BurpSettingDb.objects.filter()
 
         for data in all_burp_settings:
             burp_host = data.burp_url
@@ -114,7 +114,6 @@ class burp_scans(object):
 
         date_time = datetime.now()
         scan_dump = WebScansDb(
-            username=self.user.username,
             scan_id=self.scan_id,
             project_id=self.project_id,
             scan_url=self.scan_url,
@@ -150,8 +149,7 @@ class burp_scans(object):
             scan_info_data = json.loads(json_scan_data)
             scan_status = scan_info_data["scan_metrics"]["crawl_and_audit_progress"]
             print("Scan Status:", scan_status)
-            WebScansDb.objects.filter(
-                username=self.user.username, scan_id=self.scan_id, scanner='Burp'
+            WebScansDb.objects.filter(scan_id=self.scan_id, scanner='Burp'
             ).update(scan_status=scan_status)
             time.sleep(5)
 
@@ -258,8 +256,7 @@ class burp_scans(object):
             dup_data = name + path + severity
             duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
 
-            match_dup = WebScansDb.objects.filter(username=self.user.username,
-                                                           dup_hash=duplicate_hash).values('dup_hash').distinct()
+            match_dup = WebScansDb.objects.filter(dup_hash=duplicate_hash).values('dup_hash').distinct()
             lenth_match = len(match_dup)
 
             if lenth_match == 1:
@@ -269,8 +266,7 @@ class burp_scans(object):
             else:
                 duplicate_vuln = 'None'
 
-            false_p = WebScansDb.objects.filter(username=self.user.username,
-                                                         false_positive_hash=duplicate_hash)
+            false_p = WebScansDb.objects.filter(false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
             details = str(issue_description) + str('\n') + str(request_datas) + str('\n\n') + str(response_datas) + str(
@@ -300,15 +296,12 @@ class burp_scans(object):
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    scanner='Burp',
-                    username=self.user.username,
-                )
+                    scanner='Burp')
                 data_dump.save()
             except Exception as e:
                 print(e)
         burp_all_vul = (
-            WebScanResultsDb.objects.filter(
-                username=self.user.username, scan_id=self.scan_id
+            WebScanResultsDb.objects.filter(scan_id=self.scan_id
             )
             .values("title", "severity")
             .distinct()
@@ -319,8 +312,7 @@ class burp_scans(object):
         total_low = len(burp_all_vul.filter(severity="Low"))
         total_info = len(burp_all_vul.filter(severity="Info"))
         total_duplicate = len(burp_all_vul.filter(vuln_duplicate="Yes"))
-        WebScansDb.objects.filter(
-            username=self.user.username, scan_id=self.scan_id, scanner='Burp'
+        WebScansDb.objects.filter(scan_id=self.scan_id, scanner='Burp'
         ).update(
             total_vul=total_vul,
             high_vul=total_high,

@@ -19,20 +19,19 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class manual_scans_db(models.Model):
+class ManualScansDb(models.Model):
     scan_url = models.URLField(blank=True)
     scan_id = models.TextField(blank=True)
     total_vul = models.IntegerField(blank=True, null=True)
     high_vul = models.IntegerField(blank=True, null=True)
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
-    project_id = models.UUIDField(null=True)
+    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
     date_time = models.DateTimeField(null=True)
     pentest_type = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
 
 
-class manual_scan_results_db(models.Model):
+class ManualScanResultsDb(models.Model):
     vuln_id = models.TextField(blank=True)
     scan_id = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
@@ -48,11 +47,10 @@ class manual_scan_results_db(models.Model):
     response_header = models.TextField(blank=True, null=True)
     reference = models.TextField(blank=True, null=True)
     vuln_status = models.TextField(null=True, blank=True)
-    project_id = models.UUIDField(null=True, blank=True)
+    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
     Poc_Img = models.ImageField(null=True, blank=True)
     poc_description = models.TextField(null=True, blank=True)
     pentest_type = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
 
 
 class VulnerabilityData(models.Model):
@@ -63,4 +61,3 @@ class VulnerabilityData(models.Model):
     vuln_remediation = models.TextField(blank=True)
     vuln_references = models.TextField(blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)

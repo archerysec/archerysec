@@ -20,16 +20,15 @@ import json
 
 from django.core import signing
 
-from archerysettings.models import (arachni_settings_db, burp_setting_db,
-                                    email_db, nmap_vulners_setting_db,
-                                    openvas_setting_db, zap_settings_db)
+from archerysettings.models import (ArachniSettingsDb, BurpSettingDb,
+                                    EmailDb, NmapVulnersSettingDb,
+                                    OpenvasSettingDb, ZapSettingsDb)
 import uuid
 
 class SaveSettings:
-    def __init__(self, setting_file, username):
+    def __init__(self, setting_file):
 
         self.setting_file = setting_file
-        self.username = username
 
     def nmap_vulners(self, enabled, version, online, timing):
         """
@@ -40,19 +39,18 @@ class SaveSettings:
         :param timing:
         :return:
         """
-        all_nv = nmap_vulners_setting_db.objects.filter()
+        all_nv = NmapVulnersSettingDb.objects.filter()
         all_nv.delete()
         if timing > 5:
             timing = 5
         elif timing < 0:
             timing = 0
 
-        save_nv_settings = nmap_vulners_setting_db(
+        save_nv_settings = NmapVulnersSettingDb(
             enabled=enabled,
             version=version,
             online=online,
-            timing=timing,
-            username=self.username,
+            timing=timing
         )
         save_nv_settings.save()
 
@@ -64,11 +62,11 @@ class SaveSettings:
         :param zaport:
         :return:
         """
-        all_zap = zap_settings_db.objects.filter(self.username)
+        all_zap = ZapSettingsDb.objects.filter()
         all_zap.delete()
 
-        save_zapsettings = zap_settings_db(
-            zap_url=zaphost, zap_api=apikey, zap_port=zaport, setting_id=setting_id, username=self.username
+        save_zapsettings = ZapSettingsDb(
+            zap_url=zaphost, zap_api=apikey, zap_port=zaport, setting_id=setting_id,
         )
         save_zapsettings.save()
 
@@ -80,15 +78,14 @@ class SaveSettings:
         :return:
         """
 
-        all_burp = burp_setting_db.objects.filter(self.username)
+        all_burp = BurpSettingDb.objects.filter()
         all_burp.delete()
 
-        save_burpsettings = burp_setting_db(
+        save_burpsettings = BurpSettingDb(
             burp_url=burphost,
             burp_port=burport,
             burp_api_key=burpapikey,
             setting_id=setting_id,
-            username=self.username,
         )
         save_burpsettings.save()
 
@@ -106,18 +103,16 @@ class SaveSettings:
         :param host:
         :param port:
         :param enabled:
-        :param username:
         :param passwrod:
         :return:
         """
-        openvas_settings = openvas_setting_db(
+        openvas_settings = OpenvasSettingDb(
             host=openvas_host,
             port=openvas_port,
             enabled=openvas_enabled,
             user=openvas_user,
             password=openvas_password,
-            setting_id=setting_id,
-            username=self.username,
+            setting_id=setting_id
         )
         openvas_settings.save()
         try:
@@ -170,10 +165,10 @@ class SaveSettings:
         :param arachniport:
         :return:
         """
-        all_arachni = arachni_settings_db.objects.all()
+        all_arachni = ArachniSettingsDb.objects.all()
         all_arachni.delete()
 
-        save_arachnisettings = arachni_settings_db(
+        save_arachnisettings = ArachniSettingsDb(
             arachni_url=arachnihost,
             arachni_port=arachniport,
         )
@@ -186,11 +181,10 @@ class SaveSettings:
         :param arachniport:
         :return:
         """
-        all_email = email_db.objects.filter(self.username)
+        all_email = EmailDb.objects.filter()
         all_email.delete()
 
-        save_emailsettings = email_db(
-            username=self.username,
+        save_emailsettings = EmailDb(
             subject=subject,
             message=message,
             setting_id=setting_id,

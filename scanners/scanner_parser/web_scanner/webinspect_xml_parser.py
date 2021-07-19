@@ -44,7 +44,7 @@ false_positive = ''
 target = ''
 
 
-def xml_parser(root, project_id, scan_id, username):
+def xml_parser(root, project_id, scan_id):
     global url, Scheme, Host, Port, AttackMethod, VulnerableSession, TriggerSession, VulnerabilityID, Severity, Name, ReportSection, HighlightSelections, RawResponse, SectionText, vuln_id, severity_name, vul_col, target
     date_time = datetime.now()
     for data in root:
@@ -103,8 +103,7 @@ def xml_parser(root, project_id, scan_id, username):
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
             match_dup = (
-                WebScanResultsDb.objects.filter(
-                    username=username, dup_hash=duplicate_hash
+                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash
                 )
                 .values("dup_hash")
                 .distinct()
@@ -114,8 +113,7 @@ def xml_parser(root, project_id, scan_id, username):
             if lenth_match == 0:
                 duplicate_vuln = "No"
 
-                false_p = WebScanResultsDb.objects.filter(
-                    username=username, false_positive_hash=duplicate_hash
+                false_p = WebScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
                 )
                 fp_lenth_match = len(false_p)
 
@@ -145,8 +143,7 @@ def xml_parser(root, project_id, scan_id, username):
                         vuln_status="Open",
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
-                        scanner='Webinspect',
-                        username=username,
+                        scanner='Webinspect'
                     )
                     dump_data.save()
 
@@ -168,17 +165,14 @@ def xml_parser(root, project_id, scan_id, username):
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    scanner='Webinspect',
-                    username=username,
+                    scanner='Webinspect'
                 )
                 dump_data.save()
 
-        webinspect_all_vul = WebScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, false_positive="No"
+        webinspect_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
         )
 
-        duplicate_count = WebScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, vuln_duplicate="Yes"
+        duplicate_count = WebScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
         )
 
         total_high = len(webinspect_all_vul.filter(severity="High"))
@@ -188,7 +182,7 @@ def xml_parser(root, project_id, scan_id, username):
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
         total_vul =  total_high + total_medium + total_low + total_info
 
-        WebScansDb.objects.filter(username=username, scan_id=scan_id).update(
+        WebScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
             scan_url=target,
             date_time=date_time,
@@ -198,7 +192,7 @@ def xml_parser(root, project_id, scan_id, username):
             info_vul=total_info,
             total_dup=total_duplicate,
         )
-    trend_update(username=username)
+    trend_update()
 
     subject = "Archery Tool Scan Status - Webinspect Report Uploaded"
     message = (

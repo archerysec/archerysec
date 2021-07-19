@@ -19,10 +19,10 @@ import uuid
 
 from bs4 import BeautifulSoup
 
-from tools.models import nikto_vuln_db
+from tools.models import NiktoVulnDb
 
 
-def nikto_html_parser(data, project_id, scan_id, username):
+def nikto_html_parser(data, project_id, scan_id):
     discription = "None"
     targetip = "None"
     hostname = "None"
@@ -94,7 +94,7 @@ def nikto_html_parser(data, project_id, scan_id, username):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = (
-            nikto_vuln_db.objects.filter(username=username, dup_hash=duplicate_hash)
+            NiktoVulnDb.objects.filter(dup_hash=duplicate_hash)
             .values("dup_hash")
             .distinct()
         )
@@ -107,9 +107,8 @@ def nikto_html_parser(data, project_id, scan_id, username):
         else:
             duplicate_vuln = "None"
 
-        false_p = nikto_vuln_db.objects.filter(
-            username=username, false_positive_hash=duplicate_hash
-        )
+        false_p = NiktoVulnDb.objects.filter(false_positive_hash=duplicate_hash
+                                             )
         fp_lenth_match = len(false_p)
 
         global false_positive
@@ -120,7 +119,7 @@ def nikto_html_parser(data, project_id, scan_id, username):
         else:
             false_positive = "No"
 
-        dump_data = nikto_vuln_db(
+        dump_data = NiktoVulnDb(
             vuln_id=vuln_id,
             scan_id=scan_id,
             project_id=project_id,
@@ -136,6 +135,5 @@ def nikto_html_parser(data, project_id, scan_id, username):
             dup_hash=duplicate_hash,
             vuln_duplicate=duplicate_vuln,
             vuln_status="Open",
-            username=username,
         )
         dump_data.save()

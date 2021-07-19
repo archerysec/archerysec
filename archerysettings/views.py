@@ -41,11 +41,11 @@ from stronghold.decorators import public
 
 import PyArachniapi
 from archerysettings import load_settings
-from archerysettings.models import (arachni_settings_db,
-                                    email_db, nmap_vulners_setting_db,
-                                    zap_settings_db, settings_db)
+from archerysettings.models import (ArachniSettingsDb,
+                                    EmailDb, NmapVulnersSettingDb,
+                                    ZapSettingsDb, SettingsDb)
 from jiraticketing.models import jirasetting
-from projects.models import project_db
+from projects.models import ProjectDb
 from scanners.scanner_parser.staticscanner_parser import (
     checkmarx_xml_report_parser, dependencycheck_report_parser,
     findbugs_report_parser)
@@ -60,7 +60,7 @@ from scanners.scanner_plugin.network_scanner.openvas_plugin import \
     OpenVAS_Plugin
 from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from staticscanners.models import (StaticScansDb)
-from tools.models import nikto_result_db
+from tools.models import NiktoResultDb
 from webscanners.models import (WebScansDb, cookie_db,
                                 excluded_db,
                                 task_schedule_db)
@@ -135,11 +135,10 @@ def setting(request):
     password = None
     # Loading settings
 
-    username = request.user.username
 
-    settings = load_settings.ArcherySettings(setting_file, username=username)
+    settings = load_settings.ArcherySettings(setting_file)
 
-    all_settings_data = settings_db.objects.filter(username=username)
+    all_settings_data = SettingsDb.objects.filter()
 
     lod_ov_user = settings.openvas_username()
     lod_ov_pass = settings.openvas_pass()
@@ -153,7 +152,7 @@ def setting(request):
     zap_ports = ""
     zap_enable = False
 
-    all_zap = zap_settings_db.objects.filter(username=username)
+    all_zap = ZapSettingsDb.objects.filter()
     for zap in all_zap:
         zap_api_key = zap.zap_api
         zap_hosts = zap.zap_url
@@ -170,7 +169,7 @@ def setting(request):
     arachni_user = ''
     arachni_pass = ''
 
-    all_arachni = arachni_settings_db.objects.filter(username=username)
+    all_arachni = ArachniSettingsDb.objects.filter()
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
@@ -188,7 +187,7 @@ def setting(request):
     nv_version = False
     nv_timing = 0
 
-    all_nv = nmap_vulners_setting_db.objects.filter(username=username)
+    all_nv = NmapVulnersSettingDb.objects.filter()
     for nv in all_nv:
         nv_enabled = bool(nv.enabled)
         nv_online = bool(nv.online)
@@ -203,10 +202,10 @@ def setting(request):
 
     # Loading Email Settings
 
-    all_email = email_db.objects.filter(username=username)
+    all_email = EmailDb.objects.filter()
 
     # Load JIRA Setting
-    jira_setting = jirasetting.objects.filter(username=username)
+    jira_setting = jirasetting.objects.filter()
 
     for jira in jira_setting:
         jira_url = jira.jira_server
@@ -223,7 +222,6 @@ def setting(request):
     else:
         jira_password = signing.loads(password)
 
-    username = request.user.username
     zap_enabled = False
     random_port = "8091"
     target_url = "https://archerysec.com"
@@ -237,7 +235,7 @@ def setting(request):
         setting_of = request.POST.get("setting_of")
         setting_id = request.POST.get("setting_id")
         if setting_of == "zap":
-            all_zap = zap_settings_db.objects.filter(username=username)
+            all_zap = ZapSettingsDb.objects.filter()
             for zap in all_zap:
                 zap_enabled = zap.enabled
 
@@ -253,7 +251,7 @@ def setting(request):
                         try:
                             # Connection Test
                             zap_connect = zap_plugin.zap_connect(
-                                random_port, username=username
+                                random_port, 
                             )
                             zap_connect.spider.scan(url=target_url)
                         except Exception as e:
@@ -263,15 +261,15 @@ def setting(request):
                         break
             else:
                 try:
-                    zap_connect = zap_plugin.zap_connect(random_port, username=username)
+                    zap_connect = zap_plugin.zap_connect(random_port, )
                     zap_connect.spider.scan(url=target_url)
                     zap_info = True
-                    settings_db.objects.filter(setting_id=setting_id).update(
+                    SettingsDb.objects.filter(setting_id=setting_id).update(
                         setting_status=zap_info
                     )
                 except:
                     zap_info = False
-                    settings_db.objects.filter(setting_id=setting_id).update(
+                    SettingsDb.objects.filter(setting_id=setting_id).update(
                         setting_status=zap_info
                     )
         if setting_of == "burp":
@@ -286,12 +284,12 @@ def setting(request):
             issue_list = bi.issue_definitions()
             if issue_list.data is None:
                 burp_info = False
-                settings_db.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=burp_info
                 )
             else:
                 burp_info = True
-                settings_db.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=burp_info
                 )
 
@@ -299,17 +297,17 @@ def setting(request):
             sel_profile = ""
 
             openvas = OpenVAS_Plugin(
-                scan_ip, project_id, sel_profile, username=username
+                scan_ip, project_id, sel_profile, 
             )
             try:
                 openvas.connect()
                 openvas_info = True
-                settings_db.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=openvas_info
                 )
             except:
                 openvas_info = False
-                settings_db.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=openvas_info
                 )
 
@@ -319,7 +317,7 @@ def setting(request):
             arachni_ports = None
             arachni_user = None
             arachni_pass = None
-            all_arachni = arachni_settings_db.objects.filter(username=username)
+            all_arachni = ArachniSettingsDb.objects.filter()
             for arachni in all_arachni:
                 arachni_hosts = arachni.arachni_url
                 arachni_ports = arachni.arachni_port
@@ -342,18 +340,18 @@ def setting(request):
                     if key == "id":
                         scan_run_id = value
                 arachni_info = True
-                settings_db.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=arachni_info
                 )
             except Exception:
                 arachni_info = False
-                settings_db.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=arachni_info
                 )
 
         if setting_of == "jira":
             global jira_projects, jira_ser
-            jira_setting = jirasetting.objects.filter(username=username)
+            jira_setting = jirasetting.objects.filter()
 
             for jira in jira_setting:
                 jira_url = jira.jira_server
@@ -380,13 +378,13 @@ def setting(request):
                 jira_projects = jira_ser.projects()
                 print(len(jira_projects))
                 jira_info = True
-                settings_db.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=jira_info
                 )
             except Exception as e:
                 print(e)
                 jira_info = False
-                settings_db.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=jira_info
                 )
 
@@ -431,11 +429,10 @@ def email_setting(request):
     :param request:
     :return:
     """
-    username = request.user.username
     # Load Email Setting function
-    all_email = email_db.objects.filter(username=username)
+    all_email = EmailDb.objects.filter()
 
-    email_setting_data = settings_db.objects.filter(username=username, setting_scanner='Email')
+    email_setting_data = SettingsDb.objects.filter(setting_scanner='Email')
 
     if request.method == "POST":
         subject = request.POST.get("email_subject")
@@ -447,16 +444,16 @@ def email_setting(request):
 
         setting_id = uuid.uuid4()
 
-        save_setting_info = settings_db(
+        save_setting_info = SettingsDb(
             setting_id=setting_id,
-            username=username,
+            
             setting_scanner='Email',
             setting_status=True,
         )
         save_setting_info.save()
 
-        save_email = email_db(
-            username=username,
+        save_email = EmailDb(
+            
             subject=subject,
             message=from_message,
             recipient_list=email_to,
@@ -474,12 +471,10 @@ def del_setting(request):
     :param request:
     :return:
     """
-    username = request.user.username
-
     if request.method == "POST":
         setting_id = request.POST.get("setting_id")
 
-        delete_dat = settings_db.objects.filter(username=username, setting_id=setting_id)
+        delete_dat = SettingsDb.objects.filter(setting_id=setting_id)
         delete_dat.delete()
         return HttpResponseRedirect(reverse("archerysettings:settings"))
 

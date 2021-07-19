@@ -20,8 +20,8 @@ import uuid
 import nmap
 from django.conf import settings
 
-from archerysettings.models import nmap_vulners_setting_db
-from tools.models import nmap_scan_db, nmap_vulners_port_result_db
+from archerysettings.models import NmapVulnersSettingDb
+from tools.models import NmapScanDb, NmapVulnersPortResultDb
 
 
 def parse_port(proto, ip_addr, host_data, scan_id, project_id):
@@ -34,7 +34,7 @@ def parse_port(proto, ip_addr, host_data, scan_id, project_id):
         % (scan_id, ip_addr, proto, ports)
     )
     for port, portData in dict(ports).items():
-        nmap_obj, _ = nmap_vulners_port_result_db.objects.get_or_create(
+        nmap_obj, _ = NmapVulnersPortResultDb.objects.get_or_create(
             ip_address=ip_addr, port=port
         )
 
@@ -78,7 +78,7 @@ def run_nmap_vulners(ip_addr="", project_id=""):
     nmap_vulners_path = os.path.join(
         settings.BASE_DIR, "tools/nmap_vulners/vulners.nse"
     )
-    all_nv = nmap_vulners_setting_db.objects.all()
+    all_nv = NmapVulnersSettingDb.objects.all()
     for nv in all_nv:
         nv_enabled = bool(nv.enabled)
         nv_online = bool(nv.online)
@@ -100,7 +100,7 @@ def run_nmap_vulners(ip_addr="", project_id=""):
     scan = nm.get("scan")
 
     # Rewrite Nmap results each time
-    nmap_vulners_port_result_db.objects.filter(ip_address=ip_addr).delete()
+    NmapVulnersPortResultDb.objects.filter(ip_address=ip_addr).delete()
 
     for host, host_data in scan.items():
         print(
@@ -115,14 +115,14 @@ def run_nmap_vulners(ip_addr="", project_id=""):
         parse_port("tcp", host, host_data, scan_id, project_id)
         parse_port("udp", host, host_data, scan_id, project_id)
 
-        all_data = nmap_vulners_port_result_db.objects.filter(ip_address=host)
+        all_data = NmapVulnersPortResultDb.objects.filter(ip_address=host)
         # for a in all_data:
         #     global total_ports, ports_p
         #     ports_p = a.port
         total_ports = len(all_data)
         # print(total_ports)
 
-        all_open_p = nmap_vulners_port_result_db.objects.filter(
+        all_open_p = NmapVulnersPortResultDb.objects.filter(
             ip_address=host, state="open"
         )
         # for p in all_open_p:
@@ -130,12 +130,12 @@ def run_nmap_vulners(ip_addr="", project_id=""):
         total_open_p = len(all_open_p)
         # print(total_open_p)
 
-        all_close_p = nmap_vulners_port_result_db.objects.filter(
+        all_close_p = NmapVulnersPortResultDb.objects.filter(
             ip_address=host, state="closed"
         )
         total_close_p = len(all_close_p)
 
-        save_scan = nmap_scan_db(
+        save_scan = NmapScanDb(
             scan_id=scan_id,
             project_id=project_id,
             scan_ip=host,

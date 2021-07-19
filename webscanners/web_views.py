@@ -41,11 +41,11 @@ from stronghold.decorators import public
 
 import PyArachniapi
 from archerysettings import load_settings
-from archerysettings.models import (arachni_settings_db,
-                                    email_db, nmap_vulners_setting_db,
-                                    zap_settings_db, settings_db)
+from archerysettings.models import (ArachniSettingsDb,
+                                    EmailDb, NmapVulnersSettingDb,
+                                    ZapSettingsDb, SettingsDb)
 from jiraticketing.models import jirasetting
-from projects.models import project_db
+from projects.models import ProjectDb
 from scanners.scanner_parser.staticscanner_parser import (
     checkmarx_xml_report_parser, dependencycheck_report_parser,
     findbugs_report_parser)
@@ -60,7 +60,7 @@ from scanners.scanner_plugin.network_scanner.openvas_plugin import \
     OpenVAS_Plugin
 from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from staticscanners.models import (StaticScansDb)
-from tools.models import nikto_result_db
+from tools.models import NiktoResultDb
 from webscanners.models import (WebScansDb, cookie_db,
                                 excluded_db,
                                 task_schedule_db)
@@ -198,7 +198,7 @@ def signup(request):
 
 
 def error_404_view(request):
-    return render(request, "404.html")
+    return render(request, "error/404.html")
 
 
 def loggedin(request):
@@ -242,12 +242,11 @@ def index(request):
     :param request:
     :return:
     """
-    username = request.user.username
-    all_scans = WebScansDb.objects.filter(username=username)
-    all_excluded_url = excluded_db.objects.filter(username=username)
-    all_cookies = cookie_db.objects.filter(username=username)
+    all_scans = WebScansDb.objects.filter()
+    all_excluded_url = excluded_db.objects.filter()
+    all_cookies = cookie_db.objects.filter()
 
-    all_scans_db = project_db.objects.filter(username=username)
+    all_scans_db = ProjectDb.objects.filter()
 
     all_notify = Notification.objects.unread()
 
@@ -319,9 +318,8 @@ def web_scan_schedule(request):
     :param request:
     :return:
     """
-    username = request.user.username
-    all_scans_db = project_db.objects.filter(username=username)
-    all_scheduled_scans = task_schedule_db.objects.filter(username=username)
+    all_scans_db = ProjectDb.objects.filter()
+    all_scheduled_scans = task_schedule_db.objects.filter()
 
     if request.method == "POST":
         scan_url = request.POST.get("url")
@@ -352,18 +350,17 @@ def web_scan_schedule(request):
 
             if scanner == 'zap_scan':
                 if periodic_task_value == 'None':
-                    my_task = task(target, project_id, scanner, schedule=dt_obj, username=username)
+                    my_task = task(target, project_id, scanner, schedule=dt_obj)
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
                 else:
 
-                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None,
-                                   username=username)
+                    my_task = task(target, project_id, scanner, repeat=periodic_time, repeat_until=None)
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
             elif scanner == 'burp_scan':
                 if periodic_task_value == 'None':
-                    my_task = task(target, project_id, scanner, schedule=dt_obj, username=username)
+                    my_task = task(target, project_id, scanner, schedule=dt_obj)
                     task_id = my_task.id
                 else:
                     my_task = task(
@@ -376,7 +373,6 @@ def web_scan_schedule(request):
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
             save_scheadule = task_schedule_db(
-                username=username,
                 task_id=task_id,
                 target=target,
                 schedule_time=scan_schedule_time,
@@ -399,7 +395,6 @@ def del_web_scan_schedule(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         task_id = request.POST.get("task_id")
 
@@ -411,7 +406,7 @@ def del_web_scan_schedule(request):
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
             del_task = task_schedule_db.objects.filter(
-                task_id=task_id, username=username
+                task_id=task_id
             )
             del_task.delete()
             del_task_schedule = Task.objects.filter(id=task_id)
@@ -427,7 +422,6 @@ def burp_scan_launch(request):
     :return:
     """
     user = request.user
-    username = request.user.username
     if request.POST.get("url"):
         target_url = request.POST.get("url")
         project_id = request.POST.get("project_id")
@@ -439,7 +433,6 @@ def burp_scan_launch(request):
             scan_id = uuid.uuid4()
             date_time = datetime.now()
             scan_dump = WebScansDb(
-                username=username,
                 scan_id=scan_id,
                 project_id=project_id,
                 url=target,
@@ -471,8 +464,7 @@ def xml_upload(request):
     :param request:
     :return:
     """
-    username = request.user.username
-    all_project = project_db.objects.filter(username=username)
+    all_project = ProjectDb.objects.filter()
 
     if request.method == "POST":
         project_id = request.POST.get("project_id")
@@ -492,7 +484,6 @@ def xml_upload(request):
                 )
                 root_xml_en = ET.fromstring(en_root_xml)
                 scan_dump = WebScansDb(
-                    username=username,
                     scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
@@ -503,7 +494,6 @@ def xml_upload(request):
                 )
                 scan_dump.save()
                 zap_xml_parser.xml_parser(
-                    username=username,
                     project_id=project_id,
                     scan_id=scan_id,
                     root=root_xml_en,
@@ -526,7 +516,6 @@ def xml_upload(request):
                 )
                 root_xml_en = ET.fromstring(en_root_xml)
                 scan_dump = WebScansDb(
-                    username=username,
                     scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
@@ -536,7 +525,7 @@ def xml_upload(request):
                 )
                 scan_dump.save()
                 burp_xml_parser.burp_scan_data(
-                    root_xml_en, project_id, scan_id, username=username
+                    root_xml_en, project_id, scan_id
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("webscanners:list_scans"))
@@ -552,7 +541,6 @@ def xml_upload(request):
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
                 scan_dump = WebScansDb(
-                    username=username,
                     scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
@@ -562,7 +550,6 @@ def xml_upload(request):
                 )
                 scan_dump.save()
                 arachni_xml_parser.xml_parser(
-                    username=username,
                     project_id=project_id,
                     scan_id=scan_id,
                     root=root_xml,
@@ -582,7 +569,6 @@ def xml_upload(request):
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
                 scan_dump = WebScansDb(
-                    username=username,
                     scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
@@ -595,7 +581,6 @@ def xml_upload(request):
                     project_id=project_id,
                     scan_id=scan_id,
                     root=root_xml,
-                    username=username,
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(
@@ -612,7 +597,6 @@ def xml_upload(request):
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
                 scan_dump = WebScansDb(
-                    username=username,
                     scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
@@ -625,7 +609,6 @@ def xml_upload(request):
                     project_id=project_id,
                     scan_id=scan_id,
                     root=root_xml,
-                    username=username,
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(
@@ -643,7 +626,6 @@ def xml_upload(request):
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()
                 scan_dump = WebScansDb(
-                    username=username,
                     scan_url=scan_url,
                     scan_id=scan_id,
                     date_time=date_time,
@@ -653,7 +635,6 @@ def xml_upload(request):
                 )
                 scan_dump.save()
                 acunetix_xml_parser.xml_parser(
-                    username=username,
                     project_id=project_id,
                     scan_id=scan_id,
                     root=root_xml,
@@ -679,12 +660,11 @@ def xml_upload(request):
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
-                    username=username,
                     scanner='Dependencycheck'
                 )
                 scan_dump.save()
                 dependencycheck_report_parser.xml_parser(
-                    project_id=project_id, scan_id=scan_id, data=root, username=username,
+                    project_id=project_id, scan_id=scan_id, data=root
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(
@@ -706,12 +686,11 @@ def xml_upload(request):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    scan_status=scan_status,
-                    username=username,
+                    scan_status=scan_status
                 )
                 scan_dump.save()
                 checkmarx_xml_report_parser.checkmarx_report_xml(
-                    project_id=project_id, scan_id=scan_id, data=root, username=username
+                    project_id=project_id, scan_id=scan_id, data=root
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("checkmarx:checkmarx_list"))
@@ -731,12 +710,11 @@ def xml_upload(request):
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
-                    scan_status=scan_status,
-                    username=username,
+                    scan_status=scan_status
                 )
                 scan_dump.save()
                 findbugs_report_parser.xml_parser(
-                    project_id=project_id, scan_id=scan_id, root=root, username=username
+                    project_id=project_id, scan_id=scan_id, root=root
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("findbugs:findbugs_list"))
@@ -748,7 +726,7 @@ def xml_upload(request):
         elif scanner == "nikto":
             try:
                 date_time = datetime.now()
-                scan_dump = nikto_result_db(
+                scan_dump = NiktoResultDb(
                     date_time=date_time,
                     scan_url=scan_url,
                     scan_id=scan_id,
@@ -756,7 +734,7 @@ def xml_upload(request):
                 )
                 scan_dump.save()
 
-                nikto_html_parser(xml_file, project_id, scan_id, username=username)
+                nikto_html_parser(xml_file, project_id, scan_id)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("tools:nikto"))
             except:
@@ -772,12 +750,11 @@ def add_cookies(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         target_url = request.POST.get("url")
         target_cookies = request.POST.get("cookies")
         all_cookie_url = cookie_db.objects.filter(
-            Q(url__icontains=target_url, username=username)
+            Q(url__icontains=target_url)
         )
         for da in all_cookie_url:
             global cookies
@@ -785,12 +762,12 @@ def add_cookies(request):
 
         if cookies == target_url:
             cookie_db.objects.filter(
-                Q(url__icontains=target_url, username=username)
+                Q(url__icontains=target_url)
             ).update(cookie=target_cookies)
             return HttpResponseRedirect(reverse("webscanners:index"))
         else:
             data_dump = cookie_db(
-                url=target_url, cookie=target_cookies, username=username
+                url=target_url, cookie=target_cookies
             )
             data_dump.save()
             return HttpResponseRedirect(reverse("webscanners:index"))
@@ -839,14 +816,12 @@ def cookies_list(request):
     :param request:
     :return:
     """
-    username = request.user.username
-    all_cookies = cookie_db.objects.filter(username=username)
+    all_cookies = cookie_db.objects.filter()
 
     return render(request, "webscanners/cookies_list.html", {"all_cookies": all_cookies})
 
 
 def del_cookies(request):
-    username = request.user.username
     if request.method == "POST":
         cookie_url = request.POST.get("url")
         cookies_item = str(cookie_url)
@@ -857,9 +832,9 @@ def del_cookies(request):
         for i in range(0, split_length):
             cookies_target = target_split.__getitem__(i)
             print(cookies_target)
-            del_cookie = cookie_db.objects.filter(url=cookies_target, username=username)
+            del_cookie = cookie_db.objects.filter(url=cookies_target)
             del_cookie.delete()
-            zap_plugin.zap_replacer(target_url=cookies_target)
+            zap_plugin.zap_replacer(target_url=cookies_target, random_port='8883')
         return HttpResponseRedirect(reverse("webscanners:cookies_list"))
 
     return render(request, "webscanners/cookies_list.html")
@@ -871,7 +846,6 @@ def sel_login(request):
     :param request:
     :return:
     """
-    username = request.user.username
     action_vul = request.POST.get(
         "action",
     )
@@ -890,7 +864,7 @@ def sel_login(request):
 
             print(cookie_data)
             all_cookie_url = cookie_db.objects.filter(
-                Q(url__icontains=new_uri, username=username)
+                Q(url__icontains=new_uri)
             )
             for da in all_cookie_url:
                 global cookies
@@ -898,14 +872,13 @@ def sel_login(request):
 
             if cookies == new_uri:
                 cookie_db.objects.filter(
-                    Q(url__icontains=new_uri, username=username)
+                    Q(url__icontains=new_uri)
                 ).update(cookie=cookie_data)
                 return HttpResponseRedirect(reverse("webscanners:index"))
             else:
                 data_dump = cookie_db(
                     url=new_uri,
                     cookie=cookie_data,
-                    username=username,
                 )
                 data_dump.save()
                 return HttpResponseRedirect(reverse("webscanners:index"))
@@ -921,11 +894,10 @@ def exclude_url(request):
     :param request:
     :return:
     """
-    username = request.user.username
     exclud = request.POST.get(
         "exclude_url",
     )
-    exclude_save = excluded_db(exclude_url=exclud, username=username)
+    exclude_save = excluded_db(exclude_url=exclud)
     exclude_save.save()
 
     return render(
@@ -940,8 +912,7 @@ def exluded_url_list(request):
     :param request:
     :return:
     """
-    username = request.user.username
-    all_excluded_url = excluded_db.objects.filter(username=username)
+    all_excluded_url = excluded_db.objects.filter()
 
     if request.method == "POST":
         exclude_url = request.POST.get("exclude_url")
@@ -952,8 +923,7 @@ def exluded_url_list(request):
         for i in range(0, split_length):
             exclude_target = target_split.__getitem__(i)
 
-            del_excluded = excluded_db.objects.filter(
-                username=username, exclude_url=exclude_target
+            del_excluded = excluded_db.objects.filter(exclude_url=exclude_target
             )
             del_excluded.delete()
 

@@ -31,7 +31,7 @@ from notifications.models import Notification
 from notifications.signals import notify
 from PyBurprestapi import burpscanner
 
-from archerysettings.models import burp_setting_db, settings_db
+from archerysettings.models import BurpSettingDb, SettingsDb
 from jiraticketing.models import jirasetting
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from webscanners.models import (WebScansDb,
@@ -56,10 +56,9 @@ def burp_setting(request):
     :param request:
     :return:
     """
-    username = request.user.username
     user = request.user
 
-    all_burp_setting = burp_setting_db.objects.filter(username=username)
+    all_burp_setting = BurpSettingDb.objects.filter()
 
     for data in all_burp_setting:
         global burp_url, burp_port, burp_api_key, remediation, issue_type_id, description, name, references, vulnerability_classifications
@@ -73,18 +72,16 @@ def burp_setting(request):
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
         burpapikey = request.POST.get("burpapikey")
-        save_burp_settings = burp_setting_db(
+        save_burp_settings = BurpSettingDb(
             setting_id=setting_id,
-            username=username,
             burp_url=burphost,
             burp_port=burport,
             burp_api_key=burpapikey,
         )
         save_burp_settings.save()
 
-        setting_dat = settings_db(
+        setting_dat = SettingsDb(
             setting_id=setting_id,
-            username=username,
             setting_scanner='Burp',
         )
         setting_dat.save()
@@ -98,7 +95,7 @@ def burp_setting(request):
         json_issue_data = json.dumps(issue_list.data)
         issues = json.loads(json_issue_data)
 
-        all_data = burp_issue_definitions.objects.filter(username=username)
+        all_data = burp_issue_definitions.objects.filter()
         all_data.delete()
 
         try:
@@ -117,11 +114,11 @@ def burp_setting(request):
                     if key == "vulnerability_classifications":
                         vulnerability_classifications = values
 
-            settings_db.objects.filter(username=username, setting_id=setting_id).update(setting_status=True)
+            SettingsDb.objects.filter(setting_id=setting_id).update(setting_status=True)
 
         except Exception as e:
             print(e)
-            settings_db.objects.filter(username=username, setting_id=setting_id).update(setting_status=False)
+            SettingsDb.objects.filter(setting_id=setting_id).update(setting_status=False)
             notify.send(user, recipient=user, verb="Burp Connection Not Found")
 
         return HttpResponseRedirect(reverse("archerysettings:settings"))
@@ -139,7 +136,6 @@ def burp_scan_launch(request):
     :param request:
     :return:
     """
-    username = request.user.username
     user = request.user
 
     global vuln_id, burp_status
@@ -172,7 +168,6 @@ def export(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
@@ -182,8 +177,7 @@ def export(request):
         value_split = value.split(",")
 
         zap_resource = BurpResource()
-        queryset = WebScanResultsDb.objects.filter(
-            username=username, scanner='Burp', scan_id__in=value_split
+        queryset = WebScanResultsDb.objects.filter(scanner='Burp', scan_id__in=value_split
         )
         dataset = zap_resource.export(queryset)
         if report_type == "csv":

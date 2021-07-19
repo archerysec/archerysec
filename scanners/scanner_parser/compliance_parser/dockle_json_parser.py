@@ -17,7 +17,7 @@
 
 import uuid
 
-from compliance.models import dockle_scan_db, dockle_scan_results_db
+from compliance.models import DockleScanDb, DockleScanResultsDb
 from utility.email_notify import email_sch_notify
 
 status = None
@@ -25,7 +25,7 @@ controls_results_message = None
 vuln_col = ""
 
 
-def dockle_report_json(data, project_id, scan_id, username):
+def dockle_report_json(data, project_id, scan_id, ):
     """
 
     :param data:
@@ -55,7 +55,7 @@ def dockle_report_json(data, project_id, scan_id, username):
 
         vul_id = uuid.uuid4()
 
-        save_all = dockle_scan_results_db(
+        save_all = DockleScanResultsDb(
             scan_id=scan_id,
             project_id=project_id,
             vul_col=vul_col,
@@ -64,12 +64,11 @@ def dockle_report_json(data, project_id, scan_id, username):
             title=title,
             alerts=alerts,
             level=level,
-            username=username,
         )
         save_all.save()
 
-    all_dockle_data = dockle_scan_results_db.objects.filter(
-        username=username, scan_id=scan_id
+    all_dockle_data = DockleScanResultsDb.objects.filter(
+        scan_id=scan_id
     )
 
     total_vul = len(all_dockle_data)
@@ -79,7 +78,7 @@ def dockle_report_json(data, project_id, scan_id, username):
     dockle_info = len(all_dockle_data.filter(level="INFO"))
     total_duplicate = len(all_dockle_data.filter(level="Yes"))
 
-    dockle_scan_db.objects.filter(username=username, scan_id=scan_id).update(
+    DockleScanDb.objects.filter(scan_id=scan_id).update(
         total_vuln=total_vul,
         dockle_fatal=dockle_failed,
         dockle_warn=dockle_warn,

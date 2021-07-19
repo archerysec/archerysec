@@ -58,6 +58,9 @@ urlpatterns = [
 
     # settings app
     path("settings/", include("archerysettings.urls")),
+
+    path("archerysec/api/v1/auth/", include("authentication.urls")),
+    path("users/", include("user_management.urls")),
 ]
 
 urlpatterns = urlpatterns + static(

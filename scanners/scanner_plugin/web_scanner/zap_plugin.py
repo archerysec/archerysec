@@ -25,7 +25,7 @@ import uuid
 from django.db.models import Q
 from zapv2 import ZAPv2
 
-from archerysettings.models import (zap_settings_db)
+from archerysettings.models import (ZapSettingsDb)
 
 try:
     from scanners.scanner_parser.web_scanner import zap_xml_parser
@@ -42,7 +42,7 @@ from webscanners.models import (WebScanResultsDb, WebScansDb, cookie_db,
 
 # Global Variables
 setting_file = os.getcwd() + "/apidata.json"
-# zap_setting = load_settings.ArcherySettings(setting_file, username=username)
+# zap_setting = load_settings.ArcherySettings(setting_file)
 zap_api_key = "dwed23wdwedwwefw4rwrfw"
 zap_hosts = "0.0.0.0"
 zap_ports = "8090"
@@ -115,8 +115,8 @@ def zap_local():
     return random_port
 
 
-def zap_connect(random_port, username):
-    all_zap = zap_settings_db.objects.filter(username=username)
+def zap_connect(random_port):
+    all_zap = ZapSettingsDb.objects.filter()
 
     zap_api_key = "dwed23wdwedwwefw4rwrfw"
     zap_hosts = "127.0.0.1"
@@ -147,8 +147,8 @@ def zap_connect(random_port, username):
     return zap
 
 
-def zap_replacer(target_url, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_replacer(target_url, random_port):
+    zap = zap_connect(random_port=random_port)
     try:
         zap.replacer.remove_rule(description=target_url, apikey=zap_api_key)
     except Exception as e:
@@ -157,32 +157,32 @@ def zap_replacer(target_url, random_port, username):
     return
 
 
-def zap_spider_thread(count, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_spider_thread(count, random_port):
+    zap = zap_connect(random_port=random_port)
 
     zap.spider.set_option_thread_count(count, apikey=zap_api_key)
 
     return
 
 
-def zap_scan_thread(count, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_scan_thread(count, random_port):
+    zap = zap_connect(random_port=random_port)
 
     zap.ascan.set_option_thread_per_host(count, apikey=zap_api_key)
 
     return
 
 
-def zap_spider_setOptionMaxDepth(count, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_spider_setOptionMaxDepth(count, random_port):
+    zap = zap_connect(random_port=random_port)
 
     zap.spider.set_option_max_depth(count, apikey=zap_api_key)
 
     return
 
 
-def zap_scan_setOptionHostPerScan(count, random_port, username):
-    zap = zap_connect(random_port=random_port, username=username)
+def zap_scan_setOptionHostPerScan(count, random_port):
+    zap = zap_connect(random_port=random_port)
 
     zap.ascan.set_option_host_per_scan(count, apikey=zap_api_key)
 
@@ -243,7 +243,7 @@ class ZAPScanner:
     """ Connect with ZAP scanner global variable """
 
     def __init__(
-        self, target_url, project_id, rescan_id, rescan, random_port, username
+        self, target_url, project_id, rescan_id, rescan, random_port
     ):
         """
 
@@ -254,8 +254,7 @@ class ZAPScanner:
         self.project_id = project_id
         self.rescan_id = rescan_id
         self.rescan = rescan
-        self.username = username
-        self.zap = zap_connect(random_port=random_port, username=username)
+        self.zap = zap_connect(random_port=random_port)
 
     def exclude_url(self):
         """
@@ -423,7 +422,7 @@ class ZAPScanner:
         WebScansDb.objects.filter(scan_id=un_scanid).update(scan_status=scan_status)
         return scan_status
 
-    def zap_scan_result(self, target_url, username):
+    def zap_scan_result(self, target_url):
         """
         The function return ZAP Scan Results.
         :return:
@@ -431,7 +430,7 @@ class ZAPScanner:
         global all_vuln
         zap_enabled = False
 
-        all_zap = zap_settings_db.objects.filter(username=username)
+        all_zap = ZapSettingsDb.objects.filter()
         for zap in all_zap:
             zap_enabled = zap.enabled
 
@@ -447,7 +446,7 @@ class ZAPScanner:
 
         return all_vuln
 
-    def zap_result_save(self, all_vuln, project_id, un_scanid, username, target_url):
+    def zap_result_save(self, all_vuln, project_id, un_scanid, target_url):
         """
         The function save all data in Archery Database
         :param all_vuln:
@@ -458,7 +457,7 @@ class ZAPScanner:
         date_time = datetime.now()
         zap_enabled = False
 
-        all_zap = zap_settings_db.objects.filter(username=username)
+        all_zap = ZapSettingsDb.objects.filter()
         for zap in all_zap:
             zap_enabled = zap.enabled
 
@@ -470,7 +469,6 @@ class ZAPScanner:
             root_xml_en = ET.fromstring(en_root_xml)
             try:
                 zap_xml_parser.xml_parser(
-                    username=username,
                     project_id=project_id,
                     scan_id=un_scanid,
                     root=root_xml_en,
@@ -578,7 +576,6 @@ class ZAPScanner:
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Zap",
-                        username=username,
                     )
                     dump_data.save()
                 else:
@@ -602,7 +599,6 @@ class ZAPScanner:
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Zap",
-                        username=username,
                     )
                     dump_data.save()
 
@@ -616,8 +612,7 @@ class ZAPScanner:
                 else:
                     false_positive = "No"
 
-                vul_dat = WebScanResultsDb.objects.filter(
-                    username=username, vuln_id=vuln_id, scanner="Zap"
+                vul_dat = WebScanResultsDb.objects.filter(vuln_id=vuln_id, scanner="Zap"
                 )
                 full_data = []
                 for data in vul_dat:
@@ -627,16 +622,13 @@ class ZAPScanner:
                     instance = key + ": " + dd
                     full_data.append(instance)
                 removed_list_data = ",".join(full_data)
-                WebScanResultsDb.objects.filter(
-                    username=username, vuln_id=vuln_id
+                WebScanResultsDb.objects.filter(vuln_id=vuln_id
                 ).update(instance=full_data)
 
-            zap_all_vul = WebScanResultsDb.objects.filter(
-                username=username, scan_id=un_scanid, false_positive="No", scanner="Zap"
+            zap_all_vul = WebScanResultsDb.objects.filter(scan_id=un_scanid, false_positive="No", scanner="Zap"
             )
 
-            duplicate_count = WebScanResultsDb.objects.filter(
-                username=username, scan_id=un_scanid, vuln_duplicate="Yes"
+            duplicate_count = WebScanResultsDb.objects.filter(scan_id=un_scanid, vuln_duplicate="Yes"
             )
 
             total_high = len(zap_all_vul.filter(severity="High"))
@@ -646,7 +638,7 @@ class ZAPScanner:
             total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
             total_vul = total_high + total_medium + total_low + total_info
 
-            WebScansDb.objects.filter(username=username, scan_id=un_scanid).update(
+            WebScansDb.objects.filter(scan_id=un_scanid).update(
                 total_vul=total_vul,
                 date_time=date_time,
                 high_vul=total_high,
@@ -657,8 +649,7 @@ class ZAPScanner:
                 scan_url=target_url,
             )
             if total_vul == total_duplicate:
-                WebScansDb.objects.filter(
-                    username=username, scan_id=un_scanid
+                WebScansDb.objects.filter( scan_id=un_scanid
                 ).update(
                     total_vul=total_vul,
                     date_time=date_time,

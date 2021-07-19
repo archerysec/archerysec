@@ -19,7 +19,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class zap_settings_db(models.Model):
+class ZapSettingsDb(models.Model):
     setting_id = models.UUIDField(blank=True, null=True)
     zap_url = models.TextField(blank=False, null=False, default="127.0.0.1")
     zap_api = models.TextField(
@@ -27,37 +27,33 @@ class zap_settings_db(models.Model):
     )
     zap_port = models.IntegerField(blank=False, null=False, default=8090)
     enabled = models.BooleanField(blank=False, null=False)
-    username = models.CharField(max_length=256, null=True)
 
 
-class arachni_settings_db(models.Model):
+class ArachniSettingsDb(models.Model):
     setting_id = models.UUIDField(blank=True, null=True)
     arachni_url = models.TextField(blank=True, null=True)
     arachni_port = models.TextField(blank=True, null=True)
     arachni_user = models.TextField(blank=True, null=True)
     arachni_pass = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
 
 
-class burp_setting_db(models.Model):
+class BurpSettingDb(models.Model):
     setting_id = models.UUIDField(blank=True, null=True)
     burp_url = models.TextField(blank=True, null=True)
     burp_port = models.TextField(blank=True, null=True)
     burp_api_key = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
 
 
-class openvas_setting_db(models.Model):
+class OpenvasSettingDb(models.Model):
     setting_id = models.UUIDField(blank=True, null=True)
     host = models.TextField(blank=True, null=True)
     port = models.IntegerField(blank=False, null=False, default=9390)
     enabled = models.BooleanField(blank=False, null=False)
     user = models.TextField(blank=True, null=True)
     password = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
 
 
-class nmap_vulners_setting_db(models.Model):
+class NmapVulnersSettingDb(models.Model):
     setting_id = models.UUIDField(blank=True, null=True)
     enabled = models.BooleanField(blank=False, null=False)
     # -sV | Version detection
@@ -66,21 +62,18 @@ class nmap_vulners_setting_db(models.Model):
     online = models.BooleanField(blank=False, null=False)
     # -T4 | Set timing template (higher is faster)
     timing = models.IntegerField(blank=False, null=False, default=0)
-    username = models.CharField(max_length=256, null=True)
 
 
-class email_db(models.Model):
+class EmailDb(models.Model):
     setting_id = models.UUIDField(blank=True, null=True)
     subject = models.TextField(blank=True, null=True)
     message = models.TextField(blank=True, null=True)
-    recipient_list = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
+    recipient_list = models.TextField(blank=True)
 
 
-class settings_db(models.Model):
+class SettingsDb(models.Model):
     setting_id = models.UUIDField(blank=True, null=True)
     setting_name = models.TextField(blank=True, null=True)
     setting_scanner = models.TextField(blank=True, null=True)
     setting_status = models.BooleanField(blank=True, null=True)
-    created_time = models.DateTimeField(auto_now_add=True)
-    username = models.CharField(max_length=256, null=True)
+    created_time = models.DateTimeField(auto_now_add=True, blank=True)

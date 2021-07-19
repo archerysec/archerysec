@@ -17,5 +17,9 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from compliance import models
 
-# Register your models here.
+admin.site.register(models.DockleScanDb)
+admin.site.register(models.DockleScanResultsDb)
+admin.site.register(models.InspecScanDb)
+admin.site.register(models.InspecScanResultsDb)

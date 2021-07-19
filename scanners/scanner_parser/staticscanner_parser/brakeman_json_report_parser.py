@@ -35,7 +35,7 @@ References = ""
 false_positive = ""
 
 
-def brakeman_report_json(data, project_id, scan_id, username):
+def brakeman_report_json(data, project_id, scan_id):
     """
 
     :param data:
@@ -139,7 +139,7 @@ def brakeman_report_json(data, project_id, scan_id, username):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = StaticScanResultsDb.objects.filter(
-            username=username, dup_hash=duplicate_hash
+            dup_hash=duplicate_hash
         ).values("dup_hash")
         lenth_match = len(match_dup)
 
@@ -147,7 +147,7 @@ def brakeman_report_json(data, project_id, scan_id, username):
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                username=username, false_positive_hash=duplicate_hash
+                false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
 
@@ -166,7 +166,6 @@ def brakeman_report_json(data, project_id, scan_id, username):
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
-                username=username,
                 title=name,
                 description=str(description) + '\n\n' + str(code) + '\n\n' + str(render_path),
                 severity=severity,
@@ -188,7 +187,6 @@ def brakeman_report_json(data, project_id, scan_id, username):
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive='Duplicate',
-                username=username,
                 title=name,
                 description=str(description) + '\n\n' + str(code) + '\n\n' + str(render_path),
                 severity=severity,
@@ -198,12 +196,10 @@ def brakeman_report_json(data, project_id, scan_id, username):
             )
             save_all.save()
 
-    all_findbugs_data = StaticScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, false_positive="No", vuln_duplicate="No"
+    all_findbugs_data = StaticScanResultsDb.objects.filter( scan_id=scan_id, false_positive="No", vuln_duplicate="No"
     )
 
-    duplicate_count = StaticScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+    duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_vul = len(all_findbugs_data)
@@ -213,7 +209,6 @@ def brakeman_report_json(data, project_id, scan_id, username):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     StaticScansDb.objects.filter(scan_id=scan_id).update(
-        username=username,
         date_time=date_time,
         total_vul=total_vul,
         high_vul=total_high,
@@ -222,7 +217,7 @@ def brakeman_report_json(data, project_id, scan_id, username):
         total_dup=total_duplicate,
         scanner='Brakeman'
     )
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - brakeman Report Uploaded"
     message = (
         "brakeman Scanner has completed the scan "
