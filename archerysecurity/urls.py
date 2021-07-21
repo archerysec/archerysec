@@ -54,7 +54,7 @@ urlpatterns = [
     # Tools App
     path("tools/", include("tools.urls")),
     # Manual App
-    path("manual_scan/", include("manual_scan.urls")),
+    path("pentest/", include("pentest.urls")),
 
     # settings app
     path("settings/", include("archerysettings.urls")),

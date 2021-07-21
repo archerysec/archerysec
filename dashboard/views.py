@@ -31,7 +31,7 @@ from notifications.models import Notification
 
 from compliance.models import DockleScanDb, InspecScanDb
 from dashboard.scans_data import scans_query
-from manual_scan.models import ManualScanResultsDb, ManualScansDb
+from pentest.models import PentestScanResultsDb, PentestScanDb
 from projects.models import Month, MonthSqlite, MonthDb, ProjectDb
 from staticscanners.models import (StaticScanResultsDb, StaticScansDb)
 from webscanners.models import (WebScanResultsDb, WebScansDb)
@@ -256,7 +256,7 @@ def proj_data(request):
 
     all_compliance_seg = chain(all_comp_inspec, all_comp_dockle)
 
-    pentest = ManualScansDb.objects.filter(project__uu_id=uu_id)
+    pentest = PentestScanDb.objects.filter(project__uu_id=uu_id)
 
     all_notify = Notification.objects.unread()
 
@@ -332,32 +332,32 @@ def all_high_vuln(request):
         web_all_high = WebScanResultsDb.objects.filter(false_positive='No')
         sast_all_high = StaticScanResultsDb.objects.filter(false_positive='No')
         net_all_high = NetworkScanResultsDb.objects.filter(false_positive='No')
-        pentest_all_high = ManualScanResultsDb.objects.filter()
+        pentest_all_high = PentestScanResultsDb.objects.filter()
 
     elif severity == 'All_Closed':
         web_all_high = WebScanResultsDb.objects.filter(vuln_status='Closed')
         sast_all_high = StaticScanResultsDb.objects.filter(vuln_status='Closed')
         net_all_high = NetworkScanResultsDb.objects.filter(vuln_status='Closed')
-        pentest_all_high = ManualScanResultsDb.objects.filter()
+        pentest_all_high = PentestScanResultsDb.objects.filter()
 
     # add your scanner name here <scannername>
     elif severity == 'All_False_Positive':
         web_all_high = WebScanResultsDb.objects.filter(false_positive='Yes')
         sast_all_high = StaticScanResultsDb.objects.filter(false_positive='Yes')
         net_all_high = NetworkScanResultsDb.objects.filter(false_positive='Yes')
-        pentest_all_high = ManualScanResultsDb.objects.filter()
+        pentest_all_high = PentestScanResultsDb.objects.filter()
 
     elif severity == 'Network':
         net_all_high = NetworkScanResultsDb.objects.filter(false_positive='No')
 
     elif severity == 'Web':
         web_all_high = WebScanResultsDb.objects.filter(false_positive='No')
-        pentest_all_high = ManualScanResultsDb.objects.filter(pentest_type='web')
+        pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type='web')
 
     # add your scanner name here <scannername>
     elif severity == 'Static':
         sast_all_high = StaticScanResultsDb.objects.filter(false_positive='No')
-        pentest_all_high = ManualScanResultsDb.objects.filter(pentest_type='static')
+        pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type='static')
 
     elif severity == 'High':
 
@@ -373,7 +373,7 @@ def all_high_vuln(request):
                                                            severity='High',
                                                            false_positive='No')
 
-        pentest_all_high = ManualScanResultsDb.objects.filter(
+        pentest_all_high = PentestScanResultsDb.objects.filter(
             severity='High',
             project_id=project_id)
 
@@ -390,8 +390,8 @@ def all_high_vuln(request):
         net_all_high = NetworkScanResultsDb.objects.filter(project_id=project_id,
                                                            severity='Medium')
 
-        pentest_all_high = ManualScanResultsDb.objects.filter(severity='Medium',
-                                                              project_id=project_id)
+        pentest_all_high = PentestScanResultsDb.objects.filter(severity='Medium',
+                                                               project_id=project_id)
 
     # All Low
     elif severity == 'Low':
@@ -404,8 +404,8 @@ def all_high_vuln(request):
         net_all_high = NetworkScanResultsDb.objects.filter(project_id=project_id,
                                                            severity='Low')
 
-        pentest_all_high = ManualScanResultsDb.objects.filter(severity='Low',
-                                                              project_id=project_id)
+        pentest_all_high = PentestScanResultsDb.objects.filter(severity='Low',
+                                                               project_id=project_id)
 
     elif severity == 'Total':
         # add your scanner name here <scannername>
@@ -415,7 +415,7 @@ def all_high_vuln(request):
         net_all_high = NetworkScanResultsDb.objects.filter(project_id=project_id,
                                                            )
 
-        pentest_all_high = ManualScanResultsDb.objects.filter(project_id=project_id)
+        pentest_all_high = PentestScanResultsDb.objects.filter(project_id=project_id)
 
     elif severity == 'False':
         # add your scanner name here <scannername>
@@ -437,9 +437,9 @@ def all_high_vuln(request):
         net_all_high = NetworkScanResultsDb.objects.filter(project_id=project_id,
                                                            vuln_status='Closed')
 
-        pentest_all_high = ManualScanResultsDb.objects.filter(project_id=project_id,
+        pentest_all_high = PentestScanResultsDb.objects.filter(project_id=project_id,
 
-                                                              vuln_status='Closed')
+                                                               vuln_status='Closed')
 
     else:
         return HttpResponseRedirect(reverse('dashboard:proj_data' + '?project_id=%s' % project_id))

@@ -23,16 +23,7 @@ from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 
-from compliance.models import (DockleScanDb, DockleScanResultsDb,
-                               InspecScanDb, InspecScanResultsDb)
-from dashboard.scans_data import scans_query
-from manual_scan.models import ManualScanResultsDb, ManualScansDb
 from projects.models import MonthDb, ProjectDb, ProjectScanDb
-from staticscanners.models import (StaticScansDb, StaticScanResultsDb)
-from webscanners.models import (WebScanResultsDb, WebScansDb)
-from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb)
-
-from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response

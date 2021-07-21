@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'staticscanners',
     'jiraticketing',
     'tools',
-    'manual_scan',
+    'pentest',
     'django.contrib.admin',
     'stronghold',
     'django.contrib.auth',

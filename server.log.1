@@ -1,935 +1,320 @@
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 07:46:48; log.py:224)
+ERROR:django.request: Internal Server Error: /admin/webscanners/webscansdb/ (2021-07-19 12:43:40; log.py:224)
 Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 166, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 134, in trend_update
-    ProjectDb.objects.filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1258, in build_filter
-    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1084, in solve_lookup_type
-    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1481, in names_to_path
-    raise FieldError("Cannot resolve keyword '%s' into field. "
-django.core.exceptions.FieldError: Cannot resolve keyword 'project' into field. Choices are: created_by, created_by_id, created_time, date_time, DockleScanDb, DockleScanResultsDb, high_net, high_static, high_web, id, InspecScanDb, InspecScanResultsDb, is_active, low_net, low_static, low_web, ManualScanResultsDb, ManualScansDb, medium_net, medium_static, medium_web, MonthDb, networkscandb, networkscanresultsdb, NiktoResultDb, NiktoVulnDb, NmapResultDb, NmapScanDb, project_disc, project_end, project_id, project_name, project_owner, ProjectScanDb, project_start, project_status, SslscanResultDb, staticscanresultsdb, staticscansdb, TaskScheduleDb, total_close, total_false, total_high, total_low, total_medium, total_net, total_open, total_static, total_vuln, total_web, updated_by, updated_by_id, updated_time, web_scan_db, webscanresultsdb, webscansdb
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 07:52:55; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 166, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 100, in trend_update
-    add_data = MonthDb(project=proj_id, month=current_month, high=high,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 483, in __init__
-    _setattr(self, field.name, rel_obj)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_descriptors.py", line 215, in __set__
-    raise ValueError(
-ValueError: Cannot assign "11": "MonthDb.project" must be a "ProjectDb" instance.
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 07:52:55; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 166, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 100, in trend_update
-    add_data = MonthDb(project=proj_id, month=current_month, high=high,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 483, in __init__
-    _setattr(self, field.name, rel_obj)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_descriptors.py", line 215, in __set__
-    raise ValueError(
-ValueError: Cannot assign "11": "MonthDb.project" must be a "ProjectDb" instance.
-ERROR:django.request: Internal Server Error: /manual_scan/add_list_scan/ (2021-07-19 09:44:51; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: 'f4f28fa6-0954-4c14-8893-5f69970eb85a'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/manual_scan/views.py", line 72, in add_list_scan
-    dump_scan.save()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 753, in save
-    self.save_base(using=using, force_insert=force_insert,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 790, in save_base
-    updated = self._save_table(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 895, in _save_table
-    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 933, in _do_insert
-    return manager._insert(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1254, in _insert
-    return query.get_compiler(using=using).execute_sql(returning_fields)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1396, in execute_sql
-    for sql, params in self.as_sql():
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1339, in as_sql
-    value_rows = [
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
-    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
-    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1281, in prepare_value
-    value = field.get_db_prep_save(value, connection=self.connection)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related.py", line 971, in get_db_prep_save
-    return self.target_field.get_db_prep_save(value, connection=connection)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 823, in get_db_prep_save
-    return self.get_db_prep_value(value, connection=connection, prepared=False)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 2388, in get_db_prep_value
-    value = self.get_prep_value(value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got 'f4f28fa6-0954-4c14-8893-5f69970eb85a'.
-ERROR:django.request: Internal Server Error: /manual_scan/add_list_scan/ (2021-07-19 09:45:59; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: 'f4f28fa6-0954-4c14-8893-5f69970eb85a'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/manual_scan/views.py", line 72, in add_list_scan
-    dump_scan.save()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 753, in save
-    self.save_base(using=using, force_insert=force_insert,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 790, in save_base
-    updated = self._save_table(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 895, in _save_table
-    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 933, in _do_insert
-    return manager._insert(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1254, in _insert
-    return query.get_compiler(using=using).execute_sql(returning_fields)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1396, in execute_sql
-    for sql, params in self.as_sql():
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1339, in as_sql
-    value_rows = [
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
-    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
-    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1281, in prepare_value
-    value = field.get_db_prep_save(value, connection=self.connection)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related.py", line 971, in get_db_prep_save
-    return self.target_field.get_db_prep_save(value, connection=connection)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 823, in get_db_prep_save
-    return self.get_db_prep_value(value, connection=connection, prepared=False)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 2388, in get_db_prep_value
-    value = self.get_prep_value(value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got 'f4f28fa6-0954-4c14-8893-5f69970eb85a'.
-ERROR:django.request: Internal Server Error: /manual_scan/add_vuln/ (2021-07-19 09:47:25; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: 'None'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/manual_scan/views.py", line 178, in add_vuln
-    dump_data.save()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 753, in save
-    self.save_base(using=using, force_insert=force_insert,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 790, in save_base
-    updated = self._save_table(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 895, in _save_table
-    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 933, in _do_insert
-    return manager._insert(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1254, in _insert
-    return query.get_compiler(using=using).execute_sql(returning_fields)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1396, in execute_sql
-    for sql, params in self.as_sql():
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1339, in as_sql
-    value_rows = [
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
-    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
-    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1281, in prepare_value
-    value = field.get_db_prep_save(value, connection=self.connection)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related.py", line 971, in get_db_prep_save
-    return self.target_field.get_db_prep_save(value, connection=connection)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 823, in get_db_prep_save
-    return self.get_db_prep_value(value, connection=connection, prepared=False)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 2388, in get_db_prep_value
-    value = self.get_prep_value(value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got 'None'.
-ERROR:django.request: Internal Server Error: /manual_scan/add_vuln/ (2021-07-19 09:48:01; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: 'None'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/manual_scan/views.py", line 178, in add_vuln
-    dump_data.save()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 753, in save
-    self.save_base(using=using, force_insert=force_insert,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 790, in save_base
-    updated = self._save_table(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 895, in _save_table
-    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 933, in _do_insert
-    return manager._insert(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1254, in _insert
-    return query.get_compiler(using=using).execute_sql(returning_fields)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1396, in execute_sql
-    for sql, params in self.as_sql():
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1339, in as_sql
-    value_rows = [
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
-    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
-    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1281, in prepare_value
-    value = field.get_db_prep_save(value, connection=self.connection)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related.py", line 971, in get_db_prep_save
-    return self.target_field.get_db_prep_save(value, connection=connection)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 823, in get_db_prep_save
-    return self.get_db_prep_value(value, connection=connection, prepared=False)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 2388, in get_db_prep_value
-    value = self.get_prep_value(value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got 'None'.
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 09:56:06; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: 'fa1edce2-51ed-4f70-8910-52980c43a375'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 246, in proj_data
-    web_scan_dat = WebScansDb.objects.filter(project_id=project_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_filter
-    condition = self.build_lookup(lookups, col, value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1165, in build_lookup
-    lookup = lookup_class(lhs, rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/lookups.py", line 24, in __init__
-    self.rhs = self.get_prep_lookup()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_lookups.py", line 117, in get_prep_lookup
-    self.rhs = target_field.get_prep_value(self.rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got 'fa1edce2-51ed-4f70-8910-52980c43a375'.
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 09:56:48; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: '50892450-1d2e-4290-b9e8-27cc689d30c0'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 246, in proj_data
-    web_scan_dat = WebScansDb.objects.filter(project_id=project_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_filter
-    condition = self.build_lookup(lookups, col, value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1165, in build_lookup
-    lookup = lookup_class(lhs, rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/lookups.py", line 24, in __init__
-    self.rhs = self.get_prep_lookup()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_lookups.py", line 117, in get_prep_lookup
-    self.rhs = target_field.get_prep_value(self.rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got '50892450-1d2e-4290-b9e8-27cc689d30c0'.
-ERROR:django.request: Internal Server Error: /projects/project_delete/ (2021-07-19 10:17:20; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
-    return view_func(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
-    return self.dispatch(request, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
-    response = self.handle_exception(exc)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
-    self.raise_uncaught_exception(exc)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
-    raise exc
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
-    response = handler(request, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/projects/views.py", line 120, in post
-    projects = ProjectDb.objects.get(project_id=project_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 418, in get
-    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1258, in build_filter
-    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1084, in solve_lookup_type
-    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1481, in names_to_path
-    raise FieldError("Cannot resolve keyword '%s' into field. "
-django.core.exceptions.FieldError: Cannot resolve keyword 'project_id' into field. Choices are: created_by, created_by_id, created_time, date_time, DockleScanDb, DockleScanResultsDb, high_net, high_static, high_web, id, InspecScanDb, InspecScanResultsDb, is_active, low_net, low_static, low_web, ManualScanResultsDb, ManualScansDb, medium_net, medium_static, medium_web, MonthDb, networkscandb, networkscanresultsdb, NiktoResultDb, NiktoVulnDb, NmapResultDb, NmapScanDb, project_disc, project_end, project_name, project_owner, ProjectScanDb, project_start, project_status, SslscanResultDb, staticscanresultsdb, staticscansdb, TaskScheduleDb, total_close, total_false, total_high, total_low, total_medium, total_net, total_open, total_static, total_vuln, total_web, updated_by, updated_by_id, updated_time, uu_id, web_scan_db, webscanresultsdb, webscansdb
-ERROR:django.request: Internal Server Error: /projects/project_delete/ (2021-07-19 10:18:54; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
-    return view_func(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
-    return self.dispatch(request, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
-    response = self.handle_exception(exc)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
-    self.raise_uncaught_exception(exc)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
-    raise exc
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
-    response = handler(request, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/projects/views.py", line 120, in post
-    projects = ProjectDb.objects.get(uu_id=project_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 418, in get
-    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1258, in build_filter
-    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1084, in solve_lookup_type
-    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1481, in names_to_path
-    raise FieldError("Cannot resolve keyword '%s' into field. "
-django.core.exceptions.FieldError: Cannot resolve keyword 'project_id' into field. Choices are: created_by, created_by_id, created_time, date_time, DockleScanDb, DockleScanResultsDb, high_net, high_static, high_web, id, InspecScanDb, InspecScanResultsDb, is_active, low_net, low_static, low_web, ManualScanResultsDb, ManualScansDb, medium_net, medium_static, medium_web, MonthDb, networkscandb, networkscanresultsdb, NiktoResultDb, NiktoVulnDb, NmapResultDb, NmapScanDb, project_disc, project_end, project_name, project_owner, ProjectScanDb, project_start, project_status, SslscanResultDb, staticscanresultsdb, staticscansdb, TaskScheduleDb, total_close, total_false, total_high, total_low, total_medium, total_net, total_open, total_static, total_vuln, total_web, updated_by, updated_by_id, updated_time, uu_id, web_scan_db, webscanresultsdb, webscansdb
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 10:20:02; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 245, in proj_data
-    project_dat = ProjectDb.objects.filter(project_id=project_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1258, in build_filter
-    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1084, in solve_lookup_type
-    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1481, in names_to_path
-    raise FieldError("Cannot resolve keyword '%s' into field. "
-django.core.exceptions.FieldError: Cannot resolve keyword 'project_id' into field. Choices are: created_by, created_by_id, created_time, date_time, DockleScanDb, DockleScanResultsDb, high_net, high_static, high_web, id, InspecScanDb, InspecScanResultsDb, is_active, low_net, low_static, low_web, ManualScanResultsDb, ManualScansDb, medium_net, medium_static, medium_web, MonthDb, networkscandb, networkscanresultsdb, NiktoResultDb, NiktoVulnDb, NmapResultDb, NmapScanDb, project_disc, project_end, project_name, project_owner, ProjectScanDb, project_start, project_status, SslscanResultDb, staticscanresultsdb, staticscansdb, TaskScheduleDb, total_close, total_false, total_high, total_low, total_medium, total_net, total_open, total_static, total_vuln, total_web, updated_by, updated_by_id, updated_time, uu_id, web_scan_db, webscanresultsdb, webscansdb
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 10:20:28; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 245, in proj_data
-    project_dat = ProjectDb.objects.filter(project_id=project_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1258, in build_filter
-    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1084, in solve_lookup_type
-    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1481, in names_to_path
-    raise FieldError("Cannot resolve keyword '%s' into field. "
-django.core.exceptions.FieldError: Cannot resolve keyword 'project_id' into field. Choices are: created_by, created_by_id, created_time, date_time, DockleScanDb, DockleScanResultsDb, high_net, high_static, high_web, id, InspecScanDb, InspecScanResultsDb, is_active, low_net, low_static, low_web, ManualScanResultsDb, ManualScansDb, medium_net, medium_static, medium_web, MonthDb, networkscandb, networkscanresultsdb, NiktoResultDb, NiktoVulnDb, NmapResultDb, NmapScanDb, project_disc, project_end, project_name, project_owner, ProjectScanDb, project_start, project_status, SslscanResultDb, staticscanresultsdb, staticscansdb, TaskScheduleDb, total_close, total_false, total_high, total_low, total_medium, total_net, total_open, total_static, total_vuln, total_web, updated_by, updated_by_id, updated_time, uu_id, web_scan_db, webscanresultsdb, webscansdb
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 10:21:47; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/datastructures.py", line 76, in __getitem__
-    list_ = super().__getitem__(key)
-KeyError: 'uu_id'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 240, in proj_data
-    if request.GET['uu_id']:
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/datastructures.py", line 78, in __getitem__
-    raise MultiValueDictKeyError(key)
-django.utils.datastructures.MultiValueDictKeyError: 'uu_id'
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 10:21:47; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/datastructures.py", line 76, in __getitem__
-    list_ = super().__getitem__(key)
-KeyError: 'uu_id'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 240, in proj_data
-    if request.GET['uu_id']:
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/datastructures.py", line 78, in __getitem__
-    raise MultiValueDictKeyError(key)
-django.utils.datastructures.MultiValueDictKeyError: 'uu_id'
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 10:21:52; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/datastructures.py", line 76, in __getitem__
-    list_ = super().__getitem__(key)
-KeyError: 'uu_id'
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 240, in proj_data
-    if request.GET['uu_id']:
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/datastructures.py", line 78, in __getitem__
-    raise MultiValueDictKeyError(key)
-django.utils.datastructures.MultiValueDictKeyError: 'uu_id'
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 10:22:04; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 245, in proj_data
-    project_dat = ProjectDb.objects.filter(project_id=project_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1258, in build_filter
-    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1084, in solve_lookup_type
-    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1481, in names_to_path
-    raise FieldError("Cannot resolve keyword '%s' into field. "
-django.core.exceptions.FieldError: Cannot resolve keyword 'project_id' into field. Choices are: created_by, created_by_id, created_time, date_time, DockleScanDb, DockleScanResultsDb, high_net, high_static, high_web, id, InspecScanDb, InspecScanResultsDb, is_active, low_net, low_static, low_web, ManualScanResultsDb, ManualScansDb, medium_net, medium_static, medium_web, MonthDb, networkscandb, networkscanresultsdb, NiktoResultDb, NiktoVulnDb, NmapResultDb, NmapScanDb, project_disc, project_end, project_name, project_owner, ProjectScanDb, project_start, project_status, SslscanResultDb, staticscanresultsdb, staticscansdb, TaskScheduleDb, total_close, total_false, total_high, total_low, total_medium, total_net, total_open, total_static, total_vuln, total_web, updated_by, updated_by_id, updated_time, uu_id, web_scan_db, webscanresultsdb, webscansdb
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 10:23:22; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: '20e64dc0-8eda-40d7-b4a6-8ecddadfbf31'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 246, in proj_data
-    web_scan_dat = WebScansDb.objects.filter(project_id=uu_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_filter
-    condition = self.build_lookup(lookups, col, value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1165, in build_lookup
-    lookup = lookup_class(lhs, rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/lookups.py", line 24, in __init__
-    self.rhs = self.get_prep_lookup()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_lookups.py", line 117, in get_prep_lookup
-    self.rhs = target_field.get_prep_value(self.rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got '20e64dc0-8eda-40d7-b4a6-8ecddadfbf31'.
-ERROR:django.request: Internal Server Error: /proj_data/ (2021-07-19 10:23:22; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: '20e64dc0-8eda-40d7-b4a6-8ecddadfbf31'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 246, in proj_data
-    web_scan_dat = WebScansDb.objects.filter(project_id=uu_id)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_filter
-    condition = self.build_lookup(lookups, col, value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1165, in build_lookup
-    lookup = lookup_class(lhs, rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/lookups.py", line 24, in __init__
-    self.rhs = self.get_prep_lookup()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_lookups.py", line 117, in get_prep_lookup
-    self.rhs = target_field.get_prep_value(self.rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got '20e64dc0-8eda-40d7-b4a6-8ecddadfbf31'.
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 10:38:33; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 166, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 98, in trend_update
-    match_data = MonthDb.objects.filter(uu_id=proj_id, month=current_month)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1258, in build_filter
-    lookups, parts, reffed_expression = self.solve_lookup_type(arg)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1084, in solve_lookup_type
-    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1481, in names_to_path
-    raise FieldError("Cannot resolve keyword '%s' into field. "
-django.core.exceptions.FieldError: Cannot resolve keyword 'uu_id' into field. Choices are: high, id, low, medium, month, project, project_id
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 10:40:34; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 108, in debug_sql
-    yield
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
-    return super().execute(sql, params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
-    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
-    return executor(sql, params, many, context)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
     return self.cursor.execute(sql, params)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
     return Database.Cursor.execute(self, query, params)
-OverflowError: Python int too large to convert to SQLite INTEGER
+sqlite3.OperationalError: no such table: webscans
 
-During handling of the above exception, another exception occurred:
+The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
     response = get_response(request)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
     response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 166, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 134, in trend_update
-    ProjectDb.objects.filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 784, in update
-    rows = query.get_compiler(self.db).execute_sql(CURSOR)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1522, in execute_sql
-    cursor = super().execute_sql(result_type)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 614, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/cache.py", line 44, in _wrapped_view_func
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/sites.py", line 233, in inner
+    return view(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 43, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 1693, in changelist_view
+    cl = self.get_changelist_instance(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 735, in get_changelist_instance
+    return ChangeList(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 100, in __init__
+    self.get_results(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 235, in get_results
+    result_count = paginator.count
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/paginator.py", line 94, in count
+    return c()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 411, in count
+    return self.query.get_count(using=self.db)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 515, in get_count
+    number = obj.get_aggregation(using, ['__count'])['__count']
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 500, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
     cursor.execute(sql, params)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
     return super().execute(sql, params)
-  File "/usr/local/Cellar/python@3.9/3.9.1_3/Frameworks/Python.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
-    self.gen.throw(type, value, traceback)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 113, in debug_sql
-    sql = self.db.ops.last_executed_query(self.cursor, sql, params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/operations.py", line 155, in last_executed_query
-    params = self._quote_params_for_last_executed_query(params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/operations.py", line 144, in _quote_params_for_last_executed_query
-    return cursor.execute(sql, params).fetchone()
-OverflowError: Python int too large to convert to SQLite INTEGER
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 10:40:34; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 108, in debug_sql
-    yield
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
-    return super().execute(sql, params)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
     return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
     return executor(sql, params, many, context)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
     return self.cursor.execute(sql, params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
-    return Database.Cursor.execute(self, query, params)
-OverflowError: Python int too large to convert to SQLite INTEGER
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 166, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 134, in trend_update
-    ProjectDb.objects.filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 784, in update
-    rows = query.get_compiler(self.db).execute_sql(CURSOR)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1522, in execute_sql
-    cursor = super().execute_sql(result_type)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
-    cursor.execute(sql, params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
-    return super().execute(sql, params)
-  File "/usr/local/Cellar/python@3.9/3.9.1_3/Frameworks/Python.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
-    self.gen.throw(type, value, traceback)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 113, in debug_sql
-    sql = self.db.ops.last_executed_query(self.cursor, sql, params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/operations.py", line 155, in last_executed_query
-    params = self._quote_params_for_last_executed_query(params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/operations.py", line 144, in _quote_params_for_last_executed_query
-    return cursor.execute(sql, params).fetchone()
-OverflowError: Python int too large to convert to SQLite INTEGER
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 10:50:37; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 166, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 100, in trend_update
-    add_data = MonthDb(project__uu_id=proj_id, month=current_month, high=high,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 501, in __init__
-    raise TypeError("%s() got an unexpected keyword argument '%s'" % (cls.__name__, kwarg))
-TypeError: MonthDb() got an unexpected keyword argument 'project__uu_id'
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 10:55:17; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 108, in debug_sql
-    yield
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
-    return super().execute(sql, params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
-    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
-    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
     return self.cursor.execute(sql, params)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
     return Database.Cursor.execute(self, query, params)
-OverflowError: Python int too large to convert to SQLite INTEGER
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 166, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 102, in trend_update
-    add_data.save()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 753, in save
-    self.save_base(using=using, force_insert=force_insert,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 790, in save_base
-    updated = self._save_table(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 895, in _save_table
-    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 933, in _do_insert
-    return manager._insert(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1254, in _insert
-    return query.get_compiler(using=using).execute_sql(returning_fields)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1397, in execute_sql
-    cursor.execute(sql, params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
-    return super().execute(sql, params)
-  File "/usr/local/Cellar/python@3.9/3.9.1_3/Frameworks/Python.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
-    self.gen.throw(type, value, traceback)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 113, in debug_sql
-    sql = self.db.ops.last_executed_query(self.cursor, sql, params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/operations.py", line 155, in last_executed_query
-    params = self._quote_params_for_last_executed_query(params)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/operations.py", line 144, in _quote_params_for_last_executed_query
-    return cursor.execute(sql, params).fetchone()
-OverflowError: Python int too large to convert to SQLite INTEGER
-ERROR:django.request: Internal Server Error: /projects/project_create/ (2021-07-19 11:03:51; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
-    return view_func(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
-    return self.dispatch(request, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
-    response = self.handle_exception(exc)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
-    self.raise_uncaught_exception(exc)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
-    raise exc
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
-    response = handler(request, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/projects/views.py", line 181, in post
-    save_months_data = MonthDb(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 483, in __init__
-    _setattr(self, field.name, rel_obj)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_descriptors.py", line 215, in __set__
-    raise ValueError(
-ValueError: Cannot assign "10": "MonthDb.project" must be a "ProjectDb" instance.
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 11:04:29; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 167, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 80, in trend_update
-    add_data = MonthDb(uu_id=proj_id, month=current_month, high=high, medium=medium,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 501, in __init__
-    raise TypeError("%s() got an unexpected keyword argument '%s'" % (cls.__name__, kwarg))
-TypeError: MonthDb() got an unexpected keyword argument 'uu_id'
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 11:04:29; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 167, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 80, in trend_update
-    add_data = MonthDb(uu_id=proj_id, month=current_month, high=high, medium=medium,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 501, in __init__
-    raise TypeError("%s() got an unexpected keyword argument '%s'" % (cls.__name__, kwarg))
-TypeError: MonthDb() got an unexpected keyword argument 'uu_id'
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 11:04:33; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 167, in dashboard
-    trend_update()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 80, in trend_update
-    add_data = MonthDb(uu_id=proj_id, month=current_month, high=high, medium=medium,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 501, in __init__
-    raise TypeError("%s() got an unexpected keyword argument '%s'" % (cls.__name__, kwarg))
-TypeError: MonthDb() got an unexpected keyword argument 'uu_id'
-ERROR:django.request: Internal Server Error: /all_high_vuln/ (2021-07-19 12:03:36; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
-    return int(value)
-ValueError: invalid literal for int() with base 10: '693bbc50-2dfc-4b99-83cd-f36dff739338'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 366, in all_high_vuln
-    web_all_high = WebScanResultsDb.objects.filter(project_id=project_id,
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
-    return getattr(self.get_queryset(), name)(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 942, in filter
-    return self._filter_or_exclude(False, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 962, in _filter_or_exclude
-    clone._filter_or_exclude_inplace(negate, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 969, in _filter_or_exclude_inplace
-    self._query.add_q(Q(*args, **kwargs))
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1358, in add_q
-    clause, _ = self._add_q(q_object, self.used_aliases)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1377, in _add_q
-    child_clause, needed_inner = self.build_filter(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_filter
-    condition = self.build_lookup(lookups, col, value)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 1165, in build_lookup
-    lookup = lookup_class(lhs, rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/lookups.py", line 24, in __init__
-    self.rhs = self.get_prep_lookup()
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_lookups.py", line 117, in get_prep_lookup
-    self.rhs = target_field.get_prep_value(self.rhs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
-    raise e.__class__(
-ValueError: Field 'id' expected a number but got '693bbc50-2dfc-4b99-83cd-f36dff739338'.
-WARNING:django.security.csrf: Forbidden (CSRF token missing or incorrect.): /staticscanners/scan_delete/ (2021-07-19 12:06:19; log.py:224)
-WARNING:django.security.csrf: Forbidden (CSRF token missing or incorrect.): /staticscanners/scan_delete/ (2021-07-19 12:06:32; log.py:224)
-WARNING:django.security.csrf: Forbidden (CSRF token missing or incorrect.): /staticscanners/scan_delete/ (2021-07-19 12:06:37; log.py:224)
-WARNING:django.security.csrf: Forbidden (CSRF token missing or incorrect.): /staticscanners/scan_delete/ (2021-07-19 12:09:42; log.py:224)
-ERROR:django.request: Internal Server Error: /projects/project_create/ (2021-07-19 12:37:01; log.py:224)
-Traceback (most recent call last):
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
-    response = get_response(request)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
-    return view_func(*args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
-    return self.dispatch(request, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
-    response = self.handle_exception(exc)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
-    self.raise_uncaught_exception(exc)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
-    raise exc
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
-    response = handler(request, *args, **kwargs)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/projects/views.py", line 152, in post
-    project = ProjectDb(
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 483, in __init__
-    _setattr(self, field.name, rel_obj)
-  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_descriptors.py", line 215, in __set__
-    raise ValueError(
-ValueError: Cannot assign "'admin'": "ProjectDb.created_by" must be a "UserProfile" instance.
-ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 12:41:57; log.py:224)
+django.db.utils.OperationalError: no such table: webscans
+ERROR:django.request: Internal Server Error: /admin/webscanners/webscanresultsdb/ (2021-07-19 12:44:02; log.py:224)
 Traceback (most recent call last):
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
     return self.cursor.execute(sql, params)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
     return Database.Cursor.execute(self, query, params)
 sqlite3.OperationalError: no such table: webscanresults
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 614, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/cache.py", line 44, in _wrapped_view_func
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/sites.py", line 233, in inner
+    return view(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 43, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 1693, in changelist_view
+    cl = self.get_changelist_instance(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 735, in get_changelist_instance
+    return ChangeList(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 100, in __init__
+    self.get_results(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 235, in get_results
+    result_count = paginator.count
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/paginator.py", line 94, in count
+    return c()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 411, in count
+    return self.query.get_count(using=self.db)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 515, in get_count
+    number = obj.get_aggregation(using, ['__count'])['__count']
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 500, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: webscanresults
+ERROR:django.request: Internal Server Error: /admin/webscanners/webscanresultsdb/ (2021-07-19 12:44:51; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: WebScanResultsDb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 614, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/cache.py", line 44, in _wrapped_view_func
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/sites.py", line 233, in inner
+    return view(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 43, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 1693, in changelist_view
+    cl = self.get_changelist_instance(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 735, in get_changelist_instance
+    return ChangeList(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 100, in __init__
+    self.get_results(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 235, in get_results
+    result_count = paginator.count
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/paginator.py", line 94, in count
+    return c()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 411, in count
+    return self.query.get_count(using=self.db)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 515, in get_count
+    number = obj.get_aggregation(using, ['__count'])['__count']
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 500, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: WebScanResultsDb
+ERROR:django.request: Internal Server Error: /admin/webscanners/webscanresultsdb/ (2021-07-19 12:47:57; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: webscanresultsdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 614, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/cache.py", line 44, in _wrapped_view_func
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/sites.py", line 233, in inner
+    return view(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 43, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 1693, in changelist_view
+    cl = self.get_changelist_instance(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 735, in get_changelist_instance
+    return ChangeList(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 100, in __init__
+    self.get_results(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 235, in get_results
+    result_count = paginator.count
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/paginator.py", line 94, in count
+    return c()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 411, in count
+    return self.query.get_count(using=self.db)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 515, in get_count
+    number = obj.get_aggregation(using, ['__count'])['__count']
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 500, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: webscanresultsdb
+ERROR:django.request: Internal Server Error: /admin/webscanners/webscanresultsdb/ (2021-07-19 12:51:11; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: webscanresultsdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 614, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/cache.py", line 44, in _wrapped_view_func
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/sites.py", line 233, in inner
+    return view(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 43, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 1693, in changelist_view
+    cl = self.get_changelist_instance(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 735, in get_changelist_instance
+    return ChangeList(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 100, in __init__
+    self.get_results(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 235, in get_results
+    result_count = paginator.count
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/paginator.py", line 94, in count
+    return c()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 411, in count
+    return self.query.get_count(using=self.db)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 515, in get_count
+    number = obj.get_aggregation(using, ['__count'])['__count']
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 500, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: webscanresultsdb
+ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 12:53:51; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: webscanresultsdb
 
 The above exception was the direct cause of the following exception:
 
@@ -966,4 +351,703 @@ Traceback (most recent call last):
     return self.cursor.execute(sql, params)
   File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
     return Database.Cursor.execute(self, query, params)
-django.db.utils.OperationalError: no such table: webscanresults
+django.db.utils.OperationalError: no such table: webscanresultsdb
+ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 12:53:55; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: webscanresultsdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 168, in dashboard
+    trend_update()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 116, in trend_update
+    total_open = scans_query.all_vuln_count_data(project_id=proj_id, query='Open')
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/scans_data/scans_query.py", line 744, in all_vuln_count_data
+    all_data = int(len(web_open_vuln)) + \
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 269, in __len__
+    self._fetch_all()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: webscanresultsdb
+ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-19 15:14:10; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 168, in dashboard
+    trend_update()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 111, in trend_update
+    total_vuln = scans_query.all_vuln(project_id=proj_id, query='total')
+TypeError: all_vuln() missing 1 required positional argument: 'username'
+ERROR:django.request: Internal Server Error: /settings/settings/ (2021-07-19 15:23:53; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: archerysettings_openvassettingdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/archerysettings/views.py", line 143, in setting
+    lod_ov_user = settings.openvas_username()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/archerysettings/load_settings.py", line 145, in openvas_username
+    for openvas in all_openvas:
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 287, in __iter__
+    self._fetch_all()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: archerysettings_openvassettingdb
+ERROR:django.request: Internal Server Error: /settings/settings/ (2021-07-19 15:39:54; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: jiraticketing_jirasetting
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/archerysettings/views.py", line 210, in setting
+    for jira in jira_setting:
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 287, in __iter__
+    self._fetch_all()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: jiraticketing_jirasetting
+ERROR:django.request: Internal Server Error: /manual_scan/ (2021-07-19 16:08:25; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/manual_scan/views.py", line 42, in list_scan
+    username = request.user.username
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/functional.py", line 241, in inner
+    return func(self._wrapped, *args)
+AttributeError: 'UserProfile' object has no attribute 'username'
+ERROR:django.request: Internal Server Error: /manual_scan/add_vuln/ (2021-07-19 16:28:35; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'None'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/manual_scan/views.py", line 172, in add_vuln
+    dump_data.save()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 753, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 790, in save_base
+    updated = self._save_table(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 895, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 933, in _do_insert
+    return manager._insert(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1254, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1396, in execute_sql
+    for sql, params in self.as_sql():
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1339, in as_sql
+    value_rows = [
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
+    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
+    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1281, in prepare_value
+    value = field.get_db_prep_save(value, connection=self.connection)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related.py", line 971, in get_db_prep_save
+    return self.target_field.get_db_prep_save(value, connection=connection)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 823, in get_db_prep_save
+    return self.get_db_prep_value(value, connection=connection, prepared=False)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 2388, in get_db_prep_value
+    value = self.get_prep_value(value)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'None'.
+WARNING:django.request: Not Found: /admin/projects/project_db/ (2021-07-19 16:28:58; log.py:224)
+ERROR:django.request: Internal Server Error: /admin/compliance/docklescanresultsdb/ (2021-07-19 16:29:45; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: docklescanresultsdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 614, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/cache.py", line 44, in _wrapped_view_func
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/sites.py", line 233, in inner
+    return view(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 43, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 1693, in changelist_view
+    cl = self.get_changelist_instance(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/options.py", line 735, in get_changelist_instance
+    return ChangeList(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 100, in __init__
+    self.get_results(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/contrib/admin/views/main.py", line 235, in get_results
+    result_count = paginator.count
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/utils/functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/paginator.py", line 94, in count
+    return c()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 411, in count
+    return self.query.get_count(using=self.db)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 515, in get_count
+    number = obj.get_aggregation(using, ['__count'])['__count']
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 500, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: docklescanresultsdb
+WARNING:django.request: Not Found: /users/user/ (2021-07-19 16:30:35; log.py:224)
+ERROR:django.request: Internal Server Error: /tools/sslscan/ (2021-07-19 16:30:44; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: tools_sslscanresultdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/tools/views.py", line 87, in sslscan
+    return render(request, "tools/sslscan_list.html", {"all_sslscan": all_sslscan})
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 170, in render
+    return self._render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/test/utils.py", line 96, in instrumented_test_render
+    return self.nodelist.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 938, in render
+    bit = node.render_annotated(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 905, in render_annotated
+    return self.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/test/utils.py", line 96, in instrumented_test_render
+    return self.nodelist.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 938, in render
+    bit = node.render_annotated(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 905, in render_annotated
+    return self.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/test/utils.py", line 96, in instrumented_test_render
+    return self.nodelist.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 938, in render
+    bit = node.render_annotated(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 905, in render_annotated
+    return self.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 938, in render
+    bit = node.render_annotated(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 905, in render_annotated
+    return self.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/defaulttags.py", line 168, in render
+    len_values = len(values)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 269, in __len__
+    self._fetch_all()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: tools_sslscanresultdb
+ERROR:django.request: Internal Server Error: /tools/sslscan/ (2021-07-19 16:41:11; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: tools_sslscanresultdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/tools/views.py", line 87, in sslscan
+    return render(request, "tools/sslscan_list.html", {"all_sslscan": all_sslscan})
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/backends/django.py", line 61, in render
+    return self.template.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 170, in render
+    return self._render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/test/utils.py", line 96, in instrumented_test_render
+    return self.nodelist.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 938, in render
+    bit = node.render_annotated(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 905, in render_annotated
+    return self.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/test/utils.py", line 96, in instrumented_test_render
+    return self.nodelist.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 938, in render
+    bit = node.render_annotated(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 905, in render_annotated
+    return self.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/test/utils.py", line 96, in instrumented_test_render
+    return self.nodelist.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 938, in render
+    bit = node.render_annotated(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 905, in render_annotated
+    return self.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 938, in render
+    bit = node.render_annotated(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/base.py", line 905, in render_annotated
+    return self.render(context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/template/defaulttags.py", line 168, in render
+    len_values = len(values)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 269, in __len__
+    self._fetch_all()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: tools_sslscanresultdb
+ERROR:django.request: Internal Server Error: /zapscanner/zap_setting_update/ (2021-07-19 16:56:07; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'Noneasdf'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/webscanners/zapscanner/views.py", line 377, in zap_setting_update
+    save_data.save()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 753, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 790, in save_base
+    updated = self._save_table(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 895, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 933, in _do_insert
+    return manager._insert(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1254, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1396, in execute_sql
+    for sql, params in self.as_sql():
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1339, in as_sql
+    value_rows = [
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
+    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
+    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1281, in prepare_value
+    value = field.get_db_prep_save(value, connection=self.connection)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 823, in get_db_prep_save
+    return self.get_db_prep_value(value, connection=connection, prepared=False)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 818, in get_db_prep_value
+    value = self.get_prep_value(value)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'zap_port' expected a number but got 'Noneasdf'.
+ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-20 11:30:41; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: pentest_manualscansdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 168, in dashboard
+    trend_update()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 111, in trend_update
+    total_vuln = scans_query.all_vuln(project_id=proj_id, query='total')
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/scans_data/scans_query.py", line 219, in all_vuln
+    + int(all_manual_scan(project_id=project_id, query=query))
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/scans_data/scans_query.py", line 39, in all_manual_scan
+    all_manual_scan_scan = PentestScanDb.objects.filter(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 398, in aggregate
+    return query.get_aggregation(self.db, kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 500, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: pentest_manualscansdb
+ERROR:django.request: Internal Server Error: /dashboard/ (2021-07-20 11:32:52; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: pentest_manualscansdb
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 168, in dashboard
+    trend_update()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/views.py", line 111, in trend_update
+    total_vuln = scans_query.all_vuln(project_id=proj_id, query='total')
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/scans_data/scans_query.py", line 219, in all_vuln
+    + int(all_manual_scan(project_id=project_id, query=query))
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/dashboard/scans_data/scans_query.py", line 39, in all_manual_scan
+    all_manual_scan_scan = PentestScanDb.objects.filter(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 398, in aggregate
+    return query.get_aggregation(self.db, kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/query.py", line 500, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/backends/sqlite3/base.py", line 413, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: pentest_manualscansdb
+WARNING:django.request: Forbidden: /pentest/add_list_scan/ (2021-07-20 12:07:13; log.py:224)
+ERROR:django.request: Internal Server Error: /pentest/add_list_scan/ (2021-07-20 13:41:49; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/pentest/views.py", line 429, in post
+    dump_scan = PentestScanDb(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 483, in __init__
+    _setattr(self, field.name, rel_obj)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_descriptors.py", line 215, in __set__
+    raise ValueError(
+ValueError: Cannot assign "''": "PentestScanDb.project" must be a "ProjectDb" instance.
+ERROR:django.request: Internal Server Error: /pentest/add_list_scan/ (2021-07-20 13:44:39; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/pentest/views.py", line 427, in post
+    dump_scan = PentestScanDb(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 483, in __init__
+    _setattr(self, field.name, rel_obj)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related_descriptors.py", line 215, in __set__
+    raise ValueError(
+ValueError: Cannot assign "'4c534cf8-7675-440b-bf27-c1274952b449'": "PentestScanDb.project" must be a "ProjectDb" instance.
+ERROR:django.request: Internal Server Error: /pentest/add_list_scan/ (2021-07-20 13:45:31; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1774, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: '4c534cf8-7675-440b-bf27-c1274952b449'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/pentest/views.py", line 433, in post
+    dump_scan.save()
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 753, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 790, in save_base
+    updated = self._save_table(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 895, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 933, in _do_insert
+    return manager._insert(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/query.py", line 1254, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1396, in execute_sql
+    for sql, params in self.as_sql():
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1339, in as_sql
+    value_rows = [
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
+    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1340, in <listcomp>
+    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1281, in prepare_value
+    value = field.get_db_prep_save(value, connection=self.connection)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/related.py", line 971, in get_db_prep_save
+    return self.target_field.get_db_prep_save(value, connection=connection)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 823, in get_db_prep_save
+    return self.get_db_prep_value(value, connection=connection, prepared=False)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 2388, in get_db_prep_value
+    value = self.get_prep_value(value)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py", line 1776, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got '4c534cf8-7675-440b-bf27-c1274952b449'.
+ERROR:django.request: Internal Server Error: /pentest/add_list_scan/ (2021-07-20 13:46:05; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/pentest/views.py", line 427, in post
+    dump_scan = PentestScanDb(
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/db/models/base.py", line 501, in __init__
+    raise TypeError("%s() got an unexpected keyword argument '%s'" % (cls.__name__, kwarg))
+TypeError: PentestScanDb() got an unexpected keyword argument 'project__uu_id'
+ERROR:django.request: Internal Server Error: /pentest/add_list_scan/ (2021-07-20 13:57:30; log.py:224)
+Traceback (most recent call last):
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/venv/lib/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/anand/work/archerysec_dev/archerysec_2.0/archerysec/pentest/views.py", line 433, in post
+    project_id=project_uu_id.id,
+AttributeError: 'QuerySet' object has no attribute 'id'

@@ -137,7 +137,7 @@
                                             <tbody>{% for data in pentest %}
                                                 <tr data-target="#">
                                                     <td width="20%"><a
-                                                            href="{% url 'manual_scan:vuln_list' %}?scan_id={{ data.scan_id }}&project_id={{ data.project_id }}">{{ data.scan_url }}</a>
+                                                            href="{% url 'pentest:vuln_list' %}?scan_id={{ data.scan_id }}&project_id={{ data.project_id }}">{{ data.scan_url }}</a>
                                                     </td>
                                                     <td width="20%">
                                                         {{ data.pentest_type }}

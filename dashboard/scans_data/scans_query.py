@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 from itertools import chain
 from django.db.models import Sum
 from compliance.models import DockleScanDb, InspecScanDb
-from manual_scan.models import ManualScansDb, ManualScanResultsDb
+from pentest.models import PentestScanDb, PentestScanResultsDb
 from staticscanners.models import (StaticScansDb, StaticScanResultsDb)
 from webscanners.models import (WebScanResultsDb, WebScansDb)
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
@@ -36,7 +36,7 @@ data = ""
 def all_manual_scan(project_id, query):
     all_manual_scan = None
     if query == "total":
-        all_manual_scan_scan = ManualScansDb.objects.filter(
+        all_manual_scan_scan = PentestScanDb.objects.filter(
             project__uu_id=project_id
         ).aggregate(Sum("total_vul"))
 
@@ -48,7 +48,7 @@ def all_manual_scan(project_id, query):
 
     elif query == "high":
 
-        all_manual_scan_high = ManualScansDb.objects.filter(
+        all_manual_scan_high = PentestScanDb.objects.filter(
             project__uu_id=project_id
         ).aggregate(Sum("high_vul"))
 
@@ -59,7 +59,7 @@ def all_manual_scan(project_id, query):
                 all_manual_scan = value
 
     elif query == "medium":
-        all_manual_scan_medium = ManualScansDb.objects.filter(
+        all_manual_scan_medium = PentestScanDb.objects.filter(
             project__uu_id=project_id
         ).aggregate(Sum("medium_vul"))
 
@@ -70,7 +70,7 @@ def all_manual_scan(project_id, query):
                 all_manual_scan = value
 
     elif query == "low":
-        all_manual_scan_low = ManualScansDb.objects.filter(
+        all_manual_scan_low = PentestScanDb.objects.filter(
             project__uu_id=project_id
         ).aggregate(Sum("low_vul"))
 
@@ -83,10 +83,10 @@ def all_manual_scan(project_id, query):
     return all_manual_scan
 
 
-def all_pentest_web(username, project_id, query):
+def all_pentest_web(project_id, query):
     all_pentest_web = None
     if query == "total":
-        all_pentest_web_scan = ManualScansDb.objects.filter(
+        all_pentest_web_scan = PentestScanDb.objects.filter(
             pentest_type="web", project__uu_id=project_id
         ).aggregate(Sum("total_vul"))
 
@@ -98,7 +98,7 @@ def all_pentest_web(username, project_id, query):
 
     elif query == "high":
 
-        all_pentest_web_high = ManualScansDb.objects.filter(
+        all_pentest_web_high = PentestScanDb.objects.filter(
             pentest_type="web", project__uu_id=project_id
         ).aggregate(Sum("high_vul"))
 
@@ -109,7 +109,7 @@ def all_pentest_web(username, project_id, query):
                 all_pentest_web = value
 
     elif query == "medium":
-        all_pentest_web_medium = ManualScansDb.objects.filter(
+        all_pentest_web_medium = PentestScanDb.objects.filter(
             pentest_type="web", project__uu_id=project_id
         ).aggregate(Sum("medium_vul"))
 
@@ -120,7 +120,7 @@ def all_pentest_web(username, project_id, query):
                 all_pentest_web = value
 
     elif query == "low":
-        all_pentest_web_low = ManualScansDb.objects.filter(
+        all_pentest_web_low = PentestScanDb.objects.filter(
             pentest_type="web", project__uu_id=project_id
         ).aggregate(Sum("low_vul"))
 
@@ -136,7 +136,7 @@ def all_pentest_web(username, project_id, query):
 def all_pentest_net(project_id, query):
     all_pentest_net = None
     if query == "total":
-        all_pentest_net_scan = ManualScansDb.objects.filter(
+        all_pentest_net_scan = PentestScanDb.objects.filter(
             pentest_type="network", project__uu_id=project_id
         ).aggregate(Sum("total_vul"))
 
@@ -148,7 +148,7 @@ def all_pentest_net(project_id, query):
 
     elif query == "high":
 
-        all_pentest_net_high = ManualScansDb.objects.filter(
+        all_pentest_net_high = PentestScanDb.objects.filter(
             pentest_type="network", project__uu_id=project_id
         ).aggregate(Sum("high_vul"))
 
@@ -159,7 +159,7 @@ def all_pentest_net(project_id, query):
                 all_pentest_net = value
 
     elif query == "medium":
-        all_pentest_net_medium = ManualScansDb.objects.filter(
+        all_pentest_net_medium = PentestScanDb.objects.filter(
             pentest_type="network", project__uu_id=project_id
         ).aggregate(Sum("medium_vul"))
 
@@ -170,7 +170,7 @@ def all_pentest_net(project_id, query):
                 all_pentest_net = value
 
     elif query == "low":
-        all_pentest_net_low = ManualScansDb.objects.filter(
+        all_pentest_net_low = PentestScanDb.objects.filter(
             pentest_type="network", project__uu_id=project_id
         ).aggregate(Sum("low_vul"))
 
@@ -314,7 +314,7 @@ def all_vuln(project_id, query):
     return all_vuln
 
 
-def all_web( project_id, query):
+def all_web(project_id, query):
     all_web = 0
 
     if query == 'total':
@@ -399,7 +399,7 @@ def all_net(project_id, query):
     return all_net
 
 
-def all_compliance( project_id, query):
+def all_compliance(project_id, query):
     all_compliance = 0
 
     if query == 'total':
@@ -503,7 +503,7 @@ def all_inspec(project_id, query):
     return all_inspec
 
 
-def all_dockle( project_id, query):
+def all_dockle(project_id, query):
     all_dockle = None
     if query == 'total':
         all_dockle_scan = DockleScanDb.objects.filter(project__uu_id=project_id). \
@@ -554,9 +554,9 @@ def all_vuln_count(project_id, query):
                                                            project__uu_id=project_id
                                                            )
 
-        pentest_all_high = ManualScanResultsDb.objects.filter(severity='High',
-                                                              project__uu_id=project_id
-                                                              )
+        pentest_all_high = PentestScanResultsDb.objects.filter(severity='High',
+                                                               project__uu_id=project_id
+                                                               )
         all_data = chain(web_all_high,
                          sast_all_high,
                          net_all_high,
@@ -576,9 +576,9 @@ def all_vuln_count(project_id, query):
                                                              project__uu_id=project_id
                                                              )
 
-        pentest_all_medium = ManualScanResultsDb.objects.filter(severity='Medium',
-                                                                project__uu_id=project_id
-                                                                )
+        pentest_all_medium = PentestScanResultsDb.objects.filter(severity='Medium',
+                                                                 project__uu_id=project_id
+                                                                 )
 
         all_data = chain(web_all_medium,
                          sast_all_medium,
@@ -600,9 +600,9 @@ def all_vuln_count(project_id, query):
                                                           project__uu_id=project_id
                                                           )
 
-        pentest_all_low = ManualScanResultsDb.objects.filter(severity='Low',
-                                                             project__uu_id=project_id
-                                                             )
+        pentest_all_low = PentestScanResultsDb.objects.filter(severity='Low',
+                                                              project__uu_id=project_id
+                                                              )
 
         all_data = chain(web_all_low,
                          sast_all_low,
@@ -620,8 +620,8 @@ def all_vuln_count(project_id, query):
         net_all = NetworkScanResultsDb.objects.filter(project__uu_id=project_id
                                                       )
 
-        pentest_all = ManualScanResultsDb.objects.filter(project__uu_id=project_id
-                                                         )
+        pentest_all = PentestScanResultsDb.objects.filter(project__uu_id=project_id
+                                                          )
 
         all_data = chain(web_all,
                          sast_all,
@@ -676,7 +676,7 @@ def all_vuln_count(project_id, query):
     return all_data
 
 
-def all_vuln_count_data( project_id, query):
+def all_vuln_count_data(project_id, query):
     all_data = 0
 
     if query == 'false':
@@ -704,8 +704,8 @@ def all_vuln_count_data( project_id, query):
         sast_closed_vuln = StaticScanResultsDb.objects.filter(vuln_status='Closed',
                                                               project__uu_id=project_id)
 
-        pentest_closed_vuln = ManualScanResultsDb.objects.filter(vuln_status='Closed',
-                                                                 project__uu_id=project_id)
+        pentest_closed_vuln = PentestScanResultsDb.objects.filter(vuln_status='Closed',
+                                                                  project__uu_id=project_id)
         all_data = int(len(web_closed_vuln)) + \
                    int(len(net_closed_vuln)) + \
                    int(len(sast_closed_vuln)) + \
@@ -720,8 +720,8 @@ def all_vuln_count_data( project_id, query):
         sast_open_vuln = StaticScanResultsDb.objects.filter(vuln_status='Open',
                                                             project__uu_id=project_id)
 
-        pentest_open_vuln = ManualScanResultsDb.objects.filter(vuln_status='Open',
-                                                               project__uu_id=project_id)
+        pentest_open_vuln = PentestScanResultsDb.objects.filter(vuln_status='Open',
+                                                                project__uu_id=project_id)
         # add your scanner name here <scannername>
         all_data = int(len(web_open_vuln)) + \
                    int(len(net_open_vuln)) + \
