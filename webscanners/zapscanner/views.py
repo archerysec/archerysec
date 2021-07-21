@@ -164,8 +164,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     email_sch_notify(subject=subject, message=message)
 
 
-def launch_schudle_zap_scan(
-    target_url, project_id, rescan_id, rescan, scan_id):
+def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
     """
     The function Launch ZAP Scans.
     :param target_url: Target URL

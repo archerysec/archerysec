@@ -58,10 +58,11 @@ urlpatterns = [
     path("del_all_notify/", web_views.del_all_notify, name="del_all_notify"),
 
     # Dynamic scans
-    path("list_vuln/", views.list_vuln, name="list_vuln"),
-    path("list_scans/", views.list_scans, name="list_scans"),
-    path("list_vuln_info/", views.list_vuln_info, name="list_vuln_info"),
-    path("scan_details/", views.scan_details, name="scan_details"),
-    path("scan_delete/", views.scan_delete, name="scan_delete"),
-    path("vuln_delete/", views.vuln_delete, name="vuln_delete"),
+    path("list_vuln/", views.WebScanVulnList.as_view(), name="list_vuln"),
+    path("list_scans/", views.WebScanList.as_view(), name="list_scans"),
+    path("list_vuln_info/", views.WebScanVulnInfo.as_view(), name="list_vuln_info"),
+    path("scan_details/", views.WebScanDetails.as_view(), name="scan_details"),
+    path("scan_delete/", views.WebScanDelete.as_view(), name="scan_delete"),
+    path("vuln_delete/", views.WebScanVulnDelete.as_view(), name="vuln_delete"),
+    path("vuln_mark/", views.WebScanVulnMark.as_view(), name="vuln_mark"),
 ]

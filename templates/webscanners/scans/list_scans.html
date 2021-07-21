@@ -55,13 +55,17 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
+                    {% if user.is_superuser == True or user.role == '2' %}
                         <div class="float-right">
+
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <a href="{% url 'webscanners:xml_upload' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload XML Report"><i
                                         class="fas fa-upload"></i> Upload </a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+
                         </div>
+                    {% endif %}
                         <br>
                         <br>
                         {% csrf_token %}
@@ -124,7 +128,7 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'webscanners:list_vuln' %}?scan_id={{data.scan_id}}&scanner={{ data.scanner }}">{{data.scan_url}}</a>
+                                            <a href="{% url 'webscanners:list_vuln' %}?scan_id={{data.scan_id}}">{{data.scan_url}}</a>
                                         </td>
                                         <td width="20%">
                                             <div>
