@@ -50,6 +50,12 @@ from scanners.scanner_parser.network_scanner import (Nessus_Parser,
                                                      nmap_parser)
 from scanners.scanner_plugin.network_scanner.openvas_plugin import (
     OpenVAS_Plugin, vuln_an_id)
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework import status
+from rest_framework.response import Response
+from user_management import permissions
 
 api_data = os.getcwd() + "/" + "apidata.json"
 
@@ -85,175 +91,6 @@ def email_notify(user, subject, message):
     except Exception as e:
         notify.send(user, recipient=user, verb="Email Settings Not Configured")
         pass
-
-
-def list_scans(request):
-
-    scan_list = NetworkScanDb.objects.filter()
-
-    all_notify = Notification.objects.unread()
-
-    return render(request, "networkscanners/scans/list_scans.html", {"all_scans": scan_list, "message": all_notify})
-
-
-def list_vuln_info(request):
-    scan_id = None
-    name = None
-    scanner = None
-    ip = ''
-
-
-    jira_url = None
-
-    jira = jirasetting.objects.all()
-    for d in jira:
-        jira_url = d.jira_server
-
-    if request.method == "GET":
-        scan_id = request.GET["scan_id"]
-        scanner = request.GET['scanner']
-        ip = request.GET['ip']
-    if request.method == "POST":
-        false_positive = request.POST.get("false")
-        status = request.POST.get("status")
-        vuln_id = request.POST.get("vuln_id")
-        scan_id = request.POST.get("scan_id")
-        scanner = request.POST.get("scanner")
-        ip = request.POST.get("ip")
-        NetworkScanResultsDb.objects.filter(
-             vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
-        ).update(false_positive=false_positive, vuln_status=status)
-
-        if false_positive == "Yes":
-            vuln_info = NetworkScanResultsDb.objects.filter(
-                 scan_id=scan_id, vuln_id=vuln_id, scanner=scanner
-            )
-            for vi in vuln_info:
-                name = vi.title
-                url = vi.ip
-                severity = vi.severity
-                dup_data = name + url + severity
-                false_positive_hash = hashlib.sha256(
-                    dup_data.encode("utf-8")
-                ).hexdigest()
-                NetworkScanResultsDb.objects.filter(
-                     vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
-                ).update(
-                    false_positive=false_positive,
-                    vuln_status="Closed",
-                    false_positive_hash=false_positive_hash,
-                )
-
-        all_vuln = NetworkScanResultsDb.objects.filter(
-             scan_id=scan_id, false_positive="No", vuln_status="Open", scanner=scanner
-        )
-
-        total_high = len(all_vuln.filter(severity="High"))
-        total_medium = len(all_vuln.filter(severity="Medium"))
-        total_low = len(all_vuln.filter(severity="Low"))
-        total_info = len(all_vuln.filter(severity="Informational"))
-        total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
-        total_vul = total_high + total_medium + total_low + total_info
-
-        NetworkScanDb.objects.filter( scan_id=scan_id, scanner=scanner).update(
-            total_vul=total_vul,
-            high_vul=total_high,
-            medium_vul=total_medium,
-            low_vul=total_low,
-            info_vul=total_info,
-            total_dup=total_dup
-        )
-        return HttpResponseRedirect(
-            reverse("networkscanners:list_vuln_info") + "?scan_id=%s&ip=%s&scanner=%s" % (scan_id, ip, scanner)
-        )
-
-    vuln_data = NetworkScanResultsDb.objects.filter(
-
-        scan_id=scan_id,
-        scanner=scanner,
-        ip=ip
-    )
-
-    return render(request, "networkscanners/scans/list_vuln_info.html", {"vuln_data": vuln_data, "jira_url": jira_url})
-
-
-def scan_details(request):
-
-    if request.method == "GET":
-        vuln_id = request.GET["vuln_id"]
-        scanner = request.GET["scanner"]
-    else:
-        vuln_id = ""
-        scanner = ""
-    vul_dat = NetworkScanResultsDb.objects.filter(
-         vuln_id=vuln_id, scanner=scanner
-    ).order_by("vuln_id")
-
-    return render(request, "networkscanners/scans/vuln_details.html", {"vul_dat": vul_dat})
-
-
-def scan_delete(request):
-
-    if request.method == "POST":
-        scan_id = request.POST.get("scan_id")
-
-        scan_item = str(scan_id)
-        value = scan_item.replace(" ", "")
-        value_split = value.split(",")
-        split_length = value_split.__len__()
-        # print "split_length", split_length
-        for i in range(0, split_length):
-            scan_id = value_split.__getitem__(i)
-
-            item = NetworkScanDb.objects.filter( scan_id=scan_id)
-            item.delete()
-            item_results = NetworkScanResultsDb.objects.filter(
-                 scan_id=scan_id
-            )
-            item_results.delete()
-        return HttpResponseRedirect(reverse("webscanners:list_scans"))
-
-
-def vuln_delete(request):
-
-    if request.method == "POST":
-        vuln_id = request.POST.get("vuln_id")
-        scan_id = request.POST.get("scan_id")
-        scanner = request.POST.get("scanner")
-
-        scan_item = str(vuln_id)
-        value = scan_item.replace(" ", "")
-        value_split = value.split(",")
-        split_length = value_split.__len__()
-        # print "split_length", split_length
-        for i in range(0, split_length):
-            vuln_id = value_split.__getitem__(i)
-            delete_vuln = NetworkScanResultsDb.objects.filter(
-                 scanner=scanner, vuln_id=vuln_id
-            )
-            delete_vuln.delete()
-        all_vuln = NetworkScanResultsDb.objects.filter(
-             scanner=scanner, scan_id=scan_id
-        )
-
-        total_vul = len(all_vuln)
-        total_critical = len(all_vuln.filter(severity="Critical"))
-        total_high = len(all_vuln.filter(severity="High"))
-        total_medium = len(all_vuln.filter(severity="Medium"))
-        total_low = len(all_vuln.filter(severity="Low"))
-        total_info = len(all_vuln.filter(severity="Information"))
-
-        NetworkScanDb.objects.filter( scan_id=scan_id, scanner=scanner).update(
-            total_vul=total_vul,
-            critical_vul=total_critical,
-            high_vul=total_high,
-            medium_vul=total_medium,
-            low_vul=total_low,
-            info_vul=total_info,
-        )
-        return HttpResponseRedirect(
-            reverse("networkscanners:list_vuln") + "?scan_id=%s&scanner=%s" % (scan_id, scanner)
-        )
 
 
 def openvas_scanner(scan_ip, project_id, sel_profile, ):
@@ -718,3 +555,204 @@ def nv_details(request):
             "messages": messages,
         },
     )
+
+
+class NetworkScanList(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'networkscanners/scans/list_scans.html'
+
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, request):
+        scan_list = NetworkScanDb.objects.filter()
+
+        all_notify = Notification.objects.unread()
+
+        return render(request, "networkscanners/scans/list_scans.html",
+                      {"all_scans": scan_list,
+                       "message": all_notify})
+
+
+class NetworkScanVulnInfo(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'networkscanners/scans/list_vuln_info.html'
+
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, request):
+        jira_url = None
+        jira = jirasetting.objects.all()
+        for d in jira:
+            jira_url = d.jira_server
+        scan_id = request.GET["scan_id"]
+        scanner = request.GET['scanner']
+        ip = request.GET['ip']
+        vuln_data = NetworkScanResultsDb.objects.filter(
+            scan_id=scan_id,
+            scanner=scanner,
+            ip=ip
+        )
+        return render(request, "networkscanners/scans/list_vuln_info.html",
+                      {"vuln_data": vuln_data, "jira_url": jira_url})
+
+
+class NetworkScanVulnMark(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'networkscanners/scans/list_vuln_info.html'
+
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAnalyst
+    )
+
+    def post(self, request):
+        false_positive = request.POST.get("false")
+        status = request.POST.get("status")
+        vuln_id = request.POST.get("vuln_id")
+        scan_id = request.POST.get("scan_id")
+        scanner = request.POST.get("scanner")
+        ip = request.POST.get("ip")
+        NetworkScanResultsDb.objects.filter(
+           vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+        ).update(false_positive=false_positive, vuln_status=status)
+
+        if false_positive == "Yes":
+            vuln_info = NetworkScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, scanner=scanner
+            )
+            for vi in vuln_info:
+                name = vi.title
+                url = vi.ip
+                severity = vi.severity
+                dup_data = name + url + severity
+                false_positive_hash = hashlib.sha256(
+                    dup_data.encode("utf-8")
+                ).hexdigest()
+                NetworkScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+                ).update(
+                    false_positive=false_positive,
+                    vuln_status="Closed",
+                    false_positive_hash=false_positive_hash,
+                )
+
+        all_vuln = NetworkScanResultsDb.objects.filter(scan_id=scan_id,
+                                                       false_positive="No",
+                                                       vuln_status="Open",
+                                                       scanner=scanner)
+
+        total_high = len(all_vuln.filter(severity="High"))
+        total_medium = len(all_vuln.filter(severity="Medium"))
+        total_low = len(all_vuln.filter(severity="Low"))
+        total_info = len(all_vuln.filter(severity="Informational"))
+        total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
+        total_vul = total_high + total_medium + total_low + total_info
+
+        NetworkScanDb.objects.filter(scan_id=scan_id, scanner=scanner).update(
+            total_vul=total_vul,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            info_vul=total_info,
+            total_dup=total_dup
+        )
+        return HttpResponseRedirect(
+            reverse("networkscanners:list_vuln_info") + "?scan_id=%s&ip=%s&scanner=%s" % (scan_id, ip, scanner)
+        )
+
+
+class NetworkScanDetails(APIView):
+    enderer_classes = [TemplateHTMLRenderer]
+    template_name = 'networkscanners/scans/vuln_details.html'
+
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, request):
+        vuln_id = request.GET["vuln_id"]
+        scanner = request.GET["scanner"]
+        vul_dat = NetworkScanResultsDb.objects.filter(
+           vuln_id=vuln_id, scanner=scanner
+        ).order_by("vuln_id")
+
+        return render(request, "networkscanners/scans/vuln_details.html", {"vul_dat": vul_dat})
+
+
+class NetworkScanDelete(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'networkscanners/scans/list_scans.html'
+
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAnalyst,
+    )
+
+    def post(self, request):
+        scan_id = request.POST.get("scan_id")
+
+        scan_item = str(scan_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(",")
+        split_length = value_split.__len__()
+        # print "split_length", split_length
+        for i in range(0, split_length):
+            scan_id = value_split.__getitem__(i)
+
+            item = NetworkScanDb.objects.filter(scan_id=scan_id)
+            item.delete()
+            item_results = NetworkScanResultsDb.objects.filter(
+                scan_id=scan_id
+            )
+            item_results.delete()
+        return HttpResponseRedirect(reverse("webscanners:list_scans"))
+
+
+class NetworkScanVulnDelete(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'networkscanners/scans/list_vuln_info.html'
+
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAnalyst
+    )
+
+    def post(self, request):
+        vuln_id = request.POST.get("vuln_id")
+        scan_id = request.POST.get("scan_id")
+        scan_item = str(vuln_id)
+        value = scan_item.replace(" ", "")
+        value_split = value.split(",")
+        split_length = value_split.__len__()
+        # print "split_length", split_length
+        for i in range(0, split_length):
+            vuln_id = value_split.__getitem__(i)
+            print(vuln_id)
+            delete_vuln = NetworkScanResultsDb.objects.filter(
+                vuln_id=vuln_id
+            )
+            delete_vuln.delete()
+        all_vuln = NetworkScanResultsDb.objects.filter(
+           scan_id=scan_id
+        ).exclude(severity="Information").exclude(severity="Log")
+
+        total_vul = len(all_vuln)
+        total_critical = len(all_vuln.filter(severity="Critical"))
+        total_high = len(all_vuln.filter(severity="High"))
+        total_medium = len(all_vuln.filter(severity="Medium"))
+        total_low = len(all_vuln.filter(severity="Low"))
+        # total_info = len(all_vuln.filter(severity="Information"))
+
+        NetworkScanDb.objects.filter(scan_id=scan_id).update(
+            total_vul=total_vul,
+            critical_vul=total_critical,
+            high_vul=total_high,
+            medium_vul=total_medium,
+            low_vul=total_low,
+            # info_vul=total_info,
+        )
+        return HttpResponseRedirect(
+            reverse("networkscanners:list_scans")
+        )

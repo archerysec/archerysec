@@ -24,10 +24,11 @@ urlpatterns = [
     path("report_import/", views.report_import, name="report_import"),
 
    # Static scans
-    path("list_vuln/", views.list_vuln, name="list_vuln"),
-    path("list_scans/", views.list_scans, name="list_scans"),
-    path("list_vuln_info/", views.list_vuln_info, name="list_vuln_info"),
-    path("scan_details/", views.scan_details, name="scan_details"),
-    path("scan_delete/", views.scan_delete, name="scan_delete"),
-    path("vuln_delete/", views.vuln_delete, name="vuln_delete"),
+    path("list_vuln/", views.SastScanVulnList.as_view(), name="list_vuln"),
+    path("list_scans/", views.SastScanList.as_view(), name="list_scans"),
+    path("list_vuln_info/", views.SastScanVulnInfo.as_view(), name="list_vuln_info"),
+    path("scan_details/", views.SastScanDetails.as_view(), name="scan_details"),
+    path("scan_delete/", views.SastScanDelete.as_view(), name="scan_delete"),
+    path("vuln_delete/", views.SastScanVulnDelete.as_view(), name="vuln_delete"),
+    path("vuln_mark/", views.SastScanVulnMark.as_view(), name="vuln_mark"),
 ]

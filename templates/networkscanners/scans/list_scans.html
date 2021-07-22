@@ -43,6 +43,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="float-right">
+                        {% if user.is_superuser == True or user.role == '2' %}
                         <div class="btn-group" role="group" aria-label="Basic example">
                             <a href="{% url 'networkscanners:xml_upload' %}" class="btn btn-primary btn-mini"
                                data-toggle="tooltip" data-placement="top" title="Upload Report"><i
@@ -50,6 +51,7 @@
 "></i></i> Upload</a>
                         </div>
                         <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                        {% endif %}
                     </div>
                     <br>
                     <br>
@@ -79,7 +81,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>{% for data in all_scans %}
-                                    <tr data-target="#">
+                                    <tr data-target="#">{% csrf_token %}
                                         <td>
                                             <form>
                                                 <label class="customcheckbox">
