@@ -729,7 +729,6 @@ class NetworkScanVulnDelete(APIView):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            print(vuln_id)
             delete_vuln = NetworkScanResultsDb.objects.filter(
                 vuln_id=vuln_id
             )
