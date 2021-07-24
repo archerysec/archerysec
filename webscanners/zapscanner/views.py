@@ -29,6 +29,7 @@ from django.shortcuts import HttpResponse, render
 from django.urls import reverse
 
 from selenium import webdriver
+from notifications.signals import notify
 
 
 from archerysettings.models import (zap_settings_db, settings_db)
@@ -36,6 +37,10 @@ from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from webscanners.models import (WebScansDb, cookie_db,
                                 excluded_db,
                                 )
+from archerysettings.models import email_db
+from django.conf import settings
+from django.core.mail import send_mail
+
 import uuid
 
 setting_file = os.getcwd() + "/" + "apidata.json"
@@ -44,6 +49,36 @@ scans_status = None
 to_mail = ""
 scan_id = None
 scan_name = None
+
+
+def email_notify(user, subject, message):
+    global to_mail
+    all_email = email_db.objects.all()
+    for email in all_email:
+        to_mail = email.recipient_list
+
+    print(to_mail)
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [to_mail]
+    try:
+        send_mail(subject, message, email_from, recipient_list)
+    except Exception as e:
+        notify.send(user, recipient=user, verb='Email Settings Not Configured')
+
+
+def email_sch_notify(subject, message):
+    global to_mail
+    all_email = email_db.objects.all()
+    for email in all_email:
+        to_mail = email.recipient_list
+
+    print(to_mail)
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [to_mail]
+    try:
+        send_mail(subject, message, email_from, recipient_list)
+    except Exception as e:
+        print(e)
 
 
 def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
