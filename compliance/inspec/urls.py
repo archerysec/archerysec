@@ -22,11 +22,11 @@ app_name = "inspec"
 
 urlpatterns = [
     # Bandit scan list
-    path("inspec_list/", views.inspec_list, name="inspec_list"),
-    path("inspec_all_vuln/", views.list_vuln, name="inspec_all_vuln"),
-    path("inspec_vuln_data/", views.inspec_vuln_data, name="inspec_vuln_data"),
-    path("inspec_details/", views.inspec_details, name="inspec_details"),
-    path("del_inspec/", views.del_inspec, name="del_inspec"),
-    path("inspec_del_vuln/", views.inspec_del_vuln, name="inspec_del_vuln"),
+    path("inspec_list/", views.InspecScanList.as_view(), name="inspec_list"),
+    path("inspec_all_vuln/", views.InspecVulnList.as_view(), name="inspec_all_vuln"),
+    path("inspec_vuln_data/", views.InspecVulnData.as_view(), name="inspec_vuln_data"),
+    path("inspec_details/", views.InspecDetails.as_view(), name="inspec_details"),
+    path("del_inspec/", views.InspecDelete.as_view(), name="del_inspec"),
+    path("inspec_del_vuln/", views.InspecVulnDelete.as_view(), name="inspec_del_vuln"),
     path("export/", views.export, name="export"),
 ]

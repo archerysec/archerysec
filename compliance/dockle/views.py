@@ -21,61 +21,126 @@ from django.urls import reverse
 
 from compliance.models import DockleScanDb, DockleScanResultsDb
 from staticscanners.resources import dockleResource
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework import status
+from rest_framework.response import Response
+from user_management import permissions
 
 
-def dockle_list(request):
-    """
-    dockle Scan list.
-    :param request:
-    :return:
-    """
-    all_dockle_scan = DockleScanDb.objects.filter()
-
-    return render(
-        request, "compliance/dockle/docklescans_list.html", {"all_dockle_scan": all_dockle_scan}
-    )
-
-
-def list_vuln(request):
-    all_failed = ""
-    all_passed = ""
-    all_skipped = ""
-    if request.method == "GET":
-        scan_id = request.GET["scan_id"]
-    else:
-        scan_id = None
-
-    dockle_all_vuln = DockleScanResultsDb.objects.filter(scan_id=scan_id
-                                                         )
-    dockle_all_audit = DockleScanResultsDb.objects.filter(scan_id=scan_id
-                                                          )
-
-    all_compliance = DockleScanDb.objects.filter(scan_id=scan_id)
-
-    return render(
-        request,
-        "compliance/dockle/docklescan_list_vuln.html",
-        {
-            "dockle_all_vuln": dockle_all_vuln,
-            "dockle_all_audit": dockle_all_audit,
-            "all_compliance": all_compliance,
-        },
-    )
-
-
-def dockle_vuln_data(request):
+def export(request):
     """
     :param request:
     :return:
     """
-    if request.method == "GET":
-        scan_id = request.GET["scan_id"]
-        vuln_id = request.GET["vuln_id"]
-    else:
-        scan_id = None
-        vuln_id = None
 
     if request.method == "POST":
+        scan_id = request.POST.get("scan_id")
+        report_type = request.POST.get("type")
+
+        dockle_resource = dockleResource()
+        queryset = DockleScanResultsDb.objects.filter(scan_id=scan_id
+                                                      )
+        dataset = dockle_resource.export(queryset)
+        if report_type == "csv":
+            response = HttpResponse(dataset.csv, content_type="text/csv")
+            response["Content-Disposition"] = 'attachment; filename="%s.csv"' % scan_id
+            return response
+        if report_type == "json":
+            response = HttpResponse(dataset.json, content_type="application/json")
+            response["Content-Disposition"] = 'attachment; filename="%s.json"' % scan_id
+            return response
+        if report_type == "yaml":
+            response = HttpResponse(dataset.yaml, content_type="application/x-yaml")
+            response["Content-Disposition"] = 'attachment; filename="%s.yaml"' % scan_id
+            return response
+
+
+class DockleScanList(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'compliance/dockle/docklescans_list.html'
+
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, request):
+        all_dockle_scan = DockleScanDb.objects.filter()
+
+        return render(
+            request, "compliance/dockle/docklescans_list.html", {"all_dockle_scan": all_dockle_scan}
+        )
+
+
+class DockleVulnList(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'compliance/dockle/docklescan_list_vuln.html'
+
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get(self, request):
+        scan_id = request.GET["scan_id"]
+
+        dockle_all_vuln = DockleScanResultsDb.objects.filter(scan_id=scan_id
+                                                             )
+        dockle_all_audit = DockleScanResultsDb.objects.filter(scan_id=scan_id
+                                                              )
+
+        all_compliance = DockleScanDb.objects.filter(scan_id=scan_id)
+
+        return render(
+            request,
+            "compliance/dockle/docklescan_list_vuln.html",
+            {
+                "dockle_all_vuln": dockle_all_vuln,
+                "dockle_all_audit": dockle_all_audit,
+                "all_compliance": all_compliance,
+            },
+        )
+
+
+class DockleVulnData(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'compliance/dockle/docklescan_vuln_data.html'
+
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAnalyst
+    )
+
+    def get(self, request):
+        scan_id = request.GET["scan_id"]
+        vuln_id = request.GET["vuln_id"]
+        dockle_vuln_data = DockleScanResultsDb.objects.filter(
+            scan_id=scan_id,
+            vuln_id=vuln_id,
+            vuln_status="Open",
+            false_positive="No",
+        )
+
+        vuln_data_closed = DockleScanResultsDb.objects.filter(
+            scan_id=scan_id,
+            vuln_id=vuln_id,
+            vuln_status="Closed",
+            false_positive="No",
+        )
+        false_data = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, false_positive="Yes"
+                                                        )
+
+        return render(
+            request,
+            "compliance/dockle/docklescan_vuln_data.html",
+            {
+                "dockle_vuln_data": dockle_vuln_data,
+                "false_data": false_data,
+                "vuln_data_closed": vuln_data_closed,
+            },
+        )
+
+    def post(self, request):
         false_positive = request.POST.get("false")
         status = request.POST.get("status")
         vuln_id = request.POST.get("vuln_id")
@@ -106,66 +171,40 @@ def dockle_vuln_data(request):
             + "?scan_id=%s&test_name=%s" % (scan_id, vuln_id)
         )
 
-    dockle_vuln_data = DockleScanResultsDb.objects.filter(
-        scan_id=scan_id,
-        vuln_id=vuln_id,
-        vuln_status="Open",
-        false_positive="No",
+
+class DockleDetails(APIView):
+    enderer_classes = [TemplateHTMLRenderer]
+    template_name = 'compliance/dockle/dockle_vuln_details.html'
+
+    permission_classes = (
+        IsAuthenticated,
     )
 
-    vuln_data_closed = DockleScanResultsDb.objects.filter(
-        scan_id=scan_id,
-        vuln_id=vuln_id,
-        vuln_status="Closed",
-        false_positive="No",
-    )
-    false_data = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, false_positive="Yes"
-                                                    )
-
-    return render(
-        request,
-        "compliance/dockle/docklescan_vuln_data.html",
-        {
-            "dockle_vuln_data": dockle_vuln_data,
-            "false_data": false_data,
-            "vuln_data_closed": vuln_data_closed,
-        },
-    )
-
-
-def dockle_details(request):
-    """
-
-    :param request:
-    :return:
-    """
-
-    if request.method == "GET":
+    def get(self, request):
         scan_id = request.GET["scan_id"]
         vuln_id = request.GET["vuln_id"]
-    else:
-        scan_id = None
-        vuln_id = None
 
-    dockle_vuln_details = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
-                                                             )
+        dockle_vuln_details = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
+                                                                 )
+        return render(
+            request,
+            "compliance/dockle/dockle_vuln_details.html",
+            {
+                "dockle_vuln_details": dockle_vuln_details,
+            },
+        )
 
-    return render(
-        request,
-        "compliance/dockle/dockle_vuln_details.html",
-        {
-            "dockle_vuln_details": dockle_vuln_details,
-        },
+
+class DockleDelete(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'compliance/dockle/docklescans_list.html'
+
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAnalyst,
     )
 
-
-def del_dockle(request):
-    """
-    Delete dockle Scans.
-    :param request:
-    :return:
-    """
-    if request.method == "POST":
+    def post(self, request):
         scan_id = request.POST.get("scan_id")
         scan_item = str(scan_id)
         value = scan_item.replace(" ", "")
@@ -183,13 +222,16 @@ def del_dockle(request):
         return HttpResponseRedirect(reverse("dockle:dockle_list"))
 
 
-def dockle_del_vuln(request):
-    """
-    The function Delete the dockle Vulnerability.
-    :param request:
-    :return:
-    """
-    if request.method == "POST":
+class DockleVulnDelete(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'compliance/dockle/dockle_vuln_details.html'
+
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAnalyst
+    )
+
+    def post(self, request):
         vuln_id = request.POST.get(
             "del_vuln",
         )
@@ -226,31 +268,3 @@ def dockle_del_vuln(request):
         return HttpResponseRedirect(
             reverse("dockle:dockle_all_vuln" + "?scan_id=%s" % scan_id)
         )
-
-
-def export(request):
-    """
-    :param request:
-    :return:
-    """
-
-    if request.method == "POST":
-        scan_id = request.POST.get("scan_id")
-        report_type = request.POST.get("type")
-
-        dockle_resource = dockleResource()
-        queryset = DockleScanResultsDb.objects.filter(scan_id=scan_id
-                                                      )
-        dataset = dockle_resource.export(queryset)
-        if report_type == "csv":
-            response = HttpResponse(dataset.csv, content_type="text/csv")
-            response["Content-Disposition"] = 'attachment; filename="%s.csv"' % scan_id
-            return response
-        if report_type == "json":
-            response = HttpResponse(dataset.json, content_type="application/json")
-            response["Content-Disposition"] = 'attachment; filename="%s.json"' % scan_id
-            return response
-        if report_type == "yaml":
-            response = HttpResponse(dataset.yaml, content_type="application/x-yaml")
-            response["Content-Disposition"] = 'attachment; filename="%s.yaml"' % scan_id
-            return response
