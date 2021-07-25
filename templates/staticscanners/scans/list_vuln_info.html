@@ -46,7 +46,7 @@ $(document).on('click', '.confirm-delete', function(){
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                    {% if user.is_superuser == True or user.role == '2' %}
+                   {% if user.is_superuser == True or user.role.id == 2 %}
                         <div class="float-right">
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
@@ -70,7 +70,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>Risk</th>
                                         <th>JIRA Ticket</th>
                                         <th>Status</th>
-                                        {% if user.is_superuser == True or user.role == '2' %}
+                                       {% if user.is_superuser == True or user.role.id == 2 %}
                                         <th>False Positive</th>
                                         <th>Delete</th>
                                         <th>Mark</th>
@@ -107,7 +107,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         {% if data.vuln_status == 'Duplicate' %}
                                         <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>
                                         {% endif %}
-                                    {% if user.is_superuser == True or user.role == '2' %}
+                                   {% if user.is_superuser == True or user.role.id == 2 %}
                                         {% if data.false_positive == 'No' %}
                                         <td>
                                             <form method="POST" action="{% url 'staticscanners:vuln_mark' %}">

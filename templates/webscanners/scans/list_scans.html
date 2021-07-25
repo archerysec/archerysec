@@ -55,7 +55,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                    {% if user.is_superuser == True or user.role == '2' %}
+                    {% if user.is_superuser == True or user.role.id == 2 %}
                         <div class="float-right">
 
                             <div class="btn-group" role="group" aria-label="Basic example">

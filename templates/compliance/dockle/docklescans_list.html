@@ -44,7 +44,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="float-right">
-                        {% if user.is_superuser == True or user.role == '2' %}
+                       {% if user.is_superuser == True or user.role.id == 2 %}
                         <div class="btn-group" role="group" aria-label="Basic example">
                             <a href="{% url 'staticscanners:report_import' %}" class="btn btn-primary btn-mini"><i
                                     class="icon-upload-alt"></i> Upload </a>
@@ -77,7 +77,7 @@
                                     <th>Warning</th>
                                     <th>Info</th>
                                     <th>Duplicates</th>
-                                    {% if user.is_superuser == True or user.role == '2' %}
+                                   {% if user.is_superuser == True or user.role.id == 2 %}
                                     <th></th>
                                     {% endif %}
                                 </tr>
@@ -129,7 +129,7 @@
                                         <td><span
                                                 class="badge badge-pill badge-secondary">{{ data.total_dup }}</span>
                                         </td>
-                                    {% if user.is_superuser == True or user.role == '2' %}
+                                   {% if user.is_superuser == True or user.role.id == 2 %}
                                         <td>
                                             <form action="{% url 'dockle:del_dockle' %}" method="post"
                                                   class="forms-sample">

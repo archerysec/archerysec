@@ -21,9 +21,9 @@ from staticscanners import views
 app_name = "staticscanners"
 
 urlpatterns = [
-    path("report_import/", views.report_import, name="report_import"),
+    path("report_import/", views.UploadJSONReport.as_view(), name="report_import"),
 
-   # Static scans
+    # Static scans
     path("list_vuln/", views.SastScanVulnList.as_view(), name="list_vuln"),
     path("list_scans/", views.SastScanList.as_view(), name="list_scans"),
     path("list_vuln_info/", views.SastScanVulnInfo.as_view(), name="list_vuln_info"),

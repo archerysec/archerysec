@@ -66,6 +66,13 @@ from webscanners.models import (WebScansDb, cookie_db,
                                 task_schedule_db)
 from webscanners.zapscanner.views import launch_schudle_zap_scan
 import uuid
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from user_management import permissions
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework import status
+from rest_framework.response import Response
+
 
 setting_file = os.getcwd() + "/" + "apidata.json"
 
@@ -458,15 +465,24 @@ def burp_scan_launch(request):
     return render(request, "webscanners/scans/list_scans.html")
 
 
-def xml_upload(request):
-    """
-    Handling XML upload files.
-    :param request:
-    :return:
-    """
-    all_project = ProjectDb.objects.filter()
+class UploadXMLReport(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'webscanners/upload_xml.html'
 
-    if request.method == "POST":
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAnalyst
+    )
+
+    def get(self, request):
+        all_project = ProjectDb.objects.filter()
+
+        return render(
+            request, "webscanners/upload_xml.html", {"all_project": all_project}
+        )
+
+    def post(self, request):
+        all_project = ProjectDb.objects.filter()
         project_id = request.POST.get("project_id")
         scanner = request.POST.get("scanner")
         xml_file = request.FILES["xmlfile"]
@@ -664,8 +680,7 @@ def xml_upload(request):
                 )
                 scan_dump.save()
                 dependencycheck_report_parser.xml_parser(
-                    project_id=project_id, scan_id=scan_id, data=root
-                )
+                    project_id=project_id, scan_id=scan_id, data=root)
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(
                     reverse("dependencycheck:dependencycheck_list")
@@ -740,9 +755,6 @@ def xml_upload(request):
             except:
                 messages.error(request, "File Not Supported")
                 return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
-
-    return render(request, "webscanners/upload_xml.html", {"all_project": all_project})
-
 
 def add_cookies(request):
     """

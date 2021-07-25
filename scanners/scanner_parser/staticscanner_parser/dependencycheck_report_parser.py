@@ -30,7 +30,7 @@ total_high = ''
 total_medium = ''
 total_low = ''
 
-def xml_parser(data, project_id, scan_id, username):
+def xml_parser(data, project_id, scan_id):
     """
 
     :param data:

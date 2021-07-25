@@ -30,7 +30,7 @@ urlpatterns = [
     path("", web_views.index, name="index"),
     # path("setting/", web_views.setting, name="setting"),
     # Burp scans
-    path("xml_upload/", web_views.xml_upload, name="xml_upload"),
+    path("xml_upload/", web_views.UploadXMLReport.as_view(), name="xml_upload"),
     # path(
     #     "email_setting/",
     #     web_views.email_setting,

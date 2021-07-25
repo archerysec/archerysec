@@ -71,7 +71,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>Risk</th>
                                         <th>JIRA Ticket</th>
                                         <th>Status</th>
-                                        {% if user.is_superuser == True or user.role == '2' %}
+                                        {% if user.is_superuser == True or user.role.id == 2 %}
                                         <th>False Positive</th>
                                         <th>Delete</th>
                                         <th>Mark</th>
@@ -98,7 +98,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
                                     <td>{{data.vuln_status}}</td>
-                                    {% if user.is_superuser == True or user.role == '2' %}
+                                    {% if user.is_superuser == True or user.role.id == 2 %}
                                         {% if data.false_positive == 'No' %}
                                         <td>
                                             <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
