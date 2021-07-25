@@ -270,7 +270,7 @@
            opt = true;
            $.ajax({
                     type:'POST',
-                    url:'{% url 'tools:sslscan' %}',
+                    url:'{% url 'tools:sslscanlaunch' %}',
                     data:{
 
                        scan_url:$('#url').val(),
@@ -286,7 +286,7 @@
            opt = true;
            $.ajax({
                     type:'POST',
-                    url:'{% url 'tools:nikto' %}',
+                    url:'{% url 'tools:niktolaunch' %}',
                     data:{
 
                        scan_url:$('#url').val(),
