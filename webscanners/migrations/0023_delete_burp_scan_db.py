@@ -6,11 +6,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0022_auto_20210506_1634'),
+        ("webscanners", "0022_auto_20210506_1634"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='burp_scan_db',
+            name="burp_scan_db",
         ),
     ]

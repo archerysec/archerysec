@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0006_findbugs_scan_results_db_priority'),
+        ("staticscanners", "0006_findbugs_scan_results_db_priority"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='findbugs_scan_results_db',
-            name='risk',
+            model_name="findbugs_scan_results_db",
+            name="risk",
             field=models.TextField(blank=True),
         ),
     ]

@@ -16,7 +16,7 @@
 
 from import_export import resources
 
-from webscanners.models import (WebScanResultsDb)
+from webscanners.models import WebScanResultsDb
 
 
 class ZapResource(resources.ModelResource):

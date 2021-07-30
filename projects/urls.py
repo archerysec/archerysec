@@ -22,7 +22,6 @@ app_name = "projects"
 
 urlpatterns = [
     path("project_edit/", views.project_edit, name="project_edit"),
-
     path("project_create/", views.ProjectCreate.as_view(), name="project_create"),
-    path("project_delete/", views.ProjectDelete.as_view(), name="project_delete")
+    path("project_delete/", views.ProjectDelete.as_view(), name="project_delete"),
 ]

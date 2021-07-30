@@ -17,9 +17,9 @@
 import hashlib
 import uuid
 from datetime import datetime
-from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb)
 
 from dashboard.views import trend_update
+from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from utility.email_notify import email_sch_notify
 
 name = ""
@@ -49,8 +49,7 @@ def updated_xml_parser(root, project_id, scan_id):
     :param username:
     :return:
     """
-    global host, name, severity, port, threat, creation_time, modification_time, \
-        description, family, cvss_base, cve
+    global host, name, severity, port, threat, creation_time, modification_time, description, family, cvss_base, cve
     for openvas in root.findall(".//result"):
         for r in openvas:
             if r.tag == "name":
@@ -94,16 +93,16 @@ def updated_xml_parser(root, project_id, scan_id):
         dup_data = name + host + severity + port
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
         match_dup = (
-            NetworkScanResultsDb.objects.filter(vuln_duplicate=duplicate_hash
-            )
-                .values("vuln_duplicate")
-                .distinct()
+            NetworkScanResultsDb.objects.filter(vuln_duplicate=duplicate_hash)
+            .values("vuln_duplicate")
+            .distinct()
         )
         lenth_match = len(match_dup)
         vuln_color = ""
         if lenth_match == 0:
             duplicate_vuln = "No"
-            false_p = NetworkScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+            false_p = NetworkScanResultsDb.objects.filter(
+                false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
             if fp_lenth_match == 1:
@@ -134,7 +133,7 @@ def updated_xml_parser(root, project_id, scan_id):
                 vuln_duplicate=duplicate_vuln,
                 severity_color=vuln_color,
                 false_positive=false_positive,
-                scanner='Openvas'
+                scanner="Openvas",
             )
             save_all.save()
         else:
@@ -149,12 +148,12 @@ def updated_xml_parser(root, project_id, scan_id):
                 description=description,
                 port=port,
                 ip=host,
-                false_positive='Duplicate',
+                false_positive="Duplicate",
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 severity_color=vuln_color,
-                scanner='Openvas'
+                scanner="Openvas",
             )
             all_data_save.save()
 
@@ -174,10 +173,10 @@ def updated_xml_parser(root, project_id, scan_id):
     trend_update()
     subject = "Archery Tool Scan Status - OpenVAS Report Uploaded"
     message = (
-            "OpenVAS Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % (scan_id, total_vul, total_high, total_medium, total_low)
+        "OpenVAS Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (scan_id, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

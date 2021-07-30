@@ -19,9 +19,8 @@ import hashlib
 import uuid
 
 from dashboard.views import trend_update
-from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb)
+from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from utility.email_notify import email_sch_notify
-import uuid
 
 agent = "NA"
 description = "NA"
@@ -76,7 +75,7 @@ def updated_nessus_parser(root, project_id, scan_id):
                         date_time=date_time,
                         project_id=project_id,
                         scan_status=scan_status,
-                        scanner='Nessus'
+                        scanner="Nessus",
                     )
                     scan_dump.save()
                     for ReportItem in reportHost.iter("ReportItem"):
@@ -176,13 +175,13 @@ def updated_nessus_parser(root, project_id, scan_id):
                             vuln_color = "info"
 
                         dup_data = target + plugin_name + severity + port
-                        duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
+                        duplicate_hash = hashlib.sha256(
+                            dup_data.encode("utf-8")
+                        ).hexdigest()
                         match_dup = (
-                            NetworkScanResultsDb.objects.filter(
-                                dup_hash=duplicate_hash
-                            )
-                                .values("dup_hash")
-                                .distinct()
+                            NetworkScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+                            .values("dup_hash")
+                            .distinct()
                         )
                         lenth_match = len(match_dup)
 
@@ -217,7 +216,7 @@ def updated_nessus_parser(root, project_id, scan_id):
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 severity_color=vuln_color,
-                                scanner='Nessus'
+                                scanner="Nessus",
                             )
                             all_data_save.save()
 
@@ -235,12 +234,12 @@ def updated_nessus_parser(root, project_id, scan_id):
                                 solution=solution,
                                 severity=risk_factor,
                                 port=port,
-                                false_positive='Duplicate',
+                                false_positive="Duplicate",
                                 vuln_status="Duplicate",
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 severity_color=vuln_color,
-                                scanner='Nessus'
+                                scanner="Nessus",
                             )
                             all_data_save.save()
             except:
@@ -255,14 +254,17 @@ def updated_nessus_parser(root, project_id, scan_id):
                         vuln_duplicate="No",
                     )
 
-                    duplicate_count = NetworkScanResultsDb.objects.filter( ip=target, vuln_duplicate="Yes"
+                    duplicate_count = NetworkScanResultsDb.objects.filter(
+                        ip=target, vuln_duplicate="Yes"
                     )
 
                     target_total_vuln = len(target_filter)
                     target_total_high = len(target_filter.filter(severity="High"))
                     target_total_medium = len(target_filter.filter(severity="Medium"))
                     target_total_low = len(target_filter.filter(severity="Low"))
-                    target_total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
+                    target_total_duplicate = len(
+                        duplicate_count.filter(vuln_duplicate="Yes")
+                    )
                     NetworkScanDb.objects.filter(ip=target).update(
                         date_time=date_time,
                         total_vul=target_total_vuln,
@@ -276,10 +278,10 @@ def updated_nessus_parser(root, project_id, scan_id):
     trend_update()
     subject = "Archery Tool Scan Status - Nessus Report Uploaded"
     message = (
-            "Nessus Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % (scan_id, total_vul, total_high, total_medium, total_low)
+        "Nessus Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (scan_id, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

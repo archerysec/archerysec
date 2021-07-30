@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+
 from user_management.models import UserProfile
 
 # Create your models here.
@@ -26,12 +27,15 @@ class StaticScansDb(models.Model):
     class Meta:
         db_table = "staticscansdb"
         verbose_name_plural = "Static Scans Db"
+
     project_name = models.TextField(blank=True, null=True)
     scan_id = models.UUIDField(blank=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     total_vul = models.IntegerField(blank=True, null=True)
     critical_vul = models.IntegerField(blank=True, null=True)
     high_vul = models.IntegerField(blank=True, null=True)
@@ -49,9 +53,12 @@ class StaticScanResultsDb(models.Model):
     class Meta:
         db_table = "staticscanresultsdb"
         verbose_name_plural = "Static Scans Data"
+
     scan_id = models.UUIDField(blank=True)
     rescan_id = models.TextField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     date_time = models.DateTimeField(blank=True, null=True)
     vuln_id = models.UUIDField(blank=True)
     false_positive = models.TextField(null=True, blank=True)

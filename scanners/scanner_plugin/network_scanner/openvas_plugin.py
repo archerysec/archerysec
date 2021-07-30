@@ -14,10 +14,10 @@
 #
 # This file is part of ArcherySec Project.
 
+import datetime
 import hashlib
 import os
 import time
-import datetime
 import uuid
 
 from django.utils import timezone
@@ -25,8 +25,8 @@ from openvas_lib import VulnscanException, VulnscanManager
 
 from archerysettings.models import OpenvasSettingDb
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
-from scanners.scanner_parser.network_scanner.OpenVas_Parser import updated_xml_parser
-
+from scanners.scanner_parser.network_scanner.OpenVas_Parser import \
+    updated_xml_parser
 
 name = ""
 creation_time = ""
@@ -133,16 +133,12 @@ class OpenVAS_Plugin:
                     + " %"
                 )
                 status = float(scanner.get_progress(str(scan_id)))
-                NetworkScanDb.objects.filter(scan_id=scan_id).update(
-                    scan_status=status
-                )
+                NetworkScanDb.objects.filter(scan_id=scan_id).update(scan_status=status)
                 previous = current
             time.sleep(5)
 
         status = "100"
-        NetworkScanDb.objects.filter(scan_id=scan_id).update(
-            scan_status=status
-        )
+        NetworkScanDb.objects.filter(scan_id=scan_id).update(scan_status=status)
 
         return status
 
@@ -174,14 +170,14 @@ def vuln_an_id(scan_id, project_id):
     del_old.delete()
 
     for host in hosts:
-        scan_dump = openvas_scan_db(scan_ip=host,
-                                    scan_id=host,
-                                    date_time=date_time,
-                                    project_id=project_id,
-                                    scan_status=scan_status,
-                                    )
+        scan_dump = openvas_scan_db(
+            scan_ip=host,
+            scan_id=host,
+            date_time=date_time,
+            project_id=project_id,
+            scan_status=scan_status,
+        )
         scan_dump.save()
-    OpenVas_Parser.updated_xml_parser(project_id=project_id,
-                                      scan_id=scan_id,
-                                      root=openvas_results
-                                      )
+    OpenVas_Parser.updated_xml_parser(
+        project_id=project_id, scan_id=scan_id, root=openvas_results
+    )

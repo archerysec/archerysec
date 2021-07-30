@@ -18,14 +18,14 @@ import hashlib
 
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from compliance.models import InspecScanDb, InspecScanResultsDb
 from staticscanners.resources import InspecResource
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework import status
-from rest_framework.response import Response
 from user_management import permissions
 
 
@@ -61,43 +61,40 @@ def export(request):
 
 class InspecScanList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/inspec/inspecscans_list.html'
+    template_name = "compliance/inspec/inspecscans_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         all_inspec_scan = InspecScanDb.objects.filter()
 
         return render(
-            request, "compliance/inspec/inspecscans_list.html", {"all_inspec_scan": all_inspec_scan}
+            request,
+            "compliance/inspec/inspecscans_list.html",
+            {"all_inspec_scan": all_inspec_scan},
         )
 
 
 class InspecVulnList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/inspec/inspecscan_list_vuln.html'
+    template_name = "compliance/inspec/inspecscan_list_vuln.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
         inspec_all_vuln = (
             InspecScanResultsDb.objects.filter(scan_id=scan_id)
-                .values(
+            .values(
                 "controls_id",
                 "controls_title",
                 "controls_tags_severity",
                 "controls_tags_audit",
                 "controls_tags_fix",
             )
-                .distinct()
+            .distinct()
         )
-        inspec_all_audit = InspecScanResultsDb.objects.filter(scan_id=scan_id
-                                                              )
+        inspec_all_audit = InspecScanResultsDb.objects.filter(scan_id=scan_id)
 
         all_compliance = InspecScanDb.objects.filter(scan_id=scan_id)
 
@@ -114,12 +111,9 @@ class InspecVulnList(APIView):
 
 class InspecVulnData(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/inspec/inspecscan_vuln_data.html'
+    template_name = "compliance/inspec/inspecscan_vuln_data.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
@@ -138,8 +132,9 @@ class InspecVulnData(APIView):
             vuln_status="Closed",
             false_positive="No",
         )
-        false_data = InspecScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, false_positive="Yes"
-                                                        )
+        false_data = InspecScanResultsDb.objects.filter(
+            scan_id=scan_id, vuln_id=vuln_id, false_positive="Yes"
+        )
 
         return render(
             request,
@@ -156,12 +151,14 @@ class InspecVulnData(APIView):
         status = request.POST.get("status")
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
-        InspecScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
-                                           ).update(false_positive=false_positive, vuln_status=status)
+        InspecScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
+            false_positive=false_positive, vuln_status=status
+        )
 
         if false_positive == "Yes":
-            vuln_info = InspecScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
-                                                           )
+            vuln_info = InspecScanResultsDb.objects.filter(
+                scan_id=scan_id, vuln_id=vuln_id
+            )
             for vi in vuln_info:
                 Name = vi.Name
                 NamespaceName = vi.NamespaceName
@@ -170,8 +167,9 @@ class InspecVulnData(APIView):
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
-                InspecScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
-                                                   ).update(
+                InspecScanResultsDb.objects.filter(
+                    vuln_id=vuln_id, scan_id=scan_id
+                ).update(
                     false_positive=false_positive,
                     vuln_status=status,
                     false_positive_hash=false_positive_hash,
@@ -185,11 +183,9 @@ class InspecVulnData(APIView):
 
 class InspecDetails(APIView):
     enderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/inspec/inspec_vuln_details.html'
+    template_name = "compliance/inspec/inspec_vuln_details.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
@@ -209,7 +205,7 @@ class InspecDetails(APIView):
 
 class InspecDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/inspec/inspecscans_list.html'
+    template_name = "compliance/inspec/inspecscans_list.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -227,9 +223,7 @@ class InspecDelete(APIView):
             scan_id = value_split.__getitem__(i)
             item = InspecScanDb.objects.filter(scan_id=scan_id)
             item.delete()
-            item_results = InspecScanResultsDb.objects.filter(
-                scan_id=scan_id
-            )
+            item_results = InspecScanResultsDb.objects.filter(scan_id=scan_id)
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
         return HttpResponseRedirect(reverse("inspec:inspec_list"))
@@ -237,12 +231,9 @@ class InspecDelete(APIView):
 
 class InspecVulnDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/inspec/inspecscan_list_vuln.html'
+    template_name = "compliance/inspec/inspecscan_list_vuln.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         vuln_id = request.POST.get(
@@ -258,13 +249,9 @@ class InspecVulnDelete(APIView):
         print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = InspecScanResultsDb.objects.filter(
-                vuln_id=vuln_id
-            )
+            delete_vuln = InspecScanResultsDb.objects.filter(vuln_id=vuln_id)
             delete_vuln.delete()
-        all_inspec_data = InspecScanResultsDb.objects.filter(
-            scan_id=scan_id
-        )
+        all_inspec_data = InspecScanResultsDb.objects.filter(scan_id=scan_id)
 
         total_vul = len(all_inspec_data)
         total_high = len(all_inspec_data.filter(Severity="High"))

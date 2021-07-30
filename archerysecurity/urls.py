@@ -31,7 +31,6 @@ urlpatterns = [
     path("zapscanner/", include("webscanners.zapscanner.urls")),
     path("burpscanner/", include("webscanners.burpscanner.urls")),
     path("arachniscanner/", include("webscanners.arachniscanner.urls")),
-    path("webinspectscanner/", include("webscanners.webinspectscanner.urls")),
     path("projects/", include("projects.urls")),
     path("networkscanners/", include("networkscanners.urls")),
     path("staticscanners/", include("staticscanners.urls")),
@@ -55,11 +54,10 @@ urlpatterns = [
     path("tools/", include("tools.urls")),
     # Manual App
     path("pentest/", include("pentest.urls")),
-
     # settings app
     path("settings/", include("archerysettings.urls")),
-
     path("archerysec/api/v1/auth/", include("authentication.urls")),
+    path("auth/", include("authentication.urls")),
     path("users/", include("user_management.urls")),
 ]
 

@@ -8,23 +8,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0019_auto_20200503_1201'),
+        ("staticscanners", "0019_auto_20200503_1201"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='nodejsscan_scan_results_db',
-            name='jira_ticket',
+            model_name="nodejsscan_scan_results_db",
+            name="jira_ticket",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='npmaudit_scan_results_db',
-            name='jira_ticket',
+            model_name="npmaudit_scan_results_db",
+            name="jira_ticket",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='tfsec_scan_results_db',
-            name='jira_ticket',
+            model_name="tfsec_scan_results_db",
+            name="jira_ticket",
             field=models.TextField(blank=True, null=True),
         ),
     ]

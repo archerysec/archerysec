@@ -19,8 +19,7 @@ from itertools import starmap
 from django.shortcuts import HttpResponseRedirect, render
 from notifications.signals import notify
 
-from tools.models import (NmapResultDb, NmapScanDb,
-                          NmapVulnersPortResultDb)
+from tools.models import NmapResultDb, NmapScanDb, NmapVulnersPortResultDb
 from tools.nmap_vulners.nmap_vulners_scan import run_nmap_vulners
 
 
@@ -31,7 +30,9 @@ def nmap_vulners_scan(request):
     """
     all_nmap = NmapScanDb.objects.filter()
 
-    return render(request, "tools/nmap_scan.html", {"all_nmap": all_nmap, "is_vulners": True})
+    return render(
+        request, "tools/nmap_scan.html", {"all_nmap": all_nmap, "is_vulners": True}
+    )
 
 
 def nmap_vulners(request):
@@ -56,8 +57,7 @@ def nmap_vulners(request):
     elif request.method == "GET":
         ip_address = request.GET.get("ip")
 
-        all_nmap = NmapResultDb.objects.filter(ip_address=ip_address
-                                               )
+        all_nmap = NmapResultDb.objects.filter(ip_address=ip_address)
 
     return render(request, "tools/nmap_vulners_list.html", {"all_nmap": all_nmap})
 
@@ -68,8 +68,7 @@ def nmap_vulners_port(request):
     if not (ip_address and port):
         raise ValueError("Nmap Vulners Port info: both IP and port must be present.")
 
-    port_info = NmapVulnersPortResultDb.objects.filter(ip_address=ip_address, port=port
-                                                       )
+    port_info = NmapVulnersPortResultDb.objects.filter(ip_address=ip_address, port=port)
 
     cve_info = list()
     if port_info.first().vulners_extrainfo:

@@ -17,42 +17,39 @@
 from __future__ import unicode_literals
 
 import hashlib
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import HttpResponse, render
 from django.urls import reverse
 from notifications.models import Notification
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from jiraticketing.models import jirasetting
-from webscanners.models import (WebScanResultsDb, WebScansDb)
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from user_management import permissions
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework import status
-from rest_framework.response import Response
+from webscanners.models import WebScanResultsDb, WebScansDb
 
 
 class WebScanList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'webscanners/scans/list_scans.html'
+    template_name = "webscanners/scans/list_scans.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         all_scans = WebScansDb.objects.all()
         all_notify = Notification.objects.unread()
-        return Response({'all_scans': all_scans, "message": all_notify})
+        return Response({"all_scans": all_scans, "message": all_notify})
 
 
 class WebScanVulnInfo(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'webscanners/scans/list_vuln_info.html'
+    template_name = "webscanners/scans/list_vuln_info.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         jira_url = None
@@ -64,22 +61,20 @@ class WebScanVulnInfo(APIView):
         scan_id = request.GET["scan_id"]
         name = request.GET["scan_name"]
 
-        vuln_data = WebScanResultsDb.objects.filter(
-            title=name,
-            scan_id=scan_id
-        )
+        vuln_data = WebScanResultsDb.objects.filter(title=name, scan_id=scan_id)
 
-        return render(request, "webscanners/scans/list_vuln_info.html", {"vuln_data": vuln_data, "jira_url": jira_url})
+        return render(
+            request,
+            "webscanners/scans/list_vuln_info.html",
+            {"vuln_data": vuln_data, "jira_url": jira_url},
+        )
 
 
 class WebScanVulnMark(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'webscanners/scans/list_vuln_info.html'
+    template_name = "webscanners/scans/list_vuln_info.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         false_positive = request.POST.get("false")
@@ -87,12 +82,14 @@ class WebScanVulnMark(APIView):
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
         vuln_name = request.POST.get("vuln_name")
-        WebScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
-                                        ).update(false_positive=false_positive, vuln_status=status)
+        WebScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
+            false_positive=false_positive, vuln_status=status
+        )
 
         if false_positive == "Yes":
-            vuln_info = WebScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
-                                                        )
+            vuln_info = WebScanResultsDb.objects.filter(
+                scan_id=scan_id, vuln_id=vuln_id
+            )
             for vi in vuln_info:
                 name = vi.title
                 url = vi.url
@@ -101,15 +98,17 @@ class WebScanVulnMark(APIView):
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
-                WebScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
-                                                ).update(
+                WebScanResultsDb.objects.filter(
+                    vuln_id=vuln_id, scan_id=scan_id
+                ).update(
                     false_positive=false_positive,
                     vuln_status="Closed",
                     false_positive_hash=false_positive_hash,
                 )
 
-        all_vuln = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No", vuln_status="Open"
-                                                   )
+        all_vuln = WebScanResultsDb.objects.filter(
+            scan_id=scan_id, false_positive="No", vuln_status="Open"
+        )
 
         total_high = len(all_vuln.filter(severity="High"))
         total_medium = len(all_vuln.filter(severity="Medium"))
@@ -124,38 +123,35 @@ class WebScanVulnMark(APIView):
             medium_vul=total_medium,
             low_vul=total_low,
             info_vul=total_info,
-            total_dup=total_dup
+            total_dup=total_dup,
         )
         return HttpResponseRedirect(
-            reverse("webscanners:list_vuln_info") + "?scan_id=%s&scan_name=%s" % (
-                scan_id, vuln_name)
+            reverse("webscanners:list_vuln_info")
+            + "?scan_id=%s&scan_name=%s" % (scan_id, vuln_name)
         )
 
 
 class WebScanDetails(APIView):
     enderer_classes = [TemplateHTMLRenderer]
-    template_name = 'webscanners/scans/vuln_details.html'
+    template_name = "webscanners/scans/vuln_details.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         vuln_id = request.GET["vuln_id"]
 
         vul_dat = WebScanResultsDb.objects.filter(vuln_id=vuln_id).order_by("vuln_id")
 
-        return render(request, "webscanners/scans/vuln_details.html", {"vul_dat": vul_dat})
+        return render(
+            request, "webscanners/scans/vuln_details.html", {"vul_dat": vul_dat}
+        )
 
 
 class WebScanDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'webscanners/scans/list_scans.html'
+    template_name = "webscanners/scans/list_scans.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         scan_id = request.POST.get("scan_id")
@@ -170,20 +166,16 @@ class WebScanDelete(APIView):
 
             item = WebScansDb.objects.filter(scan_id=scan_id)
             item.delete()
-            item_results = WebScanResultsDb.objects.filter(scan_id=scan_id
-                                                           )
+            item_results = WebScanResultsDb.objects.filter(scan_id=scan_id)
             item_results.delete()
         return HttpResponseRedirect(reverse("webscanners:list_scans"))
 
 
 class WebScanVulnDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'webscanners/scans/list_vuln_info.html'
+    template_name = "webscanners/scans/list_vuln_info.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         vuln_id = request.POST.get("vuln_id")
@@ -194,11 +186,9 @@ class WebScanVulnDelete(APIView):
         split_length = value_split.__len__()
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_id
-                                                          )
+            delete_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_id)
             delete_vuln.delete()
-        all_vuln = WebScanResultsDb.objects.filter(scan_id=scan_id
-                                                   )
+        all_vuln = WebScanResultsDb.objects.filter(scan_id=scan_id)
 
         total_vul = len(all_vuln)
         total_critical = len(all_vuln.filter(severity="Critical"))
@@ -222,11 +212,9 @@ class WebScanVulnDelete(APIView):
 
 class WebScanVulnList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'webscanners/scans/list_vuln.html'
+    template_name = "webscanners/scans/list_vuln.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]

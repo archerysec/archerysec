@@ -25,7 +25,11 @@ controls_results_message = None
 vuln_col = ""
 
 
-def dockle_report_json(data, project_id, scan_id, ):
+def dockle_report_json(
+    data,
+    project_id,
+    scan_id,
+):
     """
 
     :param data:
@@ -67,9 +71,7 @@ def dockle_report_json(data, project_id, scan_id, ):
         )
         save_all.save()
 
-    all_dockle_data = DockleScanResultsDb.objects.filter(
-        scan_id=scan_id
-    )
+    all_dockle_data = DockleScanResultsDb.objects.filter(scan_id=scan_id)
 
     total_vul = len(all_dockle_data)
     dockle_failed = len(all_dockle_data.filter(level="FATAL"))

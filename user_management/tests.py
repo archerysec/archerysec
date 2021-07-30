@@ -18,6 +18,7 @@
 import base64
 import json
 import logging
+
 from django.contrib.auth.hashers import make_password
 from django.test import TestCase
 from rest_framework.test import APIClient

@@ -23,5 +23,5 @@ app_name = "archerysettings"
 urlpatterns = [
     path("settings/", views.setting, name="settings"),
     path("del_setting/", views.del_setting, name="del_setting"),
-    path("email_setting/", views.email_setting, name="email_setting")
+    path("email_setting/", views.email_setting, name="email_setting"),
 ]

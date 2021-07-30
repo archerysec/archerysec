@@ -7,18 +7,25 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='jirasetting',
+            name="jirasetting",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('setting_id', models.UUIDField(blank=True, null=True)),
-                ('jira_server', models.TextField(blank=True, null=True)),
-                ('jira_username', models.TextField(blank=True, null=True)),
-                ('jira_password', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("setting_id", models.UUIDField(blank=True, null=True)),
+                ("jira_server", models.TextField(blank=True, null=True)),
+                ("jira_username", models.TextField(blank=True, null=True)),
+                ("jira_password", models.TextField(blank=True, null=True)),
             ],
         ),
     ]

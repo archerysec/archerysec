@@ -101,13 +101,10 @@ def inspec_report_json(data, project_id, scan_id):
                             controls_results_run_time=controls_results_run_time,
                             controls_results_start_time=controls_results_start_time,
                             controls_results_message=controls_results_message,
-
                         )
                         save_all.save()
 
-            all_inspec_data = InspecScanResultsDb.objects.filter(
-                scan_id=scan_id
-            )
+            all_inspec_data = InspecScanResultsDb.objects.filter(scan_id=scan_id)
 
             total_vul = len(all_inspec_data)
             inspec_failed = len(

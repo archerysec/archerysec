@@ -17,11 +17,11 @@
 from __future__ import unicode_literals
 
 from django.db import models
+
 from user_management.models import UserProfile
 
 
 class InspecScanDb(models.Model):
-
     class Meta:
         db_table = "inspecscandb"
         verbose_name_plural = "Inspec Scans List"
@@ -29,7 +29,9 @@ class InspecScanDb(models.Model):
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     project_name = models.TextField(blank=True, null=True)
     total_vuln = models.IntegerField(blank=True, null=True)
     scan_status = models.IntegerField(blank=True, null=True)
@@ -42,15 +44,16 @@ class InspecScanDb(models.Model):
 
 
 class InspecScanResultsDb(models.Model):
-
     class Meta:
-        db_table = 'inspecscanresultdb'
+        db_table = "inspecscanresultdb"
         verbose_name_plural = "Inspec Scans Data"
 
     scan_id = models.UUIDField(blank=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     vuln_id = models.UUIDField(blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
     false_positive = models.TextField(null=True, blank=True)
@@ -101,15 +104,16 @@ class InspecScanResultsDb(models.Model):
 
 
 class DockleScanDb(models.Model):
-
     class Meta:
-        db_table = 'docklescandb'
+        db_table = "docklescandb"
         verbose_name_plural = "Dockle Scans List"
 
     scan_id = models.UUIDField(blank=True, null=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     project_name = models.TextField(blank=True, null=True)
     total_vuln = models.IntegerField(blank=True, null=True)
     scan_status = models.IntegerField(blank=True, null=True)
@@ -124,15 +128,16 @@ class DockleScanDb(models.Model):
 
 
 class DockleScanResultsDb(models.Model):
-
     class Meta:
-        db_table = 'docklescanresultsdb'
+        db_table = "docklescanresultsdb"
         verbose_name_plural = "Dockle Scans Data"
 
     scan_id = models.UUIDField(blank=True)
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     date_time = models.DateTimeField(blank=True, null=True)
     vuln_id = models.UUIDField(blank=True)
     false_positive = models.TextField(null=True, blank=True)

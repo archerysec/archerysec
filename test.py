@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 
-tree = ET.parse('nessus-multi.xml')
+tree = ET.parse("nessus-multi.xml")
 
 root = tree.getroot()
 

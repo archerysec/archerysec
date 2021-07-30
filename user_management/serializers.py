@@ -19,6 +19,7 @@ from rest_framework import serializers
 
 from user_management.models import UserProfile
 
+
 class UserCreatReqSerializers(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
     organization = serializers.CharField(max_length=255)
@@ -51,17 +52,13 @@ ROLE_CHOICES = (
     ("3", "Viewer"),
 )
 
-B_CHOICES = (
-    ("True", "Active"),
-    ("Flase", "Deactive")
-)
+B_CHOICES = (("True", "Active"), ("Flase", "Deactive"))
 
 
 class UserPutReqSerializers(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
     password = serializers.CharField(
-        max_length=100,
-        style={'input_type': 'password', 'placeholder': 'Password'}
+        max_length=100, style={"input_type": "password", "placeholder": "Password"}
     )
     name = serializers.CharField(max_length=255)
     # role = serializers.ChoiceField(choices=ROLE_CHOICES)

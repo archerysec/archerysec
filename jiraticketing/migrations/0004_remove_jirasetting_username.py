@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jiraticketing', '0003_jirasetting_setting_id'),
+        ("jiraticketing", "0003_jirasetting_setting_id"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='jirasetting',
-            name='username',
+            model_name="jirasetting",
+            name="username",
         ),
     ]

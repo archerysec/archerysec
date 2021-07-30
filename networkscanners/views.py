@@ -38,23 +38,23 @@ from django.urls import reverse
 from django.utils import timezone
 from notifications.models import Notification
 from notifications.signals import notify
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from archerysettings import load_settings, save_settings
 from archerysettings.models import EmailDb, SettingsDb
 from jiraticketing.models import jirasetting
-from networkscanners.models import (TaskScheduleDb)
-from networkscanners.models import (NetworkScanResultsDb, NetworkScanDb)
+from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb,
+                                    TaskScheduleDb)
 from projects.models import ProjectDb
 from scanners.scanner_parser.network_scanner import (Nessus_Parser,
                                                      OpenVas_Parser,
                                                      nmap_parser)
 from scanners.scanner_plugin.network_scanner.openvas_plugin import (
     OpenVAS_Plugin, vuln_an_id)
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework import status
-from rest_framework.response import Response
 from user_management import permissions
 
 api_data = os.getcwd() + "/" + "apidata.json"
@@ -93,7 +93,11 @@ def email_notify(user, subject, message):
         pass
 
 
-def openvas_scanner(scan_ip, project_id, sel_profile, ):
+def openvas_scanner(
+    scan_ip,
+    project_id,
+    sel_profile,
+):
     """
     The function is launch the OpenVAS scans.
     :param scan_ip:
@@ -102,7 +106,11 @@ def openvas_scanner(scan_ip, project_id, sel_profile, ):
     :return:
     """
     user = User.objects.get()
-    openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile, )
+    openvas = OpenVAS_Plugin(
+        scan_ip,
+        project_id,
+        sel_profile,
+    )
     try:
         scanner = openvas.connect()
     except Exception as e:
@@ -127,13 +135,15 @@ def openvas_scanner(scan_ip, project_id, sel_profile, ):
         ip=scan_ip,
         date_time=date_time,
         scan_status=0.0,
-
-        scanner='Openvas'
+        scanner="Openvas",
     )
     save_all.save()
     openvas.scan_status(scanner=scanner, scan_id=scan_id)
     time.sleep(5)
-    vuln_an_id(scan_id=scan_id, project_id=project_id, )
+    vuln_an_id(
+        scan_id=scan_id,
+        project_id=project_id,
+    )
 
     notify.send(user, recipient=user, verb="OpenVAS Scan Completed")
 
@@ -161,17 +171,21 @@ def openvas_scanner(scan_ip, project_id, sel_profile, ):
     return HttpResponse(status=201)
 
 
-def launch_scan(request):
+class OpenvasLaunchScan(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/openvas_vuln_list.html"
 
-    """
-    Function Trigger Network scans.
-    :param request:
-    :return:
-    """
-    all_ip = NetworkScanDb.objects.filter( scanner='Openvas')
-    user = request.user
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    if request.method == "POST":
+    def get(self, request):
+        all_ip = NetworkScanDb.objects.filter(scanner="Openvas")
+        user = request.user
+
+        return render("networkscanners/openvas_vuln_list.html", {"all_ip": all_ip})
+
+    def post(self, request):
+        all_ip = NetworkScanDb.objects.all()
+        user = request.user
         all_ip = NetworkScanDb.objects.filter()
         scan_ip = request.POST.get("ip")
         project_id = request.POST.get("project_id")
@@ -189,42 +203,49 @@ def launch_scan(request):
             thread.daemon = True
             thread.start()
 
-    return render("networkscanners/openvas_vuln_list.html", {"all_ip": all_ip})
+        return render("networkscanners/openvas_vuln_list.html", {"all_ip": all_ip})
 
 
-def ip_scan(request):
+class NetworkScan(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/ipscan.html"
 
-    """
-    List all network scan IP's.
-    :param request:
-    :return:
-    """
-    all_scans = NetworkScanDb.objects.filter()
-    all_proj = ProjectDb.objects.filter()
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    all_notify = Notification.objects.unread()
+    def get(self, request):
+        all_scans = NetworkScanDb.objects.filter()
+        all_proj = ProjectDb.objects.filter()
 
-    return render(
-        request,
-        "networkscanners/ipscan.html",
-        {
-            "all_scans": all_scans,
-            "all_proj": all_proj,
-            "message": all_notify,
-        },
-    )
+        all_notify = Notification.objects.unread()
+
+        return render(
+            request,
+            "networkscanners/ipscan.html",
+            {
+                "all_scans": all_scans,
+                "all_proj": all_proj,
+                "message": all_notify,
+            },
+        )
 
 
-def openvas_details(request):
+class OpenvasDetails(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/setting_form.html"
 
-    """
-    OpenVAS tool settings.
-    :param request:
-    :return:
-    """
-    setting_id = uuid.uuid4()
-    save_openvas_setting = save_settings.SaveSettings(api_data, )
-    if request.method == "POST":
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
+
+    def get(self, request):
+        return render(
+            request,
+            "networkscanners/setting_form.html",
+        )
+
+    def post(self, request):
+        setting_id = uuid.uuid4()
+        save_openvas_setting = save_settings.SaveSettings(
+            api_data,
+        )
         if request.POST.get("openvas_enabled") == "on":
             openvas_enabled = True
         else:
@@ -244,16 +265,16 @@ def openvas_details(request):
         )
 
         save_settings_data = SettingsDb(
-            setting_id=setting_id,
-
-            setting_scanner='Openvas'
+            setting_id=setting_id, setting_scanner="Openvas"
         )
         save_settings_data.save()
 
         sel_profile = ""
 
         openvas = OpenVAS_Plugin(
-            openvas_host, setting_id, sel_profile,
+            openvas_host,
+            setting_id,
+            sel_profile,
         )
         try:
             openvas.connect()
@@ -269,103 +290,107 @@ def openvas_details(request):
 
         return HttpResponseRedirect(reverse("archerysettings:settings"))
 
-    return render(
-        request,
-        "networkscanners/setting_form.html",
-    )
+
+class OpenvasSetting(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/setting_form.html"
+
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
+
+    def get(self, request):
+        load_openvas_setting = load_settings.ArcherySettings(
+            api_data,
+        )
+        openvas_host = load_openvas_setting.openvas_host()
+        openvas_port = load_openvas_setting.openvas_port()
+        openvas_enabled = load_openvas_setting.openvas_enabled()
+        if openvas_enabled:
+            openvas_enabled = "True"
+        else:
+            openvas_enabled = "False"
+        openvas_user = load_openvas_setting.openvas_username()
+        openvas_password = load_openvas_setting.openvas_pass()
+        return render(
+            request,
+            "networkscanners/setting_form.html",
+            {
+                "openvas_host": openvas_host,
+                "openvas_port": openvas_port,
+                "openvas_enabled": openvas_enabled,
+                "openvas_user": openvas_user,
+                "openvas_password": openvas_password,
+            },
+        )
 
 
-def openvas_setting(request):
+class XmlUpload(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/setting_form.html"
 
-    """
-    Calling OpenVAS setting page.
-    :param request:
-    :return:
-    """
-    load_openvas_setting = load_settings.ArcherySettings(api_data, )
-    openvas_host = load_openvas_setting.openvas_host()
-    openvas_port = load_openvas_setting.openvas_port()
-    openvas_enabled = load_openvas_setting.openvas_enabled()
-    if openvas_enabled:
-        openvas_enabled = "True"
-    else:
-        openvas_enabled = "False"
-    openvas_user = load_openvas_setting.openvas_username()
-    openvas_password = load_openvas_setting.openvas_pass()
-    return render(
-        request,
-        "networkscanners/setting_form.html",
-        {
-            "openvas_host": openvas_host,
-            "openvas_port": openvas_port,
-            "openvas_enabled": openvas_enabled,
-            "openvas_user": openvas_user,
-            "openvas_password": openvas_password,
-        },
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
+    def get(self, request):
+        all_project = ProjectDb.objects.filter()
+        return render(
+            request, "networkscanners/net_upload_xml.html", {"all_project": all_project}
+        )
 
-def xml_upload(request):
-
-    """
-    OpenVAS XML file upload.
-    :param request:
-    :return:
-    """
-    all_project = ProjectDb.objects.filter()
-    if request.method == "POST":
-        project_id = request.POST.get("project_id")
-        scanner = request.POST.get("scanner")
-        xml_file = request.FILES["xmlfile"]
-        scan_ip = request.POST.get("scan_url")
-        scan_id = uuid.uuid4()
-        scan_status = "100"
-        if scanner == "openvas":
-            date_time = datetime.now()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            hosts = OpenVas_Parser.get_hosts(root_xml)
-            for host in hosts:
-                scan_dump = NetworkScanDb(
-                    ip=host,
-                    scan_id=scan_id,
-                    date_time=date_time,
+    def post(self, request):
+        all_project = ProjectDb.objects.filter()
+        if request.method == "POST":
+            project_id = request.POST.get("project_id")
+            scanner = request.POST.get("scanner")
+            xml_file = request.FILES["xmlfile"]
+            scan_ip = request.POST.get("scan_url")
+            scan_id = uuid.uuid4()
+            scan_status = "100"
+            if scanner == "openvas":
+                date_time = datetime.now()
+                tree = ET.parse(xml_file)
+                root_xml = tree.getroot()
+                hosts = OpenVas_Parser.get_hosts(root_xml)
+                for host in hosts:
+                    scan_dump = NetworkScanDb(
+                        ip=host,
+                        scan_id=scan_id,
+                        date_time=date_time,
+                        project_id=project_id,
+                        scan_status=scan_status,
+                        scanner="Openvas",
+                    )
+                    scan_dump.save()
+                OpenVas_Parser.updated_xml_parser(
                     project_id=project_id,
-                    scan_status=scan_status,
-
-                    scanner='Openvas'
+                    scan_id=scan_id,
+                    root=root_xml,
                 )
-                scan_dump.save()
-            OpenVas_Parser.updated_xml_parser(
-                project_id=project_id, scan_id=scan_id, root=root_xml,
-            )
-            messages.success(request, "File Uploaded")
-            return HttpResponseRedirect(reverse("networkscanners:list_scans"))
-        elif scanner == "nessus":
-            date_time = datetime.now()
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            Nessus_Parser.updated_nessus_parser(
-                root=root_xml,
-                scan_id=scan_id,
-                project_id=project_id,
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse("networkscanners:list_scans"))
+            elif scanner == "nessus":
+                date_time = datetime.now()
+                tree = ET.parse(xml_file)
+                root_xml = tree.getroot()
+                Nessus_Parser.updated_nessus_parser(
+                    root=root_xml,
+                    scan_id=scan_id,
+                    project_id=project_id,
+                )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse("nessus:nessus_list"))
+            elif scanner == "nmap":
+                tree = ET.parse(xml_file)
+                root_xml = tree.getroot()
+                nmap_parser.xml_parser(
+                    root=root_xml,
+                    scan_id=scan_id,
+                    project_id=project_id,
+                )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse("tools:nmap_scan"))
 
-            )
-            messages.success(request, "File Uploaded")
-            return HttpResponseRedirect(reverse("nessus:nessus_list"))
-        elif scanner == "nmap":
-            tree = ET.parse(xml_file)
-            root_xml = tree.getroot()
-            nmap_parser.xml_parser(
-                root=root_xml,
-                scan_id=scan_id,
-                project_id=project_id,
-
-            )
-            messages.success(request, "File Uploaded")
-            return HttpResponseRedirect(reverse("tools:nmap_scan"))
-
-    return render(request, "networkscanners/net_upload_xml.html", {"all_project": all_project})
+        return render(
+            request, "networkscanners/net_upload_xml.html", {"all_project": all_project}
+        )
 
 
 @background(schedule=60)
@@ -388,18 +413,24 @@ def task(target_ip, project_id, scanner):
         return HttpResponse(status=200)
 
 
-def net_scan_schedule(request):
-    """
+class NetworkScanSchedule(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/network_scan_schedule.html"
 
-    :param request:
-    :return:
-    """
-    task_id = ''
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    all_scans_db = ProjectDb.objects.filter()
-    all_scheduled_scans = TaskScheduleDb.objects.filter()
+    def get(self, request):
+        task_id = ""
 
-    if request.method == "POST":
+        all_scans_db = ProjectDb.objects.filter()
+        all_scheduled_scans = TaskScheduleDb.objects.filter()
+        return render(
+            request,
+            "networkscanners/network_scan_schedule.html",
+            {"all_scans_db": all_scans_db, "all_scheduled_scans": all_scheduled_scans},
+        )
+
+    def post(self, request):
         scan_ip = request.POST.get("ip")
         scan_schedule_time = request.POST.get("datetime")
         project_id = request.POST.get("project_id")
@@ -452,25 +483,17 @@ def net_scan_schedule(request):
                 project_id=project_id,
                 scanner=scanner,
                 periodic_task=periodic_task_value,
-
             )
             save_scheadule.save()
 
-    return render(
-        request,
-        "networkscanners/network_scan_schedule.html",
-        {"all_scans_db": all_scans_db, "all_scheduled_scans": all_scheduled_scans},
-    )
 
+class NetworkScanScheduleDelete(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/network_scan_schedule.html"
 
-def del_net_scan_schedule(request):
-    """
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    :param request:
-    :return:
-    """
-
-    if request.method == "POST":
+    def post(self, request):
         task_id = request.POST.get("task_id")
 
         scan_item = str(task_id)
@@ -480,50 +503,61 @@ def del_net_scan_schedule(request):
         print("split_length"), split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
-            del_task = TaskScheduleDb.objects.filter(
-                 task_id=task_id
-            )
+            del_task = TaskScheduleDb.objects.filter(task_id=task_id)
             del_task.delete()
             del_task_schedule = Task.objects.filter(id=task_id)
             del_task_schedule.delete()
 
-    return HttpResponseRedirect(reverse("networkscanners:net_scan_schedule"))
+        return HttpResponseRedirect(reverse("networkscanners:net_scan_schedule"))
 
 
-def nv_setting(request):
+class OpenvasSettingEnable(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/nv_settings.html"
 
-    """
-    Calling NMAP Vulners setting page.
-    :param request:
-    :return:
-    """
-    load_nv_setting = load_settings.ArcherySettings(api_data, )
-    nv_enabled = str(load_nv_setting.nv_enabled())
-    nv_online = str(load_nv_setting.nv_enabled())
-    nv_version = str(load_nv_setting.nv_enabled())
-    nv_timing = load_nv_setting.nv_timing()
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    return render(
-        request,
-        "networkscanners/nv_settings.html",
-        {
-            "nv_enabled": nv_enabled,
-            "nv_online": nv_online,
-            "nv_version": nv_version,
-            "nv_timing": nv_timing,
-        },
-    )
+    def get(self, request):
+        load_nv_setting = load_settings.ArcherySettings(
+            api_data,
+        )
+        nv_enabled = str(load_nv_setting.nv_enabled())
+        nv_online = str(load_nv_setting.nv_enabled())
+        nv_version = str(load_nv_setting.nv_enabled())
+        nv_timing = load_nv_setting.nv_timing()
+
+        return render(
+            request,
+            "networkscanners/nv_settings.html",
+            {
+                "nv_enabled": nv_enabled,
+                "nv_online": nv_online,
+                "nv_version": nv_version,
+                "nv_timing": nv_timing,
+            },
+        )
 
 
-def nv_details(request):
+class OpenvasSettingEnableDetails(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "networkscanners/nv_settings.html"
 
-    """
-    OpenVAS tool settings.
-    :param request:
-    :return:
-    """
-    save_nv_setting = save_settings.SaveSettings(api_data, )
-    if request.method == "POST":
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
+
+    def get(self, request):
+
+        return render(
+            request,
+            "networkscanners/nv_settings.html",
+            {
+                "messages": messages,
+            },
+        )
+
+    def post(self, request):
+        save_nv_setting = save_settings.SaveSettings(
+            api_data,
+        )
         if str(request.POST.get("nv_enabled")) == "on":
             nv_enabled = True
         else:
@@ -548,40 +582,30 @@ def nv_details(request):
 
         return HttpResponseRedirect(reverse("webscanners:setting"))
 
-    return render(
-        request,
-        "networkscanners/nv_settings.html",
-        {
-            "messages": messages,
-        },
-    )
-
 
 class NetworkScanList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'networkscanners/scans/list_scans.html'
+    template_name = "networkscanners/scans/list_scans.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_list = NetworkScanDb.objects.filter()
 
         all_notify = Notification.objects.unread()
 
-        return render(request, "networkscanners/scans/list_scans.html",
-                      {"all_scans": scan_list,
-                       "message": all_notify})
+        return render(
+            request,
+            "networkscanners/scans/list_scans.html",
+            {"all_scans": scan_list, "message": all_notify},
+        )
 
 
 class NetworkScanVulnInfo(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'networkscanners/scans/list_vuln_info.html'
+    template_name = "networkscanners/scans/list_vuln_info.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         jira_url = None
@@ -589,25 +613,23 @@ class NetworkScanVulnInfo(APIView):
         for d in jira:
             jira_url = d.jira_server
         scan_id = request.GET["scan_id"]
-        scanner = request.GET['scanner']
-        ip = request.GET['ip']
+        scanner = request.GET["scanner"]
+        ip = request.GET["ip"]
         vuln_data = NetworkScanResultsDb.objects.filter(
-            scan_id=scan_id,
-            scanner=scanner,
-            ip=ip
+            scan_id=scan_id, scanner=scanner, ip=ip
         )
-        return render(request, "networkscanners/scans/list_vuln_info.html",
-                      {"vuln_data": vuln_data, "jira_url": jira_url})
+        return render(
+            request,
+            "networkscanners/scans/list_vuln_info.html",
+            {"vuln_data": vuln_data, "jira_url": jira_url},
+        )
 
 
 class NetworkScanVulnMark(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'networkscanners/scans/list_vuln_info.html'
+    template_name = "networkscanners/scans/list_vuln_info.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         false_positive = request.POST.get("false")
@@ -617,11 +639,12 @@ class NetworkScanVulnMark(APIView):
         scanner = request.POST.get("scanner")
         ip = request.POST.get("ip")
         NetworkScanResultsDb.objects.filter(
-           vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+            vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
         ).update(false_positive=false_positive, vuln_status=status)
 
         if false_positive == "Yes":
-            vuln_info = NetworkScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, scanner=scanner
+            vuln_info = NetworkScanResultsDb.objects.filter(
+                scan_id=scan_id, vuln_id=vuln_id, scanner=scanner
             )
             for vi in vuln_info:
                 name = vi.title
@@ -631,17 +654,17 @@ class NetworkScanVulnMark(APIView):
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
-                NetworkScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+                NetworkScanResultsDb.objects.filter(
+                    vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
                 ).update(
                     false_positive=false_positive,
                     vuln_status="Closed",
                     false_positive_hash=false_positive_hash,
                 )
 
-        all_vuln = NetworkScanResultsDb.objects.filter(scan_id=scan_id,
-                                                       false_positive="No",
-                                                       vuln_status="Open",
-                                                       scanner=scanner)
+        all_vuln = NetworkScanResultsDb.objects.filter(
+            scan_id=scan_id, false_positive="No", vuln_status="Open", scanner=scanner
+        )
 
         total_high = len(all_vuln.filter(severity="High"))
         total_medium = len(all_vuln.filter(severity="Medium"))
@@ -656,34 +679,35 @@ class NetworkScanVulnMark(APIView):
             medium_vul=total_medium,
             low_vul=total_low,
             info_vul=total_info,
-            total_dup=total_dup
+            total_dup=total_dup,
         )
         return HttpResponseRedirect(
-            reverse("networkscanners:list_vuln_info") + "?scan_id=%s&ip=%s&scanner=%s" % (scan_id, ip, scanner)
+            reverse("networkscanners:list_vuln_info")
+            + "?scan_id=%s&ip=%s&scanner=%s" % (scan_id, ip, scanner)
         )
 
 
 class NetworkScanDetails(APIView):
     enderer_classes = [TemplateHTMLRenderer]
-    template_name = 'networkscanners/scans/vuln_details.html'
+    template_name = "networkscanners/scans/vuln_details.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         vuln_id = request.GET["vuln_id"]
         scanner = request.GET["scanner"]
         vul_dat = NetworkScanResultsDb.objects.filter(
-           vuln_id=vuln_id, scanner=scanner
+            vuln_id=vuln_id, scanner=scanner
         ).order_by("vuln_id")
 
-        return render(request, "networkscanners/scans/vuln_details.html", {"vul_dat": vul_dat})
+        return render(
+            request, "networkscanners/scans/vuln_details.html", {"vul_dat": vul_dat}
+        )
 
 
 class NetworkScanDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'networkscanners/scans/list_scans.html'
+    template_name = "networkscanners/scans/list_scans.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -703,21 +727,16 @@ class NetworkScanDelete(APIView):
 
             item = NetworkScanDb.objects.filter(scan_id=scan_id)
             item.delete()
-            item_results = NetworkScanResultsDb.objects.filter(
-                scan_id=scan_id
-            )
+            item_results = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
             item_results.delete()
         return HttpResponseRedirect(reverse("webscanners:list_scans"))
 
 
 class NetworkScanVulnDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'networkscanners/scans/list_vuln_info.html'
+    template_name = "networkscanners/scans/list_vuln_info.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         vuln_id = request.POST.get("vuln_id")
@@ -729,13 +748,13 @@ class NetworkScanVulnDelete(APIView):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = NetworkScanResultsDb.objects.filter(
-                vuln_id=vuln_id
-            )
+            delete_vuln = NetworkScanResultsDb.objects.filter(vuln_id=vuln_id)
             delete_vuln.delete()
-        all_vuln = NetworkScanResultsDb.objects.filter(
-           scan_id=scan_id
-        ).exclude(severity="Information").exclude(severity="Log")
+        all_vuln = (
+            NetworkScanResultsDb.objects.filter(scan_id=scan_id)
+            .exclude(severity="Information")
+            .exclude(severity="Log")
+        )
 
         total_vul = len(all_vuln)
         total_critical = len(all_vuln.filter(severity="Critical"))
@@ -752,6 +771,4 @@ class NetworkScanVulnDelete(APIView):
             low_vul=total_low,
             # info_vul=total_info,
         )
-        return HttpResponseRedirect(
-            reverse("networkscanners:list_scans")
-        )
+        return HttpResponseRedirect(reverse("networkscanners:list_scans"))

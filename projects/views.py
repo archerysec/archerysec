@@ -20,23 +20,23 @@ import datetime
 import uuid
 
 from django.contrib import messages
-from django.shortcuts import HttpResponseRedirect, render
+from django.http import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, get_object_or_404, render
 from django.urls import reverse
-
-from projects.models import MonthDb, ProjectDb, ProjectScanDb
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from django.http import HttpResponseRedirect
-from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer
-from django.shortcuts import get_object_or_404
-from projects.serializers import ProjectDataSerializers, ProjectCreateSerializers
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from projects.models import MonthDb, ProjectDb, ProjectScanDb
+from projects.serializers import (ProjectCreateSerializers,
+                                  ProjectDataSerializers)
+from user_management import permissions
 from user_management.models import Organization
 
-from user_management import permissions
-
 project_dat = None
+
 
 def project_edit(request):
     """
@@ -75,11 +75,9 @@ def project_edit(request):
 
 class ProjectList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'dashboard/project.html'
+    template_name = "dashboard/project.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, uu_id=None):
         if uu_id == None:
@@ -93,24 +91,21 @@ class ProjectList(APIView):
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
-        return Response({'serializer': serialized_data, 'projects': projects})
+        return Response({"serializer": serialized_data, "projects": projects})
 
 
 class ProjectDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'dashboard/project.html'
+    template_name = "dashboard/project.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAdmin
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAdmin)
 
     def post(self, request):
         try:
             project_id = request.data.get("project_id")
             projects = ProjectDb.objects.get(uu_id=project_id)
             projects.delete()
-            return HttpResponseRedirect('/dashboard/')
+            return HttpResponseRedirect("/dashboard/")
         except ProjectDb.DoesNotExist:
             return Response(
                 {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
@@ -119,19 +114,18 @@ class ProjectDelete(APIView):
 
 class ProjectCreate(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'projects/project_create.html'
+    template_name = "projects/project_create.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAdmin
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAdmin)
 
     def get(self, request):
         org = Organization.objects.all()
         projects = ProjectDb.objects.all()
         serialized_data = ProjectDataSerializers(projects, many=True)
 
-        return Response({'serializer': serialized_data, 'projects': projects, 'org': org})
+        return Response(
+            {"serializer": serialized_data, "projects": projects, "org": org}
+        )
 
     def post(self, request):
         serializer = ProjectCreateSerializers(data=request.data)
@@ -177,4 +171,4 @@ class ProjectCreate(APIView):
             )
             save_months_data.save()
         messages.success(request, "Project Created")
-        return HttpResponseRedirect('/dashboard/')
+        return HttpResponseRedirect("/dashboard/")

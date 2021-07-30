@@ -16,12 +16,11 @@
 
 from __future__ import unicode_literals
 
-from django.db import models
-from django.db.models import F, Func, Sum
-
 import uuid
+
 from django.conf import settings
 from django.db import models
+from django.db.models import F, Func, Sum
 
 from user_management.models import UserProfile
 
@@ -63,7 +62,10 @@ class ProjectDb(models.Model):
 
     created_time = models.DateTimeField(auto_now_add=True, blank=True)
     created_by = models.ForeignKey(
-        UserProfile, related_name="project_creator", on_delete=models.SET_NULL, null=True
+        UserProfile,
+        related_name="project_creator",
+        on_delete=models.SET_NULL,
+        null=True,
     )
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
     updated_by = models.ForeignKey(
@@ -79,10 +81,13 @@ class ProjectScanDb(models.Model):
     class Meta:
         db_table = "projectscandb"
         verbose_name_plural = "Project Scans Db"
+
     project_url = models.TextField(blank=True)  # this is scan url
     project_ip = models.TextField(blank=True)
     scan_type = models.TextField(blank=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     date_time = models.DateTimeField(null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
@@ -103,9 +108,12 @@ class MonthDb(models.Model):
     class Meta:
         db_table = "monthdb"
         verbose_name_plural = "Month Db"
+
     month = models.TextField(blank=True, null=True)
     high = models.IntegerField(blank=True, default=0)
     medium = models.IntegerField(blank=True, default=0)
     low = models.IntegerField(blank=True, default=0)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)

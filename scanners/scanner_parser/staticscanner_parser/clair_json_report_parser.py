@@ -19,11 +19,11 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from staticscanners.models import StaticScansDb, StaticScanResultsDb
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
 
 vul_col = ""
-Name = ''
+Name = ""
 
 
 def clair_report_json(data, project_id, scan_id):
@@ -87,14 +87,16 @@ def clair_report_json(data, project_id, scan_id):
 
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
+            match_dup = StaticScanResultsDb.objects.filter(
+                dup_hash=duplicate_hash
             ).values("dup_hash")
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
                 duplicate_vuln = "No"
 
-                false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+                false_p = StaticScanResultsDb.objects.filter(
+                    false_positive_hash=duplicate_hash
                 )
                 fp_lenth_match = len(false_p)
 
@@ -109,10 +111,13 @@ def clair_report_json(data, project_id, scan_id):
                     date_time=date_time,
                     project_id=project_id,
                     title=Name,
-                    description=str(Description) + '\n\n' \
-                                + str(NamespaceName) + '\n\n' \
-                                + str(Metadata) + '\n\n' \
-                                + str(FeatureName),
+                    description=str(Description)
+                    + "\n\n"
+                    + str(NamespaceName)
+                    + "\n\n"
+                    + str(Metadata)
+                    + "\n\n"
+                    + str(FeatureName),
                     references=Link,
                     severity=Severity,
                     vuln_status="Open",
@@ -120,7 +125,7 @@ def clair_report_json(data, project_id, scan_id):
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
                     severity_color=vul_col,
-                    scanner='Clair'
+                    scanner="Clair",
                 )
                 save_all.save()
 
@@ -133,18 +138,21 @@ def clair_report_json(data, project_id, scan_id):
                     date_time=date_time,
                     project_id=project_id,
                     title=Name,
-                    description=str(Description) + '\n\n' \
-                                + str(NamespaceName) + '\n\n' \
-                                + str(Metadata) + '\n\n' \
-                                + str(FeatureName),
+                    description=str(Description)
+                    + "\n\n"
+                    + str(NamespaceName)
+                    + "\n\n"
+                    + str(Metadata)
+                    + "\n\n"
+                    + str(FeatureName),
                     references=Link,
                     severity=Severity,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive='Duplicate',
+                    false_positive="Duplicate",
                     severity_color=vul_col,
-                    scanner='Clair'
+                    scanner="Clair",
                 )
                 save_all.save()
 
@@ -203,7 +211,8 @@ def clair_report_json(data, project_id, scan_id):
 
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
+            match_dup = StaticScanResultsDb.objects.filter(
+                dup_hash=duplicate_hash
             ).values("dup_hash")
             lenth_match = len(match_dup)
 
@@ -211,7 +220,8 @@ def clair_report_json(data, project_id, scan_id):
 
                 duplicate_vuln = "No"
 
-                false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+                false_p = StaticScanResultsDb.objects.filter(
+                    false_positive_hash=duplicate_hash
                 )
                 fp_lenth_match = len(false_p)
 
@@ -226,10 +236,13 @@ def clair_report_json(data, project_id, scan_id):
                     date_time=date_time,
                     project_id=project_id,
                     title=Name,
-                    description=str(Description) + '\n\n' \
-                                + str(NamespaceName) + '\n\n' \
-                                + str(Metadata) + '\n\n' \
-                                + str(FeatureName),
+                    description=str(Description)
+                    + "\n\n"
+                    + str(NamespaceName)
+                    + "\n\n"
+                    + str(Metadata)
+                    + "\n\n"
+                    + str(FeatureName),
                     references=Link,
                     severity=Severity,
                     vuln_status="Open",
@@ -237,7 +250,7 @@ def clair_report_json(data, project_id, scan_id):
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
                     severity_color=vul_col,
-                    scanner='Clair'
+                    scanner="Clair",
                 )
                 save_all.save()
 
@@ -250,18 +263,21 @@ def clair_report_json(data, project_id, scan_id):
                     date_time=date_time,
                     project_id=project_id,
                     title=Name,
-                    description=str(Description) + '\n\n' \
-                                + str(NamespaceName) + '\n\n' \
-                                + str(Metadata) + '\n\n' \
-                                + str(FeatureName),
+                    description=str(Description)
+                    + "\n\n"
+                    + str(NamespaceName)
+                    + "\n\n"
+                    + str(Metadata)
+                    + "\n\n"
+                    + str(FeatureName),
                     references=Link,
                     severity=Severity,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive='Duplicate',
+                    false_positive="Duplicate",
                     severity_color=vul_col,
-                    scanner='Clair'
+                    scanner="Clair",
                 )
                 save_all.save()
 
@@ -328,7 +344,8 @@ def clair_report_json(data, project_id, scan_id):
             if lenth_match == 0:
                 duplicate_vuln = "No"
 
-                false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+                false_p = StaticScanResultsDb.objects.filter(
+                    false_positive_hash=duplicate_hash
                 )
                 fp_lenth_match = len(false_p)
 
@@ -343,10 +360,13 @@ def clair_report_json(data, project_id, scan_id):
                     date_time=date_time,
                     project_id=project_id,
                     title=Name,
-                    description=str(Description) + '\n\n' \
-                                + str(NamespaceName) + '\n\n' \
-                                + str(Metadata) + '\n\n' \
-                                + str(FeatureName),
+                    description=str(Description)
+                    + "\n\n"
+                    + str(NamespaceName)
+                    + "\n\n"
+                    + str(Metadata)
+                    + "\n\n"
+                    + str(FeatureName),
                     references=Link,
                     severity=Severity,
                     vuln_status="Open",
@@ -354,7 +374,7 @@ def clair_report_json(data, project_id, scan_id):
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
                     severity_color=vul_col,
-                    scanner='Clair'
+                    scanner="Clair",
                 )
                 save_all.save()
 
@@ -367,24 +387,27 @@ def clair_report_json(data, project_id, scan_id):
                     date_time=date_time,
                     project_id=project_id,
                     title=Name,
-                    description=str(Description) + '\n\n' \
-                                + str(NamespaceName) + '\n\n' \
-                                + str(Metadata) + '\n\n' \
-                                + str(FeatureName),
+                    description=str(Description)
+                    + "\n\n"
+                    + str(NamespaceName)
+                    + "\n\n"
+                    + str(Metadata)
+                    + "\n\n"
+                    + str(FeatureName),
                     references=Link,
                     severity=Severity,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive='Duplicate',
+                    false_positive="Duplicate",
                     severity_color=vul_col,
-                    scanner='Clair'
+                    scanner="Clair",
                 )
                 save_all.save()
 
     except Exception:
         print("Low Vulnerability Not found")
-        low = data["Vulnerabilities"]['Low']
+        low = data["Vulnerabilities"]["Low"]
 
         for vuln in low:
             vul_id = uuid.uuid4()
@@ -444,14 +467,16 @@ def clair_report_json(data, project_id, scan_id):
 
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
+            match_dup = StaticScanResultsDb.objects.filter(
+                dup_hash=duplicate_hash
             ).values("dup_hash")
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
                 duplicate_vuln = "No"
 
-                false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+                false_p = StaticScanResultsDb.objects.filter(
+                    false_positive_hash=duplicate_hash
                 )
                 fp_lenth_match = len(false_p)
 
@@ -466,10 +491,13 @@ def clair_report_json(data, project_id, scan_id):
                     date_time=date_time,
                     project_id=project_id,
                     title=Name,
-                    description=str(Description) + '\n\n' \
-                                + str(NamespaceName) + '\n\n' \
-                                + str(Metadata) + '\n\n' \
-                                + str(FeatureName),
+                    description=str(Description)
+                    + "\n\n"
+                    + str(NamespaceName)
+                    + "\n\n"
+                    + str(Metadata)
+                    + "\n\n"
+                    + str(FeatureName),
                     references=Link,
                     severity=Severity,
                     vuln_status="Open",
@@ -477,7 +505,7 @@ def clair_report_json(data, project_id, scan_id):
                     vuln_duplicate=duplicate_vuln,
                     false_positive=false_positive,
                     severity_color=vul_col,
-                    scanner='Clair'
+                    scanner="Clair",
                 )
                 save_all.save()
 
@@ -490,26 +518,31 @@ def clair_report_json(data, project_id, scan_id):
                     date_time=date_time,
                     project_id=project_id,
                     title=Name,
-                    description=str(Description) + '\n\n' \
-                                + str(NamespaceName) + '\n\n' \
-                                + str(Metadata) + '\n\n' \
-                                + str(FeatureName),
+                    description=str(Description)
+                    + "\n\n"
+                    + str(NamespaceName)
+                    + "\n\n"
+                    + str(Metadata)
+                    + "\n\n"
+                    + str(FeatureName),
                     references=Link,
                     severity=Severity,
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive='Duplicate',
+                    false_positive="Duplicate",
                     severity_color=vul_col,
-                    scanner='Clair'
+                    scanner="Clair",
                 )
                 save_all.save()
         # pass
 
-    all_clair_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
+    all_clair_data = StaticScanResultsDb.objects.filter(
+        scan_id=scan_id, false_positive="No"
     )
 
-    duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
+    duplicate_count = StaticScanResultsDb.objects.filter(
+        scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_vul = len(all_clair_data)
@@ -525,14 +558,14 @@ def clair_report_json(data, project_id, scan_id):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
-        scanner='Clair'
+        scanner="Clair",
     )
     trend_update()
     subject = "Archery Tool Scan Status - Clair Report Uploaded"
     message = (
-            "Clair Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s" % (Name, total_vul, total_high, total_medium, total_low)
+        "Clair Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s" % (Name, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

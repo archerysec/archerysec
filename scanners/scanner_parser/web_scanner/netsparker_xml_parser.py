@@ -19,30 +19,30 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from webscanners.models import WebScansDb, WebScanResultsDb
 from utility.email_notify import email_sch_notify
+from webscanners.models import WebScanResultsDb, WebScansDb
 
-vuln_url = ''
-vuln_type = ''
-vuln_severity = ''
-vuln_certainty = ''
-vuln_rawrequest = ''
-vuln_rawresponse = ''
-vuln_extrainformation = ''
-vuln_classification = ''
-vuln_id = ''
-vul_col = ''
-description = ''
-impact = ''
-actionsToTake = ''
-remedy = ''
-requiredSkillsForExploitation = ''
-externalReferences = ''
-remedyReferences = ''
-proofOfConcept = ''
-proofs = ''
-false_positive = ''
-target = ''
+vuln_url = ""
+vuln_type = ""
+vuln_severity = ""
+vuln_certainty = ""
+vuln_rawrequest = ""
+vuln_rawresponse = ""
+vuln_extrainformation = ""
+vuln_classification = ""
+vuln_id = ""
+vul_col = ""
+description = ""
+impact = ""
+actionsToTake = ""
+remedy = ""
+requiredSkillsForExploitation = ""
+externalReferences = ""
+remedyReferences = ""
+proofOfConcept = ""
+proofs = ""
+false_positive = ""
+target = ""
 
 
 def xml_parser(root, project_id, scan_id):
@@ -131,17 +131,17 @@ def xml_parser(root, project_id, scan_id):
         dup_data = str(vuln_type) + str(vuln_url) + str(vuln_severity)
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
         match_dup = (
-            WebScanResultsDb.objects.filter(dup_hash=duplicate_hash
-            )
-                .values("dup_hash")
-                .distinct()
+            WebScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+            .values("dup_hash")
+            .distinct()
         )
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
-            false_p = WebScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+            false_p = WebScanResultsDb.objects.filter(
+                false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
 
@@ -164,12 +164,12 @@ def xml_parser(root, project_id, scan_id):
                 false_positive=false_positive,
                 severity_color=vul_col,
                 description=description,
-                solution=str(remedy) + '\n\n' + str(actionsToTake),
-                reference=str(externalReferences) + '\n\n' + str(remedyReferences),
+                solution=str(remedy) + "\n\n" + str(actionsToTake),
+                reference=str(externalReferences) + "\n\n" + str(remedyReferences),
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                scanner='Netsparker'
+                scanner="Netsparker",
             )
             dump_data.save()
         else:
@@ -187,17 +187,19 @@ def xml_parser(root, project_id, scan_id):
                 vuln_status="Duplicate",
                 severity_color=vul_col,
                 description=description,
-                solution=remedy + '\n\n' + str(actionsToTake),
-                reference=externalReferences + '\n\n' + str(remedyReferences),
+                solution=remedy + "\n\n" + str(actionsToTake),
+                reference=externalReferences + "\n\n" + str(remedyReferences),
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                scanner='Netsparker'
+                scanner="Netsparker",
             )
             dump_data.save()
 
-    netsparker_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No", scanner='Netsparker'
+    netsparker_all_vul = WebScanResultsDb.objects.filter(
+        scan_id=scan_id, false_positive="No", scanner="Netsparker"
     )
-    duplicate_count = WebScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes", scanner='Netsparker'
+    duplicate_count = WebScanResultsDb.objects.filter(
+        scan_id=scan_id, vuln_duplicate="Yes", scanner="Netsparker"
     )
 
     total_high = len(netsparker_all_vul.filter(severity="High"))
@@ -216,15 +218,15 @@ def xml_parser(root, project_id, scan_id):
         info_vul=total_info,
         total_dup=total_duplicate,
         scan_url=target,
-        scanner='Netsparker'
+        scanner="Netsparker",
     )
     trend_update()
     subject = "Archery Tool Scan Status - Netsparker Report Uploaded"
     message = (
-            "Netsparker Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % (target, total_vul, total_high, total_medium, total_low)
+        "Netsparker Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (target, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

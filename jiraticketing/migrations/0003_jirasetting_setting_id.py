@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jiraticketing', '0002_jirasetting_username'),
+        ("jiraticketing", "0002_jirasetting_username"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='jirasetting',
-            name='setting_id',
+            model_name="jirasetting",
+            name="setting_id",
             field=models.UUIDField(blank=True, null=True),
         ),
     ]

@@ -25,7 +25,7 @@ import uuid
 from django.db.models import Q
 from zapv2 import ZAPv2
 
-from archerysettings.models import (ZapSettingsDb)
+from archerysettings.models import ZapSettingsDb
 
 try:
     from scanners.scanner_parser.web_scanner import zap_xml_parser
@@ -35,6 +35,7 @@ import subprocess
 from datetime import datetime
 
 import defusedxml.ElementTree as ET
+
 from webscanners.models import (WebScanResultsDb, WebScansDb, cookie_db,
                                 excluded_db, zap_spider_db)
 
@@ -122,7 +123,6 @@ def zap_connect(random_port):
     zap_hosts = "127.0.0.1"
     zap_ports = "8090"
     zap_enabled = False
-
 
     for zap in all_zap:
         zap_enabled = zap.enabled
@@ -242,9 +242,7 @@ class ZAPScanner:
 
     """ Connect with ZAP scanner global variable """
 
-    def __init__(
-        self, target_url, project_id, rescan_id, rescan, random_port
-    ):
+    def __init__(self, target_url, project_id, rescan_id, rescan, random_port):
         """
 
         :param target_url: Target URL parameter.
@@ -612,7 +610,8 @@ class ZAPScanner:
                 else:
                     false_positive = "No"
 
-                vul_dat = WebScanResultsDb.objects.filter(vuln_id=vuln_id, scanner="Zap"
+                vul_dat = WebScanResultsDb.objects.filter(
+                    vuln_id=vuln_id, scanner="Zap"
                 )
                 full_data = []
                 for data in vul_dat:
@@ -622,13 +621,16 @@ class ZAPScanner:
                     instance = key + ": " + dd
                     full_data.append(instance)
                 removed_list_data = ",".join(full_data)
-                WebScanResultsDb.objects.filter(vuln_id=vuln_id
-                ).update(instance=full_data)
+                WebScanResultsDb.objects.filter(vuln_id=vuln_id).update(
+                    instance=full_data
+                )
 
-            zap_all_vul = WebScanResultsDb.objects.filter(scan_id=un_scanid, false_positive="No", scanner="Zap"
+            zap_all_vul = WebScanResultsDb.objects.filter(
+                scan_id=un_scanid, false_positive="No", scanner="Zap"
             )
 
-            duplicate_count = WebScanResultsDb.objects.filter(scan_id=un_scanid, vuln_duplicate="Yes"
+            duplicate_count = WebScanResultsDb.objects.filter(
+                scan_id=un_scanid, vuln_duplicate="Yes"
             )
 
             total_high = len(zap_all_vul.filter(severity="High"))
@@ -649,8 +651,7 @@ class ZAPScanner:
                 scan_url=target_url,
             )
             if total_vul == total_duplicate:
-                WebScansDb.objects.filter( scan_id=un_scanid
-                ).update(
+                WebScansDb.objects.filter(scan_id=un_scanid).update(
                     total_vul=total_vul,
                     date_time=date_time,
                     high_vul=total_high,

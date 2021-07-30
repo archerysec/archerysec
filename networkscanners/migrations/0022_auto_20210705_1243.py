@@ -6,19 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0021_auto_20210531_2022'),
+        ("networkscanners", "0021_auto_20210531_2022"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='openvas_scan_db',
+            name="openvas_scan_db",
         ),
         migrations.DeleteModel(
-            name='ov_scan_result_db',
+            name="ov_scan_result_db",
         ),
         migrations.AlterField(
-            model_name='networkscanresultsdb',
-            name='port',
+            model_name="networkscanresultsdb",
+            name="port",
             field=models.TextField(blank=True, null=True),
         ),
     ]

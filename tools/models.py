@@ -22,7 +22,9 @@ from django.db import models
 # SSLScan Model.
 class SslscanResultDb(models.Model):
     scan_id = models.TextField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scan_url = models.TextField(blank=True, null=True)
     sslscan_output = models.TextField(blank=True, null=True)
 
@@ -30,7 +32,9 @@ class SslscanResultDb(models.Model):
 # Nikto Models
 class NiktoResultDb(models.Model):
     scan_id = models.TextField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scan_url = models.TextField(blank=True, null=True)
     nikto_scan_output = models.TextField(blank=True, null=True)
     date_time = models.TextField(null=True, blank=True)
@@ -40,7 +44,9 @@ class NiktoResultDb(models.Model):
 class NiktoVulnDb(models.Model):
     vuln_id = models.UUIDField(blank=True, null=True)
     scan_id = models.UUIDField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scan_url = models.TextField(blank=True, null=True)
     discription = models.TextField(blank=True, null=True)
     targetip = models.TextField(blank=True, null=True)
@@ -62,7 +68,9 @@ class NiktoVulnDb(models.Model):
 # Nmap tool models
 class NmapScanDb(models.Model):
     scan_id = models.TextField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scan_ip = models.TextField(blank=True, null=True)
     total_ports = models.TextField(blank=True, null=True)
     total_open_ports = models.TextField(blank=True, null=True)
@@ -71,7 +79,9 @@ class NmapScanDb(models.Model):
 
 class NmapResultDb(models.Model):
     scan_id = models.TextField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     ip_address = models.TextField(blank=True, null=True)
     protocol = models.TextField(blank=True, null=True)
     port = models.TextField(blank=True, null=True)

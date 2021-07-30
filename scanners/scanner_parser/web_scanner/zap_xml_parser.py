@@ -23,8 +23,8 @@ from datetime import datetime
 
 from dashboard.views import trend_update
 from scanners.vuln_checker import check_false_positive
-from webscanners.models import WebScanResultsDb, WebScansDb
 from utility.email_notify import email_sch_notify
+from webscanners.models import WebScanResultsDb, WebScansDb
 
 vul_col = ""
 title = ""
@@ -132,7 +132,7 @@ def xml_parser(root, project_id, scan_id):
                 vuln_status=vuln_status,
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                scanner="Zap"
+                scanner="Zap",
             )
 
             data_store.save()
@@ -147,10 +147,10 @@ def xml_parser(root, project_id, scan_id):
             else:
                 false_positive = "No"
 
-    zap_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
-    )
+    zap_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No")
 
-    duplicate_count = WebScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
+    duplicate_count = WebScanResultsDb.objects.filter(
+        scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_high = len(zap_all_vul.filter(severity="High"))

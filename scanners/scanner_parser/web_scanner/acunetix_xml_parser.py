@@ -19,8 +19,8 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from webscanners.models import WebScansDb, WebScanResultsDb
 from utility.email_notify import email_sch_notify
+from webscanners.models import WebScanResultsDb, WebScansDb
 
 ScanName = None
 ScanShortName = None
@@ -209,8 +209,7 @@ def xml_parser(root, project_id, scan_id):
                     ).hexdigest()
 
                     match_dup = (
-                        WebScanResultsDb.objects.filter(dup_hash=duplicate_hash
-                        )
+                        WebScanResultsDb.objects.filter(dup_hash=duplicate_hash)
                         .values("dup_hash")
                         .distinct()
                     )
@@ -219,7 +218,8 @@ def xml_parser(root, project_id, scan_id):
                     if lenth_match == 0:
                         duplicate_vuln = "No"
 
-                        false_p = WebScanResultsDb.objects.filter( false_positive_hash=duplicate_hash
+                        false_p = WebScanResultsDb.objects.filter(
+                            false_positive_hash=duplicate_hash
                         )
                         fp_lenth_match = len(false_p)
 
@@ -229,12 +229,13 @@ def xml_parser(root, project_id, scan_id):
                             false_positive = "No"
 
                         dump_data = WebScanResultsDb(
-
                             vuln_id=vuln_id,
                             scan_id=scan_id,
                             url=FullURL,
                             title=VulnName,
-                            description=str(VulnDescription) + str(VulnDetails) + str(VulnTechnicalDetails),
+                            description=str(VulnDescription)
+                            + str(VulnDetails)
+                            + str(VulnTechnicalDetails),
                             instance=str(VulnParameter) + str(VulnAffects),
                             reference=VulnReferences,
                             project_id=project_id,
@@ -242,10 +243,10 @@ def xml_parser(root, project_id, scan_id):
                             severity=risk,
                             date_time=date_time,
                             false_positive=false_positive,
-                            vuln_status='Open',
+                            vuln_status="Open",
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
-                            scanner='Acunetix',
+                            scanner="Acunetix",
                         )
                         dump_data.save()
 
@@ -257,25 +258,29 @@ def xml_parser(root, project_id, scan_id):
                             scan_id=scan_id,
                             url=VulnUrl,
                             title=VulnName,
-                            description=str(VulnDescription) + str(VulnDetails) + str(VulnTechnicalDetails),
+                            description=str(VulnDescription)
+                            + str(VulnDetails)
+                            + str(VulnTechnicalDetails),
                             instance=str(VulnParameter) + str(VulnAffects),
                             reference=VulnReferences,
                             project_id=project_id,
                             severity_color=vul_col,
                             severity=risk,
                             date_time=date_time,
-                            false_positive='Duplicate',
-                            vuln_status='Duplicate',
+                            false_positive="Duplicate",
+                            vuln_status="Duplicate",
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
-                            scanner='Acunetix',
+                            scanner="Acunetix",
                         )
                         dump_data.save()
 
-    acunetix_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
+    acunetix_all_vul = WebScanResultsDb.objects.filter(
+        scan_id=scan_id, false_positive="No"
     )
 
-    duplicate_count = WebScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
+    duplicate_count = WebScanResultsDb.objects.filter(
+        scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_high = len(acunetix_all_vul.filter(severity="High"))

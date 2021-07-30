@@ -152,11 +152,22 @@ class arachniAPI(object):
                 headers.update({"Content-Type": "application/json"})
         try:
             if self.username_api != "":
-                response = requests.request(method=method, url=self.host + ':' + self.port + url, params=params,
-                                            headers=headers, data=data, auth=(self.username_api, self.password_api))
+                response = requests.request(
+                    method=method,
+                    url=self.host + ":" + self.port + url,
+                    params=params,
+                    headers=headers,
+                    data=data,
+                    auth=(self.username_api, self.password_api),
+                )
             else:
-                response = requests.request(method=method, url=self.host + ':' + self.port + url, params=params,
-                                            headers=headers, data=data)
+                response = requests.request(
+                    method=method,
+                    url=self.host + ":" + self.port + url,
+                    params=params,
+                    headers=headers,
+                    data=data,
+                )
             try:
                 response.raise_for_status()
 

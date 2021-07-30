@@ -18,14 +18,14 @@ import hashlib
 
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from compliance.models import DockleScanDb, DockleScanResultsDb
 from staticscanners.resources import dockleResource
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework import status
-from rest_framework.response import Response
 from user_management import permissions
 
 
@@ -40,8 +40,7 @@ def export(request):
         report_type = request.POST.get("type")
 
         dockle_resource = dockleResource()
-        queryset = DockleScanResultsDb.objects.filter(scan_id=scan_id
-                                                      )
+        queryset = DockleScanResultsDb.objects.filter(scan_id=scan_id)
         dataset = dockle_resource.export(queryset)
         if report_type == "csv":
             response = HttpResponse(dataset.csv, content_type="text/csv")
@@ -59,35 +58,31 @@ def export(request):
 
 class DockleScanList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/dockle/docklescans_list.html'
+    template_name = "compliance/dockle/docklescans_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         all_dockle_scan = DockleScanDb.objects.filter()
 
         return render(
-            request, "compliance/dockle/docklescans_list.html", {"all_dockle_scan": all_dockle_scan}
+            request,
+            "compliance/dockle/docklescans_list.html",
+            {"all_dockle_scan": all_dockle_scan},
         )
 
 
 class DockleVulnList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/dockle/docklescan_list_vuln.html'
+    template_name = "compliance/dockle/docklescan_list_vuln.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
 
-        dockle_all_vuln = DockleScanResultsDb.objects.filter(scan_id=scan_id
-                                                             )
-        dockle_all_audit = DockleScanResultsDb.objects.filter(scan_id=scan_id
-                                                              )
+        dockle_all_vuln = DockleScanResultsDb.objects.filter(scan_id=scan_id)
+        dockle_all_audit = DockleScanResultsDb.objects.filter(scan_id=scan_id)
 
         all_compliance = DockleScanDb.objects.filter(scan_id=scan_id)
 
@@ -104,12 +99,9 @@ class DockleVulnList(APIView):
 
 class DockleVulnData(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/dockle/docklescan_vuln_data.html'
+    template_name = "compliance/dockle/docklescan_vuln_data.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
@@ -127,8 +119,9 @@ class DockleVulnData(APIView):
             vuln_status="Closed",
             false_positive="No",
         )
-        false_data = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, false_positive="Yes"
-                                                        )
+        false_data = DockleScanResultsDb.objects.filter(
+            scan_id=scan_id, vuln_id=vuln_id, false_positive="Yes"
+        )
 
         return render(
             request,
@@ -145,12 +138,14 @@ class DockleVulnData(APIView):
         status = request.POST.get("status")
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
-        DockleScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
-                                           ).update(false_positive=false_positive, vuln_status=status)
+        DockleScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
+            false_positive=false_positive, vuln_status=status
+        )
 
         if false_positive == "Yes":
-            vuln_info = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
-                                                           )
+            vuln_info = DockleScanResultsDb.objects.filter(
+                scan_id=scan_id, vuln_id=vuln_id
+            )
             for vi in vuln_info:
                 Name = vi.Name
                 NamespaceName = vi.NamespaceName
@@ -159,8 +154,9 @@ class DockleVulnData(APIView):
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
-                DockleScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
-                                                   ).update(
+                DockleScanResultsDb.objects.filter(
+                    vuln_id=vuln_id, scan_id=scan_id
+                ).update(
                     false_positive=false_positive,
                     vuln_status=status,
                     false_positive_hash=false_positive_hash,
@@ -174,18 +170,17 @@ class DockleVulnData(APIView):
 
 class DockleDetails(APIView):
     enderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/dockle/dockle_vuln_details.html'
+    template_name = "compliance/dockle/dockle_vuln_details.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
         vuln_id = request.GET["vuln_id"]
 
-        dockle_vuln_details = DockleScanResultsDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
-                                                                 )
+        dockle_vuln_details = DockleScanResultsDb.objects.filter(
+            scan_id=scan_id, vuln_id=vuln_id
+        )
         return render(
             request,
             "compliance/dockle/dockle_vuln_details.html",
@@ -197,7 +192,7 @@ class DockleDetails(APIView):
 
 class DockleDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/dockle/docklescans_list.html'
+    template_name = "compliance/dockle/docklescans_list.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -215,8 +210,7 @@ class DockleDelete(APIView):
             scan_id = value_split.__getitem__(i)
             item = DockleScanDb.objects.filter(scan_id=scan_id)
             item.delete()
-            item_results = DockleScanResultsDb.objects.filter(scan_id=scan_id
-                                                              )
+            item_results = DockleScanResultsDb.objects.filter(scan_id=scan_id)
             item_results.delete()
         # messages.add_message(request, messages.SUCCESS, 'Deleted Scan')
         return HttpResponseRedirect(reverse("dockle:dockle_list"))
@@ -224,12 +218,9 @@ class DockleDelete(APIView):
 
 class DockleVulnDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'compliance/dockle/dockle_vuln_details.html'
+    template_name = "compliance/dockle/dockle_vuln_details.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         vuln_id = request.POST.get(
@@ -245,11 +236,9 @@ class DockleVulnDelete(APIView):
         print("split_length"), split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = DockleScanResultsDb.objects.filter(vuln_id=vuln_id
-                                                             )
+            delete_vuln = DockleScanResultsDb.objects.filter(vuln_id=vuln_id)
             delete_vuln.delete()
-        all_dockle_data = DockleScanResultsDb.objects.filter(scan_id=scan_id
-                                                             )
+        all_dockle_data = DockleScanResultsDb.objects.filter(scan_id=scan_id)
 
         total_vul = len(all_dockle_data)
         total_high = len(all_dockle_data.filter(Severity="High"))

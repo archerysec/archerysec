@@ -17,13 +17,14 @@
 """Author: Anand Tiwari """
 
 import json
+import uuid
 
 from django.core import signing
 
-from archerysettings.models import (ArachniSettingsDb, BurpSettingDb,
-                                    EmailDb, NmapVulnersSettingDb,
-                                    OpenvasSettingDb, ZapSettingsDb)
-import uuid
+from archerysettings.models import (ArachniSettingsDb, BurpSettingDb, EmailDb,
+                                    NmapVulnersSettingDb, OpenvasSettingDb,
+                                    ZapSettingsDb)
+
 
 class SaveSettings:
     def __init__(self, setting_file):
@@ -47,10 +48,7 @@ class SaveSettings:
             timing = 0
 
         save_nv_settings = NmapVulnersSettingDb(
-            enabled=enabled,
-            version=version,
-            online=online,
-            timing=timing
+            enabled=enabled, version=version, online=online, timing=timing
         )
         save_nv_settings.save()
 
@@ -66,7 +64,10 @@ class SaveSettings:
         all_zap.delete()
 
         save_zapsettings = ZapSettingsDb(
-            zap_url=zaphost, zap_api=apikey, zap_port=zaport, setting_id=setting_id,
+            zap_url=zaphost,
+            zap_api=apikey,
+            zap_port=zaport,
+            setting_id=setting_id,
         )
         save_zapsettings.save()
 
@@ -96,7 +97,7 @@ class SaveSettings:
         openvas_enabled,
         openvas_user,
         openvas_password,
-        setting_id
+        setting_id,
     ):
         """
         Save OpenVAS Settings into Setting files.
@@ -112,7 +113,7 @@ class SaveSettings:
             enabled=openvas_enabled,
             user=openvas_user,
             password=openvas_password,
-            setting_id=setting_id
+            setting_id=setting_id,
         )
         openvas_settings.save()
         try:

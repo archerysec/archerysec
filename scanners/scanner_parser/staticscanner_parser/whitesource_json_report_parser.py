@@ -19,8 +19,7 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from staticscanners.models import (StaticScansDb,
-                                   StaticScanResultsDb)
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
 
 vul_col = ""
@@ -74,13 +73,15 @@ def whitesource_report_json(data, project_id, scan_id):
         vul_id = uuid.uuid4()
         dup_data = str(name) + str(severity) + str(project)
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
-        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
-        ).values("dup_hash")
+        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash).values(
+            "dup_hash"
+        )
         lenth_match = len(match_dup)
         if lenth_match == 0:
             duplicate_vuln = "No"
 
-            false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+            false_p = StaticScanResultsDb.objects.filter(
+                false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
             if fp_lenth_match == 1:
@@ -100,9 +101,16 @@ def whitesource_report_json(data, project_id, scan_id):
                 title=name,
                 severity=severity,
                 references=url,
-                description=str(description) + '\n\n' + str(score) + '\n\n' + str(library) + '\n\n' + str(topFix) + '\n\n',
+                description=str(description)
+                + "\n\n"
+                + str(score)
+                + "\n\n"
+                + str(library)
+                + "\n\n"
+                + str(topFix)
+                + "\n\n",
                 fileName=filename,
-                scanner='Whitesource'
+                scanner="Whitesource",
             )
             save_all.save()
 
@@ -118,20 +126,29 @@ def whitesource_report_json(data, project_id, scan_id):
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive='Duplicate',
+                false_positive="Duplicate",
                 title=name,
                 severity=severity,
                 references=url,
-                description=str(description) + '\n\n' + str(score) + '\n\n' + str(library) + '\n\n' + str(topFix) + '\n\n',
+                description=str(description)
+                + "\n\n"
+                + str(score)
+                + "\n\n"
+                + str(library)
+                + "\n\n"
+                + str(topFix)
+                + "\n\n",
                 fileName=filename,
-                scanner='Whitesource'
+                scanner="Whitesource",
             )
             save_all.save()
 
-    all_findbugs_data = StaticScanResultsDb.objects.filter( scan_id=scan_id, false_positive="No"
+    all_findbugs_data = StaticScanResultsDb.objects.filter(
+        scan_id=scan_id, false_positive="No"
     )
 
-    duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
+    duplicate_count = StaticScanResultsDb.objects.filter(
+        scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_vul = len(all_findbugs_data)
@@ -148,7 +165,7 @@ def whitesource_report_json(data, project_id, scan_id):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
-        scanner='Whitesource'
+        scanner="Whitesource",
     )
     trend_update()
     subject = "Archery Tool Scan Status - whitesource Report Uploaded"

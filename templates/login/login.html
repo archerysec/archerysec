@@ -17,7 +17,7 @@
 </head>
 <body>
 <div id="loginbox">
-    <form id="loginform" class="form-vertical" action="{% url 'webscanners:auth' %}" method="POST">{% csrf_token %}
+    <form id="loginform" class="form-vertical" action="{% url 'auth' %}" method="POST">{% csrf_token %}
         <div class="control-group normal_text"><h3><img src="{% static 'archery.png' %}"
                                                         style="max-width:190px; margin-top: 10px;" alt=""/></h3></div>
         <div class="control-group">
@@ -50,8 +50,8 @@
             </div>
         </div>
         <div class="form-actions">
-            <span class="pull-left"><a href="{% url 'webscanners:signup' %}" class="btn btn-lg btn-primary"
-                                       type="submit" tabindex="2">Sign Up</a></span>
+{#            <span class="pull-left"><a href="{% url 'webscanners:signup' %}" class="btn btn-lg btn-primary"#}
+{#                                       type="submit" tabindex="2">Sign Up</a></span>#}
 
             <span class="pull-right"><button class="btn btn-lg btn-primary " type="submit">Sign in</button></span>
         </div>

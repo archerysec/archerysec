@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+
 from user_management.models import UserProfile
 
 
@@ -36,7 +37,9 @@ class WebScansDb(models.Model):
     rescan_id = models.TextField(blank=True, null=True)
     scan_date = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     total_vul = models.IntegerField(blank=True, null=True)
     critical_vul = models.IntegerField(blank=True, null=True)
     high_vul = models.IntegerField(blank=True, null=True)
@@ -68,7 +71,9 @@ class WebScanResultsDb(models.Model):
     description = models.TextField(blank=True)
     instance = models.TextField(blank=True)
     reference = models.TextField(blank=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     severity_color = models.TextField(blank=True)
     severity = models.TextField(blank=True, null=True)
     date_time = models.DateTimeField(null=True)
@@ -99,7 +104,9 @@ class web_scan_db(models.Model):
     scan_id = models.UUIDField(blank=True)
     scan_date = models.TextField(blank=True)
     scan_status = models.TextField(blank=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     total_vul = models.IntegerField(blank=True)
     high_vul = models.IntegerField(blank=True)
     medium_vul = models.IntegerField(blank=True)
@@ -119,7 +126,9 @@ class task_schedule_db(models.Model):
     task_id = models.TextField(blank=True, null=True)
     target = models.TextField(blank=True, null=True)
     schedule_time = models.TextField(blank=True, null=True)
-    project = models.ForeignKey('projects.ProjectDb', on_delete=models.CASCADE, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scanner = models.TextField(blank=True, null=True)
     periodic_task = models.TextField(blank=True, null=True)
 

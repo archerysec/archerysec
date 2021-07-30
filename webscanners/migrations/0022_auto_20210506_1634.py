@@ -6,17 +6,17 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0021_auto_20210130_0655'),
+        ("webscanners", "0021_auto_20210130_0655"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='zap_scan_results_db',
+            name="zap_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='zap_scans_db',
+            name="zap_scans_db",
         ),
         migrations.DeleteModel(
-            name='zap_spider_results',
+            name="zap_spider_results",
         ),
     ]

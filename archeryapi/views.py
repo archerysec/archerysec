@@ -22,17 +22,18 @@ from itertools import chain
 
 import defusedxml.ElementTree as ET
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import UploadedFile
 from lxml import etree
 from rest_framework import generics, status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from stronghold.decorators import public
-from django.core.files.uploadedfile import UploadedFile
 
 from archeryapi.serializers import CreateUser
 from compliance.models import DockleScanDb, InspecScanDb
 from networkscanners import views
+from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from networkscanners.serializers import (NetworkScanDbSerializer,
                                          NetworkScanResultsDbSerializer)
 from projects.models import MonthDb, ProjectDb
@@ -59,18 +60,18 @@ from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
                                                  webinspect_xml_parser,
                                                  zap_xml_parser)
 from scanners.scanner_plugin.web_scanner import burp_plugin
-from staticscanners.serializers import (StaticScanDbSerializer, StaticScanResultsDbSerializer)
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
+from staticscanners.serializers import (StaticScanDbSerializer,
+                                        StaticScanResultsDbSerializer)
 from tools.models import NiktoResultDb
 from webscanners.arachniscanner.views import launch_arachni_scan
-from webscanners.models import (WebScanResultsDb, WebScansDb)
-from webscanners.serializers import (WebScanResultsDbSerializer,
+from webscanners.models import WebScanResultsDb, WebScansDb
+from webscanners.serializers import (UploadScanSerializer,
+                                     WebScanResultsDbSerializer,
                                      WebScansDbSerializer,
-                                     UploadScanSerializer,
                                      WebScanStatusSerializer,
                                      ZapScanStatusDataSerializers)
 from webscanners.zapscanner.views import launch_zap_scan
-from networkscanners.models import NetworkScanResultsDb, NetworkScanDb
-from staticscanners.models import StaticScansDb, StaticScanResultsDb
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -81,7 +82,7 @@ class WebScan(generics.ListCreateAPIView):
         """
         GET List all scans and check status.
         """
-        
+
         all_scans = WebScansDb.objects.filter()
         serialized_scans = WebScansDbSerializer(all_scans, many=True)
         return Response(serialized_scans.data)
@@ -90,7 +91,7 @@ class WebScan(generics.ListCreateAPIView):
         """
         Launch scans using this api
         """
-        
+
         serializer = WebScansDbSerializer(data=request.data)
         if serializer.is_valid():
             scan_id = uuid.uuid4()
@@ -121,7 +122,7 @@ class WebScan(generics.ListCreateAPIView):
                     project_id=project_id,
                     url=target_url,
                     date_time=date_time,
-                    scanner='Burp'
+                    scanner="Burp",
                 )
                 scan_dump.save()
                 try:
@@ -239,9 +240,7 @@ class Project(generics.CreateAPIView):
 
             date_time = datetime.datetime.now()
 
-            all_project = ProjectDb.objects.filter(
-                project_name=project_name
-            )
+            all_project = ProjectDb.objects.filter(project_name=project_name)
 
             for project in all_project:
                 _project_name = project.project_name
@@ -313,12 +312,8 @@ class WebScanResult(generics.ListCreateAPIView):
             scan_id = request.data.get(
                 "scan_id",
             )
-            zap_scan = WebScanResultsDb.objects.filter(
-               scan_id=scan_id, scanner='zap'
-            )
-            burp_scan = WebScanResultsDb.objects.filter(
-                scan_id=scan_id, scanner='Burp'
-            )
+            zap_scan = WebScanResultsDb.objects.filter(scan_id=scan_id, scanner="zap")
+            burp_scan = WebScanResultsDb.objects.filter(scan_id=scan_id, scanner="Burp")
             all_scans = chain(zap_scan, burp_scan)
             serialized_scans = WebScanResultsDbSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
@@ -376,9 +371,7 @@ class UpdateZapStatus(generics.CreateAPIView):
         if serializer.is_valid():
             scan_id = request.data.get("scan_id")
             scan_status = request.data.get("scan_status")
-            WebScansDb.objects.filter(scan_id=scan_id).update(
-                scan_status=scan_status
-            )
+            WebScansDb.objects.filter(scan_id=scan_id).update(scan_status=scan_status)
             return Response(
                 {"message": "ZAP Scanner status updated %s", "Scan Status": scan_status}
             )
@@ -402,74 +395,92 @@ class UploadScanResult(APIView):
         # add your scanner here
         if scanner == "zap_scan":
             date_time = datetime.datetime.now()
-            scan_dump = WebScansDb(scan_url=scan_url,
-                                   scan_id=scan_id,
-                                   date_time=date_time,
-                                   project_id=project_id,
-                                   scan_status=scan_status,
-                                   scanner='Zap'
-                                   )
+            scan_dump = WebScansDb(
+                scan_url=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                scanner="Zap",
+            )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
+                "ascii", "ignore"
+            )
             root_xml_en = ET.fromstring(en_root_xml)
 
-            zap_xml_parser.xml_parser(project_id=project_id,
-                                      scan_id=scan_id,
-                                      root=root_xml_en,
-                                      )
-            return Response({"message": "ZAP Scan Data Uploaded",
-                             "scanner": scanner,
-                             "project_id": project_id,
-                             "scan_id": scan_id
-                             })
+            zap_xml_parser.xml_parser(
+                project_id=project_id,
+                scan_id=scan_id,
+                root=root_xml_en,
+            )
+            return Response(
+                {
+                    "message": "ZAP Scan Data Uploaded",
+                    "scanner": scanner,
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                }
+            )
         elif scanner == "burp_scan":
             date_time = datetime.datetime.now()
-            scan_dump = WebScansDb(scan_url=scan_url,
-                                   scan_id=scan_id,
-                                   date_time=date_time,
-                                   project_id=project_id,
-                                   scan_status=scan_status,
-                                   scanner='Burp'
-                                   )
+            scan_dump = WebScansDb(
+                scan_url=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                scanner="Burp",
+            )
             scan_dump.save()
             # Burp scan XML parser
             root_xml = ET.fromstring(file)
-            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
+                "ascii", "ignore"
+            )
             root_xml_en = ET.fromstring(en_root_xml)
 
-            burp_xml_parser.burp_scan_data(root_xml_en,
-                                           project_id,
-                                           scan_id,
-                                           )
-            return Response({"message": "Burp Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            burp_xml_parser.burp_scan_data(
+                root_xml_en,
+                project_id,
+                scan_id,
+            )
+            return Response(
+                {
+                    "message": "Burp Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
         elif scanner == "arachni":
             date_time = datetime.datetime.now()
-            scan_dump = WebScansDb(scan_url=scan_url,
-                                   scan_id=scan_id,
-                                   date_time=date_time,
-                                   project_id=project_id,
-                                   scan_status=scan_status,
-                                   
-                                   scanner='Arachni'
-                                   )
+            scan_dump = WebScansDb(
+                scan_url=scan_url,
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                scanner="Arachni",
+            )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            arachni_xml_parser.xml_parser(project_id=project_id,
-                                          scan_id=scan_id,
-                                          root=root_xml,
-                                          
-                                          target_url=scan_url)
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            arachni_xml_parser.xml_parser(
+                project_id=project_id,
+                scan_id=scan_id,
+                root=root_xml,
+                target_url=scan_url,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
         elif scanner == "acunetix":
             date_time = datetime.datetime.now()
@@ -479,23 +490,29 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                scanner='Acunetix'
+                scanner="Acunetix",
             )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
+                "ascii", "ignore"
+            )
             root_xml_en = ET.fromstring(en_root_xml)
-            acunetix_xml_parser.xml_parser(project_id=project_id,
-                                           scan_id=scan_id,
-                                           root=root_xml_en,
-                                           )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            acunetix_xml_parser.xml_parser(
+                project_id=project_id,
+                scan_id=scan_id,
+                root=root_xml_en,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'netsparker':
+        elif scanner == "netsparker":
             date_time = datetime.datetime.now()
             scan_dump = WebScansDb(
                 scan_url=scan_url,
@@ -503,21 +520,24 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Netsparker'
+                scanner="Netsparker",
             )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            netsparker_xml_parser.xml_parser(project_id=project_id,
-                                             scan_id=scan_id,
-                                             root=root_xml,
-                                             )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
-        elif scanner == 'webinspect':
+            netsparker_xml_parser.xml_parser(
+                project_id=project_id,
+                scan_id=scan_id,
+                root=root_xml,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
+        elif scanner == "webinspect":
             date_time = datetime.datetime.now()
             scan_dump = WebScansDb(
                 scan_url=scan_url,
@@ -525,22 +545,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Webinspect'
+                scanner="Webinspect",
             )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            webinspect_xml_parser.xml_parser(project_id=project_id,
-                                             scan_id=scan_id,
-                                             root=root_xml,
-                                             )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            webinspect_xml_parser.xml_parser(
+                project_id=project_id,
+                scan_id=scan_id,
+                root=root_xml,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'banditscan':
+        elif scanner == "banditscan":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -548,22 +571,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Banditscan'
+                scanner="Banditscan",
             )
             scan_dump.save()
             data = json.loads(file)
-            bandit_report_json(data=data,
-                               project_id=project_id,
-                               scan_id=scan_id,
-                               )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            bandit_report_json(
+                data=data,
+                project_id=project_id,
+                scan_id=scan_id,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'dependencycheck':
+        elif scanner == "dependencycheck":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -571,22 +597,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Dependencycheck'
+                scanner="Dependencycheck",
             )
             scan_dump.save()
-            xml_dat = bytes(bytearray(file, encoding='utf-8'))
+            xml_dat = bytes(bytearray(file, encoding="utf-8"))
             data = etree.XML(xml_dat)
-            dependencycheck_report_parser.xml_parser(project_id=project_id,
-                                                     scan_id=scan_id,
-                                                     data=data,
-                                                     )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
-        elif scanner == 'findbugs':
+            dependencycheck_report_parser.xml_parser(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
+        elif scanner == "findbugs":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -594,22 +623,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Findbugs'
+                scanner="Findbugs",
             )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            findbugs_report_parser.xml_parser(project_id=project_id,
-                                              scan_id=scan_id,
-                                              root=root_xml,
-                                              )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            findbugs_report_parser.xml_parser(
+                project_id=project_id,
+                scan_id=scan_id,
+                root=root_xml,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'checkmarx':
+        elif scanner == "checkmarx":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -617,21 +649,24 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Checkmarx'
+                scanner="Checkmarx",
             )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            checkmarx_xml_report_parser.checkmarx_report_xml(data=root_xml,
-                                                             project_id=project_id,
-                                                             scan_id=scan_id,
-                                                             )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
-        elif scanner == 'clair':
+            checkmarx_xml_report_parser.checkmarx_report_xml(
+                data=root_xml,
+                project_id=project_id,
+                scan_id=scan_id,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
+        elif scanner == "clair":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -639,22 +674,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Clair'
+                scanner="Clair",
             )
             scan_dump.save()
             data = json.loads(file)
-            clair_json_report_parser.clair_report_json(project_id=project_id,
-                                                       scan_id=scan_id,
-                                                       data=data,
-                                                       )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            clair_json_report_parser.clair_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'trivy':
+        elif scanner == "trivy":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -662,22 +700,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Trivy'
+                scanner="Trivy",
             )
             scan_dump.save()
             data = json.loads(file)
-            trivy_json_report_parser.trivy_report_json(project_id=project_id,
-                                                       scan_id=scan_id,
-                                                       data=data,
-                                                       )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            trivy_json_report_parser.trivy_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'gitlabsca':
+        elif scanner == "gitlabsca":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -685,22 +726,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Gitlabsca'
+                scanner="Gitlabsca",
             )
             scan_dump.save()
             data = json.loads(file)
-            gitlab_sca_json_report_parser.gitlabsca_report_json(project_id=project_id,
-                                                                scan_id=scan_id,
-                                                                data=data,
-                                                                )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            gitlab_sca_json_report_parser.gitlabsca_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'gitlabsast':
+        elif scanner == "gitlabsast":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -708,22 +752,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Gitlabsast'
+                scanner="Gitlabsast",
             )
             scan_dump.save()
             data = json.loads(file)
-            gitlab_sast_json_report_parser.gitlabsast_report_json(project_id=project_id,
-                                                                  scan_id=scan_id,
-                                                                  data=data,
-                                                                  )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            gitlab_sast_json_report_parser.gitlabsast_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'gitlabcontainerscan':
+        elif scanner == "gitlabcontainerscan":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -731,22 +778,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Gitlabcontainerscan'
+                scanner="Gitlabcontainerscan",
             )
             scan_dump.save()
             data = json.loads(file)
-            gitlab_container_json_report_parser.gitlabcontainerscan_report_json(project_id=project_id,
-                                                                                scan_id=scan_id,
-                                                                                data=data,
-                                                                                )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            gitlab_container_json_report_parser.gitlabcontainerscan_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'npmaudit':
+        elif scanner == "npmaudit":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -754,22 +804,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Npmaudit'
+                scanner="Npmaudit",
             )
             scan_dump.save()
             data = json.loads(file)
-            npm_audit_report_json.npmaudit_report_json(project_id=project_id,
-                                                       scan_id=scan_id,
-                                                       data=data,
-                                                       )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            npm_audit_report_json.npmaudit_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'nodejsscan':
+        elif scanner == "nodejsscan":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -777,22 +830,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Nodejsscan'
+                scanner="Nodejsscan",
             )
             scan_dump.save()
             data = json.loads(file)
-            nodejsscan_report_json.nodejsscan_report_json(project_id=project_id,
-                                                          scan_id=scan_id,
-                                                          data=data,
-                                                          )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            nodejsscan_report_json.nodejsscan_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'semgrepscan':
+        elif scanner == "semgrepscan":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -800,22 +856,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Semgrepscan'
+                scanner="Semgrepscan",
             )
             scan_dump.save()
             data = json.loads(file)
-            semgrep_json_report_parser.semgrep_report_json(project_id=project_id,
-                                                           scan_id=scan_id,
-                                                           data=data,
-                                                           )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            semgrep_json_report_parser.semgrep_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'tfsec':
+        elif scanner == "tfsec":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -823,22 +882,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Tfsec'
+                scanner="Tfsec",
             )
             scan_dump.save()
             data = json.loads(file)
-            tfsec_report_parser.tfsec_report_json(project_id=project_id,
-                                                  scan_id=scan_id,
-                                                  data=data,
-                                                  )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            tfsec_report_parser.tfsec_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'whitesource':
+        elif scanner == "whitesource":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -846,22 +908,25 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Whitesource'
+                scanner="Whitesource",
             )
             scan_dump.save()
             data = json.loads(file)
-            whitesource_json_report_parser.whitesource_report_json(project_id=project_id,
-                                                                   scan_id=scan_id,
-                                                                   data=data,
-                                                                   )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            whitesource_json_report_parser.whitesource_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'inspec':
+        elif scanner == "inspec":
             date_time = datetime.datetime.now()
             scan_dump = InspecScanDb(
                 project_name=scan_url,
@@ -869,21 +934,24 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
             )
             scan_dump.save()
             data = json.loads(file)
-            inspec_json_parser.inspec_report_json(project_id=project_id,
-                                                  scan_id=scan_id,
-                                                  data=data,
-                                                  )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            inspec_json_parser.inspec_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'dockle':
+        elif scanner == "dockle":
             date_time = datetime.datetime.now()
             scan_dump = DockleScanDb(
                 project_name=scan_url,
@@ -891,80 +959,100 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
             )
             scan_dump.save()
             data = json.loads(file)
-            dockle_json_parser.dockle_report_json(project_id=project_id,
-                                                  scan_id=scan_id,
-                                                  data=data,
-                                                  )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            dockle_json_parser.dockle_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'nessus':
+        elif scanner == "nessus":
             root_xml = ET.fromstring(file)
-            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
+                "ascii", "ignore"
+            )
             root_xml_en = ET.fromstring(en_root_xml)
-            Nessus_Parser.updated_nessus_parser(root=root_xml_en,
-                                                scan_id=scan_id,
-                                                project_id=project_id,
-                                                
-                                                )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            Nessus_Parser.updated_nessus_parser(
+                root=root_xml_en,
+                scan_id=scan_id,
+                project_id=project_id,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'openvas':
+        elif scanner == "openvas":
             date_time = datetime.datetime.now()
             root_xml = ET.fromstring(file)
-            en_root_xml = ET.tostring(root_xml, encoding='utf8').decode('ascii', 'ignore')
+            en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
+                "ascii", "ignore"
+            )
             root_xml_en = ET.fromstring(en_root_xml)
             hosts = OpenVas_Parser.get_hosts(root_xml_en)
             for host in hosts:
-                scan_dump = NetworkScanDb(ip=host,
-                                          scan_id=scan_id,
-                                          date_time=date_time,
-                                          project_id=project_id,
-                                          scan_status=scan_status,
-                                          
-                                          scanner='Openvas'
-                                          )
+                scan_dump = NetworkScanDb(
+                    ip=host,
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    scanner="Openvas",
+                )
                 scan_dump.save()
-            OpenVas_Parser.updated_xml_parser(project_id=project_id,
-                                              scan_id=scan_id,
-                                              root=root_xml_en,
-                                              )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            OpenVas_Parser.updated_xml_parser(
+                project_id=project_id,
+                scan_id=scan_id,
+                root=root_xml_en,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'nikto':
+        elif scanner == "nikto":
             date_time = datetime.datetime.now()
             scan_dump = NiktoResultDb(
                 date_time=date_time,
                 scan_url=scan_url,
                 scan_id=scan_id,
                 project_id=project_id,
-                
             )
             scan_dump.save()
 
-            nikto_html_parser(file, project_id, scan_id, )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            nikto_html_parser(
+                file,
+                project_id,
+                scan_id,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'twistlock':
+        elif scanner == "twistlock":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
@@ -972,41 +1060,48 @@ class UploadScanResult(APIView):
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
-                
-                scanner='Twistlock'
+                scanner="Twistlock",
             )
             scan_dump.save()
             data = json.loads(file)
-            twistlock_json_report_parser.twistlock_report_json(project_id=project_id,
-                                                               scan_id=scan_id,
-                                                               data=data,
-                                                               )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            twistlock_json_report_parser.twistlock_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
-        elif scanner == 'brakeman':
+        elif scanner == "brakeman":
             date_time = datetime.datetime.now()
             scan_dump = StaticScansDb(
                 project_name=scan_url,
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
-                scan_status=scan_status,          
-                scanner='Brakeman'
+                scan_status=scan_status,
+                scanner="Brakeman",
             )
             scan_dump.save()
             data = json.loads(file)
-            brakeman_json_report_parser.brakeman_report_json(project_id=project_id,
-                                                             scan_id=scan_id,
-                                                             data=data,
-                                                             )
-            return Response({"message": "Scan Data Uploaded",
-                             "project_id": project_id,
-                             "scan_id": scan_id,
-                             "scanner": scanner
-                             })
+            brakeman_json_report_parser.brakeman_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return Response(
+                {
+                    "message": "Scan Data Uploaded",
+                    "project_id": project_id,
+                    "scan_id": scan_id,
+                    "scanner": scanner,
+                }
+            )
 
         return Response({"message": "Scan Data Uploaded"})

@@ -58,6 +58,7 @@ class WebScanResultsDbSerializer(serializers.Serializer):
     false_positive_hash = serializers.CharField(read_only=True)
     scanner = serializers.CharField(read_only=True)
 
+
 class UploadScanSerializer(serializers.Serializer):
     project_id = serializers.UUIDField()
     scanner = serializers.CharField()

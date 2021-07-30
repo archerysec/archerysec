@@ -27,20 +27,20 @@ import defusedxml.ElementTree as ET
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from notifications.signals import notify
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from scanners.scanner_parser.network_scanner import nmap_parser
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
-from tools.models import (NiktoResultDb, NiktoVulnDb, NmapResultDb,
-                          NmapScanDb, SslscanResultDb)
+from tools.models import (NiktoResultDb, NiktoVulnDb, NmapResultDb, NmapScanDb,
+                          SslscanResultDb)
 # NOTE[gmedian]: in order to be more portable we just import everything rather than add anything in this very script
 from tools.nmap_vulners.nmap_vulners_view import (nmap_vulners,
                                                   nmap_vulners_port,
                                                   nmap_vulners_scan)
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework import status
-from rest_framework.response import Response
 from user_management import permissions
 
 sslscan_output = None
@@ -51,11 +51,9 @@ all_nmap = ""
 
 class SslScanList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/sslscan_list.html'
+    template_name = "tools/sslscan_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         all_sslscan = SslscanResultDb.objects.filter()
@@ -65,15 +63,12 @@ class SslScanList(APIView):
 
 class SslScanLaunch(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/sslscan_list.html'
+    template_name = "tools/sslscan_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
-        sslscan_output = ''
+        sslscan_output = ""
         user = request.user
         scan_url = request.POST.get("scan_url")
         project_id = request.POST.get("project_id")
@@ -99,7 +94,7 @@ class SslScanLaunch(APIView):
                 scan_url=scans_url,
                 scan_id=scan_id,
                 project_id=project_id,
-                sslscan_output=sslscan_output
+                sslscan_output=sslscan_output,
             )
 
             dump_scans.save()
@@ -108,28 +103,23 @@ class SslScanLaunch(APIView):
 
 class SslScanResult(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/sslscan_result.html'
+    template_name = "tools/sslscan_result.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
-        scan_result = SslscanResultDb.objects.filter(
-            scan_id=scan_id
+        scan_result = SslscanResultDb.objects.filter(scan_id=scan_id)
+        return render(
+            request, "tools/sslscan_result.html", {"scan_result": scan_result}
         )
-        return render(request, "tools/sslscan_result.html", {"scan_result": scan_result})
 
 
 class SslScanDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/sslscan_list.html'
+    template_name = "tools/sslscan_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAdmin
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAdmin)
 
     def post(self, request):
         scan_id = request.POST.get("scan_id")
@@ -142,8 +132,7 @@ class SslScanDelete(APIView):
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
-            del_scan = SslscanResultDb.objects.filter(scan_id=vuln_id
-                                                      )
+            del_scan = SslscanResultDb.objects.filter(scan_id=vuln_id)
             del_scan.delete()
 
         return HttpResponseRedirect(reverse("tools:sslscan"))
@@ -151,11 +140,9 @@ class SslScanDelete(APIView):
 
 class NiktoScanList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nikto_scan_list.html'
+    template_name = "tools/nikto_scan_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         all_nikto = NiktoResultDb.objects.filter()
@@ -165,12 +152,9 @@ class NiktoScanList(APIView):
 
 class NiktoScanLaunch(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nikto_scan_list.html'
+    template_name = "tools/nikto_scan_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         user = request.user
@@ -193,7 +177,7 @@ class NiktoScanLaunch(APIView):
                 scan_id=scan_id,
                 project_id=project_id,
                 date_time=date_time,
-                nikto_status="Scan Started"
+                nikto_status="Scan Started",
             )
 
             dump_scans.save()
@@ -217,7 +201,11 @@ class NiktoScanLaunch(APIView):
                 f = codecs.open(nikto_res_path, "r")
                 data = f.read()
                 try:
-                    nikto_html_parser(data, project_id, scan_id, )
+                    nikto_html_parser(
+                        data,
+                        project_id,
+                        scan_id,
+                    )
                     notify.send(user, recipient=user, verb="Nikto Scan Completed")
                     NiktoResultDb.objects.filter(scan_id=scan_id).update(
                         nikto_status="Scan Completed"
@@ -248,7 +236,11 @@ class NiktoScanLaunch(APIView):
                     f = codecs.open(nikto_res_path, "r")
                     data = f.read()
                     try:
-                        nikto_html_parser(data, project_id, scan_id, )
+                        nikto_html_parser(
+                            data,
+                            project_id,
+                            scan_id,
+                        )
                         notify.send(user, recipient=user, verb="Nikto Scan Completed")
                         NiktoResultDb.objects.filter(scan_id=scan_id).update(
                             nikto_status="Scan Completed"
@@ -264,33 +256,30 @@ class NiktoScanLaunch(APIView):
 
 class NiktoScanResult(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nikto_scan_result.html'
+    template_name = "tools/nikto_scan_result.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
         scan_result = NiktoResultDb.objects.filter(scan_id=scan_id)
 
-        return render(request, "tools/nikto_scan_result.html", {"scan_result": scan_result})
+        return render(
+            request, "tools/nikto_scan_result.html", {"scan_result": scan_result}
+        )
 
 
 class NiktoResultVuln(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nikto_vuln_list.html'
+    template_name = "tools/nikto_vuln_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
         scan_result = NiktoVulnDb.objects.filter(scan_id=scan_id)
 
         vuln_data = NiktoVulnDb.objects.filter(
-
             scan_id=scan_id,
             false_positive="No",
         )
@@ -299,9 +288,7 @@ class NiktoResultVuln(APIView):
             scan_id=scan_id, false_positive="No", vuln_status="Closed"
         )
 
-        false_data = NiktoVulnDb.objects.filter(
-            scan_id=scan_id, false_positive="Yes"
-        )
+        false_data = NiktoVulnDb.objects.filter(scan_id=scan_id, false_positive="Yes")
 
         return render(
             request,
@@ -319,12 +306,12 @@ class NiktoResultVuln(APIView):
         status = request.POST.get("status")
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
-        NiktoVulnDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
-                                   ).update(false_positive=false_positive, vuln_status=status)
+        NiktoVulnDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
+            false_positive=false_positive, vuln_status=status
+        )
 
         if false_positive == "Yes":
-            vuln_info = NiktoVulnDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id
-                                                   )
+            vuln_info = NiktoVulnDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id)
             for vi in vuln_info:
                 discription = vi.discription
                 hostname = vi.hostname
@@ -332,8 +319,7 @@ class NiktoResultVuln(APIView):
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
-                NiktoVulnDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id
-                                           ).update(
+                NiktoVulnDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
                     false_positive=false_positive,
                     vuln_status=status,
                     false_positive_hash=false_positive_hash,
@@ -342,12 +328,9 @@ class NiktoResultVuln(APIView):
 
 class NiktoVulnDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nikto_vuln_list.html'
+    template_name = "tools/nikto_vuln_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         vuln_id = request.POST.get("del_vuln")
@@ -360,9 +343,7 @@ class NiktoVulnDelete(APIView):
         print("split_length"), split_length
         for i in range(0, split_length):
             _vuln_id = value_split.__getitem__(i)
-            delete_vuln = NiktoVulnDb.objects.filter(
-                vuln_id=_vuln_id
-            )
+            delete_vuln = NiktoVulnDb.objects.filter(vuln_id=_vuln_id)
             delete_vuln.delete()
 
         return HttpResponseRedirect("/tools/nikto_result_vul/?scan_id=%s" % scan_id)
@@ -370,12 +351,9 @@ class NiktoVulnDelete(APIView):
 
 class NiktoScanDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nikto_scan_list.html'
+    template_name = "tools/nikto_scan_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         scan_id = request.POST.get("scan_id")
@@ -388,9 +366,7 @@ class NiktoScanDelete(APIView):
         for i in range(0, split_length):
             _scan_id = value_split.__getitem__(i)
 
-            del_scan = NiktoResultDb.objects.filter(
-                scan_id=_scan_id
-            )
+            del_scan = NiktoResultDb.objects.filter(scan_id=_scan_id)
             del_scan.delete()
             del_scan = NiktoVulnDb.objects.filter(scan_id=_scan_id)
             del_scan.delete()
@@ -400,11 +376,9 @@ class NiktoScanDelete(APIView):
 
 class NmapScan(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nmap_scan.html'
+    template_name = "tools/nmap_scan.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         all_nmap = NmapScanDb.objects.filter()
@@ -414,18 +388,14 @@ class NmapScan(APIView):
 
 class Nmap(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nmap_list.html'
+    template_name = "tools/nmap_list.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         ip_address = request.GET["ip"]
 
-        all_nmap = NmapResultDb.objects.filter(
-            ip_address=ip_address
-        )
+        all_nmap = NmapResultDb.objects.filter(ip_address=ip_address)
 
         return render(request, "tools/nmap_list.html", {"all_nmap": all_nmap})
 
@@ -471,11 +441,9 @@ class Nmap(APIView):
 
 class NmapResult(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nmap_result.html'
+    template_name = "tools/nmap_result.html"
 
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
@@ -486,12 +454,9 @@ class NmapResult(APIView):
 
 class NmapScanDelete(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'tools/nmap_result.html'
+    template_name = "tools/nmap_result.html"
 
-    permission_classes = (
-        IsAuthenticated,
-        permissions.IsAnalyst
-    )
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         ip_address = request.POST.get("ip_address")
@@ -504,9 +469,7 @@ class NmapScanDelete(APIView):
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
-            del_scan = NmapResultDb.objects.filter(
-                ip_address=vuln_id
-            )
+            del_scan = NmapResultDb.objects.filter(ip_address=vuln_id)
             del_scan.delete()
             del_scan = NmapScanDb.objects.filter(scan_ip=vuln_id)
             del_scan.delete()

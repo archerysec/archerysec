@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0016_nodejsscan_scan_db_nodejsscan_scan_results_db'),
+        ("staticscanners", "0016_nodejsscan_scan_db_nodejsscan_scan_results_db"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='nodejsscan_scan_results_db',
-            name='severity',
+            model_name="nodejsscan_scan_results_db",
+            name="severity",
             field=models.TextField(blank=True, null=True),
         ),
     ]

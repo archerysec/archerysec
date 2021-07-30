@@ -30,12 +30,15 @@ from django.urls import reverse
 from notifications.models import Notification
 from notifications.signals import notify
 from PyBurprestapi import burpscanner
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.views import APIView
 
 from archerysettings.models import BurpSettingDb, SettingsDb
 from jiraticketing.models import jirasetting
 from scanners.scanner_plugin.web_scanner import burp_plugin
-from webscanners.models import (WebScansDb,
-                                WebScanResultsDb,
+from user_management import permissions
+from webscanners.models import (WebScanResultsDb, WebScansDb,
                                 burp_issue_definitions)
 from webscanners.resources import BurpResource
 
@@ -50,25 +53,44 @@ references = None
 vulnerability_classifications = None
 
 
-def burp_setting(request):
-    """
-    Load Burp Settings.
-    :param request:
-    :return:
-    """
-    user = request.user
+class BurpSetting(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/burpscanner/burp_setting_form.html"
 
-    all_burp_setting = BurpSettingDb.objects.filter()
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    for data in all_burp_setting:
-        global burp_url, burp_port, burp_api_key, remediation, issue_type_id, description, name, references, vulnerability_classifications
-        burp_url = data.burp_url
-        burp_port = data.burp_port
-        burp_api_key = data.burp_api_key
+    def get(self, request):
+        burp_url = ""
+        burp_port = ""
+        burp_api_key = ""
 
-    setting_id = uuid.uuid4()
+        all_burp_setting = BurpSettingDb.objects.all()
 
-    if request.method == "POST":
+        for data in all_burp_setting:
+            burp_url = data.burp_url
+            burp_port = data.burp_port
+            burp_api_key = data.burp_api_key
+
+        return render(
+            request,
+            "webscanners/burpscanner/burp_setting_form.html",
+            {
+                "burp_url": burp_url,
+                "burp_port": burp_port,
+                "burp_api_key": burp_api_key,
+            },
+        )
+
+    def post(self, request):
+        remediation = ""
+        issue_type_id = ""
+        description = ""
+        name = ""
+        references = ""
+        vulnerability_classifications = ""
+
+        user = request.user
+        setting_id = uuid.uuid4()
         burphost = request.POST.get("burpath")
         burport = request.POST.get("burport")
         burpapikey = request.POST.get("burpapikey")
@@ -82,7 +104,7 @@ def burp_setting(request):
 
         setting_dat = SettingsDb(
             setting_id=setting_id,
-            setting_scanner='Burp',
+            setting_scanner="Burp",
         )
         setting_dat.save()
 
@@ -118,28 +140,21 @@ def burp_setting(request):
 
         except Exception as e:
             print(e)
-            SettingsDb.objects.filter(setting_id=setting_id).update(setting_status=False)
+            SettingsDb.objects.filter(setting_id=setting_id).update(
+                setting_status=False
+            )
             notify.send(user, recipient=user, verb="Burp Connection Not Found")
 
         return HttpResponseRedirect(reverse("archerysettings:settings"))
 
-    return render(
-        request,
-        "webscanners/burpscanner/burp_setting_form.html",
-        {"burp_url": burp_url, "burp_port": burp_port, "burp_api_key": burp_api_key},
-    )
 
+class BurpScanLaunch(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_scans.html"
 
-def burp_scan_launch(request):
-    """
-    Burp Scan Trigger.
-    :param request:
-    :return:
-    """
-    user = request.user
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    global vuln_id, burp_status
-    if request.POST.get("url"):
+    def post(self, request):
         target_url = request.POST.get("url")
         project_id = request.POST.get("project_id")
         target__split = target_url.split(",")
@@ -160,7 +175,7 @@ def burp_scan_launch(request):
             except Exception as e:
                 print(e)
 
-    return render(request, "webscanners/scans/list_scans.html")
+        return render(request, "webscanners/scans/list_scans.html")
 
 
 def export(request):
@@ -177,7 +192,8 @@ def export(request):
         value_split = value.split(",")
 
         zap_resource = BurpResource()
-        queryset = WebScanResultsDb.objects.filter(scanner='Burp', scan_id__in=value_split
+        queryset = WebScanResultsDb.objects.filter(
+            scanner="Burp", scan_id__in=value_split
         )
         dataset = zap_resource.export(queryset)
         if report_type == "csv":

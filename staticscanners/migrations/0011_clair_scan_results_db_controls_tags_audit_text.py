@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0010_clair_scan_db_clair_scan_results_db'),
+        ("staticscanners", "0010_clair_scan_db_clair_scan_results_db"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='clair_scan_results_db',
-            name='controls_tags_audit_text',
+            model_name="clair_scan_results_db",
+            name="controls_tags_audit_text",
             field=models.TextField(blank=True, null=True),
         ),
     ]

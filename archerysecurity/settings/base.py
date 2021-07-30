@@ -47,37 +47,35 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    'archerysecurity',
-    'rest_framework',
-    'webscanners',
-    'projects',
-    'archerysettings',
-    'networkscanners',
-    'staticscanners',
-    'jiraticketing',
-    'tools',
-    'pentest',
-    'django.contrib.admin',
-    'stronghold',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework.authtoken',
-    'debug_toolbar',
-    'dashboard',
-    'background_task',
-    'sitetree',
-    'import_export',
-    'compliance',
-    'notifications',
-    'rest_framework_jwt',
-    'user_management',
-    'authentication',
+    "archerysecurity",
+    "rest_framework",
+    "webscanners",
+    "projects",
+    "archerysettings",
+    "networkscanners",
+    "staticscanners",
+    "jiraticketing",
+    "tools",
+    "pentest",
+    "django.contrib.admin",
+    "stronghold",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework.authtoken",
+    "debug_toolbar",
+    "dashboard",
+    "background_task",
+    "sitetree",
+    "import_export",
+    "compliance",
+    "notifications",
+    "rest_framework_jwt",
+    "user_management",
+    "authentication",
     "rest_framework_simplejwt.token_blacklist",
-
-
 ]
 
 MIDDLEWARE = [
@@ -98,7 +96,7 @@ ROOT_URLCONF = "archerysecurity.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -177,7 +175,7 @@ STRONGHOLD_PUBLIC_URLS = (
     r"^/api/createuser/$",
 )
 
-LOGIN_URL = "/login/"
+LOGIN_URL = "/auth/login/"
 
 LOGIN_REDIRECT_URL = "/user/accounts/"
 

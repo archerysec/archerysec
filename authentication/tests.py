@@ -17,6 +17,7 @@
 import base64
 import json
 import logging
+
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken

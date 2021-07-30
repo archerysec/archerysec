@@ -17,17 +17,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import uuid
+
 from django.core import signing
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from jira import JIRA
 from notifications.signals import notify
 
+from archerysettings.models import SettingsDb
 from jiraticketing.models import jirasetting
 from networkscanners.models import NetworkScanResultsDb
-from webscanners.models import (WebScanResultsDb)
-from archerysettings.models import SettingsDb
-import uuid
+from webscanners.models import WebScanResultsDb
 
 jira_url = ""
 j_username = ""
@@ -64,7 +65,7 @@ def jira_setting(request):
 
         setting_dat = SettingsDb(
             setting_id=setting_id,
-            setting_scanner='Jira',
+            setting_scanner="Jira",
         )
         setting_dat.save()
 
@@ -168,25 +169,25 @@ def submit_jira_ticket(request):
         print(new_issue)
 
         if scanner == "zap":
-            WebScanResultsDb.objects.filter(
-                vuln_id=vuln_id, scanner='zap'
-            ).update(jira_ticket=new_issue)
+            WebScanResultsDb.objects.filter(vuln_id=vuln_id, scanner="zap").update(
+                jira_ticket=new_issue
+            )
             return HttpResponseRedirect(
                 reverse("zapscanner:zap_vuln_details")
                 + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
             )
         elif scanner == "burp":
-            WebScanResultsDb.objects.filter(
-                vuln_id=vuln_id, scanner='Burp'
-            ).update(jira_ticket=new_issue)
+            WebScanResultsDb.objects.filter(vuln_id=vuln_id, scanner="Burp").update(
+                jira_ticket=new_issue
+            )
             return HttpResponseRedirect(
                 reverse("burpscanner:burp_vuln_out")
                 + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
             )
         elif scanner == "arachni":
-            WebScanResultsDb.objects.filter(
-                vuln_id=vuln_id, scanner='Arachni'
-            ).update(jira_ticket=new_issue)
+            WebScanResultsDb.objects.filter(vuln_id=vuln_id, scanner="Arachni").update(
+                jira_ticket=new_issue
+            )
             return HttpResponseRedirect(
                 reverse("arachniscanner:arachni_vuln_out")
                 + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
@@ -194,7 +195,7 @@ def submit_jira_ticket(request):
 
         elif scanner == "netsparker":
             WebScanResultsDb.objects.filter(
-                vuln_id=vuln_id, scanner='Netsparker'
+                vuln_id=vuln_id, scanner="Netsparker"
             ).update(jira_ticket=new_issue)
             return HttpResponseRedirect(
                 reverse("netsparkerscanner:netsparker_vuln_out")
@@ -203,7 +204,7 @@ def submit_jira_ticket(request):
 
         elif scanner == "webinspect":
             WebScanResultsDb.objects.filter(
-                vuln_id=vuln_id, scanner='Webinspect'
+                vuln_id=vuln_id, scanner="Webinspect"
             ).update(jira_ticket=new_issue)
             return HttpResponseRedirect(
                 reverse("webinspectscanner:webinspect_vuln_out")
@@ -211,9 +212,9 @@ def submit_jira_ticket(request):
             )
 
         elif scanner == "acunetix":
-            WebScanResultsDb.objects.filter(
-                vuln_id=vuln_id, scanner='Acunetix'
-            ).update(jira_ticket=new_issue)
+            WebScanResultsDb.objects.filter(vuln_id=vuln_id, scanner="Acunetix").update(
+                jira_ticket=new_issue
+            )
             return HttpResponseRedirect(
                 reverse("acunetixscanner:acunetix_vuln_out")
                 + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
@@ -292,9 +293,9 @@ def submit_jira_ticket(request):
         #     )
 
         elif scanner == "open_vas":
-            NetworkScanResultsDb.objects.filter(
-                vul_id=vuln_id
-            ).update(jira_ticket=new_issue)
+            NetworkScanResultsDb.objects.filter(vul_id=vuln_id).update(
+                jira_ticket=new_issue
+            )
             return HttpResponseRedirect(
                 reverse("networkscanners:vul_details") + "?scan_id=%s" % scan_id
             )

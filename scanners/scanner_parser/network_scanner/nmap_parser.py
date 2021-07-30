@@ -142,7 +142,7 @@ def xml_parser(root, project_id, scan_id):
                     cpe=cpe,
                     used_state=used_state,
                     used_portid=used_portid,
-                    used_proto=used_proto
+                    used_proto=used_proto,
                 )
                 dump_data.save()
 
@@ -188,6 +188,6 @@ def xml_parser(root, project_id, scan_id):
                                         scan_ip=ip_address,
                                         total_ports=total_ports,
                                         total_open_ports=total_open_p,
-                                        total_close_ports=total_close_p
+                                        total_close_ports=total_close_p,
                                     )
                                     save_scan.save()

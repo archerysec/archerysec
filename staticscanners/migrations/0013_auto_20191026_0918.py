@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0012_auto_20190824_0202'),
+        ("staticscanners", "0012_auto_20190824_0202"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='bandit_scan_results_db',
-            name='more_info',
+            model_name="bandit_scan_results_db",
+            name="more_info",
             field=models.TextField(blank=True, null=True),
         ),
     ]

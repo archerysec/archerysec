@@ -20,8 +20,7 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from staticscanners.models import (StaticScanResultsDb,
-                                   StaticScansDb)
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
 
 vul_col = ""
@@ -72,14 +71,16 @@ def nodejsscan_report_json(data, project_id, scan_id):
 
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
+            match_dup = StaticScanResultsDb.objects.filter(
+                dup_hash=duplicate_hash
             ).values("dup_hash")
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
                 duplicate_vuln = "No"
 
-                false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+                false_p = StaticScanResultsDb.objects.filter(
+                    false_positive_hash=duplicate_hash
                 )
                 fp_lenth_match = len(false_p)
 
@@ -102,8 +103,12 @@ def nodejsscan_report_json(data, project_id, scan_id):
                     fileName=filename,
                     severity=severity,
                     filePath=path,
-                    description=str(description) + '\n\n' + str(line) + '\n\n' + str(lines),
-                    scanner='Nodejsscan'
+                    description=str(description)
+                    + "\n\n"
+                    + str(line)
+                    + "\n\n"
+                    + str(lines),
+                    scanner="Nodejsscan",
                 )
                 save_all.save()
 
@@ -119,20 +124,26 @@ def nodejsscan_report_json(data, project_id, scan_id):
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    false_positive='Duplicate',
+                    false_positive="Duplicate",
                     title=title,
                     fileName=filename,
                     severity=severity,
                     filePath=path,
-                    description=str(description) + '\n\n' + str(line) + '\n\n' + str(lines),
-                    scanner='Nodejsscan'
+                    description=str(description)
+                    + "\n\n"
+                    + str(line)
+                    + "\n\n"
+                    + str(lines),
+                    scanner="Nodejsscan",
                 )
                 save_all.save()
 
-        all_findbugs_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
+        all_findbugs_data = StaticScanResultsDb.objects.filter(
+            scan_id=scan_id, false_positive="No"
         )
 
-        duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
+        duplicate_count = StaticScanResultsDb.objects.filter(
+            scan_id=scan_id, vuln_duplicate="Yes"
         )
 
         total_vul = len(all_findbugs_data)
@@ -148,7 +159,7 @@ def nodejsscan_report_json(data, project_id, scan_id):
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
-            scanner='Nodejsscan'
+            scanner="Nodejsscan",
         )
         trend_update()
         subject = "Archery Tool Scan Status - Nodejsscan Report Uploaded"

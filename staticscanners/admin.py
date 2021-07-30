@@ -15,6 +15,7 @@
 # This file is part of ArcherySec Project.
 
 from django.contrib import admin
+
 from staticscanners import models
 
 admin.site.register(models.StaticScansDb)

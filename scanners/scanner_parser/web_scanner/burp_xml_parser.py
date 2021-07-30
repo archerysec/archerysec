@@ -22,11 +22,10 @@ from datetime import datetime
 from django.shortcuts import HttpResponse
 
 from dashboard.views import trend_update
+from utility.email_notify import email_sch_notify
 # from django.core.mail import send_mail
 from webscanners import email_notification
-from webscanners.models import (WebScansDb,
-                                WebScanResultsDb)
-from utility.email_notify import email_sch_notify
+from webscanners.models import WebScanResultsDb, WebScansDb
 
 project_id = None
 target_url = None
@@ -151,8 +150,18 @@ def burp_scan_data(root, project_id, scan_id):
                 else:
                     issue_vulnerability_classifications = data.text
 
-        details = str(issue_description) + str('\n') + str(request_datas) + str('\n\n') + str(response_datas) + str(
-            '\n\n') + str('\n\n') + str(issue_description) + str('\n\n') + str(issue_vulnerability_classifications)
+        details = (
+            str(issue_description)
+            + str("\n")
+            + str(request_datas)
+            + str("\n\n")
+            + str(response_datas)
+            + str("\n\n")
+            + str("\n\n")
+            + str(issue_description)
+            + str("\n\n")
+            + str(issue_vulnerability_classifications)
+        )
 
         if severity == "High":
             vul_col = "danger"
@@ -170,17 +179,17 @@ def burp_scan_data(root, project_id, scan_id):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = (
-            WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, scanner='Burp'
-            )
-                .values("dup_hash")
-                .distinct()
+            WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, scanner="Burp")
+            .values("dup_hash")
+            .distinct()
         )
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
-            false_p = WebScanResultsDb.objects.filter(false_positive_hash=duplicate_hash, scanner='Burp'
+            false_p = WebScanResultsDb.objects.filter(
+                false_positive_hash=duplicate_hash, scanner="Burp"
             )
             fp_lenth_match = len(false_p)
 
@@ -211,7 +220,7 @@ def burp_scan_data(root, project_id, scan_id):
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    scanner='Burp'
+                    scanner="Burp",
                 )
                 data_dump.save()
             except Exception as e:
@@ -237,16 +246,18 @@ def burp_scan_data(root, project_id, scan_id):
                     vuln_status="Duplicate",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    scanner='Burp'
+                    scanner="Burp",
                 )
                 data_dump.save()
             except Exception as e:
                 print(e)
 
-    burp_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, scanner='Burp', false_positive="No"
+    burp_all_vul = WebScanResultsDb.objects.filter(
+        scan_id=scan_id, scanner="Burp", false_positive="No"
     )
 
-    duplicate_count = WebScanResultsDb.objects.filter(scan_id=scan_id, scanner='Burp', vuln_duplicate="Yes"
+    duplicate_count = WebScanResultsDb.objects.filter(
+        scan_id=scan_id, scanner="Burp", vuln_duplicate="Yes"
     )
 
     total_vul = len(burp_all_vul)
@@ -255,7 +266,7 @@ def burp_scan_data(root, project_id, scan_id):
     total_low = len(burp_all_vul.filter(severity="Low"))
     total_info = len(burp_all_vul.filter(severity="Information"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
-    WebScansDb.objects.filter(scan_id=scan_id, scanner='Burp').update(
+    WebScansDb.objects.filter(scan_id=scan_id, scanner="Burp").update(
         scan_url=host,
         date_time=date_time,
         total_vul=total_vul,
@@ -269,9 +280,9 @@ def burp_scan_data(root, project_id, scan_id):
     trend_update()
     subject = "Archery Tool Scan Status - Burp Report Uploaded"
     message = (
-            "Burp Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s" % (host, total_vul, total_high, total_medium, total_low)
+        "Burp Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s" % (host, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

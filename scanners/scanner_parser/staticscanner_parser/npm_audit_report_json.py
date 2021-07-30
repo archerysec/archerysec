@@ -112,14 +112,16 @@ def npmaudit_report_json(data, project_id, scan_id):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
-        ).values("dup_hash")
+        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash).values(
+            "dup_hash"
+        )
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
-            false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+            false_p = StaticScanResultsDb.objects.filter(
+                false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
 
@@ -139,17 +141,23 @@ def npmaudit_report_json(data, project_id, scan_id):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 title=title,
-                description=str(overview) + '\n\n'
-                            + str(vuln_versions)
-                            + '\n\n' + str(reported_by)
-                            + '\n\n' + str(module_name)
-                            + '\n\n' + str(cves) + '\n\n'
-                            + str(vuln_versions)
-                            + '\n\n' + str(patched_versions),
+                description=str(overview)
+                + "\n\n"
+                + str(vuln_versions)
+                + "\n\n"
+                + str(reported_by)
+                + "\n\n"
+                + str(module_name)
+                + "\n\n"
+                + str(cves)
+                + "\n\n"
+                + str(vuln_versions)
+                + "\n\n"
+                + str(patched_versions),
                 solution=recommendation,
                 references=references,
                 severity=severity,
-                scanner='Npmaudit'
+                scanner="Npmaudit",
             )
             save_all.save()
 
@@ -165,26 +173,34 @@ def npmaudit_report_json(data, project_id, scan_id):
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive='Duplicate',
+                false_positive="Duplicate",
                 title=title,
-                description=str(overview) + '\n\n'
-                            + str(vuln_versions)
-                            + '\n\n' + str(reported_by)
-                            + '\n\n' + str(module_name)
-                            + '\n\n' + str(cves) + '\n\n'
-                            + str(vuln_versions)
-                            + '\n\n' + str(patched_versions),
+                description=str(overview)
+                + "\n\n"
+                + str(vuln_versions)
+                + "\n\n"
+                + str(reported_by)
+                + "\n\n"
+                + str(module_name)
+                + "\n\n"
+                + str(cves)
+                + "\n\n"
+                + str(vuln_versions)
+                + "\n\n"
+                + str(patched_versions),
                 solution=recommendation,
                 references=references,
                 severity=severity,
-                scanner='Npmaudit'
+                scanner="Npmaudit",
             )
             save_all.save()
 
-    all_findbugs_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
+    all_findbugs_data = StaticScanResultsDb.objects.filter(
+        scan_id=scan_id, false_positive="No"
     )
 
-    duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
+    duplicate_count = StaticScanResultsDb.objects.filter(
+        scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_vul = len(all_findbugs_data)
@@ -200,15 +216,15 @@ def npmaudit_report_json(data, project_id, scan_id):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
-        scanner='Npmaudit'
+        scanner="Npmaudit",
     )
     trend_update()
     subject = "Archery Tool Scan Status - Npmaudit Report Uploaded"
     message = (
-            "Npmaudit Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % ("npm-audit", total_vul, total_high, total_medium, total_low)
+        "Npmaudit Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % ("npm-audit", total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

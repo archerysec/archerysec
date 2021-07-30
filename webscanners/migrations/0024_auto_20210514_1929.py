@@ -6,38 +6,38 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0023_delete_burp_scan_db'),
+        ("webscanners", "0023_delete_burp_scan_db"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='acunetix_scan_db',
+            name="acunetix_scan_db",
         ),
         migrations.DeleteModel(
-            name='acunetix_scan_result_db',
+            name="acunetix_scan_result_db",
         ),
         migrations.DeleteModel(
-            name='arachni_scan_db',
+            name="arachni_scan_db",
         ),
         migrations.DeleteModel(
-            name='arachni_scan_result_db',
+            name="arachni_scan_result_db",
         ),
         migrations.DeleteModel(
-            name='burp_issue_definitions',
+            name="burp_issue_definitions",
         ),
         migrations.DeleteModel(
-            name='burp_scan_result_db',
+            name="burp_scan_result_db",
         ),
         migrations.DeleteModel(
-            name='netsparker_scan_db',
+            name="netsparker_scan_db",
         ),
         migrations.DeleteModel(
-            name='netsparker_scan_result_db',
+            name="netsparker_scan_result_db",
         ),
         migrations.DeleteModel(
-            name='webinspect_scan_db',
+            name="webinspect_scan_db",
         ),
         migrations.DeleteModel(
-            name='webinspect_scan_result_db',
+            name="webinspect_scan_result_db",
         ),
     ]

@@ -15,15 +15,15 @@
 # This file is part of ArcherySec Project.
 
 
-from django.contrib.auth.hashers import make_password
 from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from django.http import HttpResponseRedirect
-from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer
-from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from user_management import permissions
 from user_management.models import *
@@ -32,7 +32,7 @@ from user_management.serializers import *
 
 class UsersList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'users/list_users.html'
+    template_name = "users/list_users.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -51,7 +51,7 @@ class UsersList(APIView):
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
-        return Response({'serializer': serialized_data, 'all_users': user_profile})
+        return Response({"serializer": serialized_data, "all_users": user_profile})
 
     def post(self, request):
         try:
@@ -59,15 +59,15 @@ class UsersList(APIView):
             user_profile = UserProfile.objects.get(uu_id=user_id)
             user_profile.delete()
             messages.success(request, "User Deleted")
-            return HttpResponseRedirect('/users/list_user/')
+            return HttpResponseRedirect("/users/list_user/")
         except UserProfile.DoesNotExist:
             messages.error(request, "User Doesn't Exist")
-            return HttpResponseRedirect('/users/list_user/')
+            return HttpResponseRedirect("/users/list_user/")
 
 
 class UsersEdit(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'users/edit_user.html'
+    template_name = "users/edit_user.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -87,7 +87,9 @@ class UsersEdit(APIView):
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
-        return Response({'serializer': serialized_data, 'user_details': user_details, 'org': org})
+        return Response(
+            {"serializer": serialized_data, "user_details": user_details, "org": org}
+        )
 
     def post(self, request, uu_id):
         serializer = UserPutReqSerializers(data=request.data)
@@ -105,12 +107,10 @@ class UsersEdit(APIView):
             role=role,
             name=name,
             image=image,
-            organization=organization
+            organization=organization,
         )
         if user_profile > 0:
-            return HttpResponseRedirect(
-                '/users/list_user/'
-            )
+            return HttpResponseRedirect("/users/list_user/")
         else:
             return Response(
                 {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
@@ -119,7 +119,7 @@ class UsersEdit(APIView):
 
 class UsersAdd(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'users/add_user.html'
+    template_name = "users/add_user.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -129,7 +129,7 @@ class UsersAdd(APIView):
     def get(self, request):
         org = Organization.objects.all()
 
-        return Response({'org': org})
+        return Response({"org": org})
 
     def post(self, request):
         serializer = UserCreatReqSerializers(data=request.data)
@@ -145,18 +145,16 @@ class UsersAdd(APIView):
         if user_exist:
             messages.error(request, "User Already Exist")
             content = {"message": "User Already Exist"}
-            return HttpResponseRedirect('/users/list_user/')
+            return HttpResponseRedirect("/users/list_user/")
         else:
-            UserProfile.objects.create_user(
-                email, name, role, organization, password
-            )
+            UserProfile.objects.create_user(email, name, role, organization, password)
             messages.success(request, "User Created")
-            return HttpResponseRedirect('/users/list_user/')
+            return HttpResponseRedirect("/users/list_user/")
 
 
 class Profile(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'profile/profile.html'
+    template_name = "profile/profile.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -170,7 +168,7 @@ class Profile(APIView):
         id = request.user.id
         user_profile = UserProfile.objects.filter(id=id)
         serializer = UserProfileSerializers(user_profile)
-        return Response({'serializer': serializer, 'profiles': user_profile})
+        return Response({"serializer": serializer, "profiles": user_profile})
 
     def put(self, request, uu_id):
         serializer = UserProfilePutReqSerializers(data=request.data)
@@ -220,7 +218,7 @@ class Roles(APIView):
 
 class OrganizationDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'organization/org_list.html'
+    template_name = "organization/org_list.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -233,7 +231,7 @@ class OrganizationDetail(APIView):
         """
         organization = Organization.objects.all()
         serialized_data = OrganizationSerializers(organization, many=False)
-        return Response({'serializer': serialized_data, 'organization': organization})
+        return Response({"serializer": serialized_data, "organization": organization})
 
     # Delete Organizaiton Functionality
     # def post(self, request):
@@ -250,7 +248,7 @@ class OrganizationDetail(APIView):
 
 class OrgAdd(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'organization/org_add.html'
+    template_name = "organization/org_add.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -260,7 +258,7 @@ class OrgAdd(APIView):
     def get(self, request):
         org = Organization.objects.all()
 
-        return Response({'org': org})
+        return Response({"org": org})
 
     def post(self, request):
         serializer = OrganizationSerializers(data=request.data)
@@ -269,16 +267,14 @@ class OrgAdd(APIView):
         name = request.data.get("name")
         description = request.data.get("description")
 
-        save_org = Organization(
-            name=name, description=description
-        )
+        save_org = Organization(name=name, description=description)
         save_org.save()
-        return HttpResponseRedirect('/users/list_org/')
+        return HttpResponseRedirect("/users/list_org/")
 
 
 class OrgEdit(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'organization/org_edit.html'
+    template_name = "organization/org_edit.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -294,9 +290,8 @@ class OrgEdit(APIView):
                 org_details = Organization.objects.get(uu_id=uu_id)
                 serialized_data = CreateOrganizationSerializers(org_details, many=False)
             except UserProfile.DoesNotExist:
-                return Response(
-                    template_name='error/404.html')
-        return Response({'serializer': serialized_data, 'org_details': org_details})
+                return Response(template_name="error/404.html")
+        return Response({"serializer": serialized_data, "org_details": org_details})
 
     def post(self, request, uu_id):
         serializer = CreateOrganizationSerializers(data=request.data)
@@ -309,9 +304,7 @@ class OrgEdit(APIView):
             description=description,
         )
         if org_add > 0:
-            return HttpResponseRedirect(
-                '/users/list_org/'
-            )
+            return HttpResponseRedirect("/users/list_org/")
         else:
             return Response(
                 {"message": "Org Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND

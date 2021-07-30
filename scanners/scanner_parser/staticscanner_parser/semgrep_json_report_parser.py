@@ -20,8 +20,7 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from staticscanners.models import (StaticScanResultsDb,
-                                   StaticScansDb)
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
 
 vul_col = ""
@@ -112,14 +111,16 @@ def semgrep_report_json(data, project_id, scan_id):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash
-        ).values("dup_hash")
+        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash).values(
+            "dup_hash"
+        )
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
-            false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash
+            false_p = StaticScanResultsDb.objects.filter(
+                false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
 
@@ -141,8 +142,18 @@ def semgrep_report_json(data, project_id, scan_id):
                 false_positive=false_positive,
                 fileName=path,
                 severity=severity,
-                description=str(message) + '\n\n' + str(check_id) + '\n\n' + str(end) + '\n\n' + str(metavars) + '\n\n' + str(metadata) + '\n\n' + str(lines),
-                scanner='Sempgrep'
+                description=str(message)
+                + "\n\n"
+                + str(check_id)
+                + "\n\n"
+                + str(end)
+                + "\n\n"
+                + str(metavars)
+                + "\n\n"
+                + str(metadata)
+                + "\n\n"
+                + str(lines),
+                scanner="Sempgrep",
             )
             save_all.save()
 
@@ -159,18 +170,30 @@ def semgrep_report_json(data, project_id, scan_id):
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive='Duplicate',
+                false_positive="Duplicate",
                 fileName=path,
                 severity=severity,
-                description=str(message) + '\n\n' + str(check_id) + '\n\n' + str(end) + '\n\n' + str(metavars) + '\n\n' + str(metadata) + '\n\n' + str(lines),
-                scanner='Semgrep'
+                description=str(message)
+                + "\n\n"
+                + str(check_id)
+                + "\n\n"
+                + str(end)
+                + "\n\n"
+                + str(metavars)
+                + "\n\n"
+                + str(metadata)
+                + "\n\n"
+                + str(lines),
+                scanner="Semgrep",
             )
             save_all.save()
 
-    all_findbugs_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No"
+    all_findbugs_data = StaticScanResultsDb.objects.filter(
+        scan_id=scan_id, false_positive="No"
     )
 
-    duplicate_count = StaticScanResultsDb.objects.filter(scan_id=scan_id, vuln_duplicate="Yes"
+    duplicate_count = StaticScanResultsDb.objects.filter(
+        scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_vul = len(all_findbugs_data)
@@ -186,7 +209,7 @@ def semgrep_report_json(data, project_id, scan_id):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
-        scanner='Semgrep'
+        scanner="Semgrep",
     )
     trend_update()
     subject = "Archery Tool Scan Status - semgrep Report Uploaded"

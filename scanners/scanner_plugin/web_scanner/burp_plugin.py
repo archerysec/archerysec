@@ -29,9 +29,8 @@ from PyBurprestapi import burpscanner
 
 from archerysettings.models import BurpSettingDb, EmailDb
 from webscanners import email_notification
-from webscanners.models import (WebScansDb,
-                                WebScanResultsDb)
-from webscanners.models import burp_issue_definitions
+from webscanners.models import (WebScanResultsDb, WebScansDb,
+                                burp_issue_definitions)
 
 to_mail = ""
 
@@ -118,7 +117,7 @@ class burp_scans(object):
             project_id=self.project_id,
             scan_url=self.scan_url,
             date_time=date_time,
-            scanner='Burp'
+            scanner="Burp",
         )
         scan_dump.save()
 
@@ -149,8 +148,9 @@ class burp_scans(object):
             scan_info_data = json.loads(json_scan_data)
             scan_status = scan_info_data["scan_metrics"]["crawl_and_audit_progress"]
             print("Scan Status:", scan_status)
-            WebScansDb.objects.filter(scan_id=self.scan_id, scanner='Burp'
-            ).update(scan_status=scan_status)
+            WebScansDb.objects.filter(scan_id=self.scan_id, scanner="Burp").update(
+                scan_status=scan_status
+            )
             time.sleep(5)
 
         scan_info = bi.scan_info(burp_scan_id)
@@ -170,25 +170,20 @@ class burp_scans(object):
         :return:
         """
 
-        global name, origin, confidence, caption, \
-            type_index, internal_data, \
-            serial_number, path, severity, \
-            url, request_type, request_datas, \
-            response_type, response_datas, was_redirect_followed, issue_description, \
-            issue_remediation, issue_reference, issue_vulnerability_classifications
+        global name, origin, confidence, caption, type_index, internal_data, serial_number, path, severity, url, request_type, request_datas, response_type, response_datas, was_redirect_followed, issue_description, issue_remediation, issue_reference, issue_vulnerability_classifications
 
         for data in scan_data:
-            for key, value in data['issue'].items():
-                if key == 'name':
+            for key, value in data["issue"].items():
+                if key == "name":
                     name = value
 
-                if key == 'origin':
+                if key == "origin":
                     origin = value
 
-                if key == 'confidence':
+                if key == "confidence":
                     confidence = value
 
-                if key == 'evidence':
+                if key == "evidence":
                     evidence = value
                     if evidence is None:
                         print("Evidence not found")
@@ -196,57 +191,67 @@ class burp_scans(object):
                         try:
                             for e in evidence:
                                 for key, value in e.items():
-                                    if key == 'request_response':
-                                        url = value['url']
-                                        was_redirect_followed = value['was_redirect_followed']
+                                    if key == "request_response":
+                                        url = value["url"]
+                                        was_redirect_followed = value[
+                                            "was_redirect_followed"
+                                        ]
 
-                                        for request_data in value['request']:
-                                            request_type = request_data['type']
-                                            request_datas = base64.b64decode((request_data['data']))
+                                        for request_data in value["request"]:
+                                            request_type = request_data["type"]
+                                            request_datas = base64.b64decode(
+                                                (request_data["data"])
+                                            )
 
-                                        for request_data in value['response']:
-                                            response_type = request_data['type']
-                                            response_datas = base64.b64decode(request_data['data'])
+                                        for request_data in value["response"]:
+                                            response_type = request_data["type"]
+                                            response_datas = base64.b64decode(
+                                                request_data["data"]
+                                            )
                         except Exception as e:
                             print(e)
 
-                if key == 'caption':
+                if key == "caption":
                     caption = value
 
-                if key == 'type_index':
+                if key == "type_index":
                     type_index = value
 
-                if key == 'internal_data':
+                if key == "internal_data":
                     internal_data = value
 
-                if key == 'serial_number':
+                if key == "serial_number":
                     serial_number = value
 
-                if key == 'path':
+                if key == "path":
                     path = value
 
-                if key == 'severity':
+                if key == "severity":
                     severity = value
 
-            all_issue_definitions = burp_issue_definitions.objects.filter(issue_type_id=type_index)
+            all_issue_definitions = burp_issue_definitions.objects.filter(
+                issue_type_id=type_index
+            )
             for def_data in all_issue_definitions:
                 issue_description = def_data.description
                 issue_remediation = def_data.remediation
-                issue_vulnerability_classifications = def_data.vulnerability_classifications
+                issue_vulnerability_classifications = (
+                    def_data.vulnerability_classifications
+                )
                 issue_reference = def_data.reference
 
             global vul_col
-            if severity == 'high':
-                severity = 'High'
+            if severity == "high":
+                severity = "High"
                 vul_col = "danger"
-            elif severity == 'medium':
-                severity = 'Medium'
+            elif severity == "medium":
+                severity = "Medium"
                 vul_col = "warning"
-            elif severity == 'low':
-                severity = 'Low'
+            elif severity == "low":
+                severity = "Low"
                 vul_col = "info"
-            elif severity == 'info':
-                severity = 'Info'
+            elif severity == "info":
+                severity = "Info"
                 vul_col = "info"
             else:
                 vul_col = "info"
@@ -254,23 +259,37 @@ class burp_scans(object):
             vuln_id = uuid.uuid4()
 
             dup_data = name + path + severity
-            duplicate_hash = hashlib.sha256(dup_data.encode('utf-8')).hexdigest()
+            duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-            match_dup = WebScansDb.objects.filter(dup_hash=duplicate_hash).values('dup_hash').distinct()
+            match_dup = (
+                WebScansDb.objects.filter(dup_hash=duplicate_hash)
+                .values("dup_hash")
+                .distinct()
+            )
             lenth_match = len(match_dup)
 
             if lenth_match == 1:
-                duplicate_vuln = 'Yes'
+                duplicate_vuln = "Yes"
             elif lenth_match == 0:
-                duplicate_vuln = 'No'
+                duplicate_vuln = "No"
             else:
-                duplicate_vuln = 'None'
+                duplicate_vuln = "None"
 
             false_p = WebScansDb.objects.filter(false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
-            details = str(issue_description) + str('\n') + str(request_datas) + str('\n\n') + str(response_datas) + str(
-                '\n\n') + str('\n\n') + str(issue_description) + str('\n\n') + str(issue_vulnerability_classifications)
+            details = (
+                str(issue_description)
+                + str("\n")
+                + str(request_datas)
+                + str("\n\n")
+                + str(response_datas)
+                + str("\n\n")
+                + str("\n\n")
+                + str(issue_description)
+                + str("\n\n")
+                + str(issue_vulnerability_classifications)
+            )
             global false_positive
             if fp_lenth_match == 1:
                 false_positive = "Yes"
@@ -296,13 +315,13 @@ class burp_scans(object):
                     vuln_status="Open",
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
-                    scanner='Burp')
+                    scanner="Burp",
+                )
                 data_dump.save()
             except Exception as e:
                 print(e)
         burp_all_vul = (
-            WebScanResultsDb.objects.filter(scan_id=self.scan_id
-            )
+            WebScanResultsDb.objects.filter(scan_id=self.scan_id)
             .values("title", "severity")
             .distinct()
         )
@@ -312,8 +331,7 @@ class burp_scans(object):
         total_low = len(burp_all_vul.filter(severity="Low"))
         total_info = len(burp_all_vul.filter(severity="Info"))
         total_duplicate = len(burp_all_vul.filter(vuln_duplicate="Yes"))
-        WebScansDb.objects.filter(scan_id=self.scan_id, scanner='Burp'
-        ).update(
+        WebScansDb.objects.filter(scan_id=self.scan_id, scanner="Burp").update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,

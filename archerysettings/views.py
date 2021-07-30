@@ -41,9 +41,9 @@ from stronghold.decorators import public
 
 import PyArachniapi
 from archerysettings import load_settings
-from archerysettings.models import (ArachniSettingsDb,
-                                    EmailDb, NmapVulnersSettingDb,
-                                    ZapSettingsDb, SettingsDb)
+from archerysettings.models import (ArachniSettingsDb, EmailDb,
+                                    NmapVulnersSettingDb, SettingsDb,
+                                    ZapSettingsDb)
 from jiraticketing.models import jirasetting
 from projects.models import ProjectDb
 from scanners.scanner_parser.staticscanner_parser import (
@@ -59,13 +59,11 @@ from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
 from scanners.scanner_plugin.network_scanner.openvas_plugin import \
     OpenVAS_Plugin
 from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
-from staticscanners.models import (StaticScansDb)
+from staticscanners.models import StaticScansDb
 from tools.models import NiktoResultDb
-from webscanners.models import (WebScansDb, cookie_db,
-                                excluded_db,
+from webscanners.models import (WebScansDb, cookie_db, excluded_db,
                                 task_schedule_db)
 from webscanners.zapscanner.views import launch_schudle_zap_scan
-import uuid
 
 setting_file = os.getcwd() + "/" + "apidata.json"
 
@@ -135,7 +133,6 @@ def setting(request):
     password = None
     # Loading settings
 
-
     settings = load_settings.ArcherySettings(setting_file)
 
     all_settings_data = SettingsDb.objects.filter()
@@ -164,10 +161,10 @@ def setting(request):
     zap_port = zap_ports
 
     # Loading Arachni Settings
-    arachni_hosts = ''
-    arachni_ports = ''
-    arachni_user = ''
-    arachni_pass = ''
+    arachni_hosts = ""
+    arachni_ports = ""
+    arachni_user = ""
+    arachni_pass = ""
 
     all_arachni = ArachniSettingsDb.objects.filter()
     for arachni in all_arachni:
@@ -244,14 +241,16 @@ def setting(request):
                 try:
                     random_port = zap_plugin.zap_local()
                 except:
-                    return render(request, "setting/settings_page.html", {"zap_info": zap_info})
+                    return render(
+                        request, "setting/settings_page.html", {"zap_info": zap_info}
+                    )
 
                 for i in range(0, 100):
                     while True:
                         try:
                             # Connection Test
                             zap_connect = zap_plugin.zap_connect(
-                                random_port, 
+                                random_port,
                             )
                             zap_connect.spider.scan(url=target_url)
                         except Exception as e:
@@ -261,7 +260,9 @@ def setting(request):
                         break
             else:
                 try:
-                    zap_connect = zap_plugin.zap_connect(random_port, )
+                    zap_connect = zap_plugin.zap_connect(
+                        random_port,
+                    )
                     zap_connect.spider.scan(url=target_url)
                     zap_info = True
                     SettingsDb.objects.filter(setting_id=setting_id).update(
@@ -297,7 +298,9 @@ def setting(request):
             sel_profile = ""
 
             openvas = OpenVAS_Plugin(
-                scan_ip, project_id, sel_profile, 
+                scan_ip,
+                project_id,
+                sel_profile,
             )
             try:
                 openvas.connect()
@@ -324,7 +327,9 @@ def setting(request):
                 arachni_user = arachni.arachni_user
                 arachni_pass = arachni.arachni_pass
 
-            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports, arachni_user, arachni_pass)
+            arachni = PyArachniapi.arachniAPI(
+                arachni_hosts, arachni_ports, arachni_user, arachni_pass
+            )
 
             check = []
             data = {"url": "https://archerysec.com", "checks": check, "audit": {}}
@@ -388,39 +393,43 @@ def setting(request):
                     setting_status=jira_info
                 )
 
-    return render(request, 'setting/settings_page.html',
-                  {'apikey': lod_apikey,
-                   'zapath': zap_host,
-                   'zap_port': zap_port,
-                   'zap_enable': zap_enable,
-                   'arachni_hosts': arachni_hosts,
-                   'arachni_ports': arachni_ports,
-                   'arachni_user': arachni_user,
-                   'arachni_pass': arachni_pass,
-                   'lod_ov_user': lod_ov_user,
-                   'lod_ov_pass': lod_ov_pass,
-                   'lod_ov_host': lod_ov_host,
-                   'lod_ov_enabled': lod_ov_enabled,
-                   'lod_ov_port': lod_ov_port,
-                   'burp_path': burp_host,
-                   'burp_port': burp_port,
-                   'burp_api_key': burp_api_key,
-                   'all_email': all_email,
-                   'jira_server': jira_server,
-                   'jira_username': jira_username,
-                   'jira_password': jira_password,
-                   'nv_enabled': nv_enabled,
-                   'nv_version': nv_version,
-                   'nv_online': nv_online,
-                   'nv_timing': nv_timing,
-                   'message': all_notify,
-                   'zap_info': zap_info,
-                   'burp_info': burp_info,
-                   'openvas_info': openvas_info,
-                   'arachni_info': arachni_info,
-                   'jira_info': jira_info,
-                   'all_settings_data': all_settings_data
-                   })
+    return render(
+        request,
+        "setting/settings_page.html",
+        {
+            "apikey": lod_apikey,
+            "zapath": zap_host,
+            "zap_port": zap_port,
+            "zap_enable": zap_enable,
+            "arachni_hosts": arachni_hosts,
+            "arachni_ports": arachni_ports,
+            "arachni_user": arachni_user,
+            "arachni_pass": arachni_pass,
+            "lod_ov_user": lod_ov_user,
+            "lod_ov_pass": lod_ov_pass,
+            "lod_ov_host": lod_ov_host,
+            "lod_ov_enabled": lod_ov_enabled,
+            "lod_ov_port": lod_ov_port,
+            "burp_path": burp_host,
+            "burp_port": burp_port,
+            "burp_api_key": burp_api_key,
+            "all_email": all_email,
+            "jira_server": jira_server,
+            "jira_username": jira_username,
+            "jira_password": jira_password,
+            "nv_enabled": nv_enabled,
+            "nv_version": nv_version,
+            "nv_online": nv_online,
+            "nv_timing": nv_timing,
+            "message": all_notify,
+            "zap_info": zap_info,
+            "burp_info": burp_info,
+            "openvas_info": openvas_info,
+            "arachni_info": arachni_info,
+            "jira_info": jira_info,
+            "all_settings_data": all_settings_data,
+        },
+    )
 
 
 def email_setting(request):
@@ -432,7 +441,7 @@ def email_setting(request):
     # Load Email Setting function
     all_email = EmailDb.objects.filter()
 
-    email_setting_data = SettingsDb.objects.filter(setting_scanner='Email')
+    email_setting_data = SettingsDb.objects.filter(setting_scanner="Email")
 
     if request.method == "POST":
         subject = request.POST.get("email_subject")
@@ -446,14 +455,12 @@ def email_setting(request):
 
         save_setting_info = SettingsDb(
             setting_id=setting_id,
-            
-            setting_scanner='Email',
+            setting_scanner="Email",
             setting_status=True,
         )
         save_setting_info.save()
 
         save_email = EmailDb(
-            
             subject=subject,
             message=from_message,
             recipient_list=email_to,

@@ -15,11 +15,17 @@
 # This file is part of ArcherySec Project.
 
 import base64
-import jwt
 import re
 import time
 from datetime import datetime
+
+import jwt
+from django.contrib import auth, messages
+from django.http import HttpResponseRedirect
+from django.shortcuts import HttpResponse, render
+from django.urls import reverse
 from django.utils.crypto import get_random_string
+from django.views.decorators.csrf import csrf_protect
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -28,12 +34,74 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from stronghold.decorators import public
 
 from authentication.models import *
 from authentication.serializers import *
 from common.functions import current_epoch, epoch_to_date
 from user_management import permissions
 from user_management.models import *
+
+
+# Login View
+@public
+@csrf_protect
+def login(request):
+    """
+    Login Request
+    :param request:
+    :return:
+    """
+    c = {}
+    c.update(request)
+    return render(request, "login/login.html", c)
+
+
+@public
+def auth_view(request):
+    """
+    Authentication request.
+    :param request:
+    :return:
+    """
+    username = request.POST.get(
+        "username",
+        "",
+    )
+    password = request.POST.get(
+        "password",
+        "",
+    )
+    user = auth.authenticate(username=username, password=password)
+
+    if user is not None:
+        auth.login(request, user)
+        return HttpResponseRedirect(reverse("dashboard:dashboard"))
+    else:
+        messages.add_message(
+            request, messages.ERROR, "Please check your login details and try again."
+        )
+        return HttpResponseRedirect(reverse("login"))
+
+
+@public
+def logout(request):
+    """
+    Logout request
+    :param request:
+    :return:
+    """
+    auth.logout(request)
+    return render(request, "logout/logout.html")
+
+
+def loggedin(request):
+    """
+    After login request.
+    :param request:
+    :return:
+    """
+    return render(request, "webscanners/webscanner.html")
 
 
 class ForgotPassword(APIView):
