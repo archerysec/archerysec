@@ -390,7 +390,7 @@ class Nmap(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "tools/nmap_list.html"
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
         ip_address = request.GET["ip"]

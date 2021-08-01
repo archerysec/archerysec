@@ -42,6 +42,8 @@ def nmap_vulners(request):
     """
     user = request.user
 
+    all_nmap = ''
+
     if request.method == "POST":
         ip_address = request.POST.get("ip")
         project_id = request.POST.get("project_id")
