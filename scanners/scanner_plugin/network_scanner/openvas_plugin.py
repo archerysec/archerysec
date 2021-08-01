@@ -27,6 +27,7 @@ from archerysettings.models import OpenvasSettingDb
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from scanners.scanner_parser.network_scanner.OpenVas_Parser import \
     updated_xml_parser
+from scanners.scanner_parser.network_scanner import OpenVas_Parser
 
 name = ""
 creation_time = ""
@@ -149,8 +150,9 @@ def vuln_an_id(scan_id, project_id):
     :param scan_id:
     :return:
     """
-    global name, host, severity, port, creation_time, modification_time, threat, severity, description, family, cvss_base, cve, bid, xref, tags, banner, date_time, false_positive, duplicate_hash, duplicate_vuln, ov_ip, ov_user, ov_pass
-
+    ov_ip = ''
+    ov_user = ''
+    ov_pass = ''
     all_openvas = OpenvasSettingDb.objects.filter()
 
     scan_status = "100"
@@ -166,13 +168,14 @@ def vuln_an_id(scan_id, project_id):
 
     hosts = OpenVas_Parser.get_hosts(openvas_results)
 
-    del_old = openvas_scan_db.objects.filter(scan_id=scan_id)
+    del_old = NetworkScanDb.objects.filter(scan_id=scan_id)
     del_old.delete()
 
     for host in hosts:
-        scan_dump = openvas_scan_db(
-            scan_ip=host,
-            scan_id=host,
+        scan_dump = NetworkScanDb(
+            ip=host,
+            scanner="Openvas",
+            scan_id=scan_id,
             date_time=date_time,
             project_id=project_id,
             scan_status=scan_status,

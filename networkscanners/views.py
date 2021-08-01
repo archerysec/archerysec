@@ -93,11 +93,7 @@ def email_notify(user, subject, message):
         pass
 
 
-def openvas_scanner(
-    scan_ip,
-    project_id,
-    sel_profile,
-):
+def openvas_scanner(scan_ip, project_id, sel_profile, user):
     """
     The function is launch the OpenVAS scans.
     :param scan_ip:
@@ -105,7 +101,6 @@ def openvas_scanner(
     :param sel_profile:
     :return:
     """
-    user = User.objects.get()
     openvas = OpenVAS_Plugin(
         scan_ip,
         project_id,
@@ -178,7 +173,7 @@ class OpenvasLaunchScan(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        all_ip = NetworkScanDb.objects.filter(scanner="Openvas")
+        all_ip = NetworkScanDb.objects.all()
         user = request.user
 
         return render("networkscanners/openvas_vuln_list.html", {"all_ip": all_ip})
@@ -186,13 +181,14 @@ class OpenvasLaunchScan(APIView):
     def post(self, request):
         all_ip = NetworkScanDb.objects.all()
         user = request.user
-        all_ip = NetworkScanDb.objects.filter()
         scan_ip = request.POST.get("ip")
         project_id = request.POST.get("project_id")
         sel_profile = request.POST.get("scan_profile")
         ip = scan_ip.replace(" ", "")
         target_split = ip.split(",")
         split_length = target_split.__len__()
+
+        print(split_length)
 
         for i in range(0, split_length):
             target = target_split.__getitem__(i)
@@ -203,7 +199,7 @@ class OpenvasLaunchScan(APIView):
             thread.daemon = True
             thread.start()
 
-        return render("networkscanners/openvas_vuln_list.html", {"all_ip": all_ip})
+        return HttpResponseRedirect(reverse("networkscanners:list_scans"))
 
 
 class NetworkScan(APIView):
