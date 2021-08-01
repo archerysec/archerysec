@@ -49,6 +49,8 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     global scan_run_id, scan_status
     arachni_hosts = None
     arachni_ports = None
+    arachni_user = ''
+    arachni_pass = ''
     all_arachni = ArachniSettingsDb.objects.filter()
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
@@ -152,6 +154,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
             scan_url=target,
             scan_id=scan_id,
             date_time=date_time,
+            scanner="Arachni"
         )
 
         save_all_scan.save()
@@ -213,7 +216,7 @@ class ArachniScan(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        return render(request, "webscanners/arachniscanner/arachni_scan_list.html")
+        return render(request, "webscanners/webscanner.html")
 
     def post(self, request):
         user = request.user
@@ -235,7 +238,7 @@ class ArachniScan(APIView):
             thread.daemon = True
             thread.start()
 
-        return render(request, "webscanners/arachniscanner/arachni_scan_list.html")
+        return HttpResponseRedirect(reverse("webscanners:list_scans"))
 
 
 class ArachniSetting(APIView):

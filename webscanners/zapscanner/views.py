@@ -165,7 +165,6 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         un_scanid=scan_id,
         target_url=target_url,
     )
-    print(save_all_vuln)
     all_zap_scan = WebScansDb.objects.filter(scanner="zap")
 
     total_vuln = ""
