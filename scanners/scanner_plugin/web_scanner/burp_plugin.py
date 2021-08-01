@@ -169,8 +169,17 @@ class burp_scans(object):
         :param xml_data:
         :return:
         """
-
-        global name, origin, confidence, caption, type_index, internal_data, serial_number, path, severity, url, request_type, request_datas, response_type, response_datas, was_redirect_followed, issue_description, issue_remediation, issue_reference, issue_vulnerability_classifications
+        severity = ''
+        type_index = ''
+        name = ''
+        path = ''
+        issue_description = ''
+        request_datas = ''
+        response_datas = ''
+        issue_vulnerability_classifications = ''
+        url = ''
+        issue_remediation = ''
+        issue_reference = ''
 
         for data in scan_data:
             for key, value in data["issue"].items():
@@ -240,7 +249,7 @@ class burp_scans(object):
                 )
                 issue_reference = def_data.reference
 
-            global vul_col
+            vul_col = ''
             if severity == "high":
                 severity = "High"
                 vul_col = "danger"
@@ -262,7 +271,7 @@ class burp_scans(object):
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
             match_dup = (
-                WebScansDb.objects.filter(dup_hash=duplicate_hash)
+                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash)
                 .values("dup_hash")
                 .distinct()
             )
@@ -275,7 +284,7 @@ class burp_scans(object):
             else:
                 duplicate_vuln = "None"
 
-            false_p = WebScansDb.objects.filter(false_positive_hash=duplicate_hash)
+            false_p = WebScanResultsDb.objects.filter(false_positive_hash=duplicate_hash)
             fp_lenth_match = len(false_p)
 
             details = (
@@ -284,9 +293,6 @@ class burp_scans(object):
                 + str(request_datas)
                 + str("\n\n")
                 + str(response_datas)
-                + str("\n\n")
-                + str("\n\n")
-                + str(issue_description)
                 + str("\n\n")
                 + str(issue_vulnerability_classifications)
             )
