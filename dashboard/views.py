@@ -186,7 +186,7 @@ def dashboard(request):
 
     trend_update()
 
-    all_project = ProjectDb.objects.filter()
+    all_project = ProjectDb.objects.all()
 
     current_year = datetime.datetime.now().year
 
@@ -380,8 +380,12 @@ def all_high_vuln(request):
 
     all_notify = Notification.objects.unread()
     if request.GET["project_id"]:
-        project_id = request.GET["project_id"]
+        project_uu_id = request.GET["project_id"]
         severity = request.GET["severity"]
+        if project_uu_id == 'none':
+            project_id = ''
+        else:
+            project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
     else:
         project_id = ""
         severity = ""
