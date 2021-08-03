@@ -40,6 +40,7 @@ from scanners.scanner_parser.web_scanner import arachni_xml_parser
 from user_management import permissions
 from webscanners.models import WebScanResultsDb, WebScansDb
 from webscanners.resources import ArachniResource
+from projects.models import ProjectDb
 
 scan_run_id = ""
 scan_status = ""
@@ -221,7 +222,8 @@ class ArachniScan(APIView):
     def post(self, request):
         user = request.user
         target_url = request.POST.get("scan_url")
-        project_id = request.POST.get("project_id")
+        project_uu_id = request.POST.get("project_id")
+        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
         rescan_id = None
         rescan = "No"
         target_item = str(target_url)

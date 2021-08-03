@@ -174,15 +174,14 @@ class OpenvasLaunchScan(APIView):
 
     def get(self, request):
         all_ip = NetworkScanDb.objects.all()
-        user = request.user
 
         return render("networkscanners/openvas_vuln_list.html", {"all_ip": all_ip})
 
     def post(self, request):
-        all_ip = NetworkScanDb.objects.all()
         user = request.user
         scan_ip = request.POST.get("ip")
-        project_id = request.POST.get("project_id")
+        project_uu_id = request.POST.get("project_id")
+        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
         sel_profile = request.POST.get("scan_profile")
         ip = scan_ip.replace(" ", "")
         target_split = ip.split(",")
@@ -334,7 +333,8 @@ class XmlUpload(APIView):
     def post(self, request):
         all_project = ProjectDb.objects.filter()
         if request.method == "POST":
-            project_id = request.POST.get("project_id")
+            project_uu_id = request.POST.get("project_id")
+            project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
             scanner = request.POST.get("scanner")
             xml_file = request.FILES["xmlfile"]
             scan_ip = request.POST.get("scan_url")

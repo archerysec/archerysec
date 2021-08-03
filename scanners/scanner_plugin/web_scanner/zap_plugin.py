@@ -654,6 +654,7 @@ class ZAPScanner:
                 WebScansDb.objects.filter(scan_id=un_scanid).update(
                     total_vul=total_vul,
                     date_time=date_time,
+                    project_id=project_id,
                     high_vul=total_high,
                     medium_vul=total_medium,
                     low_vul=total_low,

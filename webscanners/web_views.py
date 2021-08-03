@@ -299,7 +299,8 @@ class UploadXMLReport(APIView):
 
     def post(self, request):
         all_project = ProjectDb.objects.filter()
-        project_id = request.POST.get("project_id")
+        project_uu_id = request.POST.get("project_id")
+        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
         scanner = request.POST.get("scanner")
         xml_file = request.FILES["xmlfile"]
         scan_url = request.POST.get("scan_url")

@@ -41,6 +41,7 @@ from user_management import permissions
 from webscanners.models import (WebScanResultsDb, WebScansDb,
                                 burp_issue_definitions)
 from webscanners.resources import BurpResource
+from projects.models import ProjectDb
 
 burp_url = None
 burp_port = None
@@ -165,7 +166,8 @@ class BurpScanLaunch(APIView):
     def post(self, request):
         user = request.user
         target_url = request.POST.get("url")
-        project_id = request.POST.get("project_id")
+        project_uu_id = request.POST.get("project_id")
+        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
         target__split = target_url.split(",")
         split_length = target__split.__len__()
         for i in range(0, split_length):

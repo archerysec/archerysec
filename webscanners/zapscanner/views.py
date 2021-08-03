@@ -40,6 +40,7 @@ from webscanners.models import WebScansDb, cookie_db, excluded_db
 from archerysettings.models import EmailDb, SettingsDb
 from django.core.mail import send_mail
 from django.conf import settings
+from projects.models import ProjectDb
 
 setting_file = os.getcwd() + "/" + "apidata.json"
 
@@ -290,7 +291,8 @@ class ZapScan(APIView):
         scans_status = ""
         user = request.user
         target_url = request.POST.get("url")
-        project_id = request.POST.get("project_id")
+        project_uu_id = request.POST.get("project_id")
+        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
         rescan_id = None
         rescan = "No"
         target_item = str(target_url)
