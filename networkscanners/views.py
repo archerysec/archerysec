@@ -372,7 +372,7 @@ class XmlUpload(APIView):
                     project_id=project_id,
                 )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("nessus:nessus_list"))
+                return HttpResponseRedirect(reverse("networkscanners:list_scans"))
             elif scanner == "nmap":
                 tree = ET.parse(xml_file)
                 root_xml = tree.getroot()

@@ -55,7 +55,6 @@ urlpatterns = [
     path("zapscanstatus/", views.ZapScanStatus.as_view()),
     path("uploadscan/", views.UploadScanResult.as_view()),
     path("zapstatusupdate/", views.UpdateZapStatus.as_view()),
-    path("createuser/", views.CreateUsers.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

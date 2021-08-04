@@ -17,7 +17,6 @@
 import datetime
 import json
 import threading
-import uuid
 from itertools import chain
 
 import defusedxml.ElementTree as ET
@@ -72,6 +71,22 @@ from webscanners.serializers import (UploadScanSerializer,
                                      WebScanStatusSerializer,
                                      ZapScanStatusDataSerializers)
 from webscanners.zapscanner.views import launch_zap_scan
+
+import secrets
+import uuid
+from datetime import datetime
+from django.contrib.auth.hashers import make_password
+from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from typing import Any, Dict, List
+
+from user_management import permissions
+from user_management.models import Organization, UserProfile
+from archeryapi.models import OrgAPIKey
+from archeryapi.serializers import OrgAPIKeySerializer
 
 
 class WebScan(generics.ListCreateAPIView):
@@ -337,29 +352,6 @@ class ZapScanStatus(generics.ListCreateAPIView):
             all_scans = chain(zap_scan)
             serialized_scans = WebScanStatusSerializer(all_scans, many=True)
             return Response(serialized_scans.data)
-
-
-@public
-class CreateUsers(generics.CreateAPIView):
-    authentication_classes = ()
-    permission_classes = ()
-    serializer_class = CreateUser
-
-    def post(self, request, format=None, **kwargs):
-        """
-        # Post request to get all vulnerability Data.
-        """
-        username = request.user.username
-        serializer = CreateUser(data=request.data)
-        if serializer.is_valid():
-            username = request.data.get("username")
-            password = request.data.get("password")
-            email = request.data.get("email")
-            user = User.objects.create_user(username, email, password)
-            user.save()
-
-            return Response({"message": "User Created !!!"})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateZapStatus(generics.CreateAPIView):
@@ -1105,3 +1097,65 @@ class UploadScanResult(APIView):
             )
 
         return Response({"message": "Scan Data Uploaded"})
+
+
+class APIKey(APIView):
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAdmin,
+    )
+
+    def get(self, request):
+        user = request.user
+
+        all_active_keys = OrgAPIKey.objects.filter(
+            is_active=True
+        )
+
+        serialized_data = OrgAPIKeySerializer(all_active_keys, many=True)
+        return Response(serialized_data.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user = request.user
+        current_org = user.organization
+
+        api_key = self.generate_api_key(user)
+
+        new_api_key = OrgAPIKey.objects.create(
+            api_key=api_key, created_by=user
+        )
+
+        content = {"APIKey": api_key, "id": new_api_key.uu_id}
+        return Response(content, status=status.HTTP_200_OK)
+
+    def generate_api_key(self, user: UserProfile) -> str:
+        """
+        return string api key
+        """
+        api_key = secrets.token_urlsafe(48)
+
+        return api_key
+
+
+class DisableAPIKey(APIView):
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAdmin,
+    )
+
+    def put(self, request, api_key_uuid):
+        user = request.user
+        current_org = user.organization
+
+        key_object = OrgAPIKey.objects.filter(
+            org_subscription=current_org, is_active=True, uu_id=api_key_uuid
+        ).update(is_active=False)
+
+        if key_object > 0:
+            content = {"message": "API Key Deactivate"}
+            http_status = status.HTTP_200_OK
+        else:
+            content = {"message": "API Key Not Found"}
+            http_status = status.HTTP_404_NOT_FOUND
+
+        return Response(content, http_status)

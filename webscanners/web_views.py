@@ -505,7 +505,7 @@ class UploadXMLReport(APIView):
                 )
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(
-                    reverse("dependencycheck:dependencycheck_list")
+                    reverse("staticscanners:list_scans")
                 )
             except Exception as e:
                 print(e)
@@ -532,7 +532,7 @@ class UploadXMLReport(APIView):
                     project_id=project_id, scan_id=scan_id, data=root
                 )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("checkmarx:checkmarx_list"))
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
                 print(e)
                 messages.error(request, "File Not Supported")
@@ -558,7 +558,7 @@ class UploadXMLReport(APIView):
                     project_id=project_id, scan_id=scan_id, root=root
                 )
                 messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("findbugs:findbugs_list"))
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:
                 print(e)
                 messages.error(request, "File Not Supported")

@@ -244,7 +244,7 @@ def xml_parser(data, project_id, scan_id):
                         ).hexdigest()
 
                         match_dup = StaticScanResultsDb.objects.filter(
-                            username=username, dup_hash=duplicate_hash
+                           dup_hash=duplicate_hash
                         ).values("dup_hash")
                         lenth_match = len(match_dup)
 
@@ -252,7 +252,7 @@ def xml_parser(data, project_id, scan_id):
                             duplicate_vuln = "No"
 
                             false_p = StaticScanResultsDb.objects.filter(
-                                username=username, false_positive_hash=duplicate_hash
+                                false_positive_hash=duplicate_hash
                             )
                             fp_lenth_match = len(false_p)
 
@@ -284,7 +284,6 @@ def xml_parser(data, project_id, scan_id):
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 false_positive=false_positive,
-                                username=username,
                                 scanner="Dependencycheck",
                             )
                             save_all.save()
@@ -311,17 +310,16 @@ def xml_parser(data, project_id, scan_id):
                                 dup_hash=duplicate_hash,
                                 vuln_duplicate=duplicate_vuln,
                                 false_positive="Duplicate",
-                                username=username,
                                 scanner="Dependencycheck",
                             )
                             save_all.save()
 
         all_dependency_data = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, false_positive="No"
+            scan_id=scan_id, false_positive="No"
         )
 
         duplicate_count = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, vuln_duplicate="Yes"
+            scan_id=scan_id, vuln_duplicate="Yes"
         )
 
         total_vul = len(all_dependency_data)
@@ -330,7 +328,7 @@ def xml_parser(data, project_id, scan_id):
         total_low = len(all_dependency_data.filter(severity="Low"))
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-        StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
+        StaticScansDb.objects.filter(scan_id=scan_id).update(
             date_time=date_time,
             total_vul=total_vul,
             high_vul=total_high,
