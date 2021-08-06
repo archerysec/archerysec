@@ -14,6 +14,7 @@
 #
 # This file is part of ArcherySec Project.
 
+import datetime
 import json
 import secrets
 import uuid
@@ -35,6 +36,8 @@ from archeryapi.serializers import OrgAPIKeySerializer
 from compliance.models import DockleScanDb, InspecScanDb
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from projects.models import MonthDb, ProjectDb
+from projects.serializers import (ProjectCreateSerializers,
+                                  ProjectDataSerializers)
 from scanners.scanner_parser.compliance_parser import (dockle_json_parser,
                                                        inspec_json_parser)
 from scanners.scanner_parser.network_scanner import (Nessus_Parser,
@@ -61,6 +64,86 @@ from tools.models import NiktoResultDb
 from user_management import permissions
 from user_management.models import Organization, UserProfile
 from webscanners.models import WebScanResultsDb, WebScansDb
+
+
+class CreateProject(APIView):
+    permission_classes = (BasePermission, permissions.VerifyAPIKey)
+
+    def post(self, request):
+        """
+        Current user's identity endpoint.
+        """
+        username = request.user.username
+        _project_name = None
+        _project_id = None
+
+        serializer = ProjectDataSerializers(data=request.data)
+        if serializer.is_valid():
+            project_id = uuid.uuid4()
+            project_name = request.data.get(
+                "project_name",
+            )
+
+            project_disc = request.data.get(
+                "project_disc",
+            )
+
+            all_project = ProjectDb.objects.filter(project_name=project_name)
+
+            for project in all_project:
+                _project_name = project.project_name
+                _project_id = project.uu_id
+
+            if _project_name == project_name:
+                return Response(
+                    {"message": "Project already existed", "project_id": _project_id}
+                )
+
+            else:
+                project = ProjectDb(
+                    project_name=project_name,
+                    project_disc=project_disc,
+                    # created_by=request.user,
+                    total_vuln=0,
+                    total_high=0,
+                    total_medium=0,
+                    total_low=0,
+                    total_open=0,
+                    total_false=0,
+                    total_close=0,
+                    total_net=0,
+                    total_web=0,
+                    total_static=0,
+                    high_net=0,
+                    high_web=0,
+                    high_static=0,
+                    medium_net=0,
+                    medium_web=0,
+                    medium_static=0,
+                    low_net=0,
+                    low_web=0,
+                    low_static=0,
+                )
+                project.save()
+
+                all_month_data_display = MonthDb.objects.filter()
+
+                if len(all_month_data_display) == 0:
+                    save_months_data = MonthDb(
+                        project_id=project.id,
+                        month=datetime.datetime.now().month,
+                        high=0,
+                        medium=0,
+                        low=0,
+                    )
+                    save_months_data.save()
+
+                if not project_name:
+                    return Response({"error": "No name passed"})
+                return Response(
+                    {"message": "Project Created", "project_id": project.uu_id}
+                )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def web_result_data(scan_id, project_uu_id, scanner):

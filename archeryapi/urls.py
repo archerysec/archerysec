@@ -39,7 +39,7 @@ router = routers.DefaultRouter()
 app_name = "archeryapi"
 
 urlpatterns = [
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    # path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path(
         "v1/docs/",
         include_docs_urls(
@@ -51,6 +51,7 @@ urlpatterns = [
     path("v1/uploadscan/", views.UploadScanResult.as_view()),
     path("access-key/", views.APIKey.as_view(), name="access-key"),
     path("access-key-delete/", views.DeleteAPIKey.as_view(), name="access-key-delete"),
+    path("v1/project-create/", views.CreateProject.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
