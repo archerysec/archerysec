@@ -213,13 +213,13 @@ def xml_parser(root, project_id, scan_id, target_url):
                                     body = extra_vuln.text
 
                 details = (
-                        description
-                        + "\n\n"
-                        + str(proof)
-                        + "\n\n"
-                        + str(ref_values)
-                        + "\n\n"
-                        + str(page_body_data)
+                    description
+                    + "\n\n"
+                    + str(proof)
+                    + "\n\n"
+                    + str(ref_values)
+                    + "\n\n"
+                    + str(page_body_data)
                 )
 
                 dup_data = name + url + severity
@@ -229,8 +229,8 @@ def xml_parser(root, project_id, scan_id, target_url):
                     WebScanResultsDb.objects.filter(
                         vuln_duplicate=duplicate_hash, scanner="Arachni"
                     )
-                        .values("dup_hash")
-                        .distinct()
+                    .values("dup_hash")
+                    .distinct()
                 )
                 lenth_match = len(match_dup)
                 if severity == "high":
@@ -326,7 +326,6 @@ def xml_parser(root, project_id, scan_id, target_url):
     print(total_medium)
     print(total_info)
 
-
     WebScansDb.objects.filter(scan_id=scan_id).update(
         scan_url=target_url,
         total_vul=total_vul,
@@ -335,17 +334,17 @@ def xml_parser(root, project_id, scan_id, target_url):
         medium_vul=total_medium,
         low_vul=total_low,
         info_vul=total_info,
-        scan_status='100',
+        scan_status="100",
         total_dup=total_duplicate,
-        scanner="Arachni"
+        scanner="Arachni",
     )
     trend_update()
 
     subject = "Archery Tool Scan Status - Arachni Report Uploaded"
     message = (
-            "Arachni Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s" % (url, total_vul, total_high, total_medium, total_low)
+        "Arachni Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s" % (url, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)

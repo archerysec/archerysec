@@ -36,12 +36,12 @@ from rest_framework.views import APIView
 
 from archerysettings.models import BurpSettingDb, SettingsDb
 from jiraticketing.models import jirasetting
+from projects.models import ProjectDb
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from user_management import permissions
 from webscanners.models import (WebScanResultsDb, WebScansDb,
                                 burp_issue_definitions)
 from webscanners.resources import BurpResource
-from projects.models import ProjectDb
 
 burp_url = None
 burp_port = None
@@ -136,13 +136,14 @@ class BurpSetting(APIView):
                         references = values
                     if key == "vulnerability_classifications":
                         vulnerability_classifications = values
-            data_dump = burp_issue_definitions(remediation=remediation,
-                                               issue_type_id=issue_type_id,
-                                               description=description,
-                                               reference=references,
-                                               vulnerability_classifications=vulnerability_classifications,
-                                               name=name
-                                               )
+            data_dump = burp_issue_definitions(
+                remediation=remediation,
+                issue_type_id=issue_type_id,
+                description=description,
+                reference=references,
+                vulnerability_classifications=vulnerability_classifications,
+                name=name,
+            )
             data_dump.save()
 
             SettingsDb.objects.filter(setting_id=setting_id).update(setting_status=True)
@@ -167,7 +168,9 @@ class BurpScanLaunch(APIView):
         user = request.user
         target_url = request.POST.get("url")
         project_uu_id = request.POST.get("project_id")
-        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
+        project_id = (
+            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+        )
         target__split = target_url.split(",")
         split_length = target__split.__len__()
         for i in range(0, split_length):
@@ -210,18 +213,18 @@ def export(request):
         if report_type == "csv":
             response = HttpResponse(dataset.csv, content_type="text/csv")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.csv"' % "burp_results"
+                'attachment; filename="%s.csv"' % "burp_results"
             )
             return response
         if report_type == "json":
             response = HttpResponse(dataset.json, content_type="application/json")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.json"' % "burp_results"
+                'attachment; filename="%s.json"' % "burp_results"
             )
             return response
         if report_type == "yaml":
             response = HttpResponse(dataset.yaml, content_type="application/x-yaml")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.yaml"' % "burp_results"
+                'attachment; filename="%s.yaml"' % "burp_results"
             )
             return response

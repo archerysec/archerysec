@@ -36,11 +36,11 @@ from rest_framework.views import APIView
 import PyArachniapi
 from archerysettings.models import ArachniSettingsDb, SettingsDb
 from jiraticketing.models import jirasetting
+from projects.models import ProjectDb
 from scanners.scanner_parser.web_scanner import arachni_xml_parser
 from user_management import permissions
 from webscanners.models import WebScanResultsDb, WebScansDb
 from webscanners.resources import ArachniResource
-from projects.models import ProjectDb
 
 scan_run_id = ""
 scan_status = ""
@@ -50,8 +50,8 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     global scan_run_id, scan_status
     arachni_hosts = None
     arachni_ports = None
-    arachni_user = ''
-    arachni_pass = ''
+    arachni_user = ""
+    arachni_pass = ""
     all_arachni = ArachniSettingsDb.objects.filter()
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
@@ -155,7 +155,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
             scan_url=target,
             scan_id=scan_id,
             date_time=date_time,
-            scanner="Arachni"
+            scanner="Arachni",
         )
 
         save_all_scan.save()
@@ -223,7 +223,9 @@ class ArachniScan(APIView):
         user = request.user
         target_url = request.POST.get("scan_url")
         project_uu_id = request.POST.get("project_id")
-        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
+        project_id = (
+            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+        )
         rescan_id = None
         rescan = "No"
         target_item = str(target_url)

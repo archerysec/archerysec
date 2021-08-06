@@ -20,6 +20,11 @@
                                                 href="{% url 'list_org' %}" aria-expanded="false"><i
                             class="fas fa-building"></i><span class="hide-menu">Organization</span></a></li>
                 {% endif %}
+                {% if user.is_superuser == True %}
+                    <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                                href="{% url 'archeryapi:access-key' %}" aria-expanded="false"><i
+                            class="fas fa-key"></i><span class="hide-menu">Access Keys</span></a></li>
+                {% endif %}
 
                 <li class="my-3 mx-3 border-top"></li>
                 <li class="sidebar-item"><a class="sidebar-link" href="https://docs.archerysec.com/" target="_blank"

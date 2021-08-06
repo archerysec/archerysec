@@ -244,7 +244,7 @@ def xml_parser(data, project_id, scan_id):
                         ).hexdigest()
 
                         match_dup = StaticScanResultsDb.objects.filter(
-                           dup_hash=duplicate_hash
+                            dup_hash=duplicate_hash
                         ).values("dup_hash")
                         lenth_match = len(match_dup)
 

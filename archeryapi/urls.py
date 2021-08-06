@@ -41,20 +41,16 @@ app_name = "archeryapi"
 urlpatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path(
-        "docs/",
+        "v1/docs/",
         include_docs_urls(
             title=API_TITLE,
             description=API_DESCRIPTION,
             public=True,
         ),
     ),
-    path("webscan/", views.WebScan.as_view()),
-    path("networkscan/", views.NetworkScan.as_view()),
-    path("project/", views.Project.as_view()),
-    path("webscanresult/", views.WebScanResult.as_view()),
-    path("zapscanstatus/", views.ZapScanStatus.as_view()),
-    path("uploadscan/", views.UploadScanResult.as_view()),
-    path("zapstatusupdate/", views.UpdateZapStatus.as_view()),
+    path("v1/uploadscan/", views.UploadScanResult.as_view()),
+    path("access-key/", views.APIKey.as_view(), name="access-key"),
+    path("access-key-delete/", views.DeleteAPIKey.as_view(), name="access-key-delete"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -382,10 +382,12 @@ def all_high_vuln(request):
     if request.GET["project_id"]:
         project_uu_id = request.GET["project_id"]
         severity = request.GET["severity"]
-        if project_uu_id == 'none':
-            project_id = ''
+        if project_uu_id == "none":
+            project_id = ""
         else:
-            project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
+            project_id = (
+                ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+            )
     else:
         project_id = ""
         severity = ""

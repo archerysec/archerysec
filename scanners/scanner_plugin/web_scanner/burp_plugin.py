@@ -169,17 +169,17 @@ class burp_scans(object):
         :param xml_data:
         :return:
         """
-        severity = ''
-        type_index = ''
-        name = ''
-        path = ''
-        issue_description = ''
-        request_datas = ''
-        response_datas = ''
-        issue_vulnerability_classifications = ''
-        url = ''
-        issue_remediation = ''
-        issue_reference = ''
+        severity = ""
+        type_index = ""
+        name = ""
+        path = ""
+        issue_description = ""
+        request_datas = ""
+        response_datas = ""
+        issue_vulnerability_classifications = ""
+        url = ""
+        issue_remediation = ""
+        issue_reference = ""
 
         for data in scan_data:
             for key, value in data["issue"].items():
@@ -249,7 +249,7 @@ class burp_scans(object):
                 )
                 issue_reference = def_data.reference
 
-            vul_col = ''
+            vul_col = ""
             if severity == "high":
                 severity = "High"
                 vul_col = "danger"
@@ -284,7 +284,9 @@ class burp_scans(object):
             else:
                 duplicate_vuln = "None"
 
-            false_p = WebScanResultsDb.objects.filter(false_positive_hash=duplicate_hash)
+            false_p = WebScanResultsDb.objects.filter(
+                false_positive_hash=duplicate_hash
+            )
             fp_lenth_match = len(false_p)
 
             details = (

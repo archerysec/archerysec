@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "webscanners",
     "projects",
     "archerysettings",
+    "archeryapi",
     "networkscanners",
     "staticscanners",
     "jiraticketing",
@@ -172,7 +173,6 @@ STRONGHOLD_PUBLIC_URLS = (
     r"^/accounts/login/$",  # Avoid redirect loop
     r"^/api.*?$",
     r"^/o.*?$",
-    r"^/api/createuser/$",
 )
 
 LOGIN_URL = "/auth/login/"
@@ -187,6 +187,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ),
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

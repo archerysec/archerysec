@@ -25,9 +25,9 @@ from openvas_lib import VulnscanException, VulnscanManager
 
 from archerysettings.models import OpenvasSettingDb
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
+from scanners.scanner_parser.network_scanner import OpenVas_Parser
 from scanners.scanner_parser.network_scanner.OpenVas_Parser import \
     updated_xml_parser
-from scanners.scanner_parser.network_scanner import OpenVas_Parser
 
 name = ""
 creation_time = ""
@@ -150,9 +150,9 @@ def vuln_an_id(scan_id, project_id):
     :param scan_id:
     :return:
     """
-    ov_ip = ''
-    ov_user = ''
-    ov_pass = ''
+    ov_ip = ""
+    ov_user = ""
+    ov_pass = ""
     all_openvas = OpenvasSettingDb.objects.filter()
 
     scan_status = "100"

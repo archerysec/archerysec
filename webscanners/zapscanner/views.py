@@ -23,24 +23,23 @@ import time
 import uuid
 from datetime import datetime
 
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import HttpResponse, render
 from django.urls import reverse
+from notifications.signals import notify
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 from selenium import webdriver
-from notifications.signals import notify
 
-from archerysettings.models import SettingsDb, ZapSettingsDb
+from archerysettings.models import EmailDb, SettingsDb, ZapSettingsDb
+from projects.models import ProjectDb
 from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from user_management import permissions
 from webscanners.models import WebScansDb, cookie_db, excluded_db
-from archerysettings.models import EmailDb, SettingsDb
-from django.core.mail import send_mail
-from django.conf import settings
-from projects.models import ProjectDb
 
 setting_file = os.getcwd() + "/" + "apidata.json"
 
@@ -62,7 +61,7 @@ def email_notify(user, subject, message):
     try:
         send_mail(subject, message, email_from, recipient_list)
     except Exception as e:
-        notify.send(user, recipient=user, verb='Email Settings Not Configured')
+        notify.send(user, recipient=user, verb="Email Settings Not Configured")
 
 
 def email_sch_notify(subject, message):
@@ -185,10 +184,10 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
 
     subject = "Archery Tool Scan Status - ZAP Scan Completed"
     message = (
-            "ZAP Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % (target_url, total_vuln, total_high, total_medium, total_low)
+        "ZAP Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (target_url, total_vuln, total_high, total_medium, total_low)
     )
     email_sch_notify(subject=subject, message=message)
 
@@ -272,10 +271,10 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
 
     subject = "Archery Tool Scan Status - ZAP Scan Completed"
     message = (
-            "ZAP Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % (target_url, total_vuln, total_high, total_medium, total_low)
+        "ZAP Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (target_url, total_vuln, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)
@@ -292,7 +291,9 @@ class ZapScan(APIView):
         user = request.user
         target_url = request.POST.get("url")
         project_uu_id = request.POST.get("project_id")
-        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
+        project_id = (
+            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+        )
         rescan_id = None
         rescan = "No"
         target_item = str(target_url)

@@ -349,7 +349,9 @@ class UploadJSONReport(APIView):
     def post(self, request):
         all_project = ProjectDb.objects.filter()
         project_uu_id = request.POST.get("project_id")
-        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
+        project_id = (
+            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+        )
         scanner = request.POST.get("scanner")
         json_file = request.FILES["jsonfile"]
         project_name = request.POST.get("project_name")

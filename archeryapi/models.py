@@ -13,14 +13,15 @@
 #
 # This file is part of ArcherySec Project.
 import uuid
+
 from django.conf import settings
 from django.db import models
-
-from user_management.models import Organization, UserProfile
 from rest_framework import permissions
 
+from user_management.models import Organization, UserProfile
 
 # Create your models here.
+
 
 class OrgAPIKey(models.Model):
     """ Class for Organization API Keys Model """
@@ -31,6 +32,7 @@ class OrgAPIKey(models.Model):
 
     uu_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     api_key = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=True)
     created_time = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
         UserProfile, related_name="key_creator", on_delete=models.SET_NULL, null=True

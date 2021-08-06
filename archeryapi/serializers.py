@@ -17,11 +17,11 @@
 from rest_framework import serializers
 
 
-
 class CreateUser(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
+
 
 class OrgAPIKeySerializer(serializers.Serializer):
     api_key = serializers.CharField(max_length=255)

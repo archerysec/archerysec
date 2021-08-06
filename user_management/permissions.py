@@ -16,6 +16,8 @@
 
 from rest_framework import permissions
 
+from archeryapi.models import OrgAPIKey
+
 
 class IsAdmin(permissions.BasePermission):
     """Allow for Admin only"""
@@ -76,3 +78,15 @@ class IsOwnerOrAdminOnly(permissions.BasePermission):
         else:
             # Write permissions are only allowed to the owner of the snippet.
             return obj.owner == request.user
+
+
+class VerifyAPIKey(permissions.BasePermission):
+    """Allow only if API Key is there"""
+
+    def has_permission(self, request, view):
+        """Check if user with admin access"""
+        api_key = request.META.get("HTTP_X_API_KEY")
+        key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+        if key_object is None:
+            return False
+        return key_object.is_active

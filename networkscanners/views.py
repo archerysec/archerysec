@@ -181,7 +181,9 @@ class OpenvasLaunchScan(APIView):
         user = request.user
         scan_ip = request.POST.get("ip")
         project_uu_id = request.POST.get("project_id")
-        project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
+        project_id = (
+            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+        )
         sel_profile = request.POST.get("scan_profile")
         ip = scan_ip.replace(" ", "")
         target_split = ip.split(",")
@@ -334,7 +336,9 @@ class XmlUpload(APIView):
         all_project = ProjectDb.objects.filter()
         if request.method == "POST":
             project_uu_id = request.POST.get("project_id")
-            project_id = ProjectDb.objects.filter(uu_id=project_uu_id).values('id').get()['id']
+            project_id = (
+                ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+            )
             scanner = request.POST.get("scanner")
             xml_file = request.FILES["xmlfile"]
             scan_ip = request.POST.get("scan_url")
