@@ -1,39 +1,4 @@
-$.fn.outerFind = function(selector) {
-    return this.find(selector).addBack(selector);
-};
-function initTabs(target) {
-    if ($(target).find('.nav-tabs').length !== 0) {
-        $(target).outerFind('section[id^="tabs"]').each(function() {
-            var componentID = $(this).attr('id');
-            var $tabsNavItem = $(this).find('.nav-tabs .nav-item');
-            var $tabPane = $(this).find('.tab-pane');
 
-            $tabPane.removeClass('active').eq(0).addClass('active');
-
-            $tabsNavItem.find('a').removeClass('active').removeAttr('aria-expanded')
-                .eq(0).addClass('active');
-
-            $tabPane.each(function() {
-                $(this).attr('id', componentID + '_tab' + $(this).index());
-            });
-
-            $tabsNavItem.each(function() {
-                $(this).find('a').attr('href', '#' + componentID + '_tab' + $(this).index());
-            });
-        });
-    }
-}
-
-// Mobirise Initilizaton
-var isBuilder = $('html').hasClass('is-builder');
-if (isBuilder) {
-    $(document).on('add.cards', function(e) {
-        initTabs(e.target);
-    });
-} else {
-    if (typeof window.initTabsPlugin === 'undefined'){
-        window.initTabsPlugin = true;
-        console.log('init tabs by plugin');
-        initTabs(document.body);
-    }
-}
+$.fn.outerFind=function(a){return this.find(a).addBack(a)};
+function updateId(a){0!==$(a).find(".nav-tabs").length&&$(a).outerFind('section[id^="tabs"], section.tabs, section[id^="extTabs"]').each(function(){var a=$(this).attr("id"),b=$(this).find(".nav-tabs .nav-item"),c=$(this).find(".tab-pane");c.removeClass("active").eq(0).addClass("active");b.find("a").removeClass("active").removeAttr("aria-expanded").eq(0).addClass("active");c.each(function(){$(this).attr("id",a+"_tab"+$(this).index())});b.each(function(){$(this).find("a").attr("href","#"+a+"_tab"+$(this).index())})})}
+var isBuilder=$("html").hasClass("is-builder");if(isBuilder)$(document).on("add.cards",function(a){updateId(a.target)});else"undefined"===typeof window.initTabsPlugin&&(window.initTabsPlugin=!0,console.log("init tabs by plugin"),updateId(document.body));
