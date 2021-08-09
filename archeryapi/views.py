@@ -217,6 +217,7 @@ class UploadScanResult(APIView):
     permission_classes = (BasePermission, permissions.VerifyAPIKey)
 
     def post(self, request, format=None):
+        date_time = datetime.datetime.now()
         project_uu_id = request.data.get("project_id")
         project_id = (
             ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
@@ -359,7 +360,8 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 project_id=project_id,
                 scan_status=scan_status,
-                scanner="Banditscan",
+                scanner="Bandit",
+                date_time=date_time,
             )
             scan_dump.save()
             data = json.loads(file)
