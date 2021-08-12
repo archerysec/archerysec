@@ -860,6 +860,7 @@ class Upload(APIView):
                 scanner = "Gitlabcontainerscan"
 
                 upload(
+                    target,
                     scan_id,
                     date_time,
                     project_id,

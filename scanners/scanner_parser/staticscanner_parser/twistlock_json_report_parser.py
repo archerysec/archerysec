@@ -225,7 +225,11 @@ def twistlock_report_json(data, project_id, scan_id):
                 vuln_duplicate=duplicate_vuln,
                 false_positive="Duplicate",
                 title=name,
-                description=description + "\n\n" + cvss + "\n\n" + packageVersion,
+                description=str(description)
+                            + "\n\n"
+                            + str(cvss)
+                            + "\n\n"
+                            + str(packageVersion),
                 severity=severity,
                 fileName=packageName,
                 references=link,
