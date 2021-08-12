@@ -41,34 +41,28 @@ from stronghold.decorators import public
 
 import PyArachniapi
 from archerysettings import load_settings
-from archerysettings.models import (
-    ArachniSettingsDb,
-    EmailDb,
-    NmapVulnersSettingDb,
-    SettingsDb,
-    ZapSettingsDb,
-)
+from archerysettings.models import (ArachniSettingsDb, EmailDb,
+                                    NmapVulnersSettingDb, SettingsDb,
+                                    ZapSettingsDb)
 from jiraticketing.models import jirasetting
 from projects.models import ProjectDb
 from scanners.scanner_parser.staticscanner_parser import (
-    checkmarx_xml_report_parser,
-    dependencycheck_report_parser,
-    findbugs_report_parser,
-)
+    checkmarx_xml_report_parser, dependencycheck_report_parser,
+    findbugs_report_parser)
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
-from scanners.scanner_parser.web_scanner import (
-    acunetix_xml_parser,
-    arachni_xml_parser,
-    burp_xml_parser,
-    netsparker_xml_parser,
-    webinspect_xml_parser,
-    zap_xml_parser,
-)
-from scanners.scanner_plugin.network_scanner.openvas_plugin import OpenVAS_Plugin
+from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
+                                                 arachni_xml_parser,
+                                                 burp_xml_parser,
+                                                 netsparker_xml_parser,
+                                                 webinspect_xml_parser,
+                                                 zap_xml_parser)
+from scanners.scanner_plugin.network_scanner.openvas_plugin import \
+    OpenVAS_Plugin
 from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from staticscanners.models import StaticScansDb
 from tools.models import NiktoResultDb
-from webscanners.models import WebScansDb, cookie_db, excluded_db, task_schedule_db
+from webscanners.models import (WebScansDb, cookie_db, excluded_db,
+                                task_schedule_db)
 from webscanners.zapscanner.views import launch_schudle_zap_scan
 
 setting_file = os.getcwd() + "/" + "apidata.json"

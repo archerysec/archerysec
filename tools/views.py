@@ -35,20 +35,12 @@ from rest_framework.views import APIView
 
 from scanners.scanner_parser.network_scanner import nmap_parser
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
-from tools.models import (
-    NiktoResultDb,
-    NiktoVulnDb,
-    NmapResultDb,
-    NmapScanDb,
-    SslscanResultDb,
-)
-
+from tools.models import (NiktoResultDb, NiktoVulnDb, NmapResultDb, NmapScanDb,
+                          SslscanResultDb)
 # NOTE[gmedian]: in order to be more portable we just import everything rather than add anything in this very script
-from tools.nmap_vulners.nmap_vulners_view import (
-    nmap_vulners,
-    nmap_vulners_port,
-    nmap_vulners_scan,
-)
+from tools.nmap_vulners.nmap_vulners_view import (nmap_vulners,
+                                                  nmap_vulners_port,
+                                                  nmap_vulners_scan)
 from user_management import permissions
 
 sslscan_output = None

@@ -23,12 +23,8 @@ from itertools import chain
 
 from django.db.models import Sum
 
-from compliance.models import (
-    DockleScanDb,
-    DockleScanResultsDb,
-    InspecScanDb,
-    InspecScanResultsDb,
-)
+from compliance.models import (DockleScanDb, DockleScanResultsDb, InspecScanDb,
+                               InspecScanResultsDb)
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from pentest.models import PentestScanDb, PentestScanResultsDb
 from staticscanners.models import StaticScanResultsDb, StaticScansDb

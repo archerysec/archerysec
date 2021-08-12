@@ -16,14 +16,13 @@
 
 import logging
 
-from django.test import TestCase
-from django.test import Client
+import requests
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase
 
 from authentication.tests import UserCreationTest
-from webscanners.models import *
 from projects.models import *
-from django.core.files.uploadedfile import SimpleUploadedFile
-import requests
+from webscanners.models import *
 
 logging.disable(logging.CRITICAL)
 
@@ -111,26 +110,36 @@ class WebScanTest(TestCase):
             password=self.auth_test.admin.get("password"),
         )
 
-        client.post("/projects/project_create/", data={"project_name": "name", "project_disc": "disc"})
-        project_id = ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        client.post(
+            "/projects/project_create/",
+            data={"project_name": "name", "project_disc": "disc"},
+        )
+        project_id = (
+            ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        )
 
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.7.0.xml"
 
         response = requests.get(file_path)
 
-        file_n = SimpleUploadedFile(name='zap.xml', content=response.text.encode(),
-                                    content_type='multipart/form-data')
+        file_n = SimpleUploadedFile(
+            name="zap.xml",
+            content=response.text.encode(),
+            content_type="multipart/form-data",
+        )
 
         data = {
             "scanner": "zap_scan",
             "xmlfile": file_n,
             "scan_url": "http://test.com",
-            "project_id": str(project_id)
+            "project_id": str(project_id),
         }
         # upload one sample report
         client.post("/webscanners/xml_upload/", data=data)
 
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         response = client.get("/webscanners/list_vuln/?scan_id=%s" % scan_id)
         self.assertEqual(response.status_code, 200)
@@ -163,31 +172,41 @@ class WebScanTest(TestCase):
             password=self.auth_test.admin.get("password"),
         )
 
-        client.post("/projects/project_create/", data={"project_name": "name", "project_disc": "disc"})
-        project_id = ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        client.post(
+            "/projects/project_create/",
+            data={"project_name": "name", "project_disc": "disc"},
+        )
+        project_id = (
+            ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        )
 
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.7.0.xml"
 
         response = requests.get(file_path)
 
-        file_n = SimpleUploadedFile(name='zap.xml', content=response.text.encode(),
-                                    content_type='multipart/form-data')
+        file_n = SimpleUploadedFile(
+            name="zap.xml",
+            content=response.text.encode(),
+            content_type="multipart/form-data",
+        )
 
         data = {
             "scanner": "zap_scan",
             "xmlfile": file_n,
             "scan_url": "http://test.com",
-            "project_id": str(project_id)
+            "project_id": str(project_id),
         }
         # upload one sample report
         client.post("/webscanners/xml_upload/", data=data)
 
         # get scan_id form web scans db
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         vuln_info = WebScanResultsDb.objects.filter(scan_id=scan_id)
-        vuln_id = ''
-        vuln_name = ''
+        vuln_id = ""
+        vuln_name = ""
         for vuln in vuln_info:
             vuln_id = vuln.vuln_id
             vuln_name = vuln.title
@@ -198,7 +217,7 @@ class WebScanTest(TestCase):
             "status": "Close",
             "vuln_id": vuln_id,
             "scan_id": scan_id,
-            "vuln_name": vuln_name
+            "vuln_name": vuln_name,
         }
 
         # mark vulnerability as closed and false positive
@@ -219,14 +238,17 @@ class WebScanTest(TestCase):
             "status": "Open",
             "vuln_id": vuln_id,
             "scan_id": scan_id,
-            "vuln_name": vuln_name
+            "vuln_name": vuln_name,
         }
 
         # mark vulnerability as closed and false positive
         response = client.post("/webscanners/vuln_mark/", data=data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response,
-                             "/webscanners/list_vuln_info/" + "?scan_id=%s&scan_name=%s" % (scan_id, vuln_name))
+        self.assertRedirects(
+            response,
+            "/webscanners/list_vuln_info/"
+            + "?scan_id=%s&scan_name=%s" % (scan_id, vuln_name),
+        )
 
         vuln_info = WebScanResultsDb.objects.filter(vuln_id=vuln_id)
         for vuln in vuln_info:
@@ -265,8 +287,11 @@ class WebScanTest(TestCase):
         # mark vulnerability as closed and false positive using analyst account
         response = client.post("/webscanners/vuln_mark/", data=data)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response,
-                             "/webscanners/list_vuln_info/" + "?scan_id=%s&scan_name=%s" % (scan_id, vuln_name))
+        self.assertRedirects(
+            response,
+            "/webscanners/list_vuln_info/"
+            + "?scan_id=%s&scan_name=%s" % (scan_id, vuln_name),
+        )
 
         # mark false positive and close using viewer account
         client.login(
@@ -287,30 +312,40 @@ class WebScanTest(TestCase):
             password=self.auth_test.admin.get("password"),
         )
 
-        client.post("/projects/project_create/", data={"project_name": "name", "project_disc": "disc"})
-        project_id = ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        client.post(
+            "/projects/project_create/",
+            data={"project_name": "name", "project_disc": "disc"},
+        )
+        project_id = (
+            ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        )
 
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.7.0.xml"
 
         response = requests.get(file_path)
 
-        file_n = SimpleUploadedFile(name='zap.xml', content=response.text.encode(),
-                                    content_type='multipart/form-data')
+        file_n = SimpleUploadedFile(
+            name="zap.xml",
+            content=response.text.encode(),
+            content_type="multipart/form-data",
+        )
 
         data = {
             "scanner": "zap_scan",
             "xmlfile": file_n,
             "scan_url": "http://test.com",
-            "project_id": str(project_id)
+            "project_id": str(project_id),
         }
         # upload one sample report
         client.post("/webscanners/xml_upload/", data=data)
 
         # get scan_id form web scans db
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         vuln_info = WebScanResultsDb.objects.filter(scan_id=scan_id)
-        vuln_id = ''
+        vuln_id = ""
         for vuln in vuln_info:
             vuln_id = vuln.vuln_id
 
@@ -347,33 +382,43 @@ class WebScanTest(TestCase):
             password=self.auth_test.admin.get("password"),
         )
 
-        client.post("/projects/project_create/", data={"project_name": "name", "project_disc": "disc"})
-        project_id = ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        client.post(
+            "/projects/project_create/",
+            data={"project_name": "name", "project_disc": "disc"},
+        )
+        project_id = (
+            ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        )
 
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.7.0.xml"
 
         response = requests.get(file_path)
 
-        file_n = SimpleUploadedFile(name='zap.xml', content=response.text.encode(),
-                                    content_type='multipart/form-data')
+        file_n = SimpleUploadedFile(
+            name="zap.xml",
+            content=response.text.encode(),
+            content_type="multipart/form-data",
+        )
 
         data = {
             "scanner": "zap_scan",
             "xmlfile": file_n,
             "scan_url": "http://test.com",
-            "project_id": str(project_id)
+            "project_id": str(project_id),
         }
         # upload one sample report
         client.post("/webscanners/xml_upload/", data=data)
 
         # get scan_id form web scans db
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         response = client.post("/webscanners/scan_delete/", data={"scan_id": scan_id})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/webscanners/list_scans/")
         scan_id = WebScansDb.objects.filter(scan_id=scan_id).values()
-        self.assertEqual(str(scan_id), '<QuerySet []>')
+        self.assertEqual(str(scan_id), "<QuerySet []>")
 
         # from analyst users
         client.login(
@@ -381,32 +426,42 @@ class WebScanTest(TestCase):
             password=self.auth_test.analyst.get("password"),
         )
 
-        client.post("/projects/project_create/", data={"project_name": "name", "project_disc": "disc"})
-        project_id = ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        client.post(
+            "/projects/project_create/",
+            data={"project_name": "name", "project_disc": "disc"},
+        )
+        project_id = (
+            ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        )
 
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.7.0.xml"
 
         response = requests.get(file_path)
 
-        file_n = SimpleUploadedFile(name='zap.xml', content=response.text.encode(),
-                                    content_type='multipart/form-data')
+        file_n = SimpleUploadedFile(
+            name="zap.xml",
+            content=response.text.encode(),
+            content_type="multipart/form-data",
+        )
 
         data = {
             "scanner": "zap_scan",
             "xmlfile": file_n,
             "scan_url": "http://test.com",
-            "project_id": str(project_id)
+            "project_id": str(project_id),
         }
         # upload one sample report
         client.post("/webscanners/xml_upload/", data=data)
 
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         response = client.post("/webscanners/scan_delete/", data={"scan_id": scan_id})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/webscanners/list_scans/")
         scan_id = WebScansDb.objects.filter(scan_id=scan_id).values()
-        self.assertEqual(str(scan_id), '<QuerySet []>')
+        self.assertEqual(str(scan_id), "<QuerySet []>")
 
         # from analyst users
         client.login(
@@ -426,38 +481,52 @@ class WebScanTest(TestCase):
             password=self.auth_test.admin.get("password"),
         )
 
-        client.post("/projects/project_create/", data={"project_name": "name", "project_disc": "disc"})
-        project_id = ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        client.post(
+            "/projects/project_create/",
+            data={"project_name": "name", "project_disc": "disc"},
+        )
+        project_id = (
+            ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        )
 
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.7.0.xml"
 
         response = requests.get(file_path)
 
-        file_n = SimpleUploadedFile(name='zap.xml', content=response.text.encode(),
-                                    content_type='multipart/form-data')
+        file_n = SimpleUploadedFile(
+            name="zap.xml",
+            content=response.text.encode(),
+            content_type="multipart/form-data",
+        )
 
         data = {
             "scanner": "zap_scan",
             "xmlfile": file_n,
             "scan_url": "http://test.com",
-            "project_id": str(project_id)
+            "project_id": str(project_id),
         }
         # upload one sample report
         client.post("/webscanners/xml_upload/", data=data)
 
         # get scan_id form web scans db
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         vuln_info = WebScanResultsDb.objects.filter(scan_id=scan_id)
-        vuln_id = ''
+        vuln_id = ""
         for vuln in vuln_info:
             vuln_id = vuln.vuln_id
 
-        response = client.post("/webscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id})
+        response = client.post(
+            "/webscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+        )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/webscanners/list_vuln/" + "?scan_id=%s" % scan_id)
+        self.assertRedirects(
+            response, "/webscanners/list_vuln/" + "?scan_id=%s" % scan_id
+        )
         vuln_id = WebScanResultsDb.objects.filter(vuln_id=vuln_id).values()
-        self.assertEqual(str(vuln_id), '<QuerySet []>')
+        self.assertEqual(str(vuln_id), "<QuerySet []>")
 
         # from analyst users
         client.login(
@@ -466,18 +535,24 @@ class WebScanTest(TestCase):
         )
 
         # get scan_id form web scans db
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         vuln_info = WebScanResultsDb.objects.filter(scan_id=scan_id)
-        vuln_id = ''
+        vuln_id = ""
         for vuln in vuln_info:
             vuln_id = vuln.vuln_id
 
-        response = client.post("/webscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id})
+        response = client.post(
+            "/webscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+        )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/webscanners/list_vuln/" + "?scan_id=%s" % scan_id)
+        self.assertRedirects(
+            response, "/webscanners/list_vuln/" + "?scan_id=%s" % scan_id
+        )
         vuln_id = WebScanResultsDb.objects.filter(vuln_id=vuln_id).values()
-        self.assertEqual(str(vuln_id), '<QuerySet []>')
+        self.assertEqual(str(vuln_id), "<QuerySet []>")
 
         # from analyst users
         client.login(
@@ -486,14 +561,18 @@ class WebScanTest(TestCase):
         )
 
         # get scan_id form web scans db
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         vuln_info = WebScanResultsDb.objects.filter(scan_id=scan_id)
-        vuln_id = ''
+        vuln_id = ""
         for vuln in vuln_info:
             vuln_id = vuln.vuln_id
 
-        response = client.post("/webscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id})
+        response = client.post(
+            "/webscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_web_scan_vuln_list(self):
@@ -505,27 +584,37 @@ class WebScanTest(TestCase):
             password=self.auth_test.admin.get("password"),
         )
 
-        client.post("/projects/project_create/", data={"project_name": "name", "project_disc": "disc"})
-        project_id = ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        client.post(
+            "/projects/project_create/",
+            data={"project_name": "name", "project_disc": "disc"},
+        )
+        project_id = (
+            ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
+        )
 
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.7.0.xml"
 
         response = requests.get(file_path)
 
-        file_n = SimpleUploadedFile(name='zap.xml', content=response.text.encode(),
-                                    content_type='multipart/form-data')
+        file_n = SimpleUploadedFile(
+            name="zap.xml",
+            content=response.text.encode(),
+            content_type="multipart/form-data",
+        )
 
         data = {
             "scanner": "zap_scan",
             "xmlfile": file_n,
             "scan_url": "http://test.com",
-            "project_id": str(project_id)
+            "project_id": str(project_id),
         }
         # upload one sample report
         client.post("/webscanners/xml_upload/", data=data)
 
         # get scan_id form web scans db
-        scan_id = WebScansDb.objects.filter(scanner='Zap').values("scan_id").get()["scan_id"]
+        scan_id = (
+            WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
+        )
 
         response = client.get("/webscanners/list_vuln/?scan_id=%s" % scan_id)
         self.assertEqual(response.status_code, 200)

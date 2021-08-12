@@ -29,7 +29,8 @@ from PyBurprestapi import burpscanner
 
 from archerysettings.models import BurpSettingDb, EmailDb
 from webscanners import email_notification
-from webscanners.models import WebScanResultsDb, WebScansDb, burp_issue_definitions
+from webscanners.models import (WebScanResultsDb, WebScansDb,
+                                burp_issue_definitions)
 
 to_mail = ""
 

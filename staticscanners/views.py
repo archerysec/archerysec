@@ -26,7 +26,6 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 
 from jiraticketing.models import jirasetting
-
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from user_management import permissions
 

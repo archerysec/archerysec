@@ -19,9 +19,8 @@ import json
 import logging
 import unittest
 
-from django.test import TestCase
+from django.test import Client, TestCase
 from rest_framework.test import APIClient
-from django.test import Client
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from common.functions import current_epoch, epoch_to_date

@@ -20,11 +20,10 @@ import json
 import logging
 
 from django.contrib.auth.hashers import make_password
-from django.test import TestCase
+from django.test import Client, TestCase
+from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.urls import reverse
-from django.test import Client
 
 from authentication.tests import UserCreationTest
 from user_management.models import *
