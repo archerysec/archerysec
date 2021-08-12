@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "jiraticketing",
     "tools",
     "pentest",
+    "report_upload",
     "django.contrib.admin",
     "stronghold",
     "django.contrib.auth",

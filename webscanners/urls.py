@@ -22,7 +22,6 @@ app_name = "webscanners"
 
 urlpatterns = [
     path("", web_views.Index.as_view(), name="index"),
-    path("xml_upload/", web_views.UploadXMLReport.as_view(), name="xml_upload"),
     path(
         "cookie_add/",
         web_views.AddCookies.as_view(),

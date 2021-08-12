@@ -26,8 +26,7 @@ from openvas_lib import VulnscanException, VulnscanManager
 from archerysettings.models import OpenvasSettingDb
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from scanners.scanner_parser.network_scanner import OpenVas_Parser
-from scanners.scanner_parser.network_scanner.OpenVas_Parser import \
-    updated_xml_parser
+from scanners.scanner_parser.network_scanner.OpenVas_Parser import updated_xml_parser
 
 name = ""
 creation_time = ""

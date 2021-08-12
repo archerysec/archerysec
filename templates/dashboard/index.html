@@ -144,6 +144,10 @@
                         <div class="card-body">
                          {% if user.is_superuser %}
                             <div class="float-right">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="{% url 'report_upload:upload' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload XML Report"><i
+                                        class="fas fa-upload"></i> Upload </a>
+                            </div>
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a href="{% url 'projects:project_create' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Create New Project"><i
                         class="fas fa-plus-circle"></i> Add Project</a>

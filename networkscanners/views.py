@@ -25,36 +25,30 @@ import time
 import uuid
 from datetime import datetime
 
-import defusedxml.ElementTree as ET
 from background_task import background
 from background_task.models import Task
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import HttpResponse, render
 from django.urls import reverse
-from django.utils import timezone
 from notifications.models import Notification
 from notifications.signals import notify
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from archerysettings import load_settings, save_settings
 from archerysettings.models import EmailDb, SettingsDb
 from jiraticketing.models import jirasetting
-from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb,
-                                    TaskScheduleDb)
+from networkscanners.models import NetworkScanDb, NetworkScanResultsDb, TaskScheduleDb
 from projects.models import ProjectDb
-from scanners.scanner_parser.network_scanner import (Nessus_Parser,
-                                                     OpenVas_Parser,
-                                                     nmap_parser)
+
 from scanners.scanner_plugin.network_scanner.openvas_plugin import (
-    OpenVAS_Plugin, vuln_an_id)
+    OpenVAS_Plugin,
+    vuln_an_id,
+)
 from user_management import permissions
 
 api_data = os.getcwd() + "/" + "apidata.json"
@@ -318,80 +312,6 @@ class OpenvasSetting(APIView):
                 "openvas_password": openvas_password,
             },
         )
-
-
-class XmlUpload(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "networkscanners/setting_form.html"
-
-    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
-
-    def get(self, request):
-        all_project = ProjectDb.objects.filter()
-        return render(
-            request, "networkscanners/net_upload_xml.html", {"all_project": all_project}
-        )
-
-    def post(self, request):
-        all_project = ProjectDb.objects.filter()
-        if request.method == "POST":
-            project_uu_id = request.POST.get("project_id")
-            project_id = (
-                ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
-            )
-            scanner = request.POST.get("scanner")
-            xml_file = request.FILES["xmlfile"]
-            scan_ip = request.POST.get("scan_url")
-            scan_id = uuid.uuid4()
-            scan_status = "100"
-            if scanner == "openvas":
-                date_time = datetime.now()
-                tree = ET.parse(xml_file)
-                root_xml = tree.getroot()
-                hosts = OpenVas_Parser.get_hosts(root_xml)
-                for host in hosts:
-                    scan_dump = NetworkScanDb(
-                        ip=host,
-                        scan_id=scan_id,
-                        date_time=date_time,
-                        project_id=project_id,
-                        scan_status=scan_status,
-                        scanner="Openvas",
-                    )
-                    scan_dump.save()
-                OpenVas_Parser.updated_xml_parser(
-                    project_id=project_id,
-                    scan_id=scan_id,
-                    root=root_xml,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("networkscanners:list_scans"))
-            elif scanner == "nessus":
-                date_time = datetime.now()
-                tree = ET.parse(xml_file)
-                root_xml = tree.getroot()
-                Nessus_Parser.updated_nessus_parser(
-                    root=root_xml,
-                    scan_id=scan_id,
-                    project_id=project_id,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("networkscanners:list_scans"))
-            elif scanner == "nmap":
-                tree = ET.parse(xml_file)
-                root_xml = tree.getroot()
-                nmap_parser.xml_parser(
-                    root=root_xml,
-                    scan_id=scan_id,
-                    project_id=project_id,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("tools:nmap_scan"))
-
-        return render(
-            request, "networkscanners/net_upload_xml.html", {"all_project": all_project}
-        )
-
 
 @background(schedule=60)
 def task(target_ip, project_id, scanner):

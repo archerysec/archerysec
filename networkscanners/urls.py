@@ -27,7 +27,6 @@ urlpatterns = [
     path("nv_details/", views.OpenvasSettingEnableDetails.as_view(), name="nv_details"),
     path("openvas_setting/", views.OpenvasSetting.as_view(), name="openvas_setting"),
     path("openvas_details/", views.OpenvasDetails.as_view(), name="openvas_details"),
-    path("xml_upload/", views.XmlUpload.as_view(), name="xml_upload"),
     path(
         "net_scan_schedule/",
         views.NetworkScanSchedule.as_view(),

@@ -51,7 +51,10 @@ class UsersList(APIView):
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
-        return Response({"serializer": serialized_data, "all_users": user_profile})
+        return Response(
+            {"serializer": serialized_data, "all_users": user_profile},
+            status=status.HTTP_200_OK,
+        )
 
     def post(self, request):
         try:

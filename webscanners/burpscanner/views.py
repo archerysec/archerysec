@@ -39,8 +39,7 @@ from jiraticketing.models import jirasetting
 from projects.models import ProjectDb
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from user_management import permissions
-from webscanners.models import (WebScanResultsDb, WebScansDb,
-                                burp_issue_definitions)
+from webscanners.models import WebScanResultsDb, WebScansDb, burp_issue_definitions
 from webscanners.resources import BurpResource
 
 burp_url = None

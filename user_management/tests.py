@@ -23,6 +23,8 @@ from django.contrib.auth.hashers import make_password
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.urls import reverse
+from django.test import Client
 
 from authentication.tests import UserCreationTest
 from user_management.models import *
@@ -31,7 +33,10 @@ logging.disable(logging.CRITICAL)
 
 
 class UserManagementTest(TestCase):
-    fixtures = ["fixtures/default_user_roles.json"]
+    fixtures = [
+        "fixtures/default_user_roles.json",
+        "fixtures/default_organization.json",
+    ]
 
     auth_test = UserCreationTest()
 
@@ -46,72 +51,260 @@ class UserManagementTest(TestCase):
             email=self.auth_test.admin.get("email"),
             password=self.auth_test.admin.get("password"),
             role=1,
+            organization=1,
         )
 
-    def test_profile(self):
-        """
-        This is a test method. This is automatically executed by django test
-        Method is used to test profile API
-        """
-        # Testing with an authenticated user
-        client, refresh_token = self.auth_test.login_user("admin")
-        response = client.get("/archerysec/api/v1/user/profile/")
-        if response.data.get("name") != self.auth_test.admin.get("name"):
-            self.fail("Unable to fetch user profile")
+        # Creating analyst User
+        UserProfile.objects.create_user(
+            name=self.auth_test.analyst.get("name"),
+            email=self.auth_test.analyst.get("email"),
+            password=self.auth_test.analyst.get("password"),
+            role=2,
+            organization=1,
+        )
 
-    def test_users(self):
-        """
-        This is a test method. This is automatically executed by django test
-        Method is used to test users API
-        """
-        new_user = {
-            "name": "newUser",
-            "email": "new_user@archerysec.com",
-            "password": "n3warcherysec",
+        # Create viewer user
+        UserProfile.objects.create_user(
+            name=self.auth_test.viewer.get("name"),
+            email=self.auth_test.viewer.get("email"),
+            password=self.auth_test.viewer.get("password"),
+            role=3,
+            organization=1,
+        )
+
+    # Test user profile page
+    def test_user_profile(self):
+        client = Client()
+        client.login(
+            username=self.auth_test.admin.get("email"),
+            password=self.auth_test.admin.get("password"),
+        )
+
+        response = client.get("/users/profile/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "profile/profile.html")
+
+    # Test users list page access from admin user
+    def test_users_list_for_admin(self):
+        client = Client()
+        client.login(
+            username=self.auth_test.admin.get("email"),
+            password=self.auth_test.admin.get("password"),
+        )
+        response = client.get("/users/list_user/")
+        self.assertEqual(response.status_code, 200)
+
+    # Test analyst user should not have access on list user page
+    def test_users_list_for_analyst_users(self):
+        client = Client()
+        client.login(
+            username=self.auth_test.analyst.get("email"),
+            password=self.auth_test.analyst.get("password"),
+        )
+        response = client.get("/users/list_user/")
+        self.assertEqual(response.status_code, 403)
+
+    # Test viewer user should not have access on list user page
+    def test_users_list_for_viewer_users(self):
+        client = Client()
+        client.login(
+            username=self.auth_test.viewer.get("email"),
+            password=self.auth_test.viewer.get("password"),
+        )
+        response = client.get("/users/list_user/")
+        self.assertEqual(response.status_code, 403)
+
+    # Teat adding user functionality
+    def test_add_user(self):
+        client = Client()
+        client.login(
+            username=self.auth_test.admin.get("email"),
+            password=self.auth_test.admin.get("password"),
+        )
+
+        # create new user
+        data = {
+            "name": "test",
+            "email": "test@admin.com",
+            "password": "test@123",
             "role": 1,
+            "organization": 1,
         }
-        new_user_uuid = ""
-        updated_name = "New User"
-        user_details = ""
 
-        # Creating user by post call
-        client, refresh_token = self.auth_test.login_user("admin")
-        response = client.post("/archerysec/api/v1/user/users/", data=new_user)
-        if response.data.get("user_id"):
-            new_user_uuid = str(response.data.get("user_id"))
-        else:
-            self.fail("Unable to create user by post call")
-
-        # Fetching user details by get call
-        response = client.get(f"/archerysec/api/v1/user/users/{new_user_uuid}/")
-        if response.data.get("name") != new_user.get("name"):
-            self.fail("Unable to fetch user details by get call")
-        else:
-            user_details = response.data
-
-        # Editing user details by Put call
-        user_details["role"] = 1
-        user_details["name"] = updated_name
-        user_details["image"] = "a"
-        user_details["password"] = new_user.get("password")
-        user_details.pop("password_updt_time", None)
-        response = client.put(
-            f"/archerysec/api/v1/user/users/{new_user_uuid}/", data=user_details
+        # send request to create new user
+        response = client.post("/users/add_user/", data)
+        user_id = (
+            UserProfile.objects.filter(email=data.get("email"))
+            .values("uu_id")
+            .get()["uu_id"]
         )
-        if response.status_code == 200:
-            updated_user_detail = client.get(
-                f"/archerysec/api/v1/user/users/{new_user_uuid}/"
-            )
-            if updated_user_detail.data.get("name") != updated_name:
-                self.fail("Updating user failed with status successful")
-        else:
-            self.fail("Unable to update user details")
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/users/list_user/")
 
-        # Deleting user details by delete call
-        response = client.delete(f"/archerysec/api/v1/user/users/{new_user_uuid}/")
-        if response.status_code == 200:
-            user_check = client.get(f"/archerysec/api/v1/user/users/{new_user_uuid}/")
-            if user_check.status_code != 404:
-                self.fail("User details are present even after delete call")
-        else:
-            self.fail("Unable to delete user details by delete call")
+        credential = {
+            "username": data.get("email"),
+            "password": data.get("password"),
+        }
+        response = client.post("/auth/auth/", credential)
+        self.assertRedirects(response, "/dashboard/")
+
+        # Test delete user from database
+        response_delete = client.post("/users/list_user/", data={"user_id": user_id})
+        self.assertEqual(response_delete.status_code, 302)
+
+        # Test try to login with deleted user
+        response = client.post("/auth/auth/", credential)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/auth/login/")
+
+
+class OrgManagementTest(TestCase):
+    fixtures = [
+        "fixtures/default_user_roles.json",
+        "fixtures/default_organization.json",
+    ]
+
+    auth_test = UserCreationTest()
+
+    def setUp(self):
+        """
+        This is the class which runs at the start before running test case.
+        This method updates password of admin user
+        """
+        # Creating Admin user
+        UserProfile.objects.create_user(
+            name=self.auth_test.admin.get("name"),
+            email=self.auth_test.admin.get("email"),
+            password=self.auth_test.admin.get("password"),
+            role=1,
+            organization=1,
+        )
+
+        # Creating analyst User
+        UserProfile.objects.create_user(
+            name=self.auth_test.analyst.get("name"),
+            email=self.auth_test.analyst.get("email"),
+            password=self.auth_test.analyst.get("password"),
+            role=2,
+            organization=1,
+        )
+
+        # Create viewer user
+        UserProfile.objects.create_user(
+            name=self.auth_test.viewer.get("name"),
+            email=self.auth_test.viewer.get("email"),
+            password=self.auth_test.viewer.get("password"),
+            role=3,
+            organization=1,
+        )
+
+    def test_org_list(self):
+        client = Client()
+        client.login(
+            username=self.auth_test.admin.get("email"),
+            password=self.auth_test.admin.get("password"),
+        )
+
+        # admin user should have access on list organization
+        response = client.get("/users/list_org/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "organization/org_list.html")
+
+        client.login(
+            username=self.auth_test.analyst.get("email"),
+            password=self.auth_test.analyst.get("password"),
+        )
+
+        # analyst user should not have access on list organization
+        response = client.get("/users/list_org/")
+        self.assertEqual(response.status_code, 403)
+
+        client.login(
+            username=self.auth_test.viewer.get("email"),
+            password=self.auth_test.viewer.get("password"),
+        )
+
+        # viewer user should not have access on list organization
+        response = client.get("/users/list_org/")
+        self.assertEqual(response.status_code, 403)
+
+    def test_org_add(self):
+        client = Client()
+        client.login(
+            username=self.auth_test.admin.get("email"),
+            password=self.auth_test.admin.get("password"),
+        )
+
+        # admin user should have access on add organization
+        response = client.post(
+            "/users/add_org/", data={"name": "test", "description": "test"}
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/users/list_org/")
+
+        client.login(
+            username=self.auth_test.analyst.get("email"),
+            password=self.auth_test.analyst.get("password"),
+        )
+
+        # analyst user should not have access on add organization
+        response = client.post(
+            "/users/add_org/", data={"name": "test", "description": "test"}
+        )
+        self.assertEqual(response.status_code, 403)
+
+        client.login(
+            username=self.auth_test.viewer.get("email"),
+            password=self.auth_test.viewer.get("password"),
+        )
+
+        # viewer user should not have access on add organization
+        response = client.post(
+            "/users/add_org/", data={"name": "test", "description": "test"}
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_org_edit(self):
+        client = Client()
+        client.login(
+            username=self.auth_test.admin.get("email"),
+            password=self.auth_test.admin.get("password"),
+        )
+
+        # admin user should have access on add organization
+        client.post("/users/add_org/", data={"name": "test1", "description": "test"})
+
+        get_new_org_id = (
+            Organization.objects.filter(name="test1").values("uu_id").get()["uu_id"]
+        )
+
+        # admin user should have access on edit orgaization
+
+        response = client.post(
+            "/users/edit_org/" + str(get_new_org_id) + "/",
+            data={"name": "test", "description": "test"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/users/list_org/")
+
+        # analyst user should not have access on edit orgaization
+        client.login(
+            username=self.auth_test.analyst.get("email"),
+            password=self.auth_test.analyst.get("password"),
+        )
+        response = client.post(
+            "/users/edit_org/" + str(get_new_org_id) + "/",
+            data={"name": "test", "description": "test"},
+        )
+        self.assertEqual(response.status_code, 403)
+
+        # viewer user should not have access on edit orgaization
+        client.login(
+            username=self.auth_test.viewer.get("email"),
+            password=self.auth_test.viewer.get("password"),
+        )
+        response = client.post(
+            "/users/edit_org/" + str(get_new_org_id) + "/",
+            data={"name": "test", "description": "test"},
+        )
+        self.assertEqual(response.status_code, 403)

@@ -42,7 +42,7 @@
                         <div class="float-right">
                            {% if user.is_superuser == True or user.role.id == 2 %}
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{% url 'staticscanners:report_import' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload Report"><i
+                                <a href="{% url 'report_upload:upload' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload Report"><i
                                         class="fas fa-upload
 "></i> Upload</a>
                             </div>
