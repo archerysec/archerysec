@@ -137,9 +137,7 @@ class StaticScanTest(TestCase):
         # upload one sample report
         client.post("/report-upload/upload/", data=data)
 
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
         response = client.get("/staticscanners/list_vuln/?scan_id=%s" % scan_id)
         self.assertEqual(response.status_code, 200)
@@ -200,9 +198,7 @@ class StaticScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form static scans db
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = StaticScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -340,9 +336,7 @@ class StaticScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form static scans db
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = StaticScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -410,11 +404,11 @@ class StaticScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form static scans db
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
-        response = client.post("/staticscanners/scan_delete/", data={"scan_id": scan_id})
+        response = client.post(
+            "/staticscanners/scan_delete/", data={"scan_id": scan_id}
+        )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/staticscanners/list_scans/")
         scan_id = StaticScansDb.objects.filter(scan_id=scan_id).values()
@@ -453,11 +447,11 @@ class StaticScanTest(TestCase):
         # upload one sample report
         client.post("/report-upload/upload/", data=data)
 
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
-        response = client.post("/staticscanners/scan_delete/", data={"scan_id": scan_id})
+        response = client.post(
+            "/staticscanners/scan_delete/", data={"scan_id": scan_id}
+        )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/staticscanners/list_scans/")
         scan_id = StaticScansDb.objects.filter(scan_id=scan_id).values()
@@ -469,7 +463,9 @@ class StaticScanTest(TestCase):
             password=self.auth_test.viewer.get("password"),
         )
 
-        response = client.post("/staticscanners/scan_delete/", data={"scan_id": scan_id})
+        response = client.post(
+            "/staticscanners/scan_delete/", data={"scan_id": scan_id}
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_static_scan_vuln_delete(self):
@@ -509,9 +505,7 @@ class StaticScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form static scans db
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = StaticScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -519,7 +513,8 @@ class StaticScanTest(TestCase):
             vuln_id = vuln.vuln_id
 
         response = client.post(
-            "/staticscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+            "/staticscanners/vuln_delete/",
+            data={"scan_id": scan_id, "vuln_id": vuln_id},
         )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
@@ -535,9 +530,7 @@ class StaticScanTest(TestCase):
         )
 
         # get scan_id form static scans db
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = StaticScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -545,7 +538,8 @@ class StaticScanTest(TestCase):
             vuln_id = vuln.vuln_id
 
         response = client.post(
-            "/staticscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+            "/staticscanners/vuln_delete/",
+            data={"scan_id": scan_id, "vuln_id": vuln_id},
         )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
@@ -561,9 +555,7 @@ class StaticScanTest(TestCase):
         )
 
         # get scan_id form static scans db
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = StaticScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -571,7 +563,8 @@ class StaticScanTest(TestCase):
             vuln_id = vuln.vuln_id
 
         response = client.post(
-            "/staticscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+            "/staticscanners/vuln_delete/",
+            data={"scan_id": scan_id, "vuln_id": vuln_id},
         )
         self.assertEqual(response.status_code, 403)
 
@@ -612,9 +605,7 @@ class StaticScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form static scans db
-        scan_id = (
-            StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = StaticScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
         response = client.get("/staticscanners/list_vuln/?scan_id=%s" % scan_id)
         self.assertEqual(response.status_code, 200)

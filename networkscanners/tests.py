@@ -21,8 +21,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 
 from authentication.tests import UserCreationTest
-from projects.models import *
 from networkscanners.models import *
+from projects.models import *
 
 logging.disable(logging.CRITICAL)
 
@@ -137,13 +137,14 @@ class NetworkScanTest(TestCase):
         # upload one sample report
         client.post("/report-upload/upload/", data=data)
 
-        scan_id = (
-            NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
 
         ip = NetworkScanDb.objects.filter().values("ip").get()["ip"]
 
-        response = client.get("/networkscanners/list_vuln_info/?scan_id=%s&ip=%s&scanner=Openvas" % (scan_id, ip))
+        response = client.get(
+            "/networkscanners/list_vuln_info/?scan_id=%s&ip=%s&scanner=Openvas"
+            % (scan_id, ip)
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "networkscanners/scans/list_vuln_info.html")
 
@@ -153,7 +154,10 @@ class NetworkScanTest(TestCase):
             password=self.auth_test.analyst.get("password"),
         )
 
-        response = client.get("/networkscanners/list_vuln_info/?scan_id=%s&ip=%s&scanner=Openvas" % (scan_id, ip))
+        response = client.get(
+            "/networkscanners/list_vuln_info/?scan_id=%s&ip=%s&scanner=Openvas"
+            % (scan_id, ip)
+        )
         self.assertEqual(response.status_code, 200)
 
         # from viewers users
@@ -162,7 +166,10 @@ class NetworkScanTest(TestCase):
             password=self.auth_test.viewer.get("password"),
         )
 
-        response = client.get("/networkscanners/list_vuln_info/?scan_id=%s&ip=%s&scanner=Openvas" % (scan_id, ip))
+        response = client.get(
+            "/networkscanners/list_vuln_info/?scan_id=%s&ip=%s&scanner=Openvas"
+            % (scan_id, ip)
+        )
         self.assertEqual(response.status_code, 200)
 
     def test_network_scan_vuln_mark(self):
@@ -202,9 +209,7 @@ class NetworkScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form network scans db
-        scan_id = (
-            NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -223,7 +228,7 @@ class NetworkScanTest(TestCase):
             "scan_id": scan_id,
             "vuln_name": vuln_name,
             "scanner": "Openvas",
-            "ip": ip
+            "ip": ip,
         }
 
         # mark vulnerability as closed and false positive
@@ -246,7 +251,7 @@ class NetworkScanTest(TestCase):
             "scan_id": scan_id,
             "vuln_name": vuln_name,
             "scanner": "Openvas",
-            "ip": ip
+            "ip": ip,
         }
 
         # mark vulnerability as closed and false positive
@@ -298,7 +303,7 @@ class NetworkScanTest(TestCase):
         self.assertRedirects(
             response,
             "/networkscanners/list_vuln_info/"
-            + "?scan_id=%s&ip=%s&scanner=%s" % (scan_id, ip, "Openvas")
+            + "?scan_id=%s&ip=%s&scanner=%s" % (scan_id, ip, "Openvas"),
         )
 
         # mark false positive and close using viewer account
@@ -348,16 +353,17 @@ class NetworkScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form network scans db
-        scan_id = (
-            NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
         for vuln in vuln_info:
             vuln_id = vuln.vuln_id
 
-        response = client.get("/networkscanners/scan_details/?vuln_id=%s&scanner=%s" % (vuln_id, "Openvas"))
+        response = client.get(
+            "/networkscanners/scan_details/?vuln_id=%s&scanner=%s"
+            % (vuln_id, "Openvas")
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "networkscanners/scans/vuln_details.html")
 
@@ -367,7 +373,10 @@ class NetworkScanTest(TestCase):
             password=self.auth_test.analyst.get("password"),
         )
 
-        response = client.get("/networkscanners/scan_details/?vuln_id=%s&scanner=%s" % (vuln_id, "Openvas"))
+        response = client.get(
+            "/networkscanners/scan_details/?vuln_id=%s&scanner=%s"
+            % (vuln_id, "Openvas")
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "networkscanners/scans/vuln_details.html")
 
@@ -377,7 +386,10 @@ class NetworkScanTest(TestCase):
             password=self.auth_test.analyst.get("password"),
         )
 
-        response = client.get("/networkscanners/scan_details/?vuln_id=%s&scanner=%s" % (vuln_id, "Openvas"))
+        response = client.get(
+            "/networkscanners/scan_details/?vuln_id=%s&scanner=%s"
+            % (vuln_id, "Openvas")
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "networkscanners/scans/vuln_details.html")
 
@@ -418,11 +430,11 @@ class NetworkScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form network scans db
-        scan_id = (
-            NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
 
-        response = client.post("/networkscanners/scan_delete/", data={"scan_id": scan_id})
+        response = client.post(
+            "/networkscanners/scan_delete/", data={"scan_id": scan_id}
+        )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/networkscanners/list_scans/")
         scan_id = NetworkScanDb.objects.filter(scan_id=scan_id).values()
@@ -461,11 +473,11 @@ class NetworkScanTest(TestCase):
         # upload one sample report
         client.post("/report-upload/upload/", data=data)
 
-        scan_id = (
-            NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
 
-        response = client.post("/networkscanners/scan_delete/", data={"scan_id": scan_id})
+        response = client.post(
+            "/networkscanners/scan_delete/", data={"scan_id": scan_id}
+        )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/networkscanners/list_scans/")
         scan_id = NetworkScanDb.objects.filter(scan_id=scan_id).values()
@@ -477,7 +489,9 @@ class NetworkScanTest(TestCase):
             password=self.auth_test.viewer.get("password"),
         )
 
-        response = client.post("/networkscanners/scan_delete/", data={"scan_id": scan_id})
+        response = client.post(
+            "/networkscanners/scan_delete/", data={"scan_id": scan_id}
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_network_scan_vuln_delete(self):
@@ -517,9 +531,7 @@ class NetworkScanTest(TestCase):
         client.post("/report-upload/upload/", data=data)
 
         # get scan_id form network scans db
-        scan_id = (
-            NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -527,12 +539,11 @@ class NetworkScanTest(TestCase):
             vuln_id = vuln.vuln_id
 
         response = client.post(
-            "/networkscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+            "/networkscanners/vuln_delete/",
+            data={"scan_id": scan_id, "vuln_id": vuln_id},
         )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(
-            response, "/networkscanners/list_scans/"
-        )
+        self.assertRedirects(response, "/networkscanners/list_scans/")
         vuln_id = NetworkScanResultsDb.objects.filter(vuln_id=vuln_id).values()
         self.assertEqual(str(vuln_id), "<QuerySet []>")
 
@@ -543,9 +554,7 @@ class NetworkScanTest(TestCase):
         )
 
         # get scan_id form network scans db
-        scan_id = (
-            NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -553,12 +562,11 @@ class NetworkScanTest(TestCase):
             vuln_id = vuln.vuln_id
 
         response = client.post(
-            "/networkscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+            "/networkscanners/vuln_delete/",
+            data={"scan_id": scan_id, "vuln_id": vuln_id},
         )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(
-            response, "/networkscanners/list_scans/"
-        )
+        self.assertRedirects(response, "/networkscanners/list_scans/")
         vuln_id = NetworkScanResultsDb.objects.filter(vuln_id=vuln_id).values()
         self.assertEqual(str(vuln_id), "<QuerySet []>")
 
@@ -569,9 +577,7 @@ class NetworkScanTest(TestCase):
         )
 
         # get scan_id form network scans db
-        scan_id = (
-            NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
-        )
+        scan_id = NetworkScanDb.objects.filter().values("scan_id").get()["scan_id"]
 
         vuln_info = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
@@ -579,6 +585,7 @@ class NetworkScanTest(TestCase):
             vuln_id = vuln.vuln_id
 
         response = client.post(
-            "/networkscanners/vuln_delete/", data={"scan_id": scan_id, "vuln_id": vuln_id}
+            "/networkscanners/vuln_delete/",
+            data={"scan_id": scan_id, "vuln_id": vuln_id},
         )
         self.assertEqual(response.status_code, 403)

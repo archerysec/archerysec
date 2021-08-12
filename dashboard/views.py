@@ -65,7 +65,6 @@ def trend_update():
 
         try:
             high = all_date_data.first()["total_high"]
-            print(high)
             medium = all_date_data.first()["total_medium"]
             low = all_date_data.first()["total_low"]
         except:

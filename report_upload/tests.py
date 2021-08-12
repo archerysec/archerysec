@@ -17,16 +17,16 @@
 import logging
 
 import requests
+from django.contrib import messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
-from django.contrib import messages
 
 from authentication.tests import UserCreationTest
-from projects.models import *
-from webscanners.models import *
-from staticscanners.models import *
-from networkscanners.models import *
 from compliance.models import *
+from networkscanners.models import *
+from projects.models import *
+from staticscanners.models import *
+from webscanners.models import *
 
 logging.disable(logging.CRITICAL)
 
@@ -104,7 +104,9 @@ class UploadTest(TestCase):
         response = client.get("/report-upload/upload/")
         self.assertEqual(response.status_code, 403)
 
-    def upload_report_file(self, scanner, file_path, error_message, test_file_path, redirect_to, file_type):
+    def upload_report_file(
+        self, scanner, file_path, error_message, test_file_path, redirect_to, file_type
+    ):
         client = Client()
 
         # from admin users
@@ -125,11 +127,11 @@ class UploadTest(TestCase):
 
         response = requests.get(file_path)
 
-        file_name = ''
+        file_name = ""
 
-        if file_type == 'xml':
+        if file_type == "xml":
             file_name = "test.xml"
-        if file_type == 'json':
+        if file_type == "json":
             file_name = "test.json"
 
         file_n = SimpleUploadedFile(
@@ -153,11 +155,11 @@ class UploadTest(TestCase):
 
         response = requests.get(file_path)
 
-        file_name = ''
+        file_name = ""
 
-        if file_type == 'xml':
+        if file_type == "xml":
             file_name = "test.xml"
-        if file_type == 'json':
+        if file_type == "json":
             file_name = "test.json"
 
         file_n = SimpleUploadedFile(
@@ -214,9 +216,9 @@ class UploadTest(TestCase):
 
         response = requests.get(test_file_path)
 
-        if file_type == 'xml':
+        if file_type == "xml":
             file_name = "test.json"
-        if file_type == 'json':
+        if file_type == "json":
             file_name = "test.xml"
 
         file_n = SimpleUploadedFile(
@@ -234,7 +236,7 @@ class UploadTest(TestCase):
         # upload one sample report
         response = client.post("/report-upload/upload/", data=data, follow=True)
         # get message from context and check that expected text is there
-        message = list(response.context.get('messages'))[0]
+        message = list(response.context.get("messages"))[0]
         self.assertEqual(message.tags, "alert-danger")
         self.assertTrue(error_message in message.message)
 
@@ -245,7 +247,9 @@ class UploadTest(TestCase):
         error_message = "ZAP Scanner Only XML file Support"
         redirect_to = "/webscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_burp_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Burp/Burp_Report.xml"
@@ -254,7 +258,9 @@ class UploadTest(TestCase):
         error_message = "Burp Scan Only XML file Support"
         redirect_to = "/webscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_arachni_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Arachni/Arachni_v1.3.xml"
@@ -263,7 +269,9 @@ class UploadTest(TestCase):
         error_message = "Arachni Only XML file Support"
         redirect_to = "/webscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_netsparker_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Netsparker/Netsparker_report.xml"
@@ -272,7 +280,9 @@ class UploadTest(TestCase):
         error_message = "Netsparker Only XML file Support"
         redirect_to = "/webscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_webinspect_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Webinspect/Webinspect_v18.20.xml"
@@ -281,7 +291,9 @@ class UploadTest(TestCase):
         error_message = "Webinspect Only XML file Support"
         redirect_to = "/webscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_acunetix_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Acunetix/Acunetix_report_sample.xml"
@@ -290,7 +302,9 @@ class UploadTest(TestCase):
         error_message = "Acunetix Only XML file Support"
         redirect_to = "/webscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_dependencycheck_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Dependency-check/dependency-check-report_v5.2.1.xml"
@@ -299,7 +313,9 @@ class UploadTest(TestCase):
         error_message = "Dependencycheck Only XML file Support"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_checkmarx_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Checkmarx/Checkmarx_v8.9.0.210.xml"
@@ -308,7 +324,9 @@ class UploadTest(TestCase):
         error_message = "Checkmarx Only XML file Support"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_findbugs_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Findbugs/findbugs_report_v3.1.5.xml"
@@ -317,7 +335,9 @@ class UploadTest(TestCase):
         error_message = "Findbugs Only XML file Support"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_bandit_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
@@ -326,7 +346,9 @@ class UploadTest(TestCase):
         error_message = "Bandit Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_clair_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Clair/clair_output.json"
@@ -335,7 +357,9 @@ class UploadTest(TestCase):
         error_message = "Clair Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_trivy_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Trivy/trivy_results.json"
@@ -344,7 +368,9 @@ class UploadTest(TestCase):
         error_message = "Trivy Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_npmaudit_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Npmaudit/npm_audit_report.json"
@@ -353,7 +379,9 @@ class UploadTest(TestCase):
         error_message = "NPM Audit Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_nodejsscan_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Nodejsscan/nodejsscan_report.json"
@@ -362,7 +390,9 @@ class UploadTest(TestCase):
         error_message = "Nodejs scan Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_semgrepscan_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Semgrep/semgrep-WebGoat.json"
@@ -371,7 +401,9 @@ class UploadTest(TestCase):
         error_message = "Semgrep scan Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_tfsec_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/tfsec/tfsec_report.json"
@@ -380,7 +412,9 @@ class UploadTest(TestCase):
         error_message = "Tfsec Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_whitesource_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Whitesource/whitesource-report.json"
@@ -389,7 +423,9 @@ class UploadTest(TestCase):
         error_message = "Whitesource Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_inspec_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Inspec/inspec_report.json"
@@ -398,7 +434,9 @@ class UploadTest(TestCase):
         error_message = "Inspec Only JSON file Supported"
         redirect_to = "/inspec/inspec_list/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_dockle_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Dockle/dockle_report.json"
@@ -407,7 +445,9 @@ class UploadTest(TestCase):
         error_message = "Dockle Only JSON file Supported"
         redirect_to = "/dockle/dockle_list/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_gitlabsast_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Gitlab/gl-sast-report.json"
@@ -416,7 +456,9 @@ class UploadTest(TestCase):
         error_message = "Gitlabsast Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_gitlabcontainerscan_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Gitlab/gl-container-scanning-report.json"
@@ -425,7 +467,9 @@ class UploadTest(TestCase):
         error_message = "Gitlabcontainerscan Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_gitlabsca_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Gitlab/gl-dependency-scanning-report.json"
@@ -434,7 +478,9 @@ class UploadTest(TestCase):
         error_message = "Gitlabsca Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_twistlock_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Twistlock/twistlock.json"
@@ -443,7 +489,9 @@ class UploadTest(TestCase):
         error_message = "Twistlock Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_brakeman_scan_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Brakeman/brakeman_output.json"
@@ -452,7 +500,9 @@ class UploadTest(TestCase):
         error_message = "Brakeman Only JSON file Supported"
         redirect_to = "/staticscanners/list_scans/"
         file_type = "json"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )
 
     def test_upload_openvas_report_files(self):
         file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Openvas/openvas.xml"
@@ -461,4 +511,6 @@ class UploadTest(TestCase):
         error_message = "Openvas Only XML file Supported"
         redirect_to = "/networkscanners/list_scans/"
         file_type = "xml"
-        self.upload_report_file(scanner, file_path, error_message, test_file_path, redirect_to, file_type)
+        self.upload_report_file(
+            scanner, file_path, error_message, test_file_path, redirect_to, file_type
+        )

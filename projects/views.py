@@ -30,8 +30,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from projects.models import MonthDb, ProjectDb, ProjectScanDb
-from projects.serializers import (ProjectCreateSerializers,
-                                  ProjectDataSerializers)
+from projects.serializers import ProjectCreateSerializers, ProjectDataSerializers
 from user_management import permissions
 from user_management.models import Organization
 

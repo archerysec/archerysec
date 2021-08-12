@@ -20,8 +20,12 @@ import os
 
 from django.core import signing
 
-from archerysettings.models import (BurpSettingDb, NmapVulnersSettingDb,
-                                    OpenvasSettingDb, ZapSettingsDb)
+from archerysettings.models import (
+    BurpSettingDb,
+    NmapVulnersSettingDb,
+    OpenvasSettingDb,
+    ZapSettingsDb,
+)
 
 
 class ArcherySettings:

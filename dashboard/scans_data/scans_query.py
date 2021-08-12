@@ -23,8 +23,12 @@ from itertools import chain
 
 from django.db.models import Sum
 
-from compliance.models import (DockleScanDb, DockleScanResultsDb, InspecScanDb,
-                               InspecScanResultsDb)
+from compliance.models import (
+    DockleScanDb,
+    DockleScanResultsDb,
+    InspecScanDb,
+    InspecScanResultsDb,
+)
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from pentest.models import PentestScanDb, PentestScanResultsDb
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
@@ -197,7 +201,7 @@ def all_vuln(project_id, query):
                 )["total_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_sast_scan = 0
 
         try:
@@ -207,7 +211,7 @@ def all_vuln(project_id, query):
                 )["total_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_dast_scan = 0
 
         try:
@@ -218,7 +222,7 @@ def all_vuln(project_id, query):
                 )["total_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_net_scan = 0
 
         all_vuln = (
@@ -235,7 +239,7 @@ def all_vuln(project_id, query):
                 )["high_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_sast_scan = 0
 
         try:
@@ -271,7 +275,7 @@ def all_vuln(project_id, query):
                 )["medium_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_sast_scan = 0
 
         try:
@@ -281,7 +285,7 @@ def all_vuln(project_id, query):
                 )["medium_vul__sum"]
             )
         except Exception as e:
-            print(e)
+
             all_dast_scan = 0
 
         try:
@@ -292,7 +296,7 @@ def all_vuln(project_id, query):
             )
 
         except Exception as e:
-            print(e)
+            #
             all_net_scan = 0
 
         all_vuln = (
@@ -309,7 +313,7 @@ def all_vuln(project_id, query):
                 )["low_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_sast_scan = 0
 
         try:
@@ -319,7 +323,7 @@ def all_vuln(project_id, query):
                 )["low_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_dast_scan = 0
 
         try:
@@ -329,7 +333,7 @@ def all_vuln(project_id, query):
                 )["low_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_net_scan = 0
 
         all_vuln = (
@@ -354,7 +358,7 @@ def all_web(project_id, query):
             )
 
         except Exception as e:
-            print(e)
+            #
             all_web = 0
 
     elif query == "high":
@@ -365,7 +369,7 @@ def all_web(project_id, query):
                 )["high_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_web = 0
 
     elif query == "medium":
@@ -376,7 +380,7 @@ def all_web(project_id, query):
                 )["medium_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_web = 0
 
     elif query == "low":
@@ -387,7 +391,7 @@ def all_web(project_id, query):
                 )["low_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_web = 0
 
     return all_web
@@ -404,7 +408,7 @@ def all_net(project_id, query):
                 )["total_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_net = 0
 
     elif query == "high":
@@ -415,7 +419,7 @@ def all_net(project_id, query):
                 )["high_vul__sum"]
             )
         except Exception as e:
-            print(e)
+            #
             all_net = 0
     elif query == "medium":
         try:
@@ -425,7 +429,7 @@ def all_net(project_id, query):
                 )["medium_vul__sum"]
             )
         except Exception as e:
-            print(e)
+
             all_net = 0
 
     elif query == "low":
@@ -436,7 +440,7 @@ def all_net(project_id, query):
                 )["low_vul__sum"]
             )
         except Exception as e:
-            print(e)
+
             all_net = 0
 
     return all_net
@@ -474,7 +478,7 @@ def all_static(project_id, query):
                 )["total_vul__sum"]
             )
         except Exception as e:
-            print(e)
+
             all_static = 0
     elif query == "high":
         try:
@@ -484,7 +488,7 @@ def all_static(project_id, query):
                 )["high_vul__sum"]
             )
         except Exception as e:
-            print(e)
+
             all_static = 0
     elif query == "medium":
         try:
@@ -494,7 +498,7 @@ def all_static(project_id, query):
                 )["medium_vul__sum"]
             )
         except Exception as e:
-            print(e)
+
             all_static = 0
 
     elif query == "low":
@@ -505,7 +509,7 @@ def all_static(project_id, query):
                 )["low_vul__sum"]
             )
         except Exception as e:
-            print(e)
+
             all_static = 0
 
     return all_static

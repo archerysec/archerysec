@@ -36,8 +36,13 @@ from datetime import datetime
 
 import defusedxml.ElementTree as ET
 
-from webscanners.models import (WebScanResultsDb, WebScansDb, cookie_db,
-                                excluded_db, zap_spider_db)
+from webscanners.models import (
+    WebScanResultsDb,
+    WebScansDb,
+    cookie_db,
+    excluded_db,
+    zap_spider_db,
+)
 
 # ZAP Database import
 

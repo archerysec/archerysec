@@ -42,11 +42,12 @@ from rest_framework.views import APIView
 from archerysettings import load_settings, save_settings
 from archerysettings.models import EmailDb, SettingsDb
 from jiraticketing.models import jirasetting
-from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb,
-                                    TaskScheduleDb)
+from networkscanners.models import NetworkScanDb, NetworkScanResultsDb, TaskScheduleDb
 from projects.models import ProjectDb
 from scanners.scanner_plugin.network_scanner.openvas_plugin import (
-    OpenVAS_Plugin, vuln_an_id)
+    OpenVAS_Plugin,
+    vuln_an_id,
+)
 from user_management import permissions
 
 api_data = os.getcwd() + "/" + "apidata.json"

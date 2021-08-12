@@ -31,54 +31,75 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 
 from compliance.models import DockleScanDb, InspecScanDb
-from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb,
-                                    TaskScheduleDb)
+from networkscanners.models import NetworkScanDb, NetworkScanResultsDb, TaskScheduleDb
 from projects.models import ProjectDb
-from scanners.scanner_parser.compliance_parser.dockle_json_parser import \
-    dockle_report_json
-from scanners.scanner_parser.compliance_parser.inspec_json_parser import \
-    inspec_report_json
-from scanners.scanner_parser.network_scanner import (Nessus_Parser,
-                                                     OpenVas_Parser,
-                                                     nmap_parser)
+from scanners.scanner_parser.compliance_parser.dockle_json_parser import (
+    dockle_report_json,
+)
+from scanners.scanner_parser.compliance_parser.inspec_json_parser import (
+    inspec_report_json,
+)
+from scanners.scanner_parser.network_scanner import (
+    Nessus_Parser,
+    OpenVas_Parser,
+    nmap_parser,
+)
 from scanners.scanner_parser.staticscanner_parser import (
-    checkmarx_xml_report_parser, dependencycheck_report_parser,
-    findbugs_report_parser)
-from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import \
-    bandit_report_json
-from scanners.scanner_parser.staticscanner_parser.brakeman_json_report_parser import \
-    brakeman_report_json
-from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser import \
-    clair_report_json
-from scanners.scanner_parser.staticscanner_parser.gitlab_container_json_report_parser import \
-    gitlabcontainerscan_report_json
-from scanners.scanner_parser.staticscanner_parser.gitlab_sast_json_report_parser import \
-    gitlabsast_report_json
-from scanners.scanner_parser.staticscanner_parser.gitlab_sca_json_report_parser import \
-    gitlabsca_report_json
-from scanners.scanner_parser.staticscanner_parser.nodejsscan_report_json import \
-    nodejsscan_report_json
-from scanners.scanner_parser.staticscanner_parser.npm_audit_report_json import \
-    npmaudit_report_json
-from scanners.scanner_parser.staticscanner_parser.retirejss_json_parser import \
-    retirejs_report_json
-from scanners.scanner_parser.staticscanner_parser.semgrep_json_report_parser import \
-    semgrep_report_json
-from scanners.scanner_parser.staticscanner_parser.tfsec_report_parser import \
-    tfsec_report_json
-from scanners.scanner_parser.staticscanner_parser.trivy_json_report_parser import \
-    trivy_report_json
-from scanners.scanner_parser.staticscanner_parser.twistlock_json_report_parser import \
-    twistlock_report_json
-from scanners.scanner_parser.staticscanner_parser.whitesource_json_report_parser import \
-    whitesource_report_json
+    checkmarx_xml_report_parser,
+    dependencycheck_report_parser,
+    findbugs_report_parser,
+)
+from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import (
+    bandit_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.brakeman_json_report_parser import (
+    brakeman_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser import (
+    clair_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.gitlab_container_json_report_parser import (
+    gitlabcontainerscan_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.gitlab_sast_json_report_parser import (
+    gitlabsast_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.gitlab_sca_json_report_parser import (
+    gitlabsca_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.nodejsscan_report_json import (
+    nodejsscan_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.npm_audit_report_json import (
+    npmaudit_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.retirejss_json_parser import (
+    retirejs_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.semgrep_json_report_parser import (
+    semgrep_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.tfsec_report_parser import (
+    tfsec_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.trivy_json_report_parser import (
+    trivy_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.twistlock_json_report_parser import (
+    twistlock_report_json,
+)
+from scanners.scanner_parser.staticscanner_parser.whitesource_json_report_parser import (
+    whitesource_report_json,
+)
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
-from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
-                                                 arachni_xml_parser,
-                                                 burp_xml_parser,
-                                                 netsparker_xml_parser,
-                                                 webinspect_xml_parser,
-                                                 zap_xml_parser)
+from scanners.scanner_parser.web_scanner import (
+    acunetix_xml_parser,
+    arachni_xml_parser,
+    burp_xml_parser,
+    netsparker_xml_parser,
+    webinspect_xml_parser,
+    zap_xml_parser,
+)
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from tools.models import NiktoResultDb
 from user_management import permissions
