@@ -130,12 +130,12 @@ class WebScanTest(TestCase):
 
         data = {
             "scanner": "zap_scan",
-            "xmlfile": file_n,
-            "scan_url": "http://test.com",
+            "file": file_n,
+            "target": "http://test.com",
             "project_id": str(project_id),
         }
         # upload one sample report
-        client.post("/webscanners/xml_upload/", data=data)
+        client.post("/report-upload/upload/", data=data)
 
         scan_id = (
             WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
@@ -192,12 +192,12 @@ class WebScanTest(TestCase):
 
         data = {
             "scanner": "zap_scan",
-            "xmlfile": file_n,
-            "scan_url": "http://test.com",
+            "file": file_n,
+            "target": "http://test.com",
             "project_id": str(project_id),
         }
         # upload one sample report
-        client.post("/webscanners/xml_upload/", data=data)
+        client.post("/report-upload/upload/", data=data)
 
         # get scan_id form web scans db
         scan_id = (
@@ -332,12 +332,12 @@ class WebScanTest(TestCase):
 
         data = {
             "scanner": "zap_scan",
-            "xmlfile": file_n,
-            "scan_url": "http://test.com",
+            "file": file_n,
+            "target": "http://test.com",
             "project_id": str(project_id),
         }
         # upload one sample report
-        client.post("/webscanners/xml_upload/", data=data)
+        client.post("/report-upload/upload/", data=data)
 
         # get scan_id form web scans db
         scan_id = (
@@ -402,12 +402,12 @@ class WebScanTest(TestCase):
 
         data = {
             "scanner": "zap_scan",
-            "xmlfile": file_n,
-            "scan_url": "http://test.com",
+            "file": file_n,
+            "target": "http://test.com",
             "project_id": str(project_id),
         }
         # upload one sample report
-        client.post("/webscanners/xml_upload/", data=data)
+        client.post("/report-upload/upload/", data=data)
 
         # get scan_id form web scans db
         scan_id = (
@@ -446,12 +446,12 @@ class WebScanTest(TestCase):
 
         data = {
             "scanner": "zap_scan",
-            "xmlfile": file_n,
-            "scan_url": "http://test.com",
+            "file": file_n,
+            "target": "http://test.com",
             "project_id": str(project_id),
         }
         # upload one sample report
-        client.post("/webscanners/xml_upload/", data=data)
+        client.post("/report-upload/upload/", data=data)
 
         scan_id = (
             WebScansDb.objects.filter(scanner="Zap").values("scan_id").get()["scan_id"]
@@ -501,12 +501,12 @@ class WebScanTest(TestCase):
 
         data = {
             "scanner": "zap_scan",
-            "xmlfile": file_n,
-            "scan_url": "http://test.com",
+            "file": file_n,
+            "target": "http://test.com",
             "project_id": str(project_id),
         }
         # upload one sample report
-        client.post("/webscanners/xml_upload/", data=data)
+        client.post("/report-upload/upload/", data=data)
 
         # get scan_id form web scans db
         scan_id = (
@@ -604,12 +604,12 @@ class WebScanTest(TestCase):
 
         data = {
             "scanner": "zap_scan",
-            "xmlfile": file_n,
-            "scan_url": "http://test.com",
+            "file": file_n,
+            "target": "http://test.com",
             "project_id": str(project_id),
         }
         # upload one sample report
-        client.post("/webscanners/xml_upload/", data=data)
+        client.post("/report-upload/upload/", data=data)
 
         # get scan_id form web scans db
         scan_id = (
