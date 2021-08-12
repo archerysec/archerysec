@@ -499,7 +499,7 @@ class OpenvasSettingEnableDetails(APIView):
             enabled=nv_enabled, version=nv_version, online=nv_online, timing=nv_timing
         )
 
-        return HttpResponseRedirect(reverse("webscanners:setting"))
+        return HttpResponseRedirect(reverse("archerysettings:settings"))
 
 
 class NetworkScanList(APIView):
@@ -648,7 +648,7 @@ class NetworkScanDelete(APIView):
             item.delete()
             item_results = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
             item_results.delete()
-        return HttpResponseRedirect(reverse("webscanners:list_scans"))
+        return HttpResponseRedirect(reverse("networkscanners:list_scans"))
 
 
 class NetworkScanVulnDelete(APIView):
