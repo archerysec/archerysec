@@ -1,6 +1,12 @@
 #Ubuntu base OS
 FROM ubuntu:18.04
-LABEL MAINTAINER="Anand Tiwari"
+# Labels and Credits
+LABEL \
+    name="ArcherySec" \
+    author="Anand Tiwari <anandtiwarics@gmail.com>" \
+    maintainer="Anand Tiwari <anandtiwarics@gmail.com>" \
+    description="Archery is an opensource vulnerability assessment and management tool which helps developers and pentesters to perform scans and manage vulnerabilities. Archery uses popular opensource tools to perform comprehensive scanning for web application and network. It also performs web application dynamic authenticated scanning and covers the whole applications by using selenium. The developers can also utilize the tool for implementation of their DevOps CI/CD environment."
+
 
 ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
     DJANGO_WSGI_MODULE="archerysecurity.wsgi"
@@ -26,12 +32,17 @@ RUN \
     postgresql \
     python-psycopg2 \
     postgresql-server-dev-all \
+    libpq-dev \
     python3-dev \
     && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get autoremove --purge -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Set locales
+RUN locale-gen en_US.UTF-8
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 # Create archerysec user and group
 RUN groupadd -r archerysec && useradd -r -m -g archerysec archerysec
