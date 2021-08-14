@@ -77,6 +77,72 @@ from user_management.models import Organization, UserProfile
 from webscanners.models import WebScanResultsDb, WebScansDb
 
 
+def web_result_data(scan_id, project_uu_id, scanner):
+    all_web_data = WebScanResultsDb.objects.filter(scan_id=scan_id)
+    total_vul = len(all_web_data)
+    total_high = len(all_web_data.filter(severity="High"))
+    total_medium = len(all_web_data.filter(severity="Medium"))
+    total_low = len(all_web_data.filter(severity="Low"))
+    return Response(
+        {
+            "message": "Scan Data Uploaded",
+            "project_id": project_uu_id,
+            "scan_id": scan_id,
+            "scanner": scanner,
+            "result": {
+                "total_vul": total_vul,
+                "total_high": total_high,
+                "total_medium": total_medium,
+                "total_low": total_low,
+            },
+        }
+    )
+
+
+def sast_result_data(scan_id, project_uu_id, scanner):
+    all_sast_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+    total_vul = len(all_sast_data)
+    total_high = len(all_sast_data.filter(severity="High"))
+    total_medium = len(all_sast_data.filter(severity="Medium"))
+    total_low = len(all_sast_data.filter(severity="Low"))
+    return Response(
+        {
+            "message": "Scan Data Uploaded",
+            "project_id": project_uu_id,
+            "scan_id": scan_id,
+            "scanner": scanner,
+            "result": {
+                "total_vul": total_vul,
+                "total_high": total_high,
+                "total_medium": total_medium,
+                "total_low": total_low,
+            },
+        }
+    )
+
+
+def network_result_data(scan_id, project_uu_id, scanner):
+    all_net_data = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
+    total_vul = len(all_net_data)
+    total_high = len(all_net_data.filter(severity="High"))
+    total_medium = len(all_net_data.filter(severity="Medium"))
+    total_low = len(all_net_data.filter(severity="Low"))
+    return Response(
+        {
+            "message": "Scan Data Uploaded",
+            "project_id": project_uu_id,
+            "scan_id": scan_id,
+            "scanner": scanner,
+            "result": {
+                "total_vul": total_vul,
+                "total_high": total_high,
+                "total_medium": total_medium,
+                "total_low": total_low,
+            },
+        }
+    )
+
+
 class CreateProject(APIView):
     permission_classes = (BasePermission, permissions.VerifyAPIKey)
 
@@ -157,7 +223,6 @@ class CreateProject(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class UploadScanResult(APIView):
     parser_classes = (MultiPartParser,)
     permission_classes = (BasePermission, permissions.VerifyAPIKey)
@@ -168,6 +233,7 @@ class UploadScanResult(APIView):
         project_id = (
             ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
         )
+        print(project_id)
         scanner = request.data.get("scanner")
         if isinstance(request.data.get("filename"), UploadedFile):
             file = request.data.get("filename").read().decode("utf-8")

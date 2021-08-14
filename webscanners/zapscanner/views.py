@@ -41,8 +41,6 @@ from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from user_management import permissions
 from webscanners.models import WebScansDb, cookie_db, excluded_db
 
-setting_file = os.getcwd() + "/" + "apidata.json"
-
 scans_status = None
 to_mail = ""
 scan_id = None

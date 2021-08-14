@@ -41,8 +41,6 @@ from user_management import permissions
 from webscanners.models import WebScansDb, cookie_db, excluded_db, task_schedule_db
 from webscanners.zapscanner.views import launch_schudle_zap_scan
 
-setting_file = os.getcwd() + "/" + "apidata.json"
-
 
 def error_404_view(request):
     return render(request, "error/404.html")
