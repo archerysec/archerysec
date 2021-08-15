@@ -150,13 +150,11 @@ class CreateProject(APIView):
         """
         Current user's identity endpoint.
         """
-        username = request.user.username
         _project_name = None
         _project_id = None
 
         serializer = ProjectDataSerializers(data=request.data)
         if serializer.is_valid():
-            project_id = uuid.uuid4()
             project_name = request.data.get(
                 "project_name",
             )
