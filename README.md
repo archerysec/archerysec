@@ -312,11 +312,8 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 	
 	
 	[More Scanners](https://github.com/archerysec/archerysec/issues/16)
- 
 
-* API Automated vulnerability scanning.
-* Vulnerability POC pictures.
-* Cloud Security scanning.
+
 
 ## Lead Developer
 
