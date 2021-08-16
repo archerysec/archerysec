@@ -77,72 +77,6 @@ from user_management.models import Organization, UserProfile
 from webscanners.models import WebScanResultsDb, WebScansDb
 
 
-def web_result_data(scan_id, project_uu_id, scanner):
-    all_web_data = WebScanResultsDb.objects.filter(scan_id=scan_id)
-    total_vul = len(all_web_data)
-    total_high = len(all_web_data.filter(severity="High"))
-    total_medium = len(all_web_data.filter(severity="Medium"))
-    total_low = len(all_web_data.filter(severity="Low"))
-    return Response(
-        {
-            "message": "Scan Data Uploaded",
-            "project_id": project_uu_id,
-            "scan_id": scan_id,
-            "scanner": scanner,
-            "result": {
-                "total_vul": total_vul,
-                "total_high": total_high,
-                "total_medium": total_medium,
-                "total_low": total_low,
-            },
-        }
-    )
-
-
-def sast_result_data(scan_id, project_uu_id, scanner):
-    all_sast_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
-    total_vul = len(all_sast_data)
-    total_high = len(all_sast_data.filter(severity="High"))
-    total_medium = len(all_sast_data.filter(severity="Medium"))
-    total_low = len(all_sast_data.filter(severity="Low"))
-    return Response(
-        {
-            "message": "Scan Data Uploaded",
-            "project_id": project_uu_id,
-            "scan_id": scan_id,
-            "scanner": scanner,
-            "result": {
-                "total_vul": total_vul,
-                "total_high": total_high,
-                "total_medium": total_medium,
-                "total_low": total_low,
-            },
-        }
-    )
-
-
-def network_result_data(scan_id, project_uu_id, scanner):
-    all_net_data = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
-    total_vul = len(all_net_data)
-    total_high = len(all_net_data.filter(severity="High"))
-    total_medium = len(all_net_data.filter(severity="Medium"))
-    total_low = len(all_net_data.filter(severity="Low"))
-    return Response(
-        {
-            "message": "Scan Data Uploaded",
-            "project_id": project_uu_id,
-            "scan_id": scan_id,
-            "scanner": scanner,
-            "result": {
-                "total_vul": total_vul,
-                "total_high": total_high,
-                "total_medium": total_medium,
-                "total_low": total_low,
-            },
-        }
-    )
-
-
 class CreateProject(APIView):
     permission_classes = (BasePermission, permissions.VerifyAPIKey)
 
@@ -225,6 +159,69 @@ class UploadScanResult(APIView):
     parser_classes = (MultiPartParser,)
     permission_classes = (BasePermission, permissions.VerifyAPIKey)
 
+    def web_result_data(self, scan_id, project_uu_id, scanner):
+        all_web_data = WebScanResultsDb.objects.filter(scan_id=scan_id)
+        total_vul = len(all_web_data)
+        total_high = len(all_web_data.filter(severity="High"))
+        total_medium = len(all_web_data.filter(severity="Medium"))
+        total_low = len(all_web_data.filter(severity="Low"))
+        return Response(
+            {
+                "message": "Scan Data Uploaded",
+                "project_id": project_uu_id,
+                "scan_id": scan_id,
+                "scanner": scanner,
+                "result": {
+                    "total_vul": total_vul,
+                    "total_high": total_high,
+                    "total_medium": total_medium,
+                    "total_low": total_low,
+                },
+            }
+        )
+
+    def sast_result_data(self, scan_id, project_uu_id, scanner):
+        all_sast_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+        total_vul = len(all_sast_data)
+        total_high = len(all_sast_data.filter(severity="High"))
+        total_medium = len(all_sast_data.filter(severity="Medium"))
+        total_low = len(all_sast_data.filter(severity="Low"))
+        return Response(
+            {
+                "message": "Scan Data Uploaded",
+                "project_id": project_uu_id,
+                "scan_id": scan_id,
+                "scanner": scanner,
+                "result": {
+                    "total_vul": total_vul,
+                    "total_high": total_high,
+                    "total_medium": total_medium,
+                    "total_low": total_low,
+                },
+            }
+        )
+
+    def network_result_data(self, scan_id, project_uu_id, scanner):
+        all_net_data = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
+        total_vul = len(all_net_data)
+        total_high = len(all_net_data.filter(severity="High"))
+        total_medium = len(all_net_data.filter(severity="Medium"))
+        total_low = len(all_net_data.filter(severity="Low"))
+        return Response(
+            {
+                "message": "Scan Data Uploaded",
+                "project_id": project_uu_id,
+                "scan_id": scan_id,
+                "scanner": scanner,
+                "result": {
+                    "total_vul": total_vul,
+                    "total_high": total_high,
+                    "total_medium": total_medium,
+                    "total_low": total_low,
+                },
+            }
+        )
+
     def post(self, request, format=None):
         date_time = datetime.datetime.now()
         project_uu_id = request.data.get("project_id")
@@ -261,7 +258,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 root=root_xml_en,
             )
-            return web_result_data(scan_id, project_uu_id, scanner)
+            return self.web_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "burp_scan":
 
@@ -285,7 +282,7 @@ class UploadScanResult(APIView):
                 project_id,
                 scan_id,
             )
-            return web_result_data(scan_id, project_uu_id, scanner)
+            return self.web_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "arachni":
 
@@ -304,7 +301,7 @@ class UploadScanResult(APIView):
                 root=root_xml,
                 target_url=scan_url,
             )
-            return web_result_data(scan_id, project_uu_id, scanner)
+            return self.web_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "acunetix":
 
@@ -326,7 +323,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 root=root_xml_en,
             )
-            return web_result_data(scan_id, project_uu_id, scanner)
+            return self.web_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "netsparker":
 
@@ -344,7 +341,8 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 root=root_xml,
             )
-            return web_result_data(scan_id, project_uu_id, scanner)
+            return self.web_result_data(scan_id, project_uu_id, scanner)
+
         elif scanner == "webinspect":
 
             scan_dump = WebScansDb(
@@ -361,7 +359,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 root=root_xml,
             )
-            return web_result_data(scan_id, project_uu_id, scanner)
+            return self.web_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "banditscan":
 
@@ -380,7 +378,7 @@ class UploadScanResult(APIView):
                 project_id=project_id,
                 scan_id=scan_id,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "dependencycheck":
 
@@ -399,7 +397,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "findbugs":
 
@@ -417,7 +415,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 root=root_xml,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "checkmarx":
 
@@ -435,7 +433,7 @@ class UploadScanResult(APIView):
                 project_id=project_id,
                 scan_id=scan_id,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "clair":
 
@@ -453,7 +451,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "trivy":
 
@@ -471,7 +469,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "gitlabsca":
 
@@ -489,7 +487,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "gitlabsast":
 
@@ -507,7 +505,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "gitlabcontainerscan":
 
@@ -525,7 +523,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "npmaudit":
 
@@ -543,7 +541,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "nodejsscan":
 
@@ -561,7 +559,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "semgrepscan":
 
@@ -579,7 +577,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "tfsec":
 
@@ -597,7 +595,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "whitesource":
 
@@ -615,7 +613,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "inspec":
 
@@ -676,7 +674,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 project_id=project_id,
             )
-            return network_result_data(scan_id, project_uu_id, scanner)
+            return self.network_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "openvas":
 
@@ -700,7 +698,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 root=root_xml_en,
             )
-            return network_result_data(scan_id, project_uu_id, scanner)
+            return self.network_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "nikto":
 
@@ -741,7 +739,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "brakeman":
 
@@ -759,7 +757,7 @@ class UploadScanResult(APIView):
                 scan_id=scan_id,
                 data=data,
             )
-            return sast_result_data(scan_id, project_uu_id, scanner)
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         else:
             return Response({"message": "Scanner Not Found"})
