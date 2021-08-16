@@ -138,7 +138,7 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
-$ ./setup.sh
+$ NAME=User EMAIL=user@user.com PASSWORD=admin@123A bash setup.sh
 $ ./run.sh
 ```
 
@@ -177,11 +177,11 @@ ArcherySec Docker is available from [ArcherySec Docker](https://hub.docker.com/r
 
 ```
 $ docker pull archerysec/archerysec
-$ docker run -it -p 8000:8000 archerysec/archerysec:latest
+$ docker run -e NAME=user -e EMAIL=user@user.com -e PASSWORD=admin@123A  -it -p  8000:8000 archerysec/archerysec:latest
 
 # Docker Alpine image 
 $ docker pull archerysec/archerysec:alpine
-$ docker run -it -p 8000:8000 archerysec/archerysec:alpine
+$ docker run -e NAME=user -e EMAIL=user@user.com -e PASSWORD=admin@123A  -it -p 8000:8000 archerysec/archerysec:alpine
 
 # For persistence
 
