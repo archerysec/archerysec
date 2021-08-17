@@ -57,7 +57,44 @@
                                         <td>
                                             <a href="{% url 'staticscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&scan_name={{ data.title }}&scanner={{ data.scanner }}">{{ data.title }}</a>
                                         </td>
-                                        <td>{{ data.scanner }}</td>
+                                        <td>{% if data.scanner == 'Dependencycheck' %}
+
+                                        <div class="p-1"><img src="/static/tools/dependencycheck.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Dependencycheck"></div></td>{% elif data.scanner == 'Checkmarx' %}
+                                     <div class="p-1"><img src="/static/tools/checkmarx.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Checkmarx"></div></td>{% elif data.scanner == 'Findbugs' %}
+                                     <div class="p-1"><img src="/static/tools/findbugs.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Findbugs"></div></td>{% elif data.scanner == 'Bandit' %}
+                                     <div class="p-1"><img src="/static/tools/bandit.jpeg" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Bandit"></div></td>{% elif data.scanner == 'Clair' %}
+                                     <div class="p-1"><img src="/static/tools/clair.svg" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Clair"></div></td>{% elif data.scanner == 'Trivy' %}
+                                     <div class="p-1"><img src="/static/tools/trivy.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Trivy"></div></td>{% elif data.scanner == 'Npmaudit' %}
+                                      <div class="p-1"><img src="/static/tools/npmaduit.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Npmaudit"></div></td>{% elif data.scanner == 'Nodejsscan' %}
+                                     <div class="p-1"><img src="/static/tools/nodejs.jpeg" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Nodejsscan"></div></td>{% elif data.scanner == 'Tfsec' %}
+                                     <div class="p-1"><img src="/static/tools/tfsec.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Tfsec"></div></td>{% elif data.scanner == 'Whitesource' %}
+                                     <div class="p-1"><img src="/static/tools/whitesource.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Whitesource"></div></td>
+                                 {% elif data.scanner == 'Twistlock' %}
+                                     <div class="p-1"><img src="/static/tools/twistlock.png" alt="user" width="30"
+                                                                 class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Twistlock"></div></td>
+                                     {% elif data.scanner == 'Semgrep' %}
+                                     <div class="p-1"><img src="/static/tools/semgrep.svg" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Semgrep"></div></td>
+                                     {% elif data.scanner == 'Brakeman' %}
+                                     <div class="p-1"><img src="/static/tools/brakeman.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Brakeman"></div></td>
+                                     {% elif data.scanner == 'Gitlabsca' %}
+                                     <div class="p-1"><img src="/static/tools/gitlab.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Gitlabsca"></div></td>
+                                      {% elif data.scanner == 'Gitlabsast' %}
+                                     <div class="p-1"><img src="/static/tools/gitlab.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Gitlabsast"></div></td>
+                                 {% endif %}
                                         <td>{{ data.fileName }}</td>
                                         <td><span
                                                 class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
@@ -71,7 +108,26 @@
                                         <td>
                                             <a href="{% url 'webscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&scan_name={{ data.title }}&scanner={{ data.scanner }}">{{ data.title }}</a>
                                         </td>
-                                        <td>{{ data.scanner }}</td>
+                                        <td>{% if data.scanner == 'Zap' %}
+
+                                        <div class="p-1"><img src="/static/tools/zap.png" alt="user" width="20"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="OWASP ZAP"></div></td>
+                                        {% elif data.scanner == 'Burp' %}
+                                        <div class="p-1"><img src="/static/tools/burp.png" alt="user" width="20"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Burp"></div></td>
+                                        {% elif data.scanner == 'Arachni' %}
+                                        <div class="p-1"><img src="/static/tools/arachni.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Arachni"></div></td>
+                                        {% elif data.scanner == 'Netsparker' %}
+                                        <div class="p-1"><img src="/static/tools/netsparker.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Netsparker"></div></td>
+                                {% elif data.scanner == 'Webinspect' %}
+                                        <div class="p-1"><img src="/static/tools/webinspect.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Webinspect"></div></td>
+                                        {% elif data.scanner == 'Acunetix' %}
+                                        <div class="p-1"><img src="/static/tools/acunetix.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Acunetix"></div></td>
+                                        {% endif %}
                                         <td>{{ data.url }}</td>
                                         <td><span
                                                 class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
@@ -86,7 +142,16 @@
                                         <td>
                                             <a href="{% url 'networkscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&ip={{ data.ip }}&scanner={{ data.scanner }}">{{ data.title }}</a>
                                         </td>
-                                        <td>{{ data.scanner }}</td>
+                                        <td>{% if data.scanner == 'Nessus' %}
+
+                                            <div class="p-1"><img src="/static/tools/nessus.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip"
+                                                                  data-placement="top" title="Nessus"></div>
+                                            </td>{% elif data.scanner == 'Openvas' %}
+                                            <div class="p-1"><img src="/static/tools/openvas.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip"
+                                                                  data-placement="top" title="Openvas"></div></td>
+                                        {% endif %}
                                         <td>{{ data.ip }}</td>
                                         <td><span
                                                 class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
