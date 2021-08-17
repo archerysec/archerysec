@@ -95,17 +95,17 @@ def trend_update():
         for data in all_month_data_display:
             current_month = datetime.datetime.now().month
             if int(current_month) == 1:
-                MonthDb.objects.filter(uu_id=proj_id, month="2").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="3").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="4").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="5").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="6").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="7").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="8").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="9").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="10").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="11").delete()
-                MonthDb.objects.filter(uu_id=proj_id, month="12").delete()
+                MonthDb.objects.filter(project_id=project_id, month="2").delete()
+                MonthDb.objects.filter(project_id=project_id, month="3").delete()
+                MonthDb.objects.filter(project_id=project_id, month="4").delete()
+                MonthDb.objects.filter(project_id=project_id, month="5").delete()
+                MonthDb.objects.filter(project_id=project_id, month="6").delete()
+                MonthDb.objects.filter(project_id=project_id, month="7").delete()
+                MonthDb.objects.filter(project_id=project_id, month="8").delete()
+                MonthDb.objects.filter(project_id=project_id, month="9").delete()
+                MonthDb.objects.filter(project_id=project_id, month="10").delete()
+                MonthDb.objects.filter(project_id=project_id, month="11").delete()
+                MonthDb.objects.filter(project_id=project_id, month="12").delete()
 
             match_data = MonthDb.objects.filter(
                 project_id=project_id, month=current_month
