@@ -47,7 +47,7 @@ Archery is an opensource vulnerability assessment and management tool which help
 * [Official Website & Documentation](https://archerysec.com/)
 * [API Documentation](http://developers.archerysec.com/)
 
-![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery-demo.gif)
+![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/new-archerysec.gif)
 
 ![Overview](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/itegrate_archery_devsecops.png)
 
