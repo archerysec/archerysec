@@ -20,6 +20,7 @@ from archerysettings.models import (
     EmailDb,
     SettingsDb,
 )
+import time
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import HttpResponse, render
@@ -30,6 +31,17 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 
 from user_management import permissions
+from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
+from archerysettings.models import ZapSettingsDb, ArachniSettingsDb, BurpSettingDb, OpenvasSettingDb, EmailDb, \
+    SettingsDb
+from jiraticketing.models import jirasetting
+from django.core import signing
+from PyBurprestapi import burpscanner
+from scanners.scanner_plugin.network_scanner.openvas_plugin import \
+    OpenVAS_Plugin
+import PyArachniapi
+import json
+from jira import JIRA
 
 
 class EmailSetting(APIView):
@@ -39,7 +51,7 @@ class EmailSetting(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAdmin)
 
     def get(self, request):
-        all_email = EmailDb.objects.filter()
+        all_email = EmailDb.objects.all()
         return render(request, "setting/email_setting_form.html", {"all_email": all_email})
 
     def post(self, request):
@@ -97,6 +109,243 @@ class Settings(APIView):
         all_notify = Notification.objects.unread()
 
         all_settings_data = SettingsDb.objects.filter()
+
+        return render(
+            request,
+            "setting/settings_page.html",
+            {
+                "all_settings_data": all_settings_data,
+                "all_notify": all_notify
+            },
+        )
+
+    def post(self, request):
+        all_notify = Notification.objects.unread()
+
+        jira_url = None
+        j_username = None
+        password = None
+        # Loading settings
+
+        all_settings_data = SettingsDb.objects.filter()
+
+        # Loading ZAP Settings
+        zap_api_key = ""
+        zap_hosts = ""
+        zap_ports = ""
+        zap_enable = False
+
+        all_zap = ZapSettingsDb.objects.filter()
+        for zap in all_zap:
+            zap_api_key = zap.zap_api
+            zap_hosts = zap.zap_url
+            zap_ports = zap.zap_port
+            zap_enable = zap.enabled
+
+        lod_apikey = zap_api_key
+        zap_host = zap_hosts
+        zap_port = zap_ports
+
+        # Loading Arachni Settings
+        arachni_hosts = ''
+        arachni_ports = ''
+        arachni_user = ''
+        arachni_pass = ''
+
+        all_arachni = ArachniSettingsDb.objects.filter()
+        for arachni in all_arachni:
+            arachni_hosts = arachni.arachni_url
+            arachni_ports = arachni.arachni_port
+            arachni_user = arachni.arachni_user
+            arachni_pass = arachni.arachni_pass
+
+        burp_host = ""
+        burp_port = ""
+        burp_api_key = ""
+        all_burp_setting = BurpSettingDb.objects.all()
+        for data in all_burp_setting:
+            burp_host = data.burp_url
+            burp_port = data.burp_port
+            burp_api_key = data.burp_api_key
+
+        jira_setting = jirasetting.objects.all()
+
+        for jira in jira_setting:
+            jira_url = jira.jira_server
+            j_username = jira.jira_username
+            password = jira.jira_password
+        jira_server = jira_url
+        if j_username is None:
+            jira_username = None
+        else:
+            jira_username = signing.loads(j_username)
+
+        if password is None:
+            jira_password = None
+        else:
+            jira_password = signing.loads(password)
+
+        zap_enabled = False
+        random_port = "8091"
+        target_url = "https://archerysec.com"
+
+        setting_of = request.POST.get("setting_of")
+        setting_id = request.POST.get("setting_id")
+        if setting_of == "zap":
+            all_zap = ZapSettingsDb.objects.filter()
+            for zap in all_zap:
+                zap_enabled = zap.enabled
+
+            if zap_enabled is False:
+                zap_info = "Disabled"
+                try:
+                    random_port = zap_plugin.zap_local()
+                except:
+                    return render(request, "setting/settings_page.html", {"zap_info": zap_info})
+
+                for i in range(0, 100):
+                    while True:
+                        try:
+                            # Connection Test
+                            zap_connect = zap_plugin.zap_connect(
+                                random_port
+                            )
+                            zap_connect.spider.scan(url=target_url)
+                        except Exception as e:
+                            print("ZAP Connection Not Found, re-try after 5 sec")
+                            time.sleep(5)
+                            continue
+                        break
+            else:
+                try:
+                    zap_connect = zap_plugin.zap_connect(random_port)
+                    zap_connect.spider.scan(url=target_url)
+                    zap_info = True
+                    SettingsDb.objects.filter(setting_id=setting_id).update(
+                        setting_status=zap_info
+                    )
+                except:
+                    zap_info = False
+                    SettingsDb.objects.filter(setting_id=setting_id).update(
+                        setting_status=zap_info
+                    )
+        if setting_of == "burp":
+            host = "http://" + burp_host + ":" + burp_port + "/"
+
+            try:
+                bi = burpscanner.BurpApi(host, burp_api_key)
+            except:
+                burp_info = False
+                return burp_info
+
+            issue_list = bi.issue_definitions()
+            if issue_list.data is None:
+                burp_info = False
+                SettingsDb.objects.filter(setting_id=setting_id).update(
+                    setting_status=burp_info
+                )
+            else:
+                burp_info = True
+                SettingsDb.objects.filter(setting_id=setting_id).update(
+                    setting_status=burp_info
+                )
+
+        if setting_of == "openvas":
+            sel_profile = ""
+            scan_ip = ''
+            project_id = ''
+
+            openvas = OpenVAS_Plugin(
+                scan_ip, project_id, sel_profile
+            )
+            try:
+                openvas.connect()
+                openvas_info = True
+                SettingsDb.objects.filter(setting_id=setting_id).update(
+                    setting_status=openvas_info
+                )
+            except:
+                openvas_info = False
+                SettingsDb.objects.filter(setting_id=setting_id).update(
+                    setting_status=openvas_info
+                )
+
+        if setting_of == "arachni":
+            global scan_run_id, scan_status
+            arachni_hosts = None
+            arachni_ports = None
+            arachni_user = None
+            arachni_pass = None
+            all_arachni = ArachniSettingsDb.objects.filter()
+            for arachni in all_arachni:
+                arachni_hosts = arachni.arachni_url
+                arachni_ports = arachni.arachni_port
+                arachni_user = arachni.arachni_user
+                arachni_pass = arachni.arachni_pass
+
+            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports, arachni_user, arachni_pass)
+
+            check = []
+            data = {"url": "https://archerysec.com", "checks": check, "audit": {}}
+            d = json.dumps(data)
+
+            scan_launch = arachni.scan_launch(d)
+            time.sleep(3)
+
+            try:
+                scan_data = scan_launch.data
+
+                for key, value in scan_data.items():
+                    if key == "id":
+                        scan_run_id = value
+                arachni_info = True
+                SettingsDb.objects.filter(setting_id=setting_id).update(
+                    setting_status=arachni_info
+                )
+            except Exception:
+                arachni_info = False
+                SettingsDb.objects.filter(setting_id=setting_id).update(
+                    setting_status=arachni_info
+                )
+
+        if setting_of == "jira":
+            global jira_projects, jira_ser
+            jira_setting = jirasetting.objects.filter()
+
+            for jira in jira_setting:
+                jira_url = jira.jira_server
+                username = jira.jira_username
+                password = jira.jira_password
+
+                if jira_url is None:
+                    print("No jira url found")
+
+            try:
+
+                jira_server = jira_url
+                jira_username = signing.loads(username)
+                jira_password = signing.loads(password)
+            except:
+                jira_info = False
+
+            options = {"server": jira_server}
+            try:
+
+                jira_ser = JIRA(
+                    options, basic_auth=(jira_username, jira_password), timeout=5
+                )
+                jira_projects = jira_ser.projects()
+                print(len(jira_projects))
+                jira_info = True
+                SettingsDb.objects.filter(setting_id=setting_id).update(
+                    setting_status=jira_info
+                )
+            except Exception as e:
+                print(e)
+                jira_info = False
+                SettingsDb.objects.filter(setting_id=setting_id).update(
+                    setting_status=jira_info
+                )
 
         return render(
             request,
