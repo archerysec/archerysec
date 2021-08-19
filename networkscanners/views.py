@@ -38,6 +38,9 @@ from notifications.signals import notify
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
+from django.core import signing
+from jira import JIRA
+from notifications.signals import notify
 
 from archerysettings import load_settings, save_settings
 from archerysettings.models import EmailDb, SettingsDb
@@ -533,10 +536,9 @@ class NetworkScanVulnInfo(APIView):
         for d in jira:
             jira_url = d.jira_server
         scan_id = request.GET["scan_id"]
-        scanner = request.GET["scanner"]
         ip = request.GET["ip"]
         vuln_data = NetworkScanResultsDb.objects.filter(
-            scan_id=scan_id, scanner=scanner, ip=ip
+            scan_id=scan_id, ip=ip
         )
         return render(
             request,
@@ -616,12 +618,43 @@ class NetworkScanDetails(APIView):
     def get(self, request):
         vuln_id = request.GET["vuln_id"]
         scanner = request.GET["scanner"]
+        jira_setting = jirasetting.objects.filter()
+        user = request.user
+        jira_server = ''
+        jira_username = ''
+        jira_password = ''
+        jira_projects = ''
+
+        for jira in jira_setting:
+            jira_server = jira.jira_server
+            jira_username = jira.jira_username
+            jira_password = jira.jira_password
+
+        if jira_username is None:
+            jira_username = None
+        else:
+            jira_username = signing.loads(jira_username)
+
+        if jira_password is None:
+            jira_password = None
+        else:
+            jira_password = signing.loads(jira_password)
+
+        options = {"server": jira_server}
+        try:
+            jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), max_retries=0)
+            jira_projects = jira_ser.projects()
+        except Exception as e:
+            print(e)
+            jira_projects = None
+            notify.send(user, recipient=user, verb="Jira settings not found")
+
         vul_dat = NetworkScanResultsDb.objects.filter(
             vuln_id=vuln_id, scanner=scanner
         ).order_by("vuln_id")
 
         return render(
-            request, "networkscanners/scans/vuln_details.html", {"vul_dat": vul_dat}
+            request, "networkscanners/scans/vuln_details.html", {"vul_dat": vul_dat, "jira_projects": jira_projects}
         )
 
 

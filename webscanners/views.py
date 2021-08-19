@@ -19,6 +19,7 @@ from __future__ import unicode_literals
 import hashlib
 
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 from django.shortcuts import HttpResponse, render
 from django.urls import reverse
 from notifications.models import Notification
@@ -27,6 +28,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.core import signing
+from jira import JIRA
+from notifications.signals import notify
 
 from jiraticketing.models import jirasetting
 from user_management import permissions
@@ -140,10 +144,41 @@ class WebScanDetails(APIView):
     def get(self, request):
         vuln_id = request.GET["vuln_id"]
 
+        jira_setting = jirasetting.objects.filter()
+        user = request.user
+        jira_server = ''
+        jira_username = ''
+        jira_password = ''
+        jira_projects = ''
+
+        for jira in jira_setting:
+            jira_server = jira.jira_server
+            jira_username = jira.jira_username
+            jira_password = jira.jira_password
+
+        if jira_username is None:
+            jira_username = None
+        else:
+            jira_username = signing.loads(jira_username)
+
+        if jira_password is None:
+            jira_password = None
+        else:
+            jira_password = signing.loads(jira_password)
+
+        options = {"server": jira_server}
+        try:
+            jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), max_retries=0)
+            jira_projects = jira_ser.projects()
+        except Exception as e:
+            print(e)
+            jira_projects = None
+            notify.send(user, recipient=user, verb="Jira settings not found")
+
         vul_dat = WebScanResultsDb.objects.filter(vuln_id=vuln_id).order_by("vuln_id")
 
         return render(
-            request, "webscanners/scans/vuln_details.html", {"vul_dat": vul_dat}
+            request, "webscanners/scans/vuln_details.html", {"vul_dat": vul_dat, "jira_projects": jira_projects}
         )
 
 

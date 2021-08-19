@@ -21,6 +21,6 @@ from jiraticketing import views
 app_name = "jiraticketing"
 
 urlpatterns = [
-    path("jira_setting/", views.jira_setting, name="jira_setting"),
-    path("submit_jira_ticket/", views.submit_jira_ticket, name="submit_jira_ticket"),
+    path("jira_setting/", views.JiraSetting.as_view(), name="jira_setting"),
+    path("submit_jira_ticket/", views.CreateJiraTicket.as_view(), name="submit_jira_ticket"),
 ]

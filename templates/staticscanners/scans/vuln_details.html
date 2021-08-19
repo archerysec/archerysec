@@ -1,16 +1,17 @@
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-{% for data in vul_dat %}
+    {% for data in vul_dat %}
 
         <div class="row">
             <div class="col-md-12">
-                  <div class="col-md-auto">
+                <div class="col-md-auto">
                     <div class="float-right">
-                        <!-- Large modal -->
-                        <a href="/jira/submit_jira_ticket/?summary={{ data.test_name }}&description={{data.issue_text }}%0a%0a%0a Vulnerable File: {{data.filename}} %0a%0a Vulnerable Code: {{data.code }} %0a%0a Solution:  %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} &scanner=bandit&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
-               class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
-
+                        {% if jira_projects != None %}
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jiraModal">
+                                Create Jira Ticket
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
                 <h1>{{ data.title }}</h1>
@@ -30,7 +31,7 @@
                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{data.description | safe}}
+                                    {{ data.description | safe }}
 
                                 </div>
                             </div>
@@ -49,7 +50,7 @@
                                  data-parent="#accordionExample">
                                 <div class="card-body">
                                     <div class="col-md-6">
-                                        File: {{data.fileName}}
+                                        File: {{ data.fileName }}
                                     </div>
                                 </div>
                             </div>
@@ -67,7 +68,7 @@
                             <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                   <a href="{{data.solution | safe}}">{{data.solution | safe}}</a>
+                                    <a href="{{ data.solution | safe }}">{{ data.solution | safe }}</a>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +85,7 @@
                             <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                   <a href="{{data.references | safe}}">{{data.references | safe}}</a>
+                                    <a href="{{ data.references | safe }}">{{ data.references | safe }}</a>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +94,80 @@
             </div>
         </div>
 
+        <div class="modal fade" id="jiraModal" tabindex="-1" role="dialog"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="jiraModalLabel">JIRA Ticket</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" method="POST"
+                              action="{% url 'jiraticketing:submit_jira_ticket' %}">{% csrf_token %}
+                            <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
+                            <input name="scanner" value="sast" type="hidden">
+                            <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label
+                                            class="col-sm-4 col-form-label">Select Project</label>
+                                    <div class="col-sm-6">
+                                        <select id="project_id" name="project_id"
+                                                class="select2 form-control custom-select"
+                                                style="width: 100%; height:36px;">
+                                            {% for jira_data in jira_projects %}
+                                                <option value="{{ jira_data.id }}">{{ jira_data.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label
+                                            class="col-sm-4 col-form-label">Issue Type</label>
+                                    <div class="col-sm-6">
+                                        <select name="issue_type"
+                                                class="select2 form-control custom-select"
+                                                style="width: 100%; height:36px;">
+                                            <option>Bug</option>
+                                            <option>Story</option>
 
-{% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label
+                                            class="col-sm-4 col-form-label">Summary</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="summary"
+                                               class="form-control"
+                                               value="{{ data.title }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label
+                                            class="col-sm-4 col-form-label">Description</label>
+                                    <div class="col-sm-6">
+                                        <textarea name="description"
+                                                  class="form-control">{{ data.description }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    {% endfor %}
 
 {% endblock %}
