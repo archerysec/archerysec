@@ -14,7 +14,7 @@
                     <div class="card">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="card">{% for data in all_email %}
+                                <div class="card">
                                     <form method="POST"
                                           action="{% url 'archerysettings:email_setting' %}">{% csrf_token %}
                                         <div class="form-group row">
@@ -26,20 +26,20 @@
                                         <div class="form-group row">
                                             <label class="col-sm-4 col-form-label">Email Subject:</label>
                                             <div class="col-sm-6">
-                                                <input type="text" name="email_subject" value="{{ data.subject }}" class="span11"/>
+                                                <input type="text" name="email_subject" class="span11"/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-4 col-form-label">To Email:</label>
                                             <div class="col-sm-6">
-                                                <input type="text" name="to_email" value="{{ data.recipient_list }}" class="span11"/>
+                                                <input type="text" name="to_email" class="span11"/>
                                             </div>
                                         </div>
                                         <div class="form-actions">
                                             <button type="submit" class="btn btn-success">Save</button>
                                         </div>
                                     </form>
-                                    {% endfor %}
+                                    
                                 </div>
                             </div>
                         </div>

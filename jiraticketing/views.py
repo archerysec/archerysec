@@ -242,7 +242,7 @@ class CreateJiraTicket(APIView):
                 jira_ticket=new_issue
             )
             ip = NetworkScanResultsDb.objects.filter(vuln_id=vuln_id).values('ip').get()['ip']
-            
+
             messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
             return HttpResponseRedirect(
                 reverse("networkscanners:list_vuln_info") + "?scan_id=%s&ip=%s" % (scan_id, ip)

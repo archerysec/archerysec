@@ -35,6 +35,7 @@ from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from archerysettings.models import ZapSettingsDb, ArachniSettingsDb, BurpSettingDb, OpenvasSettingDb, EmailDb, \
     SettingsDb
 from jiraticketing.models import jirasetting
+from utility.email_notify import email_sch_notify
 from django.core import signing
 from PyBurprestapi import burpscanner
 from scanners.scanner_plugin.network_scanner.openvas_plugin import \
@@ -68,13 +69,6 @@ class EmailSetting(APIView):
 
         setting_id = uuid.uuid4()
 
-        save_setting_info = SettingsDb(
-            setting_id=setting_id,
-            setting_scanner="Email",
-            setting_status=True,
-        )
-        save_setting_info.save()
-
         save_email = EmailDb(
             subject=subject,
             message=from_message,
@@ -82,6 +76,25 @@ class EmailSetting(APIView):
             setting_id=setting_id,
         )
         save_email.save()
+
+        subject_test = "test"
+        message = (
+                "test"
+        )
+
+        email = email_sch_notify(subject=subject_test, message=message)
+
+        if email is False:
+            setting_status = False
+        else:
+            setting_status = True
+
+        save_setting_info = SettingsDb(
+            setting_id=setting_id,
+            setting_scanner="Email",
+            setting_status=setting_status,
+        )
+        save_setting_info.save()
         return HttpResponseRedirect(reverse("archerysettings:settings"))
 
 

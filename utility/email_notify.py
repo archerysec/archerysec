@@ -15,5 +15,7 @@ def email_sch_notify(subject, message):
     recipient_list = [to_mail]
     try:
         send_mail(subject, message, email_from, recipient_list)
+        return True
     except Exception as e:
         print(e)
+        return False
