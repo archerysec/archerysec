@@ -23,7 +23,6 @@ from django.shortcuts import HttpResponse
 
 from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
-
 # from django.core.mail import send_mail
 from webscanners import email_notification
 from webscanners.models import WebScanResultsDb, WebScansDb

@@ -19,12 +19,12 @@ import logging
 import requests
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
+from rest_framework.test import APIClient
 
+from archeryapi.models import *
 from authentication.tests import UserCreationTest
 from projects.models import *
 from webscanners.models import *
-from archeryapi.models import *
-from rest_framework.test import APIClient
 
 logging.disable(logging.CRITICAL)
 
@@ -114,9 +114,9 @@ class APIKeyTest(TestCase):
         )
 
         # create access key
-        response = client.post("/api/access-key/", data={'name': 'test'})
+        response = client.post("/api/access-key/", data={"name": "test"})
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, '/api/access-key/')
+        self.assertRedirects(response, "/api/access-key/")
 
         # api_key = OrgAPIKey.objects.filter(name='test').values('api_key').get['api_key']
 
@@ -127,7 +127,7 @@ class APIKeyTest(TestCase):
         )
 
         # create access key
-        response = client.post("/api/access-key/", data={'name': 'test'})
+        response = client.post("/api/access-key/", data={"name": "test"})
         self.assertEqual(response.status_code, 403)
 
         # from viewer users
@@ -137,7 +137,7 @@ class APIKeyTest(TestCase):
         )
 
         # create access key
-        response = client.post("/api/access-key/", data={'name': 'test'})
+        response = client.post("/api/access-key/", data={"name": "test"})
         self.assertEqual(response.status_code, 403)
 
 
@@ -191,10 +191,12 @@ class APICreateProject(TestCase):
         )
 
         # create access key
-        response = client.post("/api/access-key/", data={'name': 'test'})
+        response = client.post("/api/access-key/", data={"name": "test"})
         self.assertEqual(response.status_code, 302)
 
-        api_key = OrgAPIKey.objects.filter(name='test').values('api_key').get()['api_key']
+        api_key = (
+            OrgAPIKey.objects.filter(name="test").values("api_key").get()["api_key"]
+        )
 
         return api_key
 
@@ -204,12 +206,15 @@ class APICreateProject(TestCase):
 
         api_key = self.create_api_key()
 
-        header = {'HTTP_X_API_KEY': api_key}
+        header = {"HTTP_X_API_KEY": api_key}
 
-        response = client.post('/api/v1/project-create/',
-                               content_type='application/json',
-                               data={'project_name': 'test', 'project_disc': 'test'}, **header)
+        response = client.post(
+            "/api/v1/project-create/",
+            content_type="application/json",
+            data={"project_name": "test", "project_disc": "test"},
+            **header
+        )
 
         message = response.data.get("message")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(message, 'Project Created')
+        self.assertEqual(message, "Project Created")

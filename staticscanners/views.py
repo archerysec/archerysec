@@ -18,9 +18,12 @@ from __future__ import unicode_literals
 
 import hashlib
 
+from django.core import signing
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
+from jira import JIRA
 from notifications.models import Notification
+from notifications.signals import notify
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
@@ -28,9 +31,6 @@ from rest_framework.views import APIView
 from jiraticketing.models import jirasetting
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from user_management import permissions
-from django.core import signing
-from jira import JIRA
-from notifications.signals import notify
 
 
 class SastScanList(APIView):
@@ -142,10 +142,10 @@ class SastScanDetails(APIView):
         vuln_id = request.GET["vuln_id"]
         jira_setting = jirasetting.objects.filter()
         user = request.user
-        jira_server = ''
-        jira_username = ''
-        jira_password = ''
-        jira_projects = ''
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+        jira_projects = ""
 
         for jira in jira_setting:
             jira_server = jira.jira_server
@@ -164,7 +164,9 @@ class SastScanDetails(APIView):
 
         options = {"server": jira_server}
         try:
-            jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), max_retries=0)
+            jira_ser = JIRA(
+                options, basic_auth=(jira_username, jira_password), max_retries=0
+            )
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)
@@ -176,7 +178,9 @@ class SastScanDetails(APIView):
         )
 
         return render(
-            request, "staticscanners/scans/vuln_details.html", {"vul_dat": vul_dat, "jira_projects": jira_projects}
+            request,
+            "staticscanners/scans/vuln_details.html",
+            {"vul_dat": vul_dat, "jira_projects": jira_projects},
         )
 
 

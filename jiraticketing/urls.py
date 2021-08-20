@@ -22,5 +22,9 @@ app_name = "jiraticketing"
 
 urlpatterns = [
     path("jira_setting/", views.JiraSetting.as_view(), name="jira_setting"),
-    path("submit_jira_ticket/", views.CreateJiraTicket.as_view(), name="submit_jira_ticket"),
+    path(
+        "submit_jira_ticket/",
+        views.CreateJiraTicket.as_view(),
+        name="submit_jira_ticket",
+    ),
 ]

@@ -29,28 +29,26 @@ from background_task import background
 from background_task.models import Task
 from django.conf import settings
 from django.contrib import messages
+from django.core import signing
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import HttpResponse, render
 from django.urls import reverse
+from jira import JIRA
 from notifications.models import Notification
 from notifications.signals import notify
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
-from django.core import signing
-from jira import JIRA
-from notifications.signals import notify
 
 from archerysettings import load_settings, save_settings
 from archerysettings.models import EmailDb, SettingsDb
 from jiraticketing.models import jirasetting
-from networkscanners.models import NetworkScanDb, NetworkScanResultsDb, TaskScheduleDb
+from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb,
+                                    TaskScheduleDb)
 from projects.models import ProjectDb
 from scanners.scanner_plugin.network_scanner.openvas_plugin import (
-    OpenVAS_Plugin,
-    vuln_an_id,
-)
+    OpenVAS_Plugin, vuln_an_id)
 from user_management import permissions
 
 api_data = os.getcwd() + "/" + "apidata.json"
@@ -537,9 +535,7 @@ class NetworkScanVulnInfo(APIView):
             jira_url = d.jira_server
         scan_id = request.GET["scan_id"]
         ip = request.GET["ip"]
-        vuln_data = NetworkScanResultsDb.objects.filter(
-            scan_id=scan_id, ip=ip
-        )
+        vuln_data = NetworkScanResultsDb.objects.filter(scan_id=scan_id, ip=ip)
         return render(
             request,
             "networkscanners/scans/list_vuln_info.html",
@@ -620,10 +616,10 @@ class NetworkScanDetails(APIView):
         scanner = request.GET["scanner"]
         jira_setting = jirasetting.objects.filter()
         user = request.user
-        jira_server = ''
-        jira_username = ''
-        jira_password = ''
-        jira_projects = ''
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+        jira_projects = ""
 
         for jira in jira_setting:
             jira_server = jira.jira_server
@@ -642,7 +638,9 @@ class NetworkScanDetails(APIView):
 
         options = {"server": jira_server}
         try:
-            jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), max_retries=0)
+            jira_ser = JIRA(
+                options, basic_auth=(jira_username, jira_password), max_retries=0
+            )
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)
@@ -654,7 +652,9 @@ class NetworkScanDetails(APIView):
         ).order_by("vuln_id")
 
         return render(
-            request, "networkscanners/scans/vuln_details.html", {"vul_dat": vul_dat, "jira_projects": jira_projects}
+            request,
+            "networkscanners/scans/vuln_details.html",
+            {"vul_dat": vul_dat, "jira_projects": jira_projects},
         )
 
 

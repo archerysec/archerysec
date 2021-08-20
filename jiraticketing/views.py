@@ -19,22 +19,22 @@ from __future__ import unicode_literals
 
 import uuid
 
+from django.contrib import messages
 from django.core import signing
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from jira import JIRA
 from notifications.signals import notify
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.views import APIView
 
 from archerysettings.models import SettingsDb
-from django.contrib import messages
 from jiraticketing.models import jirasetting
 from networkscanners.models import NetworkScanResultsDb
-from webscanners.models import WebScanResultsDb
 from staticscanners.models import StaticScanResultsDb
-from rest_framework.views import APIView
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.permissions import IsAuthenticated
 from user_management import permissions
+from webscanners.models import WebScanResultsDb
 
 
 class JiraSetting(APIView):
@@ -44,9 +44,9 @@ class JiraSetting(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAdmin)
 
     def get(self, request):
-        jira_server = ''
-        jira_username = ''
-        jira_password = ''
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
 
         all_jira_settings = jirasetting.objects.filter()
         for jira in all_jira_settings:
@@ -66,7 +66,7 @@ class JiraSetting(APIView):
 
     def post(self, request):
         all_jira_settings = jirasetting.objects.filter()
-        jira_server = ''
+        jira_server = ""
         for jira in all_jira_settings:
             jira_server = jira.jira_server
 
@@ -123,10 +123,10 @@ class CreateJiraTicket(APIView):
     def get(self, request):
         jira_setting = jirasetting.objects.filter()
         user = request.user
-        jira_server = ''
-        jira_username = ''
-        jira_password = ''
-        jira_projects = ''
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+        jira_projects = ""
 
         for jira in jira_setting:
             jira_server = jira.jira_server
@@ -145,7 +145,9 @@ class CreateJiraTicket(APIView):
 
         options = {"server": jira_server}
         try:
-            jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), max_retries=0)
+            jira_ser = JIRA(
+                options, basic_auth=(jira_username, jira_password), max_retries=0
+            )
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)
@@ -174,10 +176,10 @@ class CreateJiraTicket(APIView):
         jira_setting = jirasetting.objects.filter()
         user = request.user
 
-        jira_server = ''
-        jira_username = ''
-        jira_password = ''
-        jira_ser = ''
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+        jira_ser = ""
 
         for jira in jira_setting:
             jira_server = jira.jira_server
@@ -228,9 +230,9 @@ class CreateJiraTicket(APIView):
             )
 
         elif scanner == "sast":
-            StaticScanResultsDb.objects.filter(
-                vuln_id=vuln_id
-            ).update(jira_ticket=new_issue)
+            StaticScanResultsDb.objects.filter(vuln_id=vuln_id).update(
+                jira_ticket=new_issue
+            )
             messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
             return HttpResponseRedirect(
                 reverse("staticscanners:list_vuln_info")
@@ -241,9 +243,14 @@ class CreateJiraTicket(APIView):
             NetworkScanResultsDb.objects.filter(vuln_id=vuln_id).update(
                 jira_ticket=new_issue
             )
-            ip = NetworkScanResultsDb.objects.filter(vuln_id=vuln_id).values('ip').get()['ip']
+            ip = (
+                NetworkScanResultsDb.objects.filter(vuln_id=vuln_id)
+                .values("ip")
+                .get()["ip"]
+            )
 
             messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
             return HttpResponseRedirect(
-                reverse("networkscanners:list_vuln_info") + "?scan_id=%s&ip=%s" % (scan_id, ip)
+                reverse("networkscanners:list_vuln_info")
+                + "?scan_id=%s&ip=%s" % (scan_id, ip)
             )

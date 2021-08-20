@@ -18,8 +18,8 @@ import logging
 
 from django.test import Client, TestCase
 
-from authentication.tests import UserCreationTest
 from archerysettings.models import *
+from authentication.tests import UserCreationTest
 from projects.models import *
 
 logging.disable(logging.CRITICAL)
@@ -140,7 +140,7 @@ class WebScanTest(TestCase):
         data = {
             "email_message": "test",
             "email_subject": "test",
-            "to_email": "to_email"
+            "to_email": "to_email",
         }
 
         response = client.post("/settings/email_setting/", data=data)
@@ -156,7 +156,7 @@ class WebScanTest(TestCase):
         data = {
             "email_subject": "email_subject",
             "email_message": "email_message",
-            "to_email": "to_email"
+            "to_email": "to_email",
         }
         response = client.post("/settings/email_setting/", data=data)
         self.assertEqual(response.status_code, 403)
@@ -170,7 +170,7 @@ class WebScanTest(TestCase):
         data = {
             "email_subject": "email_subject",
             "email_message": "email_message",
-            "to_email": "to_email"
+            "to_email": "to_email",
         }
         response = client.post("/settings/email_setting/", data=data)
         self.assertEqual(response.status_code, 403)
@@ -181,8 +181,12 @@ class WebScanTest(TestCase):
             password=self.auth_test.analyst.get("password"),
         )
 
-        setting_id = SettingsDb.objects.filter().values("setting_id").get()["setting_id"]
-        response = client.post("/settings/del_setting/", data={"setting_id": setting_id})
+        setting_id = (
+            SettingsDb.objects.filter().values("setting_id").get()["setting_id"]
+        )
+        response = client.post(
+            "/settings/del_setting/", data={"setting_id": setting_id}
+        )
         self.assertEqual(response.status_code, 403)
 
         # delete analyst setting from viewer user
@@ -191,8 +195,12 @@ class WebScanTest(TestCase):
             password=self.auth_test.viewer.get("password"),
         )
 
-        setting_id = SettingsDb.objects.filter().values("setting_id").get()["setting_id"]
-        response = client.post("/settings/del_setting/", data={"setting_id": setting_id})
+        setting_id = (
+            SettingsDb.objects.filter().values("setting_id").get()["setting_id"]
+        )
+        response = client.post(
+            "/settings/del_setting/", data={"setting_id": setting_id}
+        )
         self.assertEqual(response.status_code, 403)
 
         # delete email setting from admin user
@@ -201,11 +209,11 @@ class WebScanTest(TestCase):
             password=self.auth_test.admin.get("password"),
         )
 
-        setting_id = SettingsDb.objects.filter().values("setting_id").get()["setting_id"]
-        response = client.post("/settings/del_setting/", data={"setting_id": setting_id})
+        setting_id = (
+            SettingsDb.objects.filter().values("setting_id").get()["setting_id"]
+        )
+        response = client.post(
+            "/settings/del_setting/", data={"setting_id": setting_id}
+        )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/settings/settings/")
-
-
-
-

@@ -21,14 +21,9 @@ import uuid
 
 from django.core import signing
 
-from archerysettings.models import (
-    ArachniSettingsDb,
-    BurpSettingDb,
-    EmailDb,
-    NmapVulnersSettingDb,
-    OpenvasSettingDb,
-    ZapSettingsDb,
-)
+from archerysettings.models import (ArachniSettingsDb, BurpSettingDb, EmailDb,
+                                    NmapVulnersSettingDb, OpenvasSettingDb,
+                                    ZapSettingsDb)
 
 
 class SaveSettings:

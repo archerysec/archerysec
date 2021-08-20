@@ -14,35 +14,31 @@
 #
 # This file is part of ArcherySec Project.
 
+import json
+import time
 import uuid
 
-from archerysettings.models import (
-    EmailDb,
-    SettingsDb,
-)
-import time
-
+from django.core import signing
 from django.http import HttpResponseRedirect
 from django.shortcuts import HttpResponse, render
 from django.urls import reverse
+from jira import JIRA
 from notifications.models import Notification
+from PyBurprestapi import burpscanner
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 
-from user_management import permissions
-from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
-from archerysettings.models import ZapSettingsDb, ArachniSettingsDb, BurpSettingDb, OpenvasSettingDb, EmailDb, \
-    SettingsDb
+import PyArachniapi
+from archerysettings.models import (ArachniSettingsDb, BurpSettingDb, EmailDb,
+                                    OpenvasSettingDb, SettingsDb,
+                                    ZapSettingsDb)
 from jiraticketing.models import jirasetting
-from utility.email_notify import email_sch_notify
-from django.core import signing
-from PyBurprestapi import burpscanner
 from scanners.scanner_plugin.network_scanner.openvas_plugin import \
     OpenVAS_Plugin
-import PyArachniapi
-import json
-from jira import JIRA
+from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
+from user_management import permissions
+from utility.email_notify import email_sch_notify
 
 
 class EmailSetting(APIView):
@@ -53,7 +49,9 @@ class EmailSetting(APIView):
 
     def get(self, request):
         all_email = EmailDb.objects.all()
-        return render(request, "setting/email_setting_form.html", {"all_email": all_email})
+        return render(
+            request, "setting/email_setting_form.html", {"all_email": all_email}
+        )
 
     def post(self, request):
         all_email = EmailDb.objects.filter()
@@ -78,9 +76,7 @@ class EmailSetting(APIView):
         save_email.save()
 
         subject_test = "test"
-        message = (
-                "test"
-        )
+        message = "test"
 
         email = email_sch_notify(subject=subject_test, message=message)
 
@@ -126,10 +122,7 @@ class Settings(APIView):
         return render(
             request,
             "setting/settings_page.html",
-            {
-                "all_settings_data": all_settings_data,
-                "all_notify": all_notify
-            },
+            {"all_settings_data": all_settings_data, "all_notify": all_notify},
         )
 
     def post(self, request):
@@ -160,10 +153,10 @@ class Settings(APIView):
         zap_port = zap_ports
 
         # Loading Arachni Settings
-        arachni_hosts = ''
-        arachni_ports = ''
-        arachni_user = ''
-        arachni_pass = ''
+        arachni_hosts = ""
+        arachni_ports = ""
+        arachni_user = ""
+        arachni_pass = ""
 
         all_arachni = ArachniSettingsDb.objects.filter()
         for arachni in all_arachni:
@@ -214,15 +207,15 @@ class Settings(APIView):
                 try:
                     random_port = zap_plugin.zap_local()
                 except:
-                    return render(request, "setting/settings_page.html", {"zap_info": zap_info})
+                    return render(
+                        request, "setting/settings_page.html", {"zap_info": zap_info}
+                    )
 
                 for i in range(0, 100):
                     while True:
                         try:
                             # Connection Test
-                            zap_connect = zap_plugin.zap_connect(
-                                random_port
-                            )
+                            zap_connect = zap_plugin.zap_connect(random_port)
                             zap_connect.spider.scan(url=target_url)
                         except Exception as e:
                             print("ZAP Connection Not Found, re-try after 5 sec")
@@ -265,12 +258,10 @@ class Settings(APIView):
 
         if setting_of == "openvas":
             sel_profile = ""
-            scan_ip = ''
-            project_id = ''
+            scan_ip = ""
+            project_id = ""
 
-            openvas = OpenVAS_Plugin(
-                scan_ip, project_id, sel_profile
-            )
+            openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile)
             try:
                 openvas.connect()
                 openvas_info = True
@@ -296,7 +287,9 @@ class Settings(APIView):
                 arachni_user = arachni.arachni_user
                 arachni_pass = arachni.arachni_pass
 
-            arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports, arachni_user, arachni_pass)
+            arachni = PyArachniapi.arachniAPI(
+                arachni_hosts, arachni_ports, arachni_user, arachni_pass
+            )
 
             check = []
             data = {"url": "https://archerysec.com", "checks": check, "audit": {}}
@@ -363,8 +356,5 @@ class Settings(APIView):
         return render(
             request,
             "setting/settings_page.html",
-            {
-                "all_settings_data": all_settings_data,
-                "all_notify": all_notify
-            },
+            {"all_settings_data": all_settings_data, "all_notify": all_notify},
         )
