@@ -60,6 +60,8 @@ urlpatterns = [
     path("auth/", include("authentication.urls")),
     path("users/", include("user_management.urls")),
     path("report-upload/", include("report_upload.urls")),
+    # cicd app
+    path("cicd/", include("cicd.urls")),
 ]
 
 urlpatterns = urlpatterns + static(

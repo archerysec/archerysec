@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "networkscanners",
     "staticscanners",
     "jiraticketing",
+    "cicd",
     "tools",
     "pentest",
     "report_upload",
