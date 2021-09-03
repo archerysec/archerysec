@@ -1,0 +1,95 @@
+{% extends 'base/setting_base.html' %}
+
+{% block body %}
+    <script type="text/javascript">
+
+        $("#checkAll").change(function () {
+            $("input:checkbox").prop('checked', $(this).prop("checked"));
+        });
+        $(document).ready(function () {
+            $('.btn-danger').click(function () {
+                if (confirm('Are you sure you want to delete this?')) {
+                    var scan_id = [];
+                    $.each($("input[name='del_scan_id']:checked"), function () {
+                        scan_id.push($(this).val());
+                    });
+
+                    var json_scanid = scan_id.join(", ");
+                    $.ajax({
+                        type: 'POST',
+                        <!--contentType: 'application/json; charset=utf-8',-->
+                        url: '{% url 'list_org' %}',
+                        data: {
+                            org_id: json_scanid,
+                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                        },
+                        sucess: function () {
+
+                        }
+                    });
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                }
+            });
+
+        });
+
+    </script>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="float-right">
+{#                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected </button>#}
+                        <a type="button" href="{% url 'add_org' %}" class="btn btn-success btn-mini">Add Organization </a>
+                    </div>
+
+                    <br>
+                    <br>
+                    <br>
+                    <div class="d-md-flex align-items-center">
+                        <h1 class="card-title">Organization List</h1>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table id="bandit_scan_list" class="table table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    <th><label class="customcheckbox m-b-20">
+                                        <input type="checkbox" id="mainCheckbox">
+                                        <span class="checkmark"></span>
+                                    </label></th>
+                                    <th>Name</th>
+                                    <th>Date Time</th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in organization %}
+                                    <tr data-target="#">
+                                        <td>
+                                            <form>{% csrf_token %}
+                                                <label class="customcheckbox">
+                                                    <input type="checkbox" class="listCheckbox"
+                                                           value="{{ data.uu_id }}"
+                                                           name="del_scan_id"
+                                                           onClick="reload">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                        <td><a href="{% url 'edit_org' uu_id=data.uu_id %}">{{ data.name }} </a></td>
+                                        <td>{{ data.token_time }}</td>
+
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

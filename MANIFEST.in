@@ -1,7 +1,0 @@
-include LICENSE
-include README.rst
-recursive-include archerysecurity/static *
-recursive-include networkscanners/templates *
-recursive-include projects/templates *
-recursive-include webscanners/templates *
-recursive-include docs *

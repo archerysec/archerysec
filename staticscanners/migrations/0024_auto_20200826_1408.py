@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0023_checkmarx_scan_db_checkmarx_scan_results_db'),
+        ("staticscanners", "0023_checkmarx_scan_db_checkmarx_scan_results_db"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='checkmarx_scan_results_db',
-            name='file_name',
+            model_name="checkmarx_scan_results_db",
+            name="file_name",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='checkmarx_scan_results_db',
-            name='result_data',
+            model_name="checkmarx_scan_results_db",
+            name="result_data",
             field=models.TextField(blank=True),
         ),
     ]

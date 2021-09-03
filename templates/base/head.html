@@ -39,7 +39,7 @@
                         <a class="dropdown-item" href="{% url 'webscanners:index' %}">Domain Scans</a>
                         <a class="dropdown-item" href="{% url 'networkscanners:ip_scan' %}">Network Scans</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'projects:create_form' %}">Projects</a>
+                        <a class="dropdown-item" href="{% url 'projects:project_create' %}">Projects</a>
                     </div>
                 </li>
             </ul>
@@ -51,13 +51,15 @@
                             src="{% static 'matrix-admin-bt4/assets/images/users/1.jpg' %}" alt="user"
                             class="rounded-circle" width="31"></a>
                     <div class="dropdown-menu dropdown-menu-right user-dd animated">
+                        <a class="dropdown-item" href="{% url 'profile' %}"><i class="ti-user m-r-5 m-l-5"></i>
+                            Profile</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'archerysettings:settings' %}"><i class="ti-settings m-r-5 m-l-5"></i>
                             Setting</a>
                         <a class="dropdown-item" href="https://developers.archerysec.com/" target="_blank"><i class="fas fa-cog m-r-5 m-l-5"></i>
                             API</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'webscanners:logout' %}"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
                         <div class="dropdown-divider"></div>
                     </div>
                 </li>

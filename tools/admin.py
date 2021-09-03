@@ -13,8 +13,15 @@
 # Twitter: @anandtiwarics
 #
 # This file is part of ArcherySec Project.
+
 from __future__ import unicode_literals
 
 from django.contrib import admin
 
-# Register your models here.
+from tools import models
+
+admin.site.register(models.NiktoResultDb)
+admin.site.register(models.NmapResultDb)
+admin.site.register(models.NmapScanDb)
+admin.site.register(models.NmapVulnersPortResultDb)
+admin.site.register(models.SslscanResultDb)

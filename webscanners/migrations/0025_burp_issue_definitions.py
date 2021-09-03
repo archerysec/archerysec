@@ -6,21 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('webscanners', '0024_auto_20210514_1929'),
+        ("webscanners", "0024_auto_20210514_1929"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='burp_issue_definitions',
+            name="burp_issue_definitions",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('remediation', models.TextField(blank=True, null=True)),
-                ('issue_type_id', models.TextField(blank=True, null=True)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('reference', models.TextField(blank=True, null=True)),
-                ('vulnerability_classifications', models.TextField(blank=True, null=True)),
-                ('name', models.TextField(blank=True, null=True)),
-                ('username', models.CharField(max_length=256, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("remediation", models.TextField(blank=True, null=True)),
+                ("issue_type_id", models.TextField(blank=True, null=True)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("reference", models.TextField(blank=True, null=True)),
+                (
+                    "vulnerability_classifications",
+                    models.TextField(blank=True, null=True),
+                ),
+                ("name", models.TextField(blank=True, null=True)),
+                ("username", models.CharField(max_length=256, null=True)),
             ],
         ),
     ]

@@ -1,0 +1,26 @@
+[
+  {
+    "model": "user_management.UserRoles",
+    "pk": 1,
+    "fields": {
+      "role": "Admin",
+      "description": "Admin can manage organization level site"
+    }
+  },
+  {
+    "model": "user_management.UserRoles",
+    "pk": 2,
+    "fields": {
+      "role": "Analyst",
+      "description": "Analyst can create scannings"
+    }
+  },
+  {
+    "model": "user_management.UserRoles",
+    "pk": 3,
+    "fields": {
+      "role": "Viewer",
+      "description": "Viewers can only view dashboards"
+    }
+  }
+]

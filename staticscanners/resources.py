@@ -16,14 +16,14 @@
 
 from import_export import resources
 
-from compliance.models import dockle_scan_results_db, inspec_scan_results_db
+from compliance.models import DockleScanResultsDb, InspecScanResultsDb
 
 
 class InspecResource(resources.ModelResource):
     class Meta:
-        model = inspec_scan_results_db
+        model = InspecScanResultsDb
 
 
 class dockleResource(resources.ModelResource):
     class Meta:
-        model = dockle_scan_results_db
+        model = DockleScanResultsDb

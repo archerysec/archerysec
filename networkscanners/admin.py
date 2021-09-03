@@ -14,8 +14,9 @@
 #
 # This file is part of ArcherySec Project.
 
-from __future__ import unicode_literals
-
 from django.contrib import admin
 
-# Register your models here.
+from networkscanners import models
+
+admin.site.register(models.NetworkScanDb)
+admin.site.register(models.NetworkScanResultsDb)

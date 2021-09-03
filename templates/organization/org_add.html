@@ -1,0 +1,52 @@
+{% extends 'base/setting_base.html' %}
+{% load rest_framework %}
+
+{% block body %}
+
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-md-flex align-items-center">
+                        <h1 class="card-title">Organization Details</h1>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="widget-box">
+                                        <form class="form-horizontal"
+                                              action="{% url 'add_org' %}" method="POST">
+                                            {% csrf_token %}
+
+
+                                            <div class="card">
+
+                                                <div class="form-group ">
+                                                    <label>Name</label>
+                                                    <input name="name" class="form-control" type="text">
+                                                </div>
+                                                <div class="form-group ">
+                                                    <label>Description</label>
+                                                    <input name="description" class="form-control" type="text">
+                                                </div>
+                                            </div>
+
+                                            <div class="border-top">
+                                                <div class="card-body">
+                                                    <button type="submit" class="btn btn-default">Save
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

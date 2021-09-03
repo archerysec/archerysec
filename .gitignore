@@ -22,3 +22,4 @@ nikto_output
 htmlcov
 .coverage
 openvas_lib-master
+server.log.1

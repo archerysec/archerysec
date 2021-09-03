@@ -40,12 +40,14 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="float-right">
+                           {% if user.is_superuser == True or user.role.id == 2 %}
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <a href="{% url 'staticscanners:report_import' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload Report"><i
+                                <a href="{% url 'report_upload:upload' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload Report"><i
                                         class="fas fa-upload
 "></i> Upload</a>
                             </div>
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                            {% endif %}
                         </div>
                         <br>
                         <br>
@@ -76,7 +78,7 @@
                             </thead>
                             <tbody>{% for data in all_scans %}
                             <tr data-target="#">
-                                <td>
+                                <td>{% csrf_token %}
                                             <form>
                                                 <label class="customcheckbox">
                                                     <input type="checkbox" class="listCheckbox"
@@ -111,7 +113,23 @@
                                      <div class="p-1"><img src="/static/tools/tfsec.png" alt="user" width="30"
                                                                   class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Tfsec"></div></td>{% elif data.scanner == 'Whitesource' %}
                                      <div class="p-1"><img src="/static/tools/whitesource.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Whitesource"></div></td>{% endif %}
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Whitesource"></div></td>
+                                 {% elif data.scanner == 'Twistlock' %}
+                                     <div class="p-1"><img src="/static/tools/twistlock.png" alt="user" width="30"
+                                                                 class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Twistlock"></div></td>
+                                     {% elif data.scanner == 'Semgrep' %}
+                                     <div class="p-1"><img src="/static/tools/semgrep.svg" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Semgrep"></div></td>
+                                     {% elif data.scanner == 'Brakeman' %}
+                                     <div class="p-1"><img src="/static/tools/brakeman.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Brakeman"></div></td>
+                                     {% elif data.scanner == 'Gitlabsca' %}
+                                     <div class="p-1"><img src="/static/tools/gitlab.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Gitlabsca"></div></td>
+                                      {% elif data.scanner == 'Gitlabsast' %}
+                                     <div class="p-1"><img src="/static/tools/gitlab.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Gitlabsast"></div></td>
+                                 {% endif %}
 
 {#                                <td width="20%">#}
 {#                                            <div>#}
@@ -141,19 +159,4 @@
                 </div>
             </div>
         </div>
-
-<script>
-        $(window).load(function() {
-            {% if messages %}
-                {% for message in messages %}
-                    {% if message.tags == 'alert-success' %}
-                        toastr.success('{{ message }}');
-                    {% endif %}
-                    {% if message.tags == 'alert-danger' %}
-                        toastr.error('{{ message }}');
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        });
-</script>
 {% endblock %}

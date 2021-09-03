@@ -20,7 +20,7 @@ import datetime
 import hashlib
 import uuid
 
-from tools.models import nmap_result_db, nmap_scan_db
+from tools.models import NmapResultDb, NmapScanDb
 
 ip_address = None
 port = None
@@ -44,7 +44,7 @@ osgen = None
 accuracy = None
 
 
-def xml_parser(root, project_id, scan_id, username):
+def xml_parser(root, project_id, scan_id):
     """
 
     :param root:
@@ -122,7 +122,7 @@ def xml_parser(root, project_id, scan_id, username):
                 # print(ip_address)
                 print("------")
 
-                dump_data = nmap_result_db(
+                dump_data = NmapResultDb(
                     scan_id=scan_id,
                     ip_address=ip_address,
                     port=port,
@@ -143,7 +143,6 @@ def xml_parser(root, project_id, scan_id, username):
                     used_state=used_state,
                     used_portid=used_portid,
                     used_proto=used_proto,
-                    username=username,
                 )
                 dump_data.save()
 
@@ -159,8 +158,8 @@ def xml_parser(root, project_id, scan_id, username):
                                 if key == "addr":
                                     ip_address = value
 
-                                    all_data = nmap_result_db.objects.filter(
-                                        ip_address=ip_address, username=username
+                                    all_data = NmapResultDb.objects.filter(
+                                        ip_address=ip_address
                                     )
                                     # for a in all_data:
                                     #     global total_ports, ports_p
@@ -168,8 +167,7 @@ def xml_parser(root, project_id, scan_id, username):
                                     total_ports = len(all_data)
                                     # print(total_ports)
 
-                                    all_open_p = nmap_result_db.objects.filter(
-                                        username=username,
+                                    all_open_p = NmapResultDb.objects.filter(
                                         ip_address=ip_address,
                                         state="open",
                                     )
@@ -178,20 +176,18 @@ def xml_parser(root, project_id, scan_id, username):
                                     total_open_p = len(all_open_p)
                                     # print(total_open_p)
 
-                                    all_close_p = nmap_result_db.objects.filter(
-                                        username=username,
+                                    all_close_p = NmapResultDb.objects.filter(
                                         ip_address=ip_address,
                                         state="closed",
                                     )
                                     total_close_p = len(all_close_p)
 
-                                    save_scan = nmap_scan_db(
+                                    save_scan = NmapScanDb(
                                         scan_id=scan_id,
                                         project_id=project_id,
                                         scan_ip=ip_address,
                                         total_ports=total_ports,
                                         total_open_ports=total_open_p,
                                         total_close_ports=total_close_p,
-                                        username=username,
                                     )
                                     save_scan.save()

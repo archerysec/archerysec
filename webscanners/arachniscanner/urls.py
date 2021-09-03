@@ -22,12 +22,14 @@ app_name = "arachniscanner"
 
 urlpatterns = [
     # arachni
-    path("arachni_settings/", views.arachni_settings, name="arachni_settings"),
+    path("arachni_settings/", views.ArachniSetting.as_view(), name="arachni_settings"),
     path(
         "arachni_setting_update/",
-        views.arachni_setting_update,
+        views.ArachniSettingUpdate.as_view(),
         name="arachni_setting_update",
     ),
-    path("arachni_scan_launch/", views.arachni_scan, name="arachni_scan_launch"),
+    path(
+        "arachni_scan_launch/", views.ArachniScan.as_view(), name="arachni_scan_launch"
+    ),
     path("export/", views.export, name="export"),
 ]

@@ -19,7 +19,7 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from staticscanners.models import StaticScansDb, StaticScanResultsDb
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
 
 vul_col = ""
@@ -32,7 +32,7 @@ inst = ""
 code_data = ""
 
 
-def checkmarx_report_xml(data, project_id, scan_id, username):
+def checkmarx_report_xml(data, project_id, scan_id):
     """
 
     :param data:
@@ -72,15 +72,15 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
 
         dup_data = str(name) + str(severity) + str(file_name)
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
-        match_dup = StaticScanResultsDb.objects.filter(
-            username=username, dup_hash=duplicate_hash
-        ).values("dup_hash")
+        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash).values(
+            "dup_hash"
+        )
         lenth_match = len(match_dup)
         if lenth_match == 0:
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                username=username, false_positive_hash=duplicate_hash
+                false_positive_hash=duplicate_hash
             )
             fp_lenth_match = len(false_p)
             if fp_lenth_match == 1:
@@ -102,8 +102,7 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
                 severity=severity,
                 description=str(scan_details),
                 fileName=file_name,
-                username=username,
-                scanner='Checkmarx'
+                scanner="Checkmarx",
             )
             save_all.save()
 
@@ -119,22 +118,21 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
-                false_positive='Duplicate',
+                false_positive="Duplicate",
                 title=name,
                 severity=severity,
                 description=str(scan_details),
                 fileName=file_name,
-                username=username,
-                scanner='Checkmarx'
+                scanner="Checkmarx",
             )
             save_all.save()
 
     all_findbugs_data = StaticScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, false_positive="No"
+        scan_id=scan_id, false_positive="No"
     )
 
     duplicate_count = StaticScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+        scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_high = len(all_findbugs_data.filter(severity="High"))
@@ -143,7 +141,7 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
     total_vul = len(all_findbugs_data)
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
+    StaticScansDb.objects.filter(scan_id=scan_id).update(
         project_name=project,
         date_time=date_time,
         total_vul=total_vul,
@@ -151,9 +149,9 @@ def checkmarx_report_xml(data, project_id, scan_id, username):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
-        scanner='Checkmarx'
+        scanner="Checkmarx",
     )
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - checkmarx Report Uploaded"
     message = (
         "checkmarx Scanner has completed the scan "

@@ -17,44 +17,60 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import uuid
+
+from django.contrib import messages
 from django.core import signing
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from jira import JIRA
 from notifications.signals import notify
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.views import APIView
 
+from archerysettings.models import SettingsDb
 from jiraticketing.models import jirasetting
 from networkscanners.models import NetworkScanResultsDb
-from webscanners.models import (WebScanResultsDb)
-from archerysettings.models import settings_db
-import uuid
-
-jira_url = ""
-j_username = ""
-
-password = ""
-jira_projects = ""
+from staticscanners.models import StaticScanResultsDb
+from user_management import permissions
+from webscanners.models import WebScanResultsDb
 
 
-def jira_setting(request):
-    """
+class JiraSetting(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_scans.html"
 
-    :param request:
-    :return:
-    """
-    setting_id = uuid.uuid4()
-    username = request.user.username
-    all_jira_settings = jirasetting.objects.filter(username=username)
-    for jira in all_jira_settings:
-        global jira_url, j_username, password
-        jira_url = jira.jira_server
-        j_username = signing.loads(jira.jira_username)
-        password = signing.loads(jira.jira_password)
-    jira_server = jira_url
-    jira_username = j_username
-    jira_password = password
+    permission_classes = (IsAuthenticated, permissions.IsAdmin)
 
-    if request.method == "POST":
+    def get(self, request):
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+
+        all_jira_settings = jirasetting.objects.filter()
+        for jira in all_jira_settings:
+            jira_server = jira.jira_server
+            jira_username = signing.loads(jira.jira_username)
+            jira_password = signing.loads(jira.jira_password)
+
+        return render(
+            request,
+            "jiraticketing/jira_setting_form.html",
+            {
+                "jira_server": jira_server,
+                "jira_username": jira_username,
+                "jira_password": jira_password,
+            },
+        )
+
+    def post(self, request):
+        all_jira_settings = jirasetting.objects.filter()
+        jira_server = ""
+        for jira in all_jira_settings:
+            jira_server = jira.jira_server
+
+        setting_id = uuid.uuid4()
         jira_url = request.POST.get("jira_url")
         jira_username = request.POST.get("jira_username")
         jira_password = request.POST.get("jira_password")
@@ -62,16 +78,14 @@ def jira_setting(request):
         j_username = signing.dumps(jira_username)
         password = signing.dumps(jira_password)
 
-        setting_dat = settings_db(
-            username=username,
+        setting_dat = SettingsDb(
             setting_id=setting_id,
-            setting_scanner='Jira',
+            setting_scanner="Jira",
         )
         setting_dat.save()
 
         save_data = jirasetting(
             setting_id=setting_id,
-            username=username,
             jira_server=jira_url,
             jira_username=j_username,
             jira_password=password,
@@ -82,57 +96,63 @@ def jira_setting(request):
         try:
 
             jira_ser = JIRA(
-                options, basic_auth=(jira_username, jira_password), timeout=5
+                options, basic_auth=(jira_username, jira_password), max_retries=0
             )
             jira_projects = jira_ser.projects()
             print(len(jira_projects))
             jira_info = True
-            settings_db.objects.filter(setting_id=setting_id).update(
+            SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=jira_info
             )
         except Exception as e:
             print(e)
             jira_info = False
-            settings_db.objects.filter(setting_id=setting_id).update(
+            SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=jira_info
             )
 
         return HttpResponseRedirect(reverse("archerysettings:settings"))
 
-    return render(
-        request,
-        "jiraticketing/jira_setting_form.html",
-        {
-            "jira_server": jira_server,
-            "jira_username": jira_username,
-            "jira_password": jira_password,
-        },
-    )
 
+class CreateJiraTicket(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_scans.html"
 
-def submit_jira_ticket(request):
-    global jira_projects, jira_ser
-    r_username = request.user.username
-    jira_setting = jirasetting.objects.filter(username=r_username)
-    user = request.user
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    for jira in jira_setting:
-        jira_url = jira.jira_server
-        username = jira.jira_username
-        password = jira.jira_password
-    jira_server = jira_url
-    jira_username = signing.loads(username)
-    jira_password = signing.loads(password)
+    def get(self, request):
+        jira_setting = jirasetting.objects.filter()
+        user = request.user
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+        jira_projects = ""
 
-    options = {"server": jira_server}
-    try:
-        jira_ser = JIRA(options, basic_auth=(jira_username, jira_password))
-        jira_projects = jira_ser.projects()
-    except Exception as e:
-        print(e)
-        notify.send(user, recipient=user, verb="Jira settings not found")
+        for jira in jira_setting:
+            jira_server = jira.jira_server
+            jira_username = jira.jira_username
+            jira_password = jira.jira_password
 
-    if request.method == "GET":
+        if jira_username is None:
+            jira_username = None
+        else:
+            jira_username = signing.loads(jira_username)
+
+        if jira_password is None:
+            jira_password = None
+        else:
+            jira_password = signing.loads(jira_password)
+
+        options = {"server": jira_server}
+        try:
+            jira_ser = JIRA(
+                options, basic_auth=(jira_username, jira_password), max_retries=0
+            )
+            jira_projects = jira_ser.projects()
+        except Exception as e:
+            print(e)
+            notify.send(user, recipient=user, verb="Jira settings not found")
+
         summary = request.GET["summary"]
         description = request.GET["description"]
         scanner = request.GET["scanner"]
@@ -152,7 +172,37 @@ def submit_jira_ticket(request):
             },
         )
 
-    if request.method == "POST":
+    def post(self, request):
+        jira_setting = jirasetting.objects.filter()
+        user = request.user
+
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+        jira_ser = ""
+
+        for jira in jira_setting:
+            jira_server = jira.jira_server
+            jira_username = jira.jira_username
+            jira_password = jira.jira_password
+
+        if jira_username is None:
+            jira_username = None
+        else:
+            jira_username = signing.loads(jira_username)
+
+        if jira_password is None:
+            jira_password = None
+        else:
+            jira_password = signing.loads(jira_password)
+
+        options = {"server": jira_server}
+        try:
+            jira_ser = JIRA(options, basic_auth=(jira_username, jira_password))
+            jira_projects = jira_ser.projects()
+        except Exception as e:
+            print(e)
+            notify.send(user, recipient=user, verb="Jira settings not found")
         summary = request.POST.get("summary")
         description = request.POST.get("description")
         project_id = request.POST.get("project_id")
@@ -168,143 +218,39 @@ def submit_jira_ticket(request):
             "issuetype": {"name": issue_type},
         }
         new_issue = jira_ser.create_issue(fields=issue_dict)
-        print(new_issue)
 
-        if scanner == "zap":
-            WebScanResultsDb.objects.filter(
-                username=r_username, vuln_id=vuln_id, scanner='zap'
-            ).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(
-                reverse("zapscanner:zap_vuln_details")
-                + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
-            )
-        elif scanner == "burp":
-            WebScanResultsDb.objects.filter(
-                username=r_username, vuln_id=vuln_id, scanner='Burp'
-            ).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(
-                reverse("burpscanner:burp_vuln_out")
-                + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
-            )
-        elif scanner == "arachni":
-            WebScanResultsDb.objects.filter(
-                username=r_username, vuln_id=vuln_id, scanner='Arachni'
-            ).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(
-                reverse("arachniscanner:arachni_vuln_out")
-                + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
-            )
-
-        elif scanner == "netsparker":
-            WebScanResultsDb.objects.filter(
-                username=r_username, vuln_id=vuln_id, scanner='Netsparker'
-            ).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(
-                reverse("netsparkerscanner:netsparker_vuln_out")
-                + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
-            )
-
-        elif scanner == "webinspect":
-            WebScanResultsDb.objects.filter(
-                username=r_username, vuln_id=vuln_id, scanner='Webinspect'
-            ).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(
-                reverse("webinspectscanner:webinspect_vuln_out")
-                + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
-            )
-
-        elif scanner == "acunetix":
-            WebScanResultsDb.objects.filter(
-                username=r_username, vuln_id=vuln_id, scanner='Acunetix'
-            ).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(
-                reverse("acunetixscanner:acunetix_vuln_out")
-                + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
-            )
-
-        # elif scanner == "bandit":
-        #     bandit_scan_results_db.objects.filter(
-        #         username=r_username, vuln_id=vuln_id
-        #     ).update(jira_ticket=new_issue)
-        #     return HttpResponseRedirect(
-        #         reverse("banditscanner:banditscan_vuln_data")
-        #         + "?scan_id=%s&test_name=%s" % (scan_id, summary)
-        #     )
-        #
-        # elif scanner == "dependencycheck":
-        #     dependencycheck_scan_results_db.objects.filter(
-        #         username=r_username, vuln_id=vuln_id
-        #     ).update(jira_ticket=new_issue)
-        #     return HttpResponseRedirect(
-        #         reverse("dependencycheck:dependencycheck_vuln_data")
-        #         + "?scan_id=%s&test_name=%s" % (scan_id, summary)
-        #     )
-        #
-        # elif scanner == "findbugs":
-        #     findbugs_scan_results_db.objects.filter(
-        #         username=r_username, vuln_id=vuln_id
-        #     ).update(jira_ticket=new_issue)
-        #     return HttpResponseRedirect(
-        #         reverse("findbugs:findbugs_vuln_data")
-        #         + "?scan_id=%s&test_name=%s" % (scan_id, summary)
-        #     )
-        #
-        # elif scanner == "clair":
-        #     clair_scan_results_db.objects.filter(
-        #         username=r_username, vuln_id=vuln_id
-        #     ).update(jira_ticket=new_issue)
-        #     return HttpResponseRedirect(
-        #         reverse("clair:clair_vuln_data")
-        #         + "?scan_id=%s&test_name=%s" % (scan_id, summary)
-        #     )
-        #
-        # elif scanner == "trivy":
-        #     trivy_scan_results_db.objects.filter(
-        #         username=r_username, vuln_id=vuln_id
-        #     ).update(jira_ticket=new_issue)
-        #     return HttpResponseRedirect(
-        #         reverse("trivy:trivy_vuln_data")
-        #         + "?scan_id=%s&test_name=%s" % (scan_id, summary)
-        #     )
-        #
-        # elif scanner == "npmaudit":
-        #     npmaudit_scan_results_db.objects.filter(
-        #         username=r_username, vuln_id=vuln_id
-        #     ).update(jira_ticket=new_issue)
-        #     return HttpResponseRedirect(
-        #         reverse("npmaudit:npmaudit_vuln_data")
-        #         + "?scan_id=%s&test_name=%s" % (scan_id, summary)
-        #     )
-        #
-        # elif scanner == "nodejsscan":
-        #     nodejsscan_scan_results_db.objects.filter(
-        #         username=r_username, vuln_id=vuln_id
-        #     ).update(jira_ticket=new_issue)
-        #     return HttpResponseRedirect(
-        #         reverse("nodejsscan:nodejsscan_vuln_data")
-        #         + "?scan_id=%s&test_name=%s" % (scan_id, summary)
-        #     )
-        #
-        # elif scanner == "tfsec":
-        #     tfsec_scan_results_db.objects.filter(
-        #         username=r_username, vuln_id=vuln_id
-        #     ).update(jira_ticket=new_issue)
-        #     return HttpResponseRedirect(
-        #         reverse("tfsec:tfsec_vuln_data")
-        #         + "?scan_id=%s&test_name=%s" % (scan_id, summary)
-        #     )
-
-        elif scanner == "open_vas":
-            NetworkScanResultsDb.objects.filter(
-                username=r_username, vul_id=vuln_id
-            ).update(jira_ticket=new_issue)
-            return HttpResponseRedirect(
-                reverse("networkscanners:vul_details") + "?scan_id=%s" % scan_id
-            )
-        elif scanner == "nessus":
-            NetworkScanResultsDb.objects.filter(username=r_username, vul_id=vuln_id).update(
+        if scanner == "web":
+            WebScanResultsDb.objects.filter(vuln_id=vuln_id).update(
                 jira_ticket=new_issue
             )
+            messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
             return HttpResponseRedirect(
-                reverse("networkscanners:nessus_vuln_details") + "?scan_id=%s" % scan_id
+                reverse("webscanners:list_vuln_info")
+                + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
+            )
+
+        elif scanner == "sast":
+            StaticScanResultsDb.objects.filter(vuln_id=vuln_id).update(
+                jira_ticket=new_issue
+            )
+            messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
+            return HttpResponseRedirect(
+                reverse("staticscanners:list_vuln_info")
+                + "?scan_id=%s&test_name=%s" % (scan_id, summary)
+            )
+
+        elif scanner == "network":
+            NetworkScanResultsDb.objects.filter(vuln_id=vuln_id).update(
+                jira_ticket=new_issue
+            )
+            ip = (
+                NetworkScanResultsDb.objects.filter(vuln_id=vuln_id)
+                .values("ip")
+                .get()["ip"]
+            )
+
+            messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
+            return HttpResponseRedirect(
+                reverse("networkscanners:list_vuln_info")
+                + "?scan_id=%s&ip=%s" % (scan_id, ip)
             )

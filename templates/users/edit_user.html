@@ -1,0 +1,83 @@
+{% extends 'base/setting_base.html' %}
+{% load rest_framework %}
+
+{% block body %}
+
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-md-flex align-items-center">
+                        <h1 class="card-title">User Details</h1>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="widget-box">
+                                        <form class="form-horizontal"
+                                              action="{% url 'edit_user' uu_id=user_details.uu_id %}" method="POST">
+                                            {% csrf_token %}
+                                            {% render_form serializer %}
+                                        <div class="form-group ">
+                                                <label>Organization</label>
+                                                <div class="dropdown bootstrap-select form-control">
+                                                    <select class="select2 form-control custom-select"
+                                                            name="organization" style="width: 100%; height:36px;">
+                                                        <optgroup label="Seleted">
+                                                            <option value="{{ user_details.organization.pk }}"
+                                                                    selected>{{ user_details.organization }}</option>
+                                                        </optgroup>
+                                                        {% for data in org %}<option value="{{ data.pk }}">{{ data.name }}</option>{% endfor %}
+                                                    </select>
+
+                                                    <div class="dropdown-menu ">
+                                                        <div class="inner show" role="listbox" id="bs-select-1"
+                                                             tabindex="-1">
+                                                            <ul class="dropdown-menu inner show"
+                                                                role="presentation"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+
+                                            <div class="form-group ">
+                                                <label>Role</label>
+                                                <div class="dropdown bootstrap-select form-control">
+                                                    <select class="select2 form-control custom-select" name="role"
+                                                            style="width: 100%; height:36px;">
+                                                        <optgroup label="Seleted">
+                                                            <option value="{{ user_details.role.id }}" selected>{{ user_details.role }}</option>
+                                                        </optgroup>
+                                                        <option value="1">Admin</option>
+                                                        <option value="2">Analyst</option>
+                                                        <option value="3">Viewer</option>
+                                                    </select>
+                                                    <div class="dropdown-menu ">
+                                                        <div class="inner show" role="listbox" id="bs-select-1"
+                                                             tabindex="-1">
+                                                            <ul class="dropdown-menu inner show"
+                                                                role="presentation"></ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="border-top">
+                                                <div class="card-body">
+                                                    <button type="submit" class="btn btn-default">Save
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

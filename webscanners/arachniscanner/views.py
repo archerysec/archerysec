@@ -29,12 +29,17 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from notifications.signals import notify
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.views import APIView
 
 import PyArachniapi
-from archerysettings.models import arachni_settings_db, settings_db
+from archerysettings.models import ArachniSettingsDb, SettingsDb
 from jiraticketing.models import jirasetting
+from projects.models import ProjectDb
 from scanners.scanner_parser.web_scanner import arachni_xml_parser
-from webscanners.models import (WebScanResultsDb, WebScansDb)
+from user_management import permissions
+from webscanners.models import WebScanResultsDb, WebScansDb
 from webscanners.resources import ArachniResource
 
 scan_run_id = ""
@@ -45,15 +50,18 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     global scan_run_id, scan_status
     arachni_hosts = None
     arachni_ports = None
-    username = user.username
-    all_arachni = arachni_settings_db.objects.filter(username=username)
+    arachni_user = ""
+    arachni_pass = ""
+    all_arachni = ArachniSettingsDb.objects.filter()
     for arachni in all_arachni:
         arachni_hosts = arachni.arachni_url
         arachni_ports = arachni.arachni_port
         arachni_user = arachni.arachni_user
         arachni_pass = arachni.arachni_pass
 
-    arachni = PyArachniapi.arachniAPI(arachni_hosts, arachni_ports, arachni_user, arachni_pass)
+    arachni = PyArachniapi.arachniAPI(
+        arachni_hosts, arachni_ports, arachni_user, arachni_pass
+    )
     check = [
         "xss_event",
         "xss",
@@ -143,11 +151,11 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
 
     try:
         save_all_scan = WebScansDb(
-            username=username,
             project_id=project_id,
             scan_url=target,
             scan_id=scan_id,
             date_time=date_time,
+            scanner="Arachni",
         )
 
         save_all_scan.save()
@@ -177,7 +185,7 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
                 * 100
                 / scan_sum["statistics"]["browser_cluster"]["total_job_time"]
             )
-        WebScansDb.objects.filter(username=username, scan_id=scan_id, scanner='Arachni').update(
+        WebScansDb.objects.filter(scan_id=scan_id, scanner="Arachni").update(
             scan_status=int(status)
         )
         scan_sum = arachni.scan_summary(id=scan_run_id).data
@@ -189,13 +197,12 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
         xml_report = arachni.scan_xml_report(id=scan_run_id).data
         root_xml = ET.fromstring(xml_report)
         arachni_xml_parser.xml_parser(
-            username=username,
             project_id=project_id,
             scan_id=scan_id,
             root=root_xml,
             target_url=target,
         )
-        WebScansDb.objects.filter(username=username, scan_id=scan_id, scanner='Arachni').update(
+        WebScansDb.objects.filter(scan_id=scan_id, scanner="Arachni").update(
             scan_status="100"
         )
         print("Data uploaded !!!!")
@@ -203,16 +210,22 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     notify.send(user, recipient=user, verb="Arachni Scan Completed on URL %s" % target)
 
 
-def arachni_scan(request):
-    """
-    The function trigger Arachni scan.
-    :param request:
-    :return:
-    """
-    user = request.user
-    if request.method == "POST":
+class ArachniScan(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/arachniscanner/arachni_scan_list.html"
+
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
+
+    def get(self, request):
+        return render(request, "webscanners/webscanner.html")
+
+    def post(self, request):
+        user = request.user
         target_url = request.POST.get("scan_url")
-        project_id = request.POST.get("project_id")
+        project_uu_id = request.POST.get("project_id")
+        project_id = (
+            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+        )
         rescan_id = None
         rescan = "No"
         target_item = str(target_url)
@@ -229,68 +242,77 @@ def arachni_scan(request):
             thread.daemon = True
             thread.start()
 
-    return render(request, "webscanners/arachniscanner/arachni_scan_list.html")
+        return HttpResponseRedirect(reverse("webscanners:list_scans"))
 
 
-def arachni_settings(request):
-    """
-    The function calling arachni Scanner setting page.
-    :param request:
-    :return:
-    """
-    username = request.user.username
-    arachni_hosts = None
-    arachni_ports = None
-    arachni_user= None
-    arachni_pass = None
+class ArachniSetting(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/arachniscanner/arachni_settings_form.html"
 
-    all_arachni = arachni_settings_db.objects.filter(username=username)
-    for arachni in all_arachni:
-        # global arachni_api_key, arachni_hosts, arachni_ports
-        arachni_hosts = arachni.arachni_url
-        arachni_ports = arachni.arachni_port
-        arachni_user = arachni.arachni_user
-        arachni_pass = arachni.arachni_pass
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
-    return render(request,
-                  'webscanners/arachniscanner/arachni_settings_form.html',
-                  {
-                      'arachni_host': arachni_hosts,
-                      'arachni_port': arachni_ports,
-                      'arachni_user': arachni_user,
-                      'arachni_pass': arachni_pass
-                  }
-                  )
+    def get(self, request):
+        arachni_hosts = None
+        arachni_ports = None
+        arachni_user = None
+        arachni_pass = None
+
+        all_arachni = ArachniSettingsDb.objects.filter()
+        for arachni in all_arachni:
+            # global arachni_api_key, arachni_hosts, arachni_ports
+            arachni_hosts = arachni.arachni_url
+            arachni_ports = arachni.arachni_port
+            arachni_user = arachni.arachni_user
+            arachni_pass = arachni.arachni_pass
+
+        return render(
+            request,
+            "webscanners/arachniscanner/arachni_settings_form.html",
+            {
+                "arachni_host": arachni_hosts,
+                "arachni_port": arachni_ports,
+                "arachni_user": arachni_user,
+                "arachni_pass": arachni_pass,
+            },
+        )
 
 
-def arachni_setting_update(request):
-    """
-    The function Update the arachni settings.
-    :param request:
-    :return:
-    """
-    setting_id = uuid.uuid4()
-    username = request.user.username
-    if request.method == 'POST':
-        arachnihost = request.POST.get("arachnihost", )
-        port = request.POST.get("arachniport", )
-        user = request.POST.get("arachniuser", )
-        password = request.POST.get("arachnipass", )
+class ArachniSettingUpdate(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/arachniscanner/arachni_settings_form.html"
 
-        setting_dat = settings_db(
-            username=username,
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
+
+    def get(self, request):
+        return render(request, "webscanners/arachniscanner/arachni_settings_form.html")
+
+    def post(self, request):
+        setting_id = uuid.uuid4()
+        arachnihost = request.POST.get(
+            "arachnihost",
+        )
+        port = request.POST.get(
+            "arachniport",
+        )
+        user = request.POST.get(
+            "arachniuser",
+        )
+        password = request.POST.get(
+            "arachnipass",
+        )
+
+        setting_dat = SettingsDb(
             setting_id=setting_id,
-            setting_scanner='Arachni',
+            setting_scanner="Arachni",
         )
         setting_dat.save()
 
-        save_data = arachni_settings_db(
-            username=username,
+        save_data = ArachniSettingsDb(
             arachni_url=arachnihost,
             arachni_port=port,
             arachni_user=user,
             arachni_pass=password,
-            setting_id=setting_id
+            setting_id=setting_id,
         )
         save_data.save()
 
@@ -310,18 +332,16 @@ def arachni_setting_update(request):
                 if key == "id":
                     scan_run_id = value
             arachni_info = True
-            settings_db.objects.filter(setting_id=setting_id).update(
+            SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=arachni_info
             )
         except Exception:
             arachni_info = False
-            settings_db.objects.filter(setting_id=setting_id).update(
+            SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=arachni_info
             )
 
         return HttpResponseRedirect(reverse("archerysettings:settings"))
-
-    return render(request, "webscanners/arachniscanner/arachni_settings_form.html")
 
 
 def export(request):
@@ -329,7 +349,6 @@ def export(request):
     :param request:
     :return:
     """
-    username = request.user.username
     if request.method == "POST":
         scan_id = request.POST.get("scan_id")
         report_type = request.POST.get("type")
@@ -340,7 +359,7 @@ def export(request):
 
         zap_resource = ArachniResource()
         queryset = WebScanResultsDb.objects.filter(
-            username=username, scan_id__in=value_split, scanner='Arachni'
+            scan_id__in=value_split, scanner="Arachni"
         )
         dataset = zap_resource.export(queryset)
         if report_type == "csv":

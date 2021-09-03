@@ -1,1 +1,0 @@
-web: gunicorn archerysecurity.wsgi --log-file -

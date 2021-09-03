@@ -1,22 +1,25 @@
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-{% for data in vul_dat %}
+    {% for data in vul_dat %}
 
         <div class="float-right">
 
         </div>
         <div class="row">
             <div class="col-md-12">
-                 <div class="col-md-auto">
+                <div class="col-md-auto">
                     <div class="float-right">
-                        <!-- Large modal -->
-                        <a href="/jira/submit_jira_ticket/?summary={{data.title}}&description={{data.description}}%0a%0a%0a Vulnerable URL: {{data.url}} %0a%0a Vulnerable Parameter: {{data.param}} %0a%0a Solution: {{data.solution}} %0a%0a Archery URL: {SERVERIP}/webscanners/vuln_dat/?vuln_id={{data.vuln_id}} %0a%0a Request Header: {{ data.requestHeader }}&scanner=zap&vuln_id={{data.vuln_id}}&scan_id={{data.scan_id}} "
-               class="btn btn-primary btn-lg active" role="button" aria-pressed="true"> Create Jira Ticket</a>
 
+                        {% if jira_projects != None %}
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jiraModal">
+                            Create Jira Ticket
+                        </button>
+                        {% endif %}
                     </div>
+
                 </div>
-                <h1>{{data.title}}</h1>
+                <h1>{{ data.title }}</h1>
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
@@ -33,7 +36,7 @@
                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{data.description | safe}}
+                                    {{ data.description | safe }}
                                 </div>
                             </div>
                         </div>
@@ -49,65 +52,65 @@
                             </div>
 
                             {% if data.scanner == 'Zap' %}
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
+                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                     data-parent="#accordionExample">
                                     <div class="card-body">
+                                        <div class="card-body">
                                             <table class="table table-bordered">
                                                 <tbody id="instance"></tbody>
                                             </table>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             {% elif data.scanner == 'Arachni' %}
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
+                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                     data-parent="#accordionExample">
                                     <div class="card-body">
+                                        <div class="card-body">
                                             <table class="table table-bordered">
                                                 <tbody id="instance"></tbody>
                                             </table>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
                             {% elif data.scanner == 'Acunetix' %}
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
+                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                     data-parent="#accordionExample">
                                     <div class="card-body">
-{#                                            <table class="table table-bordered">#}
-{#                                                <tbody id="instance"></tbody>#}
-{#                                            </table>#}
-                                        {{ data.instance }}
+                                        <div class="card-body">
+                                            {#                                            <table class="table table-bordered">#}
+                                            {#                                                <tbody id="instance"></tbody>#}
+                                            {#                                            </table>#}
+                                            {{ data.instance }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             {% else %}
 
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <div class="col-md-6">
-                                    <table class="table table-bordered data-table table-fixed">
-                                        <thead>
-                                            <tr>
-                                                <td>URL</td>
+                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                     data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered data-table table-fixed">
+                                                <thead>
+                                                <tr>
+                                                    <td>URL</td>
 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>
-                                                {{data.url}}
-                                            </td>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        {{ data.url }}
+                                                    </td>
 
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
+                                    </div>
                                 </div>
-                            </div>
                             {% endif %}
                         </div>
                         <div class="card m-b-0 border-top">
@@ -123,7 +126,7 @@
                             <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{data.solution | safe}}
+                                    {{ data.solution | safe }}
                                 </div>
                             </div>
                         </div>
@@ -140,7 +143,7 @@
                             <div id="collapse4" class="collapse" aria-labelledby="heading4"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{data.reference | safe}}
+                                    {{ data.reference | safe }}
                                 </div>
                             </div>
                         </div>
@@ -149,19 +152,93 @@
             </div>
         </div>
 
+
+        <div class="modal fade" id="jiraModal" tabindex="-1" role="dialog"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="jiraModalLabel">JIRA Ticket</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" method="POST"
+                              action="{% url 'jiraticketing:submit_jira_ticket' %}">{% csrf_token %}
+                            <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
+                            <input name="scanner" value="web" type="hidden">
+                            <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label
+                                            class="col-sm-4 col-form-label">Select Project</label>
+                                    <div class="col-sm-6">
+                                        <select id="project_id" name="project_id"
+                                                class="select2 form-control custom-select"
+                                                style="width: 100%; height:36px;">
+                                            {% for jira_data in jira_projects %}
+                                                <option value="{{ jira_data.id }}">{{ jira_data.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label
+                                            class="col-sm-4 col-form-label">Issue Type</label>
+                                    <div class="col-sm-6">
+                                        <select name="issue_type"
+                                                class="select2 form-control custom-select"
+                                                style="width: 100%; height:36px;">
+                                            <option>Bug</option>
+                                            <option>Story</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label
+                                            class="col-sm-4 col-form-label">Summary</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="summary"
+                                               class="form-control"
+                                               value="{{ data.title }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label
+                                            class="col-sm-4 col-form-label">Description</label>
+                                    <div class="col-sm-6">
+                                        <textarea name="description"
+                                                  class="form-control">{{ data.description }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript">
             var json = {{ data.instance | safe }}
-            $.each(json, function (key, data) {
+                $.each(json, function (key, data) {
 
-                $.each(data, function (key2, data2) {
-                    var tbody = document.getElementById('instance');
-                    var tr = "<tr>";
-                    tr += "<td>" + key2 + "</td>" + "<td>" + data2.toString() + "</td></tr>";
-                    tbody.innerHTML += tr;
+                    $.each(data, function (key2, data2) {
+                        var tbody = document.getElementById('instance');
+                        var tr = "<tr>";
+                        tr += "<td>" + key2 + "</td>" + "<td>" + data2.toString() + "</td></tr>";
+                        tbody.innerHTML += tr;
+                    });
+
                 });
-
-            });
         </script>
-{% endfor %}
+    {% endfor %}
 
 {% endblock %}

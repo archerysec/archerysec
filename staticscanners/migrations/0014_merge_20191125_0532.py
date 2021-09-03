@@ -8,9 +8,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0013_auto_20191026_0918'),
-        ('staticscanners', '0013_trivy_scan_db_trivy_scan_results_db'),
+        ("staticscanners", "0013_auto_20191026_0918"),
+        ("staticscanners", "0013_trivy_scan_db_trivy_scan_results_db"),
     ]
 
-    operations = [
-    ]
+    operations = []

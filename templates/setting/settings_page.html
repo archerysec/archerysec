@@ -1,4 +1,4 @@
-{% extends 'dashboard/base.html' %}
+{% extends 'base/setting_base.html' %}
 
 {% block body %}
     <script type="text/javascript">
@@ -139,7 +139,7 @@
                                                 <div class="p-1"><img src="/static/tools/burp.png" alt="user" width="50"
                                                                       class="rounded-circle" data-toggle="tooltip"
                                                                       data-placement="top" title="Burp">
-                                                    <b><a href="/burpscanner/burp_setting/">Burp</a></b>
+                                                    <b><a href="{% url 'burpscanner:burp_setting' %}">Burp</a></b>
                                                 </div>
                                             </td>
                                             <td>
@@ -181,7 +181,7 @@
                                                 <div class="p-1"><img src="/static/tools/jira.png" alt="user" width="50"
                                                                       class="rounded-circle" data-toggle="tooltip"
                                                                       data-placement="top" title="Jira">
-                                                    <b><a href="/jira/jira_setting/">Jira</a></b>
+                                                    <b><a href="{% url 'jiraticketing:jira_setting' %}">Jira</a></b>
                                                 </div>
                                             </td>
                                             <td>
@@ -267,7 +267,7 @@
                                                                       width="50"
                                                                       class="rounded-circle" data-toggle="tooltip"
                                                                       data-placement="top" title="Email">
-                                                    <b><a href="/arachniscanner/arachni_settings/">Email</a></b>
+                                                    <b><a href="{% url 'archerysettings:email_setting' %}">Email</a></b>
                                                 </div>
                                             </td>
                                             <td>
@@ -314,23 +314,6 @@
             </div>
         </div>
     </div>
-
-
-
-    <script>
-        $(window).load(function () {
-            {% if messages %}
-                {% for message in messages %}
-                    {% if message.tags == 'alert-success' %}
-                        toastr.success('{{ message }}');
-                    {% endif %}
-                    {% if message.tags == 'alert-danger' %}
-                        toastr.error('{{ message }}');
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        });
-    </script>
 
     {% if zap_info == False %}
         <script>

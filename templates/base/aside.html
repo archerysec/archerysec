@@ -8,7 +8,7 @@
                 <li class="my-2 mx-3 border-top"></li>
                 <!-- Manual Scans -->
                 <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                            href="{% url 'manual_scan:list_scan' %}" aria-expanded="false"><i
+                                            href="{% url 'pentest:list_scan' %}" aria-expanded="false"><i
                         class="fas fa-laptop"></i><span class="hide-menu">Pentest Activity</span></a></li>
 
                 <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
@@ -48,26 +48,30 @@
                                 class="mdi mdi-note-plus"></i><span class="hide-menu"> Dockle </span></a></li>
                     </ul>
                 </li>
-                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"
-                                            href="javascript:void(0)" aria-expanded="false"><i
-                        class="fas fa-wrench"></i><span class="hide-menu">Tools </span></a>
-                    <ul aria-expanded="false" class="collapse  first-level">
-                        <li class="sidebar-item"><a href="/tools/sslscan/" class="sidebar-link"><i
-                                class="mdi mdi-emoticon"></i><span class="hide-menu"> SSLScan </span></a>
-                        </li>
-                        <li class="sidebar-item"><a href="/tools/nikto/" class="sidebar-link"><i
-                                class="fas fa-eraser"></i><span
-                                class="hide-menu"> Nikto </span></a></li>
-                        <li class="sidebar-item"><a href="/tools/nmap_vulners_scan/" class="sidebar-link"><i
-                                class="fas fa-shield-alt"></i><span
-                                class="hide-menu"> NMAP </span></a></li>
+{#                <li class="sidebar-item"><a class="sidebar-link has-arrow waves-effect waves-dark"#}
+{#                                            href="javascript:void(0)" aria-expanded="false"><i#}
+{#                        class="fas fa-wrench"></i><span class="hide-menu">Tools </span></a>#}
+{#                    <ul aria-expanded="false" class="collapse  first-level">#}
+{#                        <li class="sidebar-item"><a href="/tools/sslscan/" class="sidebar-link"><i#}
+{#                                class="mdi mdi-emoticon"></i><span class="hide-menu"> SSLScan </span></a>#}
+{#                        </li>#}
+{#                        <li class="sidebar-item"><a href="/tools/nikto/" class="sidebar-link"><i#}
+{#                                class="fas fa-eraser"></i><span#}
+{#                                class="hide-menu"> Nikto </span></a></li>#}
+{#                        <li class="sidebar-item"><a href="/tools/nmap_vulners_scan/" class="sidebar-link"><i#}
+{#                                class="fas fa-shield-alt"></i><span#}
+{#                                class="hide-menu"> NMAP </span></a></li>#}
+{##}
+{#                    </ul>#}
+{#                </li>#}
 
-                    </ul>
-                </li>
                 <li class="my-3 mx-3 border-top"></li>
+                {% if user.is_superuser == True %}
                 <li class="sidebar-item"><a class="sidebar-link" href="/settings/settings/" aria-expanded="false"><i
                         class="ti-settings m-r-5 m-l-5"></i><span class="hide-menu">Settings</span></a>
                 </li>
+                {% endif %}
+
                 <li class="sidebar-item"><a class="sidebar-link" href="https://docs.archerysec.com/" target="_blank"
                                             aria-expanded="false"><i
                         class="fas fa-book"></i><span class="hide-menu">Documents</span></a>
@@ -79,12 +83,6 @@
                 </li>
             </ul>
         </nav>
-        <!-- End Sidebar navigation -->
-        <div class="my-3 mx-3">
-            <ul>
-                Version v2.0.2
-            </ul>
-        </div>
 
     </div>
     <!-- End Sidebar scroll-->

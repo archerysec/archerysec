@@ -20,29 +20,33 @@ from django.db import models
 
 
 # SSLScan Model.
-class sslscan_result_db(models.Model):
+class SslscanResultDb(models.Model):
     scan_id = models.TextField(blank=True, null=True)
-    project_id = models.TextField(blank=True, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scan_url = models.TextField(blank=True, null=True)
     sslscan_output = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
 
 
 # Nikto Models
-class nikto_result_db(models.Model):
+class NiktoResultDb(models.Model):
     scan_id = models.TextField(blank=True, null=True)
-    project_id = models.TextField(blank=True, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scan_url = models.TextField(blank=True, null=True)
     nikto_scan_output = models.TextField(blank=True, null=True)
     date_time = models.TextField(null=True, blank=True)
     nikto_status = models.TextField(null=True, blank=True)
-    username = models.CharField(max_length=256, null=True)
 
 
-class nikto_vuln_db(models.Model):
+class NiktoVulnDb(models.Model):
     vuln_id = models.UUIDField(blank=True, null=True)
     scan_id = models.UUIDField(blank=True, null=True)
-    project_id = models.TextField(blank=True, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scan_url = models.TextField(blank=True, null=True)
     discription = models.TextField(blank=True, null=True)
     targetip = models.TextField(blank=True, null=True)
@@ -59,23 +63,25 @@ class nikto_vuln_db(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     date_time = models.TextField(null=True, blank=True)
-    username = models.CharField(max_length=256, null=True)
 
 
 # Nmap tool models
-class nmap_scan_db(models.Model):
+class NmapScanDb(models.Model):
     scan_id = models.TextField(blank=True, null=True)
-    project_id = models.TextField(blank=True, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     scan_ip = models.TextField(blank=True, null=True)
     total_ports = models.TextField(blank=True, null=True)
     total_open_ports = models.TextField(blank=True, null=True)
     total_close_ports = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
 
 
-class nmap_result_db(models.Model):
+class NmapResultDb(models.Model):
     scan_id = models.TextField(blank=True, null=True)
-    project_id = models.TextField(blank=True, null=True)
+    project = models.ForeignKey(
+        "projects.ProjectDb", on_delete=models.CASCADE, null=True
+    )
     ip_address = models.TextField(blank=True, null=True)
     protocol = models.TextField(blank=True, null=True)
     port = models.TextField(blank=True, null=True)
@@ -96,9 +102,8 @@ class nmap_result_db(models.Model):
     used_state = models.TextField(blank=True, null=True)
     used_portid = models.TextField(blank=True, null=True)
     used_proto = models.TextField(blank=True, null=True)
-    username = models.CharField(max_length=256, null=True)
 
 
 # NOTE[gmedian]: just base on the previous existing table in order not to make anything non-working
-class nmap_vulners_port_result_db(nmap_result_db):
+class NmapVulnersPortResultDb(NmapResultDb):
     vulners_extrainfo = models.TextField(blank=True, null=True)

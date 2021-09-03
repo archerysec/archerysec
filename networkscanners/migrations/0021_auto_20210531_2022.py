@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkscanners', '0020_networkscanresultsdb_false_positive_hash'),
+        ("networkscanners", "0020_networkscanresultsdb_false_positive_hash"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='networkscandb',
-            name='scan_id',
+            model_name="networkscandb",
+            name="scan_id",
             field=models.UUIDField(blank=True),
         ),
         migrations.AlterField(
-            model_name='networkscanresultsdb',
-            name='scan_id',
+            model_name="networkscanresultsdb",
+            name="scan_id",
             field=models.UUIDField(blank=True),
         ),
     ]

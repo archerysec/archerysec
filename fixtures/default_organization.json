@@ -1,0 +1,13 @@
+[
+    {
+        "model": "user_management.Organization",
+        "pk": 1,
+        "fields": {
+            "name": "default",
+            "description": "Default Organization",
+            "logo": "default_logo",
+            "contact": "",
+            "address": "default"
+        }
+    }
+]

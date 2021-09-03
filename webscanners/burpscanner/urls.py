@@ -22,7 +22,7 @@ app_name = "burpscanner"
 
 urlpatterns = [
     # Burp scans
-    path("burp_launch_scan/", views.burp_scan_launch, name="burp_launch_scan"),
+    path("burp_launch_scan/", views.BurpScanLaunch.as_view(), name="burp_launch_scan"),
     path("export/", views.export, name="export"),
-    path("burp_setting/", views.burp_setting, name="burp_setting"),
+    path("burp_setting/", views.BurpSetting.as_view(), name="burp_setting"),
 ]

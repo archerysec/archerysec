@@ -9,20 +9,20 @@
     $(document).ready(function() {
         $('.btn-danger').click(function(){
             if (confirm('Are you sure you want to delete this?')) {
-                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                var vuln_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
                 $.each($("input[name='del_vuln_id']:checked"), function(){
-                    scan_id.push($(this).val());
+                    vuln_id.push($(this).val());
                 });
 
-                var json_scanid = scan_id.join(", ");
+                var json_vuln_id = vuln_id.join(", ");
                 $.ajax({
                     type:'POST',
                     <!--contentType: 'application/json; charset=utf-8',-->
                     url:'{% url 'staticscanners:vuln_delete' %}',
                     data:{
-                       del_vuln: json_scanid,
-                       scan_id: $('input[name=scan_id]').val(),
-                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                        vuln_id: json_vuln_id,
+                        scan_id: $('input[name=scan_id]').val(),
+                        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
                     },
                     sucess:function(){
                     }
@@ -46,9 +46,11 @@ $(document).on('click', '.confirm-delete', function(){
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
+                   {% if user.is_superuser == True or user.role.id == 2 %}
                         <div class="float-right">
                             <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
                         </div>
+                    {% endif %}
                         <br>
                         <div class="d-md-flex align-items-center">
                             <h1 class="card-title">Vulnerability List</h1>
@@ -67,10 +69,12 @@ $(document).on('click', '.confirm-delete', function(){
                                         <th>Filename</th>
                                         <th>Risk</th>
                                         <th>JIRA Ticket</th>
-                                        <th>False Positive</th>
                                         <th>Status</th>
+                                       {% if user.is_superuser == True or user.role.id == 2 %}
+                                        <th>False Positive</th>
                                         <th>Delete</th>
                                         <th>Mark</th>
+                                        {% endif %}
                                     </tr>
                                     </thead>
                                     <tbody>{% for data in vuln_data %}
@@ -94,9 +98,19 @@ $(document).on('click', '.confirm-delete', function(){
                                         </td>
                                         <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
                                         </td>
+                                    {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                        {% endif %}
+                                    {% if data.vuln_status == 'Open' %}
+                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                        <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>
+                                        {% endif %}
+                                   {% if user.is_superuser == True or user.role.id == 2 %}
                                         {% if data.false_positive == 'No' %}
                                         <td>
-                                            <form method="POST" action="{% url 'staticscanners:list_vuln_info' %}">
+                                            <form method="POST" action="{% url 'staticscanners:vuln_mark' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="Yes">
@@ -110,7 +124,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         {% endif %}
                                     {% if data.false_positive == 'Yes' %}
                                         <td>
-                                            <form method="POST" action="{% url 'staticscanners:list_vuln_info' %}">
+                                            <form method="POST" action="{% url 'staticscanners:vuln_mark' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
@@ -127,15 +141,6 @@ $(document).on('click', '.confirm-delete', function(){
                                             NA
                                         </td>
                                     {% endif %}
-                                        {% if data.vuln_status == 'Closed' %}
-                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
-                                        {% endif %}
-                                    {% if data.vuln_status == 'Open' %}
-                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
-                                        {% endif %}
-                                        {% if data.vuln_status == 'Duplicate' %}
-                                        <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>
-                                        {% endif %}
                                         <td class="confirm-delete">
                                             <div>
                                                 <form action="{% url 'staticscanners:vuln_delete' %}" method="POST"
@@ -151,7 +156,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         </td>
                                     {% if data.vuln_status == 'Open' %}
                                         <td>
-                                            <form method="POST" action="{% url 'staticscanners:list_vuln_info' %}">
+                                            <form method="POST" action="{% url 'staticscanners:vuln_mark' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
@@ -165,7 +170,7 @@ $(document).on('click', '.confirm-delete', function(){
                                     {% endif %}
                                     {% if data.vuln_status == 'Closed' %}
                                         <td>
-                                            <form method="POST" action="{% url 'staticscanners:list_vuln_info' %}">
+                                            <form method="POST" action="{% url 'staticscanners:vuln_mark' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
                                                 <input type="hidden" name="false" value="No">
@@ -181,6 +186,7 @@ $(document).on('click', '.confirm-delete', function(){
                                         <td>
                                             NA
                                         </td>
+                                    {% endif %}
                                     {% endif %}
                                     </tr>
                                     {% endfor %}

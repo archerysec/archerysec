@@ -20,8 +20,8 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from webscanners.models import WebScanResultsDb, WebScansDb
 from utility.email_notify import email_sch_notify
+from webscanners.models import WebScanResultsDb, WebScansDb
 
 name = ""
 description = ""
@@ -59,7 +59,7 @@ response_raw_headers = ""
 false_positive = None
 
 
-def xml_parser(root, project_id, scan_id, username, target_url):
+def xml_parser(root, project_id, scan_id, target_url):
     date_time = datetime.now()
     global name, description, remedy_guidance, remedy_code, severity, check, digest, references, vector, remarks, page, signature, proof, trusted, platform_type, platform_name, url, action, body, vuln_id, vul_col, ref_key, ref_values, vector_input_key, vector_input_values, vector_source_key, vector_source_values, page_body_data, request_url, request_method, request_raw, response_ip, response_raw_headers
 
@@ -212,14 +212,22 @@ def xml_parser(root, project_id, scan_id, username, target_url):
                                 else:
                                     body = extra_vuln.text
 
-                details = description + '\n\n' + str(proof) + '\n\n' + str(ref_values) + '\n\n' + str(page_body_data)
+                details = (
+                    description
+                    + "\n\n"
+                    + str(proof)
+                    + "\n\n"
+                    + str(ref_values)
+                    + "\n\n"
+                    + str(page_body_data)
+                )
 
                 dup_data = name + url + severity
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
                 match_dup = (
                     WebScanResultsDb.objects.filter(
-                        username=username, vuln_duplicate=duplicate_hash, scanner='Arachni'
+                        vuln_duplicate=duplicate_hash, scanner="Arachni"
                     )
                     .values("dup_hash")
                     .distinct()
@@ -241,13 +249,11 @@ def xml_parser(root, project_id, scan_id, username, target_url):
                     severity = "Low"
                     vul_col = "info"
 
-                print(severity)
-
                 if lenth_match == 0:
                     duplicate_vuln = "No"
 
                     false_p = WebScanResultsDb.objects.filter(
-                        username=username, false_positive_hash=duplicate_hash
+                        false_positive_hash=duplicate_hash
                     )
                     fp_lenth_match = len(false_p)
 
@@ -274,8 +280,7 @@ def xml_parser(root, project_id, scan_id, username, target_url):
                         vuln_status="Open",
                         false_positive_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
-                        scanner='Arachni',
-                        username=username,
+                        scanner="Arachni",
                     )
                     dump_data.save()
 
@@ -297,17 +302,16 @@ def xml_parser(root, project_id, scan_id, username, target_url):
                         vuln_status="Duplicate",
                         false_positive_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
-                        scanner='Arachni',
-                        username=username,
+                        scanner="Arachni",
                     )
                     dump_data.save()
 
     arachni_all_vul = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, false_positive="No", scanner='Arachni'
+        scan_id=scan_id, false_positive="No", scanner="Arachni"
     )
 
     duplicate_count = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, vuln_duplicate="Yes", scanner='Arachni'
+        scan_id=scan_id, vuln_duplicate="Yes", scanner="Arachni"
     )
 
     total_high = len(arachni_all_vul.filter(severity="High"))
@@ -318,8 +322,11 @@ def xml_parser(root, project_id, scan_id, username, target_url):
     total_vul = total_high + total_medium + total_low + total_info
 
     print(total_high)
+    print(total_low)
+    print(total_medium)
+    print(total_info)
 
-    WebScansDb.objects.filter(scan_id=scan_id, username=username, scanner='Arachni').update(
+    WebScansDb.objects.filter(scan_id=scan_id).update(
         scan_url=target_url,
         total_vul=total_vul,
         date_time=date_time,
@@ -327,9 +334,11 @@ def xml_parser(root, project_id, scan_id, username, target_url):
         medium_vul=total_medium,
         low_vul=total_low,
         info_vul=total_info,
+        scan_status="100",
         total_dup=total_duplicate,
+        scanner="Arachni",
     )
-    trend_update(username=username)
+    trend_update()
 
     subject = "Archery Tool Scan Status - Arachni Report Uploaded"
     message = (

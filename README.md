@@ -44,10 +44,10 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 ### Documentation
 
-* [Official Website & Documentation](https://archerysec.github.io/archerysec/)
+* [Official Website & Documentation](https://archerysec.com/)
 * [API Documentation](http://developers.archerysec.com/)
 
-![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/archery-demo.gif)
+![Demo](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/new-archerysec.gif)
 
 ![Overview](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/itegrate_archery_devsecops.png)
 
@@ -65,19 +65,10 @@ Archery is an opensource vulnerability assessment and management tool which help
 * Concurrent scans.
 * Useful for DevOps teams for Vulnerability Management.
 
-### Note
-
-Currently project is in development phase and still lot of work going on. Stay tuned !!!
 
 ## Requirements
 
 * Python 3.9+ - [Python 3.9 Download](https://www.python.org/downloads/)
-* [OpenVAS 8, 9](http://www.openvas.org/index.html)
-* [OWASP ZAP 2.7.0](https://github.com/zaproxy/zaproxy/wiki/Downloads)
-* [Selenium Python Firefox Web driver](https://github.com/mozilla/geckodriver/releases)
-* [SSLScan](https://github.com/rbsec/sslscan)
-* [Nikto](https://cirt.net/Nikto2)
-* [NMAP Vulners](https://github.com/vulnersCom/nmap-vulners)
 
 ### OpenVAS
 
@@ -138,7 +129,7 @@ sudo wget https://raw.githubusercontent.com/vulnersCom/nmap-vulners/master/vulne
 ```
 $ git clone https://github.com/archerysec/archerysec.git
 $ cd archerysec
-$ ./setup.sh
+$ NAME=User EMAIL=user@user.com PASSWORD=admin@123A bash setup.sh
 $ ./run.sh
 ```
 
@@ -177,11 +168,11 @@ ArcherySec Docker is available from [ArcherySec Docker](https://hub.docker.com/r
 
 ```
 $ docker pull archerysec/archerysec
-$ docker run -it -p 8000:8000 archerysec/archerysec:latest
+$ docker run -e NAME=user -e EMAIL=user@user.com -e PASSWORD=admin@123A  -it -p  8000:8000 archerysec/archerysec:latest
 
 # Docker Alpine image 
 $ docker pull archerysec/archerysec:alpine
-$ docker run -it -p 8000:8000 archerysec/archerysec:alpine
+$ docker run -e NAME=user -e EMAIL=user@user.com -e PASSWORD=admin@123A  -it -p 8000:8000 archerysec/archerysec:alpine
 
 # For persistence
 
@@ -321,35 +312,15 @@ zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.
 	
 	
 	[More Scanners](https://github.com/archerysec/archerysec/issues/16)
-    
-* Popular Tools plugin support.
-    - [x] Nmap
-    - [x] SSL Analysis
-    - [x] Nikto
-    - [ ] WPScan
-* Reporting
-    - [ ] PDF
-    - [ ] Docx
-    - [x] XML
-    - [x] Excel
-    - [x] JSON
 
-* API Automated vulnerability scanning.
-* Vulnerability POC pictures.
-* Cloud Security scanning.
+
 
 ## Lead Developer
 
 [Anand Tiwari](https://github.com/anandtiwarics)
 
-## Contributors
-
-- [GMedian](https://github.com/GMedian) - Nmap+Vulners
-
-- [Kenneth Belitzky](https://github.com/httpdss)
-
 ## Social Media
 
-* [Official Website](https://archerysec.github.io/archerysec/)
+* [Official Website](https://archerysec.com/)
 * [Twitter](https://twitter.com/archerysec)
 * [Facebook](https://facebook.com/archerysec)

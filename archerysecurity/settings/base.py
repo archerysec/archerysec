@@ -47,33 +47,37 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    'archerysecurity',
-    'rest_framework',
-    'webscanners',
-    'projects',
-    'archerysettings',
-    'networkscanners',
-    'staticscanners',
-    'jiraticketing',
-    'tools',
-    'manual_scan',
-    'django.contrib.admin',
-    'stronghold',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework.authtoken',
-    'debug_toolbar',
-    'dashboard',
-    'background_task',
-    'sitetree',
-    'import_export',
-    'compliance',
-    'notifications',
-    'rest_framework_jwt'
-
+    "archerysecurity",
+    "rest_framework",
+    "webscanners",
+    "projects",
+    "archerysettings",
+    "archeryapi",
+    "networkscanners",
+    "staticscanners",
+    "jiraticketing",
+    "tools",
+    "pentest",
+    "report_upload",
+    "django.contrib.admin",
+    "stronghold",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework.authtoken",
+    "debug_toolbar",
+    "dashboard",
+    "background_task",
+    "sitetree",
+    "import_export",
+    "compliance",
+    "notifications",
+    "rest_framework_jwt",
+    "user_management",
+    "authentication",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 MIDDLEWARE = [
@@ -94,7 +98,7 @@ ROOT_URLCONF = "archerysecurity.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -155,6 +159,8 @@ USE_L10N = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+AUTH_USER_MODEL = "user_management.UserProfile"
+
 MESSAGE_TAGS = {
     messages.DEBUG: "alert-info",
     messages.INFO: "alert-info",
@@ -168,10 +174,9 @@ STRONGHOLD_PUBLIC_URLS = (
     r"^/accounts/login/$",  # Avoid redirect loop
     r"^/api.*?$",
     r"^/o.*?$",
-    r"^/api/createuser/$",
 )
 
-LOGIN_URL = "/login/"
+LOGIN_URL = "/auth/login/"
 
 LOGIN_REDIRECT_URL = "/user/accounts/"
 
@@ -183,6 +188,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ),
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

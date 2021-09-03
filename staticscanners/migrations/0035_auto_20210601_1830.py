@@ -6,160 +6,179 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0034_brakeman_scan_db_brakeman_scan_results_db'),
+        ("staticscanners", "0034_brakeman_scan_db_brakeman_scan_results_db"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='StaticScanResultsDb',
+            name="StaticScanResultsDb",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('scan_id', models.UUIDField(blank=True)),
-                ('rescan_id', models.TextField(blank=True, null=True)),
-                ('project_id', models.UUIDField(blank=True)),
-                ('date_time', models.DateTimeField(blank=True, null=True)),
-                ('vuln_id', models.UUIDField(blank=True)),
-                ('false_positive', models.TextField(blank=True, null=True)),
-                ('severity_color', models.TextField(blank=True)),
-                ('dup_hash', models.TextField(blank=True, null=True)),
-                ('vuln_duplicate', models.TextField(blank=True, null=True)),
-                ('false_positive_hash', models.TextField(blank=True, null=True)),
-                ('vuln_status', models.TextField(blank=True, null=True)),
-                ('jira_ticket', models.TextField(blank=True, null=True)),
-                ('title', models.TextField(blank=True, null=True)),
-                ('severity', models.TextField(blank=True, null=True)),
-                ('description', models.TextField(blank=True, null=True)),
-                ('references', models.TextField(blank=True, null=True)),
-                ('fileName', models.TextField(blank=True, null=True)),
-                ('filePath', models.TextField(blank=True, null=True)),
-                ('solution', models.TextField(blank=True)),
-                ('scanner', models.TextField(default='Dependency Check', editable=False)),
-                ('username', models.CharField(max_length=256, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("scan_id", models.UUIDField(blank=True)),
+                ("rescan_id", models.TextField(blank=True, null=True)),
+                ("project_id", models.UUIDField(blank=True)),
+                ("date_time", models.DateTimeField(blank=True, null=True)),
+                ("vuln_id", models.UUIDField(blank=True)),
+                ("false_positive", models.TextField(blank=True, null=True)),
+                ("severity_color", models.TextField(blank=True)),
+                ("dup_hash", models.TextField(blank=True, null=True)),
+                ("vuln_duplicate", models.TextField(blank=True, null=True)),
+                ("false_positive_hash", models.TextField(blank=True, null=True)),
+                ("vuln_status", models.TextField(blank=True, null=True)),
+                ("jira_ticket", models.TextField(blank=True, null=True)),
+                ("title", models.TextField(blank=True, null=True)),
+                ("severity", models.TextField(blank=True, null=True)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("references", models.TextField(blank=True, null=True)),
+                ("fileName", models.TextField(blank=True, null=True)),
+                ("filePath", models.TextField(blank=True, null=True)),
+                ("solution", models.TextField(blank=True)),
+                (
+                    "scanner",
+                    models.TextField(default="Dependency Check", editable=False),
+                ),
+                ("username", models.CharField(max_length=256, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='StaticScansDb',
+            name="StaticScansDb",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('project_name', models.TextField(blank=True, null=True)),
-                ('scan_id', models.UUIDField(blank=True)),
-                ('rescan_id', models.TextField(blank=True, null=True)),
-                ('scan_date', models.TextField(blank=True)),
-                ('scan_status', models.TextField(blank=True)),
-                ('project_id', models.UUIDField(blank=True)),
-                ('total_vul', models.IntegerField(blank=True, null=True)),
-                ('critical_vul', models.IntegerField(blank=True, null=True)),
-                ('high_vul', models.IntegerField(blank=True, null=True)),
-                ('medium_vul', models.IntegerField(blank=True, null=True)),
-                ('low_vul', models.IntegerField(blank=True, null=True)),
-                ('info_vul', models.IntegerField(blank=True, null=True)),
-                ('date_time', models.DateTimeField(blank=True, null=True)),
-                ('rescan', models.TextField(blank=True, null=True)),
-                ('total_dup', models.TextField(blank=True, null=True)),
-                ('username', models.CharField(max_length=256, null=True)),
-                ('scanner', models.CharField(max_length=256, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("project_name", models.TextField(blank=True, null=True)),
+                ("scan_id", models.UUIDField(blank=True)),
+                ("rescan_id", models.TextField(blank=True, null=True)),
+                ("scan_date", models.TextField(blank=True)),
+                ("scan_status", models.TextField(blank=True)),
+                ("project_id", models.UUIDField(blank=True)),
+                ("total_vul", models.IntegerField(blank=True, null=True)),
+                ("critical_vul", models.IntegerField(blank=True, null=True)),
+                ("high_vul", models.IntegerField(blank=True, null=True)),
+                ("medium_vul", models.IntegerField(blank=True, null=True)),
+                ("low_vul", models.IntegerField(blank=True, null=True)),
+                ("info_vul", models.IntegerField(blank=True, null=True)),
+                ("date_time", models.DateTimeField(blank=True, null=True)),
+                ("rescan", models.TextField(blank=True, null=True)),
+                ("total_dup", models.TextField(blank=True, null=True)),
+                ("username", models.CharField(max_length=256, null=True)),
+                ("scanner", models.CharField(max_length=256, null=True)),
             ],
         ),
         migrations.DeleteModel(
-            name='bandit_scan_db',
+            name="bandit_scan_db",
         ),
         migrations.DeleteModel(
-            name='bandit_scan_results_db',
+            name="bandit_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='brakeman_scan_db',
+            name="brakeman_scan_db",
         ),
         migrations.DeleteModel(
-            name='brakeman_scan_results_db',
+            name="brakeman_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='checkmarx_scan_db',
+            name="checkmarx_scan_db",
         ),
         migrations.DeleteModel(
-            name='checkmarx_scan_results_db',
+            name="checkmarx_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='clair_scan_db',
+            name="clair_scan_db",
         ),
         migrations.DeleteModel(
-            name='clair_scan_results_db',
+            name="clair_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='dependencycheck_scan_db',
+            name="dependencycheck_scan_db",
         ),
         migrations.DeleteModel(
-            name='dependencycheck_scan_results_db',
+            name="dependencycheck_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='findbugs_scan_db',
+            name="findbugs_scan_db",
         ),
         migrations.DeleteModel(
-            name='findbugs_scan_results_db',
+            name="findbugs_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='gitlabcontainerscan_scan_db',
+            name="gitlabcontainerscan_scan_db",
         ),
         migrations.DeleteModel(
-            name='gitlabcontainerscan_scan_results_db',
+            name="gitlabcontainerscan_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='gitlabsast_scan_db',
+            name="gitlabsast_scan_db",
         ),
         migrations.DeleteModel(
-            name='gitlabsast_scan_results_db',
+            name="gitlabsast_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='gitlabsca_scan_db',
+            name="gitlabsca_scan_db",
         ),
         migrations.DeleteModel(
-            name='gitlabsca_scan_results_db',
+            name="gitlabsca_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='nodejsscan_scan_db',
+            name="nodejsscan_scan_db",
         ),
         migrations.DeleteModel(
-            name='nodejsscan_scan_results_db',
+            name="nodejsscan_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='npmaudit_scan_db',
+            name="npmaudit_scan_db",
         ),
         migrations.DeleteModel(
-            name='npmaudit_scan_results_db',
+            name="npmaudit_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='retirejs_scan_db',
+            name="retirejs_scan_db",
         ),
         migrations.DeleteModel(
-            name='retirejs_scan_results_db',
+            name="retirejs_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='semgrepscan_scan_db',
+            name="semgrepscan_scan_db",
         ),
         migrations.DeleteModel(
-            name='semgrepscan_scan_results_db',
+            name="semgrepscan_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='tfsec_scan_db',
+            name="tfsec_scan_db",
         ),
         migrations.DeleteModel(
-            name='tfsec_scan_results_db',
+            name="tfsec_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='trivy_scan_db',
+            name="trivy_scan_db",
         ),
         migrations.DeleteModel(
-            name='trivy_scan_results_db',
+            name="trivy_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='twistlock_scan_db',
+            name="twistlock_scan_db",
         ),
         migrations.DeleteModel(
-            name='twistlock_scan_results_db',
+            name="twistlock_scan_results_db",
         ),
         migrations.DeleteModel(
-            name='whitesource_scan_db',
+            name="whitesource_scan_db",
         ),
         migrations.DeleteModel(
-            name='whitesource_scan_results_db',
+            name="whitesource_scan_results_db",
         ),
     ]

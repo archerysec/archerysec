@@ -19,7 +19,7 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from staticscanners.models import StaticScansDb, StaticScanResultsDb
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
 
 scan_id = None
@@ -39,13 +39,13 @@ test_name = None
 filename = None
 more_info = None
 vul_col = None
-total_vul = ''
-total_high = ''
-total_medium = ''
-total_low = ''
+total_vul = ""
+total_high = ""
+total_medium = ""
+total_low = ""
 
 
-def bandit_report_json(data, project_id, scan_id, username):
+def bandit_report_json(data, project_id, scan_id):
     """
 
     :param data:
@@ -124,23 +124,21 @@ def bandit_report_json(data, project_id, scan_id, username):
 
                 if issue_severity == "HIGH":
                     vul_col = "danger"
-                    issue_severity = 'High'
+                    issue_severity = "High"
 
                 elif issue_severity == "MEDIUM":
                     vul_col = "warning"
-                    issue_severity = 'Medium'
+                    issue_severity = "Medium"
 
                 elif issue_severity == "LOW":
                     vul_col = "info"
-                    issue_severity = 'Low'
+                    issue_severity = "Low"
 
                 dup_data = test_name + filename + issue_severity
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
                 match_dup = (
-                    StaticScanResultsDb.objects.filter(
-                        username=username, dup_hash=duplicate_hash
-                    )
+                    StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash)
                     .values("dup_hash")
                     .distinct()
                 )
@@ -150,7 +148,7 @@ def bandit_report_json(data, project_id, scan_id, username):
                     duplicate_vuln = "No"
 
                     false_p = StaticScanResultsDb.objects.filter(
-                        username=username, false_positive_hash=duplicate_hash
+                        false_positive_hash=duplicate_hash
                     )
                     fp_lenth_match = len(false_p)
 
@@ -167,15 +165,18 @@ def bandit_report_json(data, project_id, scan_id, username):
                         severity=issue_severity,
                         title=test_name,
                         fileName=filename,
-                        description=str(issue_text) + '\n\n' + str(code) + '\n\n' + str(line_range),
+                        description=str(issue_text)
+                        + "\n\n"
+                        + str(code)
+                        + "\n\n"
+                        + str(line_range),
                         references=more_info,
                         severity_color=vul_col,
                         false_positive=false_positive,
                         vuln_status="Open",
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
-                        username=username,
-                        scanner='Bandit',
+                        scanner="Bandit",
                     )
                     save_all.save()
 
@@ -190,25 +191,27 @@ def bandit_report_json(data, project_id, scan_id, username):
                         severity=issue_severity,
                         title=test_name,
                         fileName=filename,
-                        description=str(issue_text) + '\n\n' + str(code) + '\n\n' + str(line_range),
+                        description=str(issue_text)
+                        + "\n\n"
+                        + str(code)
+                        + "\n\n"
+                        + str(line_range),
                         references=more_info,
                         severity_color=vul_col,
                         false_positive="Duplicate",
                         vuln_status="Duplicate",
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
-                        username=username,
-                        scanner='Bandit',
-
+                        scanner="Bandit",
                     )
                     save_all.save()
 
         all_bandit_data = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, false_positive="No"
+            scan_id=scan_id, false_positive="No"
         )
 
         duplicate_count = StaticScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, vuln_duplicate="Yes"
+            scan_id=scan_id, vuln_duplicate="Yes"
         )
 
         total_vul = len(all_bandit_data)
@@ -217,14 +220,14 @@ def bandit_report_json(data, project_id, scan_id, username):
         total_low = len(all_bandit_data.filter(severity="Low"))
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-        StaticScansDb.objects.filter(username=username, scan_id=scan_id).update(
+        StaticScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
         )
-    trend_update(username=username)
+    trend_update()
     subject = "Archery Tool Scan Status - Bandit Report Uploaded"
     message = (
         "Bandit Scanner has completed the scan "

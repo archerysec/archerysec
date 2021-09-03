@@ -20,7 +20,7 @@ import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
-from staticscanners.models import StaticScansDb, StaticScanResultsDb
+from staticscanners.models import StaticScanResultsDb, StaticScansDb
 
 scan_id = None
 rescan_id = None
@@ -37,7 +37,7 @@ info = None
 version = None
 
 
-def retirejs_report_json(data, project_id, scan_id, username):
+def retirejs_report_json(data, project_id, scan_id):
     """
 
     :param data:
@@ -100,9 +100,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = (
-            StaticScanResultsDb.objects.filter(
-                username=username, dup_hash=duplicate_hash
-            )
+            StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash)
             .values("dup_hash")
             .distinct()
         )
@@ -115,9 +113,7 @@ def retirejs_report_json(data, project_id, scan_id, username):
         else:
             duplicate_vuln = "None"
 
-        false_p = StaticScanResultsDb.objects.filter(
-            username=username, false_positive_hash=duplicate_hash
-        )
+        false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash)
         fp_lenth_match = len(false_p)
 
         if fp_lenth_match == 1:
@@ -131,20 +127,19 @@ def retirejs_report_json(data, project_id, scan_id, username):
             project_id=project_id,
             vuln_id=vul_id,
             fileName=files,
-            #component=component,
-            #CVE=cve,
+            # component=component,
+            # CVE=cve,
             title=issue,
-            #bug=bug,
+            # bug=bug,
             description=summary,
-            #info=info,
+            # info=info,
             severity=severity,
             # false_positive=false_positive,
             vuln_status="Open",
             # dup_hash=duplicate_hash,
             # vuln_duplicate=duplicate_vuln,
             # version=version,
-            username=username,
-            scanner='Retirejs'
+            scanner="Retirejs",
         )
         save_all.save()
-        trend_update(username=username)
+        trend_update()

@@ -23,8 +23,8 @@ from datetime import datetime
 
 from dashboard.views import trend_update
 from scanners.vuln_checker import check_false_positive
-from webscanners.models import WebScanResultsDb, WebScansDb
 from utility.email_notify import email_sch_notify
+from webscanners.models import WebScanResultsDb, WebScansDb
 
 vul_col = ""
 title = ""
@@ -43,7 +43,7 @@ duplicate_vuln = ""
 scan_url = ""
 
 
-def xml_parser(username, root, project_id, scan_id):
+def xml_parser(root, project_id, scan_id):
     """
     ZAP Proxy scanner xml report parser.
     :param root:
@@ -133,7 +133,6 @@ def xml_parser(username, root, project_id, scan_id):
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 scanner="Zap",
-                username=username,
             )
 
             data_store.save()
@@ -148,12 +147,10 @@ def xml_parser(username, root, project_id, scan_id):
             else:
                 false_positive = "No"
 
-    zap_all_vul = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, false_positive="No"
-    )
+    zap_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No")
 
     duplicate_count = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, vuln_duplicate="Yes"
+        scan_id=scan_id, vuln_duplicate="Yes"
     )
 
     total_high = len(zap_all_vul.filter(severity="High"))
@@ -163,7 +160,7 @@ def xml_parser(username, root, project_id, scan_id):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
     total_vul = total_high + total_medium + total_low + total_info
 
-    WebScansDb.objects.filter(username=username, scan_id=scan_id).update(
+    WebScansDb.objects.filter(scan_id=scan_id).update(
         total_vul=total_vul,
         date_time=date_time,
         high_vul=total_high,
@@ -174,7 +171,7 @@ def xml_parser(username, root, project_id, scan_id):
         scan_url=scan_url,
     )
     if total_vul == total_duplicate:
-        WebScansDb.objects.filter(username=username, scan_id=scan_id).update(
+        WebScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
             date_time=date_time,
             high_vul=total_high,
@@ -183,7 +180,7 @@ def xml_parser(username, root, project_id, scan_id):
             total_dup=total_duplicate,
         )
 
-    trend_update(username=username)
+    trend_update()
 
     subject = "Archery Tool Scan Status - ZAP Report Uploaded"
     message = (

@@ -17,77 +17,82 @@
 from __future__ import unicode_literals
 
 import hashlib
+
+from django.contrib import messages
+from django.core import signing
 from django.http import HttpResponseRedirect
 from django.shortcuts import HttpResponse, render
 from django.urls import reverse
+from jira import JIRA
 from notifications.models import Notification
+from notifications.signals import notify
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from jiraticketing.models import jirasetting
-from webscanners.models import (WebScanResultsDb, WebScansDb)
+from user_management import permissions
+from webscanners.models import WebScanResultsDb, WebScansDb
 
 
-def list_vuln(request):
-    username = request.user.username
-    if request.method == "GET":
-        scan_id = request.GET["scan_id"]
-        scanner = request.GET["scanner"]
-    else:
-        scan_id = None
-        scanner = None
+class WebScanList(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_scans.html"
 
-    all_vuln = WebScanResultsDb.objects.filter(
-        username=username, scan_id=scan_id, scanner=scanner
-    )
+    permission_classes = (IsAuthenticated,)
 
-    return render(
-        request,
-        "webscanners/scans/list_vuln.html",
-        {
-            "all_vuln": all_vuln,
-            "scan_id": scan_id,
-        },
-    )
+    def get(self, request):
+        all_scans = WebScansDb.objects.all()
+        all_notify = Notification.objects.unread()
+        return Response({"all_scans": all_scans, "message": all_notify})
 
 
-def list_scans(request):
-    username = request.user.username
-    scan_list = WebScansDb.objects.filter(username=username)
+class WebScanVulnInfo(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_vuln_info.html"
 
-    all_notify = Notification.objects.unread()
+    permission_classes = (IsAuthenticated,)
 
-    return render(request, "webscanners/scans/list_scans.html", {"all_scans": scan_list, "message": all_notify})
+    def get(self, request):
+        jira_url = None
 
+        jira = jirasetting.objects.all()
+        for d in jira:
+            jira_url = d.jira_server
 
-def list_vuln_info(request):
-    scan_id = None
-    name = None
-    scanner = None
-
-    username = request.user.username
-    jira_url = None
-
-    jira = jirasetting.objects.all()
-    for d in jira:
-        jira_url = d.jira_server
-
-    if request.method == "GET":
         scan_id = request.GET["scan_id"]
         name = request.GET["scan_name"]
-        scanner = request.GET['scanner']
-    if request.method == "POST":
+
+        vuln_data = WebScanResultsDb.objects.filter(title=name, scan_id=scan_id)
+
+        return render(
+            request,
+            "webscanners/scans/list_vuln_info.html",
+            {"vuln_data": vuln_data, "jira_url": jira_url},
+        )
+
+
+class WebScanVulnMark(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_vuln_info.html"
+
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
+
+    def post(self, request):
         false_positive = request.POST.get("false")
         status = request.POST.get("status")
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
         vuln_name = request.POST.get("vuln_name")
-        scanner = request.POST.get("scanner")
-        WebScanResultsDb.objects.filter(
-            username=username, vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
-        ).update(false_positive=false_positive, vuln_status=status)
+        WebScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
+            false_positive=false_positive, vuln_status=status
+        )
 
         if false_positive == "Yes":
             vuln_info = WebScanResultsDb.objects.filter(
-                username=username, scan_id=scan_id, vuln_id=vuln_id, scanner=scanner
+                scan_id=scan_id, vuln_id=vuln_id
             )
             for vi in vuln_info:
                 name = vi.title
@@ -98,7 +103,7 @@ def list_vuln_info(request):
                     dup_data.encode("utf-8")
                 ).hexdigest()
                 WebScanResultsDb.objects.filter(
-                    username=username, vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+                    vuln_id=vuln_id, scan_id=scan_id
                 ).update(
                     false_positive=false_positive,
                     vuln_status="Closed",
@@ -106,7 +111,7 @@ def list_vuln_info(request):
                 )
 
         all_vuln = WebScanResultsDb.objects.filter(
-            username=username, scan_id=scan_id, false_positive="No", vuln_status="Open", scanner=scanner
+            scan_id=scan_id, false_positive="No", vuln_status="Open"
         )
 
         total_high = len(all_vuln.filter(severity="High"))
@@ -116,47 +121,78 @@ def list_vuln_info(request):
         total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low + total_info
 
-        WebScansDb.objects.filter(username=username, scan_id=scan_id, scanner=scanner).update(
+        WebScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,
             info_vul=total_info,
-            total_dup=total_dup
+            total_dup=total_dup,
         )
         return HttpResponseRedirect(
-            reverse("webscanners:list_vuln_info") + "?scan_id=%s&scan_name=%s&scanner=%s" % (
-            scan_id, vuln_name, scanner)
+            reverse("webscanners:list_vuln_info")
+            + "?scan_id=%s&scan_name=%s" % (scan_id, vuln_name)
         )
 
-    vuln_data = WebScanResultsDb.objects.filter(
-        username=username,
-        title=name,
-        scan_id=scan_id,
-        scanner=scanner
-    )
 
-    return render(request, "webscanners/scans/list_vuln_info.html", {"vuln_data": vuln_data, "jira_url": jira_url})
+class WebScanDetails(APIView):
+    enderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/vuln_details.html"
 
+    permission_classes = (IsAuthenticated,)
 
-def scan_details(request):
-    username = request.user.username
-    if request.method == "GET":
+    def get(self, request):
         vuln_id = request.GET["vuln_id"]
-        scanner = request.GET["scanner"]
-    else:
-        vuln_id = ""
-        scanner = ""
-    vul_dat = WebScanResultsDb.objects.filter(
-        username=username, vuln_id=vuln_id, scanner=scanner
-    ).order_by("vuln_id")
 
-    return render(request, "webscanners/scans/vuln_details.html", {"vul_dat": vul_dat})
+        jira_setting = jirasetting.objects.filter()
+        user = request.user
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+        jira_projects = ""
+
+        for jira in jira_setting:
+            jira_server = jira.jira_server
+            jira_username = jira.jira_username
+            jira_password = jira.jira_password
+
+        if jira_username is None:
+            jira_username = None
+        else:
+            jira_username = signing.loads(jira_username)
+
+        if jira_password is None:
+            jira_password = None
+        else:
+            jira_password = signing.loads(jira_password)
+
+        options = {"server": jira_server}
+        try:
+            jira_ser = JIRA(
+                options, basic_auth=(jira_username, jira_password), max_retries=0
+            )
+            jira_projects = jira_ser.projects()
+        except Exception as e:
+            print(e)
+            jira_projects = None
+            notify.send(user, recipient=user, verb="Jira settings not found")
+
+        vul_dat = WebScanResultsDb.objects.filter(vuln_id=vuln_id).order_by("vuln_id")
+
+        return render(
+            request,
+            "webscanners/scans/vuln_details.html",
+            {"vul_dat": vul_dat, "jira_projects": jira_projects},
+        )
 
 
-def scan_delete(request):
-    username = request.user.username
-    if request.method == "POST":
+class WebScanDelete(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_scans.html"
+
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
+
+    def post(self, request):
         scan_id = request.POST.get("scan_id")
 
         scan_item = str(scan_id)
@@ -167,36 +203,31 @@ def scan_delete(request):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = WebScansDb.objects.filter(username=username, scan_id=scan_id)
+            item = WebScansDb.objects.filter(scan_id=scan_id)
             item.delete()
-            item_results = WebScanResultsDb.objects.filter(
-                username=username, scan_id=scan_id
-            )
+            item_results = WebScanResultsDb.objects.filter(scan_id=scan_id)
             item_results.delete()
         return HttpResponseRedirect(reverse("webscanners:list_scans"))
 
 
-def vuln_delete(request):
-    username = request.user.username
-    if request.method == "POST":
+class WebScanVulnDelete(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_vuln_info.html"
+
+    permission_classes = (IsAuthenticated, permissions.IsAnalyst)
+
+    def post(self, request):
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
-        scanner = request.POST.get("scanner")
-
         scan_item = str(vuln_id)
         value = scan_item.replace(" ", "")
         value_split = value.split(",")
         split_length = value_split.__len__()
-        # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = WebScanResultsDb.objects.filter(
-                username=username, scanner=scanner, vuln_id=vuln_id
-            )
+            delete_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_id)
             delete_vuln.delete()
-        all_vuln = WebScanResultsDb.objects.filter(
-            username=username, scanner=scanner, scan_id=scan_id
-        )
+        all_vuln = WebScanResultsDb.objects.filter(scan_id=scan_id)
 
         total_vul = len(all_vuln)
         total_critical = len(all_vuln.filter(severity="Critical"))
@@ -205,7 +236,7 @@ def vuln_delete(request):
         total_low = len(all_vuln.filter(severity="Low"))
         total_info = len(all_vuln.filter(severity="Information"))
 
-        WebScansDb.objects.filter(username=username, scan_id=scan_id, scanner=scanner).update(
+        WebScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
             critical_vul=total_critical,
             high_vul=total_high,
@@ -214,5 +245,24 @@ def vuln_delete(request):
             info_vul=total_info,
         )
         return HttpResponseRedirect(
-            reverse("webscanners:list_vuln") + "?scan_id=%s&scanner=%s" % (scan_id, scanner)
+            reverse("webscanners:list_vuln") + "?scan_id=%s" % (scan_id)
+        )
+
+
+class WebScanVulnList(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "webscanners/scans/list_vuln.html"
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        scan_id = request.GET["scan_id"]
+        all_vuln = WebScanResultsDb.objects.filter(scan_id=scan_id)
+        return render(
+            request,
+            "webscanners/scans/list_vuln.html",
+            {
+                "all_vuln": all_vuln,
+                "scan_id": scan_id,
+            },
         )

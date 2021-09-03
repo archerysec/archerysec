@@ -38,7 +38,7 @@
                                                                 class="select2 form-control custom-select"
                                                                 style="width: 100%; height:36px;">
                                                             {% for data in all_proj %}
-                                                            <option value="{{data.project_id}}">{{data.project_name}}
+                                                            <option value="{{data.uu_id}}">{{data.project_name}}
                                                             </option>
                                                             {% endfor %}
                                                         </select>
@@ -49,9 +49,9 @@
                                             <div class="card-body">
                                                 <div class="controls">
                                                     <input type="submit" class="btn btn-primary" value="Launch">
-                                                    <a href="{% url 'networkscanners:net_scan_schedule' %}"
-                                                       class="btn btn-success">Scan
-                                                        Schedule</a>
+{#                                                    <a href="{% url 'networkscanners:net_scan_schedule' %}"#}
+{#                                                       class="btn btn-success">Scan#}
+{#                                                        Schedule</a>#}
                                                 </div>
                                                 <div id='status'></div>
                                             </div>
@@ -77,17 +77,17 @@
                                     <input name="optradio1" type="checkbox"><span>OpenVAS</span>
                                 </label>
                             </div>
-                            <!--<div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b " style="width: 200px;">-->
-                            <!--<label>-->
-                            <!--<input name="optradio2" type="checkbox"><span>Nmap</span>-->
-                            <!--</label>-->
+{#                            <div class="checkbox inline checkbox-slider&#45;&#45;b-flat checkbox-slider&#45;&#45;b " style="width: 200px;">#}
+{#                            <label>#}
+{#                            <input name="optradio2" type="checkbox"><span>Nmap</span>#}
+{#                            </label>#}
                             <!--</div>-->
-                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"
-                                 style="width: 200px;">
-                                <label>
-                                    <input name="optradio2" type="checkbox"><span>NMAP</span>
-                                </label>
-                            </div>
+{#                            <div class="checkbox inline checkbox-slider--b-flat checkbox-slider--b"#}
+{#                                 style="width: 200px;">#}
+{#                                <label>#}
+{#                                    <input name="optradio2" type="checkbox"><span>NMAP</span>#}
+{#                                </label>#}
+{#                            </div>#}
                         </div>
                     </div>
                 </div>

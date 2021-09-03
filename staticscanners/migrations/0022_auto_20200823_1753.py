@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0021_whitesource_scan_db_whitesource_scan_results_db'),
+        ("staticscanners", "0021_whitesource_scan_db_whitesource_scan_results_db"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='whitesource_scan_results_db',
-            name='filename',
+            model_name="whitesource_scan_results_db",
+            name="filename",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='whitesource_scan_results_db',
-            name='groupId',
+            model_name="whitesource_scan_results_db",
+            name="groupId",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='whitesource_scan_results_db',
-            name='sha1',
+            model_name="whitesource_scan_results_db",
+            name="sha1",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='whitesource_scan_results_db',
-            name='version',
+            model_name="whitesource_scan_results_db",
+            name="version",
             field=models.TextField(blank=True, null=True),
         ),
     ]

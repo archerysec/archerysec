@@ -33,7 +33,6 @@ class WebScansDbSerializer(serializers.Serializer):
     date_time = serializers.DateTimeField(read_only=True)
     rescan = serializers.CharField(read_only=True)
     total_dup = serializers.CharField(read_only=True)
-    username = serializers.CharField(read_only=True)
     scanner = serializers.CharField(read_only=True)
 
 
@@ -58,7 +57,6 @@ class WebScanResultsDbSerializer(serializers.Serializer):
     vuln_duplicate = serializers.CharField(read_only=True)
     false_positive_hash = serializers.CharField(read_only=True)
     scanner = serializers.CharField(read_only=True)
-    username = serializers.CharField(read_only=True)
 
 
 class UploadScanSerializer(serializers.Serializer):

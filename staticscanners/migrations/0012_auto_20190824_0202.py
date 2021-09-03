@@ -6,33 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('staticscanners', '0011_clair_scan_results_db_controls_tags_audit_text'),
+        ("staticscanners", "0011_clair_scan_results_db_controls_tags_audit_text"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='bandit_scan_results_db',
-            name='jira_ticket',
+            model_name="bandit_scan_results_db",
+            name="jira_ticket",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='clair_scan_results_db',
-            name='jira_ticket',
+            model_name="clair_scan_results_db",
+            name="jira_ticket",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='dependencycheck_scan_results_db',
-            name='jira_ticket',
+            model_name="dependencycheck_scan_results_db",
+            name="jira_ticket",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='findbugs_scan_results_db',
-            name='jira_ticket',
+            model_name="findbugs_scan_results_db",
+            name="jira_ticket",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='retirejs_scan_results_db',
-            name='jira_ticket',
+            model_name="retirejs_scan_results_db",
+            name="jira_ticket",
             field=models.TextField(blank=True, null=True),
         ),
     ]
