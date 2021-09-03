@@ -18,7 +18,7 @@
                     $.ajax({
                         type: 'POST',
                         <!--contentType: 'application/json; charset=utf-8',-->
-                        url: '{% url 'webscanners:scan_delete' %}',
+                        url: '{% url 'cicd:deletepolicies' %}',
                         data: {
                             scan_id: json_scanid,
                             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
@@ -76,6 +76,7 @@
                         // console.log(result);
                         $("#command pre").remove();
                         $("#command").append('<pre id="cmd-1" style="white-space: pre-wrap;">' + result + '</pre>');
+                        document.getElementById("result").value = result;
                     },
                 });
             });
@@ -114,14 +115,6 @@
                 <div class="card-body">
                     {% if user.is_superuser == True or user.role.id == 2 %}
                         <div class="float-right">
-
-                            {#                            <div class="btn-group" role="group" aria-label="Basic example">#}
-                            {#                                <a href="{% url 'report_upload:upload' %}" class="btn btn-primary btn-mini"#}
-                            {#                                   data-toggle="tooltip" data-placement="top" title="Add Policy"><i#}
-                            {#                                        class="fas fa-plus-circle"></i> Add Policy </a>#}
-                            {#                            </div>#}
-
-
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#jiraModal">
@@ -151,14 +144,8 @@
                                         <span class="checkmark"></span>
                                     </label></th>
                                     <th>Policy</th>
-                                    <th>Rule</th>
-                                    <th>Scanner</th>
-                                    <th>Total Vulnerability</th>
-                                    <th>High</th>
-                                    <th>Medium</th>
-                                    <th>Low</th>
-                                    <th>Info</th>
-                                    <th>Duplicates</th>
+                                    <th>Threshold</th>
+                                    <th>Threshold Count</th>
                                 </tr>
                                 </thead>
                                 <tbody>{% for data in all_scans %}
@@ -167,7 +154,7 @@
                                             <form>
                                                 <label class="customcheckbox">
                                                     <input type="checkbox" class="listCheckbox"
-                                                           value="{{ data.scan_id }}"
+                                                           value="{{ data.cicd_id }}"
                                                            name="del_scan_id"
                                                            onClick="reload">
                                                     <span class="checkmark"></span>
@@ -175,57 +162,13 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{% url 'webscanners:list_vuln' %}?scan_id={{ data.scan_id }}">{{ data.scan_url }}</a>
+                                            <a href="{% url 'cicd:policiesedit' uu_id=data.cicd_id %}">{{ data.name }}</a>
                                         </td>
-                                        <td width="20%">
-                                            <div>
-                                                <div class="d-flex no-block align-items-center">
-                                                    <span>{{ data.scan_status }}% Completed</span>
-                                                </div>
-                                                <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
-                                                    <div class="progress-bar progress-bar-striped" role="progressbar"
-                                                         style="width: {{ data.scan_status }}{{ data.vul_status }}%"
-                                                         aria-valuenow="10" aria-valuemin="0"
-                                                         aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
+                                        <td >
+                                            {{ data.threshold }}
                                         </td>
-                                        <td>{% if data.scanner == 'Zap' %}
 
-                                            <div class="p-1"><img src="/static/tools/zap.png" alt="user" width="20"
-                                                                  class="rounded-circle" data-toggle="tooltip"
-                                                                  data-placement="top" title="OWASP ZAP"></div></td>
-                                        {% elif data.scanner == 'Burp' %}
-                                            <div class="p-1"><img src="/static/tools/burp.png" alt="user" width="20"
-                                                                  class="rounded-circle" data-toggle="tooltip"
-                                                                  data-placement="top" title="Burp"></div></td>
-                                        {% elif data.scanner == 'Arachni' %}
-                                            <div class="p-1"><img src="/static/tools/arachni.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip"
-                                                                  data-placement="top" title="Arachni"></div></td>
-                                        {% elif data.scanner == 'Netsparker' %}
-                                            <div class="p-1"><img src="/static/tools/netsparker.png" alt="user"
-                                                                  width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip"
-                                                                  data-placement="top" title="Netsparker"></div></td>
-                                        {% elif data.scanner == 'Webinspect' %}
-                                            <div class="p-1"><img src="/static/tools/webinspect.png" alt="user"
-                                                                  width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip"
-                                                                  data-placement="top" title="Webinspect"></div></td>
-                                        {% elif data.scanner == 'Acunetix' %}
-                                            <div class="p-1"><img src="/static/tools/acunetix.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip"
-                                                                  data-placement="top" title="Acunetix"></div></td>
-                                        {% endif %}
-                                        <td><span class="badge badge-pill badge-dark">{{ data.total_vul }}</span></td>
-                                        <td><span class="badge badge-pill badge-danger">{{ data.high_vul }}</span></td>
-                                        <td><span class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
-                                        </td>
-                                        <td><span class="badge badge-pill badge-info">{{ data.low_vul }}</span></td>
-                                        <td><span class="badge badge-pill badge-info">{{ data.info_vul }}</span></td>
-                                        <td><span class="badge badge-pill badge-secondary">{{ data.total_dup }}</span>
-                                        </td>
+                                        <td>{{ data.threshold_count }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -251,18 +194,13 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" method="POST"
-                          action="{% url 'jiraticketing:submit_jira_ticket' %}">{% csrf_token %}
-                        <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
-                        <input name="scanner" value="web" type="hidden">
-                        <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
+                          action="{% url 'cicd:createpolicies' %}">{% csrf_token %}
                         <div class="card-body">
                             <div class="form-group row">
                                 <label
                                         class="col-sm-4 col-form-label">Policies Name</label>
                                 <div class="col-sm-6">
-                                    <input type="text" name="summary"
-                                           class="form-control"
-                                           value="{{ data.title }}">
+                                    <input type="text" name="name" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -283,24 +221,20 @@
                                 <label
                                         class="col-sm-4 col-form-label">Threshold</label>
                                 <div class="col-sm-6">
-                                    <select name="issue_type"
+                                    <select name="threshold"
                                             class="select2 form-control custom-select"
                                             style="width: 100%; height:36px;">
-                                        <option>High</option>
-                                        <option>Medium</option>
-                                        <option>Low</option>
-
+                                        <option value="high">High</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="low">Low</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label
-                                        class="col-sm-4 col-form-label">Threshold Count</label>
+                                <label class="col-sm-4 col-form-label">Threshold Count</label>
                                 <div class="col-sm-6">
-                                    <input type="text" name="summary"
-                                           class="form-control"
-                                           value="{{ data.title }}">
+                                    <input type="text" name="threshold_count" class="form-control">
                                 </div>
                             </div>
 
@@ -308,13 +242,12 @@
                                 <label
                                         class="col-sm-4 col-form-label">SCM Server</label>
                                 <div class="col-sm-6">
-                                    <select name="issue_type"
+                                    <select name="scm_server"
                                             class="select2 form-control custom-select"
                                             style="width: 100%; height:36px;">
-                                        <option>Github</option>
-                                        <option>Bitbucket</option>
-                                        <option>AWS CodeCommit</option>
-
+                                        <option value="github">Github</option>
+                                        <option value="bitbucket">Bitbucket</option>
+                                        <option value="codecommit">AWS CodeCommit</option>
                                     </select>
                                 </div>
                             </div>
@@ -323,7 +256,7 @@
                                 <label
                                         class="col-sm-4 col-form-label">Build Server</label>
                                 <div class="col-sm-6">
-                                    <select name="issue_type"
+                                    <select name="build_server"
                                             class="select2 form-control custom-select"
                                             style="width: 100%; height:36px;">
                                         <option>Jenkins</option>
@@ -337,7 +270,7 @@
                                 <label
                                         class="col-sm-4 col-form-label">Target Name</label>
                                 <div class="col-sm-6">
-                                    <input type="text" name="summary"
+                                    <input type="text" name="target_name"
                                            class="form-control"
                                            id="target_name">
                                 </div>
@@ -346,7 +279,7 @@
                                 <label
                                         class="col-sm-4 col-form-label">Code Path/Target</label>
                                 <div class="col-sm-6">
-                                    <input type="text" name="summary"
+                                    <input type="text" name="code_path"
                                            class="form-control"
                                            id="code_path">
                                 </div>
@@ -356,7 +289,7 @@
                                 <label
                                         class="col-sm-4 col-form-label">Scanner</label>
                                 <div class="col-sm-6">
-                                    <select name="issue_type" id="selectscanners"
+                                    <select name="scanner" id="selectscanners"
                                             class="select2 form-control custom-select"
                                             style="width: 100%; height:36px;">
                                         <option>OWASP ZAP</option>
@@ -369,14 +302,14 @@
 
 
                             <div class="form-group row">
-                                <label
-                                        class="col-4 col-form-label">Command</label>
+                                <label class="col-4 col-form-label">Command</label>
                                 <div class="col-8">
                                     <blockquote class="blockquote" id="command">
                                         <a id="btn-1"><i class="fas fa-copy"></i></a>
                                     </blockquote>
                                 </div>
                             </div>
+                        <input type="hidden" name="command" id="result">
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

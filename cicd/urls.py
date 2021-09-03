@@ -22,5 +22,8 @@ app_name = "cicd"
 
 urlpatterns = [
     path("", views.CicdScanList.as_view(), name="cicd_list"),
-    path("scannercmd/", views.ScannerCommand.as_view(), name="scannercmd")
+    path("scannercmd/", views.ScannerCommand.as_view(), name="scannercmd"),
+    path("createpolicies/", views.CreatePolicies.as_view(), name="createpolicies"),
+    path("deletepolicies/", views.PoliciesDelete.as_view(), name="deletepolicies"),
+    path("policiesedit/<str:uu_id>/", views.PoliciesEdit.as_view(), name="policiesedit")
 ]
