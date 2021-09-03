@@ -34,6 +34,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 from selenium import webdriver
+from notifications.signals import notify
 
 from archerysettings.models import EmailDb, SettingsDb, ZapSettingsDb
 from projects.models import ProjectDb
@@ -59,7 +60,7 @@ def email_notify(user, subject, message):
     try:
         send_mail(subject, message, email_from, recipient_list)
     except Exception as e:
-        notify.send(user, recipient=user, verb="Email Settings Not Configured")
+        notify.send(user, recipient=user, verb='Email Settings Not Configured')
 
 
 def email_sch_notify(subject, message):
