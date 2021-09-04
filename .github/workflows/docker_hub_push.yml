@@ -19,6 +19,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+          NAME: 'TEST'
+          EMAIL: 'user@user.com'
+          PASSWORD: 'fake@pass'
       - name: Setup
         run: |
           ./setup.sh
