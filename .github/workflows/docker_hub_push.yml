@@ -20,9 +20,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
         env:
-          NAME: 'TEST'
-          EMAIL: 'user@user.com'
-          PASSWORD: 'fake@pass'
+          NAME: test
+          EMAIL: test@test.com
+          PASSWORD: test@test
       - name: Setup
         run: |
           ./setup.sh
