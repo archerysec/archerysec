@@ -19,13 +19,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Setup
+        run: |
+          ./setup.sh
         env:
           NAME: test
           EMAIL: test@test.com
           PASSWORD: test@test
-      - name: Setup
-        run: |
-          ./setup.sh
 
   push_to_registry:
       name: Push Docker image to Docker Hub
