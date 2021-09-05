@@ -26,9 +26,6 @@ jobs:
           NAME: test
           EMAIL: test@test.com
           PASSWORD: test@test
-      - name: Django Testing project
-        run: |
-          python3 manage.py test
 
   push_to_registry:
       name: Push Docker image to Docker Hub
@@ -39,9 +36,6 @@ jobs:
         - name: Integration test
           run: |
            bash integration-test.sh || exit 1
-        - name: Django Testing project
-          run: |
-            python3 manage.py test
         - name: Push to Docker Hub
           uses: docker/build-push-action@v1
           with:
