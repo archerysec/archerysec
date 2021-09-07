@@ -52,6 +52,7 @@ urlpatterns = [
     path("access-key/", views.APIKey.as_view(), name="access-key"),
     path("access-key-delete/", views.DeleteAPIKey.as_view(), name="access-key-delete"),
     path("v1/project-create/", views.CreateProject.as_view()),
+    path("v1/get-cicd-policies/<str:uu_id>/", views.GetCicdPolicies.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

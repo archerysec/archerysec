@@ -54,8 +54,10 @@
                 var optionSelected = $(this).find("option:selected");
                 var valueSelected = optionSelected.val();
                 var scanner_name = optionSelected.text();
+                document.getElementById("cicd_uu_id").value = uuidv4();
 
                 var proj = document.getElementById("project_id").value;
+                var cicd_uuid = document.getElementById("cicd_uu_id").value = uuidv4();
 
 
                 data = {
@@ -65,6 +67,7 @@
                     'target_name': document.getElementById("target_name").value,
                     'code_path': document.getElementById("code_path").value,
                     'project': proj,
+                    'cicd_id': cicd_uuid,
                 };
 
                 $.ajax({
@@ -73,7 +76,7 @@
                     // data:JSON.stringify(data),
                     data: data,
                     success: function (result) {
-                        // console.log(result);
+                        console.log(uuidv4());
                         $("#command pre").remove();
                         $("#command").append('<pre id="cmd-1" style="white-space: pre-wrap;">' + result + '</pre>');
                         document.getElementById("result").value = result;
@@ -81,6 +84,14 @@
                 });
             });
         });
+
+         function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        console.log(uuidv4());
 
     </script>
     <div class="row">
@@ -164,7 +175,7 @@
                                         <td>
                                             <a href="{% url 'cicd:policiesedit' uu_id=data.cicd_id %}">{{ data.name }}</a>
                                         </td>
-                                        <td >
+                                        <td>
                                             {{ data.threshold }}
                                         </td>
 
@@ -196,6 +207,7 @@
                     <form class="form-horizontal" method="POST"
                           action="{% url 'cicd:createpolicies' %}">{% csrf_token %}
                         <div class="card-body">
+                            <input type="hidden" id="cicd_uu_id" name="cicd_id">
                             <div class="form-group row">
                                 <label
                                         class="col-sm-4 col-form-label">Policies Name</label>
@@ -309,7 +321,7 @@
                                     </blockquote>
                                 </div>
                             </div>
-                        <input type="hidden" name="command" id="result">
+                            <input type="hidden" name="command" id="result">
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

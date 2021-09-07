@@ -34,7 +34,6 @@ from jiraticketing.models import jirasetting
 from cicd.models import CicdDb
 from archeryapi.views import APIKey
 from django.shortcuts import HttpResponseRedirect, render, reverse
-from cicd.serializers import CreatePoliciesSerializers
 
 
 class CicdScanList(APIView):
@@ -67,6 +66,8 @@ class ScannerCommand(APIView):
         target_name = request.GET.get('target_name', None)
         project = request.GET.get('project', None)
 
+        cicd_id = request.GET.get('cicd_id', None)
+
         access_key = OrgAPIKey.objects.all().count()
 
         if access_key == 0:
@@ -80,21 +81,13 @@ class ScannerCommand(APIView):
             for data in access_key:
                 api_key = data.api_key
 
-        if code_path == '':
-            code_path = '$(pwd)'
-
-        if target_name == '':
-            target_name = 'TARGET_NAME'
-
         if scanner == 'Bandit':
-            result_set = 'archerysec-cli' + \
+            result_set = 'archerysec-cli ' + \
                          '-h ' + protocol + \
                          '//' + host + ' ' + \
-                         '-t' + ' ' + api_key + \
-                         ' ' + '--bandit --project=' + \
-                         project + ' ' + '--project-name=' + \
-                         target_name + ' ' + \
-                         '--report_path=$(pwd) --code_path=' + code_path
+                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
+                         ' ' + '--project=' + \
+                         project + ' ' + '--bandit' + ' ' + '--report_path=$(pwd)'
 
         return HttpResponse(simplejson.dumps(result_set), content_type='application/json')
 
@@ -115,13 +108,21 @@ class CreatePolicies(APIView):
         target_name = request.POST.get("target_name")
         scanner = request.POST.get("scanner")
         command = request.POST.get("command")
+        cicd_id = request.POST.get("cicd_id")
+        code_path = request.POST.get("code_path")
 
         project_id = (
             ProjectDb.objects.filter(uu_id=uu_id).values("id").get()["id"]
         )
 
+        if code_path == '':
+            code_path = '$(pwd)'
+
+        if target_name == '':
+            target_name = 'TARGET_NAME'
+
         CicdDb.objects.create(
-            cicd_id=uuid.uuid4(),
+            cicd_id=cicd_id,
             name=name,
             project_id=project_id,
             threshold=threshold,
@@ -130,7 +131,8 @@ class CreatePolicies(APIView):
             build_server=build_server,
             target_name=target_name,
             scanner=scanner,
-            command=command
+            command=command,
+            target=code_path
         )
         return HttpResponseRedirect("/cicd/")
 
@@ -147,23 +149,18 @@ class PoliciesEdit(APIView):
     def get(self, request, uu_id=None):
         if uu_id == None:
             cicd_details = CicdDb.objects.all()
-            serialized_data = CreatePoliciesSerializers(cicd_details, many=True)
         else:
             try:
                 cicd_details = CicdDb.objects.get(cicd_id=uu_id)
-                serialized_data = CreatePoliciesSerializers(cicd_details, many=False)
             except CicdDb.DoesNotExist:
                 return Response(
                     {"message": "CICD Policies Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
         return Response(
-            {"serializer": serialized_data, "cicd_details": cicd_details}
+            {"cicd_details": cicd_details}
         )
 
     def post(self, request, uu_id):
-        serializer = CreatePoliciesSerializers(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
         name = request.data.get("name")
         threshold = request.data.get("threshold")
         threshold_count = request.data.get("threshold_count")
@@ -199,6 +196,6 @@ class PoliciesDelete(APIView):
 
             item = CicdDb.objects.filter(cicd_id=scan_id)
             item.delete()
-            item_results = CicdDb.objects.filter(cicd_id=   scan_id)
+            item_results = CicdDb.objects.filter(cicd_id=scan_id)
             item_results.delete()
         return HttpResponseRedirect(reverse("cicd:cicd_list"))

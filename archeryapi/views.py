@@ -64,6 +64,8 @@ from tools.models import NiktoResultDb
 from user_management import permissions
 from user_management.models import Organization, UserProfile
 from webscanners.models import WebScanResultsDb, WebScansDb
+from cicd.models import CicdDb
+from cicd.serializers import GetPoliciesSerializers
 
 
 class CreateProject(APIView):
@@ -814,6 +816,25 @@ class DisableAPIKey(APIView):
             http_status = status.HTTP_404_NOT_FOUND
 
         return Response(content, http_status)
+
+
+class GetCicdPolicies(APIView):
+    parser_classes = (MultiPartParser,)
+    permission_classes = (BasePermission, permissions.VerifyAPIKey)
+
+    def get(self, request, uu_id=None):
+        if uu_id == None:
+            get_cicd_policies = CicdDb.objects.all()
+            serialized_data = GetPoliciesSerializers(get_cicd_policies, many=True)
+        else:
+            try:
+                get_cicd_policies = CicdDb.objects.get(cicd_id=uu_id)
+                serialized_data = GetPoliciesSerializers(get_cicd_policies, many=False)
+            except CicdDb.DoesNotExist:
+                return Response(
+                    {"message": "CI/CD Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+                )
+        return Response(serialized_data.data, status=status.HTTP_200_OK)
 
 
 class DeleteAPIKey(APIView):

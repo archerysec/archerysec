@@ -20,7 +20,6 @@
                                               action="{% url 'cicd:policiesedit' uu_id=cicd_details.cicd_id %}"
                                               method="POST">
                                             {% csrf_token %}
-                                            {% render_form serializer %}
                                             <div class="form-group row">
                                                 <label
                                                         class="col-sm-4 col-form-label">Policies Name</label>
