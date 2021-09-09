@@ -63,7 +63,7 @@ openvas-lib @ git+https://github.com/archerysec/openvas_lib.git@326bde506ccb2b98
 ordereddict==1.1
 pbr==5.5.1
 pdfrw==0.4
-Pillow==8.2.0
+Pillow==8.3.2
 psycopg2-binary==2.8.6
 PyBurprestapi==0.4
 pycparser==2.18
