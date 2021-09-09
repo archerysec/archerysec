@@ -142,14 +142,14 @@ class WebScanDetails(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
+        jira_server = None
+        jira_username = None
+        jira_password = None
+        jira_projects = None
         vuln_id = request.GET["vuln_id"]
 
         jira_setting = jirasetting.objects.filter()
         user = request.user
-        jira_server = ""
-        jira_username = ""
-        jira_password = ""
-        jira_projects = ""
 
         for jira in jira_setting:
             jira_server = jira.jira_server

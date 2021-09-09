@@ -5,7 +5,7 @@ set -ex
 export CONTAINER_NAME=archery
 export REPO=archeryec
 docker build -t $REPO .
-docker run -d -e DJANGO_SETTINGS_MODULE=archerysecurity.settings.base -p 127.0.0.1:8000:8000 --name=$CONTAINER_NAME $REPO
+docker run -e NAME=user -e EMAIL=user@user.com -e PASSWORD=fake@pass -d -e DJANGO_SETTINGS_MODULE=archerysecurity.settings.base -p 127.0.0.1:8000:8000 --name=$CONTAINER_NAME $REPO
 docker logs $CONTAINER_NAME
 docker ps -a
 docker logs $CONTAINER_NAME
