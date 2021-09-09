@@ -85,12 +85,13 @@
             });
         });
 
-         function uuidv4() {
+        function uuidv4() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
         }
+
         console.log(uuidv4());
 
     </script>
@@ -111,10 +112,18 @@
                     <p>To install archerysec-cli you need to have Python pip pre-loaded and by running below command you
                         can able to install.</p>
 
-                    <blockquote class="blockquote">
-                        <pre id="cmd">pip install archerysec-cli <a id="btn"><i class="fas fa-copy"></i></a></pre>
-                    </blockquote>
+                    <div class="alert alert-warning" role="alert">
+                        archerysec-cli need a Docker container. All you need is Docker in your environment. To scan larger applications, you may need more memory. archerysec-cli also requires network access to your running ArcherySec application. It works by connecting to your ArcherySec application.
 
+                    </div>
+
+                    <blockquote class="blockquote">
+                        <pre id="cmd">pip install archerysec-cli --force <a id="btn"><i class="fas fa-copy"></i></a> </pre>
+                    </blockquote>
+                    <h6>OR</h6>
+                    <blockquote class="blockquote">
+                        <pre id="cmd-2">python3 -m pip install archerysec-cli --force <a id="btn-2"><i class="fas fa-copy"></i></a> </pre>
+                    </blockquote>
 
                 </div>
             </div>
@@ -304,8 +313,9 @@
                                     <select name="scanner" id="selectscanners"
                                             class="select2 form-control custom-select"
                                             style="width: 100%; height:36px;">
+                                        <option selected>Select</option>
                                         <option>OWASP ZAP</option>
-                                        <option>DependencyChecker</option>
+                                        <option>DependencyCheck</option>
                                         <option>Bandit</option>
                                         <option>FindBugs</option>
                                     </select>
@@ -348,6 +358,13 @@
 
         btn.addEventListener('click', () => {
             const textCopied = ClipboardJS.copy(document.querySelector('#cmd-1'));
+            console.log('copied!', textCopied);
+        });
+
+        var btn = document.querySelector('#btn-2');
+
+        btn.addEventListener('click', () => {
+            const textCopied = ClipboardJS.copy(document.querySelector('#cmd-2'));
             console.log('copied!', textCopied);
         });
 

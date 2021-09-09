@@ -89,6 +89,14 @@ class ScannerCommand(APIView):
                          ' ' + '--project=' + \
                          project + ' ' + '--bandit' + ' ' + '--report_path=$(pwd)'
 
+        if scanner == 'DependencyCheck':
+            result_set = 'archerysec-cli ' + \
+                         '-h ' + protocol + \
+                         '//' + host + ' ' + \
+                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
+                         ' ' + '--project=' + \
+                         project + ' ' + '--dependency-check' + ' ' + '--report_path=$(pwd)'
+
         return HttpResponse(simplejson.dumps(result_set), content_type='application/json')
 
 
