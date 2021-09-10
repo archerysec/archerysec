@@ -89,7 +89,7 @@ selenium==3.141.0
 singledispatch==3.6.1
 six==1.15.0
 soupsieve==2.2.1
-sqlparse==0.4.1
+sqlparse==0.4.2
 swapper==1.1.2.post1
 tablib==3.0.0
 tinycss2==1.1.0
