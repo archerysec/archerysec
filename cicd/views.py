@@ -87,7 +87,7 @@ class ScannerCommand(APIView):
                          '//' + host + ' ' + \
                          '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
                          ' ' + '--project=' + \
-                         project + ' ' + '--bandit' + ' ' + '--report_path=$(pwd)'
+                         project + ' ' + '--bandit' + ' ' + '--report_path=$(pwd)/archerysec-scans-report'
 
         if scanner == 'DependencyCheck':
             result_set = 'archerysec-cli ' + \
@@ -95,7 +95,31 @@ class ScannerCommand(APIView):
                          '//' + host + ' ' + \
                          '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
                          ' ' + '--project=' + \
-                         project + ' ' + '--dependency-check' + ' ' + '--report_path=$(pwd)'
+                         project + ' ' + '--dependency-check' + ' ' + '--report_path=$(pwd)/archerysec-scans-report'
+
+        if scanner == 'owasp-base-line':
+            result_set = 'archerysec-cli ' + \
+                         '-h ' + protocol + \
+                         '//' + host + ' ' + \
+                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
+                         ' ' + '--project=' + \
+                         project + ' ' + '--zap-base-line-scan' + ' ' + '--report_path=$(pwd)/archerysec-scans-report'
+
+        if scanner == 'owasp-zap-full':
+            result_set = 'archerysec-cli ' + \
+                         '-h ' + protocol + \
+                         '//' + host + ' ' + \
+                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
+                         ' ' + '--project=' + \
+                         project + ' ' + '--zap-full-scan' + ' ' + '--report_path=$(pwd)/archerysec-scans-report'
+
+        if scanner == 'findsecbugs':
+            result_set = 'archerysec-cli ' + \
+                         '-h ' + protocol + \
+                         '//' + host + ' ' + \
+                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
+                         ' ' + '--project=' + \
+                         project + ' ' + '--findsecbugs-scan' + ' ' + '--report_path=$(pwd)/archerysec-scans-report'
 
         return HttpResponse(simplejson.dumps(result_set), content_type='application/json')
 

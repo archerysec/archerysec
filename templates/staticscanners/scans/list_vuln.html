@@ -22,7 +22,7 @@
                                     <th>Risk</th>
                                 </tr>
                                 </thead>
-                                {% for data in all_vuln %}<tbody>
+                                 <tbody>{% for data in all_vuln %}
                                     <tr data-target="#">
                                         <td>
                                             <a href="{% url 'staticscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&scan_name={{ data.title }}&scanner={{ data.scanner }}">{{ data.title }}</a>
@@ -40,7 +40,8 @@
                                         <td><span class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
                                         </td>
                                     </tr>
-                                </tbody>{% endfor %}
+                                 {% endfor %}
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -48,6 +49,5 @@
             </div>
         </div>
     </div>
-
 
 {% endblock %}

@@ -45,11 +45,12 @@ from scanners.scanner_parser.network_scanner import (Nessus_Parser,
 from scanners.scanner_parser.staticscanner_parser import (
     brakeman_json_report_parser, checkmarx_xml_report_parser,
     clair_json_report_parser, dependencycheck_report_parser,
-    findbugs_report_parser, gitlab_container_json_report_parser,
+    gitlab_container_json_report_parser,
     gitlab_sast_json_report_parser, gitlab_sca_json_report_parser,
     nodejsscan_report_json, npm_audit_report_json, semgrep_json_report_parser,
     tfsec_report_parser, trivy_json_report_parser,
     twistlock_json_report_parser, whitesource_json_report_parser)
+from scanners.scanner_parser.staticscanner_parser.findbugs_report_parser import FindsecbugsParser
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import \
     bandit_report_json
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
@@ -401,11 +402,10 @@ class UploadScanResult(APIView):
             )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            findbugs_report_parser.xml_parser(
-                project_id=project_id,
-                scan_id=scan_id,
-                root=root_xml,
-            )
+            findbugs_report_parser = FindsecbugsParser(project_id=project_id,
+                                                       scan_id=scan_id,
+                                                       root=root_xml)
+            findbugs_report_parser.xml_parser()
             return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "checkmarx":

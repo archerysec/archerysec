@@ -52,8 +52,8 @@
         $(document).ready(function () {
             $('select#selectscanners').change(function () {
                 var optionSelected = $(this).find("option:selected");
-                var valueSelected = optionSelected.val();
-                var scanner_name = optionSelected.text();
+                var scanner_name = optionSelected.val();
+                {#var scanner_name = optionSelected.text();#}
                 document.getElementById("cicd_uu_id").value = uuidv4();
 
                 var proj = document.getElementById("project_id").value;
@@ -314,10 +314,11 @@
                                             class="select2 form-control custom-select"
                                             style="width: 100%; height:36px;">
                                         <option selected>Select</option>
-                                        <option>OWASP ZAP</option>
-                                        <option>DependencyCheck</option>
-                                        <option>Bandit</option>
-                                        <option>FindBugs</option>
+                                        <option value="owasp-zap-full">OWASP ZAP Scan</option>
+                                        <option value="owasp-base-line">OWASP ZAP Base Line Scan</option>
+                                        <option value="DependencyCheck">Dependency Check</option>
+                                        <option value="Bandit">Bandit</option>
+                                        <option value="findsecbugs">FindBugs</option>
                                     </select>
                                 </div>
                             </div>
