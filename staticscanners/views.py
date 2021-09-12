@@ -260,7 +260,12 @@ class SastScanVulnList(APIView):
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
-        all_vuln = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+        all_vuln = StaticScanResultsDb.objects.filter(scan_id=scan_id).distinct().values('title',
+                                                                                         'severity',
+                                                                                         'vuln_status',
+                                                                                         'severity_color',
+                                                                                         'scanner',
+                                                                                         'scan_id').exclude(vuln_status='Duplicate')
 
         return render(
             request,
