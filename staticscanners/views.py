@@ -64,6 +64,7 @@ class SastScanVulnInfo(APIView):
             jira_url = d.jira_server
         scan_id = request.GET["scan_id"]
         vuln_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+        all_notify = Notification.objects.unread()
         return render(
             request,
             "staticscanners/scans/list_vuln_info.html",
@@ -171,7 +172,7 @@ class SastScanDetails(APIView):
         except Exception as e:
             print(e)
             jira_projects = None
-            notify.send(user, recipient=user, verb="Jira settings not found")
+            # notify.send(user, recipient=user, verb="Jira settings not found")
 
         vul_dat = StaticScanResultsDb.objects.filter(vuln_id=vuln_id).order_by(
             "vuln_id"

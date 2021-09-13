@@ -164,6 +164,7 @@
                                         <span class="checkmark"></span>
                                     </label></th>
                                     <th>Policy</th>
+                                    <th>Scanner</th>
                                     <th>Threshold</th>
                                     <th>Threshold Count</th>
                                 </tr>
@@ -184,6 +185,7 @@
                                         <td>
                                             <a href="{% url 'cicd:policiesedit' uu_id=data.cicd_id %}">{{ data.name }}</a>
                                         </td>
+                                        <td><span class="badge badge-pill badge-primary">{{ data.scanner }}</span></td>
                                         <td>
                                             {{ data.threshold }}
                                         </td>
