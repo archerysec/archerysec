@@ -16,8 +16,6 @@
 
 from __future__ import unicode_literals
 
-import hashlib
-
 from django.shortcuts import HttpResponse, render
 from notifications.models import Notification
 from rest_framework.permissions import IsAuthenticated
@@ -28,7 +26,6 @@ from user_management import permissions
 from projects.models import ProjectDb
 import json as simplejson
 from archeryapi.models import OrgAPIKey
-import uuid
 from rest_framework import status
 from jiraticketing.models import jirasetting
 from cicd.models import CicdDb
