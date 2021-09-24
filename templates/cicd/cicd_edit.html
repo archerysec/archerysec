@@ -1,0 +1,108 @@
+{% extends 'dashboard/base.html' %}
+{% load rest_framework %}
+
+{% block body %}
+
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-md-flex align-items-center">
+                        <h1 class="card-title">Policies Details</h1>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="widget-box">
+                                        <form class="form-horizontal"
+                                              action="{% url 'cicd:policiesedit' uu_id=cicd_details.cicd_id %}"
+                                              method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-sm-4 col-form-label">Policies Name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" value="{{ cicd_details.name }}" name="name" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-sm-4 col-form-label">Threshold</label>
+                                                <div class="col-sm-6">
+                                                    <select name="threshold"
+                                                            class="select2 form-control custom-select"
+                                                            style="width: 100%; height:36px;">
+                                                        <optgroup label="Seleted">
+                                                            <option value="{{ cicd_details.threshold }}" selected>{{ cicd_details.threshold }}</option>
+                                                        </optgroup>
+                                                        <option value="high">High</option>
+                                                        <option value="medium">Medium</option>
+                                                        <option value="low">Low</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-form-label">Threshold Count</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" value="{{ cicd_details.threshold_count }}" name="threshold_count" class="form-control">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-sm-4 col-form-label">Target Name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" value="{{ cicd_details.target_name }}" name="target_name"
+                                                           class="form-control"
+                                                           id="target_name">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-sm-4 col-form-label">Code Path/Target</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" value="{{ cicd_details.target }}" name="code_path"
+                                                           class="form-control"
+                                                           id="code_path">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label
+                                                        class="col-4 col-form-label">Command</label>
+                                                <div class="col-8">
+                                                    <blockquote class="blockquote">
+                                                        <a id="btn-1"><i class="fas fa-copy"></i></a>
+                                                        <pre id="cmd-1" style="white-space: pre-wrap;">{{ cicd_details.command }}</pre>
+                                                    </blockquote>
+                                                </div>
+                                            </div>
+
+                                            <div class="border-top">
+                                                <div class="card-body">
+                                                    <button type="submit" class="btn btn-default">Save
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    var btn = document.querySelector('#btn-1');
+
+        btn.addEventListener('click', () => {
+            const textCopied = ClipboardJS.copy(document.querySelector('#cmd-1'));
+            console.log('copied!', textCopied);
+        });
+    </script>
+{% endblock %}

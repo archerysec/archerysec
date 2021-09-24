@@ -45,11 +45,12 @@ from scanners.scanner_parser.network_scanner import (Nessus_Parser,
 from scanners.scanner_parser.staticscanner_parser import (
     brakeman_json_report_parser, checkmarx_xml_report_parser,
     clair_json_report_parser, dependencycheck_report_parser,
-    findbugs_report_parser, gitlab_container_json_report_parser,
+    gitlab_container_json_report_parser,
     gitlab_sast_json_report_parser, gitlab_sca_json_report_parser,
     nodejsscan_report_json, npm_audit_report_json, semgrep_json_report_parser,
     tfsec_report_parser, trivy_json_report_parser,
     twistlock_json_report_parser, whitesource_json_report_parser)
+from scanners.scanner_parser.staticscanner_parser.findbugs_report_parser import FindsecbugsParser
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import \
     bandit_report_json
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
@@ -64,6 +65,8 @@ from tools.models import NiktoResultDb
 from user_management import permissions
 from user_management.models import Organization, UserProfile
 from webscanners.models import WebScanResultsDb, WebScansDb
+from cicd.models import CicdDb
+from cicd.serializers import GetPoliciesSerializers
 
 
 class CreateProject(APIView):
@@ -399,11 +402,10 @@ class UploadScanResult(APIView):
             )
             scan_dump.save()
             root_xml = ET.fromstring(file)
-            findbugs_report_parser.xml_parser(
-                project_id=project_id,
-                scan_id=scan_id,
-                root=root_xml,
-            )
+            findbugs_report_parser = FindsecbugsParser(project_id=project_id,
+                                                       scan_id=scan_id,
+                                                       root=root_xml)
+            findbugs_report_parser.xml_parser()
             return self.sast_result_data(scan_id, project_uu_id, scanner)
 
         elif scanner == "checkmarx":
@@ -814,6 +816,25 @@ class DisableAPIKey(APIView):
             http_status = status.HTTP_404_NOT_FOUND
 
         return Response(content, http_status)
+
+
+class GetCicdPolicies(APIView):
+    parser_classes = (MultiPartParser,)
+    permission_classes = (BasePermission, permissions.VerifyAPIKey)
+
+    def get(self, request, uu_id=None):
+        if uu_id == None:
+            get_cicd_policies = CicdDb.objects.all()
+            serialized_data = GetPoliciesSerializers(get_cicd_policies, many=True)
+        else:
+            try:
+                get_cicd_policies = CicdDb.objects.get(cicd_id=uu_id)
+                serialized_data = GetPoliciesSerializers(get_cicd_policies, many=False)
+            except CicdDb.DoesNotExist:
+                return Response(
+                    {"message": "CI/CD Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+                )
+        return Response(serialized_data.data, status=status.HTTP_200_OK)
 
 
 class DeleteAPIKey(APIView):

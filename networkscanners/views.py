@@ -645,7 +645,7 @@ class NetworkScanDetails(APIView):
         except Exception as e:
             print(e)
             jira_projects = None
-            notify.send(user, recipient=user, verb="Jira settings not found")
+            # notify.send(user, recipient=user, verb="Jira settings not found")
 
         vul_dat = NetworkScanResultsDb.objects.filter(
             vuln_id=vuln_id, scanner=scanner

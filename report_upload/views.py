@@ -43,7 +43,7 @@ from scanners.scanner_parser.network_scanner import (Nessus_Parser,
                                                      nmap_parser)
 from scanners.scanner_parser.staticscanner_parser import (
     checkmarx_xml_report_parser, dependencycheck_report_parser,
-    findbugs_report_parser)
+    )
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import \
     bandit_report_json
 from scanners.scanner_parser.staticscanner_parser.brakeman_json_report_parser import \
@@ -83,6 +83,7 @@ from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from tools.models import NiktoResultDb
 from user_management import permissions
 from webscanners.models import WebScansDb
+from scanners.scanner_parser.staticscanner_parser.findbugs_report_parser import FindsecbugsParser
 
 
 def upload(target, scan_id, date_time, project_id, scan_status, scanner, data):
@@ -445,9 +446,10 @@ class Upload(APIView):
                     scan_status=scan_status,
                 )
                 scan_dump.save()
-                findbugs_report_parser.xml_parser(
-                    project_id=project_id, scan_id=scan_id, root=root
-                )
+                findbugs_report_parser = FindsecbugsParser(project_id=project_id,
+                                                           scan_id=scan_id,
+                                                           root=root)
+                findbugs_report_parser.xml_parser()
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("staticscanners:list_scans"))
             except Exception as e:

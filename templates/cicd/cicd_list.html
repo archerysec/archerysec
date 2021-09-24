@@ -1,0 +1,376 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block body %}
+    <script type="text/javascript">
+
+        $("#checkAll").change(function () {
+            $("input:checkbox").prop('checked', $(this).prop("checked"));
+        });
+        $(document).ready(function () {
+            $('.btn-danger').click(function () {
+                if (confirm('Are you sure you want to delete this?')) {
+                    var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                    $.each($("input[name='del_scan_id']:checked"), function () {
+                        scan_id.push($(this).val());
+                    });
+
+                    var json_scanid = scan_id.join(", ");
+                    $.ajax({
+                        type: 'POST',
+                        <!--contentType: 'application/json; charset=utf-8',-->
+                        url: '{% url 'cicd:deletepolicies' %}',
+                        data: {
+                            scan_id: json_scanid,
+                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                        },
+                        sucess: function () {
+
+                        }
+                    });
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                }
+            });
+
+        });
+
+        $(document).ready(function () {
+            $('.btn-primary').click(function () {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_scan_id']:checked"), function () {
+                    scan_id.push($(this).val());
+                });
+
+                document.getElementById("toexport").value = scan_id.join(", ");
+
+
+            });
+
+        });
+
+        $(document).ready(function () {
+            $('select#selectscanners').change(function () {
+                var optionSelected = $(this).find("option:selected");
+                var scanner_name = optionSelected.val();
+                {#var scanner_name = optionSelected.text();#}
+                document.getElementById("cicd_uu_id").value = uuidv4();
+
+                var proj = document.getElementById("project_id").value;
+                var cicd_uuid = document.getElementById("cicd_uu_id").value = uuidv4();
+
+
+                data = {
+                    'scanner': scanner_name,
+                    'host': window.location.host,
+                    'protocol': window.location.protocol,
+                    'target_name': document.getElementById("target_name").value,
+                    'code_path': document.getElementById("code_path").value,
+                    'project': proj,
+                    'cicd_id': cicd_uuid,
+                };
+
+                $.ajax({
+                    type: "GET",
+                    url: '{% url 'cicd:scannercmd' %}',
+                    // data:JSON.stringify(data),
+                    data: data,
+                    success: function (result) {
+                        console.log(uuidv4());
+                        $("#command pre").remove();
+                        $("#command").append('<pre id="cmd-1" style="white-space: pre-wrap;">' + result + '</pre>');
+                        document.getElementById("result").value = result;
+                    },
+                });
+            });
+        });
+
+        function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        console.log(uuidv4());
+
+    </script>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-md-flex align-items-center">
+                        <h1 class="card-title">CI/CD</h1>
+                    </div>
+                    <p>ArcherySec integrates with CI/CD pipelines using the archerysec-cli in order to help
+                        organizations shift-left security scanning in their build pipelines. ArcherySec CLI is a
+                        locally deployed command line tool designed to run on any Linux host. ArcherySec CLI requires a
+                        ArcherySec Platform service key to authenticate.</p>
+                    <br>
+                    <h5>ArcherySec CLI</h5>
+
+                    <p>To install archerysec-cli you need to have Python pip pre-loaded and by running below command you
+                        can able to install.</p>
+
+                    <div class="alert alert-warning" role="alert">
+                        archerysec-cli need a Docker container. All you need is Docker in your environment. To scan larger applications, you may need more memory. archerysec-cli also requires network access to your running ArcherySec application. It works by connecting to your ArcherySec application.
+
+                    </div>
+
+                    <blockquote class="blockquote">
+                        <pre id="cmd">pip install archerysec-cli --force <a id="btn"><i class="fas fa-copy"></i></a> </pre>
+                    </blockquote>
+                    <h6>OR</h6>
+                    <blockquote class="blockquote">
+                        <pre id="cmd-2">python3 -m pip install archerysec-cli --force <a id="btn-2"><i class="fas fa-copy"></i></a> </pre>
+                    </blockquote>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if user.is_superuser == True or user.role.id == 2 %}
+                        <div class="float-right">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#jiraModal">
+                                    <i class="fas fa-plus-circle"></i> Add Policy
+                                </button>
+                            </div>
+
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+
+                        </div>
+                    {% endif %}
+                    <br>
+                    <br>
+                    {% csrf_token %}
+                    <br>
+                    <div class="d-md-flex align-items-center">
+                        <h1 class="card-title">Scan Policies</h1>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table id="scans_list" class="table table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    <th><label class="customcheckbox m-b-20">
+                                        <input type="checkbox" id="mainCheckbox">
+                                        <span class="checkmark"></span>
+                                    </label></th>
+                                    <th>Policy</th>
+                                    <th>Scanner</th>
+                                    <th>Threshold</th>
+                                    <th>Threshold Count</th>
+                                </tr>
+                                </thead>
+                                <tbody>{% for data in all_scans %}
+                                    <tr data-target="#">
+                                        <td>
+                                            <form>
+                                                <label class="customcheckbox">
+                                                    <input type="checkbox" class="listCheckbox"
+                                                           value="{{ data.cicd_id }}"
+                                                           name="del_scan_id"
+                                                           onClick="reload">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'cicd:policiesedit' uu_id=data.cicd_id %}">{{ data.name }}</a>
+                                        </td>
+                                        <td><span class="badge badge-pill badge-primary">{{ data.scanner }}</span></td>
+                                        <td>
+                                            {{ data.threshold }}
+                                        </td>
+
+                                        <td>{{ data.threshold_count }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="jiraModal" tabindex="-1" role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="jiraModalLabel">Create Policies</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" method="POST"
+                          action="{% url 'cicd:createpolicies' %}">{% csrf_token %}
+                        <div class="card-body">
+                            <input type="hidden" id="cicd_uu_id" name="cicd_id">
+                            <div class="form-group row">
+                                <label
+                                        class="col-sm-4 col-form-label">Policies Name</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="name" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label
+                                        class="col-sm-4 col-form-label">Select Project</label>
+                                <div class="col-sm-6">
+                                    <select id="project_id" name="project_id"
+                                            class="select2 form-control custom-select"
+                                            style="width: 100%; height:36px;">
+                                        {% for data in all_projects %}
+                                            <option value="{{ data.uu_id }}">{{ data.project_name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label
+                                        class="col-sm-4 col-form-label">Threshold</label>
+                                <div class="col-sm-6">
+                                    <select name="threshold"
+                                            class="select2 form-control custom-select"
+                                            style="width: 100%; height:36px;">
+                                        <option value="high">High</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="low">Low</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Threshold Count</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="threshold_count" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label
+                                        class="col-sm-4 col-form-label">SCM Server</label>
+                                <div class="col-sm-6">
+                                    <select name="scm_server"
+                                            class="select2 form-control custom-select"
+                                            style="width: 100%; height:36px;">
+                                        <option value="github">Github</option>
+                                        <option value="bitbucket">Bitbucket</option>
+                                        <option value="codecommit">AWS CodeCommit</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label
+                                        class="col-sm-4 col-form-label">Build Server</label>
+                                <div class="col-sm-6">
+                                    <select name="build_server"
+                                            class="select2 form-control custom-select"
+                                            style="width: 100%; height:36px;">
+                                        <option>Jenkins</option>
+                                        <option>Github Action</option>
+                                        <option>Gitlab</option>
+                                        <option>AWS CodeBuild</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label
+                                        class="col-sm-4 col-form-label">Target Name</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="target_name"
+                                           class="form-control"
+                                           id="target_name">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label
+                                        class="col-sm-4 col-form-label">Code Path/Target</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="code_path"
+                                           class="form-control"
+                                           id="code_path">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label
+                                        class="col-sm-4 col-form-label">Scanner</label>
+                                <div class="col-sm-6">
+                                    <select name="scanner" id="selectscanners"
+                                            class="select2 form-control custom-select"
+                                            style="width: 100%; height:36px;">
+                                        <option selected>Select</option>
+                                        <option value="owasp-zap-full">OWASP ZAP Scan</option>
+                                        <option value="owasp-base-line">OWASP ZAP Base Line Scan</option>
+                                        <option value="DependencyCheck">Dependency Check</option>
+                                        <option value="Bandit">Bandit</option>
+                                        <option value="findsecbugs">FindBugs</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label class="col-4 col-form-label">Command</label>
+                                <div class="col-8">
+                                    <blockquote class="blockquote" id="command">
+                                        <a id="btn-1"><i class="fas fa-copy"></i></a>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <input type="hidden" name="command" id="result">
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var btn = document.querySelector('#btn');
+
+        btn.addEventListener('click', () => {
+            const textCopied = ClipboardJS.copy(document.querySelector('#cmd'));
+            console.log('copied!', textCopied);
+        });
+
+        var btn = document.querySelector('#btn-1');
+
+        btn.addEventListener('click', () => {
+            const textCopied = ClipboardJS.copy(document.querySelector('#cmd-1'));
+            console.log('copied!', textCopied);
+        });
+
+        var btn = document.querySelector('#btn-2');
+
+        btn.addEventListener('click', () => {
+            const textCopied = ClipboardJS.copy(document.querySelector('#cmd-2'));
+            console.log('copied!', textCopied);
+        });
+
+    </script>
+
+{% endblock %}
