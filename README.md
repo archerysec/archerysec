@@ -1,12 +1,9 @@
 [![Follow Archery on Twitter](https://img.shields.io/twitter/follow/archerysec.svg?style=social&logo=twitter&label=Follow)](https://twitter.com/intent/user?screen_name=archerysec "Follow Archery on Twitter")
 
 [![PyPI - License](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/django.svg)](https://github.com/archerysec/archerysec/blob/master/LICENSE) ![PyPI - Django Version](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/djangorestframework.svg) ![Travis-ci](https://api.travis-ci.com/archerysec/archerysec.svg?branch=master)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5284/badge)](https://bestpractices.coreinfrastructure.org/projects/5284)
 
 [![Road Map](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/roadmap-orange.svg)](https://github.com/archerysec/archerysec/projects/1) [![BlackHat USA Arsenal 2018](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/blackhat-usa-2018.svg)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/) [![BlackHat Asia Arsenal 2018](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/blackhat-asia-2018.svg)](https://www.blackhat.com/asia-18/arsenal/schedule/#archery---open-source-vulnerability-assessment-and-management-9837) [![DEFCON 26 Demolabs](https://github.com/anandtiwarics/photoVideos/blob/master/Photos/defcon-26-demo-labs-orange.svg)](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html#Archery)
-
-<p align="center">
-  <img width="350" height="100" src="https://raw.githubusercontent.com/anandtiwarics/archerysecurity/master/archerysecurity/static/photo.png">
-</p>
 
 ## Support.
 **Your generous donations will keep us motivated.**
