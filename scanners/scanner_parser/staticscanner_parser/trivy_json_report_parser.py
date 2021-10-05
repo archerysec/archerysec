@@ -49,9 +49,17 @@ def trivy_report_json(data, project_id, scan_id):
     global total_vul, total_high, total_medium, total_low
     date_time = datetime.now()
     vul_col = ""
+    t_target = ''
+    t_type = ''
+    t_class = ''
     for vuln_data in data:
-        vuln = vuln_data["Vulnerabilities"]
-
+        try:
+            vuln = vuln_data["Vulnerabilities"]
+            t_target = vuln_data["Target"]
+            t_class = vuln_data["Class"]
+            t_type = vuln_data["Type"]
+        except:
+            pass
         for issue in vuln:
             try:
                 VulnerabilityID = issue["VulnerabilityID"]
@@ -116,7 +124,12 @@ def trivy_report_json(data, project_id, scan_id):
 
             vul_id = uuid.uuid4()
 
-            dup_data = str(VulnerabilityID) + str(Severity) + str(PkgName)
+            dup_data = str(VulnerabilityID) + \
+                       str(Severity) + \
+                       str(PkgName) + \
+                       str(t_target) + \
+                       str(t_type) + \
+                       str(t_class)
 
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -146,15 +159,19 @@ def trivy_report_json(data, project_id, scan_id):
                     fileName=PkgName,
                     title=VulnerabilityID,
                     description=str(Description)
-                    + str(Title)
-                    + "\n\n"
-                    + str(VulnerabilityID)
-                    + "\n\n"
-                    + str(PkgName)
-                    + "\n\n"
-                    + str(InstalledVersion)
-                    + "\n\n"
-                    + str(FixedVersion),
+                                + str(Title)
+                                + "\n\n"
+                                + str(t_target) +
+                                str(t_type) +
+                                str(t_class)
+                                + "\n\n"
+                                + str(VulnerabilityID)
+                                + "\n\n"
+                                + str(PkgName)
+                                + "\n\n"
+                                + str(InstalledVersion)
+                                + "\n\n"
+                                + str(FixedVersion),
                     severity=Severity,
                     references=References,
                     severity_color=vul_col,
@@ -177,15 +194,19 @@ def trivy_report_json(data, project_id, scan_id):
                     fileName=PkgName,
                     title=VulnerabilityID,
                     description=str(Description)
-                    + str(Title)
-                    + "\n\n"
-                    + str(VulnerabilityID)
-                    + "\n\n"
-                    + str(PkgName)
-                    + "\n\n"
-                    + str(InstalledVersion)
-                    + "\n\n"
-                    + str(FixedVersion),
+                                + str(Title)
+                                + "\n\n"
+                                + str(t_target) +
+                                str(t_type) +
+                                str(t_class)
+                                + "\n\n"
+                                + str(VulnerabilityID)
+                                + "\n\n"
+                                + str(PkgName)
+                                + "\n\n"
+                                + str(InstalledVersion)
+                                + "\n\n"
+                                + str(FixedVersion),
                     severity=Severity,
                     references=References,
                     severity_color=vul_col,
@@ -223,10 +244,10 @@ def trivy_report_json(data, project_id, scan_id):
     trend_update()
     subject = "Archery Tool Scan Status - Trivy Report Uploaded"
     message = (
-        "Trivy Scanner has completed the scan "
-        "  %s <br> Total: %s <br>High: %s <br>"
-        "Medium: %s <br>Low %s"
-        % (Target, total_vul, total_high, total_medium, total_low)
+            "Trivy Scanner has completed the scan "
+            "  %s <br> Total: %s <br>High: %s <br>"
+            "Medium: %s <br>Low %s"
+            % (Target, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)
