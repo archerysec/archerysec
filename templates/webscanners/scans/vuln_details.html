@@ -36,7 +36,7 @@
                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{ data.description | safe }}
+                                    {{ data.description | striptags }}
                                 </div>
                             </div>
                         </div>
@@ -126,7 +126,7 @@
                             <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{ data.solution | safe }}
+                                    {{ data.solution | striptags }}
                                 </div>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                             <div id="collapse4" class="collapse" aria-labelledby="heading4"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{ data.reference | safe }}
+                                    {{ data.reference }}
                                 </div>
                             </div>
                         </div>
