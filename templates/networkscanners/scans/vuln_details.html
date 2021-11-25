@@ -31,7 +31,7 @@
                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{ data.description | safe }}
+                                    {{ data.description }}
 
                                 </div>
                             </div>
@@ -73,7 +73,7 @@
                             <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    {{ data.solution | safe }}
+                                    {{ data.solution }}
                                 </div>
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                             <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
                                  data-parent="#accordionExample">
                                 <div class="card-body">
-                                    <a href="{{ data.references | safe }}">{{ data.references | safe }}</a>
+                                    <a href="{{ data.references }}">{{ data.references }}</a>
                                 </div>
                             </div>
                         </div>
