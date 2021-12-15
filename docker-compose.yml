@@ -55,6 +55,7 @@ services:
       - DJANGO_DEBUG=1
       - EMAIL_HOST=mailhog
       - EMAIL_PORT=1025
+      - ARCHERY_WORKER=True
     container_name: archerysec-worker
 
   zaproxy:
