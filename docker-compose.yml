@@ -23,6 +23,9 @@ services:
     environment:
       - DB_PASSWORD=archerysec
       - DB_USER=archerysec
+      - NAME=user
+      - EMAIL=admin@user.com
+      - PASSWORD=admin@123A
       - DB_NAME=archerysec
       - DB_HOST=db
       - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
@@ -42,6 +45,9 @@ services:
     environment:
       - DB_PASSWORD=archerysec
       - DB_USER=archerysec
+      - NAME=user
+      - EMAIL=admin@user.com
+      - PASSWORD=admin@123A
       - DB_NAME=archerysec
       - DB_HOST=db
       - DJANGO_SETTINGS_MODULE=archerysecurity.settings.development
@@ -49,7 +55,6 @@ services:
       - DJANGO_DEBUG=1
       - EMAIL_HOST=mailhog
       - EMAIL_PORT=1025
-      - ARCHERY_WORKER=True
     container_name: archerysec-worker
 
   zaproxy:
