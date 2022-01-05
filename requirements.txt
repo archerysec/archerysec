@@ -18,7 +18,7 @@ cryptography==3.4.7
 cssselect2==0.4.1
 defusedxml==0.7.1
 diff-match-patch==20200713
-Django==3.1.14
+Django==2.2.26
 django-appconf==1.0.4
 django-background-tasks==1.2.5
 django-compat==1.0.15
@@ -63,7 +63,7 @@ openvas-lib @ git+https://github.com/archerysec/openvas_lib.git@326bde506ccb2b98
 ordereddict==1.1
 pbr==5.5.1
 pdfrw==0.4
-Pillow==8.3.2
+Pillow==9.0.0
 psycopg2-binary==2.8.6
 PyBurprestapi==0.4
 pycparser==2.18
