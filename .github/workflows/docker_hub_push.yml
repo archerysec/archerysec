@@ -36,10 +36,11 @@ jobs:
         - name: Integration test
           run: |
            bash integration-test.sh || exit 1
+          with:
+            python-version: '3.9'
         - name: Push to Docker Hub
           uses: docker/build-push-action@v1
           with:
-            python-version: ${{ matrix.python-version }}
             username: ${{ secrets.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
             repository: archerysec/archerysec
