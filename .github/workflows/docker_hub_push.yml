@@ -39,6 +39,7 @@ jobs:
         - name: Push to Docker Hub
           uses: docker/build-push-action@v1
           with:
+            python-version: ${{ matrix.python-version }}
             username: ${{ secrets.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
             repository: archerysec/archerysec
