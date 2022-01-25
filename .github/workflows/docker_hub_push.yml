@@ -33,11 +33,13 @@ jobs:
       steps:
         - name: Check out the repo
           uses: actions/checkout@v2
+        - name: Set up Python
+          uses: actions/setup-python@v2
+          with:
+            python-version: '3.9'
         - name: Integration test
           run: |
            bash integration-test.sh || exit 1
-          with:
-            python-version: '3.9'
         - name: Push to Docker Hub
           uses: docker/build-push-action@v1
           with:
