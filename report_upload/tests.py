@@ -241,7 +241,7 @@ class UploadTest(TestCase):
         self.assertTrue(error_message in message.message)
 
     def test_upload_zap_report_files(self):
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.7.0.xml"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/OWASP-ZAP/OWASP-ZAP-v2.11.1.xml"
         test_file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
         scanner = "zap_scan"
         error_message = "ZAP Scanner Only XML file Support"
