@@ -64,23 +64,37 @@ def xml_parser(root, project_id, scan_id):
             vuln_id = uuid.uuid4()
             if vuln.tag == "alert":
                 alert = vuln.text
+                if alert is None:
+                    alert = "NA"
             if vuln.tag == "name":
                 title = vuln.text
+                if title is None:
+                    title = "NA"
             if vuln.tag == "solution":
                 solution = vuln.text
+                if solution is None:
+                    solution = "NA"
             if vuln.tag == "reference":
                 reference = vuln.text
+                if reference is None:
+                    reference = "NA"
             if vuln.tag == "riskcode":
                 riskcode = vuln.text
+                if riskcode is None:
+                    riskcode = "NA"
             for instances in vuln:
                 for ii in instances:
                     instance = {}
-                    dd = re.sub(r"<[^>]*>", " ", ii.text)
+                    dd = re.sub(r"<[^>]*>", " ", str(ii.text))
+                    if dd == "None":
+                        dd = 'NA'
                     instance[ii.tag] = dd
                     inst.append(instance)
 
             if vuln.tag == "desc":
                 desc = vuln.text
+                if desc is None:
+                    desc = "NA"
             if riskcode == "3":
                 vul_col = "danger"
                 risk = "High"
