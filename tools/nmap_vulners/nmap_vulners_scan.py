@@ -29,10 +29,6 @@ def parse_port(proto, ip_addr, host_data, scan_id, project_id):
     if not ports:
         return
 
-    print(
-        "[NMAP_VULNERS][%s] Host : %s, proto %s, ports (%s)"
-        % (scan_id, ip_addr, proto, ports)
-    )
     for port, portData in dict(ports).items():
         nmap_obj, _ = NmapVulnersPortResultDb.objects.get_or_create(
             ip_address=ip_addr, port=port
@@ -93,7 +89,6 @@ def run_nmap_vulners(ip_addr="", project_id=""):
     if nv_timing:
         args += " -T" + str(nv_timing)
     args += " --script " + nmap_vulners_path
-    print("[NMAP_VULNERS][%s] - ARGUMENTS -%s" % (scan_id, args))
 
     nm = nmap.PortScanner()
     nm = nm.scan(hosts=ip_addr, arguments=args)
@@ -103,14 +98,6 @@ def run_nmap_vulners(ip_addr="", project_id=""):
     NmapVulnersPortResultDb.objects.filter(ip_address=ip_addr).delete()
 
     for host, host_data in scan.items():
-        print(
-            "[NMAP_VULNERS][%s] ----------------------------------------------------"
-            % (scan_id)
-        )
-        print(
-            "[NMAP_VULNERS][%s] Host : %s (%s)"
-            % (scan_id, host, host_data.get("hostnames"))
-        )
 
         parse_port("tcp", host, host_data, scan_id, project_id)
         parse_port("udp", host, host_data, scan_id, project_id)
