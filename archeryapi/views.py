@@ -67,6 +67,7 @@ from user_management.models import Organization, UserProfile
 from webscanners.models import WebScanResultsDb, WebScansDb
 from cicd.models import CicdDb
 from cicd.serializers import GetPoliciesSerializers
+from django.utils.html import escape
 
 
 class CreateProject(APIView):
@@ -160,14 +161,14 @@ class UploadScanResult(APIView):
         return Response(
             {
                 "message": "Scan Data Uploaded",
-                "project_id": project_uu_id,
-                "scan_id": scan_id,
-                "scanner": scanner,
+                "project_id": escape(project_uu_id),
+                "scan_id": escape(scan_id),
+                "scanner": escape(scanner),
                 "result": {
-                    "total_vul": total_vul,
-                    "total_high": total_high,
-                    "total_medium": total_medium,
-                    "total_low": total_low,
+                    "total_vul": escape(total_vul),
+                    "total_high": escape(total_high),
+                    "total_medium": escape(total_medium),
+                    "total_low": escape(total_low),
                 },
             }
         )
@@ -181,14 +182,14 @@ class UploadScanResult(APIView):
         return Response(
             {
                 "message": "Scan Data Uploaded",
-                "project_id": project_uu_id,
-                "scan_id": scan_id,
-                "scanner": scanner,
+                "project_id": escape(project_uu_id),
+                "scan_id": escape(scan_id),
+                "scanner": escape(scanner),
                 "result": {
-                    "total_vul": total_vul,
-                    "total_high": total_high,
-                    "total_medium": total_medium,
-                    "total_low": total_low,
+                    "total_vul": escape(total_vul),
+                    "total_high": escape(total_high),
+                    "total_medium": escape(total_medium),
+                    "total_low": escape(total_low),
                 },
             }
         )
@@ -202,14 +203,14 @@ class UploadScanResult(APIView):
         return Response(
             {
                 "message": "Scan Data Uploaded",
-                "project_id": project_uu_id,
-                "scan_id": scan_id,
-                "scanner": scanner,
+                "project_id": escape(project_uu_id),
+                "scan_id": escape(scan_id),
+                "scanner": escape(scanner),
                 "result": {
-                    "total_vul": total_vul,
-                    "total_high": total_high,
-                    "total_medium": total_medium,
-                    "total_low": total_low,
+                    "total_vul": escape(total_vul),
+                    "total_high": escape(total_high),
+                    "total_medium": escape(total_medium),
+                    "total_low": escape(total_low),
                 },
             }
         )
@@ -624,9 +625,9 @@ class UploadScanResult(APIView):
             return Response(
                 {
                     "message": "Scan Data Uploaded",
-                    "project_id": project_uu_id,
-                    "scan_id": scan_id,
-                    "scanner": scanner,
+                    "project_id": escape(project_uu_id),
+                    "scan_id": escape(scan_id),
+                    "scanner": escape(scanner),
                 }
             )
 
@@ -648,9 +649,9 @@ class UploadScanResult(APIView):
             return Response(
                 {
                     "message": "Scan Data Uploaded",
-                    "project_id": project_uu_id,
-                    "scan_id": scan_id,
-                    "scanner": scanner,
+                    "project_id": escape(project_uu_id),
+                    "scan_id": escape(scan_id),
+                    "scanner": escape(scanner),
                 }
             )
 
@@ -708,9 +709,9 @@ class UploadScanResult(APIView):
             return Response(
                 {
                     "message": "Scan Data Uploaded",
-                    "project_id": project_uu_id,
-                    "scan_id": scan_id,
-                    "scanner": scanner,
+                    "project_id": escape(project_uu_id),
+                    "scan_id": escape(scan_id),
+                    "scanner": escape(scanner),
                 }
             )
 

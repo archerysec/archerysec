@@ -21,6 +21,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from yaml import dump, safe_load
+from django.utils.html import escape
 
 from common.functions import current_epoch, epoch_to_date
 from common.serializers import *
@@ -39,7 +40,7 @@ class Json_to_Yaml(APIView):
         json_object = request.data.get("json_object")
         yaml_config = dump(json_object)
 
-        return Response(yaml_config)
+        return Response(escape(yaml_config))
 
 
 class Yaml_to_Json(APIView):
@@ -55,4 +56,4 @@ class Yaml_to_Json(APIView):
         yaml_object = request.data.get("yaml_object")
         json_config = safe_load(yaml_object)
 
-        return Response(json_config, status=status.HTTP_200_OK)
+        return Response(escape(json_config), status=status.HTTP_200_OK)

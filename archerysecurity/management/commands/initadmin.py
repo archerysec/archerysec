@@ -27,7 +27,6 @@ class Command(BaseCommand):
                 username = user[0].replace(" ", "")
                 email = user[1]
                 password = "admin"
-                print("Creating user for %s (%s)" % (username, email))
                 User.objects.create_superuser(username, email, password)
         else:
             print("Admin accounts can only be initialized if no Accounts exist")
