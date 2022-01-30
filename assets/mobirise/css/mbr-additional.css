@@ -687,37 +687,6 @@ section.lazy-placeholder:after {
 .cid-qNJ1nkJvuL H3 {
   text-align: center;
 }
-.cid-sFA8u6drG6 {
-  padding-top: 30px;
-  padding-bottom: 45px;
-  background-color: #ffffff;
-}
-.cid-sFA8u6drG6 h3 {
-  text-align: center;
-}
-.cid-sFA8u6drG6 .mbr-section-subtitle {
-  color: #767676;
-  font-weight: 300;
-}
-.cid-sFA8u6drG6 .mbr-content-text {
-  color: #767676;
-}
-.cid-sFA8u6drG6 .panel-item {
-  background: #b2ccd2;
-}
-.cid-sFA8u6drG6 .card {
-  word-wrap: break-word;
-}
-.cid-sFA8u6drG6 .mbr-iconfont {
-  font-size: 80px;
-  color: #149dcc;
-}
-.cid-sFA8u6drG6 H3 {
-  text-align: center;
-}
-.cid-sFA8u6drG6 H4 {
-  text-align: center;
-}
 .cid-sFArpWkX15 {
   background-color: #ffffff;
 }
@@ -1254,6 +1223,65 @@ section.lazy-placeholder:after {
   text-align: left;
 }
 .cid-siFblj1Olo H1 {
+  color: #0f7699;
+}
+.cid-sVZfksSXc8 {
+  background-color: #ffffff;
+  background: linear-gradient(45deg, #ffffff, #879a9f);
+}
+@media (min-width: 992px) {
+  .cid-sVZfksSXc8 .mbr-figure {
+    padding-right: 4rem;
+  }
+}
+@media (max-width: 991px) {
+  .cid-sVZfksSXc8 .mbr-figure {
+    padding-bottom: 3rem;
+  }
+}
+@media (max-width: 767px) {
+  .cid-sVZfksSXc8 .mbr-text {
+    text-align: center;
+  }
+}
+.cid-sVZfksSXc8 .mbr-text,
+.cid-sVZfksSXc8 .mbr-section-btn {
+  color: #232323;
+  text-align: left;
+}
+.cid-sVZfksSXc8 H1 {
+  color: #0f7699;
+}
+.cid-sVZsiCPart {
+  background-color: #c1c1c1;
+  background: linear-gradient(45deg, #c1c1c1, #efefef);
+}
+.cid-sVZsiCPart .media-container-row {
+  flex-direction: row-reverse;
+}
+@media (min-width: 992px) {
+  .cid-sVZsiCPart .mbr-figure {
+    padding-right: 4rem;
+    padding-right: 0;
+    padding-left: 4rem;
+  }
+}
+@media (max-width: 991px) {
+  .cid-sVZsiCPart .mbr-figure {
+    padding-bottom: 3rem;
+  }
+}
+@media (max-width: 767px) {
+  .cid-sVZsiCPart .mbr-text {
+    text-align: center;
+  }
+}
+.cid-sVZsiCPart .mbr-text,
+.cid-sVZsiCPart .mbr-section-btn {
+  color: #0f7699;
+  text-align: left;
+}
+.cid-sVZsiCPart H1 {
   color: #0f7699;
 }
 .cid-qNK5zIdDqO {
