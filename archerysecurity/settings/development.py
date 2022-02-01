@@ -31,6 +31,15 @@ DATABASES = {
     }
 }
 
+
+def show_toolbar(request):
+    return True
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+}
+
 ADMINS = [("admin", os.getenv("DJANGO_ADMIN_EMAIL", "admin@example.com"))]
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "localhost")
