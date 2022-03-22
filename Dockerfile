@@ -50,7 +50,7 @@ RUN mkdir /home/archerysec/app
 # Set archerysec as a work directory.
 WORKDIR /home/archerysec/app
 
-RUN virtualenv -p python /home/archerysec/app/venv
+RUN python3 -m pip install venv
 
 # Install requirements
 RUN . venv/bin/activate && pip3 install --no-cache-dir -r requirements.txt && \
