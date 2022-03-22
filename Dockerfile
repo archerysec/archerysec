@@ -18,22 +18,11 @@ RUN \
     apt-get install --quiet --yes --fix-missing \
     make \
     default-jre \
-    postgresql-client-10 \
-    sslscan \
-    nikto \
-    nmap \
-    wget \
-    curl \
-    unzip \
-    git \
-    python3-pip \
-    virtualenv \
     gunicorn \
     postgresql \
     python-psycopg2 \
     postgresql-server-dev-all \
     libpq-dev \
-    python3-dev \
     && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get autoremove --purge -y && \
@@ -62,26 +51,6 @@ RUN mkdir /home/archerysec/app
 WORKDIR /home/archerysec/app
 
 RUN virtualenv -p python /home/archerysec/app/venv
-
-# Copy all file to archerysec folder.
-COPY . .
-
-RUN mkdir nikto_result
-
-RUN wget https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAP_2.7.0_Linux.tar.gz
-
-RUN tar -xvzf ZAP_2.7.0_Linux.tar.gz
-
-RUN mkdir zap
-
-RUN cp -r ZAP_2.7.0/* /home/archerysec/app/zap
-
-COPY zap_config/policies /home/archerysec/app/zap
-
-COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascanrulesBeta-beta-24.zap
-
-RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
-    rm -rf ZAP_2.7.0
 
 # Install requirements
 RUN . venv/bin/activate && pip3 install --no-cache-dir -r requirements.txt && \
