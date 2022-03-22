@@ -50,13 +50,10 @@ RUN mkdir /home/archerysec/app
 # Set archerysec as a work directory.
 WORKDIR /home/archerysec/app
 
-RUN python3 -m pip install venv
+RUN pip3 install --upgrade --no-cache-dir setuptools pip && \
+    pip3 install --quiet --no-cache-dir -r requirements.txt
 
-# Install requirements
-RUN . venv/bin/activate && pip3 install --no-cache-dir -r requirements.txt && \
-    rm -rf /home/archerysec/.cache
-
-RUN . venv/bin/activate && python3 -m pip3 install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
+RUN pip3 install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
 
 # Exposing port.
 EXPOSE 8000
