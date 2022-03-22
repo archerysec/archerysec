@@ -84,7 +84,7 @@ RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
     rm -rf ZAP_2.7.0
 
 # Install requirements
-RUN . venv/bin/activate && python3 -m pip3 install --no-cache-dir -r requirements.txt && \
+RUN . venv/bin/activate && python3 -m pip install --no-cache-dir -r requirements.txt && \
     rm -rf /home/archerysec/.cache
 
 RUN . venv/bin/activate && python3 -m pip install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
