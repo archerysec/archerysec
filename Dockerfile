@@ -61,7 +61,7 @@ RUN mkdir /home/archerysec/app
 # Set archerysec as a work directory.
 WORKDIR /home/archerysec/app
 
-RUN virtualenv -p python3 /home/archerysec/app/venv
+RUN virtualenv -p python /home/archerysec/app/venv
 
 # Copy all file to archerysec folder.
 COPY . .
@@ -82,6 +82,9 @@ COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascan
 
 RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
     rm -rf ZAP_2.7.0
+
+# upgrade pip
+RUN . venv/bin/activate && python3 -m pip install --upgrade pip
 
 # Install requirements
 RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt && \
