@@ -83,11 +83,12 @@ COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascan
 RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
     rm -rf ZAP_2.7.0
 
-RUN . venv/bin/activate && pip3 install --upgrade --no-cache-dir setuptools pip && \
-    pip3 install --quiet --no-cache-dir -r requirements.txt && \
-    rm -rf /home/archerysec/.cache
+# Install Requirements
+COPY requirements.txt .
+RUN pip3 install --upgrade --no-cache-dir setuptools pip && \
+    pip3 install --quiet --no-cache-dir -r requirements.txt
 
-RUN . venv/bin/activate && python3 -m pip install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
+RUN pip3 install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
 
 # Exposing port.
 EXPOSE 8000
