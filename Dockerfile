@@ -1,5 +1,5 @@
 #Ubuntu base OS
-FROM python:3.9-buster
+FROM ubuntu:18.04
 # Labels and Credits
 LABEL \
     name="ArcherySec" \
@@ -18,11 +18,22 @@ RUN \
     apt-get install --quiet --yes --fix-missing \
     make \
     default-jre \
+    postgresql-client-10 \
+    sslscan \
+    nikto \
+    nmap \
+    wget \
+    curl \
+    unzip \
+    git \
+    python3-pip \
+    virtualenv \
     gunicorn \
     postgresql \
     python-psycopg2 \
     postgresql-server-dev-all \
     libpq-dev \
+    python3-dev \
     && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get autoremove --purge -y && \
@@ -50,10 +61,33 @@ RUN mkdir /home/archerysec/app
 # Set archerysec as a work directory.
 WORKDIR /home/archerysec/app
 
-RUN pip3 install --upgrade --no-cache-dir setuptools pip && \
-    pip3 install --quiet --no-cache-dir -r requirements.txt
+RUN virtualenv -p python3 /home/archerysec/app/venv
 
-RUN pip3 install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
+# Copy all file to archerysec folder.
+COPY . .
+
+RUN mkdir nikto_result
+
+RUN wget https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAP_2.7.0_Linux.tar.gz
+
+RUN tar -xvzf ZAP_2.7.0_Linux.tar.gz
+
+RUN mkdir zap
+
+RUN cp -r ZAP_2.7.0/* /home/archerysec/app/zap
+
+COPY zap_config/policies /home/archerysec/app/zap
+
+COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascanrulesBeta-beta-24.zap
+
+RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
+    rm -rf ZAP_2.7.0
+
+RUN . venv/bin/activate && pip3 install --upgrade --no-cache-dir setuptools pip && \
+    pip3 install --quiet --no-cache-dir -r requirements.txt && \
+    rm -rf /home/archerysec/.cache
+
+RUN . venv/bin/activate && python3 -m pip install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
 
 # Exposing port.
 EXPOSE 8000
