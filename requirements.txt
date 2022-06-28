@@ -34,7 +34,6 @@ django-settings-export==1.2.1
 django-sitetree==1.16.0
 django-stronghold==0.4.0
 djangorestframework==3.12.4
-djangorestframework-jwt==1.11.0
 dnspython==2.1.0
 enum34==1.1.10
 et-xmlfile==1.0.1

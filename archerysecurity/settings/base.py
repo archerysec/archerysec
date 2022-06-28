@@ -75,7 +75,6 @@ INSTALLED_APPS = [
     "import_export",
     "compliance",
     "notifications",
-    "rest_framework_jwt",
     "user_management",
     "authentication",
     "rest_framework_simplejwt.token_blacklist",
@@ -184,7 +183,6 @@ LOGIN_REDIRECT_URL = "/user/accounts/"
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
     ),
