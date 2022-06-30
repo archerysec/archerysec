@@ -18,6 +18,14 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework.documentation import include_docs_urls
 from rest_framework.urlpatterns import format_suffix_patterns
+from webscanners.views import WebScanList, WebScanVulnInfo
+from networkscanners.views import NetworkScanList, NetworkScanVulnInfo
+from staticscanners.views import SastScanList, SastScanVulnInfo
+from projects.views import ProjectList
+from authentication.views import MyTokenObtainPairView, Logout
+from rest_framework_simplejwt import views as jwt_views
+
+
 
 from archeryapi import views
 
@@ -48,10 +56,33 @@ urlpatterns = [
             public=True,
         ),
     ),
+
+    # Authentication API
+    path("v1/auth/login/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("v1/auth/refresh-token/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
+    path("v1/auth/logout/", Logout.as_view()),
+
     path("v1/uploadscan/", views.UploadScanResult.as_view()),
     path("access-key/", views.APIKey.as_view(), name="access-key"),
     path("access-key-delete/", views.DeleteAPIKey.as_view(), name="access-key-delete"),
+
+    # Project API
+    path("v1/project-list/", ProjectList.as_view()),
     path("v1/project-create/", views.CreateProject.as_view()),
+
+    # Web scans API endpoints
+    path("v1/web-scans/", WebScanList.as_view()),
+    path("v1/web-scans/<str:uu_id>/", WebScanVulnInfo.as_view()),
+
+    # Network scan API endpoints
+    path("v1/network-scans/", NetworkScanList.as_view()),
+    path("v1/network-scans/<str:uu_id>/", NetworkScanVulnInfo.as_view()),
+
+    # Static scan API endpoints
+    path("v1/sast-scans/", SastScanList.as_view()),
+    path("v1/sast-scans/<str:uu_id>/", SastScanVulnInfo.as_view()),
+
+    # CI/CD policy API endpoints
     path("v1/get-cicd-policies/<str:uu_id>/", views.GetCicdPolicies.as_view()),
 ]
 

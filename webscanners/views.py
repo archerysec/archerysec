@@ -35,43 +35,58 @@ from rest_framework.views import APIView
 from jiraticketing.models import jirasetting
 from user_management import permissions
 from webscanners.models import WebScanResultsDb, WebScansDb
+from webscanners.serializers import WebScansDbSerializer, WebScanResultsDbSerializer
 
 
 class WebScanList(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "webscanners/scans/list_scans.html"
-
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
     def get(self, request):
         all_scans = WebScansDb.objects.all()
         all_notify = Notification.objects.unread()
-        return Response({"all_scans": all_scans, "message": all_notify})
+        if request.path[: 4] == '/api':
+            serialized_data = WebScansDbSerializer(all_scans, many=True)
+            return Response(serialized_data.data, status=status.HTTP_200_OK)
+        else:
+            return render(
+                request,
+                "webscanners/scans/list_scans.html",
+                {"all_scans": all_scans, "message": all_notify},
+            )
 
 
 class WebScanVulnInfo(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "webscanners/scans/list_vuln_info.html"
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
-    def get(self, request):
+    def get(self, request, uu_id=None):
+        vuln_data = ''
         jira_url = None
 
         jira = jirasetting.objects.all()
         for d in jira:
             jira_url = d.jira_server
+        if uu_id == None:
+            scan_id = request.GET["scan_id"]
+            name = request.GET["scan_name"]
+            vuln_data = WebScanResultsDb.objects.filter(title=name, scan_id=scan_id)
+        else:
+            try:
+                vuln_data = WebScanResultsDb.objects.filter(scan_id=uu_id)
+            except:
+                return Response(
+                    {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+                )
 
-        scan_id = request.GET["scan_id"]
-        name = request.GET["scan_name"]
-
-        vuln_data = WebScanResultsDb.objects.filter(title=name, scan_id=scan_id)
-
-        return render(
-            request,
-            "webscanners/scans/list_vuln_info.html",
-            {"vuln_data": vuln_data, "jira_url": jira_url},
-        )
+        if request.path[: 4] == '/api':
+            serialized_data = WebScanResultsDbSerializer(vuln_data, many=True)
+            return Response(serialized_data.data, status=status.HTTP_200_OK)
+        else:
+            return render(
+                request,
+                "webscanners/scans/list_vuln_info.html",
+                {"vuln_data": vuln_data, "jira_url": jira_url},
+            )
 
 
 class WebScanVulnMark(APIView):
