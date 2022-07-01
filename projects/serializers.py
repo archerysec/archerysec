@@ -18,7 +18,7 @@ from rest_framework import serializers
 
 
 class ProjectDataSerializers(serializers.Serializer):
-
+    uu_id = serializers.UUIDField(read_only=True)
     project_id = serializers.UUIDField(read_only=True)
     project_name = serializers.CharField(required=True, help_text="Project Name")
     project_disc = serializers.CharField(required=True, help_text="Project Description")

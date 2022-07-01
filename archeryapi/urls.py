@@ -24,6 +24,7 @@ from staticscanners.views import SastScanList, SastScanVulnInfo
 from projects.views import ProjectList
 from authentication.views import MyTokenObtainPairView, Logout
 from rest_framework_simplejwt import views as jwt_views
+from webscanners.zapscanner.views import ZapScan, ZapSetting, ZapSettingUpdate
 
 
 
@@ -84,6 +85,12 @@ urlpatterns = [
 
     # CI/CD policy API endpoints
     path("v1/get-cicd-policies/<str:uu_id>/", views.GetCicdPolicies.as_view()),
+
+    # ZAP Scan
+    path("v1/zap-scan/", ZapScan.as_view()),
+    path("v1/zap-settings/", ZapSetting.as_view()),
+    path("v1/zap-settings-update/", ZapSettingUpdate.as_view()),
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
