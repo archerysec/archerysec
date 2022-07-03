@@ -26,6 +26,7 @@ from authentication.views import MyTokenObtainPairView, Logout
 from rest_framework_simplejwt import views as jwt_views
 from webscanners.zapscanner.views import ZapScan, ZapSetting, ZapSettingUpdate
 from webscanners.burpscanner.views import BurpSetting, BurpScanLaunch
+from webscanners.arachniscanner.views import ArachniScan, ArachniSetting, ArachniSettingUpdate
 
 
 
@@ -95,6 +96,11 @@ urlpatterns = [
     # Burp Scan
     path("v1/burp-settings/", BurpSetting.as_view()),
     path("v1/burp-scans/", BurpScanLaunch.as_view()),
+
+    # Arachni Scan
+    path("v1/arachni-scans/", ArachniScan.as_view()),
+    path("v1/arachni-settings/", ArachniSetting.as_view()),
+    path("v1/arachni-setting-update/", ArachniSettingUpdate.as_view()),
 
 ]
 

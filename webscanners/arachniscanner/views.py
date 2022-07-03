@@ -32,6 +32,7 @@ from notifications.signals import notify
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 import PyArachniapi
 from archerysettings.models import ArachniSettingsDb, SettingsDb
@@ -41,6 +42,7 @@ from scanners.scanner_parser.web_scanner import arachni_xml_parser
 from user_management import permissions
 from webscanners.models import WebScanResultsDb, WebScansDb
 from webscanners.resources import ArachniResource
+from webscanners.arachniscanner.serializers import ArachniScansSerializer, ArachniSettingsSerializer
 
 scan_run_id = ""
 scan_status = ""
@@ -176,14 +178,14 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     while scan_status != "done":
         status = "0"
         if (
-            scan_sum["statistics"]["browser_cluster"]["queued_job_count"]
-            and scan_sum["statistics"]["browser_cluster"]["total_job_time"]
+                scan_sum["statistics"]["browser_cluster"]["queued_job_count"]
+                and scan_sum["statistics"]["browser_cluster"]["total_job_time"]
         ):
             status = (
-                100
-                - scan_sum["statistics"]["browser_cluster"]["queued_job_count"]
-                * 100
-                / scan_sum["statistics"]["browser_cluster"]["total_job_time"]
+                    100
+                    - scan_sum["statistics"]["browser_cluster"]["queued_job_count"]
+                    * 100
+                    / scan_sum["statistics"]["browser_cluster"]["total_job_time"]
             )
         WebScansDb.objects.filter(scan_id=scan_id, scanner="Arachni").update(
             scan_status=int(status)
@@ -211,18 +213,29 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
 
 
 class ArachniScan(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "webscanners/arachniscanner/arachni_scan_list.html"
-
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
         return render(request, "webscanners/webscanner.html")
 
     def post(self, request):
+        scan_id = None
+        project_uu_id = None
+        target_url = None
+
         user = request.user
-        target_url = request.POST.get("scan_url")
-        project_uu_id = request.POST.get("project_id")
+        if request.path[: 4] == '/api':
+            serializer = ArachniScansSerializer(data=request.data)
+            if serializer.is_valid():
+                target_url = request.data.get(
+                    "url",
+                )
+                project_uu_id = request.data.get(
+                    "project_id",
+                )
+            else:
+                target_url = request.POST.get("scan_url")
+                project_uu_id = request.POST.get("project_id")
         project_id = (
             ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
         )
@@ -242,13 +255,16 @@ class ArachniScan(APIView):
             thread.daemon = True
             thread.start()
 
-        return HttpResponseRedirect(reverse("webscanners:list_scans"))
+            if request.path[: 4] == '/api':
+                return Response({"scan_id": scan_id})
+
+        if request.path[: 4] == '/api':
+            return Response({"scan_id": scan_id})
+        else:
+            return render(request, "webscanners/scans/list_scans.html")
 
 
 class ArachniSetting(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "webscanners/arachniscanner/arachni_settings_form.html"
-
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
@@ -265,22 +281,26 @@ class ArachniSetting(APIView):
             arachni_user = arachni.arachni_user
             arachni_pass = arachni.arachni_pass
 
-        return render(
-            request,
-            "webscanners/arachniscanner/arachni_settings_form.html",
-            {
-                "arachni_host": arachni_hosts,
-                "arachni_port": arachni_ports,
-                "arachni_user": arachni_user,
-                "arachni_pass": arachni_pass,
-            },
-        )
+        if request.path[: 4] == '/api':
+            return Response({"arachni_host": arachni_hosts,
+                             "arachni_port": arachni_ports,
+                             "arachni_user": arachni_user,
+                             "arachni_pass": arachni_pass,
+                             })
+        else:
+            return render(
+                request,
+                "webscanners/arachniscanner/arachni_settings_form.html",
+                {
+                    "arachni_host": arachni_hosts,
+                    "arachni_port": arachni_ports,
+                    "arachni_user": arachni_user,
+                    "arachni_pass": arachni_pass,
+                },
+            )
 
 
 class ArachniSettingUpdate(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "webscanners/arachniscanner/arachni_settings_form.html"
-
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
@@ -288,18 +308,42 @@ class ArachniSettingUpdate(APIView):
 
     def post(self, request):
         setting_id = uuid.uuid4()
-        arachnihost = request.POST.get(
-            "arachnihost",
-        )
-        port = request.POST.get(
-            "arachniport",
-        )
-        user = request.POST.get(
-            "arachniuser",
-        )
-        password = request.POST.get(
-            "arachnipass",
-        )
+        arachnihost = None
+        port = None
+        user = None
+        password = None
+
+        if request.path[: 4] == '/api':
+            serializer = ArachniSettingsSerializer(data=request.data)
+            if serializer.is_valid():
+                arachnihost = request.data.get(
+                    "arachni_hosts",
+                )
+                port = request.data.get(
+                    "arachni_ports",
+                )
+                user = request.data.get(
+                    "arachni_user",
+                )
+                password = request.data.get(
+                    "arachni_pass",
+                )
+            else:
+                return Response({"message": "Not Valid Data"})
+
+        else:
+            arachnihost = request.POST.get(
+                "arachnihost",
+            )
+            port = request.POST.get(
+                "arachniport",
+            )
+            user = request.POST.get(
+                "arachniuser",
+            )
+            password = request.POST.get(
+                "arachnipass",
+            )
 
         setting_dat = SettingsDb(
             setting_id=setting_id,
@@ -341,7 +385,10 @@ class ArachniSettingUpdate(APIView):
                 setting_status=arachni_info
             )
 
-        return HttpResponseRedirect(reverse("archerysettings:settings"))
+        if request.path[: 4] == '/api':
+            return Response({"message": "Arachani scanner updated!!!"})
+        else:
+            return HttpResponseRedirect(reverse("archerysettings:settings"))
 
 
 def export(request):
@@ -365,18 +412,18 @@ def export(request):
         if report_type == "csv":
             response = HttpResponse(dataset.csv, content_type="text/csv")
             response["Content-Disposition"] = (
-                'attachment; filename="%s.csv"' % "arachni_results"
+                    'attachment; filename="%s.csv"' % "arachni_results"
             )
             return response
         if report_type == "json":
             response = HttpResponse(dataset.json, content_type="application/json")
             response["Content-Disposition"] = (
-                'attachment; filename="%s.json"' % "arachni_results"
+                    'attachment; filename="%s.json"' % "arachni_results"
             )
             return response
         if report_type == "yaml":
             response = HttpResponse(dataset.yaml, content_type="application/x-yaml")
             response["Content-Disposition"] = (
-                'attachment; filename="%s.yaml"' % "arachni_results"
+                    'attachment; filename="%s.yaml"' % "arachni_results"
             )
             return response
