@@ -25,6 +25,7 @@ from projects.views import ProjectList
 from authentication.views import MyTokenObtainPairView, Logout
 from rest_framework_simplejwt import views as jwt_views
 from webscanners.zapscanner.views import ZapScan, ZapSetting, ZapSettingUpdate
+from webscanners.burpscanner.views import BurpSetting, BurpScanLaunch
 
 
 
@@ -90,6 +91,10 @@ urlpatterns = [
     path("v1/zap-scan/", ZapScan.as_view()),
     path("v1/zap-settings/", ZapSetting.as_view()),
     path("v1/zap-settings-update/", ZapSettingUpdate.as_view()),
+
+    # Burp Scan
+    path("v1/burp-settings/", BurpSetting.as_view()),
+    path("v1/burp-scans/", BurpScanLaunch.as_view()),
 
 ]
 
