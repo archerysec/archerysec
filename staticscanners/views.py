@@ -27,49 +27,62 @@ from notifications.signals import notify
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
+from rest_framework import status
 
 from jiraticketing.models import jirasetting
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from user_management import permissions
+from rest_framework.response import Response
+from staticscanners.serializers import StaticScanDbSerializer, StaticScanResultsDbSerializer
 
 
 class SastScanList(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "staticscanners/scans/list_scans.html"
-
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
     def get(self, request):
         scan_list = StaticScansDb.objects.filter()
-
         all_notify = Notification.objects.unread()
 
-        return render(
-            request,
-            "staticscanners/scans/list_scans.html",
-            {"all_scans": scan_list, "message": all_notify},
-        )
+        if request.path[: 4] == '/api':
+            serialized_data = StaticScanDbSerializer(scan_list, many=True)
+            return Response(serialized_data.data)
+        else:
+            return render(
+                request,
+                "staticscanners/scans/list_scans.html",
+                {"all_scans": scan_list, "message": all_notify},
+            )
 
 
 class SastScanVulnInfo(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "staticscanners/scans/list_vuln_info.html"
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
+    def get(self, request, uu_id=None):
         jira_url = None
         jira = jirasetting.objects.all()
         for d in jira:
             jira_url = d.jira_server
-        scan_id = request.GET["scan_id"]
-        vuln_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+
         all_notify = Notification.objects.unread()
-        return render(
-            request,
-            "staticscanners/scans/list_vuln_info.html",
-            {"vuln_data": vuln_data, "jira_url": jira_url},
-        )
+        if uu_id == None:
+            scan_id = request.GET["scan_id"]
+            vuln_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+        else:
+            try:
+                vuln_data = StaticScanResultsDb.objects.filter(scan_id=uu_id)
+            except:
+                return Response(
+                    {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+                )
+        if request.path[: 4] == '/api':
+            serialized_data = StaticScanResultsDbSerializer(vuln_data, many=True)
+            return Response(serialized_data.data)
+        else:
+            return render(
+                request,
+                "staticscanners/scans/list_vuln_info.html",
+                {"vuln_data": vuln_data, "jira_url": jira_url},
+            )
 
 
 class SastScanVulnMark(APIView):

@@ -1,0 +1,684 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Archery_REST_API",
+		"_postman_id": "363ae70b-b199-c52a-1512-5d5bddc95cf7",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Web Scans",
+			"description": "",
+			"item": [
+				{
+					"name": "List Web Scans",
+					"request": {
+						"url": "{{url}}/api/v1/web-scans/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "List scans"
+					},
+					"response": []
+				},
+				{
+					"name": "Web Scan Details",
+					"request": {
+						"url": "{{url}}/api/v1/web-scans/cf7f5be0-5ad9-41c2-9691-6ea21df9d984/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "Web scan details"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Projects",
+			"description": "",
+			"item": [
+				{
+					"name": "Create Project",
+					"request": {
+						"url": "{{url}}/api/v1/project-create/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "Create new project"
+					},
+					"response": []
+				},
+				{
+					"name": "Project List",
+					"request": {
+						"url": "{{url}}/api/v1/project-list/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "Project List"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Network Scans",
+			"description": "",
+			"item": [
+				{
+					"name": "Network Scan List",
+					"request": {
+						"url": "{{url}}/api/v1/network-scans/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "Network scan list"
+					},
+					"response": []
+				},
+				{
+					"name": "Network Scan Details",
+					"request": {
+						"url": "{{url}}/api/v1/network-scans/159269f6-3f16-4482-b811-aef62623e203/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "Network Scan Details"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SAST Scans",
+			"description": "",
+			"item": [
+				{
+					"name": "SAST Scan List",
+					"request": {
+						"url": "{{url}}/api/v1/sast-scans/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "SAST Scan List"
+					},
+					"response": []
+				},
+				{
+					"name": "SAST Scan Details",
+					"request": {
+						"url": "{{url}}/api/v1/sast-scans/ec24b302-7f30-4dbd-a400-7dd2bb2e1817/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "SAST Scan Details"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"description": "",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"url": "{{url}}/api/v1/auth/login/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ZAP Scan",
+			"description": "",
+			"item": [
+				{
+					"name": "ZAP Scans",
+					"request": {
+						"url": "{{url}}/api/v1/zap-scan/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://archerysec.com, https://archerysec.com\",\n    \"project_id\": \"a0d3dfcf-e5df-4d05-a103-35363a3633ba\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "ZAP Settings",
+					"request": {
+						"url": "{{url}}/api/v1/zap-settings/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "ZAP Settings Update",
+					"request": {
+						"url": "{{url}}/api/v1/zap-settings-update/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"zap_api_key\": \"q6p34p59k6vm4uilm8m80ccmfg\",\n    \"zap_host\": \"127.0.0.1\",\n    \"zap_port\": \"8080\",\n    \"zap_enabled\": \"True\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Burp Scan",
+			"description": "",
+			"item": [
+				{
+					"name": "Burp Scans",
+					"request": {
+						"url": "{{url}}/api/v1/burp-scans/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://archerysec.com\",\n    \"project_id\": \"a0d3dfcf-e5df-4d05-a103-35363a3633ba\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Burp Settings",
+					"request": {
+						"url": "{{url}}/api/v1/burp-settings/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Burp Setting Update",
+					"request": {
+						"url": "{{url}}/api/v1/burp-settings/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"burp_api_key\": \"NPsE2002qX7aatYxg5hxYvTLtaEB7zX5\",\n    \"burp_host\": \"192.168.1.6\",\n    \"burp_port\": \"1337\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Arachni Scan",
+			"description": "",
+			"item": [
+				{
+					"name": "Arachni Scans",
+					"request": {
+						"url": "{{url}}/api/v1/arachni-scans/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://archerysec.com\",\n    \"project_id\": \"a0d3dfcf-e5df-4d05-a103-35363a3633ba\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Arachni Settings",
+					"request": {
+						"url": "{{url}}/api/v1/arachni-settings/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Arachni Setting Update",
+					"request": {
+						"url": "{{url}}/api/v1/arachni-setting-update/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"arachni_hosts\": \"192.0.0.1\",\n    \"arachni_ports\": \"8082\",\n    \"arachni_user\": \"admin\",\n    \"arachni_pass\": \"passwd\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Openvas Scan",
+			"description": "",
+			"item": [
+				{
+					"name": "Openvas Scans",
+					"request": {
+						"url": "{{url}}/api/v1/openvas-scans/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://archerysec.com\",\n    \"project_id\": \"a0d3dfcf-e5df-4d05-a103-35363a3633ba\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Openvas Settings",
+					"request": {
+						"url": "{{url}}/api/v1/openvas-settings/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Openvas Setting Update",
+					"request": {
+						"url": "{{url}}/api/v1/openvas-setting-update/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"arachni_hosts\": \"192.0.0.1\",\n    \"arachni_ports\": \"8082\",\n    \"arachni_user\": \"admin\",\n    \"arachni_pass\": \"passwd\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Report Upload",
+			"request": {
+				"url": "{{url}}/api/v1/uploadscan/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "p5EPkahds6XHDXW3IdhvqVVKveRTTI-1gOLvZ3SElLBEMymSRVQq1klenNcUgNjS",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{key}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "filename",
+							"value": "",
+							"description": "",
+							"type": "file"
+						},
+						{
+							"key": "project_id",
+							"value": "98516905-4db9-4a77-9f04-675ddc792158",
+							"description": ""
+						},
+						{
+							"key": "scanner",
+							"value": "zap_scan",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "scan_url",
+							"value": "http://demo.testifre.com",
+							"description": ""
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

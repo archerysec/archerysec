@@ -74,10 +74,7 @@ def project_edit(request):
 
 
 class ProjectList(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "dashboard/project.html"
-
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
     def get(self, request, uu_id=None):
         if uu_id == None:
@@ -91,7 +88,11 @@ class ProjectList(APIView):
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
-        return Response({"serializer": serialized_data, "projects": projects})
+
+        if request.path[: 4] == '/api':
+            return Response(serialized_data.data)
+        else:
+            return Response({"serializer": serialized_data, "projects": projects})
 
 
 class ProjectDelete(APIView):

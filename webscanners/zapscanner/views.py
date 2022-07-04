@@ -35,12 +35,14 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 from selenium import webdriver
 from notifications.signals import notify
+from rest_framework.response import Response
 
 from archerysettings.models import EmailDb, SettingsDb, ZapSettingsDb
 from projects.models import ProjectDb
 from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from user_management import permissions
 from webscanners.models import WebScansDb, cookie_db, excluded_db
+from webscanners.zapscanner.serializers import ZapScansSerializer, ZapSettingsSerializer
 
 scans_status = None
 to_mail = ""
@@ -280,16 +282,31 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
 
 
 class ZapScan(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "webscanners/zapscanner/zap_scan_list.html"
-
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
         scans_status = ""
+        scan_id = ""
+        project_uu_id = None
+        target_url = None
         user = request.user
-        target_url = request.POST.get("url")
-        project_uu_id = request.POST.get("project_id")
+
+        if request.path[: 4] == '/api':
+            _url = None
+            _project_id = None
+
+            serializer = ZapScansSerializer(data=request.data)
+            if serializer.is_valid():
+                target_url = request.data.get(
+                    "url",
+                )
+
+                project_uu_id = request.data.get(
+                    "project_id",
+                )
+        else:
+            target_url = request.POST.get("url")
+            project_uu_id = request.POST.get("project_id")
         project_id = (
             ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
         )
@@ -312,15 +329,17 @@ class ZapScan(APIView):
         if scans_status == "100":
             scans_status = "0"
         else:
+            if request.path[: 4] == '/api':
+                return Response({"scan_id": scan_id})
             return HttpResponse(status=200)
 
-        return render(request, "webscanners/zapscanner/zap_scan_list.html")
+        if request.path[: 4] == '/api':
+            return Response({"scan_id": scan_id})
+        else:
+            return render(request, "webscanners/zapscanner/zap_scan_list.html")
 
 
 class ZapSetting(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "webscanners/zapscanner/zap_settings_form.html"
-
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
@@ -341,28 +360,35 @@ class ZapSetting(APIView):
         else:
             zap_enabled = "False"
 
-        return render(
-            request,
-            "webscanners/zapscanner/zap_settings_form.html",
-            {
-                "zap_apikey": zap_api_key,
-                "zap_host": zap_hosts,
-                "zap_port": zap_ports,
-                "zap_enabled": zap_enabled,
-            },
-        )
+        if request.path[: 4] == '/api':
+            return Response({"zap_api_key": zap_api_key,
+                             "zap_hosts": zap_hosts,
+                             "zap_ports": zap_ports,
+                             "zap_enabled": zap_enabled,
+                             })
+        else:
+            return render(
+                request,
+                "webscanners/zapscanner/zap_settings_form.html",
+                {
+                    "zap_apikey": zap_api_key,
+                    "zap_host": zap_hosts,
+                    "zap_port": zap_ports,
+                    "zap_enabled": zap_enabled,
+                },
+            )
 
 
 class ZapSettingUpdate(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "webscanners/zapscanner/zap_settings_form.html"
-
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
         return render(request, "webscanners/zapscanner/zap_settings_form.html")
 
     def post(self, request):
+        zaphost = 'NA'
+        port = 'NA'
+        apikey = 'NA'
 
         all_zap = ZapSettingsDb.objects.filter()
         all_zap.delete()
@@ -375,15 +401,31 @@ class ZapSettingUpdate(APIView):
         else:
             zap_enabled = False
 
-        apikey = request.POST.get(
-            "apikey",
-        )
-        zaphost = request.POST.get(
-            "zappath",
-        )
-        port = request.POST.get(
-            "port",
-        )
+        if request.path[: 4] == '/api':
+            serializer = ZapSettingsSerializer(data=request.data)
+            if serializer.is_valid():
+                apikey = request.data.get(
+                    "zap_api_key",
+                )
+                zaphost = request.data.get(
+                    "zap_host",
+                )
+                port = request.data.get(
+                    "zap_port",
+                )
+                zap_enabled = request.data.get(
+                    "zap_enabled",
+                )
+        else:
+            apikey = request.POST.get(
+                "apikey",
+            )
+            zaphost = request.POST.get(
+                "zappath",
+            )
+            port = request.POST.get(
+                "port",
+            )
 
         setting_id = uuid.uuid4()
 
@@ -402,6 +444,10 @@ class ZapSettingUpdate(APIView):
         )
         save_data.save()
 
+        if request.path[: 4] == '/api':
+            if zap_enabled is False:
+                return Response ({"message": "OWASP ZAP scanner updated!!!"})
+
         zap_enabled = False
         random_port = "8091"
         target_url = "https://archerysec.com"
@@ -412,6 +458,8 @@ class ZapSettingUpdate(APIView):
             zap_enabled = zap.enabled
 
         if zap_enabled is False:
+            if request.path[: 4] == '/api':
+                return Response({"message": "OWASP ZAP Scanner Disabled"})
             zap_info = "Disabled"
             try:
                 random_port = zap_plugin.zap_local()
@@ -441,10 +489,14 @@ class ZapSettingUpdate(APIView):
                 SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=zap_info
                 )
+                if request.path[: 4] == '/api':
+                    return Response({"message": "OWASP ZAP scanner updated!!!"})
             except:
                 zap_info = False
                 SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=zap_info
                 )
+                if request.path[: 4] == '/api':
+                    return Response({"message": "Not updated, Something Wrong !!!"})
 
         return HttpResponseRedirect(reverse("archerysettings:settings"))

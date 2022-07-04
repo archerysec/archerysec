@@ -18,6 +18,18 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework.documentation import include_docs_urls
 from rest_framework.urlpatterns import format_suffix_patterns
+from webscanners.views import WebScanList, WebScanVulnInfo
+from networkscanners.views import NetworkScanList, NetworkScanVulnInfo
+from staticscanners.views import SastScanList, SastScanVulnInfo
+from projects.views import ProjectList
+from authentication.views import MyTokenObtainPairView, Logout
+from rest_framework_simplejwt import views as jwt_views
+from webscanners.zapscanner.views import ZapScan, ZapSetting, ZapSettingUpdate
+from webscanners.burpscanner.views import BurpSetting, BurpScanLaunch
+from webscanners.arachniscanner.views import ArachniScan, ArachniSetting, ArachniSettingUpdate
+from networkscanners.views import OpenvasLaunchScan, OpenvasDetails, OpenvasSetting
+
+
 
 from archeryapi import views
 
@@ -48,11 +60,54 @@ urlpatterns = [
             public=True,
         ),
     ),
+
+    # Authentication API
+    path("v1/auth/login/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("v1/auth/refresh-token/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
+    path("v1/auth/logout/", Logout.as_view()),
+
     path("v1/uploadscan/", views.UploadScanResult.as_view()),
     path("access-key/", views.APIKey.as_view(), name="access-key"),
     path("access-key-delete/", views.DeleteAPIKey.as_view(), name="access-key-delete"),
+
+    # Project API
+    path("v1/project-list/", ProjectList.as_view()),
     path("v1/project-create/", views.CreateProject.as_view()),
+
+    # Web scans API endpoints
+    path("v1/web-scans/", WebScanList.as_view()),
+    path("v1/web-scans/<str:uu_id>/", WebScanVulnInfo.as_view()),
+
+    # Network scan API endpoints
+    path("v1/network-scans/", NetworkScanList.as_view()),
+    path("v1/network-scans/<str:uu_id>/", NetworkScanVulnInfo.as_view()),
+
+    # Static scan API endpoints
+    path("v1/sast-scans/", SastScanList.as_view()),
+    path("v1/sast-scans/<str:uu_id>/", SastScanVulnInfo.as_view()),
+
+    # CI/CD policy API endpoints
     path("v1/get-cicd-policies/<str:uu_id>/", views.GetCicdPolicies.as_view()),
+
+    # ZAP Scan
+    path("v1/zap-scan/", ZapScan.as_view()),
+    path("v1/zap-settings/", ZapSetting.as_view()),
+    path("v1/zap-settings-update/", ZapSettingUpdate.as_view()),
+
+    # Burp Scan
+    path("v1/burp-settings/", BurpSetting.as_view()),
+    path("v1/burp-scans/", BurpScanLaunch.as_view()),
+
+    # Arachni Scan
+    path("v1/arachni-scans/", ArachniScan.as_view()),
+    path("v1/arachni-settings/", ArachniSetting.as_view()),
+    path("v1/arachni-setting-update/", ArachniSettingUpdate.as_view()),
+
+    # Openvas Scan
+    path("v1/openvas-scans/", OpenvasLaunchScan.as_view()),
+    path("v1/openvas-settings/", OpenvasSetting.as_view()),
+    path("v1/openvas-setting-update/", OpenvasDetails.as_view()),
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

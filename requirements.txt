@@ -103,4 +103,4 @@ xhtml2pdf==0.2.5
 xlrd==2.0.1
 xlwt==1.3.0
 djangorestframework==3.12.4
-djangorestframework-simplejwt==4.0.0
+djangorestframework-simplejwt==5.2.0
