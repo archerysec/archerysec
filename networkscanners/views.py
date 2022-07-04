@@ -53,6 +53,7 @@ from scanners.scanner_plugin.network_scanner.openvas_plugin import (
 from user_management import permissions
 from rest_framework import status
 from networkscanners.serializers import NetworkScanDbSerializer, NetworkScanResultsDbSerializer
+from networkscanners.serializers import OpenvasSettingsSerializer, OpenvasScansSerializer
 
 api_data = os.getcwd() + "/" + "apidata.json"
 
@@ -164,8 +165,6 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
 
 
 class OpenvasLaunchScan(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "networkscanners/openvas_vuln_list.html"
 
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
@@ -176,8 +175,22 @@ class OpenvasLaunchScan(APIView):
 
     def post(self, request):
         user = request.user
-        scan_ip = request.POST.get("ip")
-        project_uu_id = request.POST.get("project_id")
+        if request.path[: 4] == '/api':
+
+            serializer = OpenvasScansSerializer(data=request.data)
+            if serializer.is_valid():
+                scan_ip = request.data.get(
+                    "scan_ip",
+                )
+
+                project_uu_id = request.data.get(
+                    "project_id",
+                )
+            else:
+                return Response({"message": "Invalid data"})
+        else:
+            scan_ip = request.POST.get("ip")
+            project_uu_id = request.POST.get("project_id")
         project_id = (
             ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
         )
@@ -197,7 +210,10 @@ class OpenvasLaunchScan(APIView):
             thread.daemon = True
             thread.start()
 
-        return HttpResponseRedirect(reverse("networkscanners:list_scans"))
+        if request.path[: 4] == '/api':
+            return Response({"message": "Openvas scan launched"})
+        else:
+            return HttpResponseRedirect(reverse("networkscanners:list_scans"))
 
 
 class NetworkScan(APIView):
@@ -224,9 +240,6 @@ class NetworkScan(APIView):
 
 
 class OpenvasDetails(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "networkscanners/setting_form.html"
-
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
@@ -240,14 +253,37 @@ class OpenvasDetails(APIView):
         save_openvas_setting = save_settings.SaveSettings(
             api_data,
         )
+
         if request.POST.get("openvas_enabled") == "on":
             openvas_enabled = True
         else:
             openvas_enabled = False
-        openvas_host = request.POST.get("openvas_host")
-        openvas_port = request.POST.get("openvas_port")
-        openvas_user = request.POST.get("openvas_user")
-        openvas_password = request.POST.get("openvas_password")
+
+        if request.path[: 4] == '/api':
+            serializer = OpenvasSettingsSerializer(data=request.data)
+            if serializer.is_valid():
+                openvas_host = request.data.get(
+                    "openvas_host",
+                )
+                openvas_port = request.data.get(
+                    "openvas_port",
+                )
+                openvas_user = request.data.get(
+                    "openvas_user",
+                )
+                openvas_password = request.data.get(
+                    "openvas_password",
+                )
+                openvas_enabled = request.data.get(
+                    "openvas_enabled",
+                )
+            else:
+                return Response({"message": "Invalid Data"})
+        else:
+            openvas_host = request.POST.get("openvas_host")
+            openvas_port = request.POST.get("openvas_port")
+            openvas_user = request.POST.get("openvas_user")
+            openvas_password = request.POST.get("openvas_password")
 
         save_openvas_setting.openvas_settings(
             openvas_host=openvas_host,
@@ -281,14 +317,17 @@ class OpenvasDetails(APIView):
             SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=openvas_info
             )
+            if request.path[: 4] == '/api':
+                return Response({"message": "Openvas Not Working"})
 
-        return HttpResponseRedirect(reverse("archerysettings:settings"))
+        if request.path[: 4] == '/api':
+            return Response({"message": "Openvas Scanner setting updated !!!",
+                             })
+        else:
+            return HttpResponseRedirect(reverse("archerysettings:settings"))
 
 
 class OpenvasSetting(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "networkscanners/setting_form.html"
-
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
@@ -304,17 +343,25 @@ class OpenvasSetting(APIView):
             openvas_enabled = "False"
         openvas_user = load_openvas_setting.openvas_username()
         openvas_password = load_openvas_setting.openvas_pass()
-        return render(
-            request,
-            "networkscanners/setting_form.html",
-            {
-                "openvas_host": openvas_host,
-                "openvas_port": openvas_port,
-                "openvas_enabled": openvas_enabled,
-                "openvas_user": openvas_user,
-                "openvas_password": openvas_password,
-            },
-        )
+        if request.path[: 4] == '/api':
+            return Response({"openvas_host": openvas_host,
+                             "openvas_port": openvas_port,
+                             "openvas_enabled": openvas_enabled,
+                             "openvas_user": openvas_user,
+                             "openvas_password": openvas_password,
+                             })
+        else:
+            return render(
+                request,
+                "networkscanners/setting_form.html",
+                {
+                    "openvas_host": openvas_host,
+                    "openvas_port": openvas_port,
+                    "openvas_enabled": openvas_enabled,
+                    "openvas_user": openvas_user,
+                    "openvas_password": openvas_password,
+                },
+            )
 
 
 @background(schedule=60)

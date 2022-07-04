@@ -27,6 +27,7 @@ from rest_framework_simplejwt import views as jwt_views
 from webscanners.zapscanner.views import ZapScan, ZapSetting, ZapSettingUpdate
 from webscanners.burpscanner.views import BurpSetting, BurpScanLaunch
 from webscanners.arachniscanner.views import ArachniScan, ArachniSetting, ArachniSettingUpdate
+from networkscanners.views import OpenvasLaunchScan, OpenvasDetails, OpenvasSetting
 
 
 
@@ -101,6 +102,11 @@ urlpatterns = [
     path("v1/arachni-scans/", ArachniScan.as_view()),
     path("v1/arachni-settings/", ArachniSetting.as_view()),
     path("v1/arachni-setting-update/", ArachniSettingUpdate.as_view()),
+
+    # Openvas Scan
+    path("v1/openvas-scans/", OpenvasLaunchScan.as_view()),
+    path("v1/openvas-settings/", OpenvasSetting.as_view()),
+    path("v1/openvas-setting-update/", OpenvasDetails.as_view()),
 
 ]
 

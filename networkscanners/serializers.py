@@ -57,3 +57,16 @@ class NetworkScanResultsDbSerializer(serializers.Serializer):
     vuln_status = serializers.CharField(read_only=True)
     false_positive_hash = serializers.CharField(read_only=True)
     false_positive = serializers.CharField(read_only=True)
+
+
+class OpenvasScansSerializer(serializers.Serializer):
+    scan_ip = serializers.IPAddressField(read_only=True)
+    project_id = serializers.UUIDField(required=True, help_text=("Provide ScanId"))
+
+
+class OpenvasSettingsSerializer(serializers.Serializer):
+    openvas_host = serializers.CharField()
+    openvas_port = serializers.IntegerField()
+    openvas_user = serializers.CharField()
+    openvas_password = serializers.CharField()
+    openvas_enabled = serializers.BooleanField()
