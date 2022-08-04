@@ -18,7 +18,7 @@ cryptography==3.4.7
 cssselect2==0.4.1
 defusedxml==0.7.1
 diff-match-patch==20200713
-Django==3.2.13
+Django==3.2.15
 django-appconf==1.0.4
 django-background-tasks==1.2.5
 django-compat==1.0.15
