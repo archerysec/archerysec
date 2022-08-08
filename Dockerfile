@@ -18,7 +18,7 @@ RUN \
     apt-get install --quiet --yes --fix-missing \
     make \
     default-jre \
-    postgresql-client-10 \
+    postgresql-10 \
     sslscan \
     nikto \
     nmap \
