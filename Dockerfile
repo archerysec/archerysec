@@ -1,5 +1,5 @@
 #Ubuntu base OS
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 # Labels and Credits
 LABEL \
     name="ArcherySec" \
@@ -26,8 +26,8 @@ RUN \
     curl \
     unzip \
     git \
-    python3-setuptools \
-    python3-wheel \
+    python3.9 \
+    python3-dev \
     python3-pip \
     virtualenv \
     gunicorn \
