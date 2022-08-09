@@ -18,7 +18,6 @@ RUN \
     apt-get install --quiet --yes --fix-missing \
     make \
     default-jre \
-    postgresql-10 \
     sslscan \
     nikto \
     nmap \
@@ -32,10 +31,9 @@ RUN \
     virtualenv \
     gunicorn \
     postgresql \
-    python-psycopg2 \
+    python3-psycopg2 \
     postgresql-server-dev-all \
     libpq-dev \
-    python3-dev \
     && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get autoremove --purge -y && \
