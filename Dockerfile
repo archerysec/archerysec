@@ -18,9 +18,6 @@ RUN \
     apt-get install --quiet --yes --fix-missing \
     make \
     default-jre \
-    sslscan \
-    nikto \
-    nmap \
     wget \
     curl \
     unzip \
