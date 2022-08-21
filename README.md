@@ -65,7 +65,7 @@ Archery is an opensource vulnerability assessment and management tool which help
 
 ## Requirements
 
-* Python 3.9+ - [Python 3.9 Download](https://www.python.org/downloads/)
+* Python 3.9 - [Python 3.9 Download](https://www.python.org/downloads/)
 
 ### OpenVAS
 
