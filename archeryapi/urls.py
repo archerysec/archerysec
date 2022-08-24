@@ -22,7 +22,7 @@ from webscanners.views import WebScanList, WebScanVulnInfo
 from networkscanners.views import NetworkScanList, NetworkScanVulnInfo
 from staticscanners.views import SastScanList, SastScanVulnInfo
 from projects.views import ProjectList
-from authentication.views import MyTokenObtainPairView, Logout
+from authentication.views import MyTokenObtainPairView, Logout, UserSettings
 from rest_framework_simplejwt import views as jwt_views
 from webscanners.zapscanner.views import ZapScan, ZapSetting, ZapSettingUpdate
 from webscanners.burpscanner.views import BurpSetting, BurpScanLaunch
@@ -62,9 +62,11 @@ urlpatterns = [
     ),
 
     # Authentication API
+    path("v1/", views.ApiTest.as_view(), name="api_test"),
     path("v1/auth/login/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("v1/auth/refresh-token/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
     path("v1/auth/logout/", Logout.as_view()),
+    path("v1/auth/user-settings/", UserSettings.as_view()),
 
     path("v1/uploadscan/", views.UploadScanResult.as_view()),
     path("access-key/", views.APIKey.as_view(), name="access-key"),

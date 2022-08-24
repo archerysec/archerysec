@@ -857,3 +857,12 @@ class DeleteAPIKey(APIView):
             item = OrgAPIKey.objects.filter(uu_id=uu_id)
             item.delete()
         return HttpResponseRedirect("/api/access-key/")
+
+
+class ApiTest(APIView):
+    permission_classes = ()
+
+    def get(self, request):
+        return Response(
+            {"message": "ArcherySec API working."}
+        )

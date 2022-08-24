@@ -263,11 +263,12 @@ class Logout(APIView):
         user_id = request.user.id
         token = request.data.get("refrest-token")
         login_id_token = request.headers["Authorization"].split("Bearer ")[1]
-        login_id = jwt.decode(login_id_token, verify=False)["loginId"]
+        login_id = jwt.decode(login_id_token, options={"verify_signature": False})["loginId"]
 
         # Blacklisting token
         blackListToken = RefreshToken(token)
-        blackListToken.blacklist()
+        print(blackListToken)
+        print(blackListToken.blacklist())
 
         # Getting Client IP
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
