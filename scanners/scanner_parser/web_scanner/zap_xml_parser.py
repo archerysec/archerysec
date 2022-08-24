@@ -95,7 +95,11 @@ def xml_parser(root, project_id, scan_id):
                 desc = vuln.text
                 if desc is None:
                     desc = "NA"
-            if riskcode == "3":
+
+            if riskcode == "4":
+                vul_col = "critical"
+                risk = "Critical"
+            elif riskcode == "3":
                 vul_col = "danger"
                 risk = "High"
             elif riskcode == "2":
@@ -167,6 +171,7 @@ def xml_parser(root, project_id, scan_id):
         scan_id=scan_id, vuln_duplicate="Yes"
     )
 
+    total_critical = len(zap_all_vul.filter(severity="Critical"))
     total_high = len(zap_all_vul.filter(severity="High"))
     total_medium = len(zap_all_vul.filter(severity="Medium"))
     total_low = len(zap_all_vul.filter(severity="Low"))
@@ -177,6 +182,7 @@ def xml_parser(root, project_id, scan_id):
     WebScansDb.objects.filter(scan_id=scan_id).update(
         total_vul=total_vul,
         date_time=date_time,
+        critical_vul=total_critical,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,

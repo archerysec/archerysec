@@ -124,8 +124,6 @@ def twistlock_report_json(data, project_id, scan_id):
 
         try:
             severity = vuln_data["severity"]
-            if severity == "critical":
-                severity = "High"
         except Exception as e:
             severity = "Not Found"
 
@@ -144,17 +142,20 @@ def twistlock_report_json(data, project_id, scan_id):
         except Exception as e:
             link = "Not Found"
 
-        if severity == "Critical":
+        if severity == "critical":
+            severity = "Critical"
+            vul_col = "critical"
+
+        if severity == "high":
             severity = "High"
             vul_col = "danger"
 
-        if severity == "High":
-            vul_col = "danger"
-
-        elif severity == "Medium":
+        elif severity == "medium":
+            severity = "Medium"
             vul_col = "warning"
 
-        elif severity == "Low":
+        elif severity == "low":
+            severity = "Low"
             vul_col = "info"
 
         elif severity == "Unknown":
@@ -246,6 +247,7 @@ def twistlock_report_json(data, project_id, scan_id):
     )
 
     total_vul = len(all_findbugs_data)
+    total_critical = len(all_findbugs_data.filter(severity="Critical"))
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
     total_low = len(all_findbugs_data.filter(severity="Low"))
@@ -254,6 +256,7 @@ def twistlock_report_json(data, project_id, scan_id):
     StaticScansDb.objects.filter(scan_id=scan_id).update(
         date_time=date_time,
         total_vul=total_vul,
+        critical_vul=total_critical,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,

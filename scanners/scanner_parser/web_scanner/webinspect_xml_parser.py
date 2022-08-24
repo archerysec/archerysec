@@ -80,8 +80,8 @@ def xml_parser(root, project_id, scan_id):
                 vuln_id = uuid.uuid4()
 
             if Severity == "4":
-                Severity = "High"
-                vul_col = "danger"
+                Severity = "Critical"
+                vul_col = "critical"
 
             elif Severity == "3":
                 Severity = "High"
@@ -183,6 +183,7 @@ def xml_parser(root, project_id, scan_id):
             scan_id=scan_id, vuln_duplicate="Yes"
         )
 
+        total_critical = len(webinspect_all_vul.filter(severity="Critical"))
         total_high = len(webinspect_all_vul.filter(severity="High"))
         total_medium = len(webinspect_all_vul.filter(severity="Medium"))
         total_low = len(webinspect_all_vul.filter(severity="Low"))
@@ -194,6 +195,7 @@ def xml_parser(root, project_id, scan_id):
             total_vul=total_vul,
             scan_url=target,
             date_time=date_time,
+            critical_vul=total_critical,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,

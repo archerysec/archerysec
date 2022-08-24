@@ -229,6 +229,7 @@ class FindsecbugsParser(object):
             )
 
             total_vul = len(all_findbugs_data)
+            total_critical = len(all_findbugs_data.filter(severity="Critical"))
             total_high = len(all_findbugs_data.filter(severity="High"))
             total_medium = len(all_findbugs_data.filter(severity="Medium"))
             total_low = len(all_findbugs_data.filter(severity="Low"))
@@ -237,6 +238,7 @@ class FindsecbugsParser(object):
             StaticScansDb.objects.filter(scan_id=self.scan_id).update(
                 total_vul=total_vul,
                 date_time=date_time,
+                critical_vul=total_critical,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low,

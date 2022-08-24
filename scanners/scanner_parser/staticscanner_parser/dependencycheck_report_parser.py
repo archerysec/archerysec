@@ -83,7 +83,11 @@ def xml_parser(data, project_id, scan_id):
                                         cwe = vuln_dat.text
                                     if vuln_dat.tag == "{%s}severity" % pt:
                                         severity_dat = vuln_dat.text
-                                        if severity_dat == "HIGH":
+                                        if severity_dat == "CRITICAL":
+                                            severity = "Critical"
+                                        elif severity_dat == "high":
+                                            severity = "High"
+                                        elif severity_dat == "HIGH":
                                             severity = "High"
                                         elif severity_dat == "MEDIUM":
                                             severity = "Medium"
@@ -105,6 +109,19 @@ def xml_parser(data, project_id, scan_id):
                                 if dc22.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = dc22.text
 
+                                if dc22.tag == "{%s}severity" % pt:
+                                    severity_dat = dc22.text
+                                    if severity_dat == "CRITICAL":
+                                        severity = "Critical"
+                                    elif severity_dat == "high":
+                                        severity = "High"
+                                    elif severity_dat == "HIGH":
+                                        severity = "High"
+                                    elif severity_dat == "MEDIUM":
+                                        severity = "Medium"
+                                    elif severity_dat == "LOW":
+                                        severity = "Low"
+
                                 for vuln_dat in dc22:
                                     for d in vuln_dat:
                                         if d.tag == "{%s}url" % pt:
@@ -112,14 +129,8 @@ def xml_parser(data, project_id, scan_id):
 
                                     if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == "{%s}severity" % pt:
-                                        severity_dat = vuln_dat.text
-                                        if severity_dat == "HIGH":
-                                            severity = "High"
-                                        elif severity_dat == "MEDIUM":
-                                            severity = "Medium"
-                                        elif severity_dat == "LOW":
-                                            severity = "Low"
+
+
                         elif (
                             pt
                             == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.3.xsd"
@@ -135,6 +146,19 @@ def xml_parser(data, project_id, scan_id):
                                 if dc22.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = dc22.text
 
+                                if dc22.tag == "{%s}severity" % pt:
+                                    severity_dat = dc22.text
+                                    if severity_dat == "CRITICAL":
+                                        severity = "Critical"
+                                    elif severity_dat == "high":
+                                        severity = "High"
+                                    elif severity_dat == "HIGH":
+                                        severity = "High"
+                                    elif severity_dat == "MEDIUM":
+                                        severity = "Medium"
+                                    elif severity_dat == "LOW":
+                                        severity = "Low"
+
                                 for vuln_dat in dc22:
                                     for d in vuln_dat:
                                         if d.tag == "{%s}url" % pt:
@@ -142,14 +166,7 @@ def xml_parser(data, project_id, scan_id):
 
                                     if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == "{%s}severity" % pt:
-                                        severity_dat = vuln_dat.text
-                                        if severity_dat == "HIGH":
-                                            severity = "High"
-                                        elif severity_dat == "MEDIUM":
-                                            severity = "Medium"
-                                        elif severity_dat == "LOW":
-                                            severity = "Low"
+
                         elif (
                             pt
                             == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.4.xsd"
@@ -165,6 +182,19 @@ def xml_parser(data, project_id, scan_id):
                                 if dc22.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = dc22.text
 
+                                if dc22.tag == "{%s}severity" % pt:
+                                    severity_dat = dc22.text
+                                    if severity_dat == "CRITICAL":
+                                        severity = "Critical"
+                                    elif severity_dat == "high":
+                                        severity = "High"
+                                    elif severity_dat == "HIGH":
+                                        severity = "High"
+                                    elif severity_dat == "MEDIUM":
+                                        severity = "Medium"
+                                    elif severity_dat == "LOW":
+                                        severity = "Low"
+
                                 for vuln_dat in dc22:
                                     for d in vuln_dat:
                                         if d.tag == "{%s}url" % pt:
@@ -172,14 +202,7 @@ def xml_parser(data, project_id, scan_id):
 
                                     if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == "{%s}severity" % pt:
-                                        severity_dat = vuln_dat.text
-                                        if severity_dat == "HIGH":
-                                            severity = "High"
-                                        elif severity_dat == "MEDIUM":
-                                            severity = "Medium"
-                                        elif severity_dat == "LOW":
-                                            severity = "Low"
+
                         elif (
                             pt
                             == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd"
@@ -195,6 +218,19 @@ def xml_parser(data, project_id, scan_id):
                                 if dc22.tag == "{%s}vulnerableSoftware" % pt:
                                     vulnerableSoftware = dc22.text
 
+                                if dc22.tag == "{%s}severity" % pt:
+                                    severity_dat = dc22.text
+                                    if severity_dat == "CRITICAL":
+                                        severity = "Critical"
+                                    elif severity_dat == "high":
+                                        severity = "High"
+                                    elif severity_dat == "HIGH":
+                                        severity = "High"
+                                    elif severity_dat == "MEDIUM":
+                                        severity = "Medium"
+                                    elif severity_dat == "LOW":
+                                        severity = "Low"
+
                                 for vuln_dat in dc22:
                                     for d in vuln_dat:
                                         if d.tag == "{%s}url" % pt:
@@ -202,14 +238,6 @@ def xml_parser(data, project_id, scan_id):
 
                                     if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-                                    if vuln_dat.tag == "{%s}severity" % pt:
-                                        severity_dat = vuln_dat.text
-                                        if severity_dat == "HIGH":
-                                            severity = "High"
-                                        elif severity_dat == "MEDIUM":
-                                            severity = "Medium"
-                                        elif severity_dat == "LOW":
-                                            severity = "Low"
 
                         else:
                             for vulner in vuln:
@@ -229,7 +257,10 @@ def xml_parser(data, project_id, scan_id):
                         date_time = datetime.now()
                         vul_id = uuid.uuid4()
 
-                        if severity == "High":
+                        if severity == "Critical":
+                            vul_col = "critical"
+
+                        elif severity == "High":
                             vul_col = "danger"
 
                         elif severity == "Medium":
@@ -263,7 +294,7 @@ def xml_parser(data, project_id, scan_id):
 
                             if cwe == "Na":
                                 cwe = name
-
+                            # print(severity)
                             save_all = StaticScanResultsDb(
                                 vuln_id=vul_id,
                                 scan_id=scan_id,
@@ -323,6 +354,7 @@ def xml_parser(data, project_id, scan_id):
         )
 
         total_vul = len(all_dependency_data)
+        total_critical = len(all_dependency_data.filter(severity="Critical"))
         total_high = len(all_dependency_data.filter(severity="High"))
         total_medium = len(all_dependency_data.filter(severity="Medium"))
         total_low = len(all_dependency_data.filter(severity="Low"))
@@ -330,6 +362,7 @@ def xml_parser(data, project_id, scan_id):
 
         StaticScansDb.objects.filter(scan_id=scan_id).update(
             date_time=date_time,
+            critical_vul=total_critical,
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,

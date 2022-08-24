@@ -87,7 +87,10 @@ def retirejs_report_json(data, project_id, scan_id):
         vul_id = uuid.uuid4()
 
         global vul_col
-        if severity == "HIGH":
+        if severity == "CRITICAL":
+            vul_col = "critical"
+
+        elif severity == "HIGH":
             vul_col = "danger"
 
         elif severity == "MEDIUM":

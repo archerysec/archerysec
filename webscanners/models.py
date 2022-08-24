@@ -108,6 +108,7 @@ class web_scan_db(models.Model):
         "projects.ProjectDb", on_delete=models.CASCADE, null=True
     )
     total_vul = models.IntegerField(blank=True)
+    critical_vul = models.IntegerField(blank=True, null=True)
     high_vul = models.IntegerField(blank=True)
     medium_vul = models.IntegerField(blank=True)
     low_vul = models.IntegerField(blank=True)

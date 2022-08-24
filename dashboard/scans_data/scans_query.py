@@ -49,6 +49,18 @@ def all_manual_scan(project_id, query):
             else:
                 all_manual_scan = value
 
+    elif query == "critical":
+
+        all_manual_scan_critical = PentestScanDb.objects.filter(
+            project__uu_id=project_id
+        ).aggregate(Sum("critical_vul"))
+
+        for key, value in all_manual_scan_critical.items():
+            if value is None:
+                all_manual_scan = "0"
+            else:
+                all_manual_scan = value
+
     elif query == "high":
 
         all_manual_scan_high = PentestScanDb.objects.filter(
@@ -99,6 +111,18 @@ def all_pentest_web(project_id, query):
             else:
                 all_pentest_web = value
 
+    elif query == "critical":
+
+        all_pentest_web_critical = PentestScanDb.objects.filter(
+            pentest_type="web", project__uu_id=project_id
+        ).aggregate(Sum("critical_vul"))
+
+        for key, value in all_pentest_web_critical.items():
+            if value is None:
+                all_pentest_web = "0"
+            else:
+                all_pentest_web = value
+
     elif query == "high":
 
         all_pentest_web_high = PentestScanDb.objects.filter(
@@ -144,6 +168,18 @@ def all_pentest_net(project_id, query):
         ).aggregate(Sum("total_vul"))
 
         for key, value in all_pentest_net_scan.items():
+            if value is None:
+                all_pentest_net = "0"
+            else:
+                all_pentest_net = value
+
+    elif query == "critical":
+
+        all_pentest_net_critical = PentestScanDb.objects.filter(
+            pentest_type="network", project__uu_id=project_id
+        ).aggregate(Sum("critical_vul"))
+
+        for key, value in all_pentest_net_critical.items():
             if value is None:
                 all_pentest_net = "0"
             else:
@@ -219,6 +255,41 @@ def all_vuln(project_id, query):
             )
         except Exception as e:
             #
+            all_net_scan = 0
+
+        all_vuln = (
+            int(all_sast_scan)
+            + int(all_dast_scan)
+            + int(all_net_scan)
+            + int(all_manual_scan(project_id=project_id, query=query))
+        )
+    elif query == "critical":
+        try:
+            all_sast_scan = int(
+                StaticScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("critical_vul")
+                )["critical_vul__sum"]
+            )
+        except Exception as e:
+            #
+            all_sast_scan = 0
+
+        try:
+            all_dast_scan = int(
+                WebScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("critical_vul")
+                )["critical_vul__sum"]
+            )
+        except Exception as e:
+            all_dast_scan = 0
+
+        try:
+            all_net_scan = int(
+                NetworkScanDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("critical_vul")
+                )["critical_vul__sum"]
+            )
+        except Exception as e:
             all_net_scan = 0
 
         all_vuln = (
@@ -357,6 +428,17 @@ def all_web(project_id, query):
             #
             all_web = 0
 
+    elif query == "critical":
+        try:
+            all_web = int(
+                WebScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("critical_vul")
+                )["critical_vul__sum"]
+            )
+        except Exception as e:
+            #
+            all_web = 0
+
     elif query == "high":
         try:
             all_web = int(
@@ -402,6 +484,17 @@ def all_net(project_id, query):
                 NetworkScanDb.objects.filter(project__uu_id=project_id).aggregate(
                     Sum("total_vul")
                 )["total_vul__sum"]
+            )
+        except Exception as e:
+            #
+            all_net = 0
+
+    elif query == "critical":
+        try:
+            all_net = int(
+                NetworkScanDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("critical_vul")
+                )["critical_vul__sum"]
             )
         except Exception as e:
             #
@@ -472,6 +565,17 @@ def all_static(project_id, query):
                 StaticScansDb.objects.filter(project__uu_id=project_id).aggregate(
                     Sum("total_vul")
                 )["total_vul__sum"]
+            )
+        except Exception as e:
+
+            all_static = 0
+
+    elif query == "critical":
+        try:
+            all_static = int(
+                StaticScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("critical_vul")
+                )["critical_vul__sum"]
             )
         except Exception as e:
 
@@ -602,7 +706,30 @@ def all_dockle(project_id, query):
 
 def all_vuln_count(project_id, query):
     all_data = 0
-    if query == "High":
+    if query == "Critical":
+        web_all_critical = WebScanResultsDb.objects.filter(
+            project__uu_id=project_id,
+            severity="Critical",
+        )
+
+        sast_all_critical = StaticScanResultsDb.objects.filter(
+            project__uu_id=project_id, severity="Critical"
+        )
+
+        net_all_critical = NetworkScanResultsDb.objects.filter(
+            severity="Critical", project__uu_id=project_id
+        )
+
+        pentest_all_critical = PentestScanResultsDb.objects.filter(
+            severity="Critical", project__uu_id=project_id
+        )
+        all_data = chain(
+            web_all_critical,
+            sast_all_critical,
+            net_all_critical,
+            pentest_all_critical,
+        )
+    elif query == "High":
         web_all_high = WebScanResultsDb.objects.filter(
             project__uu_id=project_id,
             severity="High",

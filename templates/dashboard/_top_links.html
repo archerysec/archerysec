@@ -2,6 +2,15 @@
     <!-- Column -->
     <div class="col-md-6 col-lg-2 col-xlg-3">
         <div class="card card-hover">
+            <div class="box bg-critical text-center">
+                <h1 class="font-light text-white">{{all_critical}}</h1>
+                <a href="{% url 'dashboard:all_high_vuln' %}?project_id={{project_id}}&severity=Critical"><h6 class="text-white"> Critical</h6></a>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+    <div class="col-md-6 col-lg-2 col-xlg-3">
+        <div class="card card-hover">
             <div class="box bg-danger text-center">
                 <h1 class="font-light text-white">{{all_high}}</h1>
                 <a href="{% url 'dashboard:all_high_vuln' %}?project_id={{project_id}}&severity=High"><h6 class="text-white"> High</h6></a>

@@ -546,6 +546,7 @@ def clair_report_json(data, project_id, scan_id):
     )
 
     total_vul = len(all_clair_data)
+    total_critical = len(all_clair_data.filter(severity="Critical"))
     total_high = len(all_clair_data.filter(severity="High"))
     total_medium = len(all_clair_data.filter(severity="Medium"))
     total_low = len(all_clair_data.filter(severity="Low"))
@@ -553,6 +554,7 @@ def clair_report_json(data, project_id, scan_id):
 
     StaticScansDb.objects.filter(scan_id=scan_id).update(
         total_vul=total_vul,
+        critical_vul=total_critical,
         high_vul=total_high,
         date_time=date_time,
         medium_vul=total_medium,

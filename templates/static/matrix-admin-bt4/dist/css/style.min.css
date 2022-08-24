@@ -5611,6 +5611,18 @@ input[type=submit].btn-block {
 	background-color: #4c32e9
 }
 
+.badge-critical {
+	color: #fff;
+	background-color: #790505
+}
+
+.badge-critical[href]:focus,
+.badge-critical[href]:hover {
+	color: #fff;
+	text-decoration: none;
+	background-color: #790505
+}
+
 .badge-secondary {
 	color: #fff;
 	background-color: #6c757d
@@ -7153,6 +7165,17 @@ a.bg-warning:hover,
 button.bg-warning:focus,
 button.bg-warning:hover {
 	background-color: #ffa415!important
+}
+
+.bg-critical {
+	background-color: #790505!important
+}
+
+a.bg-critical:focus,
+a.bg-critical:hover,
+button.bg-critical:focus,
+button.bg-critical:hover {
+	background-color: #790505!important
 }
 
 .bg-danger {

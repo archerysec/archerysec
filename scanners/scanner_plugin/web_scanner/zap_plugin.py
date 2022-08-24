@@ -531,7 +531,10 @@ class ZAPScanner:
 
                     if key == "risk":
                         risk = value
-                if risk == "High":
+                if risk == "Critical":
+                    vul_col = "critical"
+                    risk = "Critical"
+                elif risk == "High":
                     vul_col = "danger"
                     risk = "High"
                 elif risk == "Medium":
@@ -633,6 +636,7 @@ class ZAPScanner:
                 scan_id=un_scanid, vuln_duplicate="Yes"
             )
 
+            total_critical = len(zap_all_vul.filter(severity="Critical"))
             total_high = len(zap_all_vul.filter(severity="High"))
             total_medium = len(zap_all_vul.filter(severity="Medium"))
             total_low = len(zap_all_vul.filter(severity="Low"))
@@ -643,6 +647,7 @@ class ZAPScanner:
             WebScansDb.objects.filter(scan_id=un_scanid).update(
                 total_vul=total_vul,
                 date_time=date_time,
+                critical_vul=total_critical,
                 high_vul=total_high,
                 medium_vul=total_medium,
                 low_vul=total_low,
@@ -655,6 +660,7 @@ class ZAPScanner:
                     total_vul=total_vul,
                     date_time=date_time,
                     project_id=project_id,
+                    critical_vul=total_critical,
                     high_vul=total_high,
                     medium_vul=total_medium,
                     low_vul=total_low,

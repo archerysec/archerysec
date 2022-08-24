@@ -122,7 +122,11 @@ def bandit_report_json(data, project_id, scan_id):
                 date_time = datetime.now()
                 vul_id = uuid.uuid4()
 
-                if issue_severity == "HIGH":
+                if issue_severity == "CRITICAL":
+                    vul_col = "critical"
+                    issue_severity = "Critical"
+
+                elif issue_severity == "HIGH":
                     vul_col = "danger"
                     issue_severity = "High"
 
@@ -215,6 +219,7 @@ def bandit_report_json(data, project_id, scan_id):
         )
 
         total_vul = len(all_bandit_data)
+        total_critical = len(all_bandit_data.filter(severity="Critical"))
         total_high = len(all_bandit_data.filter(severity="High"))
         total_medium = len(all_bandit_data.filter(severity="Medium"))
         total_low = len(all_bandit_data.filter(severity="Low"))
@@ -222,6 +227,7 @@ def bandit_report_json(data, project_id, scan_id):
 
         StaticScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
+            critical_vul=total_critical,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,

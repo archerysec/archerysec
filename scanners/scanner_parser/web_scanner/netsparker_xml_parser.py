@@ -112,8 +112,7 @@ def xml_parser(root, project_id, scan_id):
         vuln_id = uuid.uuid4()
 
         if vuln_severity == "Critical":
-            vuln_severity = "High"
-            vul_col = "danger"
+            vul_col = "critical"
 
         elif vuln_severity == "High":
             vul_col = "danger"
@@ -202,6 +201,7 @@ def xml_parser(root, project_id, scan_id):
         scan_id=scan_id, vuln_duplicate="Yes", scanner="Netsparker"
     )
 
+    total_critical = len(netsparker_all_vul.filter(severity="Critical"))
     total_high = len(netsparker_all_vul.filter(severity="High"))
     total_medium = len(netsparker_all_vul.filter(severity="Medium"))
     total_low = len(netsparker_all_vul.filter(severity="Low"))
@@ -212,6 +212,7 @@ def xml_parser(root, project_id, scan_id):
     WebScansDb.objects.filter(scan_id=scan_id).update(
         total_vul=total_vul,
         date_time=date_time,
+        critical_vul=total_critical,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,
