@@ -41,6 +41,7 @@ class ProjectDb(models.Model):
     project_status = models.TextField(blank=True)
     date_time = models.DateTimeField(null=True)
     total_vuln = models.IntegerField(blank=True, null=True)
+    total_critical = models.IntegerField(blank=True, null=True)
     total_high = models.IntegerField(blank=True, null=True)
     total_medium = models.IntegerField(blank=True, null=True)
     total_low = models.IntegerField(blank=True, null=True)
@@ -50,6 +51,9 @@ class ProjectDb(models.Model):
     total_net = models.IntegerField(blank=True, null=True)
     total_web = models.IntegerField(blank=True, null=True)
     total_static = models.IntegerField(blank=True, null=True)
+    critical_net = models.IntegerField(blank=True, null=True)
+    critical_web = models.IntegerField(blank=True, null=True)
+    critical_static = models.IntegerField(blank=True, null=True)
     high_net = models.IntegerField(blank=True, null=True)
     high_web = models.IntegerField(blank=True, null=True)
     high_static = models.IntegerField(blank=True, null=True)
@@ -110,6 +114,7 @@ class MonthDb(models.Model):
         verbose_name_plural = "Month Db"
 
     month = models.TextField(blank=True, null=True)
+    critical = models.IntegerField(blank=True, default=0)
     high = models.IntegerField(blank=True, default=0)
     medium = models.IntegerField(blank=True, default=0)
     low = models.IntegerField(blank=True, default=0)
