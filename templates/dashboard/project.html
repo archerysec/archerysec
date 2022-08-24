@@ -129,6 +129,7 @@
                                                 <th>Type</th>
                                                 <th>Date Time</th>
                                                 <th>Total</th>
+                                                <th>Critical</th>
                                                 <th>High</th>
                                                 <th>Medium</th>
                                                 <th>Low</th>
@@ -145,6 +146,9 @@
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
                                                             class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
+                                                    </td>
+                                                     <td><span
+                                                            class="badge badge-pill badge-critical">{{ data.critical_vul }}</span>
                                                     </td>
                                                     <td><span
                                                             class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
@@ -188,6 +192,7 @@
                                                 <th>Status</th>
                                                 <th>Date Time</th>
                                                 <th>Total</th>
+                                                <th>Critical</th>
                                                 <th>High</th>
                                                 <th>Medium</th>
                                                 <th>Low</th>
@@ -216,6 +221,9 @@
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
                                                             class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-critical">{{ data.critical_vul }}</span>
                                                     </td>
                                                     <td><span
                                                             class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
@@ -259,9 +267,10 @@
                                                 <th>Status</th>
                                                 <th>Date Time</th>
                                                 <th>Total Vulnerability</th>
-                                                <th>HIGH</th>
-                                                <th>MEDIUM</th>
-                                                <th>LOW</th>
+                                                <th>Critical</th>
+                                                <th>High</th>
+                                                <th>Medium</th>
+                                                <th>Low</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -289,6 +298,9 @@
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
                                                             class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-critical">{{ data.critical_vul }}</span>
                                                     </td>
                                                     <td><span
                                                             class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
@@ -333,6 +345,7 @@
                                                 <th>Status</th>
                                                 <th>Date Time</th>
                                                 <th>Total</th>
+                                                <th>Critical</th>
                                                 <th>High</th>
                                                 <th>Medium</th>
                                                 <th>Low</th>
@@ -362,6 +375,9 @@
                                                     <td>{{ data.date_time }}</td>
                                                     <td><span
                                                             class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-critical">{{ data.critical_vul }}</span>
                                                     </td>
                                                     <td><span
                                                             class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
@@ -503,18 +519,20 @@
             data: {
                 datasets: [{
                     data: [
+                        {{all_critical}},
                         {{all_high}},
                         {{all_medium}},
                         {{all_low}},
 
                     ],
                     backgroundColor: [
-                        '#bd3f3b', '#ff7800', '#1b7ec7'
+                        '#790505', '#bd3f3b', '#ff7800', '#1b7ec7'
 
                     ],
                     label: 'Venerability'
                 }],
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low',
@@ -536,18 +554,20 @@
             data: {
                 datasets: [{
                     data: [
+                        {{all_critical}},
                         {{all_high}},
                         {{all_medium}},
                         {{all_low}},
 
                     ],
                     backgroundColor: [
-                        '#bd3f3b', '#ff7800', '#1b7ec7'
+                        '#790505', '#bd3f3b', '#ff7800', '#1b7ec7'
 
                     ],
                     label: '',
                 }],
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low',
@@ -571,18 +591,20 @@
             data: {
                 datasets: [{
                     data: [
+                        {{all_web_critical}},
                         {{all_web_high}},
                         {{all_web_medium}},
                         {{all_web_low}},
 
                     ],
                     backgroundColor: [
-                        '#9b38d4', '#38c2d4', '#d48a38'
+                        '#790505', '#9b38d4', '#38c2d4', '#d48a38'
 
                     ],
                     label: 'Venerability'
                 }],
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low',
@@ -604,18 +626,20 @@
             data: {
                 datasets: [{
                     data: [
+                        {{all_network_critical}},
                         {{all_network_high}},
                         {{all_network_medium}},
                         {{all_network_low}},
 
                     ],
                     backgroundColor: [
-                        '#cc009e', '#0063cc', '#4dcc00'
+                        '#790505', '#cc009e', '#0063cc', '#4dcc00'
 
                     ],
                     label: 'Venerability'
                 }],
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low',
@@ -636,18 +660,20 @@
             data: {
                 datasets: [{
                     data: [
+                        {{all_static_critical}},
                         {{all_static_high}},
                         {{all_static_medium}},
                         {{all_static_low}},
 
                     ],
                     backgroundColor: [
-                        '#bd3f3b', '#ff7800', '#1b7ec7'
+                        '#790505', '#bd3f3b', '#ff7800', '#1b7ec7'
 
                     ],
                     label: 'Venerability'
                 }],
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low',

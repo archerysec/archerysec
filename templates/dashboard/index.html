@@ -245,13 +245,23 @@
             data: {
                 labels: [{% for data in all_month_data_display %}monthNumToName({{ data.month }}),{% endfor %}],
                 datasets: [{
+                    label: 'Critical',
+                    data: [{% for data in all_month_data_display %}{{ data.critical }},{% endfor %}],
+                    backgroundColor: [
+                        'rgb(121, 5, 5)',
+                    ],
+                    borderColor: [
+                        'rgb(121, 5, 5)',
+                    ],
+                    fill: false,
+                },{
                     label: 'High',
                     data: [{% for data in all_month_data_display %}{{ data.high }},{% endfor %}],
                     backgroundColor: [
-                        'rgb(255, 99, 132)',
+                        'rgb(219,  85, 101)',
                     ],
                     borderColor: [
-                        'rgb(255, 99, 132)',
+                        'rgb(219,  85, 101)',
                     ],
                     fill: false,
                 }, {
@@ -293,17 +303,19 @@
             data: {
                 datasets: [{
                     data: [
+                        {{ critical_count_project.total_critical__sum }},
                         {{ high_count_project.total_high__sum }},
                         {{ medium_count_project.total_medium__sum }},
                         {{ low_count_project.total_low__sum }}
                     ], backgroundColor: [
-                        'rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+                        'rgb(121, 5, 5)', 'rgb(219,  85, 101)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
 
                     ],
                 }],
 
                 // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low'
@@ -317,17 +329,19 @@
             data: {
                 datasets: [{
                     data: [
+                        {{critical_web_count_project.critical_web__sum}},
                         {{high_web_count_project.high_web__sum}},
                         {{medium_web_count_project.medium_web__sum}},
                         {{low_web_count_project.low_web__sum}}
                     ], backgroundColor: [
-                        'rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+                        'rgb(121, 5, 5)', 'rgb(219,  85, 101)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
 
                     ],
                 }],
 
                 // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low'
@@ -340,17 +354,19 @@
             data: {
                 datasets: [{
                     data: [
+                        {{critical_net_count_project.critical_net__sum}},
                         {{high_net_count_project.high_net__sum}},
                         {{medium_net_count_project.medium_net__sum}},
                         {{low_net_count_project.low_net__sum}}
                     ], backgroundColor: [
-                        'rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+                        'rgb(121, 5, 5)', 'rgb(219,  85, 101)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
 
                     ],
                 }],
 
                 // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low'
@@ -363,17 +379,19 @@
             data: {
                 datasets: [{
                     data: [
+                        {{critical_static_count_project.critical_static__sum}},
                         {{high_static_count_project.high_static__sum}},
                         {{medium_static_count_project.medium_static__sum}},
                         {{low_static_count_project.low_static__sum}}
                     ], backgroundColor: [
-                        'rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+                        'rgb(121, 5, 5)', 'rgb(219,  85, 101)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
 
                     ],
                 }],
 
                 // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
+                    'Critical',
                     'High',
                     'Medium',
                     'Low'

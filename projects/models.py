@@ -114,7 +114,7 @@ class MonthDb(models.Model):
         verbose_name_plural = "Month Db"
 
     month = models.TextField(blank=True, null=True)
-    critical = models.IntegerField(blank=True, default=0)
+    critical = models.IntegerField(blank=True, null=True, default=0)
     high = models.IntegerField(blank=True, default=0)
     medium = models.IntegerField(blank=True, default=0)
     low = models.IntegerField(blank=True, default=0)

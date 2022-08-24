@@ -57,6 +57,7 @@ def trend_update():
         all_date_data = (
             ProjectDb.objects.annotate(month=Month("date_time"))
             .values("month")
+            .annotate(total_critical=Sum("total_critical"))
             .annotate(total_high=Sum("total_high"))
             .annotate(total_medium=Sum("total_medium"))
             .annotate(total_low=Sum("total_low"))
@@ -64,6 +65,7 @@ def trend_update():
         )
 
         try:
+            critical = all_date_data.first()["total_critical"]
             high = all_date_data.first()["total_high"]
             medium = all_date_data.first()["total_medium"]
             low = all_date_data.first()["total_low"]
@@ -71,11 +73,13 @@ def trend_update():
             all_date_data = (
                 ProjectDb.objects.annotate(month=MonthSqlite("date_time"))
                 .values("month")
+                .annotate(total_critical=Sum("total_critical"))
                 .annotate(total_high=Sum("total_high"))
                 .annotate(total_medium=Sum("total_medium"))
                 .annotate(total_low=Sum("total_low"))
                 .order_by("month")
             )
+            critical = all_date_data.first()["total_critical"]
             high = all_date_data.first()["total_high"]
             medium = all_date_data.first()["total_medium"]
             low = all_date_data.first()["total_low"]
@@ -86,6 +90,7 @@ def trend_update():
             add_data = MonthDb(
                 project_id=project_id,
                 month=current_month,
+                critical=critical,
                 high=high,
                 medium=medium,
                 low=low,
@@ -114,6 +119,7 @@ def trend_update():
                 add_data = MonthDb(
                     project_id=project_id,
                     month=current_month,
+                    critical=critical,
                     high=high,
                     medium=medium,
                     low=low,
@@ -122,10 +128,11 @@ def trend_update():
 
             elif int(data.month) == int(current_month):
                 MonthDb.objects.filter(month=current_month).update(
-                    high=high, medium=medium, low=low
+                    critical=critical, high=high, medium=medium, low=low
                 )
 
         total_vuln = scans_query.all_vuln(project_id=proj_id, query="total")
+        total_critical = scans_query.all_vuln(project_id=proj_id, query="critical")
         total_high = scans_query.all_vuln(project_id=proj_id, query="high")
         total_medium = scans_query.all_vuln(project_id=proj_id, query="medium")
         total_low = scans_query.all_vuln(project_id=proj_id, query="low")
@@ -139,6 +146,10 @@ def trend_update():
         total_net = scans_query.all_net(project_id=proj_id, query="total")
         total_web = scans_query.all_web(project_id=proj_id, query="total")
         total_static = scans_query.all_static(project_id=proj_id, query="total")
+
+        critical_net = scans_query.all_net(proj_id, query="critical")
+        critical_web = scans_query.all_web(proj_id, query="critical")
+        critical_static = scans_query.all_static(proj_id, query="critical")
 
         high_net = scans_query.all_net(proj_id, query="high")
         high_web = scans_query.all_web(proj_id, query="high")
@@ -160,9 +171,13 @@ def trend_update():
             total_net=total_net,
             total_web=total_web,
             total_static=total_static,
+            total_critical=total_critical,
             total_high=total_high,
             total_medium=total_medium,
             total_low=total_low,
+            critical_net=critical_net,
+            critical_web=critical_web,
+            critical_static=critical_static,
             high_net=high_net,
             high_web=high_web,
             high_static=high_static,
@@ -192,7 +207,7 @@ def dashboard(request):
     all_notify = Notification.objects.unread()
 
     all_month_data_display = (
-        MonthDb.objects.all().values("month", "high", "medium", "low").distinct()
+        MonthDb.objects.all().values("month", "critical", "high", "medium", "low").distinct()
     )
     # print(MonthDb.objects.filter().values('month', 'high', 'medium', 'low').distinct())
 
@@ -219,6 +234,9 @@ def dashboard(request):
             "static_count_project": ProjectDb.objects.filter().aggregate(
                 Sum("total_static")
             ),
+            "critical_count_project": ProjectDb.objects.filter().aggregate(
+                Sum("total_critical")
+            ),
             "high_count_project": ProjectDb.objects.filter().aggregate(
                 Sum("total_high")
             ),
@@ -226,6 +244,15 @@ def dashboard(request):
                 Sum("total_medium")
             ),
             "low_count_project": ProjectDb.objects.filter().aggregate(Sum("total_low")),
+            "critical_net_count_project": ProjectDb.objects.filter().aggregate(
+                Sum("critical_net")
+            ),
+            "critical_web_count_project": ProjectDb.objects.filter().aggregate(
+                Sum("critical_web")
+            ),
+            "critical_static_count_project": ProjectDb.objects.filter().aggregate(
+                Sum("critical_static")
+            ),
             "high_net_count_project": ProjectDb.objects.filter().aggregate(
                 Sum("high_net")
             ),
@@ -309,11 +336,12 @@ def proj_data(request):
 
     all_notify = Notification.objects.unread()
 
+    all_critical = scans_query.all_vuln(project_id=uu_id, query="critical")
     all_high = scans_query.all_vuln(project_id=uu_id, query="high")
     all_medium = scans_query.all_vuln(project_id=uu_id, query="medium")
     all_low = scans_query.all_vuln(project_id=uu_id, query="low")
 
-    total = all_high, all_medium, all_low
+    total = all_critical, all_high, all_medium, all_low
 
     tota_vuln = sum(total)
 
@@ -327,18 +355,22 @@ def proj_data(request):
             "total_web": scans_query.all_web(project_id=uu_id, query="total"),
             "total_static": scans_query.all_static(project_id=uu_id, query="total"),
             "total_network": scans_query.all_net(project_id=uu_id, query="total"),
+            "all_critical": all_critical,
             "all_high": all_high,
             "all_medium": all_medium,
             "all_low": all_low,
+            "all_web_critical": scans_query.all_web(project_id=uu_id, query="critical"),
             "all_web_high": scans_query.all_web(project_id=uu_id, query="high"),
             "all_web_medium": scans_query.all_web(project_id=uu_id, query="medium"),
             "all_network_medium": scans_query.all_net(project_id=uu_id, query="medium"),
+            "all_network_critical": scans_query.all_net(project_id=uu_id, query="critical"),
             "all_network_high": scans_query.all_net(project_id=uu_id, query="high"),
             "all_web_low": scans_query.all_web(project_id=uu_id, query="low"),
             "all_network_low": scans_query.all_net(project_id=uu_id, query="low"),
             "all_project": all_project,
             "project_dat": project_dat,
             "web_scan_dat": web_scan_dat,
+            "all_static_critical": scans_query.all_static(project_id=uu_id, query="critical"),
             "all_static_high": scans_query.all_static(project_id=uu_id, query="high"),
             "all_static_medium": scans_query.all_static(
                 project_id=uu_id, query="medium"
@@ -420,6 +452,24 @@ def all_high_vuln(request):
     elif severity == "Static":
         sast_all_high = StaticScanResultsDb.objects.filter(false_positive="No")
         pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="static")
+
+    elif severity == "Critical":
+
+        # add your scanner name here <scannername>
+
+        web_all_high = WebScanResultsDb.objects.filter(
+            project_id=project_id, severity="Critical", false_positive="No"
+        )
+        sast_all_high = StaticScanResultsDb.objects.filter(
+            project_id=project_id, severity="Critical", false_positive="No"
+        )
+        net_all_high = NetworkScanResultsDb.objects.filter(
+            project_id=project_id, severity="Critical", false_positive="No"
+        )
+
+        pentest_all_high = PentestScanResultsDb.objects.filter(
+            severity="Critical", project_id=project_id
+        )
 
     elif severity == "High":
 
