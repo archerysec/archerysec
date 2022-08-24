@@ -250,7 +250,10 @@ class burp_scans(object):
                 issue_reference = def_data.reference
 
             vul_col = ""
-            if severity == "high":
+            if severity == "critical":
+                severity = "Critical"
+                vul_col = "critical"
+            elif severity == "high":
                 severity = "High"
                 vul_col = "danger"
             elif severity == "medium":
@@ -334,6 +337,7 @@ class burp_scans(object):
             .distinct()
         )
         total_vul = len(burp_all_vul)
+        total_critical = len(burp_all_vul.filter(severity="Critical"))
         total_high = len(burp_all_vul.filter(severity="High"))
         total_medium = len(burp_all_vul.filter(severity="Medium"))
         total_low = len(burp_all_vul.filter(severity="Low"))
@@ -341,6 +345,7 @@ class burp_scans(object):
         total_duplicate = len(burp_all_vul.filter(vuln_duplicate="Yes"))
         WebScansDb.objects.filter(scan_id=self.scan_id, scanner="Burp").update(
             total_vul=total_vul,
+            critical_vul=total_critical,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,

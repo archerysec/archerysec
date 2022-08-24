@@ -70,6 +70,7 @@
 {#                                <th>Status</th>#}
                                 <th>Date Time</th>
                                 <th>Total</th>
+                                <th>Critical</th>
                                 <th>High</th>
                                 <th>Medium</th>
                                 <th>Low</th>
@@ -145,10 +146,11 @@
 {#                                        </td>#}
                                 <td>{{data.date_time}}</td>
                                 <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-critical">{{data.critical_vul}}</span></td>
                                 <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
                                 <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>
                                 <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>
-                                <td><span class="badge badge-pill badge-danger">{{data.total_dup}}</span></td>
+                                <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span></td>
                             </tr>
                             {% endfor %}
                             </tbody>

@@ -107,6 +107,7 @@
                                         <th>Status</th>
                                         <th>Scanner</th>
                                         <th>Total Vulnerability</th>
+                                        <th>Critical</th>
                                         <th>High</th>
                                         <th>Medium</th>
                                         <th>Low</th>
@@ -164,6 +165,7 @@
                                                                   class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Acunetix"></div></td>
                                         {% endif %}
                                         <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
+                                        <td><span class="badge badge-pill badge-critical">{{data.critical_vul}}</span></td>
                                         <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
                                         <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>
                                         <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>

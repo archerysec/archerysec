@@ -159,8 +159,8 @@ def updated_nessus_parser(root, project_id, scan_id):
                         vuln_id = uuid.uuid4()
 
                         if risk_factor == "Critical":
-                            vuln_color = "danger"
-                            risk_factor = "High"
+                            vuln_color = "critical"
+                            risk_factor = "Critical"
                         elif risk_factor == "High":
                             vuln_color = "danger"
                             risk_factor = "High"
@@ -259,6 +259,7 @@ def updated_nessus_parser(root, project_id, scan_id):
                     )
 
                     target_total_vuln = len(target_filter)
+                    target_total_critical = len(target_filter.filter(severity="Critical"))
                     target_total_high = len(target_filter.filter(severity="High"))
                     target_total_medium = len(target_filter.filter(severity="Medium"))
                     target_total_low = len(target_filter.filter(severity="Low"))
@@ -268,6 +269,7 @@ def updated_nessus_parser(root, project_id, scan_id):
                     NetworkScanDb.objects.filter(ip=target).update(
                         date_time=date_time,
                         total_vul=target_total_vuln,
+                        critical_vul=target_total_critical,
                         high_vul=target_total_high,
                         medium_vul=target_total_medium,
                         low_vul=target_total_low,

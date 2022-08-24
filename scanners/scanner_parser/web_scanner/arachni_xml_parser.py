@@ -233,7 +233,11 @@ def xml_parser(root, project_id, scan_id, target_url):
                     .distinct()
                 )
                 lenth_match = len(match_dup)
-                if severity == "high":
+                if severity == "critical":
+                    vul_col = "critical"
+                    severity = "Critical"
+
+                elif severity == "high":
                     vul_col = "danger"
                     severity = "High"
 
@@ -314,6 +318,7 @@ def xml_parser(root, project_id, scan_id, target_url):
         scan_id=scan_id, vuln_duplicate="Yes", scanner="Arachni"
     )
 
+    total_critical = len(arachni_all_vul.filter(severity="Critical"))
     total_high = len(arachni_all_vul.filter(severity="High"))
     total_medium = len(arachni_all_vul.filter(severity="Medium"))
     total_low = len(arachni_all_vul.filter(severity="Low"))
@@ -330,6 +335,7 @@ def xml_parser(root, project_id, scan_id, target_url):
         scan_url=target_url,
         total_vul=total_vul,
         date_time=date_time,
+        critical_vul=total_critical,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,

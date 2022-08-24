@@ -87,8 +87,8 @@ def npmaudit_report_json(data, project_id, scan_id):
             url = "not found"
 
         if severity == "critical":
-            severity = "High"
-            vul_col = "danger"
+            severity = "Critical"
+            vul_col = "critical"
 
         if severity == "high":
             severity = "High"
@@ -204,6 +204,7 @@ def npmaudit_report_json(data, project_id, scan_id):
     )
 
     total_vul = len(all_findbugs_data)
+    total_critical = len(all_findbugs_data.filter(severity="Critical"))
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
     total_low = len(all_findbugs_data.filter(severity="Low"))
@@ -212,6 +213,7 @@ def npmaudit_report_json(data, project_id, scan_id):
     StaticScansDb.objects.filter(scan_id=scan_id).update(
         total_vul=total_vul,
         date_time=date_time,
+        critical_vul=total_critical,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,

@@ -109,7 +109,9 @@ def updated_xml_parser(root, project_id, scan_id):
                 false_positive = "Yes"
             else:
                 false_positive = "No"
-            if threat == "High":
+            if threat == "Critical":
+                vuln_color = "critical"
+            elif threat == "High":
                 vuln_color = "danger"
             elif threat == "Medium":
                 vuln_color = "warning"
@@ -158,6 +160,7 @@ def updated_xml_parser(root, project_id, scan_id):
             all_data_save.save()
 
         openvas_vul = NetworkScanResultsDb.objects.filter(scan_id=scan_id, ip=host)
+        total_critical = len(openvas_vul.filter(severity="Critical"))
         total_high = len(openvas_vul.filter(severity="High"))
         total_medium = len(openvas_vul.filter(severity="Medium"))
         total_low = len(openvas_vul.filter(severity="Low"))
@@ -165,6 +168,7 @@ def updated_xml_parser(root, project_id, scan_id):
         total_vul = total_high + total_medium + total_low
         NetworkScanDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
+            critical_vul=total_critical,
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,

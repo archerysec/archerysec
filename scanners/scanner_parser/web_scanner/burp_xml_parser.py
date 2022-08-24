@@ -163,7 +163,9 @@ def burp_scan_data(root, project_id, scan_id):
             + str(issue_vulnerability_classifications)
         )
 
-        if severity == "High":
+        if severity == "Critical":
+            vul_col = "critical"
+        elif severity == "High":
             vul_col = "danger"
         elif severity == "Medium":
             vul_col = "warning"
@@ -261,6 +263,7 @@ def burp_scan_data(root, project_id, scan_id):
     )
 
     total_vul = len(burp_all_vul)
+    total_critical = len(burp_all_vul.filter(severity="Critical"))
     total_high = len(burp_all_vul.filter(severity="High"))
     total_medium = len(burp_all_vul.filter(severity="Medium"))
     total_low = len(burp_all_vul.filter(severity="Low"))
@@ -270,6 +273,7 @@ def burp_scan_data(root, project_id, scan_id):
         scan_url=host,
         date_time=date_time,
         total_vul=total_vul,
+        critical_vul=total_critical,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,

@@ -172,6 +172,7 @@
                                             <th>Project</th>
                                             <th>Created By</th>
                                             <th>Total</th>
+                                            <th>Critical</th>
                                             <th>High</th>
                                             <th>Medium</th>
                                             <th>Low</th>
@@ -185,9 +186,12 @@
                                                     <a href="{% url 'dashboard:proj_data' %}?uu_id={{ data.uu_id }}">{{ data.project_name }}</a>
                                                 </td>
                                                 <td>{{ data.created_by.name }}</td>
-
                                                 <td><span
                                                         class="badge badge-pill badge-purple">{{ data.total_vuln }}</span>
+                                                </td>
+
+                                                <td><span
+                                                        class="badge badge-pill badge-critical">{{ data.total_critical }}</span>
                                                 </td>
                                                 <td> <span
                                                         class="badge badge-pill badge-danger">{{ data.total_high }}</span>

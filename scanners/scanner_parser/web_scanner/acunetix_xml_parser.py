@@ -177,7 +177,11 @@ def xml_parser(root, project_id, scan_id):
                     if ReportItem.tag == "References":
                         VulnReferences = ReportItem.text
 
-                    if VulnSeverity == "high":
+                    if VulnSeverity == "critical":
+                        vul_col = "critical"
+                        risk = "Critical"
+
+                    elif VulnSeverity == "high":
                         vul_col = "danger"
                         risk = "High"
                     elif VulnSeverity == "medium":
@@ -283,6 +287,7 @@ def xml_parser(root, project_id, scan_id):
         scan_id=scan_id, vuln_duplicate="Yes"
     )
 
+    total_critical = len(acunetix_all_vul.filter(severity="Critical"))
     total_high = len(acunetix_all_vul.filter(severity="High"))
     total_medium = len(acunetix_all_vul.filter(severity="Medium"))
     total_low = len(acunetix_all_vul.filter(severity="Low"))
@@ -295,6 +300,7 @@ def xml_parser(root, project_id, scan_id):
     WebScansDb.objects.filter(scan_id=scan_id).update(
         total_vul=total_vul,
         date_time=date_time,
+        critical_vul=total_critical,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,
