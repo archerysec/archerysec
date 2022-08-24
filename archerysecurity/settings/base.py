@@ -226,6 +226,8 @@ EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
