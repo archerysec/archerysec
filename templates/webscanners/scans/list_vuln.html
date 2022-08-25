@@ -28,7 +28,18 @@
                                             <a href="{% url 'webscanners:list_vuln_info' %}?scan_id={{data.scan_id}}&scan_name={{data.title}}">{{data.title}}</a>
                                         </td>
                                         {% if data.vuln_status == 'Open' %}
-                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span></td>
+                                        <td><span class="badge badge-pill badge-purple">{{data.vuln_status}}</span>
+                                        {% if data.note != None %}
+                                            <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                        {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-success">{{data.vuln_status}}</span>
+                                        {% if data.note != None %}
+                                         <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                        {% endif %}
+                                        </td>
                                         {% endif %}
                                         {% if data.vuln_status == 'Duplicate' %}
                                         <td><span class="badge badge-pill badge-warning">{{data.vuln_status}}</span></td>

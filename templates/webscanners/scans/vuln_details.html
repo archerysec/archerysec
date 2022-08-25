@@ -19,8 +19,13 @@
                     </div>
 
                 </div>
-                <h1>{{ data.title }}</h1>
+                <h1>{{ data.title }} <span class="badge badge-pill badge-primary">{{data.vuln_status}}</span></h1>
                 <br>
+                {% if data.note != None %}
+                <div class="alert alert-warning" role="alert">
+                  {{ data.note }}
+                 </div>
+                {% endif %}
                 <div class="card">
                     <div class="accordion" id="accordionExample">
                         <div class="card m-b-0">
@@ -63,7 +68,7 @@
                                     </div>
                                 </div>
                             {% elif data.scanner == 'Arachni' %}
-                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                <div id="collapseFour" class="collapse" aria-labelledby="headingTwo"
                                      data-parent="#accordionExample">
                                     <div class="card-body">
                                         <div class="card-body">
@@ -75,7 +80,7 @@
                                 </div>
 
                             {% elif data.scanner == 'Acunetix' %}
-                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                <div id="collapseFive" class="collapse" aria-labelledby="headingTwo"
                                      data-parent="#accordionExample">
                                     <div class="card-body">
                                         <div class="card-body">

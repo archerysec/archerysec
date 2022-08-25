@@ -81,6 +81,7 @@ class WebScanResultsDb(models.Model):
     jira_ticket = models.TextField(null=True, blank=True)
     vuln_status = models.TextField(null=True, blank=True)
     dup_hash = models.TextField(null=True, blank=True)
+    note = models.TextField(null=True, blank=True)
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField(editable=False)

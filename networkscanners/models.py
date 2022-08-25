@@ -76,7 +76,7 @@ class NetworkScanResultsDb(models.Model):
     vuln_status = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     false_positive = models.TextField(null=True, blank=True)
-
+    note = models.TextField(null=True, blank=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 

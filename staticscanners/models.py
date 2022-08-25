@@ -76,4 +76,5 @@ class StaticScanResultsDb(models.Model):
     filePath = models.TextField(blank=True, null=True)
     solution = models.TextField(blank=True)
     scanner = models.TextField(blank=True)
+    note = models.TextField(null=True, blank=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
