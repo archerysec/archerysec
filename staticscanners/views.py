@@ -66,7 +66,8 @@ class SastScanVulnInfo(APIView):
         all_notify = Notification.objects.unread()
         if uu_id == None:
             scan_id = request.GET["scan_id"]
-            vuln_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+            scan_name = request.GET["scan_name"]
+            vuln_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, title=scan_name)
         else:
             try:
                 vuln_data = StaticScanResultsDb.objects.filter(scan_id=uu_id)
@@ -97,8 +98,9 @@ class SastScanVulnMark(APIView):
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
         vuln_name = request.POST.get("vuln_name")
+        notes = request.POST.get("note")
         StaticScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
-            false_positive=false_positive, vuln_status=status
+            false_positive=false_positive, vuln_status=status, note=notes
         )
 
         if false_positive == "Yes":
@@ -119,6 +121,7 @@ class SastScanVulnMark(APIView):
                     false_positive=false_positive,
                     vuln_status="Closed",
                     false_positive_hash=false_positive_hash,
+                    note=notes
                 )
 
         all_vuln = StaticScanResultsDb.objects.filter(
@@ -279,6 +282,7 @@ class SastScanVulnList(APIView):
                                                                                          'vuln_status',
                                                                                          'severity_color',
                                                                                          'scanner',
+                                                                                         'note',
                                                                                          'scan_id').exclude(vuln_status='Duplicate')
 
         return render(

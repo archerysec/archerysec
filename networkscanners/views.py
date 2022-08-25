@@ -614,9 +614,10 @@ class NetworkScanVulnMark(APIView):
         scan_id = request.POST.get("scan_id")
         scanner = request.POST.get("scanner")
         ip = request.POST.get("ip")
+        notes = request.POST.get("note")
         NetworkScanResultsDb.objects.filter(
             vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
-        ).update(false_positive=false_positive, vuln_status=status)
+        ).update(false_positive=false_positive, vuln_status=status, note=notes)
 
         if false_positive == "Yes":
             vuln_info = NetworkScanResultsDb.objects.filter(
@@ -636,6 +637,7 @@ class NetworkScanVulnMark(APIView):
                     false_positive=false_positive,
                     vuln_status="Closed",
                     false_positive_hash=false_positive_hash,
+                    note=notes
                 )
 
         all_vuln = NetworkScanResultsDb.objects.filter(

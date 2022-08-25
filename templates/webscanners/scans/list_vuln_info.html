@@ -41,148 +41,248 @@ $(document).on('click', '.confirm-delete', function(){
 })
 
 
+
+
+
 </script>
 
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                    {% if user.is_superuser == True or user.role == '2' %}
-                        <div class="float-right">
-                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
-                        </div>
-                    {% endif %}
-                        <br>
-                        <div class="d-md-flex align-items-center">
-                            <h1 class="card-title">Vulnerability List</h1>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="table-responsive">
-                                <table id="acunetix_scans_list" class="table table-bordered data-table table-fixed" width="100%">
-                                    <thead>
-                                    <tr>
-                                        <th><label class="customcheckbox m-b-20">
-                                            <input type="checkbox" id="mainCheckbox">
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                {% if user.is_superuser == True or user.role == '2' %}
+                <div class="float-right">
+                    <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                </div>
+                {% endif %}
+                <br>
+                <div class="d-md-flex align-items-center">
+                    <h1 class="card-title">Vulnerability List</h1>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="table-responsive">
+                        <table id="acunetix_scans_list" class="table table-bordered data-table table-fixed"
+                               width="100%">
+                            <thead>
+                            <tr>
+                                <th><label class="customcheckbox m-b-20">
+                                    <input type="checkbox" id="mainCheckbox">
+                                    <span class="checkmark"></span>
+                                </label></th>
+                                <th>Vulnerability</th>
+                                <th>Risk</th>
+                                <th>JIRA Ticket</th>
+                                <th>Status</th>
+                                {% if user.is_superuser == True or user.role.id == 2 %}
+                                <th>False Positive</th>
+                                <th>Delete</th>
+                                <th>Mark</th>
+                                {% endif %}
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in vuln_data %}
+                            <tr data-target="#">
+                                <td>
+                                    <form>
+                                        <label class="customcheckbox">
+                                            <input type="checkbox" class="listCheckbox"
+                                                   value="{{data.vuln_id}}"
+                                                   name="del_vuln_id"
+                                                   onClick="reload">
                                             <span class="checkmark"></span>
-                                        </label></th>
-                                        <th>Vulnerability</th>
-                                        <th>Risk</th>
-                                        <th>JIRA Ticket</th>
-                                        <th>Status</th>
-                                        {% if user.is_superuser == True or user.role.id == 2 %}
-                                        <th>False Positive</th>
-                                        <th>Delete</th>
-                                        <th>Mark</th>
-                                        {% endif %}
-                                    </tr>
-                                    </thead>
-                                    <tbody>{% for data in vuln_data %}
-                                    <tr data-target="#">
-                                        <td>
-                                            <form>
-                                                <label class="customcheckbox">
-                                                    <input type="checkbox" class="listCheckbox"
-                                                           value="{{data.vuln_id}}"
-                                                           name="del_vuln_id"
-                                                           onClick="reload">
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                            </form>
-                                        </td>
-                                        <td><a href="{% url 'webscanners:scan_details' %}?vuln_id={{data.vuln_id}}&scanner={{ data.scanner }}">{{data.title}}</a>
-                                        </td>
-                                        <td><span class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
-                                        </td>
-                                        <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
-                                        </td>
-                                    <td>{{data.vuln_status}}</td>
-                                    {% if user.is_superuser == True or user.role.id == 2 %}
-                                        {% if data.false_positive == 'No' %}
-                                        <td>
-                                            <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
-                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                                <input type="hidden" name="scanner" value="{{ data.scanner }}">
-                                                <input type="hidden" name="false" value="Yes">
-                                                <input type="hidden" name="status" value="Closed">
-                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
-                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-outline-info btn-mini">Yes</button>
-                                            </form>
-                                        </td>
-                                        {% endif %}
-                                        {% if data.false_positive == 'Yes' %}
-                                            <td>
-                                            <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
-                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                                <input type="hidden" name="scanner" value="{{ data.scanner }}">
-                                                <input type="hidden" name="false" value="No">
-                                                <input type="hidden" name="status" value="Open">
-                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
-                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-info btn-mini">No</button>
-                                            </form>
-                                        </td>
-                                        {% endif %}
-                                    {% if data.false_positive == 'Duplicate' %}
-                                            <td>
-                                            NA
-                                        </td>
-                                        {% endif %}
-                                        <td class="confirm-delete">
-                                            <div>
-                                                <form action="{% url 'webscanners:vuln_delete' %}" method="POST"
-                                                      class="form-horizontal">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                                    <input type="hidden" name="scanner" value="{{ data.scanner }}">
-                                                    <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                    <button class="btn btn-warning"><i class="fas fa-trash"></i></button>
+                                        </label>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="{% url 'webscanners:scan_details' %}?vuln_id={{data.vuln_id}}&scanner={{ data.scanner }}">{{data.title}}</a>
+                                </td>
+                                <td><span
+                                        class="badge badge-pill badge-{{data.severity_color}}">{{data.severity}}</span>
+                                </td>
+                                <td><a href="{{jira_url}}browse/{{data.jira_ticket}}" target="_blank">{{data.jira_ticket}}</a>
+                                </td>
+                                <td>
+                                    <span class="badge badge-pill badge-primary">{{data.vuln_status}}</span>
+                                    {% if data.note != None %}
+                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                    {% endif %}
+                                </td>
+                                {% if user.is_superuser == True or user.role.id == 2 %}
+                                {% if data.false_positive == 'No' %}
+                                <td>
+                                    <button class="btn btn-outline-info btn-mini" data-toggle="modal"
+                                            data-target="#commentModal">Yes
+                                    </button>
+                                    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
+                                                    <div class="modal-body">
+                                                        <textarea class="form-control" name="note" id="message-text"></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                        <input type="hidden" name="scanner" value="{{ data.scanner }}">
+                                                        <input type="hidden" name="false" value="Yes">
+                                                        <input type="hidden" name="status" value="Closed">
+                                                        <input type="hidden" name="vuln_name" value="{{data.title}}">
+                                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                        <button class="btn btn-outline-info btn-mini">Save Note</button>
+                                                    </div>
                                                 </form>
                                             </div>
-                                        </td>
-                                        {% if data.vuln_status == 'Open' %}
-                                        <td>
-                                            <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
-                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                                <input type="hidden" name="scanner" value="{{ data.scanner }}">
-                                                <input type="hidden" name="false" value="No">
-                                                <input type="hidden" name="status" value="Closed">
-                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
-                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-outline-info btn-mini">Close</button>
-                                            </form>
-                                        </td>
-                                    {% endif %}
-                                    {% if data.vuln_status == 'Closed' %}
-                                    <td>
-                                            <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
-                                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
-                                                <input type="hidden" name="scanner" value="{{ data.scanner }}">
-                                                <input type="hidden" name="false" value="No">
-                                                <input type="hidden" name="status" value="Open">
-                                                <input type="hidden" name="vuln_name" value="{{data.title}}">
-                                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
-                                                <button class="btn btn-info btn-mini">Open</button>
-                                            </form>
-                                        </td>
-                                    {% endif %}
-                                    {% if data.vuln_status == 'Duplicate' %}
-                                        <td>
-                                            NA
-                                        </td>
-                                    {% endif %}
-                                    {% endif %}
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                {% endif %}
+                                {% if data.false_positive == 'Yes' %}
+                                <td>
+                                    <button class="btn btn-outline-info btn-mini" data-toggle="modal"
+                                            data-target="#commentNoModal">No
+                                    </button>
+                                    <div class="modal fade" id="commentNoModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleNoModalLabel">Comment</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
+                                                    <div class="modal-body">
+                                                        <textarea class="form-control" name="note"  id="no-message-text"></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                        <input type="hidden" name="scanner" value="{{ data.scanner }}">
+                                                        <input type="hidden" name="false" value="No">
+                                                        <input type="hidden" name="status" value="Open">
+                                                        <input type="hidden" name="vuln_name" value="{{data.title}}">
+                                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                        <button class="btn btn-outline-info btn-mini">Save Note</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                {% endif %}
+                                {% if data.false_positive == 'Duplicate' %}
+                                <td>
+                                    NA
+                                </td>
+                                {% endif %}
+                                <td class="confirm-delete">
+                                    <div>
+                                        <form action="{% url 'webscanners:vuln_delete' %}" method="POST"
+                                              class="form-horizontal">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                            <input type="hidden" name="scanner" value="{{ data.scanner }}">
+                                            <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                            <button class="btn btn-warning"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                                {% if data.vuln_status == 'Open' %}
+                                <td>
+                                    <button class="btn btn-outline-info btn-mini" data-toggle="modal"
+                                            data-target="#commentCloseModal">Close
+                                    </button>
+                                    <div class="modal fade" id="commentCloseModal" tabindex="-1" role="dialog" aria-labelledby="ClosecommentModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="CloseModalLabel">Comment</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
+                                                    <div class="modal-body">
+                                                        <textarea class="form-control" name="note"  id="close-message-text"></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                        <input type="hidden" name="scanner" value="{{ data.scanner }}">
+                                                        <input type="hidden" name="false" value="No">
+                                                        <input type="hidden" name="status" value="Closed">
+                                                        <input type="hidden" name="vuln_name" value="{{data.title}}">
+                                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                        <button class="btn btn-outline-info btn-mini">Save Note</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                {% endif %}
+                                {% if data.vuln_status == 'Closed' %}
+                                <td>
+                                    <button class="btn btn-outline-info btn-mini" data-toggle="modal"
+                                            data-target="#commentOpenModal">Open
+                                    </button>
+                                    <div class="modal fade" id="commentOpenModal" tabindex="-1" role="dialog" aria-labelledby="ClosecommentModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="OpenModalLabel">Comment</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
+                                                    <div class="modal-body">
+                                                        <textarea class="form-control" name="note"  id="open-message-text"></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                                        <input type="hidden" name="scanner" value="{{ data.scanner }}">
+                                                        <input type="hidden" name="false" value="No">
+                                                        <input type="hidden" name="status" value="Open">
+                                                        <input type="hidden" name="vuln_name" value="{{data.title}}">
+                                                        <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                                        <button class="btn btn-outline-info btn-mini">Save Note</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                {% endif %}
+                                {% if data.vuln_status == 'Duplicate' %}
+                                <td>
+                                    NA
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
 {% endblock %}

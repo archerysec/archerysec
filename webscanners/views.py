@@ -101,8 +101,9 @@ class WebScanVulnMark(APIView):
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
         vuln_name = request.POST.get("vuln_name")
+        notes = request.POST.get("note")
         WebScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
-            false_positive=false_positive, vuln_status=status
+            false_positive=false_positive, vuln_status=status, note=notes
         )
 
         if false_positive == "Yes":
@@ -123,6 +124,7 @@ class WebScanVulnMark(APIView):
                     false_positive=false_positive,
                     vuln_status="Closed",
                     false_positive_hash=false_positive_hash,
+                    note=notes,
                 )
 
         all_vuln = WebScanResultsDb.objects.filter(
@@ -135,7 +137,6 @@ class WebScanVulnMark(APIView):
         total_info = len(all_vuln.filter(severity="Informational"))
         total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low + total_info
-
         WebScansDb.objects.filter(scan_id=scan_id).update(
             total_vul=total_vul,
             high_vul=total_high,
