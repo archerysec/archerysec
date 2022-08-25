@@ -14,7 +14,13 @@
                         {% endif %}
                     </div>
                 </div>
-                <h1>{{ data.title }}</h1>
+                <h1>{{ data.title }} <span class="badge badge-pill badge-primary">{{data.vuln_status}}</span></h1>
+                <br>
+                {% if data.note != None %}
+                <div class="alert alert-warning" role="alert">
+                  {{ data.note }}
+                 </div>
+                {% endif %}
                 <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
