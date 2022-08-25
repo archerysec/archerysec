@@ -43,6 +43,7 @@
                                 <tr>
                                     <th>Vulnerability</th>
                                     <th>Scanner</th>
+                                    <th>Status</th>
                                     <th>URL/IP</th>
                                     <th>Risk</th>
 
@@ -95,10 +96,35 @@
                                      <div class="p-1"><img src="/static/tools/gitlab.png" alt="user" width="30"
                                                                   class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Gitlabsast"></div></td>
                                  {% endif %}
+                                        {% if data.vuln_status == 'Open' %}
+                                            <td><span class="badge badge-pill badge-purple">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-success">{{data.vuln_status}}</span>
+                                        {% if data.note != None %}
+                                            <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                        {% endif %}
+
+                                        </td>
+                                        {% endif %}
+
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                            <td><span class="badge badge-pill badge-warning">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
                                         <td>{{ data.fileName }}</td>
+
                                         <td><span
                                                 class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
                                         </td>
+
                                     </tr>
                                 {% endfor %}
 
@@ -128,6 +154,29 @@
                                         <div class="p-1"><img src="/static/tools/acunetix.png" alt="user" width="30"
                                                                   class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Acunetix"></div></td>
                                         {% endif %}
+                                        {% if data.vuln_status == 'Open' %}
+                                            <td><span class="badge badge-pill badge-purple">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-success">{{data.vuln_status}}</span>
+                                        {% if data.note != None %}
+                                            <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                        {% endif %}
+
+                                        </td>
+                                        {% endif %}
+
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                            <td><span class="badge badge-pill badge-warning">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
                                         <td>{{ data.url }}</td>
                                         <td><span
                                                 class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
@@ -152,6 +201,29 @@
                                                                   class="rounded-circle" data-toggle="tooltip"
                                                                   data-placement="top" title="Openvas"></div></td>
                                         {% endif %}
+                                        {% if data.vuln_status == 'Open' %}
+                                            <td><span class="badge badge-pill badge-purple">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-success">{{data.vuln_status}}</span>
+                                        {% if data.note != None %}
+                                            <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                        {% endif %}
+
+                                        </td>
+                                        {% endif %}
+
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                            <td><span class="badge badge-pill badge-warning">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
                                         <td>{{ data.ip }}</td>
                                         <td><span
                                                 class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
@@ -166,6 +238,29 @@
                                             <a href="{% url 'pentest:vuln_details' %}?vuln_id={{ data.vuln_id }}">{{ data.vuln_name }}</a>
                                         </td>
                                         <td>Pentest</td>
+                                        {% if data.vuln_status == 'Open' %}
+                                            <td><span class="badge badge-pill badge-purple">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-success">{{data.vuln_status}}</span>
+                                        {% if data.note != None %}
+                                            <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                        {% endif %}
+
+                                        </td>
+                                        {% endif %}
+
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                            <td><span class="badge badge-pill badge-warning">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
                                         <td>{{ data.vuln_url }}</td>
                                         <td><span
                                                 class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
