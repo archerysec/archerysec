@@ -26,6 +26,48 @@
                   {{ data.note }}
                  </div>
                 {% endif %}
+                <div class="row">
+            <div class="col-2">
+                <button type="button" class="btn btn-outline-dark" data-toggle="modal"
+                        data-target="#commentModal"><i class="fas fa-comment-alt"></i> Add Note
+                </button>
+            </div>
+
+            <div class="modal fade" id="commentModal" tabindex="-1" role="dialog"
+                 aria-labelledby="commentModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="POST" action="{% url 'webscanners:vuln_mark' %}">{% csrf_token %}
+                            <div class="modal-body">
+                                                        <textarea class="form-control" name="note"
+                                                                  id="message-text"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Close
+                                </button>
+                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                <input type="hidden" name="false" value="{{data.false_positive}}">
+                                <input type="hidden" name="status" value="{{data.vuln_status}}">
+                                <input type="hidden" name="vuln_name" value="{{data.title}}">
+                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                <input type="hidden" name="scanner" value="{{data.scanner}}">
+                                <button class="btn btn-outline-info btn-mini">Save Note</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
                 <div class="card">
                     <div class="accordion" id="accordionExample">
                         <div class="card m-b-0">

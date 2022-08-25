@@ -1,179 +1,221 @@
 {% extends 'dashboard/base.html' %}
 
 {% block body %}
-    {% for data in vul_dat %}
+{% for data in vul_dat %}
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-auto">
-                    <div class="float-right">
-                        {% if jira_projects != None %}
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jiraModal">
-                                Create Jira Ticket
-                            </button>
-                        {% endif %}
-                    </div>
-                </div>
-                <h1>{{ data.title }} <span class="badge badge-pill badge-primary">{{data.vuln_status}}</span></h1>
-                <br>
-                {% if data.note != None %}
-                <div class="alert alert-warning" role="alert">
-                  {{ data.note }}
-                 </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-auto">
+            <div class="float-right">
+                {% if jira_projects != None %}
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jiraModal">
+                    Create Jira Ticket
+                </button>
                 {% endif %}
-                <br>
-                <div class="card">
-                    <div class="accordion" id="accordionExample">
-                        <div class="card m-b-0">
-                            <div class="card-header" id="headingOne">
-                                <h5 class="mb-0">
-                                    <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
-                                       aria-controls="collapseOne">
-                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Description</span>
-                                    </a>
-                                </h5>
-                            </div>
-                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    {{ data.description }}
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card m-b-0 border-top">
-                            <div class="card-header" id="headingTwo">
-                                <h5 class="mb-0">
-                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo"
-                                       aria-expanded="false" aria-controls="collapseTwo">
-                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Instance</span>
-                                    </a>
-                                </h5>
-                            </div>
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <div class="col-md-6">
-                                        File: {{ data.fileName }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card m-b-0 border-top">
-                            <div class="card-header" id="headingThree">
-                                <h5 class="mb-0">
-                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseThree"
-                                       aria-expanded="false" aria-controls="collapseThree">
-                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>Solutions</span>
-                                    </a>
-                                </h5>
-                            </div>
-                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    {{ data.solution }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card m-b-0 border-top">
-                            <div class="card-header" id="headingFour">
-                                <h5 class="mb-0">
-                                    <a class="collapsed" data-toggle="collapse" data-target="#collapseFour"
-                                       aria-expanded="false" aria-controls="collapseFour">
-                                        <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
-                                        <span>References</span>
-                                    </a>
-                                </h5>
-                            </div>
-                            <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
-                                 data-parent="#accordionExample">
-                                <div class="card-body">
-                                    <a href="{{ data.references }}">{{ data.references }}</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
+        <h1>{{ data.title }} <span class="badge badge-pill badge-primary">{{data.vuln_status}}</span></h1>
+        <br>
+        {% if data.note != None %}
+        <div class="alert alert-warning" role="alert">
+            {{ data.note }}
+        </div>
+        {% endif %}
+        <br>
+        <div class="row">
+            <div class="col-2">
+                <button type="button" class="btn btn-outline-dark" data-toggle="modal"
+                        data-target="#commentModal"><i class="fas fa-comment-alt"></i> Add Note
+                </button>
+            </div>
 
-        <div class="modal fade" id="jiraModal" tabindex="-1" role="dialog"
-             aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 class="modal-title" id="jiraModalLabel">JIRA Ticket</h2>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form class="form-horizontal" method="POST"
-                              action="{% url 'jiraticketing:submit_jira_ticket' %}">{% csrf_token %}
-                            <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
-                            <input name="scanner" value="sast" type="hidden">
-                            <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
-                            <div class="card-body">
-                                <div class="form-group row">
-                                    <label
-                                            class="col-sm-4 col-form-label">Select Project</label>
-                                    <div class="col-sm-6">
-                                        <select id="project_id" name="project_id"
-                                                class="select2 form-control custom-select"
-                                                style="width: 100%; height:36px;">
-                                            {% for jira_data in jira_projects %}
-                                                <option value="{{ jira_data.id }}">{{ jira_data.name }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label
-                                            class="col-sm-4 col-form-label">Issue Type</label>
-                                    <div class="col-sm-6">
-                                        <select name="issue_type"
-                                                class="select2 form-control custom-select"
-                                                style="width: 100%; height:36px;">
-                                            <option>Bug</option>
-                                            <option>Story</option>
-
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label
-                                            class="col-sm-4 col-form-label">Summary</label>
-                                    <div class="col-sm-6">
-                                        <input type="text" name="summary"
-                                               class="form-control"
-                                               value="{{ data.title }}">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label
-                                            class="col-sm-4 col-form-label">Description</label>
-                                    <div class="col-sm-6">
-                                        <textarea name="description"
-                                                  class="form-control">{{ data.description }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
+            <div class="modal fade" id="commentModal" tabindex="-1" role="dialog"
+                 aria-labelledby="commentModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="POST" action="{% url 'staticscanners:vuln_mark' %}">{% csrf_token %}
+                            <div class="modal-body">
+                                                        <textarea class="form-control" name="note"
+                                                                  id="message-text"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">Close
+                                </button>
+                                <input type="hidden" name="vuln_id" value="{{data.vuln_id}}">
+                                <input type="hidden" name="false" value="{{data.false_positive}}">
+                                <input type="hidden" name="status" value="{{data.vuln_status}}">
+                                <input type="hidden" name="vuln_name" value="{{data.title}}">
+                                <input type="hidden" name="scan_id" value="{{data.scan_id}}">
+                                <input type="hidden" name="scanner" value="{{data.scanner}}">
+                                <button class="btn btn-outline-info btn-mini">Save Note</button>
                             </div>
                         </form>
                     </div>
-
                 </div>
             </div>
         </div>
+        <br>
+        <div class="card">
+            <div class="accordion" id="accordionExample">
+                <div class="card m-b-0">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                               aria-controls="collapseOne">
+                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                <span>Description</span>
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                         data-parent="#accordionExample">
+                        <div class="card-body">
+                            {{ data.description }}
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card m-b-0 border-top">
+                    <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                            <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                               aria-expanded="false" aria-controls="collapseTwo">
+                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                <span>Instance</span>
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                         data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div class="col-md-6">
+                                File: {{ data.fileName }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card m-b-0 border-top">
+                    <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                            <a class="collapsed" data-toggle="collapse" data-target="#collapseThree"
+                               aria-expanded="false" aria-controls="collapseThree">
+                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                <span>Solutions</span>
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                         data-parent="#accordionExample">
+                        <div class="card-body">
+                            {{ data.solution }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card m-b-0 border-top">
+                    <div class="card-header" id="headingFour">
+                        <h5 class="mb-0">
+                            <a class="collapsed" data-toggle="collapse" data-target="#collapseFour"
+                               aria-expanded="false" aria-controls="collapseFour">
+                                <i class="m-r-5 fa fa-chevron-down" aria-hidden="true"></i>
+                                <span>References</span>
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                         data-parent="#accordionExample">
+                        <div class="card-body">
+                            <a href="{{ data.references }}">{{ data.references }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="jiraModal" tabindex="-1" role="dialog"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="jiraModalLabel">JIRA Ticket</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="POST"
+                      action="{% url 'jiraticketing:submit_jira_ticket' %}">{% csrf_token %}
+                    <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
+                    <input name="scanner" value="sast" type="hidden">
+                    <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label
+                                    class="col-sm-4 col-form-label">Select Project</label>
+                            <div class="col-sm-6">
+                                <select id="project_id" name="project_id"
+                                        class="select2 form-control custom-select"
+                                        style="width: 100%; height:36px;">
+                                    {% for jira_data in jira_projects %}
+                                    <option value="{{ jira_data.id }}">{{ jira_data.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label
+                                    class="col-sm-4 col-form-label">Issue Type</label>
+                            <div class="col-sm-6">
+                                <select name="issue_type"
+                                        class="select2 form-control custom-select"
+                                        style="width: 100%; height:36px;">
+                                    <option>Bug</option>
+                                    <option>Story</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label
+                                    class="col-sm-4 col-form-label">Summary</label>
+                            <div class="col-sm-6">
+                                <input type="text" name="summary"
+                                       class="form-control"
+                                       value="{{ data.title }}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label
+                                    class="col-sm-4 col-form-label">Description</label>
+                            <div class="col-sm-6">
+                                        <textarea name="description"
+                                                  class="form-control">{{ data.description }}</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
-    {% endfor %}
+{% endfor %}
 
 {% endblock %}
