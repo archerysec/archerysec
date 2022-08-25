@@ -16,6 +16,11 @@
                 </div>
                 <h1>{{ data.title }}</h1>
                 <br>
+                {% if data.note != None %}
+                <div class="alert alert-warning" role="alert">
+                  {{ data.note }}
+                 </div>
+                {% endif %}
                 <div class="card">
                     <div class="accordion" id="accordionExample">
                         <div class="card m-b-0">
