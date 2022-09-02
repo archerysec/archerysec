@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "archeryapi",
     "networkscanners",
     "staticscanners",
+    'cloudscanners',
     "jiraticketing",
     "cicd",
     "tools",

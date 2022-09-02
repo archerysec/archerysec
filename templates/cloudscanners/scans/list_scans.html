@@ -1,0 +1,113 @@
+{% extends 'dashboard/base.html' %}
+
+{% block body %}
+<script type="text/javascript">
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+    $(document).ready(function() {
+        $('.btn-danger').click(function(){
+            if (confirm('Are you sure you want to delete this?')) {
+                var scan_id = ['a7af5b68-b661-45ad-90fd-ffa27526cdce'];
+                $.each($("input[name='del_scan_id']:checked"), function(){
+                    scan_id.push($(this).val());
+                });
+
+                var json_scanid = scan_id.join(", ");
+                $.ajax({
+                    type:'POST',
+                    <!--contentType: 'application/json; charset=utf-8',-->
+                    url:'{% url 'cloudscanners:scan_delete' %}',
+                    data:{
+                       scan_id: json_scanid,
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    sucess:function(){
+
+                    }
+                });
+                setTimeout(function(){location.reload();},1200);
+            }
+        });
+
+    });
+
+</script>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right">
+                           {% if user.is_superuser == True or user.role.id == 2 %}
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="{% url 'report_upload:upload' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload Report"><i
+                                        class="fas fa-upload
+"></i> Upload</a>
+                            </div>
+                            <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected</button>
+                            {% endif %}
+                        </div>
+                        <br>
+                        <br>
+                        <br>
+                        <div class="d-md-flex align-items-center">
+                            <h1 class="card-title">Cloud Scans List</h1>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="bandit_scan_list" class="table table-bordered data-table">
+                            <thead>
+                            <tr>
+                                <th><label class="customcheckbox m-b-20">
+                                <input type="checkbox" id="mainCheckbox">
+                                <span class="checkmark"></span>
+                                </label></th>
+                                <th>Account ID</th>
+                                <th>Scanner</th>
+                                <th>Date Time</th>
+                                <th>Total</th>
+                                <th>Critical</th>
+                                <th>High</th>
+                                <th>Medium</th>
+                                <th>Low</th>
+                                <th>Duplicates</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for data in all_scans %}
+                            <tr data-target="#">
+                                <td>{% csrf_token %}
+                                            <form>
+                                                <label class="customcheckbox">
+                                                    <input type="checkbox" class="listCheckbox"
+                                                           value="{{data.scan_id}}"
+                                                           name="del_scan_id"
+                                                           onClick="reload">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </form>
+                                        </td>
+                                <td>
+                                    <a href="{% url 'cloudscanners:list_vuln' %}?scan_id={{data.scan_id}}&scanner={{ data.scanner }}">{% firstof data.cloudAccountId 'None' %}</a>
+                                </td>
+                                <td>{{data.scanner}}</td>
+                                <td>{{data.date_time}}</td>
+                                <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-critical">{{data.critical_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-danger">{{data.high_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-warning">{{data.medium_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-info">{{data.low_vul}}</span></td>
+                                <td><span class="badge badge-pill badge-secondary">{{data.total_dup}}</span></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

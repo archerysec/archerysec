@@ -29,6 +29,7 @@ from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from pentest.models import PentestScanDb, PentestScanResultsDb
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from webscanners.models import WebScanResultsDb, WebScansDb
+from cloudscanners.models import CloudScansDb, CloudScansResultsDb
 
 # Create your views here.
 chart = []
@@ -237,6 +238,16 @@ def all_vuln(project_id, query):
             all_sast_scan = 0
 
         try:
+            all_cloud_scan = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("total_vul")
+                )["total_vul__sum"]
+            )
+        except Exception as e:
+            #
+            all_cloud_scan = 0
+
+        try:
             all_dast_scan = int(
                 WebScansDb.objects.filter(project__uu_id=project_id).aggregate(
                     Sum("total_vul")
@@ -260,6 +271,7 @@ def all_vuln(project_id, query):
         all_vuln = (
             int(all_sast_scan)
             + int(all_dast_scan)
+            + int(all_cloud_scan)
             + int(all_net_scan)
             + int(all_manual_scan(project_id=project_id, query=query))
         )
@@ -275,6 +287,16 @@ def all_vuln(project_id, query):
             all_sast_scan = 0
 
         try:
+            all_cloud_scan = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("critical_vul")
+                )["critical_vul__sum"]
+            )
+        except Exception as e:
+            #
+            all_cloud_scan = 0
+
+        try:
             all_dast_scan = int(
                 WebScansDb.objects.filter(project__uu_id=project_id).aggregate(
                     Sum("critical_vul")
@@ -295,6 +317,7 @@ def all_vuln(project_id, query):
         all_vuln = (
             int(all_sast_scan)
             + int(all_dast_scan)
+            + int(all_cloud_scan)
             + int(all_net_scan)
             + int(all_manual_scan(project_id=project_id, query=query))
         )
@@ -302,6 +325,16 @@ def all_vuln(project_id, query):
         try:
             all_sast_scan = int(
                 StaticScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("high_vul")
+                )["high_vul__sum"]
+            )
+        except Exception as e:
+            #
+            all_sast_scan = 0
+
+        try:
+            all_cloud_scan = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
                     Sum("high_vul")
                 )["high_vul__sum"]
             )
@@ -329,6 +362,7 @@ def all_vuln(project_id, query):
 
         all_vuln = (
             int(all_sast_scan)
+            + int(all_cloud_scan)
             + int(all_dast_scan)
             + int(all_net_scan)
             + int(all_manual_scan(project_id=project_id, query=query))
@@ -346,6 +380,16 @@ def all_vuln(project_id, query):
             all_sast_scan = 0
 
         try:
+            all_cloud_scan = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("medium_vul")
+                )["medium_vul__sum"]
+            )
+        except Exception as e:
+            #
+            all_sast_scan = 0
+
+        try:
             all_dast_scan = int(
                 WebScansDb.objects.filter(project__uu_id=project_id).aggregate(
                     Sum("medium_vul")
@@ -369,6 +413,7 @@ def all_vuln(project_id, query):
         all_vuln = (
             int(all_sast_scan)
             + int(all_dast_scan)
+            + int(all_cloud_scan)
             + int(all_net_scan)
             + int(all_manual_scan(project_id=project_id, query=query))
         )
@@ -376,6 +421,16 @@ def all_vuln(project_id, query):
         try:
             all_sast_scan = int(
                 StaticScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("low_vul")
+                )["low_vul__sum"]
+            )
+        except Exception as e:
+            #
+            all_sast_scan = 0
+
+        try:
+            all_cloud_scan = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
                     Sum("low_vul")
                 )["low_vul__sum"]
             )
@@ -406,6 +461,7 @@ def all_vuln(project_id, query):
         all_vuln = (
             int(all_sast_scan)
             + int(all_dast_scan)
+            + int(all_cloud_scan)
             + int(all_net_scan)
             + int(all_manual_scan(project_id=project_id, query=query))
         )
@@ -614,6 +670,64 @@ def all_static(project_id, query):
 
     return all_static
 
+def all_cloud(project_id, query):
+    all_cloud = 0
+
+    if query == "total":
+        try:
+            all_cloud = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("total_vul")
+                )["total_vul__sum"]
+            )
+        except Exception as e:
+
+            all_cloud = 0
+
+    elif query == "critical":
+        try:
+            all_cloud = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("critical_vul")
+                )["critical_vul__sum"]
+            )
+        except Exception as e:
+
+            all_cloud = 0
+    elif query == "high":
+        try:
+            all_cloud = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("high_vul")
+                )["high_vul__sum"]
+            )
+        except Exception as e:
+
+            all_cloud = 0
+    elif query == "medium":
+        try:
+            all_cloud = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("medium_vul")
+                )["medium_vul__sum"]
+            )
+        except Exception as e:
+
+            all_cloud = 0
+
+    elif query == "low":
+        try:
+            all_cloud = int(
+                CloudScansDb.objects.filter(project__uu_id=project_id).aggregate(
+                    Sum("low_vul")
+                )["low_vul__sum"]
+            )
+        except Exception as e:
+
+            all_cloud = 0
+
+    return all_cloud
+
 
 def all_inspec(project_id, query):
     all_inspec = None
@@ -716,6 +830,10 @@ def all_vuln_count(project_id, query):
             project__uu_id=project_id, severity="Critical"
         )
 
+        cloud_all_critical = CloudScansResultsDb.objects.filter(
+            project__uu_id=project_id, severity="Critical"
+        )
+
         net_all_critical = NetworkScanResultsDb.objects.filter(
             severity="Critical", project__uu_id=project_id
         )
@@ -726,6 +844,7 @@ def all_vuln_count(project_id, query):
         all_data = chain(
             web_all_critical,
             sast_all_critical,
+            cloud_all_critical,
             net_all_critical,
             pentest_all_critical,
         )
@@ -739,6 +858,10 @@ def all_vuln_count(project_id, query):
             project__uu_id=project_id, severity="High"
         )
 
+        cloud_all_high = CloudScansResultsDb.objects.filter(
+            project__uu_id=project_id, severity="High"
+        )
+
         net_all_high = NetworkScanResultsDb.objects.filter(
             severity="High", project__uu_id=project_id
         )
@@ -749,6 +872,7 @@ def all_vuln_count(project_id, query):
         all_data = chain(
             web_all_high,
             sast_all_high,
+            cloud_all_high,
             net_all_high,
             pentest_all_high,
         )
@@ -763,6 +887,10 @@ def all_vuln_count(project_id, query):
             project__uu_id=project_id, severity="Medium"
         )
 
+        cloud_all_medium = CloudScansResultsDb.objects.filter(
+            project__uu_id=project_id, severity="Medium"
+        )
+
         net_all_medium = NetworkScanResultsDb.objects.filter(
             severity="Medium", project__uu_id=project_id
         )
@@ -774,6 +902,7 @@ def all_vuln_count(project_id, query):
         all_data = chain(
             web_all_medium,
             sast_all_medium,
+            cloud_all_medium,
             net_all_medium,
             pentest_all_medium,
         )
@@ -789,6 +918,10 @@ def all_vuln_count(project_id, query):
             project__uu_id=project_id, severity="Low"
         )
 
+        cloud_all_low = CloudScansResultsDb.objects.filter(
+            project__uu_id=project_id, severity="Low"
+        )
+
         net_all_low = NetworkScanResultsDb.objects.filter(
             severity="Low", project__uu_id=project_id
         )
@@ -800,6 +933,7 @@ def all_vuln_count(project_id, query):
         all_data = chain(
             web_all_low,
             sast_all_low,
+            cloud_all_low,
             net_all_low,
             pentest_all_low,
         )
@@ -813,6 +947,10 @@ def all_vuln_count(project_id, query):
             project__uu_id=project_id,
         )
 
+        cloud_all = CloudScansResultsDb.objects.filter(
+            project__uu_id=project_id,
+        )
+
         net_all = NetworkScanResultsDb.objects.filter(project__uu_id=project_id)
 
         pentest_all = PentestScanResultsDb.objects.filter(project__uu_id=project_id)
@@ -820,6 +958,7 @@ def all_vuln_count(project_id, query):
         all_data = chain(
             web_all,
             sast_all,
+            cloud_all,
             net_all,
             pentest_all,
         )
@@ -833,12 +972,17 @@ def all_vuln_count(project_id, query):
             project__uu_id=project_id, false_positive="Yes"
         )
 
+        cloud_all_false = CloudScansResultsDb.objects.filter(
+            project__uu_id=project_id, false_positive="Yes"
+        )
+
         net_all_false = NetworkScanResultsDb.objects.filter(
             project__uu_id=project_id, false_positive="Yes"
         )
         all_data = chain(
             web_all_false,
             sast_all_false,
+            cloud_all_false,
             net_all_false,
         )
 
@@ -851,12 +995,17 @@ def all_vuln_count(project_id, query):
             project__uu_id=project_id, vuln_status="Closed"
         )
 
+        cloud_all_close = CloudScansResultsDb.objects.filter(
+            project__uu_id=project_id, vuln_status="Closed"
+        )
+
         net_all_close = NetworkScanResultsDb.objects.filter(
             project__uu_id=project_id, vuln_status="Closed"
         )
         all_data = chain(
             web_all_close,
             sast_all_close,
+            cloud_all_close,
             net_all_close,
         )
 
@@ -870,12 +1019,17 @@ def all_vuln_count(project_id, query):
             project__uu_id=project_id, vuln_status="Open"
         )
 
+        cloud_all_open = CloudScansResultsDb.objects.filter(
+            project__uu_id=project_id, vuln_status="Open"
+        )
+
         net_all_open = NetworkScanResultsDb.objects.filter(
             project__uu_id=project_id, vuln_status="Open"
         )
         all_data = chain(
             web_all_open,
             sast_all_open,
+            cloud_all_open,
             net_all_open,
         )
 
@@ -894,6 +1048,10 @@ def all_vuln_count_data(project_id, query):
             false_positive="Yes", project__uu_id=project_id
         )
 
+        cloud_false_positive = CloudScansResultsDb.objects.filter(
+            false_positive="Yes", project__uu_id=project_id
+        )
+
         net_false_positive = NetworkScanResultsDb.objects.filter(
             false_positive="Yes", project__uu_id=project_id
         )
@@ -901,6 +1059,7 @@ def all_vuln_count_data(project_id, query):
         all_data = (
             int(len(web_false_positive))
             + int(len(sast_false_positive))
+            + int(len(cloud_false_positive))
             + int(len(net_false_positive))
         )
 
@@ -917,6 +1076,10 @@ def all_vuln_count_data(project_id, query):
             vuln_status="Closed", project__uu_id=project_id
         )
 
+        cloud_closed_vuln = CloudScansResultsDb.objects.filter(
+            vuln_status="Closed", project__uu_id=project_id
+        )
+
         pentest_closed_vuln = PentestScanResultsDb.objects.filter(
             vuln_status="Closed", project__uu_id=project_id
         )
@@ -924,6 +1087,7 @@ def all_vuln_count_data(project_id, query):
             int(len(web_closed_vuln))
             + int(len(net_closed_vuln))
             + int(len(sast_closed_vuln))
+            + int(len(cloud_closed_vuln))
             + int(len(pentest_closed_vuln))
         )
 
@@ -938,6 +1102,10 @@ def all_vuln_count_data(project_id, query):
             vuln_status="Open", project__uu_id=project_id
         )
 
+        cloud_open_vuln = CloudScansResultsDb.objects.filter(
+            vuln_status="Open", project__uu_id=project_id
+        )
+
         pentest_open_vuln = PentestScanResultsDb.objects.filter(
             vuln_status="Open", project__uu_id=project_id
         )
@@ -946,6 +1114,7 @@ def all_vuln_count_data(project_id, query):
             int(len(web_open_vuln))
             + int(len(net_open_vuln))
             + int(len(sast_open_vuln))
+            + int(len(cloud_open_vuln))
             + int(len(pentest_open_vuln))
         )
 
