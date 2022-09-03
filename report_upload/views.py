@@ -83,6 +83,7 @@ from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
                                                  zap_xml_parser)
 from cloudscanners.models import CloudScansDb
 from scanners.scanner_parser.cloud_scanner.prisma_cloud_csv import prisma_cloud_report_csv
+from scanners.scanner_parser.cloud_scanner.wiz_security_csv import wiz_cloud_report_csv
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from tools.models import NiktoResultDb
 from user_management import permissions
@@ -1044,6 +1045,40 @@ class Upload(APIView):
                 )
                 scan_dump.save()
                 prisma_cloud_report_csv(data=data,
+                                        project_id=project_id,
+                                        scan_id=scan_id,
+                                        )
+
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse("cloudscanners:list_scans"))
+            except Exception as e:
+                print(e)
+                messages.error(request, "File Not Supported")
+                return render(
+                    request,
+                    "report_upload/upload.html",
+                    {"all_project": all_project},
+                )
+
+        elif scanner == "wiz":
+            try:
+                if self.check_file_ext(str(file)) != ".csv":
+                    messages.error(request, "Wiz Security Only CSV file Supported")
+                    return HttpResponseRedirect(reverse("report_upload:upload"))
+                date_time = datetime.now()
+                file_data = file.read().decode("utf-8")
+                reader = csv.DictReader(io.StringIO(file_data))
+                data = [line for line in reader]
+                scan_dump = CloudScansDb(
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    rescan="No",
+                    scanner="wiz",
+                )
+                scan_dump.save()
+                wiz_cloud_report_csv(data=data,
                                         project_id=project_id,
                                         scan_id=scan_id,
                                         )

@@ -97,7 +97,12 @@
 
                                         <div class="p-1"><img src="/static/tools/prisma-cloud.png" alt="user" width="30"
                                                                   class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Prisma Cloud"></div>
-                                </td>{% endif %}
+                                {% endif %}
+                                {% if data.scanner == 'wiz' %}
+
+                                        <div class="p-1"><img src="/static/tools/wiz.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Wiz"></div>
+                                {% endif %}</td>
                                 <td>{{data.date_time}}</td>
                                 <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
                                 <td><span class="badge badge-pill badge-critical">{{data.critical_vul}}</span></td>
