@@ -64,6 +64,7 @@ from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
                                                  webinspect_xml_parser,
                                                  zap_xml_parser)
 from scanners.scanner_parser.cloud_scanner.prisma_cloud_csv import prisma_cloud_report_csv
+from scanners.scanner_parser.cloud_scanner.wiz_security_csv import wiz_cloud_report_csv
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from cloudscanners.models import CloudScansDb, CloudScansResultsDb
 from tools.models import NiktoResultDb
@@ -802,8 +803,28 @@ class UploadScanResult(APIView):
 
             return self.cloud_result_data(scan_id, project_uu_id, scanner)
 
+        elif scanner == "wiz":
+            reader = csv.DictReader(io.StringIO(file))
+            data = [line for line in reader]
+            scan_dump = CloudScansDb(
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                rescan="No",
+                scanner="wiz",
+            )
+            scan_dump.save()
+            wiz_cloud_report_csv(data=data,
+                                    project_id=project_id,
+                                    scan_id=scan_id,
+                                    )
+
+            return self.cloud_result_data(scan_id, project_uu_id, scanner)
+
         else:
             return Response({"message": "Scanner Not Found"})
+
 
 
 class APIKey(APIView):
