@@ -67,6 +67,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6 col-lg-2 col-xlg-3">
+                    <div class="card card-hover">
+                        <div class="box bg-dark text-center">
+                            <h1 class="font-light text-white">{{ cloud_count_project.total_cloud__sum }}</h1>
+                            <a href="{% url 'dashboard:all_high_vuln' %}?project_id=none&severity=Cloud"><h6
+                                    class="text-white">Cloud Issues</h6></a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col">
@@ -109,8 +118,8 @@
                             <canvas id="webpie"></canvas>
                         </div>
                     </div>
-                </div>
-                <div class="col">
+    <!--                </div>-->
+    <!--                <div class="col">-->
                     <div class="card">
                         <div class="card-body">
                             <div class="d-md-flex align-items-center">
@@ -133,6 +142,17 @@
                                 </div>
                             </div>
                             <canvas id="staticpie"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-md-flex align-items-center">
+                                <div>
+                                    <h6>Cloud Issues</h6>
+                                    <h5 class="card-subtitle"></h5>
+                                </div>
+                            </div>
+                            <canvas id="cloudpie"></canvas>
                         </div>
                     </div>
                 </div>
@@ -383,6 +403,31 @@
                         {{high_static_count_project.high_static__sum}},
                         {{medium_static_count_project.medium_static__sum}},
                         {{low_static_count_project.low_static__sum}}
+                    ], backgroundColor: [
+                        'rgb(121, 5, 5)', 'rgb(219,  85, 101)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
+
+                    ],
+                }],
+
+                // These labels appear in the legend and in the tooltips when hovering different arcs
+                labels: [
+                    'Critical',
+                    'High',
+                    'Medium',
+                    'Low'
+                ]
+            },
+        });
+        var ctx = document.getElementById('cloudpie').getContext('2d');
+        var staticpie = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: [
+                        {{critical_cloud_count_project.critical_cloud__sum}},
+                        {{high_cloud_count_project.high_cloud__sum}},
+                        {{medium_cloud_count_project.medium_cloud__sum}},
+                        {{low_cloud_count_project.low_cloud__sum}}
                     ], backgroundColor: [
                         'rgb(121, 5, 5)', 'rgb(219,  85, 101)', 'rgb(255, 159, 64)', 'rgb(54, 162, 235)'
 

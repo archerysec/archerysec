@@ -200,7 +200,7 @@ class CloudScanTest(TestCase):
         # get scan_id form cloud scans db
         scan_id = CloudScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
-        vuln_info = CloudScanResultsDb.objects.filter(scan_id=scan_id)
+        vuln_info = CloudScansResultsDb.objects.filter(scan_id=scan_id)
         vuln_id = ""
         vuln_name = ""
         for vuln in vuln_info:

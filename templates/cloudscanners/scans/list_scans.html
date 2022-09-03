@@ -89,10 +89,15 @@
                                                 </label>
                                             </form>
                                         </td>
+
                                 <td>
                                     <a href="{% url 'cloudscanners:list_vuln' %}?scan_id={{data.scan_id}}&scanner={{ data.scanner }}">{% firstof data.cloudAccountId 'None' %}</a>
                                 </td>
-                                <td>{{data.scanner}}</td>
+                                <td>{% if data.scanner == 'Prismacloud' %}
+
+                                        <div class="p-1"><img src="/static/tools/prisma-cloud.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Prisma Cloud"></div>
+                                </td>{% endif %}
                                 <td>{{data.date_time}}</td>
                                 <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>
                                 <td><span class="badge badge-pill badge-critical">{{data.critical_vul}}</span></td>

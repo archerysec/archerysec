@@ -131,7 +131,6 @@ def prisma_cloud_report_csv(data, project_id, scan_id):
 
         else:
             duplicate_vuln = "Yes"
-            print(scan_id)
             save_all = CloudScansResultsDb(
                 vuln_id=vul_id,
                 scan_id=scan_id,

@@ -18,6 +18,9 @@ import datetime
 import json
 import secrets
 import uuid
+import csv
+import io
+import os
 
 import defusedxml.ElementTree as ET
 from django.core.files.uploadedfile import UploadedFile
@@ -60,7 +63,9 @@ from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
                                                  netsparker_xml_parser,
                                                  webinspect_xml_parser,
                                                  zap_xml_parser)
+from scanners.scanner_parser.cloud_scanner.prisma_cloud_csv import prisma_cloud_report_csv
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
+from cloudscanners.models import CloudScansDb, CloudScansResultsDb
 from tools.models import NiktoResultDb
 from user_management import permissions
 from user_management.models import Organization, UserProfile
@@ -152,6 +157,11 @@ class UploadScanResult(APIView):
     parser_classes = (MultiPartParser,)
     permission_classes = (BasePermission, permissions.VerifyAPIKey)
 
+    def check_file_ext(self, file):
+        split_tup = os.path.splitext(file)
+        file_extension = split_tup[1]
+        return file_extension
+
     def web_result_data(self, scan_id, project_uu_id, scanner):
         all_web_data = WebScanResultsDb.objects.filter(scan_id=scan_id)
         total_vul = len(all_web_data)
@@ -190,6 +200,29 @@ class UploadScanResult(APIView):
                     "total_high": escape(total_high),
                     "total_medium": escape(total_medium),
                     "total_low": escape(total_low),
+                },
+            }
+        )
+
+    def cloud_result_data(self, scan_id, project_uu_id, scanner):
+        all_sast_data = CloudScansResultsDb.objects.filter(scan_id=scan_id)
+        total_vul = len(all_sast_data)
+        total_critical = len(all_sast_data.filter(severity="Critical"))
+        total_high = len(all_sast_data.filter(severity="High"))
+        total_medium = len(all_sast_data.filter(severity="Medium"))
+        total_low = len(all_sast_data.filter(severity="Low"))
+        return Response(
+            {
+                "message": "Scan Data Uploaded",
+                "project_id": escape(project_uu_id),
+                "scan_id": escape(scan_id),
+                "scanner": escape(scanner),
+                "result": {
+                    "total_vul": escape(total_vul),
+                    "total_high": escape(total_high),
+                    "total_medium": escape(total_medium),
+                    "total_low": escape(total_low),
+                    "total_critical": escape(total_critical)
                 },
             }
         )
@@ -750,6 +783,24 @@ class UploadScanResult(APIView):
                 data=data,
             )
             return self.sast_result_data(scan_id, project_uu_id, scanner)
+        elif scanner == "prisma":
+            reader = csv.DictReader(io.StringIO(file))
+            data = [line for line in reader]
+            scan_dump = CloudScansDb(
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                rescan="No",
+                scanner="Prismacloud",
+            )
+            scan_dump.save()
+            prisma_cloud_report_csv(data=data,
+                                    project_id=project_id,
+                                    scan_id=scan_id,
+                                    )
+
+            return self.cloud_result_data(scan_id, project_uu_id, scanner)
 
         else:
             return Response({"message": "Scanner Not Found"})

@@ -286,7 +286,6 @@ class CloudScanVulnList(APIView):
                                                                                          'scanner',
                                                                                          'note',
                                                                                          'scan_id').exclude(vuln_status='Duplicate')
-        print(all_vuln)
         # all_vuln = CloudScansResultsDb.objects.all()
 
         return render(

@@ -1025,7 +1025,7 @@ class Upload(APIView):
             messages.success(request, "File Uploaded")
             return HttpResponseRedirect(reverse("tools:nmap_scan"))
 
-        if scanner == "prisma_cspm":
+        elif scanner == "prisma_cspm":
             try:
                 if self.check_file_ext(str(file)) != ".csv":
                     messages.error(request, "Prisma CLoud Only CSV file Supported")

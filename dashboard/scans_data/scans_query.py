@@ -340,7 +340,7 @@ def all_vuln(project_id, query):
             )
         except Exception as e:
             #
-            all_sast_scan = 0
+            all_cloud_scan = 0
 
         try:
             all_dast_scan = int(
@@ -387,7 +387,7 @@ def all_vuln(project_id, query):
             )
         except Exception as e:
             #
-            all_sast_scan = 0
+            all_cloud_scan = 0
 
         try:
             all_dast_scan = int(
@@ -436,7 +436,7 @@ def all_vuln(project_id, query):
             )
         except Exception as e:
             #
-            all_sast_scan = 0
+            all_cloud_scan = 0
 
         try:
             all_dast_scan = int(

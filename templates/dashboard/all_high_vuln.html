@@ -128,6 +128,51 @@
                                     </tr>
                                 {% endfor %}
 
+                                {% for data in cloud_all_high %}
+                                    <tr data-target="#">
+
+                                        <td>
+                                            <a href="{% url 'cloudscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&scan_name={{ data.title }}&scanner={{ data.scanner }}">{{ data.title }}</a>
+                                        </td>
+                                        <td>{% if data.scanner == 'Prismacloud' %}
+
+                                        <div class="p-1"><img src="/static/tools/prisma-cloud.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Prisma Cloud"></div>
+                                        </td>
+                                 {% endif %}
+                                        {% if data.vuln_status == 'Open' %}
+                                            <td><span class="badge badge-pill badge-purple">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        {% if data.vuln_status == 'Closed' %}
+                                        <td><span class="badge badge-pill badge-success">{{data.vuln_status}}</span>
+                                        {% if data.note != None %}
+                                            <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                        {% endif %}
+
+                                        </td>
+                                        {% endif %}
+
+                                        {% if data.vuln_status == 'Duplicate' %}
+                                            <td><span class="badge badge-pill badge-warning">{{ data.vuln_status }}</span>
+                                                {% if data.note != None %}
+                                                    <i data-toggle="tooltip" data-placement="top" title data-original-title="{{data.note}}" class="fas fa-comment-alt"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        <td>{{ data.fileName }}</td>
+
+                                        <td><span
+                                                class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+
+
                                 {% for data in web_all_high %}
                                     <tr data-target="#">
 
