@@ -15,17 +15,23 @@
                                     <h5 class="card-subtitle"></h5>
                                 </div>
                             </div>
+
                             <div class="row">
-                                <div class="col-sm-4 col-md-4">
+                                <div class="col">
                                     <!--<canvas id="webscans"></canvas>-->
-                                    <canvas id="webscans" width="100" height="100"></canvas>
+                                    <canvas id="webscans"></canvas>
+                                    <canvas id="networkscan"></canvas>
                                 </div>
-                                <div class="col-sm-4 col-md-4">
-                                    <canvas id="networkscan" width="100" height="100"></canvas>
+<!--                                <div class="col-sm-4 col-md-4">-->
+<!--                                    <canvas id="networkscan" width="100" height="100"></canvas>-->
+<!--                                </div>-->
+                                <div class="col">
+                                    <canvas id="static"></canvas>
+                                    <canvas id="cloud"></canvas>
                                 </div>
-                                <div class="col-sm-4 col-md-4">
-                                    <canvas id="testProChart2" width="100" height="100"></canvas>
-                                </div>
+<!--                                <div class="col-sm-4 col-md-4">-->
+<!--                                    -->
+<!--                                </div>-->
                             </div>
                         </div>
                     </div>
@@ -279,6 +285,83 @@
                                                 <tr data-target="#">
                                                     <td width="20%">
                                                         <a href="{% url 'staticscanners:list_vuln' %}?scan_id={{ data.scan_id }}&scanner={{ data.scanner }}">{{ data.project_name }}</a>
+                                                    </td>
+                                                    <td width="20%">
+                                                        <div>
+                                                            <div class="d-flex no-block align-items-center">
+                                                                <span>{{ data.scan_status }}{{ data.vul_status }}% Completed</span>
+                                                            </div>
+                                                            <div class="progress{% if data.scan_status != '100.0' %} active progress-striped{% endif %}">
+                                                                <div class="progress-bar progress-bar-striped"
+                                                                     role="progressbar"
+                                                                     style="width:
+                                                                             {{ data.scan_status }}{{ data.vul_status }}%"
+                                                                     aria-valuenow="10" aria-valuemin="0"
+                                                                     aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ data.date_time }}</td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-dark">{{ data.total_vul }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-critical">{{ data.critical_vul }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-danger">{{ data.high_vul }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-warning">{{ data.medium_vul }}</span>
+                                                    </td>
+                                                    <td><span
+                                                            class="badge badge-pill badge-info">{{ data.low_vul }}</span>
+                                                    </td>
+
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-md-flex align-items-center">
+                                <div>
+                                    <h5>Cloud Scan List</h5>
+                                    <h5 class="card-subtitle"></h5>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <!-- column -->
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table id="zero_config2" class="table table-striped table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th>Project Name</th>
+                                                <th>Status</th>
+                                                <th>Date Time</th>
+                                                <th>Total Vulnerability</th>
+                                                <th>Critical</th>
+                                                <th>High</th>
+                                                <th>Medium</th>
+                                                <th>Low</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for data in cloud_scan %}
+                                                <tr data-target="#">
+                                                    <td width="20%">
+                                                        <a href="{% url 'cloudscanners:list_vuln' %}?scan_id={{ data.scan_id }}&scanner={{ data.scanner }}">{{ data.cloudAccountId }}</a>
                                                     </td>
                                                     <td width="20%">
                                                         <div>
@@ -654,8 +737,8 @@
             }
         });
 
-        var ctx = document.getElementById("testProChart2").getContext('2d');
-        var testProChart2 = new Chart(ctx, {
+        var ctx = document.getElementById("static").getContext('2d');
+        var static = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 datasets: [{
@@ -684,6 +767,39 @@
                 title: {
                     display: true,
                     text: 'Static Scans'
+                }
+            }
+        });
+        var ctx = document.getElementById("cloud").getContext('2d');
+        var cloud = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [
+                        {{all_cloud_critical}},
+                        {{all_cloud_high}},
+                        {{all_cloud_medium}},
+                        {{all_cloud_low}},
+
+                    ],
+                    backgroundColor: [
+                        '#790505', '#bd3f3b', '#ff7800', '#1b7ec7'
+
+                    ],
+                    label: 'Venerability'
+                }],
+                labels: [
+                    'Critical',
+                    'High',
+                    'Medium',
+                    'Low',
+                ]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Cloud Scans'
                 }
             }
         });

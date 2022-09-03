@@ -32,6 +32,7 @@ urlpatterns = [
     path("projects/", include("projects.urls")),
     path("networkscanners/", include("networkscanners.urls")),
     path("staticscanners/", include("staticscanners.urls")),
+    path("cloudscanners/", include("cloudscanners.urls")),
     path("inspec/", include("compliance.inspec.urls")),
     path("dockle/", include("compliance.dockle.urls")),
     path("api/", include("archeryapi.urls")),
