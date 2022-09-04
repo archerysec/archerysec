@@ -65,6 +65,7 @@ from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
                                                  zap_xml_parser)
 from scanners.scanner_parser.cloud_scanner.prisma_cloud_csv import prisma_cloud_report_csv
 from scanners.scanner_parser.cloud_scanner.wiz_security_csv import wiz_cloud_report_csv
+from scanners.scanner_parser.cloud_scanner.scoutsuite_js import scoutsuite_cloud_report_js
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from cloudscanners.models import CloudScansDb, CloudScansResultsDb
 from tools.models import NiktoResultDb
@@ -255,7 +256,6 @@ class UploadScanResult(APIView):
         project_id = (
             ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
         )
-        print(project_id)
         scanner = request.data.get("scanner")
         if isinstance(request.data.get("filename"), UploadedFile):
             file = request.data.get("filename").read().decode("utf-8")
@@ -816,9 +816,30 @@ class UploadScanResult(APIView):
             )
             scan_dump.save()
             wiz_cloud_report_csv(data=data,
-                                    project_id=project_id,
-                                    scan_id=scan_id,
-                                    )
+                                project_id=project_id,
+                                scan_id=scan_id,
+                                )
+
+            return self.cloud_result_data(scan_id, project_uu_id, scanner)
+
+        elif scanner == "scoutsuite":
+            file_data = file.replace('scoutsuite_results =', '')
+            json_payload = ''.join(file_data)
+            data = json.loads(json_payload)
+
+            scan_dump = CloudScansDb(
+                scan_id=scan_id,
+                date_time=date_time,
+                project_id=project_id,
+                scan_status=scan_status,
+                rescan="No",
+                scanner="scoutsuite",
+            )
+            scan_dump.save()
+            scoutsuite_cloud_report_js(data=data,
+                                        project_id=project_id,
+                                        scan_id=scan_id,
+                                        )
 
             return self.cloud_result_data(scan_id, project_uu_id, scanner)
 
