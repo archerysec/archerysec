@@ -44,7 +44,7 @@
                                     <th>Vulnerability</th>
                                     <th>Scanner</th>
                                     <th>Status</th>
-                                    <th>URL/IP</th>
+                                    <th>URL/IP/Resource</th>
                                     <th>Risk</th>
 
                                 </tr>
@@ -138,8 +138,18 @@
 
                                         <div class="p-1"><img src="/static/tools/prisma-cloud.png" alt="user" width="30"
                                                                   class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Prisma Cloud"></div>
-                                        </td>
+
                                  {% endif %}
+                                            {% if data.scanner == 'wiz' %}
+
+                                        <div class="p-1"><img src="/static/tools/wiz.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Wiz"></div>
+                                {% endif %}
+                                        {% if data.scanner == 'scoutsuite' %}
+
+                                        <div class="p-1"><img src="/static/tools/scoutsuite.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Scout Suite"></div>
+                                {% endif %} </td>
                                         {% if data.vuln_status == 'Open' %}
                                             <td><span class="badge badge-pill badge-purple">{{ data.vuln_status }}</span>
                                                 {% if data.note != None %}
@@ -163,7 +173,7 @@
                                                 {% endif %}
                                             </td>
                                         {% endif %}
-                                        <td>{{ data.fileName }}</td>
+                                        <td>{{ data.resourceName }}</td>
 
                                         <td><span
                                                 class="badge badge-pill badge-{{ data.severity_color }}">{{ data.severity }}</span>

@@ -84,6 +84,7 @@ from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
 from cloudscanners.models import CloudScansDb
 from scanners.scanner_parser.cloud_scanner.prisma_cloud_csv import prisma_cloud_report_csv
 from scanners.scanner_parser.cloud_scanner.wiz_security_csv import wiz_cloud_report_csv
+from scanners.scanner_parser.cloud_scanner.scoutsuite_js import scoutsuite_cloud_report_js
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from tools.models import NiktoResultDb
 from user_management import permissions
@@ -1082,6 +1083,46 @@ class Upload(APIView):
                                         project_id=project_id,
                                         scan_id=scan_id,
                                         )
+
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse("cloudscanners:list_scans"))
+            except Exception as e:
+                print(e)
+                messages.error(request, "File Not Supported")
+                return render(
+                    request,
+                    "report_upload/upload.html",
+                    {"all_project": all_project},
+                )
+
+        elif scanner == "scoutsuite":
+            json_file = ''
+            try:
+                if self.check_file_ext(str(file)) != ".js":
+                    messages.error(request, "scoutsuite Only JS file Supported")
+                    return HttpResponseRedirect(reverse("report_upload:upload"))
+                date_time = datetime.now()
+                json_payload = file.readlines()
+
+                json_payload.pop(0)
+                for d in json_payload:
+                    json_file = json.loads(d)
+                    data = json_file
+
+
+                scan_dump = CloudScansDb(
+                    scan_id=scan_id,
+                    date_time=date_time,
+                    project_id=project_id,
+                    scan_status=scan_status,
+                    rescan="No",
+                    scanner="scoutsuite",
+                )
+                scan_dump.save()
+                scoutsuite_cloud_report_js(data=data,
+                                            project_id=project_id,
+                                            scan_id=scan_id,
+                                            )
 
                 messages.success(request, "File Uploaded")
                 return HttpResponseRedirect(reverse("cloudscanners:list_scans"))
