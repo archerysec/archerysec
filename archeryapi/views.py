@@ -52,7 +52,7 @@ from scanners.scanner_parser.staticscanner_parser import (
     gitlab_sast_json_report_parser, gitlab_sca_json_report_parser,
     nodejsscan_report_json, npm_audit_report_json, semgrep_json_report_parser,
     tfsec_report_parser, trivy_json_report_parser,
-    twistlock_json_report_parser, whitesource_json_report_parser)
+    twistlock_json_report_parser, whitesource_json_report_parser, grype_report_json_parser)
 from scanners.scanner_parser.staticscanner_parser.findbugs_report_parser import FindsecbugsParser
 from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import \
     bandit_report_json
@@ -167,6 +167,7 @@ class UploadScanResult(APIView):
     def web_result_data(self, scan_id, project_uu_id, scanner):
         all_web_data = WebScanResultsDb.objects.filter(scan_id=scan_id)
         total_vul = len(all_web_data)
+        total_critical = len(all_web_data.filter(severity="Critical"))
         total_high = len(all_web_data.filter(severity="High"))
         total_medium = len(all_web_data.filter(severity="Medium"))
         total_low = len(all_web_data.filter(severity="Low"))
@@ -178,6 +179,7 @@ class UploadScanResult(APIView):
                 "scanner": escape(scanner),
                 "result": {
                     "total_vul": escape(total_vul),
+                    "total_critical": escape(total_critical),
                     "total_high": escape(total_high),
                     "total_medium": escape(total_medium),
                     "total_low": escape(total_low),
@@ -187,7 +189,8 @@ class UploadScanResult(APIView):
 
     def sast_result_data(self, scan_id, project_uu_id, scanner):
         all_sast_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
-        total_vul = len(all_sast_data)
+        total_vul = len(all_sast_data.filter(severity__in=['Critical', 'High', 'Medium', 'Low']))
+        total_critical = len(all_sast_data.filter(severity="Critical"))
         total_high = len(all_sast_data.filter(severity="High"))
         total_medium = len(all_sast_data.filter(severity="Medium"))
         total_low = len(all_sast_data.filter(severity="Low"))
@@ -199,6 +202,7 @@ class UploadScanResult(APIView):
                 "scanner": escape(scanner),
                 "result": {
                     "total_vul": escape(total_vul),
+                    "total_critical": escape(total_critical),
                     "total_high": escape(total_high),
                     "total_medium": escape(total_medium),
                     "total_low": escape(total_low),
@@ -207,12 +211,12 @@ class UploadScanResult(APIView):
         )
 
     def cloud_result_data(self, scan_id, project_uu_id, scanner):
-        all_sast_data = CloudScansResultsDb.objects.filter(scan_id=scan_id)
-        total_vul = len(all_sast_data)
-        total_critical = len(all_sast_data.filter(severity="Critical"))
-        total_high = len(all_sast_data.filter(severity="High"))
-        total_medium = len(all_sast_data.filter(severity="Medium"))
-        total_low = len(all_sast_data.filter(severity="Low"))
+        all_cloud_data = CloudScansResultsDb.objects.filter(scan_id=scan_id)
+        total_vul = len(all_cloud_data)
+        total_critical = len(all_cloud_data.filter(severity="Critical"))
+        total_high = len(all_cloud_data.filter(severity="High"))
+        total_medium = len(all_cloud_data.filter(severity="Medium"))
+        total_low = len(all_cloud_data.filter(severity="Low"))
         return Response(
             {
                 "message": "Scan Data Uploaded",
@@ -491,6 +495,24 @@ class UploadScanResult(APIView):
             scan_dump.save()
             data = json.loads(file)
             trivy_json_report_parser.trivy_report_json(
+                project_id=project_id,
+                scan_id=scan_id,
+                data=data,
+            )
+            return self.sast_result_data(scan_id, project_uu_id, scanner)
+
+        elif scanner == "grype":
+
+            scan_dump = StaticScansDb(
+                project_name=scan_url,
+                scan_id=scan_id,
+                project_id=project_id,
+                scan_status=scan_status,
+                scanner="grype",
+            )
+            scan_dump.save()
+            data = json.loads(file)
+            grype_report_json_parser.grype_report_json(
                 project_id=project_id,
                 scan_id=scan_id,
                 data=data,

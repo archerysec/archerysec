@@ -95,7 +95,11 @@
                                       {% elif data.scanner == 'Gitlabsast' %}
                                      <div class="p-1"><img src="/static/tools/gitlab.png" alt="user" width="30"
                                                                   class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Gitlabsast"></div></td>
-                                 {% endif %}
+                                 {% elif data.scanner == 'grypescan' %}
+                                     <div class="p-1"><img src="/static/tools/grype.png" alt="user" width="30"
+                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Grype Scan"></div></td>
+
+                                        {% endif %}
                                         {% if data.vuln_status == 'Open' %}
                                             <td><span class="badge badge-pill badge-purple">{{ data.vuln_status }}</span>
                                                 {% if data.note != None %}

@@ -74,6 +74,8 @@ from scanners.scanner_parser.staticscanner_parser.twistlock_json_report_parser i
     twistlock_report_json
 from scanners.scanner_parser.staticscanner_parser.whitesource_json_report_parser import \
     whitesource_report_json
+from scanners.scanner_parser.staticscanner_parser.grype_report_json_parser import \
+    grype_report_json
 from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
 from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
                                                  arachni_xml_parser,
@@ -147,6 +149,8 @@ def upload(target, scan_id, date_time, project_id, scan_status, scanner, data):
         twistlock_report_json(data=data, project_id=project_id, scan_id=scan_id)
     elif scanner == "Brakeman_scan":
         brakeman_report_json(data=data, project_id=project_id, scan_id=scan_id)
+    elif scanner == "grype_scan":
+        grype_report_json(data=data, project_id=project_id, scan_id=scan_id)
 
 
 
@@ -928,6 +932,36 @@ class Upload(APIView):
                 j = file.read()
                 data = json.loads(j)
                 scanner = "Twistlock"
+                upload(
+                    target,
+                    scan_id,
+                    date_time,
+                    project_id,
+                    scan_status,
+                    scanner,
+                    data,
+                )
+                messages.success(request, "File Uploaded")
+                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
+            except Exception as e:
+                print(e)
+                messages.error(request, "File Not Supported")
+                return render(
+                    request,
+                    "report_upload/upload.html",
+                    {"all_project": all_project},
+                )
+
+        if scanner == "grype_scan":
+            try:
+                if self.check_file_ext(str(file)) != ".json":
+                    messages.error(request, "grype Only JSON file Supported")
+                    return HttpResponseRedirect(reverse("report_upload:upload"))
+                date_time = datetime.now()
+
+                j = file.read()
+                data = json.loads(j)
+                scanner = "grype_scan"
                 upload(
                     target,
                     scan_id,
