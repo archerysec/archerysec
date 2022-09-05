@@ -118,18 +118,18 @@ class CloudScanTest(TestCase):
             ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
         )
 
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Prisma%20CSPM/prisma-report-sample.csv"
 
         response = requests.get(file_path)
 
         file_n = SimpleUploadedFile(
-            name="test.json",
+            name="test.csv",
             content=response.text.encode(),
             content_type="multipart/form-data",
         )
 
         data = {
-            "scanner": "bandit_scan",
+            "scanner": "prisma_cspm",
             "file": file_n,
             "target": "http://test.com",
             "project_id": str(project_id),
@@ -178,18 +178,18 @@ class CloudScanTest(TestCase):
             ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
         )
 
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Prisma%20CSPM/prisma-report-sample.csv"
 
         response = requests.get(file_path)
 
         file_n = SimpleUploadedFile(
-            name="test.json",
+            name="test.csv",
             content=response.text.encode(),
             content_type="multipart/form-data",
         )
 
         data = {
-            "scanner": "bandit_scan",
+            "scanner": "prisma_cspm",
             "file": file_n,
             "target": "http://test.com",
             "project_id": str(project_id),
@@ -316,18 +316,18 @@ class CloudScanTest(TestCase):
             ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
         )
 
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Prisma%20CSPM/prisma-report-sample.csv"
 
         response = requests.get(file_path)
 
         file_n = SimpleUploadedFile(
-            name="test.json",
+            name="test.csv",
             content=response.text.encode(),
             content_type="multipart/form-data",
         )
 
         data = {
-            "scanner": "bandit_scan",
+            "scanner": "prisma_cspm",
             "file": file_n,
             "target": "http://test.com",
             "project_id": str(project_id),
@@ -384,18 +384,18 @@ class CloudScanTest(TestCase):
             ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
         )
 
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Prisma%20CSPM/prisma-report-sample.csv"
 
         response = requests.get(file_path)
 
         file_n = SimpleUploadedFile(
-            name="test.json",
+            name="test.csv",
             content=response.text.encode(),
             content_type="multipart/form-data",
         )
 
         data = {
-            "scanner": "bandit_scan",
+            "scanner": "prisma_cspm",
             "file": file_n,
             "target": "http://test.com",
             "project_id": str(project_id),
@@ -428,18 +428,18 @@ class CloudScanTest(TestCase):
             ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
         )
 
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Prisma%20CSPM/prisma-report-sample.csv"
 
         response = requests.get(file_path)
 
         file_n = SimpleUploadedFile(
-            name="test.json",
+            name="test.csv",
             content=response.text.encode(),
             content_type="multipart/form-data",
         )
 
         data = {
-            "scanner": "bandit_scan",
+            "scanner": "prisma_cspm",
             "file": file_n,
             "target": "http://test.com",
             "project_id": str(project_id),
@@ -485,18 +485,18 @@ class CloudScanTest(TestCase):
             ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
         )
 
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Prisma%20CSPM/prisma-report-sample.csv"
 
         response = requests.get(file_path)
 
         file_n = SimpleUploadedFile(
-            name="test.json",
+            name="test.csv",
             content=response.text.encode(),
             content_type="multipart/form-data",
         )
 
         data = {
-            "scanner": "bandit_scan",
+            "scanner": "prisma_cspm",
             "file": file_n,
             "target": "http://test.com",
             "project_id": str(project_id),
@@ -585,18 +585,18 @@ class CloudScanTest(TestCase):
             ProjectDb.objects.filter(project_name="name").values("uu_id").get()["uu_id"]
         )
 
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Bandit/bandit_report.json"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Prisma%20CSPM/prisma-report-sample.csv"
 
         response = requests.get(file_path)
 
         file_n = SimpleUploadedFile(
-            name="test.json",
+            name="test.csv",
             content=response.text.encode(),
             content_type="multipart/form-data",
         )
 
         data = {
-            "scanner": "bandit_scan",
+            "scanner": "prisma_cspm",
             "file": file_n,
             "target": "http://test.com",
             "project_id": str(project_id),

@@ -362,7 +362,7 @@ class UploadTest(TestCase):
         )
 
     def test_upload_trivy_scan_report_files(self):
-        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Trivy/trivy_results.json"
+        file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Trivy/trivy-all.json"
         test_file_path = "https://raw.githubusercontent.com/archerysec/report-sample/main/Findbugs/findbugs_report_v3.1.5.xml"
         scanner = "trivy_scan"
         error_message = "Trivy Only JSON file Supported"
