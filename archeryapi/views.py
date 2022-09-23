@@ -236,6 +236,7 @@ class UploadScanResult(APIView):
     def network_result_data(self, scan_id, project_uu_id, scanner):
         all_net_data = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
         total_vul = len(all_net_data)
+        total_critical = len(all_net_data.filter(severity="Critical"))
         total_high = len(all_net_data.filter(severity="High"))
         total_medium = len(all_net_data.filter(severity="Medium"))
         total_low = len(all_net_data.filter(severity="Low"))
@@ -247,6 +248,7 @@ class UploadScanResult(APIView):
                 "scanner": escape(scanner),
                 "result": {
                     "total_vul": escape(total_vul),
+                    "total_critical": escape(total_critical),
                     "total_high": escape(total_high),
                     "total_medium": escape(total_medium),
                     "total_low": escape(total_low),

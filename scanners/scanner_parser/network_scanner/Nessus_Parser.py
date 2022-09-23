@@ -67,7 +67,6 @@ def updated_nessus_parser(root, project_id, scan_id):
             try:
                 for key, value in reportHost.items():
                     target = value
-                    scan_id = uuid.uuid4()
                     scan_status = "100"
                     scan_dump = NetworkScanDb(
                         ip=target,
