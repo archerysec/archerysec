@@ -93,47 +93,14 @@
                                 <td>
                                     <a href="{% url 'staticscanners:list_vuln' %}?scan_id={{data.scan_id}}&scanner={{ data.scanner }}">{% firstof data.project_name 'None' %}</a>
                                 </td>
-                                 <td>{% if data.scanner == 'Dependencycheck' %}
-
-                                        <div class="p-1"><img src="/static/tools/dependencycheck.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Dependencycheck"></div></td>{% elif data.scanner == 'Checkmarx' %}
-                                     <div class="p-1"><img src="/static/tools/checkmarx.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Checkmarx"></div></td>{% elif data.scanner == 'Findbugs' %}
-                                     <div class="p-1"><img src="/static/tools/findbugs.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Findbugs"></div></td>{% elif data.scanner == 'Bandit' %}
-                                     <div class="p-1"><img src="/static/tools/bandit.jpeg" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Bandit"></div></td>{% elif data.scanner == 'Clair' %}
-                                     <div class="p-1"><img src="/static/tools/clair.svg" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Clair"></div></td>{% elif data.scanner == 'Trivy' %}
-                                     <div class="p-1"><img src="/static/tools/trivy.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Trivy"></div></td>{% elif data.scanner == 'Npmaudit' %}
-                                      <div class="p-1"><img src="/static/tools/npmaduit.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Npmaudit"></div></td>{% elif data.scanner == 'Nodejsscan' %}
-                                     <div class="p-1"><img src="/static/tools/nodejs.jpeg" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Nodejsscan"></div></td>{% elif data.scanner == 'Tfsec' %}
-                                     <div class="p-1"><img src="/static/tools/tfsec.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Tfsec"></div></td>{% elif data.scanner == 'Whitesource' %}
-                                     <div class="p-1"><img src="/static/tools/whitesource.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Whitesource"></div></td>
-                                 {% elif data.scanner == 'Twistlock' %}
-                                     <div class="p-1"><img src="/static/tools/twistlock.png" alt="user" width="30"
-                                                                 class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Twistlock"></div></td>
-                                     {% elif data.scanner == 'Semgrep' %}
-                                     <div class="p-1"><img src="/static/tools/semgrep.svg" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Semgrep"></div></td>
-                                     {% elif data.scanner == 'Brakeman' %}
-                                     <div class="p-1"><img src="/static/tools/brakeman.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Brakeman"></div></td>
-                                     {% elif data.scanner == 'Gitlabsca' %}
-                                     <div class="p-1"><img src="/static/tools/gitlab.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Gitlabsca"></div></td>
-                                      {% elif data.scanner == 'Gitlabsast' %}
-                                     <div class="p-1"><img src="/static/tools/gitlab.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Gitlabsast"></div></td>
-                                      {% elif data.scanner == 'grypescan' %}
-                                     <div class="p-1"><img src="/static/tools/grype.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Grype Scan"></div></td>
-                                 {% endif %}
+                                <td>{% with scanType=data.scanner %}
+                                    <div class="p-1"><img src="{{ PARSER_DICT|get_icon:scanType }}" alt="user"
+                                            width="30" class="rounded-circle" data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="{{ PARSER_DICT|get_displayName:scanType }}">
+                                    </div>
+                                    {% endwith %}
+                                </td>
 
 {#                                <td width="20%">#}
 {#                                            <div>#}

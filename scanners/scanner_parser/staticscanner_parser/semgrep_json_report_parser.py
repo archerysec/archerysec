@@ -50,47 +50,47 @@ def semgrep_report_json(data, project_id, scan_id):
     for vuln_data in vuln:
         try:
             check_id = vuln_data["check_id"]
-        except Exception as e:
+        except Exception:
             check_id = "Not Found"
 
         try:
             path = vuln_data["path"]
-        except Exception as e:
+        except Exception:
             path = "Not Found"
 
-        try:
-            start = vuln_data["start"]
-        except Exception as e:
-            start = "Not Found"
+        # try:
+        #     start = vuln_data["start"]
+        # except Exception:
+        #     start = "Not Found"
 
         try:
             end = vuln_data["end"]
-        except Exception as e:
+        except Exception:
             end = "Not Found"
 
         try:
             message = vuln_data["extra"]["message"]
-        except Exception as e:
+        except Exception:
             message = "Not Found"
 
         try:
             metavars = vuln_data["extra"]["metavars"]
-        except Exception as e:
+        except Exception:
             metavars = "Not Found"
 
         try:
             metadata = vuln_data["extra"]["metadata"]
-        except Exception as e:
+        except Exception:
             metadata = "Not Found"
 
         try:
             severity = vuln_data["extra"]["severity"]
-        except Exception as e:
+        except Exception:
             severity = "Not Found"
 
         try:
             lines = vuln_data["extra"]["lines"]
-        except Exception as e:
+        except Exception:
             lines = "Not Found"
 
         if severity == "ERROR":
@@ -153,7 +153,7 @@ def semgrep_report_json(data, project_id, scan_id):
                 + str(metadata)
                 + "\n\n"
                 + str(lines),
-                scanner="Sempgrep",
+                scanner="Semgrep",
             )
             save_all.save()
 

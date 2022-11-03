@@ -48,12 +48,13 @@ def grype_report_json(data, project_id, scan_id):
 
         title = vuln['vulnerability']['id']
         dataSource = vuln['vulnerability']['dataSource']
-        namespace = vuln['vulnerability']['namespace']
+        # namespace =
+        vuln['vulnerability']['namespace']
         severity = vuln['vulnerability']['severity']
         urls = vuln['vulnerability']['urls']
         try:
             description = vuln['vulnerability']['description']
-        except:
+        except Exception:
             description = "NA"
         fix = vuln['vulnerability']['fix']['state']
         fix_version = vuln['vulnerability']['fix']['versions']
@@ -122,7 +123,7 @@ def grype_report_json(data, project_id, scan_id):
                             + str(advisories)
                             + "\n\n"
                             + str(dataSource),
-                scanner="grypescan",
+                scanner="grype_scan",
             )
             save_all.save()
 
@@ -153,7 +154,7 @@ def grype_report_json(data, project_id, scan_id):
                             + str(advisories)
                             + "\n\n"
                             + str(dataSource),
-                scanner="grypescan",
+                scanner="grype_scan",
             )
             save_all.save()
 
@@ -180,7 +181,7 @@ def grype_report_json(data, project_id, scan_id):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
-        scanner="grypescan",
+        scanner="grype_scan",
     )
     trend_update()
     subject = "Archery Tool Scan Status - grype Report Uploaded"

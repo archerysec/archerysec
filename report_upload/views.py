@@ -166,7 +166,7 @@ class Upload(APIView):
                                 date_time=date_time,
                                 project_id=project_id,
                                 scan_status=scan_status,
-                                scanner="Openvas",
+                                scanner=dbName,
                             )
                             scan_dump.save()
                     # Regular network scan case

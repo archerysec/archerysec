@@ -313,7 +313,7 @@ class UploadScanResult(APIView):
                             scan_id=scan_id,
                             project_id=project_id,
                             scan_status=scan_status,
-                            scanner="Openvas",
+                            scanner=dbName,
                         )
                         scan_dump.save()
                 # Regular network scan case
