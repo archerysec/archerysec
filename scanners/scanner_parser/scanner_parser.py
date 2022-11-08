@@ -286,7 +286,7 @@ ParserFunctionDict = {
         "icon": "/static/tools/openvas.png"
     },
     "prisma_cspm": {
-        "displayName": "prisma_cspm",
+        "displayName": "Prisma CSPM",
         "dbtype": "CloudScans",
         "dbname": "Prismacloud",
         "type": "CSV",
@@ -294,7 +294,7 @@ ParserFunctionDict = {
         "icon": "/static/tools/prisma-cloud.png"
     },
     "wiz": {
-        "displayName": "wiz",
+        "displayName": "Wiz",
         "dbtype": "CloudScans",
         "dbname": "wiz",
         "type": "CSV",
@@ -302,7 +302,7 @@ ParserFunctionDict = {
         "icon": "/static/tools/wiz.png"
     },
     "scoutsuite": {
-        "displayName": "scoutsuite",
+        "displayName": "Scout Suite",
         "dbtype": "CloudScans",
         "dbname": "scoutsuite",
         "type": "JS",
@@ -322,22 +322,23 @@ for parserCode in ParserFunctionDict:
     IconDict[dbName] = {}
     IconDict[dbName]["displayName"] = ParserFunctionDict[parserCode]["displayName"]
     IconDict[dbName]["codeName"] = parserCode
+    IconDict[dbName]["type"] = ParserFunctionDict[parserCode]["type"]
 
     if "icon" in ParserFunctionDict[parserCode]:
         IconDict[dbName]["icon"] = ParserFunctionDict[parserCode]["icon"]
 
 # Jira
-IconDict["Jira"] = {
-    "icon": "/static/tools/jira.png",
-    "displayName": "Jira",
-    "codeName": "jira"
-}
+# IconDict["Jira"] = {
+#     "icon": "/static/tools/jira.png",
+#     "displayName": "Jira",
+#     "codeName": "jira"
+# }
 # Email
-IconDict["Email"] = {
-    "icon": "/static/tools/email.png",
-    "displayName": "Email",
-    "codeName": "email"
-}
+# IconDict["Email"] = {
+#     "icon": "/static/tools/email.png",
+#     "displayName": "Email",
+#     "codeName": "email"
+# }
 
 
 # Django specific definitions
@@ -354,3 +355,13 @@ def get_icon(dictionary, key):
 @register.filter
 def get_displayName(dictionary, key):
     return dictionary.get(key).get("displayName")
+
+
+@register.filter
+def get_codeName(dictionary, key):
+    return dictionary.get(key).get("codeName")
+
+
+@register.filter
+def get_type(dictionary, key):
+    return dictionary.get(key).get("type")
