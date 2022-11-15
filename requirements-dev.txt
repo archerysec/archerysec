@@ -1,3 +1,4 @@
 -r requirements.txt
 pre-commit==1.15.1
 flake8==3.7.7
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
