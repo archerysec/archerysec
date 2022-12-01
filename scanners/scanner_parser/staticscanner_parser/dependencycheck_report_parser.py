@@ -53,7 +53,7 @@ def xml_parser(data, project_id, scan_id):
 
     pt = data.xpath("namespace-uri(.)")
     # root = data.getroot()
-    inst = []
+    # inst = []
     for scan in data:
         for dependencies in scan:
             for dependency in dependencies:
@@ -129,7 +129,6 @@ def xml_parser(data, project_id, scan_id):
 
                                     if vuln_dat.tag == "{%s}cwe" % pt:
                                         cwe = vuln_dat.text
-
 
                         elif (
                             pt
@@ -381,3 +380,15 @@ def xml_parser(data, project_id, scan_id):
     email_sch_notify(subject=subject, message=message)
 
     return HttpResponse(status=201)
+
+
+ParserHeaderDict = {
+    "dependencycheck": {
+        "displayName": "Dependency Check",
+        "dbtype": "StaticScans",
+        "dbname": "Dependencycheck",
+        "type": "LXML",
+        "parserFunction": xml_parser,
+        "icon": "/static/tools/dependencycheck.png"
+    }
+}

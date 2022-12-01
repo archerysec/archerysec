@@ -193,3 +193,15 @@ def grype_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "grype_scan": {
+        "displayName": "grype Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "grype_scan",
+        "type": "JSON",
+        "parserFunction": grype_report_json,
+        "icon": "/static/tools/grype.png"
+    }
+}

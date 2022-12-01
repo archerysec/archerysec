@@ -49,7 +49,7 @@ def npmaudit_report_json(data, project_id, scan_id):
         access = data["advisories"][vuln]["access"]
         severity = data["advisories"][vuln]["severity"]
         cwe = data["advisories"][vuln]["cwe"]
-        metadata = data["advisories"][vuln]["metadata"]
+        # metadata = data["advisories"][vuln]["metadata"]
         url = data["advisories"][vuln]["url"]
 
         findings = data["advisories"][vuln]["findings"]
@@ -230,3 +230,15 @@ def npmaudit_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "npmaudit_scan": {
+        "displayName": "npm-audit Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Npmaudit",
+        "type": "JSON",
+        "parserFunction": npmaudit_report_json,
+        "icon": "/static/tools/npmaudit.png"
+    }
+}

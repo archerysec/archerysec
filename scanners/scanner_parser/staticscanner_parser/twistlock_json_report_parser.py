@@ -104,42 +104,42 @@ def twistlock_report_json(data, project_id, scan_id):
     for vuln_data in vuln:
         try:
             name = vuln_data["id"]
-        except Exception as e:
+        except Exception:
             name = "Not Found"
 
         try:
             cvss = vuln_data["cvss"]
-        except Exception as e:
+        except Exception:
             cvss = "Not Found"
 
-        try:
-            vector = vuln_data["vector"]
-        except Exception as e:
-            vector = "Not Found"
+        # try:
+        #     vector = vuln_data["vector"]
+        # except Exception:
+        #     vector = "Not Found"
 
         try:
             description = vuln_data["description"]
-        except Exception as e:
+        except Exception:
             description = "Not Found"
 
         try:
             severity = vuln_data["severity"]
-        except Exception as e:
+        except Exception:
             severity = "Not Found"
 
         try:
             packageName = vuln_data["packageName"]
-        except Exception as e:
+        except Exception:
             packageName = "Not Found"
 
         try:
             packageVersion = vuln_data["packageVersion"]
-        except Exception as e:
+        except Exception:
             packageVersion = "Not Found"
 
         try:
             link = vuln_data["link"]
-        except Exception as e:
+        except Exception:
             link = "Not Found"
 
         if severity == "critical":
@@ -273,3 +273,15 @@ def twistlock_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "twistlock_scan": {
+        "displayName": "twistlock Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Twistlock",
+        "type": "JSON",
+        "parserFunction": twistlock_report_json,
+        "icon": "/static/tools/twistlock.png"
+    }
+}

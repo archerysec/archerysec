@@ -270,3 +270,15 @@ class FindsecbugsParser(object):
         )
 
         email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "findbugs": {
+        "displayName": "FindBug",
+        "dbtype": "StaticScans",
+        "dbname": "Findbugs",
+        "type": "XML",
+        "parserFunction": findsecbug_report_xml,
+        "icon": "/static/tools/findbugs.png"
+    }
+}

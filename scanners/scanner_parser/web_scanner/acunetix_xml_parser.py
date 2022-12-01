@@ -318,3 +318,15 @@ def xml_parser(root, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "acunetix": {
+        "displayName": "Acutenix Scanner",
+        "dbtype": "WebScans",
+        "dbname": "Acutenix",
+        "type": "XML",
+        "parserFunction": xml_parser,
+        "icon": "/static/tools/acunetix.png"
+    }
+}

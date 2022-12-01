@@ -136,3 +136,13 @@ def nikto_html_parser(data, project_id, scan_id):
             vuln_status="Open",
         )
         dump_data.save()
+
+
+ParserHeaderDict = {
+    "nikto": {
+        "displayName": "Nikto",
+        "dbtype": "NiktoResult",
+        "type": "XML",
+        "parserFunction": nikto_html_parser
+    }
+}

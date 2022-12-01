@@ -61,7 +61,7 @@ def trivy_report_json(data, project_id, scan_id):
                 t_target = vuln_data["Target"]
                 t_class = vuln_data["Class"]
                 t_type = vuln_data["Type"]
-            except:
+            except Exception:
                 pass
             for issue in vuln:
                 try:
@@ -128,11 +128,11 @@ def trivy_report_json(data, project_id, scan_id):
                 vul_id = uuid.uuid4()
 
                 dup_data = str(VulnerabilityID) + \
-                           str(Severity) + \
-                           str(PkgName) + \
-                           str(t_target) + \
-                           str(t_type) + \
-                           str(t_class)
+                    str(Severity) + \
+                    str(PkgName) + \
+                    str(t_target) + \
+                    str(t_type) + \
+                    str(t_class)
 
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -162,19 +162,19 @@ def trivy_report_json(data, project_id, scan_id):
                         fileName=PkgName,
                         title=VulnerabilityID,
                         description=str(Description)
-                                    + str(Title)
-                                    + "\n\n"
-                                    + str(t_target) +
-                                    str(t_type) +
-                                    str(t_class)
-                                    + "\n\n"
-                                    + str(VulnerabilityID)
-                                    + "\n\n"
-                                    + str(PkgName)
-                                    + "\n\n"
-                                    + str(InstalledVersion)
-                                    + "\n\n"
-                                    + str(FixedVersion),
+                        + str(Title)
+                        + "\n\n"
+                        + str(t_target)
+                        + str(t_type)
+                        + str(t_class)
+                        + "\n\n"
+                        + str(VulnerabilityID)
+                        + "\n\n"
+                        + str(PkgName)
+                        + "\n\n"
+                        + str(InstalledVersion)
+                        + "\n\n"
+                        + str(FixedVersion),
                         severity=Severity,
                         solution=PkgName + ' can be fixed by upgrading version :' + FixedVersion,
                         references=References,
@@ -198,19 +198,19 @@ def trivy_report_json(data, project_id, scan_id):
                         fileName=PkgName,
                         title=VulnerabilityID,
                         description=str(Description)
-                                    + str(Title)
-                                    + "\n\n"
-                                    + str(t_target) +
-                                    str(t_type) +
-                                    str(t_class)
-                                    + "\n\n"
-                                    + str(VulnerabilityID)
-                                    + "\n\n"
-                                    + str(PkgName)
-                                    + "\n\n"
-                                    + str(InstalledVersion)
-                                    + "\n\n"
-                                    + str(FixedVersion),
+                        + str(Title)
+                        + "\n\n"
+                        + str(t_target)
+                        + str(t_type)
+                        + str(t_class)
+                        + "\n\n"
+                        + str(VulnerabilityID)
+                        + "\n\n"
+                        + str(PkgName)
+                        + "\n\n"
+                        + str(InstalledVersion)
+                        + "\n\n"
+                        + str(FixedVersion),
                         severity=Severity,
                         references=References,
                         severity_color=vul_col,
@@ -262,7 +262,7 @@ def trivy_report_json(data, project_id, scan_id):
             target = mis['Target']
             try:
                 mis_data = mis['Misconfigurations']
-            except:
+            except Exception:
                 pass
             if mis['Class'] == 'secret':
                 title = mis['Secrets'][0]['Title']
@@ -295,9 +295,9 @@ def trivy_report_json(data, project_id, scan_id):
                 vul_id = uuid.uuid4()
 
                 dup_data = str(title) + \
-                           str(Severity) + \
-                           str(match) + \
-                           str(target)
+                    str(Severity) + \
+                    str(match) + \
+                    str(target)
 
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -327,15 +327,15 @@ def trivy_report_json(data, project_id, scan_id):
                         fileName=target,
                         title=title,
                         description=str(description)
-                                    + str(title)
-                                    + "\n\n"
-                                    + str(match)
-                                    + "\n\n"
-                                    + 'Start Line: ' + str(startline)
-                                    + "\n\n"
-                                    + 'End Line: ' + str(endline)
-                                    + "\n\n"
-                                    + str(category),
+                        + str(title)
+                        + "\n\n"
+                        + str(match)
+                        + "\n\n"
+                        + 'Start Line: ' + str(startline)
+                        + "\n\n"
+                        + 'End Line: ' + str(endline)
+                        + "\n\n"
+                        + str(category),
                         severity=Severity,
                         solution='Remove secret ' + match + ' form the code',
                         references=references,
@@ -359,15 +359,15 @@ def trivy_report_json(data, project_id, scan_id):
                         fileName=target,
                         title=title,
                         description=str(description)
-                                    + str(title)
-                                    + "\n\n"
-                                    + str(match)
-                                    + "\n\n"
-                                    + 'Start Line: ' + str(startline)
-                                    + "\n\n"
-                                    + 'End Line: ' + str(endline)
-                                    + "\n\n"
-                                    + str(category),
+                        + str(title)
+                        + "\n\n"
+                        + str(match)
+                        + "\n\n"
+                        + 'Start Line: ' + str(startline)
+                        + "\n\n"
+                        + 'End Line: ' + str(endline)
+                        + "\n\n"
+                        + str(category),
                         severity=Severity,
                         references=references,
                         severity_color=vul_col,
@@ -395,7 +395,7 @@ def trivy_report_json(data, project_id, scan_id):
                         provider = miscon['CauseMetadata']['Provider']
 
                     except Exception as e:
-                            print(e)
+                        print(e)
 
                     if Severity == "CRITICAL":
                         Severity = "Critical"
@@ -420,9 +420,9 @@ def trivy_report_json(data, project_id, scan_id):
                     vul_id = uuid.uuid4()
 
                     dup_data = str(title) + \
-                               str(Severity) + \
-                               str(code) + \
-                               str(target)
+                        str(Severity) + \
+                        str(code) + \
+                        str(target)
 
                     duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -452,18 +452,18 @@ def trivy_report_json(data, project_id, scan_id):
                             fileName=target,
                             title=title,
                             description=str(description)
-                                        + str(title)
-                                        + "\n\n"
-                                        + str(message)
-                                        + "\n\n"
-                                        + 'Start Line: ' + str(startline)
-                                        + "\n\n"
-                                        + 'End Line: ' + str(endline)
-                                        + "\n\n"
-                                        + str(resource)
-                                        + "\n\n"
-                                        + str(provider)
-                                        + str(code),
+                            + str(title)
+                            + "\n\n"
+                            + str(message)
+                            + "\n\n"
+                            + 'Start Line: ' + str(startline)
+                            + "\n\n"
+                            + 'End Line: ' + str(endline)
+                            + "\n\n"
+                            + str(resource)
+                            + "\n\n"
+                            + str(provider)
+                            + str(code),
                             severity=Severity,
                             solution=resolution,
                             references=references,
@@ -487,15 +487,15 @@ def trivy_report_json(data, project_id, scan_id):
                             fileName=target,
                             title=title,
                             description=str(description)
-                                        + str(title)
-                                        + "\n\n"
-                                        + str(message)
-                                        + "\n\n"
-                                        + 'Start Line: ' + str(startline)
-                                        + "\n\n"
-                                        + 'End Line: ' + str(endline)
-                                        + "\n\n"
-                                        + str(resource),
+                            + str(title)
+                            + "\n\n"
+                            + str(message)
+                            + "\n\n"
+                            + 'Start Line: ' + str(startline)
+                            + "\n\n"
+                            + 'End Line: ' + str(endline)
+                            + "\n\n"
+                            + str(resource),
                             severity=Severity,
                             references=references,
                             severity_color=vul_col,
@@ -536,10 +536,22 @@ def trivy_report_json(data, project_id, scan_id):
     trend_update()
     subject = "Archery Tool Scan Status - Trivy Report Uploaded"
     message = (
-            "Trivy Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % (Target, total_vul, total_high, total_medium, total_low)
+        "Trivy Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (Target, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "trivy_scan": {
+        "displayName": "Trivy Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Trivy",
+        "type": "JSON",
+        "parserFunction": trivy_report_json,
+        "icon": "/static/tools/trivy.png"
+    }
+}

@@ -243,3 +243,15 @@ def bandit_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "bandit_scan": {
+        "displayName": "Bandit Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Bandit",
+        "type": "JSON",
+        "parserFunction": bandit_report_json,
+        "icon": "/static/tools/bandit.jpeg"
+    }
+}

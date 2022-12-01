@@ -231,3 +231,14 @@ def xml_parser(root, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "netsparker": {
+        "displayName": "Netsparker Scanner",
+        "dbtype": "WebScans",
+        "dbname": "Netsparker",
+        "type": "XML",
+        "parserFunction": xml_parser
+    }
+}

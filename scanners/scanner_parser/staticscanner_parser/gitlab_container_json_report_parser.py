@@ -51,47 +51,47 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id):
 
         try:
             message = vuln_data["message"]
-        except Exception as e:
+        except Exception:
             message = "Not Found"
 
         try:
             description = vuln_data["description"]
-        except Exception as e:
+        except Exception:
             description = "Not Found"
 
-        try:
-            cve = vuln_data["cve"]
-        except Exception as e:
-            cve = "Not Found"
+        # try:
+        #     cve = vuln_data["cve"]
+        # except Exception:
+        #     cve = "Not Found"
 
         try:
             scanner = vuln_data["scanner"]["name"]
-        except Exception as e:
+        except Exception:
             scanner = "Not Found"
 
         try:
             location = vuln_data["location"]["dependency"]
-        except Exception as e:
+        except Exception:
             location = "Not Found"
 
-        try:
-            identifiers = vuln_data["identifiers"]
-        except Exception as e:
-            identifiers = "Not Found"
+        # try:
+        #     identifiers = vuln_data["identifiers"]
+        # except Exception:
+        #     identifiers = "Not Found"
 
         try:
             severity = vuln_data["severity"]
-        except Exception as e:
+        except Exception:
             severity = "Not Found"
 
         try:
             file = vuln_data["location"]["dependency"]["package"]["name"]
-        except Exception as e:
+        except Exception:
             file = "Not Found"
 
         try:
             version = vuln_data["location"]["dependency"]["version"]
-        except Exception as e:
+        except Exception:
             version = "Not Found"
 
         full_location = str(file) + str(version)
@@ -212,3 +212,14 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "gitlabcontainerscan_scan": {
+        "displayName": "Gitlab Container Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Gitlabcontainerscan",
+        "type": "JSON",
+        "parserFunction": gitlabcontainerscan_report_json
+    }
+}

@@ -45,7 +45,7 @@ def checkmarx_report_xml(data, project_id, scan_id):
     project = data.attrib["ProjectName"]
     scan_details = data.attrib
     for dat in data:
-        query = dat.attrib
+        # query = dat.attrib
         name = dat.attrib["name"]
         severity = dat.attrib["Severity"]
         code_data = []
@@ -165,3 +165,15 @@ def checkmarx_report_xml(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "checkmarx": {
+        "displayName": "Checkmarx",
+        "dbtype": "StaticScans",
+        "dbname": "Checkmarx",
+        "type": "XML",
+        "parserFunction": checkmarx_report_xml,
+        "icon": "/static/tools/checkmarx.png"
+    }
+}

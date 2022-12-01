@@ -201,3 +201,15 @@ def get_hosts(root):
                     else:
                         hosts.append(host)
     return hosts
+
+
+ParserHeaderDict = {
+    "openvas": {
+        "displayName": "OpenVAS",
+        "dbtype": "NetworkScan",
+        "dbname": "Openvas",
+        "type": "XML",
+        "parserFunction": updated_xml_parser,
+        "icon": "/static/tools/nessus.png"
+    }
+}

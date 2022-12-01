@@ -223,3 +223,15 @@ def semgrep_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "semgrepscan_scan": {
+        "displayName": "Semgrep Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Semgrep",
+        "type": "JSON",
+        "parserFunction": semgrep_report_json,
+        "icon": "/static/tools/semgrep.svg"
+    }
+}

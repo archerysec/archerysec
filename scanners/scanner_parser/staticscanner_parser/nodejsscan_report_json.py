@@ -49,8 +49,8 @@ def nodejsscan_report_json(data, project_id, scan_id):
             title = vuln_dat["title"]
             filename = vuln_dat["filename"]
             path = vuln_dat["path"]
-            sha2 = vuln_dat["sha2"]
-            tag = vuln_dat["tag"]
+            # sha2 = vuln_dat["sha2"]
+            # tag = vuln_dat["tag"]
             description = vuln_dat["description"]
 
             line = vuln_dat["line"]
@@ -176,3 +176,15 @@ def nodejsscan_report_json(data, project_id, scan_id):
         )
 
         email_sch_notify(subject=subject, message=message)
+
+
+ParserHeaderDict = {
+    "nodejsscan_scan": {
+        "displayName": "Nodejs Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Nodejsscan",
+        "type": "JSON",
+        "parserFunction": nodejsscan_report_json,
+        "icon": "/static/tools/nodejs.jpeg"
+    }
+}
