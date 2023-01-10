@@ -11,6 +11,9 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jiraModal">
                     Create Jira Ticket
                 </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jiraLinkModal">
+                    Link to Jira Ticket
+                </button>
                 {% endif %}
             </div>
         </div>
@@ -221,6 +224,43 @@
     </div>
 </div>
 
+<div class="modal fade" id="jiraLinkModal" tabindex="-1" role="dialog"
+             aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="jiraLinkModalLabel">JIRA Ticket Linking</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="POST"
+                        action="{% url 'jiraticketing:link_jira_ticket' %}">{% csrf_token %}
+                    <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
+                    <input name="scanner" value="network" type="hidden">
+                    <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
+                    <input name="summary" value="{{ data.title }}" type="hidden">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label
+                                    class="col-sm-4 col-form-label">Jira Ticket ID</label>
+                            <div class="col-sm-6">
+                                <input type="text" name="jiraTickID"
+                                        class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 {% endfor %}
 

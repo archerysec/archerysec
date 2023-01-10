@@ -66,14 +66,14 @@ class WebScanVulnInfo(APIView):
         jira = jirasetting.objects.all()
         for d in jira:
             jira_url = d.jira_server
-        if uu_id == None:
+        if uu_id is None:
             scan_id = request.GET["scan_id"]
             name = request.GET["scan_name"]
             vuln_data = WebScanResultsDb.objects.filter(title=name, scan_id=scan_id)
         else:
             try:
                 vuln_data = WebScanResultsDb.objects.filter(scan_id=uu_id)
-            except:
+            except Exception:
                 return Response(
                     {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
@@ -165,7 +165,7 @@ class WebScanDetails(APIView):
         vuln_id = request.GET["vuln_id"]
 
         jira_setting = jirasetting.objects.filter()
-        user = request.user
+        # user = request.user
 
         for jira in jira_setting:
             jira_server = jira.jira_server
@@ -184,9 +184,12 @@ class WebScanDetails(APIView):
 
         options = {"server": jira_server}
         try:
-            jira_ser = JIRA(
-                options, basic_auth=(jira_username, jira_password), max_retries=0
-            )
+            if jira_username is not None and jira_username != "" :
+                jira_ser = JIRA(
+                    options, basic_auth=(jira_username, jira_password), max_retries=0
+                )
+            else :
+                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0)
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)

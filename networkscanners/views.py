@@ -57,7 +57,7 @@ from networkscanners.serializers import OpenvasSettingsSerializer, OpenvasScansS
 
 api_data = os.getcwd() + "/" + "apidata.json"
 
-status = ""
+# status = ""
 name = ""
 creation_time = ""
 modification_time = ""
@@ -86,7 +86,7 @@ def email_notify(user, subject, message):
     recipient_list = [to_mail]
     try:
         send_mail(subject, message, email_from, recipient_list)
-    except Exception as e:
+    except Exception:
         notify.send(user, recipient=user, verb="Email Settings Not Configured")
         pass
 
@@ -106,7 +106,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     )
     try:
         scanner = openvas.connect()
-    except Exception as e:
+    except Exception:
 
         notify.send(user, recipient=user, verb="OpenVAS Setting not configured")
         subject = "Archery Tool Notification"
@@ -312,7 +312,7 @@ class OpenvasDetails(APIView):
             SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=openvas_info
             )
-        except:
+        except Exception:
             openvas_info = False
             SettingsDb.objects.filter(setting_id=setting_id).update(
                 setting_status=openvas_info
@@ -366,8 +366,8 @@ class OpenvasSetting(APIView):
 
 @background(schedule=60)
 def task(target_ip, project_id, scanner):
-    rescan_id = ""
-    rescan = "No"
+    # rescan_id = ""
+    # rescan = "No"
     sel_profile = ""
     ip = target_ip.replace(" ", "")
     target__split = ip.split(",")
@@ -391,7 +391,7 @@ class NetworkScanSchedule(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        task_id = ""
+        # task_id = ""
 
         all_scans_db = ProjectDb.objects.filter()
         all_scheduled_scans = TaskScheduleDb.objects.filter()
@@ -579,14 +579,14 @@ class NetworkScanVulnInfo(APIView):
         jira = jirasetting.objects.all()
         for d in jira:
             jira_url = d.jira_server
-        if uu_id == None:
+        if uu_id is None:
             scan_id = request.GET["scan_id"]
             ip = request.GET["ip"]
             vuln_data = NetworkScanResultsDb.objects.filter(scan_id=scan_id, ip=ip)
         else:
             try:
                 vuln_data = NetworkScanResultsDb.objects.filter(scan_id=uu_id)
-            except:
+            except Exception:
                 return Response(
                     {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
@@ -679,7 +679,7 @@ class NetworkScanDetails(APIView):
         vuln_id = request.GET["vuln_id"]
         scanner = request.GET["scanner"]
         jira_setting = jirasetting.objects.filter()
-        user = request.user
+        # user = request.user
 
         for jira in jira_setting:
             jira_server = jira.jira_server
@@ -698,9 +698,12 @@ class NetworkScanDetails(APIView):
 
         options = {"server": jira_server}
         try:
-            jira_ser = JIRA(
-                options, basic_auth=(jira_username, jira_password), max_retries=0
-            )
+            if jira_username is not None and jira_username != "" :
+                jira_ser = JIRA(
+                    options, basic_auth=(jira_username, jira_password), max_retries=0
+                )
+            else :
+                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0)
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)

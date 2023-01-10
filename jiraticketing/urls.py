@@ -27,4 +27,9 @@ urlpatterns = [
         views.CreateJiraTicket.as_view(),
         name="submit_jira_ticket",
     ),
+    path(
+        "link_jira_ticket/",
+        views.LinkJiraTicket.as_view(),
+        name="link_jira_ticket",
+    ),
 ]
