@@ -25,6 +25,8 @@ import os
 import defusedxml.ElementTree as ET
 from django.core.files.uploadedfile import UploadedFile
 from django.shortcuts import HttpResponseRedirect, render, reverse
+from django.db.models import TextField, F, Value
+from django.db.models.functions import Cast, Concat
 from lxml import etree
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -35,7 +37,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from archeryapi.models import OrgAPIKey
-from archeryapi.serializers import OrgAPIKeySerializer
+from archeryapi.serializers import OrgAPIKeySerializer, GenericScanResultsDbSerializer
 from compliance.models import DockleScanDb, InspecScanDb
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from projects.models import MonthDb, ProjectDb
@@ -840,9 +842,9 @@ class UploadScanResult(APIView):
             )
             scan_dump.save()
             wiz_cloud_report_csv(data=data,
-                                project_id=project_id,
-                                scan_id=scan_id,
-                                )
+                                 project_id=project_id,
+                                 scan_id=scan_id,
+                                 )
 
             return self.cloud_result_data(scan_id, project_uu_id, scanner)
 
@@ -861,15 +863,14 @@ class UploadScanResult(APIView):
             )
             scan_dump.save()
             scoutsuite_cloud_report_js(data=data,
-                                        project_id=project_id,
-                                        scan_id=scan_id,
-                                        )
+                                       project_id=project_id,
+                                       scan_id=scan_id,
+                                       )
 
             return self.cloud_result_data(scan_id, project_uu_id, scanner)
 
         else:
             return Response({"message": "Scanner Not Found"})
-
 
 
 class APIKey(APIView):
@@ -896,11 +897,12 @@ class APIKey(APIView):
         api_key = self.generate_api_key(user)
         name = request.POST.get("name")
 
-        new_api_key = OrgAPIKey.objects.create(
+        # new_api_key =
+        OrgAPIKey.objects.create(
             api_key=api_key, created_by=user, name=name
         )
 
-        content = {"APIKey": api_key, "id": new_api_key.uu_id}
+        # content = {"APIKey": api_key, "id": new_api_key.uu_id}
         return HttpResponseRedirect("/api/access-key/")
 
     def generate_api_key(self, user: UserProfile) -> str:
@@ -941,7 +943,7 @@ class GetCicdPolicies(APIView):
     permission_classes = (BasePermission, permissions.VerifyAPIKey)
 
     def get(self, request, uu_id=None):
-        if uu_id == None:
+        if uu_id is None:
             get_cicd_policies = CicdDb.objects.all()
             serialized_data = GetPoliciesSerializers(get_cicd_policies, many=True)
         else:
@@ -983,3 +985,114 @@ class ApiTest(APIView):
         return Response(
             {"message": "ArcherySec API working."}
         )
+
+
+class ListAllScanResults(APIView):
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
+
+    def get(self, request):
+
+        # Retrieve the filter parameters
+        scan_filter = request.GET.get("scan_filter", None)
+
+        # Get scan list
+        all_cloud_data = CloudScansResultsDb.objects.annotate(
+            target=Concat('cloudAccountId', Value(' '), 'cloudType', output_field=TextField())
+        ).values(
+            'scan_id',
+            'project_id',
+            'date_time',
+            'vuln_id',
+            'false_positive',
+            'severity_color',
+            'dup_hash',
+            'vuln_duplicate',
+            'false_positive_hash',
+            'vuln_status',
+            'jira_ticket',
+            'title',
+            'severity',
+            'description',
+            'solution',
+            'scanner',
+            'target'
+        )
+
+        all_network_data = NetworkScanResultsDb.objects.annotate(
+            target=Concat(Cast('ip', output_field=TextField()), Value(':'), 'port', output_field=TextField())
+        ).values(
+            'scan_id',
+            'project_id',
+            'date_time',
+            'vuln_id',
+            'false_positive',
+            'severity_color',
+            'dup_hash',
+            'vuln_duplicate',
+            'false_positive_hash',
+            'vuln_status',
+            'jira_ticket',
+            'title',
+            'severity',
+            'description',
+            'solution',
+            'scanner',
+            'target'
+        )
+
+        all_sast_data = StaticScanResultsDb.objects.annotate(
+            target=Concat('filePath', Value("/"), 'fileName', output_field=TextField())
+        ).values(
+            'scan_id',
+            'project_id',
+            'date_time',
+            'vuln_id',
+            'false_positive',
+            'severity_color',
+            'dup_hash',
+            'vuln_duplicate',
+            'false_positive_hash',
+            'vuln_status',
+            'jira_ticket',
+            'title',
+            'severity',
+            'description',
+            'solution',
+            'scanner',
+            'target'
+        )
+
+        all_web_data = WebScanResultsDb.objects.annotate(
+            target=F('url')
+        ).values(
+            'scan_id',
+            'project_id',
+            'date_time',
+            'vuln_id',
+            'false_positive',
+            'severity_color',
+            'dup_hash',
+            'vuln_duplicate',
+            'false_positive_hash',
+            'vuln_status',
+            'jira_ticket',
+            'title',
+            'severity',
+            'description',
+            'solution',
+            'scanner',
+            'target'
+        )
+
+        # Filter resulting queries
+        for tables in [all_cloud_data, all_web_data, all_network_data, all_sast_data]:
+            if scan_filter is not None:
+                if scan_filter == "nojira":
+                    tables = tables.filter(jira_ticket__isnull=True)
+
+        # Tables of the world, unite !
+        all_data = all_cloud_data.union(all_sast_data, all_network_data, all_web_data)
+
+        serialized_data = GenericScanResultsDbSerializer(all_data, many=True)
+
+        return Response(serialized_data.data, status=status.HTTP_200_OK)

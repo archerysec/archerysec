@@ -29,8 +29,6 @@ from webscanners.burpscanner.views import BurpSetting, BurpScanLaunch
 from webscanners.arachniscanner.views import ArachniScan, ArachniSetting, ArachniSettingUpdate
 from networkscanners.views import OpenvasLaunchScan, OpenvasDetails, OpenvasSetting
 
-
-
 from archeryapi import views
 
 API_TITLE = "Archery API"
@@ -109,6 +107,9 @@ urlpatterns = [
     path("v1/openvas-scans/", OpenvasLaunchScan.as_view()),
     path("v1/openvas-settings/", OpenvasSetting.as_view()),
     path("v1/openvas-setting-update/", OpenvasDetails.as_view()),
+
+    # All Scans
+    path("v1/all-scans/", views.ListAllScanResults.as_view()),
 
 ]
 
