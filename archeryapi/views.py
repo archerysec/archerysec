@@ -27,6 +27,7 @@ from django.core.files.uploadedfile import UploadedFile
 from django.shortcuts import HttpResponseRedirect, render, reverse
 from django.db.models import TextField, F, Value
 from django.db.models.functions import Cast, Concat
+from django.db import transaction
 from lxml import etree
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -1096,3 +1097,73 @@ class ListAllScanResults(APIView):
         serialized_data = GenericScanResultsDbSerializer(all_data, many=True)
 
         return Response(serialized_data.data, status=status.HTTP_200_OK)
+
+
+class UpdateJiraTicket(APIView):
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
+
+    def post(self, request):
+
+        # Retrieve the JSON object with the update
+        if request.content_type == "application/json":
+            parsed_input_data = request.data
+        else:
+            raw_input_data = request.POST.get("json_data", None)
+            if raw_input_data is None:
+                return Response({"error": "No data passed"}, status=status.HTTP_400_BAD_REQUEST)
+            parsed_input_data = json.loads(raw_input_data)
+        if len(parsed_input_data) == 0:
+            return Response({"error": "Empty structure passed"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Start the database transactional process
+        try:
+            with transaction.atomic():
+                to_update = len(parsed_input_data)
+                update_count = 0
+                vulns_not_found = []
+
+                # Update the entries
+                for vuln_id, jira_tick in parsed_input_data.items():
+                    vuln_uuid = uuid.UUID(vuln_id)
+                    found = False
+
+                    matched_vuln = CloudScansResultsDb.objects.filter(vuln_id=vuln_uuid)
+                    if len(matched_vuln) == 1:
+                        matched_vuln.update(jira_ticket=jira_tick)
+                        update_count += 1
+                        found = True
+
+                    if found is False:
+                        matched_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_uuid)
+                        if len(matched_vuln) == 1:
+                            matched_vuln.update(jira_ticket=jira_tick)
+                            update_count += 1
+                            found = True
+
+                    if found is False:
+                        matched_vuln = NetworkScanResultsDb.objects.filter(vuln_id=vuln_uuid)
+                        if len(matched_vuln) == 1:
+                            matched_vuln.update(jira_ticket=jira_tick)
+                            update_count += 1
+                            found = True
+
+                    if found is False:
+                        matched_vuln = StaticScanResultsDb.objects.filter(vuln_id=vuln_uuid)
+                        if len(matched_vuln) == 1:
+                            matched_vuln.update(jira_ticket=jira_tick)
+                            update_count += 1
+                            found = True
+
+                    # This vuln has not been found, add it to the list
+                    if found is False:
+                        vulns_not_found.append(vuln_id)
+
+                if update_count != to_update:
+                    raise Exception("Too many/few rows updated, rolling back...")
+
+        except KeyError as e :
+            return Response({"error": "KeyError: Something went wrong when updating", "error_data": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": "General error: " + str(e), "error_data": vulns_not_found}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"message": "Jira tickets have been updated"}, status=status.HTTP_200_OK)

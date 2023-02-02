@@ -111,6 +111,9 @@ urlpatterns = [
     # All Scans
     path("v1/all-scans/", views.ListAllScanResults.as_view()),
 
+    # Update JIRA
+    path("v1/update-jira/", views.UpdateJiraTicket.as_view()),
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
