@@ -12,6 +12,8 @@
 # Email:   anandtiwarics@gmail.com
 # Twitter: @anandtiwarics
 #
+# Modified by Victor Sallard (vsallard@scaleway.com)
+#
 # This file is part of ArcherySec Project.
 
 import importlib
