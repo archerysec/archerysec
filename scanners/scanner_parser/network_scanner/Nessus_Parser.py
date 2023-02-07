@@ -294,6 +294,6 @@ parser_header_dict = {
         "dbtype": "Nessus",
         "type": "Nessus",
         "parserFunction": updated_nessus_parser,
-        "icon": "/static/tools/openvas.png"
+        "icon": "/static/tools/nessus.png"
     }
 }
