@@ -253,8 +253,20 @@ class UploadScanResult(APIView):
         scan_id = uuid.uuid4()
         scan_status = "100"
 
-        parserDict = scanner_parser.ParserFunctionDict[scanner]
-        filetype = parserDict["type"]
+        parser_dict = scanner_parser.parser_function_dict.get(scanner, "Not implemented")
+        if parser_dict == "Not implemented":
+            return Response(
+                {
+                    "error": "Scanner is not implemented",
+                }, status=status.HTTP_400_BAD_REQUEST
+            )
+        filetype = parser_dict.get("type", "Unknown")
+        if filetype == "Unknown":
+            return Response(
+                {
+                    "error": "Unknown file type",
+                }, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # Put the data in memory
         if filetype == "XML" or filetype == "Nessus":
@@ -273,39 +285,52 @@ class UploadScanResult(APIView):
             data = [line for line in reader]
         # Custom data loader
         elif filetype == "JS":
-            file_data = file.replace('scoutsuite_results =', '')
+            file_data = file.replace('scoutsuite_results =', '').lstrip()
             json_payload = ''.join(file_data)
             data = json.loads(json_payload)
+        # Unsupported file type case
+        else:
+            return Response(
+                {
+                    "error": "Unsupported file type",
+                }, status=status.HTTP_400_BAD_REQUEST
+            )
 
-        dbType = parserDict["dbtype"]
-        needToStore = 1
-        customreturn = 0
+        db_type = parser_dict["dbtype"]
+        need_to_store = True
+        custom_return = False
         # Store to database - regular types
-        if "dbname" in parserDict:
-            dbName = parserDict["dbname"]
-            if dbType == "WebScans":
-                returnfunc = self.web_result_data
+        if "dbname" in parser_dict:
+            db_name = parser_dict.get("dbname", "Unsupported")
+            if db_type == "Unsupported":
+                return Response(
+                    {
+                        "error": "Unsupported DB type",
+                    }, status=status.HTTP_400_BAD_REQUEST
+                )
+            elif db_type == "WebScans":
+                return_func = self.web_result_data
                 scan_dump = WebScansDb(
                     scan_url=scan_url,
                     scan_id=scan_id,
                     project_id=project_id,
                     scan_status=scan_status,
-                    scanner=dbName,
+                    scanner=db_name,
                 )
-            elif dbType == "StaticScans":
-                returnfunc = self.sast_result_data
+            elif db_type == "StaticScans":
+                return_func = self.sast_result_data
                 scan_dump = StaticScansDb(
                     scan_url=scan_url,
                     scan_id=scan_id,
                     project_id=project_id,
                     scan_status=scan_status,
-                    scanner=dbName,
+                    scanner=db_name,
                 )
-            elif dbType == "NetworkScan":
-                returnfunc = self.network_result_data
+            elif db_type == "NetworkScan":
+                return_func = self.network_result_data
                 # OpenVAS special case
                 if scanner == "openvas":
-                    needToStore = 0
+                    need_to_store = False
                     hosts = OpenVas_Parser.get_hosts(root_xml)
                     for host in hosts:
                         scan_dump = NetworkScanDb(
@@ -313,7 +338,7 @@ class UploadScanResult(APIView):
                             scan_id=scan_id,
                             project_id=project_id,
                             scan_status=scan_status,
-                            scanner=dbName,
+                            scanner=db_name,
                         )
                         scan_dump.save()
                 # Regular network scan case
@@ -323,56 +348,56 @@ class UploadScanResult(APIView):
                         scan_id=scan_id,
                         project_id=project_id,
                         scan_status=scan_status,
-                        scanner=dbName,
+                        scanner=db_name,
                     )
-            elif dbType == "CloudScans":
-                returnfunc = self.cloud_result_data
+            elif db_type == "CloudScans":
+                return_func = self.cloud_result_data
                 scan_dump = CloudScansDb(
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
                     rescan="No",
-                    scanner=dbName,
+                    scanner=db_name,
                 )
         # Store to database - custom types
-        elif dbType == "NiktoResult":
-            customreturn = 1
+        elif db_type == "NiktoResult":
+            custom_return = True
             scan_dump = NiktoResultDb(
                 scan_url=scan_url,
                 scan_id=scan_id,
                 project_id=project_id,
             )
-        elif dbType == "InspecScan":
-            customreturn = 1
+        elif db_type == "InspecScan":
+            custom_return = True
             scan_dump = InspecScanDb(
                 project_name=scan_url,
                 scan_id=scan_id,
                 project_id=project_id,
                 scan_status=scan_status,
             )
-        elif dbType == "DockleScan":
-            customreturn = 1
+        elif db_type == "DockleScan":
+            custom_return = True
             scan_dump = DockleScanDb(
                 scan_id=scan_id,
                 date_time=date_time,
                 project_id=project_id,
                 scan_status=scan_status,
             )
-        elif dbType == "Nessus":
-            returnfunc = self.network_result_data
-            needToStore = 0
+        elif db_type == "Nessus":
+            return_func = self.network_result_data
+            need_to_store = False
             # Nessus does not store before the parser
         # Store the dump (except for no need to store cases)
-        if needToStore == 1:
+        if need_to_store is True:
             scan_dump.save()
 
         # Call the parser
-        parserFunc = parserDict["parserFunction"]
-        parserFunc(data, project_id, scan_id)
+        parser_func = parser_dict["parserFunction"]
+        parser_func(data, project_id, scan_id)
 
         # Success !
-        if customreturn == 1:
+        if custom_return is True:
             return Response(
                 {
                     "message": "Scan Data Uploaded",
@@ -382,7 +407,7 @@ class UploadScanResult(APIView):
                 }
             )
         else:
-            return returnfunc(scan_id, project_id, scanner)
+            return return_func(scan_id, project_id, scanner)
 
 
 class APIKey(APIView):

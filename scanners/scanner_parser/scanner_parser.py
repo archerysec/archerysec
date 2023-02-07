@@ -20,31 +20,31 @@ import os
 
 from django.template.defaulttags import register
 
-ParserFunctionDict = {}
+parser_function_dict = {}
 
 # Import all modules in the scanner_parser folder
-modulePaths = glob.glob("./scanners/scanner_parser/*/*.py", recursive=True)
-for modulePath in modulePaths:
-    if os.path.basename(modulePath) != '__init__.py':
-        moduleName = os.path.normpath(modulePath).split('.py')[0].replace("/", ".")
-        moduleID = importlib.import_module(moduleName)
-        ParserFunctionDict.update(moduleID.ParserHeaderDict)
+module_paths = glob.glob("./scanners/scanner_parser/*/*.py", recursive=True)
+for module_path in module_paths:
+    if os.path.basename(module_path) != '__init__.py':
+        module_name = os.path.normpath(module_path).split('.py')[0].replace("/", ".")
+        module_id = importlib.import_module(module_name)
+        parser_function_dict.update(module_id.parser_header_dict)
 
 # Create a reverse parser dict to ease the lookup for icons
-IconDict = {}
-for parserCode in ParserFunctionDict:
-    if "dbname" in ParserFunctionDict[parserCode]:
-        dbName = ParserFunctionDict[parserCode]["dbname"]
+icon_dict = {}
+for parser_code in parser_function_dict:
+    if "dbname" in parser_function_dict[parser_code]:
+        dbName = parser_function_dict[parser_code]["dbname"]
     else:
-        dbName = ParserFunctionDict[parserCode]["dbtype"]
+        dbName = parser_function_dict[parser_code]["dbtype"]
 
-    IconDict[dbName] = {}
-    IconDict[dbName]["displayName"] = ParserFunctionDict[parserCode]["displayName"]
-    IconDict[dbName]["codeName"] = parserCode
-    IconDict[dbName]["type"] = ParserFunctionDict[parserCode]["type"]
+    icon_dict[dbName] = {}
+    icon_dict[dbName]["displayName"] = parser_function_dict[parser_code]["displayName"]
+    icon_dict[dbName]["codeName"] = parser_code
+    icon_dict[dbName]["type"] = parser_function_dict[parser_code]["type"]
 
-    if "icon" in ParserFunctionDict[parserCode]:
-        IconDict[dbName]["icon"] = ParserFunctionDict[parserCode]["icon"]
+    if "icon" in parser_function_dict[parser_code]:
+        icon_dict[dbName]["icon"] = parser_function_dict[parser_code]["icon"]
 
 # Jira
 # IconDict["Jira"] = {
@@ -63,7 +63,7 @@ for parserCode in ParserFunctionDict:
 # Django specific definitions
 def parser_dict(request):
     # return the value you want as a dictionnary. you may add multiple values in there.
-    return {'PARSER_DICT': IconDict}
+    return {'PARSER_DICT': icon_dict}
 
 
 @register.filter

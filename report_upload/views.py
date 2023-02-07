@@ -75,11 +75,12 @@ class Upload(APIView):
         scan_id = uuid.uuid4()
         scan_status = "100"
 
-        parserDict = scanner_parser.ParserFunctionDict[scanner]
-        filetype = parserDict["type"]
-        fileext = ""
-        returnpage = ""
         try:
+            parser_dict = scanner_parser.parser_function_dict[scanner]
+            filetype = parser_dict["type"]
+            fileext = ""
+            returnpage = ""
+
             # Regular file formats (XML/JSON/CSV)
             if filetype == "XML" or filetype == "LXML":
                 fileext = ".xml"
@@ -94,9 +95,9 @@ class Upload(APIView):
                 fileext = ".js"
             # Check file format
             if self.check_file_ext(str(file)) != fileext or fileext == "":
-                errorMess = parserDict["displayName"] + \
+                error_mess = parser_dict["displayName"] + \
                     " Only " + filetype + " file support"
-                messages.error(request, errorMess)
+                messages.error(request, error_mess)
                 return HttpResponseRedirect(reverse("report_upload:upload"))
 
             # Create datetime for timestamp
@@ -127,12 +128,12 @@ class Upload(APIView):
                     json_file = json.loads(d)
                     data = json_file
 
-            dbType = parserDict["dbtype"]
-            needToStore = 1
+            db_type = parser_dict["dbtype"]
+            need_to_store = True
             # Store to database - regular types
-            if "dbname" in parserDict:
-                dbName = parserDict["dbname"]
-                if dbType == "WebScans":
+            if "dbname" in parser_dict:
+                db_name = parser_dict["dbname"]
+                if db_type == "WebScans":
                     returnpage = "webscanners:list_scans"
                     scan_dump = WebScansDb(
                         scan_url=target,
@@ -141,9 +142,9 @@ class Upload(APIView):
                         project_id=project_id,
                         scan_status=scan_status,
                         rescan="No",
-                        scanner=dbName,
+                        scanner=db_name,
                     )
-                elif dbType == "StaticScans":
+                elif db_type == "StaticScans":
                     returnpage = "staticscanners:list_scans"
                     scan_dump = StaticScansDb(
                         project_name=target,
@@ -151,13 +152,13 @@ class Upload(APIView):
                         date_time=date_time,
                         project_id=project_id,
                         scan_status=scan_status,
-                        scanner=dbName,
+                        scanner=db_name,
                     )
-                elif dbType == "NetworkScan":
+                elif db_type == "NetworkScan":
                     returnpage = "networkscanners:list_scans"
                     # OpenVAS special case
                     if scanner == "openvas":
-                        needToStore = 0
+                        need_to_store = False
                         hosts = OpenVas_Parser.get_hosts(root_xml)
                         for host in hosts:
                             scan_dump = NetworkScanDb(
@@ -166,7 +167,7 @@ class Upload(APIView):
                                 date_time=date_time,
                                 project_id=project_id,
                                 scan_status=scan_status,
-                                scanner=dbName,
+                                scanner=db_name,
                             )
                             scan_dump.save()
                     # Regular network scan case
@@ -177,9 +178,9 @@ class Upload(APIView):
                             date_time=date_time,
                             project_id=project_id,
                             scan_status=scan_status,
-                            scanner=dbName,
+                            scanner=db_name,
                         )
-                elif dbType == "CloudScans":
+                elif db_type == "CloudScans":
                     returnpage = "cloudscanners:list_scans"
                     scan_dump = CloudScansDb(
                         scan_id=scan_id,
@@ -187,10 +188,10 @@ class Upload(APIView):
                         project_id=project_id,
                         scan_status=scan_status,
                         rescan="No",
-                        scanner=dbName,
+                        scanner=db_name,
                     )
             # Store to database - custom types
-            elif dbType == "NiktoResult":
+            elif db_type == "NiktoResult":
                 returnpage = "tools:nikto"
                 scan_dump = NiktoResultDb(
                     date_time=date_time,
@@ -198,7 +199,7 @@ class Upload(APIView):
                     scan_id=scan_id,
                     project_id=project_id,
                 )
-            elif dbType == "InspecScan":
+            elif db_type == "InspecScan":
                 returnpage = "inspec:inspec_list"
                 scan_dump = InspecScanDb(
                     scan_id=scan_id,
@@ -206,7 +207,7 @@ class Upload(APIView):
                     project_id=project_id,
                     scan_status=scan_status,
                 )
-            elif dbType == "DockleScan":
+            elif db_type == "DockleScan":
                 returnpage = "dockle:dockle_list"
                 scan_dump = DockleScanDb(
                     scan_id=scan_id,
@@ -214,16 +215,16 @@ class Upload(APIView):
                     project_id=project_id,
                     scan_status=scan_status,
                 )
-            elif dbType == "Nessus":
-                needToStore = 0
+            elif db_type == "Nessus":
+                need_to_store = False
                 returnpage = "networkscanners:list_scans"
                 # Nessus does not store before the parser
             # Store the dump (except for no need to store cases)
-            if needToStore == 1:
+            if need_to_store is True:
                 scan_dump.save()
 
             # Call the parser
-            parserFunc = parserDict["parserFunction"]
+            parserFunc = parser_dict["parserFunction"]
             parserFunc(data, project_id, scan_id)
 
             # Success !

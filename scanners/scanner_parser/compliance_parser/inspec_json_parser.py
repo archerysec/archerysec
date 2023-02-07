@@ -136,11 +136,12 @@ def inspec_report_json(data, project_id, scan_id):
             email_sch_notify(subject=subject, message=message)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "inspec_scan": {
         "displayName": "Inspec Scanner",
         "dbtype": "InspecScan",
         "type": "JSON",
-        "parserFunction": inspec_report_json
+        "parserFunction": inspec_report_json,
+        "icon": "/static/tools/inspec.png"
     }
 }

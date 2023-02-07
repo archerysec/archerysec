@@ -356,7 +356,7 @@ def xml_parser(root, project_id, scan_id, target_url):
     email_sch_notify(subject=subject, message=message)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "arachni": {
         "displayName": "Arachni Scanner",
         "dbtype": "WebScans",

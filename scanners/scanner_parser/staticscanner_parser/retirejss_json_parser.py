@@ -148,7 +148,7 @@ def retirejs_report_json(data, project_id, scan_id):
         trend_update()
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "retirejs_scan": {
         "displayName": "RetireJS Scanner",
         "dbtype": "StaticScans",

@@ -382,7 +382,7 @@ def xml_parser(data, project_id, scan_id):
     return HttpResponse(status=201)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "dependencycheck": {
         "displayName": "Dependency Check",
         "dbtype": "StaticScans",

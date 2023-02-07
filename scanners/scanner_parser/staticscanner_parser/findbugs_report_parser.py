@@ -272,7 +272,7 @@ class FindsecbugsParser(object):
         email_sch_notify(subject=subject, message=message)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "findbugs": {
         "displayName": "FindBug",
         "dbtype": "StaticScans",

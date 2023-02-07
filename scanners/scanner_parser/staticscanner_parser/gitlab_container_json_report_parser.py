@@ -214,12 +214,13 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id):
     email_sch_notify(subject=subject, message=message)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "gitlabcontainerscan_scan": {
         "displayName": "Gitlab Container Scanner",
         "dbtype": "StaticScans",
         "dbname": "Gitlabcontainerscan",
         "type": "JSON",
-        "parserFunction": gitlabcontainerscan_report_json
+        "parserFunction": gitlabcontainerscan_report_json,
+        "icon": "/static/tools/gitlab.png"
     }
 }

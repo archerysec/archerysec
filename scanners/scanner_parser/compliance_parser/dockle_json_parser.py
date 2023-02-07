@@ -99,11 +99,12 @@ def dockle_report_json(
     email_sch_notify(subject=subject, message=message)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "dockle_scan": {
         "displayName": "Dockle Scanner",
         "dbtype": "DockleScan",
         "type": "JSON",
-        "parserFunction": dockle_report_json
+        "parserFunction": dockle_report_json,
+        "icon": "/static/tools/dockle.png"
     }
 }

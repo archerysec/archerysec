@@ -200,7 +200,7 @@ def wiz_cloud_report_csv(data, project_id, scan_id):
     email_sch_notify(subject=subject, message=message)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "wiz": {
         "displayName": "Wiz",
         "dbtype": "CloudScans",

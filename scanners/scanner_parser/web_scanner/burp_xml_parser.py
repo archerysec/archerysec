@@ -298,7 +298,7 @@ def burp_scan_data(root, project_id, scan_id):
     HttpResponse(status=201)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "burp_scan": {
         "displayName": "Burp Scanner",
         "dbtype": "WebScans",

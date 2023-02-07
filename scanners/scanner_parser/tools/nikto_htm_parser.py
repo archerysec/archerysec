@@ -138,7 +138,7 @@ def nikto_html_parser(data, project_id, scan_id):
         dump_data.save()
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "nikto": {
         "displayName": "Nikto",
         "dbtype": "NiktoResult",

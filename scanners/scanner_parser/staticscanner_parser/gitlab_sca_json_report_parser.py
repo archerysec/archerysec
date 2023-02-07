@@ -211,7 +211,7 @@ def gitlabsca_report_json(data, project_id, scan_id):
     email_sch_notify(subject=subject, message=message)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "gitlabsca_scan": {
         "displayName": "Gitlab Dependancy Scanner",
         "dbtype": "StaticScans",

@@ -208,7 +208,7 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id):
     email_sch_notify(subject=subject, message=message)
 
 
-ParserHeaderDict = {
+parser_header_dict = {
     "scoutsuite": {
         "displayName": "Scout Suite",
         "dbtype": "CloudScans",
