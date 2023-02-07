@@ -73,14 +73,14 @@ def get_icon(dictionary, key):
 
 @register.filter
 def get_displayName(dictionary, key):
-    return dictionary.get(key).get("displayName")
+    return dictionary.get(key).get("displayName", "Unknown display name")
 
 
 @register.filter
 def get_codeName(dictionary, key):
-    return dictionary.get(key).get("codeName")
+    return dictionary.get(key).get("codeName", "Unknown name")
 
 
 @register.filter
 def get_type(dictionary, key):
-    return dictionary.get(key).get("type")
+    return dictionary.get(key).get("type", "Unknown type")
