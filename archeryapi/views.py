@@ -296,19 +296,19 @@ class UploadScanResult(APIView):
                 }, status=status.HTTP_400_BAD_REQUEST
             )
 
-        db_type = parser_dict["dbtype"]
+        db_type = parser_dict.get("dbtype", "Unsupported")
+        if db_type == "Unsupported":
+            return Response(
+                {
+                    "error": "Unsupported DB type",
+                }, status=status.HTTP_400_BAD_REQUEST
+            )
         need_to_store = True
         custom_return = False
         # Store to database - regular types
         if "dbname" in parser_dict:
-            db_name = parser_dict.get("dbname", "Unsupported")
-            if db_type == "Unsupported":
-                return Response(
-                    {
-                        "error": "Unsupported DB type",
-                    }, status=status.HTTP_400_BAD_REQUEST
-                )
-            elif db_type == "WebScans":
+            db_name = parser_dict.get("dbname", "Unknown")
+            if db_type == "WebScans":
                 return_func = self.web_result_data
                 scan_dump = WebScansDb(
                     scan_url=scan_url,

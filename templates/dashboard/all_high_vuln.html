@@ -60,10 +60,10 @@
                                         </td>
                                         <td>
                                             {% with scanType=data.scanner %}
-                                            <div class="p-1"><img src="{{ PARSER_DICT|get_icon:scanType }}" alt="user"
+                                            <div class="p-1"><img src="{{ PARSER_DICT | get_icon:scanType }}" alt="user"
                                                     width="30" class="rounded-circle" data-toggle="tooltip"
                                                     data-placement="top"
-                                                    title="{{ PARSER_DICT|get_displayName:scanType }}">
+                                                    title="{{ PARSER_DICT | get_displayName:scanType }}">
                                             </div>
                                             {% endwith %}
                                         </td>
@@ -106,10 +106,10 @@
                                             <a href="{% url 'cloudscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&scan_name={{ data.title }}&scanner={{ data.scanner }}">{{ data.title }}</a>
                                         </td>
                                         <td>{% with scanType=data.scanner %}
-                                            <div class="p-1"><img src="{{ PARSER_DICT|get_icon:scanType }}" alt="user"
+                                            <div class="p-1"><img src="{{ PARSER_DICT | get_icon:scanType }}" alt="user"
                                                     width="30" class="rounded-circle" data-toggle="tooltip"
                                                     data-placement="top"
-                                                    title="{{ PARSER_DICT|get_displayName:scanType }}">
+                                                    title="{{ PARSER_DICT | get_displayName:scanType }}">
                                             </div>
                                             {% endwith %}
                                         </td>
@@ -153,10 +153,10 @@
                                             <a href="{% url 'webscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&scan_name={{ data.title }}&scanner={{ data.scanner }}">{{ data.title }}</a>
                                         </td>
                                         <td>{% with scanType=data.scanner %}
-                                            <div class="p-1"><img src="{{ PARSER_DICT|get_icon:scanType }}" alt="user"
+                                            <div class="p-1"><img src="{{ PARSER_DICT | get_icon:scanType }}" alt="user"
                                                     width="30" class="rounded-circle" data-toggle="tooltip"
                                                     data-placement="top"
-                                                    title="{{ PARSER_DICT|get_displayName:scanType }}">
+                                                    title="{{ PARSER_DICT | get_displayName:scanType }}">
                                             </div>
                                             {% endwith %}
                                         </td>
@@ -198,10 +198,10 @@
                                             <a href="{% url 'networkscanners:list_vuln_info' %}?scan_id={{ data.scan_id }}&ip={{ data.ip }}&scanner={{ data.scanner }}">{{ data.title }}</a>
                                         </td>
                                         <td>{% with scanType=data.scanner %}
-                                            <div class="p-1"><img src="{{ PARSER_DICT|get_icon:scanType }}" alt="user"
+                                            <div class="p-1"><img src="{{ PARSER_DICT | get_icon:scanType }}" alt="user"
                                                     width="30" class="rounded-circle" data-toggle="tooltip"
                                                     data-placement="top"
-                                                    title="{{ PARSER_DICT|get_displayName:scanType }}">
+                                                    title="{{ PARSER_DICT | get_displayName:scanType }}">
                                             </div>
                                             {% endwith %}
                                         </td>
