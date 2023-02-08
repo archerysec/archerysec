@@ -35,9 +35,9 @@
                                                 <select id="scanner" name="scanner"
                                                         class="select2 form-control custom-select"
                                                         style="width: 100%; height:36px;">
-                                                    {% for parser in PARSER_DICT -%}
+                                                    {% for parser in PARSER_DICT %}
                                                     <option value="{{ PARSER_DICT | get_codeName:parser }}">{{ PARSER_DICT | get_displayName:parser }}</option>
-                                                    {% endfor -%}
+                                                    {% endfor %}
                                                 </select>
                                             </div>
                                         </div>
