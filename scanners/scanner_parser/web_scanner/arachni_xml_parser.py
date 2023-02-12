@@ -59,7 +59,7 @@ response_raw_headers = ""
 false_positive = None
 
 
-def xml_parser(root, project_id, scan_id, target_url):
+def xml_parser(root, project_id, scan_id):
     date_time = datetime.now()
     global name, description, remedy_guidance, remedy_code, severity, check, digest, references, vector, remarks, page, signature, proof, trusted, platform_type, platform_name, url, action, body, vuln_id, vul_col, ref_key, ref_values, vector_input_key, vector_input_values, vector_source_key, vector_source_values, page_body_data, request_url, request_method, request_raw, response_ip, response_raw_headers
 
@@ -332,7 +332,7 @@ def xml_parser(root, project_id, scan_id, target_url):
     print(total_info)
 
     WebScansDb.objects.filter(scan_id=scan_id).update(
-        scan_url=target_url,
+        scan_url=url,
         total_vul=total_vul,
         date_time=date_time,
         critical_vul=total_critical,
