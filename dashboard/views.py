@@ -493,7 +493,7 @@ def all_high_vuln(request):
         pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="static")
 
     elif severity == "Cloud":
-        sast_all_high = CloudScansResultsDb.objects.filter(false_positive="No")
+        cloud_all_high = CloudScansResultsDb.objects.filter(false_positive="No")
         pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="cloud")
 
     elif severity == "Critical":
