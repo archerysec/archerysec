@@ -191,7 +191,7 @@ def wiz_cloud_report_csv(data, project_id, scan_id):
     trend_update()
     subject = "Archery Tool Scan Status - wiz Cloud Report Uploaded"
     message = (
-        "tfsec Scanner has completed the scan "
+        "Wiz Scanner has completed the scan "
         "  %s <br> Total: %s <br>High: %s <br>"
         "Medium: %s <br>Low %s"
         % ("wiz Cloud", total_vul, total_high, total_medium, total_low)
