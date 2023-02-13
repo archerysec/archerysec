@@ -110,16 +110,14 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{% if data.scanner == 'Nessus' %}
-
-                                            <div class="p-1"><img src="/static/tools/nessus.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip"
-                                                                  data-placement="top" title="Nessus"></div>
-                                            </td>{% elif data.scanner == 'Openvas' %}
-                                            <div class="p-1"><img src="/static/tools/openvas.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip"
-                                                                  data-placement="top" title="Openvas"></div></td>
-                                        {% endif %}
+                                        <td>{% with scanType=data.scanner %}
+                                            <div class="p-1"><img src="{{ PARSER_DICT | get_icon:scanType }}" alt="user"
+                                                    width="30" class="rounded-circle" data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="{{ PARSER_DICT | get_displayName:scanType }}">
+                                            </div>
+                                            {% endwith %}
+                                        </td>
 
                                         <td>{{ data.date_time }}</td>
                                         <td><span class="badge badge-pill badge-dark">{{ data.total_vul }}</span></td>

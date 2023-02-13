@@ -51,42 +51,42 @@ def gitlabsast_report_json(data, project_id, scan_id):
 
         try:
             name = vuln_data["message"]
-        except Exception as e:
+        except Exception:
             name = "Not Found"
 
         try:
             description = vuln_data["description"]
-        except Exception as e:
+        except Exception:
             description = "Not Found"
 
-        try:
-            cve = vuln_data["cve"]
-        except Exception as e:
-            cve = "Not Found"
+        # try:
+        #     cve = vuln_data["cve"]
+        # except Exception:
+        #     cve = "Not Found"
 
         try:
             scanner = vuln_data["scanner"]
-        except Exception as e:
+        except Exception:
             scanner = "Not Found"
 
         try:
             location = vuln_data["location"]
-        except Exception as e:
+        except Exception:
             location = "Not Found"
 
-        try:
-            identifiers = vuln_data["identifiers"]
-        except Exception as e:
-            identifiers = "Not Found"
+        # try:
+        #     identifiers = vuln_data["identifiers"]
+        # except Exception:
+        #     identifiers = "Not Found"
 
         try:
             severity = vuln_data["severity"]
-        except Exception as e:
+        except Exception:
             severity = "Not Found"
 
         try:
             file = vuln_data["location"]["file"]
-        except Exception as e:
+        except Exception:
             file = "Not Found"
 
         if severity == "Critical":
@@ -208,3 +208,15 @@ def gitlabsast_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+parser_header_dict = {
+    "gitlabsast_scan": {
+        "displayName": "Gitlab SAST Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Gitlabsast",
+        "type": "JSON",
+        "parserFunction": gitlabsast_report_json,
+        "icon": "/static/tools/gitlab.png"
+    }
+}

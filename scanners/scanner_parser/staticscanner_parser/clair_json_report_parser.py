@@ -75,10 +75,10 @@ def clair_report_json(data, project_id, scan_id):
             except Exception:
                 FeatureName = "Not Found"
 
-            try:
-                FeatureVersion = vuln["FeatureVersion"]
-            except Exception:
-                FeatureName = "Not Found"
+            # try:
+            #     FeatureVersion = vuln["FeatureVersion"]
+            # except Exception:
+            #     FeatureName = "Not Found"
 
             if Severity == "High":
                 vul_col = "danger"
@@ -199,10 +199,10 @@ def clair_report_json(data, project_id, scan_id):
             except Exception:
                 FeatureName = "Not Found"
 
-            try:
-                FeatureVersion = vuln["FeatureVersion"]
-            except Exception:
-                FeatureName = "Not Found"
+            # try:
+            #     FeatureVersion = vuln["FeatureVersion"]
+            # except Exception:
+            #     FeatureName = "Not Found"
 
             if Severity == "Medium":
                 vul_col = "warning"
@@ -324,10 +324,10 @@ def clair_report_json(data, project_id, scan_id):
             except Exception:
                 FeatureName = "Not Found"
 
-            try:
-                FeatureVersion = vuln["FeatureVersion"]
-            except Exception:
-                FeatureName = "Not Found"
+            # try:
+            #     FeatureVersion = vuln["FeatureVersion"]
+            # except Exception:
+            #     FeatureName = "Not Found"
 
             if Severity == "Low":
                 vul_col = "info"
@@ -445,10 +445,10 @@ def clair_report_json(data, project_id, scan_id):
             except Exception:
                 FeatureName = "Not Found"
 
-            try:
-                FeatureVersion = vuln["featureversion"]
-            except Exception:
-                FeatureName = "Not Found"
+            # try:
+            #     FeatureVersion = vuln["featureversion"]
+            # except Exception:
+            #     FeatureName = "Not Found"
 
             if Severity == "Low":
                 vul_col = "info"
@@ -571,3 +571,15 @@ def clair_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+parser_header_dict = {
+    "clair_scan": {
+        "displayName": "Clair Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Clair",
+        "type": "JSON",
+        "parserFunction": clair_report_json,
+        "icon": "/static/tools/clair.svg"
+    }
+}

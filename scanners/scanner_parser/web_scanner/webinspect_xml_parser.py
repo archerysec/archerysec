@@ -212,3 +212,15 @@ def xml_parser(root, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+parser_header_dict = {
+    "webinspect": {
+        "displayName": "Webinspect Scanner",
+        "dbtype": "WebScans",
+        "dbname": "Webinspect",
+        "type": "XML",
+        "parserFunction": xml_parser,
+        "icon": "/static/tools/webinspect.png"
+    }
+}

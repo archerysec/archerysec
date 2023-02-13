@@ -93,21 +93,14 @@
                                 <td>
                                     <a href="{% url 'cloudscanners:list_vuln' %}?scan_id={{data.scan_id}}&scanner={{ data.scanner }}">{% firstof data.cloudAccountId 'None' %}</a>
                                 </td>
-                                <td>{% if data.scanner == 'Prismacloud' %}
-
-                                        <div class="p-1"><img src="/static/tools/prisma-cloud.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Prisma Cloud"></div>
-                                {% endif %}
-                                {% if data.scanner == 'wiz' %}
-
-                                        <div class="p-1"><img src="/static/tools/wiz.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Wiz"></div>
-                                {% endif %}
-                                {% if data.scanner == 'scoutsuite' %}
-
-                                        <div class="p-1"><img src="/static/tools/scoutsuite.png" alt="user" width="30"
-                                                                  class="rounded-circle" data-toggle="tooltip" data-placement="top" title="Scout Suite"></div>
-                                {% endif %}
+                                <td>
+                                    {% with scanType=data.scanner %}
+                                    <div class="p-1"><img src="{{ PARSER_DICT | get_icon:scanType }}" alt="user"
+                                            width="30" class="rounded-circle" data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="{{ PARSER_DICT | get_displayName:scanType }}">
+                                    </div>
+                                    {% endwith %}
                                 </td>
                                 <td>{{data.date_time}}</td>
                                 <td><span class="badge badge-pill badge-dark">{{data.total_vul}}</span></td>

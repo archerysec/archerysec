@@ -199,11 +199,22 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id):
     trend_update()
     subject = "Archery Tool Scan Status - scoutsuite Cloud Report Uploaded"
     message = (
-            "tfsec Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % ("scoutsuite Cloud", total_vul, total_high, total_medium, total_low)
+        "Scout Suite Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % ("scoutsuite Cloud", total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)
 
+
+parser_header_dict = {
+    "scoutsuite": {
+        "displayName": "Scout Suite",
+        "dbtype": "CloudScans",
+        "dbname": "scoutsuite",
+        "type": "JS",
+        "parserFunction": scoutsuite_cloud_report_js,
+        "icon": "/static/tools/scoutsuite.png"
+    }
+}

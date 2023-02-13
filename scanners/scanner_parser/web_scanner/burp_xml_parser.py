@@ -296,3 +296,15 @@ def burp_scan_data(root, project_id, scan_id):
     except Exception as e:
         print(e)
     HttpResponse(status=201)
+
+
+parser_header_dict = {
+    "burp_scan": {
+        "displayName": "Burp Scanner",
+        "dbtype": "WebScans",
+        "dbname": "Burp",
+        "type": "XML",
+        "parserFunction": burp_scan_data,
+        "icon": "/static/tools/burp.png"
+    }
+}
