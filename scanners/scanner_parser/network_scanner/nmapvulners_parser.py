@@ -21,7 +21,6 @@ import uuid
 from dashboard.views import trend_update
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from utility.email_notify import email_sch_notify
-from django.utils.html import escape
 
 agent = "NA"
 description = "NA"
@@ -213,7 +212,8 @@ def xml_parser(root, project_id, scan_id):
             total_dup=target_total_duplicate,
         )
     except Exception:
-        pass
+        print("Something went wrong while updating the vulnerability count")
+        # pass
 
     trend_update()
     subject = "Archery Tool Scan Status - Nmap Vulners Report Uploaded"
