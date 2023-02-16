@@ -343,6 +343,7 @@ class UploadScanResult(APIView):
                         scan_dump.save()
                 # Regular network scan case
                 else:
+                    host = parser_dict["getHostFunction"](data)
                     scan_dump = NetworkScanDb(
                         ip=host,
                         scan_id=scan_id,
