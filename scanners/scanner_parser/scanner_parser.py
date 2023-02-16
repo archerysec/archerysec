@@ -70,7 +70,6 @@ def parser_dict(request):
 
 @register.filter
 def get_icon(dictionary, key):
-
     return dictionary.get(key, {}).get("icon", "/static/tools/unknown.png")
 
 
