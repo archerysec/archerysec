@@ -70,19 +70,19 @@ def parser_dict(request):
 
 @register.filter
 def get_icon(dictionary, key):
-    return dictionary.get(key).get("icon", "/static/tools/unknown.png")
+    return dictionary.get(key, {}).get("icon", "/static/tools/unknown.png")
 
 
 @register.filter
 def get_displayName(dictionary, key):
-    return dictionary.get(key).get("displayName", "Unknown display name")
+    return dictionary.get(key, {}).get("displayName", "Unknown display name")
 
 
 @register.filter
 def get_codeName(dictionary, key):
-    return dictionary.get(key).get("codeName", "Unknown name")
+    return dictionary.get(key, {}).get("codeName", "Unknown name")
 
 
 @register.filter
 def get_type(dictionary, key):
-    return dictionary.get(key).get("type", "Unknown type")
+    return dictionary.get(key, {}).get("type", "Unknown type")
