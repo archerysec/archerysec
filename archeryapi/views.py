@@ -79,6 +79,10 @@ from cicd.models import CicdDb
 from cicd.serializers import GetPoliciesSerializers
 from django.utils.html import escape
 
+from jiraticketing.models import jirasetting
+from django.core import signing
+from jira import JIRA
+
 
 class CreateProject(APIView):
     permission_classes = (BasePermission, permissions.VerifyAPIKey)
@@ -1115,6 +1119,40 @@ class UpdateJiraTicket(APIView):
         if len(parsed_input_data) == 0:
             return Response({"error": "Empty structure passed"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Connect to Jira
+        jira_setting = jirasetting.objects.filter()
+
+        jira_server = ""
+        jira_username = ""
+        jira_password = ""
+        jira_ser = ""
+
+        for jira in jira_setting:
+            jira_server = jira.jira_server
+            jira_username = jira.jira_username
+            jira_password = jira.jira_password
+
+        if jira_username is None:
+            jira_username = None
+        else:
+            jira_username = signing.loads(jira_username)
+
+        if jira_password is None:
+            jira_password = None
+        else:
+            jira_password = signing.loads(jira_password)
+
+        options = {"server": jira_server}
+        try:
+            if jira_username is not None and jira_username != "" :
+                jira_ser = JIRA(
+                    options, basic_auth=(jira_username, jira_password)
+                )
+            else :
+                jira_ser = JIRA(options, token_auth=jira_password)
+        except Exception:
+            return Response({"error": "Cannot connect to JIRA"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         # Start the database transactional process
         try:
             with transaction.atomic():
@@ -1124,33 +1162,37 @@ class UpdateJiraTicket(APIView):
 
                 # Update the entries
                 for vuln_id, jira_tick in parsed_input_data.items():
+                    linked_issue = None
+                    if jira_tick is not None or jira_tick != "":
+                        linked_issue = jira_ser.issue(jira_tick)
+
                     vuln_uuid = uuid.UUID(vuln_id)
                     found = False
 
                     matched_vuln = CloudScansResultsDb.objects.filter(vuln_id=vuln_uuid)
                     if len(matched_vuln) == 1:
-                        matched_vuln.update(jira_ticket=jira_tick)
+                        matched_vuln.update(jira_ticket=linked_issue)
                         update_count += 1
                         found = True
 
                     if found is False:
                         matched_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_uuid)
                         if len(matched_vuln) == 1:
-                            matched_vuln.update(jira_ticket=jira_tick)
+                            matched_vuln.update(jira_ticket=linked_issue)
                             update_count += 1
                             found = True
 
                     if found is False:
                         matched_vuln = NetworkScanResultsDb.objects.filter(vuln_id=vuln_uuid)
                         if len(matched_vuln) == 1:
-                            matched_vuln.update(jira_ticket=jira_tick)
+                            matched_vuln.update(jira_ticket=linked_issue)
                             update_count += 1
                             found = True
 
                     if found is False:
                         matched_vuln = StaticScanResultsDb.objects.filter(vuln_id=vuln_uuid)
                         if len(matched_vuln) == 1:
-                            matched_vuln.update(jira_ticket=jira_tick)
+                            matched_vuln.update(jira_ticket=linked_issue)
                             update_count += 1
                             found = True
 

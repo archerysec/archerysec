@@ -312,7 +312,7 @@ class LinkJiraTicket(APIView):
             notify.send(user, recipient=user, verb="Jira settings not found")
 
         summary = request.GET["summary"]
-        jiraTickID = request.GET["jiraTickID"]
+        jira_tick_id = request.GET["jira_tick_id"]
         scanner = request.GET["scanner"]
         vuln_id = request.GET["vuln_id"]
         scan_id = request.GET["scan_id"]
@@ -323,7 +323,7 @@ class LinkJiraTicket(APIView):
             {
                 "jira_projects": jira_projects,
                 "summary": summary,
-                "jiraTickID": jiraTickID,
+                "jira_tick_id": jira_tick_id,
                 "scanner": scanner,
                 "vuln_id": vuln_id,
                 "scan_id": scan_id,
@@ -367,16 +367,19 @@ class LinkJiraTicket(APIView):
             notify.send(user, recipient=user, verb="Jira settings not found")
 
         summary = request.POST.get("summary")
-        jiraTickID = request.POST.get("jiraTickID")
+        jira_tick_id = request.POST.get("jira_tick_id")
         vuln_id = request.POST.get("vuln_id")
         scanner = request.POST.get("scanner")
         scan_id = request.POST.get("scan_id")
 
-        try:
-            linked_issue = jira_ser.issue(jiraTickID)
-        except Exception as e:
-            print(e)
-            notify.send(user, recipient=user, verb="Jira issue not found")
+        # If blank ticket ID, set the Jira Ticket to None in the database
+        linked_issue = None
+        if jira_tick_id is not None or jira_tick_id != "":
+            try:
+                linked_issue = jira_ser.issue(jira_tick_id)
+            except Exception as e:
+                print(e)
+                notify.send(user, recipient=user, verb="Jira issue not found")
 
         if scanner == "web":
             WebScanResultsDb.objects.filter(vuln_id=vuln_id).update(
