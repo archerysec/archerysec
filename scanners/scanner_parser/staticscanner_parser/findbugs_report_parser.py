@@ -41,6 +41,13 @@ details = 'na'
 message = 'na'
 
 
+def findsecbug_report_xml(root, project_id, scan_id):
+    findbugs_report_parser = FindsecbugsParser(project_id=project_id,
+                                               scan_id=scan_id,
+                                               root=root)
+    findbugs_report_parser.xml_parser()
+
+
 class FindsecbugsParser(object):
 
     def __init__(self, root, project_id, scan_id):
@@ -84,17 +91,17 @@ class FindsecbugsParser(object):
                         global classname
                         try:
                             classname = BugInstance.attrib["classname"]
-                        except:
+                        except Exception:
                             classname = 'na'
                     if BugInstance.tag == "SourceLine":
                         global sourcepath, sourcefile
                         try:
                             sourcepath = BugInstance.attrib["sourcepath"]
-                        except:
+                        except Exception:
                             sourcepath = 'NA'
                         try:
                             sourcefile = BugInstance.attrib["sourcefile"]
-                        except:
+                        except Exception:
                             sourcefile = 'NA'
 
                         for data in bug:
@@ -116,9 +123,11 @@ class FindsecbugsParser(object):
 
                     vul_id = uuid.uuid4()
 
-                    dup_data = str(ShortMessage) + str(message) + str(sourcepath) + str(risk)
+                    dup_data = str(ShortMessage) + str(message) + \
+                        str(sourcepath) + str(risk)
 
-                    duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
+                    duplicate_hash = hashlib.sha256(
+                        dup_data.encode("utf-8")).hexdigest()
 
                     match_dup = StaticScanResultsDb.objects.filter(
                         dup_hash=duplicate_hash
@@ -146,17 +155,20 @@ class FindsecbugsParser(object):
                         project_id=self.project_id,
                         title=str(ShortMessage),
                         severity=risk,
-                        description="<b>Finding Path & Line:</b> %s" % str(message)
-                                    + "<br><br>"
-                                      "<b>Finding Classes:</b> %s" % str(classname)
-                                    + "<br><br>"
-                                      "<b>Finding Source Path</b>: %s" % str(sourcepath)
-                                    + "<br><br>"
-                                    + str(ShortMessage)
-                                    + "<br><br>"
-                                    + str(LongMessage)
-                                    + "<br><br>"
-                                    + str(details),
+                        description="<b>Finding Path & Line:</b> %s" % str(
+                            message)
+                        + "<br><br>"
+                        "<b>Finding Classes:</b> %s" % str(
+                            classname)
+                        + "<br><br>"
+                        "<b>Finding Source Path</b>: %s" % str(
+                            sourcepath)
+                        + "<br><br>"
+                        + str(ShortMessage)
+                        + "<br><br>"
+                        + str(LongMessage)
+                        + "<br><br>"
+                        + str(details),
                         # + "\n\n"
                         # + str(classname),
                         fileName=str(message),
@@ -178,17 +190,20 @@ class FindsecbugsParser(object):
                         project_id=self.project_id,
                         title=str(ShortMessage),
                         severity=risk,
-                        description="<b>Finding Path & Line:</b> %s" % str(message)
-                                    + "<br><br>"
-                                      "<b>Finding Classes:</b> %s" % str(classname)
-                                    + "<br><br>"
-                                      "<b>Finding Source Path</b>: %s" % str(sourcepath)
-                                    + "<br><br>"
-                                    + str(ShortMessage)
-                                    + "<br><br>"
-                                    + str(LongMessage)
-                                    + "<br><br>"
-                                    + str(details),
+                        description="<b>Finding Path & Line:</b> %s" % str(
+                            message)
+                        + "<br><br>"
+                        "<b>Finding Classes:</b> %s" % str(
+                            classname)
+                        + "<br><br>"
+                        "<b>Finding Source Path</b>: %s" % str(
+                            sourcepath)
+                        + "<br><br>"
+                        + str(ShortMessage)
+                        + "<br><br>"
+                        + str(LongMessage)
+                        + "<br><br>"
+                        + str(details),
                         # + "\n\n"
                         # + str(classname),
                         fileName=str(message),
@@ -248,10 +263,22 @@ class FindsecbugsParser(object):
         trend_update()
         subject = "Archery Tool Scan Status - Findbugs Report Uploaded"
         message = (
-                "Findbugs Scanner has completed the scan "
-                "  %s <br> Total: %s <br>High: %s <br>"
-                "Medium: %s <br>Low %s"
-                % (self.scan_id, total_vul, total_high, total_medium, total_low)
+            "Findbugs Scanner has completed the scan "
+            "  %s <br> Total: %s <br>High: %s <br>"
+            "Medium: %s <br>Low %s"
+            % (self.scan_id, total_vul, total_high, total_medium, total_low)
         )
 
         email_sch_notify(subject=subject, message=message)
+
+
+parser_header_dict = {
+    "findbugs": {
+        "displayName": "FindBug",
+        "dbtype": "StaticScans",
+        "dbname": "Findbugs",
+        "type": "XML",
+        "parserFunction": findsecbug_report_xml,
+        "icon": "/static/tools/findbugs.png"
+    }
+}

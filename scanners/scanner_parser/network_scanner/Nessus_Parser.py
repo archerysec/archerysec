@@ -101,59 +101,59 @@ def updated_nessus_parser(root, project_id, scan_id):
                                 port = value
                         try:
                             agent = ReportItem.find("agent").text
-                        except:
+                        except Exception:
                             agent = "NA"
                         try:
                             description = ReportItem.find("description").text
-                        except:
+                        except Exception:
                             description = "NA"
                         try:
                             fname = ReportItem.find("fname").text
-                        except:
+                        except Exception:
                             fname = "NA"
                         try:
                             plugin_modification_date = ReportItem.find(
                                 "plugin_modification_date"
                             ).text
-                        except:
+                        except Exception:
                             plugin_modification_date = "NA"
                         try:
                             plugin_name = ReportItem.find("plugin_name").text
-                        except:
+                        except Exception:
                             plugin_name = "NA"
                         try:
                             plugin_publication_date = ReportItem.find(
                                 "plugin_publication_date"
                             ).text
-                        except:
+                        except Exception:
                             plugin_publication_date = "NA"
                         try:
                             plugin_type = ReportItem.find("plugin_type").text
-                        except:
+                        except Exception:
                             plugin_type = "NA"
                         try:
                             risk_factor = ReportItem.find("risk_factor").text
-                        except:
+                        except Exception:
                             risk_factor = "NA"
                         try:
                             script_version = ReportItem.find("script_version").text
-                        except:
+                        except Exception:
                             script_version = "NA"
                         try:
                             see_also = ReportItem.find("see_also").text
-                        except:
+                        except Exception:
                             see_also = "NA"
                         try:
                             solution = ReportItem.find("solution").text
-                        except:
+                        except Exception:
                             solution = "NA"
                         try:
                             synopsis = ReportItem.find("synopsis").text
-                        except:
+                        except Exception:
                             synopsis = "NA"
                         try:
                             plugin_output = ReportItem.find("plugin_output").text
-                        except:
+                        except Exception:
                             plugin_output = "NA"
                         vuln_id = uuid.uuid4()
 
@@ -241,7 +241,7 @@ def updated_nessus_parser(root, project_id, scan_id):
                                 scanner="Nessus",
                             )
                             all_data_save.save()
-            except:
+            except Exception:
                 continue
         for reportHost in data.iter("ReportHost"):
             try:
@@ -274,7 +274,7 @@ def updated_nessus_parser(root, project_id, scan_id):
                         low_vul=target_total_low,
                         total_dup=target_total_duplicate,
                     )
-            except:
+            except Exception:
                 continue
     trend_update()
     subject = "Archery Tool Scan Status - Nessus Report Uploaded"
@@ -286,3 +286,14 @@ def updated_nessus_parser(root, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+parser_header_dict = {
+    "nessus": {
+        "displayName": "Nessus",
+        "dbtype": "Nessus",
+        "type": "Nessus",
+        "parserFunction": updated_nessus_parser,
+        "icon": "/static/tools/nessus.png"
+    }
+}

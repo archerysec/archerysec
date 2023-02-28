@@ -15,6 +15,7 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
+import json
 import uuid
 from datetime import datetime
 
@@ -23,10 +24,18 @@ from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
 
 vul_col = ""
-severity = ""
+Target = ""
+VulnerabilityID = ""
+PkgName = ""
+InstalledVersion = ""
+FixedVersion = ""
+Title = ""
+Description = ""
+Severity = ""
+References = ""
 
 
-def tfsec_report_json(data, project_id, scan_id):
+def gitleaks_report_json(data, project_id, scan_id):
     """
 
     :param data:
@@ -35,31 +44,62 @@ def tfsec_report_json(data, project_id, scan_id):
     :return:
     """
     date_time = datetime.now()
-    global vul_col
-    for vuln in data["results"]:
-        rule_id = vuln["rule_id"]
-        link = vuln["link"]
-        filename = vuln["location"]["filename"]
-        start_line = vuln["location"]["start_line"]
-        end_line = vuln["location"]["end_line"]
-        description = vuln["description"]
-        severity = vuln["severity"]
 
-        if severity == "ERROR":
+    vul_col = ""
+
+    for issues_data in data:
+        try:
+            name = issues_data["line"]
+        except Exception:
+            name = "Not Found"
+
+        try:
+            description = issues_data["offender"] + \
+                          "<br>" + issues_data["commit"] + \
+                          "<br>" + issues_data["repo"] + \
+                          "<br>" + issues_data["rule"] + \
+                          "<br>" + issues_data["commitMessage"] + \
+                          "<br>" + issues_data["author"] + \
+                          "<br>" + issues_data["email"] + \
+                          "<br>" + issues_data["date"] + \
+                          "<br>" + issues_data["tags"]
+
+        except Exception:
+            description = "Not Found"
+
+        try:
             severity = "High"
+        except Exception:
+            severity = "Not Found"
+
+        try:
+            file = issues_data["file"]
+        except Exception:
+            file = "Not Found"
+
+        if severity == "Critical":
+            vul_col = "critical"
+
+        elif severity == "High":
             vul_col = "danger"
 
-        elif severity == "WARNING":
-            severity = "Medium"
+        elif severity == "Medium":
             vul_col = "warning"
 
-        elif severity == "INFO":
-            severity = "Info"
+        elif severity == "Low":
+            vul_col = "info"
+
+        elif severity == "Unknown":
+            severity = "Low"
+            vul_col = "info"
+
+        elif severity == "Everything else":
+            severity = "Low"
             vul_col = "info"
 
         vul_id = uuid.uuid4()
 
-        dup_data = str(rule_id) + str(severity) + str(filename)
+        dup_data = str(name) + str(severity) + str(file)
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -83,26 +123,19 @@ def tfsec_report_json(data, project_id, scan_id):
 
             save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
-                scan_id=scan_id,
                 date_time=date_time,
+                scan_id=scan_id,
                 project_id=project_id,
+                title=name,
+                description=description,
+                fileName=file,
+                severity=severity,
                 severity_color=vul_col,
-                title=rule_id,
                 vuln_status="Open",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
-                fileName=filename,
-                severity=severity,
-                description=str(description)
-                + "\n\n"
-                + str(rule_id)
-                + "\n\n"
-                + str(start_line)
-                + "\n\n"
-                + str(end_line),
-                references=link,
-                scanner="Tfsec",
+                scanner="gitleaks",
             )
             save_all.save()
 
@@ -111,26 +144,19 @@ def tfsec_report_json(data, project_id, scan_id):
 
             save_all = StaticScanResultsDb(
                 vuln_id=vul_id,
-                scan_id=scan_id,
                 date_time=date_time,
+                scan_id=scan_id,
                 project_id=project_id,
-                title=rule_id,
+                title=name,
+                description=description,
+                fileName=file,
+                severity=severity,
                 severity_color=vul_col,
                 vuln_status="Duplicate",
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 false_positive="Duplicate",
-                fileName=filename,
-                severity=severity,
-                description=str(description)
-                + "\n\n"
-                + str(rule_id)
-                + "\n\n"
-                + str(start_line)
-                + "\n\n"
-                + str(end_line),
-                references=link,
-                scanner="Tfsec",
+                scanner="gitleaks",
             )
             save_all.save()
 
@@ -150,34 +176,34 @@ def tfsec_report_json(data, project_id, scan_id):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     StaticScansDb.objects.filter(scan_id=scan_id).update(
-        total_vul=total_vul,
         date_time=date_time,
+        total_vul=total_vul,
         critical_vul=total_critical,
         high_vul=total_high,
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
-        scanner="Tfsec",
+        scanner="gitleaks",
     )
     trend_update()
-    subject = "Archery Tool Scan Status - tfsec Report Uploaded"
+    subject = "Archery Tool Scan Status - GitLab Dependency Report Uploaded"
     message = (
-        "tfsec Scanner has completed the scan "
-        "  %s <br> Total: %s <br>High: %s <br>"
-        "Medium: %s <br>Low %s"
-        % ("tfsec", total_vul, total_high, total_medium, total_low)
+            "Gitleaks Scanner has completed the scan "
+            "  %s <br> Total: %s <br>High: %s <br>"
+            "Medium: %s <br>Low %s"
+            % (Target, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)
 
 
 parser_header_dict = {
-    "tfsec_scan": {
-        "displayName": "tfsec Scanner",
+    "gitleaks_scan": {
+        "displayName": "Gitleaks Scanner",
         "dbtype": "StaticScans",
-        "dbname": "Tfsec",
+        "dbname": "gitleaks",
         "type": "JSON",
-        "parserFunction": tfsec_report_json,
-        "icon": "/static/tools/tfsec.png"
+        "parserFunction": gitleaks_report_json,
+        "icon": "/static/tools/gitleaks.png"
     }
 }

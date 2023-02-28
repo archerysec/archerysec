@@ -56,59 +56,59 @@ def brakeman_report_json(data, project_id, scan_id):
     for vuln_data in vuln:
         try:
             name = vuln_data["warning_type"]
-        except Exception as e:
+        except Exception:
             name = "Not Found"
 
-        try:
-            warning_code = vuln_data["warning_code"]
-        except Exception as e:
-            warning_code = "Not Found"
+        # try:
+        #    warning_code = vuln_data["warning_code"]
+        # except Exception:
+        #     warning_code = "Not Found"
 
-        try:
-            fingerprint = vuln_data["fingerprint"]
-        except Exception as e:
-            fingerprint = "Not Found"
+        # try:
+        #     fingerprint = vuln_data["fingerprint"]
+        # except Exception:
+        #     fingerprint = "Not Found"
 
         try:
             description = vuln_data["message"]
-        except Exception as e:
+        except Exception:
             description = "Not Found"
 
-        try:
-            check_name = vuln_data["check_name"]
-        except Exception as e:
-            check_name = "Not Found"
+        # try:
+        #     check_name = vuln_data["check_name"]
+        # except Exception:
+        #     check_name = "Not Found"
 
         try:
             severity = vuln_data["confidence"]
             if severity == "Weak":
                 severity = "Low"
-        except Exception as e:
+        except Exception:
             severity = "Not Found"
 
         try:
             file = vuln_data["file"]
-        except Exception as e:
+        except Exception:
             file = "Not Found"
 
-        try:
-            line = vuln_data["line"]
-        except Exception as e:
-            line = "Not Found"
+        # try:
+        #     line = vuln_data["line"]
+        # except Exception:
+        #     line = "Not Found"
 
         try:
             link = vuln_data["link"]
-        except Exception as e:
+        except Exception:
             link = "Not Found"
 
         try:
             code = vuln_data["code"]
-        except Exception as e:
+        except Exception:
             code = "Not Found"
 
         try:
             render_path = vuln_data["render_path"]
-        except Exception as e:
+        except Exception:
             render_path = "Not Found"
 
         if severity == "Critical":
@@ -174,7 +174,7 @@ def brakeman_report_json(data, project_id, scan_id):
                 severity=severity,
                 fileName=file,
                 references=link,
-                scanner="Brakeman",
+                scanner="Brakeman_scan",
             )
             save_all.save()
         else:
@@ -199,7 +199,7 @@ def brakeman_report_json(data, project_id, scan_id):
                 severity=severity,
                 fileName=file,
                 references=link,
-                scanner="Brakeman",
+                scanner="Brakeman_scan",
             )
             save_all.save()
 
@@ -226,7 +226,7 @@ def brakeman_report_json(data, project_id, scan_id):
         medium_vul=total_medium,
         low_vul=total_low,
         total_dup=total_duplicate,
-        scanner="Brakeman",
+        scanner="Brakeman_scan",
     )
     trend_update()
     subject = "Archery Tool Scan Status - brakeman Report Uploaded"
@@ -238,3 +238,15 @@ def brakeman_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+parser_header_dict = {
+    "brakeman_scan": {
+        "displayName": "brakeman Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Brakeman_scan",
+        "type": "JSON",
+        "parserFunction": brakeman_report_json,
+        "icon": "/static/tools/brakeman.png"
+    }
+}

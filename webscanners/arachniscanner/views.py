@@ -233,9 +233,9 @@ class ArachniScan(APIView):
                 project_uu_id = request.data.get(
                     "project_id",
                 )
-            else:
-                target_url = request.POST.get("scan_url")
-                project_uu_id = request.POST.get("project_id")
+        else:
+            target_url = request.POST.get("scan_url")
+            project_uu_id = request.POST.get("project_id")
         project_id = (
             ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
         )

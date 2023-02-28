@@ -14,7 +14,6 @@
 #
 # This file is part of ArcherySec Project.
 
-import hashlib
 import json
 import os
 import uuid
@@ -23,135 +22,25 @@ import io
 from datetime import datetime
 
 import defusedxml.ElementTree as ET
+from lxml import etree
 from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
-from lxml import etree
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 
 from compliance.models import DockleScanDb, InspecScanDb
-from networkscanners.models import (NetworkScanDb, NetworkScanResultsDb,
-                                    TaskScheduleDb)
+from networkscanners.models import NetworkScanDb
 from projects.models import ProjectDb
-from scanners.scanner_parser.compliance_parser.dockle_json_parser import \
-    dockle_report_json
-from scanners.scanner_parser.compliance_parser.inspec_json_parser import \
-    inspec_report_json
-from scanners.scanner_parser.network_scanner import (Nessus_Parser,
-                                                     OpenVas_Parser,
-                                                     nmap_parser)
-from scanners.scanner_parser.staticscanner_parser import (
-    checkmarx_xml_report_parser, dependencycheck_report_parser,
-    )
-from scanners.scanner_parser.staticscanner_parser.bandit_report_parser import \
-    bandit_report_json
-from scanners.scanner_parser.staticscanner_parser.brakeman_json_report_parser import \
-    brakeman_report_json
-from scanners.scanner_parser.staticscanner_parser.clair_json_report_parser import \
-    clair_report_json
-from scanners.scanner_parser.staticscanner_parser.gitlab_container_json_report_parser import \
-    gitlabcontainerscan_report_json
-from scanners.scanner_parser.staticscanner_parser.gitlab_sast_json_report_parser import \
-    gitlabsast_report_json
-from scanners.scanner_parser.staticscanner_parser.gitlab_sca_json_report_parser import \
-    gitlabsca_report_json
-from scanners.scanner_parser.staticscanner_parser.nodejsscan_report_json import \
-    nodejsscan_report_json
-from scanners.scanner_parser.staticscanner_parser.npm_audit_report_json import \
-    npmaudit_report_json
-from scanners.scanner_parser.staticscanner_parser.retirejss_json_parser import \
-    retirejs_report_json
-from scanners.scanner_parser.staticscanner_parser.semgrep_json_report_parser import \
-    semgrep_report_json
-from scanners.scanner_parser.staticscanner_parser.tfsec_report_parser import \
-    tfsec_report_json
-from scanners.scanner_parser.staticscanner_parser.trivy_json_report_parser import \
-    trivy_report_json
-from scanners.scanner_parser.staticscanner_parser.twistlock_json_report_parser import \
-    twistlock_report_json
-from scanners.scanner_parser.staticscanner_parser.whitesource_json_report_parser import \
-    whitesource_report_json
-from scanners.scanner_parser.staticscanner_parser.grype_report_json_parser import \
-    grype_report_json
-from scanners.scanner_parser.tools.nikto_htm_parser import nikto_html_parser
-from scanners.scanner_parser.web_scanner import (acunetix_xml_parser,
-                                                 arachni_xml_parser,
-                                                 burp_xml_parser,
-                                                 netsparker_xml_parser,
-                                                 webinspect_xml_parser,
-                                                 zap_xml_parser)
+from scanners.scanner_parser.network_scanner import OpenVas_Parser
 from cloudscanners.models import CloudScansDb
-from scanners.scanner_parser.cloud_scanner.prisma_cloud_csv import prisma_cloud_report_csv
-from scanners.scanner_parser.cloud_scanner.wiz_security_csv import wiz_cloud_report_csv
-from scanners.scanner_parser.cloud_scanner.scoutsuite_js import scoutsuite_cloud_report_js
-from staticscanners.models import StaticScanResultsDb, StaticScansDb
+from staticscanners.models import StaticScansDb
 from tools.models import NiktoResultDb
 from user_management import permissions
 from webscanners.models import WebScansDb
-from scanners.scanner_parser.staticscanner_parser.findbugs_report_parser import FindsecbugsParser
-
-
-def upload(target, scan_id, date_time, project_id, scan_status, scanner, data):
-    """
-
-    :param project_name:
-    :param scan_id:
-    :param date_time:
-    :param project_id:
-    :param scan_status:
-    :param scanner:
-    :param username:
-    :param data:
-    :return:
-    """
-    scan_dump = StaticScansDb(
-        project_name=target,
-        scan_id=scan_id,
-        date_time=date_time,
-        project_id=project_id,
-        scan_status=scan_status,
-        scanner=scanner,
-    )
-    scan_dump.save()
-
-    if scanner == "Bandit":
-        bandit_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Retirejs":
-        retirejs_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Clair":
-        clair_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Trivy":
-        trivy_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Npmaudit":
-        npmaudit_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Nodejsscan":
-        nodejsscan_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Semgrep":
-        semgrep_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Tfsec":
-        tfsec_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Whitesource":
-        whitesource_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Gitlabsast":
-        gitlabsast_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Gitlabcontainerscan":
-        gitlabcontainerscan_report_json(
-            data=data, project_id=project_id, scan_id=scan_id
-        )
-    elif scanner == "Gitlabsca":
-        gitlabsast_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Gitlabsca":
-        gitlabsca_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Twistlock":
-        twistlock_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "Brakeman_scan":
-        brakeman_report_json(data=data, project_id=project_id, scan_id=scan_id)
-    elif scanner == "grype_scan":
-        grype_report_json(data=data, project_id=project_id, scan_id=scan_id)
-
+from scanners.scanner_parser import scanner_parser
 
 
 class Upload(APIView):
@@ -177,995 +66,176 @@ class Upload(APIView):
         all_project = ProjectDb.objects.filter()
         project_uu_id = request.POST.get("project_id")
         project_id = (
-            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+            ProjectDb.objects.filter(
+                uu_id=project_uu_id).values("id").get()["id"]
         )
         scanner = request.POST.get("scanner")
         file = request.FILES["file"]
         target = request.POST.get("target")
         scan_id = uuid.uuid4()
         scan_status = "100"
-        if scanner == "zap_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "ZAP Scanner Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                tree = ET.parse(file)
-                date_time = datetime.now()
 
-                root_xml = tree.getroot()
-                en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
-                    "ascii", "ignore"
-                )
-                root_xml_en = ET.fromstring(en_root_xml)
-                scan_dump = WebScansDb(
-                    scan_url=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    rescan="No",
-                    scanner="Zap",
-                )
-                scan_dump.save()
-                zap_xml_parser.xml_parser(
-                    project_id=project_id,
-                    scan_id=scan_id,
-                    root=root_xml_en,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
+        try:
+            parser_dict = scanner_parser.parser_function_dict[scanner]
+            filetype = parser_dict["type"]
+            fileext = ""
+            returnpage = ""
 
-        elif scanner == "burp_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Burp Scan Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-                # Burp scan XML parser
+            # Regular file formats (XML/JSON/CSV)
+            if filetype == "XML" or filetype == "LXML":
+                fileext = ".xml"
+            elif filetype == "JSON":
+                fileext = ".json"
+            elif filetype == "CSV":
+                fileext = ".csv"
+            # Custom file formats
+            elif filetype == "Nessus":
+                fileext = ".nessus"
+            elif filetype == "JS":
+                fileext = ".js"
+            # Check file format
+            if self.check_file_ext(str(file)) != fileext or fileext == "":
+                error_mess = parser_dict["displayName"] + \
+                    " Only " + filetype + " file support"
+                messages.error(request, error_mess)
+                return HttpResponseRedirect(reverse("report_upload:upload"))
+
+            # Create datetime for timestamp
+            date_time = datetime.now()
+            # Put the data in memory
+            if filetype == "XML" or filetype == "Nessus":
                 tree = ET.parse(file)
                 root_xml = tree.getroot()
                 en_root_xml = ET.tostring(root_xml, encoding="utf8").decode(
                     "ascii", "ignore"
                 )
-                root_xml_en = ET.fromstring(en_root_xml)
-                scan_dump = WebScansDb(
-                    scan_url=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    scanner="Burp",
-                )
-                scan_dump.save()
-                burp_xml_parser.burp_scan_data(root_xml_en, project_id, scan_id)
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
+                data = ET.fromstring(en_root_xml)
+            elif filetype == "LXML":
+                tree = etree.parse(file)
+                data = tree.getroot()
+            elif filetype == "JSON":
+                jsonContents = file.read()
+                data = json.loads(jsonContents)
+            elif filetype == "CSV":
+                file_data = file.read().decode("utf-8")
+                reader = csv.DictReader(io.StringIO(file_data))
+                data = [line for line in reader]
+            # Custom data loader
+            elif filetype == "JS":
+                json_payload = file.readlines()
+                json_payload.pop(0)
+                for d in json_payload:
+                    json_file = json.loads(d)
+                    data = json_file
 
-        elif scanner == "arachni":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Arachni Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                tree = ET.parse(file)
-                root_xml = tree.getroot()
-                scan_dump = WebScansDb(
-                    scan_url=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    scanner="Arachni",
-                )
-                scan_dump.save()
-                arachni_xml_parser.xml_parser(
-                    project_id=project_id,
-                    scan_id=scan_id,
-                    root=root_xml,
-                    target_url=target,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
-
-        elif scanner == "netsparker":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Netsparker Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                tree = ET.parse(file)
-                root_xml = tree.getroot()
-                scan_dump = WebScansDb(
-                    scan_url=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    scanner="Netsparker",
-                )
-                scan_dump.save()
-                netsparker_xml_parser.xml_parser(
-                    project_id=project_id,
-                    scan_id=scan_id,
-                    root=root_xml,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
-        elif scanner == "webinspect":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Webinspect Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                tree = ET.parse(file)
-                root_xml = tree.getroot()
-                scan_dump = WebScansDb(
-                    scan_url=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    scanner="Webinspect",
-                )
-                scan_dump.save()
-                webinspect_xml_parser.xml_parser(
-                    project_id=project_id,
-                    scan_id=scan_id,
-                    root=root_xml,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
-
-        elif scanner == "acunetix":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Acunetix Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                tree = ET.parse(file)
-                root_xml = tree.getroot()
-                scan_dump = WebScansDb(
-                    scan_url=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scanner="Acunetix",
-                    scan_status=scan_status,
-                )
-                scan_dump.save()
-                acunetix_xml_parser.xml_parser(
-                    project_id=project_id,
-                    scan_id=scan_id,
-                    root=root_xml,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("webscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
-
-        elif scanner == "dependencycheck":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Dependencycheck Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                data = etree.parse(file)
-                root = data.getroot()
-                scan_dump = StaticScansDb(
-                    project_name=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    scanner="Dependencycheck",
-                )
-                scan_dump.save()
-                dependencycheck_report_parser.xml_parser(
-                    project_id=project_id, scan_id=scan_id, data=root
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
-
-        elif scanner == "checkmarx":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Checkmarx Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                data = etree.parse(file)
-                root = data.getroot()
-                scan_dump = StaticScansDb(
-                    project_name=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                )
-                scan_dump.save()
-                checkmarx_xml_report_parser.checkmarx_report_xml(
-                    project_id=project_id, scan_id=scan_id, data=root
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
-
-        elif scanner == "findbugs":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Findbugs Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                tree = ET.parse(file)
-                root = tree.getroot()
-                scan_dump = StaticScansDb(
-                    project_name=target,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                )
-                scan_dump.save()
-                findbugs_report_parser = FindsecbugsParser(project_id=project_id,
-                                                           scan_id=scan_id,
-                                                           root=root)
-                findbugs_report_parser.xml_parser()
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
-
-        elif scanner == "nikto":
-            try:
-                if self.check_file_ext(str(file)) != ".xml":
-                    messages.error(request, "Nikto Only XML file Support")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
+            db_type = parser_dict["dbtype"]
+            need_to_store = True
+            # Store to database - regular types
+            if "dbname" in parser_dict:
+                db_name = parser_dict["dbname"]
+                if db_type == "WebScans":
+                    returnpage = "webscanners:list_scans"
+                    scan_dump = WebScansDb(
+                        scan_url=target,
+                        scan_id=scan_id,
+                        date_time=date_time,
+                        project_id=project_id,
+                        scan_status=scan_status,
+                        rescan="No",
+                        scanner=db_name,
+                    )
+                elif db_type == "StaticScans":
+                    returnpage = "staticscanners:list_scans"
+                    scan_dump = StaticScansDb(
+                        project_name=target,
+                        scan_id=scan_id,
+                        date_time=date_time,
+                        project_id=project_id,
+                        scan_status=scan_status,
+                        scanner=db_name,
+                    )
+                elif db_type == "NetworkScan":
+                    returnpage = "networkscanners:list_scans"
+                    # OpenVAS special case
+                    if scanner == "openvas":
+                        need_to_store = False
+                        hosts = OpenVas_Parser.get_hosts(root_xml)
+                        for host in hosts:
+                            scan_dump = NetworkScanDb(
+                                ip=host,
+                                scan_id=scan_id,
+                                date_time=date_time,
+                                project_id=project_id,
+                                scan_status=scan_status,
+                                scanner=db_name,
+                            )
+                            scan_dump.save()
+                    # Regular network scan case
+                    else:
+                        host = parser_dict["getHostFunction"](data)
+                        scan_dump = NetworkScanDb(
+                            ip=host,
+                            scan_id=scan_id,
+                            date_time=date_time,
+                            project_id=project_id,
+                            scan_status=scan_status,
+                            scanner=db_name,
+                        )
+                elif db_type == "CloudScans":
+                    returnpage = "cloudscanners:list_scans"
+                    scan_dump = CloudScansDb(
+                        scan_id=scan_id,
+                        date_time=date_time,
+                        project_id=project_id,
+                        scan_status=scan_status,
+                        rescan="No",
+                        scanner=db_name,
+                    )
+            # Store to database - custom types
+            elif db_type == "NiktoResult":
+                returnpage = "tools:nikto"
                 scan_dump = NiktoResultDb(
                     date_time=date_time,
                     scan_url=target,
                     scan_id=scan_id,
                     project_id=project_id,
                 )
-                scan_dump.save()
-
-                nikto_html_parser(file, project_id, scan_id)
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("tools:nikto"))
-            except:
-                messages.error(request, "File Not Supported")
-                return render(
-                    request, "report_upload/upload.html", {"all_project": all_project}
-                )
-
-        if scanner == "bandit_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Bandit Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Bandit"
-
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "retirejs_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Retirejs Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Retirejs"
-
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "clair_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Clair Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Clair"
-
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "trivy_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Trivy Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Trivy"
-
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "npmaudit_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "NPM Audit Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Npmaudit"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "nodejsscan_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Nodejs scan Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Nodejsscan"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "semgrepscan_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Semgrep scan Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Semgrep"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "tfsec_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Tfsec Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Tfsec"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "whitesource_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Whitesource Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Whitesource"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "inspec_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Inspec Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
+            elif db_type == "InspecScan":
+                returnpage = "inspec:inspec_list"
                 scan_dump = InspecScanDb(
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
                 )
-                scan_dump.save()
-                inspec_report_json(
-                    data=data,
-                    project_id=project_id,
-                    scan_id=scan_id,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("inspec:inspec_list"))
-            except:
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "dockle_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Dockle Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
+            elif db_type == "DockleScan":
+                returnpage = "dockle:dockle_list"
                 scan_dump = DockleScanDb(
                     scan_id=scan_id,
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
                 )
+            elif db_type == "Nessus":
+                need_to_store = False
+                returnpage = "networkscanners:list_scans"
+                # Nessus does not store before the parser
+            # Store the dump (except for no need to store cases)
+            if need_to_store is True:
                 scan_dump.save()
-                dockle_report_json(
-                    data=data,
-                    project_id=project_id,
-                    scan_id=scan_id,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("dockle:dockle_list"))
-            except:
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
 
-        if scanner == "gitlabsast_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Gitlabsast Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
+            # Call the parser
+            parserFunc = parser_dict["parserFunction"]
+            parserFunc(data, project_id, scan_id)
 
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Gitlabsast"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "gitlabcontainerscan_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(
-                        request, "Gitlabcontainerscan Only JSON file Supported"
-                    )
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Gitlabcontainerscan"
-
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "gitlabsca_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Gitlabsca Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Gitlabsca"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "twistlock_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Twistlock Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Twistlock"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "grype_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "grype Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-
-                j = file.read()
-                data = json.loads(j)
-                scanner = "grype_scan"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "brakeman_scan":
-            try:
-                if self.check_file_ext(str(file)) != ".json":
-                    messages.error(request, "Brakeman Only JSON file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-                j = file.read()
-                data = json.loads(j)
-                scanner = "Brakeman_scan"
-                upload(
-                    target,
-                    scan_id,
-                    date_time,
-                    project_id,
-                    scan_status,
-                    scanner,
-                    data,
-                )
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("staticscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        if scanner == "openvas":
-            if self.check_file_ext(str(file)) != ".xml":
-                messages.error(request, "Openvas Only XML file Supported")
-                return HttpResponseRedirect(reverse("report_upload:upload"))
-            date_time = datetime.now()
-            tree = ET.parse(file)
-            root_xml = tree.getroot()
-            hosts = OpenVas_Parser.get_hosts(root_xml)
-            for host in hosts:
-                scan_dump = NetworkScanDb(
-                    ip=host,
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    scanner="Openvas",
-                )
-                scan_dump.save()
-            OpenVas_Parser.updated_xml_parser(
-                project_id=project_id,
-                scan_id=scan_id,
-                root=root_xml,
-            )
+            # Success !
             messages.success(request, "File Uploaded")
-            return HttpResponseRedirect(reverse("networkscanners:list_scans"))
-        elif scanner == "nessus":
-            if self.check_file_ext(str(file)) != ".nessus":
-                messages.error(request, "Nessus Only .nessus file Supported")
-                return HttpResponseRedirect(reverse("report_upload:upload"))
-            date_time = datetime.now()
-            tree = ET.parse(file)
-            root_xml = tree.getroot()
-            Nessus_Parser.updated_nessus_parser(
-                root=root_xml,
-                scan_id=scan_id,
-                project_id=project_id,
+            return HttpResponseRedirect(reverse(returnpage))
+
+        except Exception as e:
+            print(e)
+            messages.error(request, "File Not Supported")
+            return render(
+                request, "report_upload/upload.html", {
+                    "all_project": all_project}
             )
-            messages.success(request, "File Uploaded")
-            return HttpResponseRedirect(reverse("networkscanners:list_scans"))
-        elif scanner == "nmap":
-            tree = ET.parse(file)
-            root_xml = tree.getroot()
-            nmap_parser.xml_parser(
-                root=root_xml,
-                scan_id=scan_id,
-                project_id=project_id,
-            )
-            messages.success(request, "File Uploaded")
-            return HttpResponseRedirect(reverse("tools:nmap_scan"))
-
-        elif scanner == "prisma_cspm":
-            try:
-                if self.check_file_ext(str(file)) != ".csv":
-                    messages.error(request, "Prisma CLoud Only CSV file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-                file_data = file.read().decode("utf-8")
-                reader = csv.DictReader(io.StringIO(file_data))
-                data = [line for line in reader]
-                scan_dump = CloudScansDb(
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    rescan="No",
-                    scanner="Prismacloud",
-                )
-                scan_dump.save()
-                prisma_cloud_report_csv(data=data,
-                                        project_id=project_id,
-                                        scan_id=scan_id,
-                                        )
-
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("cloudscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        elif scanner == "wiz":
-            try:
-                if self.check_file_ext(str(file)) != ".csv":
-                    messages.error(request, "Wiz Security Only CSV file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-                file_data = file.read().decode("utf-8")
-                reader = csv.DictReader(io.StringIO(file_data))
-                data = [line for line in reader]
-                scan_dump = CloudScansDb(
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    rescan="No",
-                    scanner="wiz",
-                )
-                scan_dump.save()
-                wiz_cloud_report_csv(data=data,
-                                        project_id=project_id,
-                                        scan_id=scan_id,
-                                        )
-
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("cloudscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-
-        elif scanner == "scoutsuite":
-            json_file = ''
-            try:
-                if self.check_file_ext(str(file)) != ".js":
-                    messages.error(request, "scoutsuite Only JS file Supported")
-                    return HttpResponseRedirect(reverse("report_upload:upload"))
-                date_time = datetime.now()
-                json_payload = file.readlines()
-
-                json_payload.pop(0)
-                for d in json_payload:
-                    json_file = json.loads(d)
-                    data = json_file
-
-
-                scan_dump = CloudScansDb(
-                    scan_id=scan_id,
-                    date_time=date_time,
-                    project_id=project_id,
-                    scan_status=scan_status,
-                    rescan="No",
-                    scanner="scoutsuite",
-                )
-                scan_dump.save()
-                scoutsuite_cloud_report_js(data=data,
-                                            project_id=project_id,
-                                            scan_id=scan_id,
-                                            )
-
-                messages.success(request, "File Uploaded")
-                return HttpResponseRedirect(reverse("cloudscanners:list_scans"))
-            except Exception as e:
-                print(e)
-                messages.error(request, "File Not Supported")
-                return render(
-                    request,
-                    "report_upload/upload.html",
-                    {"all_project": all_project},
-                )
-

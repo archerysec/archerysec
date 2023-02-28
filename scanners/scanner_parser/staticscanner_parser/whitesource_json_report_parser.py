@@ -44,23 +44,23 @@ def whitesource_report_json(data, project_id, scan_id):
         name = issues["name"]
         severity = issues["severity"]
         score = issues["score"]
-        cvss3_severity = issues["cvss3_severity"]
-        cvss3_score = issues["cvss3_score"]
-        publishDate = issues["publishDate"]
-        lastUpdatedDate = issues["lastUpdatedDate"]
-        scoreMetadataVector = issues["scoreMetadataVector"]
+        # cvss3_severity = issues["cvss3_severity"]
+        # cvss3_score = issues["cvss3_score"]
+        # publishDate = issues["publishDate"]
+        # lastUpdatedDate = issues["lastUpdatedDate"]
+        # scoreMetadataVector = issues["scoreMetadataVector"]
         url = issues["url"]
         description = issues["description"]
         project = issues["project"]
-        product = issues["product"]
-        cvss3Attributes = issues["cvss3Attributes"]
+        # product = issues["product"]
+        # cvss3Attributes = issues["cvss3Attributes"]
         library = issues["library"]
         topFix = issues["topFix"]
         # allFixes = issues['allFixes']
         filename = issues["library"]["filename"]
-        sha1 = issues["library"]["sha1"]
-        version = issues["library"]["version"]
-        groupId = issues["library"]["groupId"]
+        # sha1 = issues["library"]["sha1"]
+        # version = issues["library"]["version"]
+        # groupId = issues["library"]["groupId"]
         if severity == "critical":
             severity = "Critical"
             vul_col = "critical"
@@ -182,3 +182,15 @@ def whitesource_report_json(data, project_id, scan_id):
     )
 
     email_sch_notify(subject=subject, message=message)
+
+
+parser_header_dict = {
+    "whitesource_scan": {
+        "displayName": "Whitesource Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Whitesource",
+        "type": "JSON",
+        "parserFunction": whitesource_report_json,
+        "icon": "/static/tools/whitesource.png"
+    }
+}

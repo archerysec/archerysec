@@ -99,30 +99,30 @@ def retirejs_report_json(data, project_id, scan_id):
         elif severity == "LOW":
             vul_col = "info"
 
-        dup_data = files + component + severity
-        duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
+        # dup_data = files + component + severity
+        # duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = (
-            StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash)
-            .values("dup_hash")
-            .distinct()
-        )
-        lenth_match = len(match_dup)
+        # match_dup = (
+        #     StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+        #     .values("dup_hash")
+        #     .distinct()
+        # )
+        # lenth_match = len(match_dup)
 
-        if lenth_match == 1:
-            duplicate_vuln = "Yes"
-        elif lenth_match == 0:
-            duplicate_vuln = "No"
-        else:
-            duplicate_vuln = "None"
+        # if lenth_match == 1:
+        #     duplicate_vuln = "Yes"
+        # elif lenth_match == 0:
+        #     duplicate_vuln = "No"
+        # else:
+        #     duplicate_vuln = "None"
 
-        false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash)
-        fp_lenth_match = len(false_p)
+        # false_p = StaticScanResultsDb.objects.filter(false_positive_hash=duplicate_hash)
+        # fp_lenth_match = len(false_p)
 
-        if fp_lenth_match == 1:
-            false_positive = "Yes"
-        else:
-            false_positive = "No"
+        # if fp_lenth_match == 1:
+        #     false_positive = "Yes"
+        # else:
+        #     false_positive = "No"
         save_all = StaticScanResultsDb(
             scan_id=scan_id,
             date_time=date_time,
@@ -146,3 +146,14 @@ def retirejs_report_json(data, project_id, scan_id):
         )
         save_all.save()
         trend_update()
+
+
+parser_header_dict = {
+    "retirejs_scan": {
+        "displayName": "RetireJS Scanner",
+        "dbtype": "StaticScans",
+        "dbname": "Retirejs",
+        "type": "JSON",
+        "parserFunction": retirejs_report_json
+    }
+}
