@@ -417,6 +417,7 @@ class UploadScanResult(APIView):
         else:
             return return_func(scan_id, project_id, scanner)
 
+
 class APIKey(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "access-key/access-key-list.html"
