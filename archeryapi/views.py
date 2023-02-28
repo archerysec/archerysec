@@ -998,7 +998,7 @@ class ListAllScanResults(APIView):
     def get(self, request):
 
         # Retrieve the filter parameters
-        scan_filter = request.GET.get("scan_filter", None)
+        # scan_filter = request.GET.get("scan_filter", None)
 
         # Get scan list
         all_cloud_data = CloudScansResultsDb.objects.annotate(
@@ -1090,10 +1090,10 @@ class ListAllScanResults(APIView):
         )
 
         # Filter resulting queries
-        for tables in [all_cloud_data, all_web_data, all_network_data, all_sast_data]:
-            if scan_filter is not None:
-                if scan_filter == "nojira":
-                    tables = tables.filter(jira_ticket__isnull=True)
+        # for tables in [all_cloud_data, all_web_data, all_network_data, all_sast_data]:
+        #     if scan_filter is not None:
+        #         if scan_filter == "nojira":
+        #             tables = tables.filter(jira_ticket__isnull=True)
 
         # Tables of the world, unite !
         all_data = all_cloud_data.union(all_sast_data, all_network_data, all_web_data)
@@ -1163,7 +1163,7 @@ class UpdateJiraTicket(APIView):
                 # Update the entries
                 for vuln_id, jira_tick in parsed_input_data.items():
                     linked_issue = None
-                    if jira_tick is not None or jira_tick != "":
+                    if jira_tick is not None and jira_tick.strip() != "":
                         linked_issue = jira_ser.issue(jira_tick)
 
                     vuln_uuid = uuid.UUID(vuln_id)

@@ -374,7 +374,7 @@ class LinkJiraTicket(APIView):
 
         # If blank ticket ID, set the Jira Ticket to None in the database
         linked_issue = None
-        if jira_tick_id is not None or jira_tick_id != "":
+        if jira_tick_id is not None and jira_tick_id.strip() != "":
             try:
                 linked_issue = jira_ser.issue(jira_tick_id)
             except Exception as e:
