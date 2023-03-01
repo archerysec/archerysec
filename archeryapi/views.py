@@ -666,8 +666,8 @@ class UpdateJiraTicket(APIView):
         jira_setting = jirasetting.objects.filter()
 
         jira_server = ""
-        jira_username = ""
-        jira_password = ""
+        jira_username = None
+        jira_password = None
         jira_ser = ""
 
         for jira in jira_setting:
@@ -675,24 +675,20 @@ class UpdateJiraTicket(APIView):
             jira_username = jira.jira_username
             jira_password = jira.jira_password
 
-        if jira_username is None:
-            jira_username = None
-        else:
+        if jira_username is not None:
             jira_username = signing.loads(jira_username)
 
-        if jira_password is None:
-            jira_password = None
-        else:
+        if jira_password is not None:
             jira_password = signing.loads(jira_password)
 
         options = {"server": jira_server}
         try:
             if jira_username is not None and jira_username != "" :
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password)
+                    options, basic_auth=(jira_username, jira_password), timeout=30
                 )
             else :
-                jira_ser = JIRA(options, token_auth=jira_password)
+                jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
         except Exception:
             return Response({"error": "Cannot connect to JIRA"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -718,21 +714,21 @@ class UpdateJiraTicket(APIView):
                         update_count += 1
                         found = True
 
-                    if found is False:
+                    if not found:
                         matched_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_uuid)
                         if len(matched_vuln) == 1:
                             matched_vuln.update(jira_ticket=linked_issue)
                             update_count += 1
                             found = True
 
-                    if found is False:
+                    if not found:
                         matched_vuln = NetworkScanResultsDb.objects.filter(vuln_id=vuln_uuid)
                         if len(matched_vuln) == 1:
                             matched_vuln.update(jira_ticket=linked_issue)
                             update_count += 1
                             found = True
 
-                    if found is False:
+                    if not found:
                         matched_vuln = StaticScanResultsDb.objects.filter(vuln_id=vuln_uuid)
                         if len(matched_vuln) == 1:
                             matched_vuln.update(jira_ticket=linked_issue)
@@ -740,7 +736,7 @@ class UpdateJiraTicket(APIView):
                             found = True
 
                     # This vuln has not been found, add it to the list
-                    if found is False:
+                    if not found:
                         vulns_not_found.append(vuln_id)
 
                 if update_count != to_update:

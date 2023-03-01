@@ -170,24 +170,20 @@ class SastScanDetails(APIView):
             jira_username = jira.jira_username
             jira_password = jira.jira_password
 
-        if jira_username is None:
-            jira_username = None
-        else:
+        if jira_username is not None:
             jira_username = signing.loads(jira_username)
 
-        if jira_password is None:
-            jira_password = None
-        else:
+        if jira_password is not None:
             jira_password = signing.loads(jira_password)
 
         options = {"server": jira_server}
         try:
             if jira_username is not None and jira_username != "" :
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), max_retries=0
+                    options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
                 )
             else :
-                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0)
+                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)

@@ -98,10 +98,10 @@ class JiraSetting(APIView):
 
             if jira_username is not None and jira_username != "" :
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), max_retries=0
+                    options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
                 )
             else :
-                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0)
+                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
             jira_projects = jira_ser.projects()
             print(len(jira_projects))
             jira_info = True
@@ -128,8 +128,8 @@ class CreateJiraTicket(APIView):
         jira_setting = jirasetting.objects.filter()
         user = request.user
         jira_server = ""
-        jira_username = ""
-        jira_password = ""
+        jira_username = None
+        jira_password = None
         jira_projects = ""
 
         for jira in jira_setting:
@@ -137,24 +137,20 @@ class CreateJiraTicket(APIView):
             jira_username = jira.jira_username
             jira_password = jira.jira_password
 
-        if jira_username is None:
-            jira_username = None
-        else:
+        if jira_username is not None:
             jira_username = signing.loads(jira_username)
 
-        if jira_password is None:
-            jira_password = None
-        else:
+        if jira_password is not None:
             jira_password = signing.loads(jira_password)
 
         options = {"server": jira_server}
         try:
             if jira_username is not None and jira_username != "" :
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), max_retries=0
+                    options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
                 )
             else :
-                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0)
+                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)
@@ -184,8 +180,8 @@ class CreateJiraTicket(APIView):
         user = request.user
 
         jira_server = ""
-        jira_username = ""
-        jira_password = ""
+        jira_username = None
+        jira_password = None
         jira_ser = ""
 
         for jira in jira_setting:
@@ -193,24 +189,20 @@ class CreateJiraTicket(APIView):
             jira_username = jira.jira_username
             jira_password = jira.jira_password
 
-        if jira_username is None:
-            jira_username = None
-        else:
+        if jira_username is not None:
             jira_username = signing.loads(jira_username)
 
-        if jira_password is None:
-            jira_password = None
-        else:
+        if jira_password is not None:
             jira_password = signing.loads(jira_password)
 
         options = {"server": jira_server}
         try:
             if jira_username is not None and jira_username != "" :
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password)
+                    options, basic_auth=(jira_username, jira_password), timeout=30
                 )
             else :
-                jira_ser = JIRA(options, token_auth=jira_password)
+                jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
             # jira_projects =
             jira_ser.projects()
         except Exception as e:
@@ -279,8 +271,8 @@ class LinkJiraTicket(APIView):
         jira_setting = jirasetting.objects.filter()
         user = request.user
         jira_server = ""
-        jira_username = ""
-        jira_password = ""
+        jira_username = None
+        jira_password = None
         jira_projects = ""
 
         for jira in jira_setting:
@@ -288,34 +280,30 @@ class LinkJiraTicket(APIView):
             jira_username = jira.jira_username
             jira_password = jira.jira_password
 
-        if jira_username is None:
-            jira_username = None
-        else:
+        if jira_username is not None:
             jira_username = signing.loads(jira_username)
 
-        if jira_password is None:
-            jira_password = None
-        else:
+        if jira_password is not None:
             jira_password = signing.loads(jira_password)
 
         options = {"server": jira_server}
         try:
             if jira_username is not None and jira_username != "" :
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), max_retries=0
+                    options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
                 )
             else :
-                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0)
+                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)
             notify.send(user, recipient=user, verb="Jira settings not found")
 
-        summary = request.GET["summary"]
-        jira_tick_id = request.GET["jira_tick_id"]
-        scanner = request.GET["scanner"]
-        vuln_id = request.GET["vuln_id"]
-        scan_id = request.GET["scan_id"]
+        summary = request.GET.get("summary", "Not found")
+        jira_tick_id = request.GET.get("jira_tick_id", "Not found")
+        scanner = request.GET.get("scanner", "Not found")
+        vuln_id = request.GET.get("vuln_id", "Not found")
+        scan_id = request.GET.get("scan_id", "Not found")
 
         return render(
             request,
@@ -335,8 +323,8 @@ class LinkJiraTicket(APIView):
         user = request.user
 
         jira_server = ""
-        jira_username = ""
-        jira_password = ""
+        jira_username = None
+        jira_password = None
         jira_ser = ""
 
         for jira in jira_setting:
@@ -344,24 +332,20 @@ class LinkJiraTicket(APIView):
             jira_username = jira.jira_username
             jira_password = jira.jira_password
 
-        if jira_username is None:
-            jira_username = None
-        else:
+        if jira_username is not None:
             jira_username = signing.loads(jira_username)
 
-        if jira_password is None:
-            jira_password = None
-        else:
+        if jira_password is not None:
             jira_password = signing.loads(jira_password)
 
         options = {"server": jira_server}
         try:
             if jira_username is not None and jira_username != "" :
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password)
+                    options, basic_auth=(jira_username, jira_password), timeout=30
                 )
             else :
-                jira_ser = JIRA(options, token_auth=jira_password)
+                jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
         except Exception as e:
             print(e)
             notify.send(user, recipient=user, verb="Jira settings not found")
@@ -369,7 +353,7 @@ class LinkJiraTicket(APIView):
         summary = request.POST.get("summary")
         jira_tick_id = request.POST.get("jira_tick_id")
         vuln_id = request.POST.get("vuln_id")
-        scanner = request.POST.get("scanner")
+        scanner = request.POST.get("scanner", "Not found")
         scan_id = request.POST.get("scan_id")
 
         # If blank ticket ID, set the Jira Ticket to None in the database
@@ -379,13 +363,40 @@ class LinkJiraTicket(APIView):
                 linked_issue = jira_ser.issue(jira_tick_id)
             except Exception as e:
                 print(e)
-                notify.send(user, recipient=user, verb="Jira issue not found")
+                messages.warning(request, "Jira Ticket not found")
+                if scanner == "web":
+                    return HttpResponseRedirect(
+                        reverse("webscanners:list_vuln_info")
+                        + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
+                    )
+                elif scanner == "sast":
+                    return HttpResponseRedirect(
+                        reverse("staticscanners:list_vuln_info")
+                        + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
+                    )
+                elif scanner == "network":
+                    ip = (
+                        NetworkScanResultsDb.objects.filter(vuln_id=vuln_id)
+                        .values("ip")
+                        .get()["ip"]
+                    )
+                    return HttpResponseRedirect(
+                        reverse("networkscanners:list_vuln_info")
+                        + "?scan_id=%s&ip=%s" % (scan_id, ip)
+                    )
+                elif scanner == "cloud":
+                    return HttpResponseRedirect(
+                        reverse("cloudscanners:list_vuln_info")
+                        + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
+                    )
+                else:
+                    return HttpResponseRedirect(reverse("dashboard:dashboard"))
 
         if scanner == "web":
             WebScanResultsDb.objects.filter(vuln_id=vuln_id).update(
                 jira_ticket=linked_issue
             )
-            messages.success(request, "Jira Ticket Linked ID: %s", linked_issue)
+            messages.success(request, "Jira Ticket Linked ID: %s" % linked_issue)
             return HttpResponseRedirect(
                 reverse("webscanners:list_vuln_info")
                 + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
@@ -395,7 +406,7 @@ class LinkJiraTicket(APIView):
             StaticScanResultsDb.objects.filter(vuln_id=vuln_id).update(
                 jira_ticket=linked_issue
             )
-            messages.success(request, "Jira Ticket Linked ID: %s", linked_issue)
+            messages.success(request, "Jira Ticket Linked ID: %s" % linked_issue)
             return HttpResponseRedirect(
                 reverse("staticscanners:list_vuln_info")
                 + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
@@ -411,7 +422,7 @@ class LinkJiraTicket(APIView):
                 .get()["ip"]
             )
 
-            messages.success(request, "Jira Ticket Linked ID: %s", linked_issue)
+            messages.success(request, "Jira Ticket Linked ID: %s" % linked_issue)
             return HttpResponseRedirect(
                 reverse("networkscanners:list_vuln_info")
                 + "?scan_id=%s&ip=%s" % (scan_id, ip)
@@ -422,8 +433,13 @@ class LinkJiraTicket(APIView):
                 jira_ticket=linked_issue
             )
 
-            messages.success(request, "Jira Ticket Linked ID: %s", linked_issue)
+            messages.success(request, "Jira Ticket Linked ID: %s" % linked_issue)
             return HttpResponseRedirect(
                 reverse("cloudscanners:list_vuln_info")
                 + "?scan_id=%s&scan_name=%s" % (scan_id, summary)
             )
+
+        # Scanner not found
+        else:
+            messages.warning(request, "Invalid scanner type")
+            return HttpResponseRedirect(reverse("dashboard:dashboard"))
