@@ -742,9 +742,9 @@ class UpdateJiraTicket(APIView):
                 if update_count != to_update:
                     raise Exception("Too many/few rows updated, rolling back...")
 
-        except KeyError as e :
-            return Response({"error": "KeyError: Something went wrong when updating", "error_data": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        except Exception as e:
-            return Response({"error": "General error: " + str(e), "error_data": vulns_not_found}, status=status.HTTP_400_BAD_REQUEST)
+        except KeyError:
+            return Response({"error": "KeyError: Something went wrong when updating"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception:
+            return Response({"error": "General error"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"message": "Jira tickets have been updated"}, status=status.HTTP_200_OK)
