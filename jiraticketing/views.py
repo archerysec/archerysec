@@ -259,6 +259,15 @@ class CreateJiraTicket(APIView):
                 reverse("networkscanners:list_vuln_info")
                 + "?scan_id=%s&ip=%s" % (scan_id, ip)
             )
+        elif scanner == "cloud":
+            CloudScansResultsDb.objects.filter(vuln_id=vuln_id).update(
+                jira_ticket=new_issue
+            )
+
+            messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
+            return HttpResponseRedirect(
+                reverse("cloudscanners:list_vuln") + "?scan_id=%s" % (scan_id)
+            )
 
 
 class LinkJiraTicket(APIView):

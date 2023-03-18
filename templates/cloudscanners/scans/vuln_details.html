@@ -159,7 +159,7 @@
                 <form class="form-horizontal" method="POST"
                       action="{% url 'jiraticketing:submit_jira_ticket' %}">{% csrf_token %}
                     <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
-                    <input name="scanner" value="sast" type="hidden">
+                    <input name="scanner" value="cloud" type="hidden">
                     <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
                     <div class="card-body">
                         <div class="form-group row">
