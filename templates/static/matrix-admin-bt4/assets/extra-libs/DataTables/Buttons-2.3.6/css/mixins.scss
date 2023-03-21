@@ -1,0 +1,228 @@
+
+@function dtb-tint( $color, $percent ) {
+	@return mix(white, $color, $percent);
+}
+
+@function dtb-shade( $color, $percent ) {
+	@return mix(black, $color, $percent);
+}
+
+@mixin dtb-two-stop-gradient($fromColor, $toColor) {
+	background-color: $toColor; /* Fallback */
+	background: linear-gradient(to bottom, $fromColor 0%, $toColor 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#{nth( $fromColor, 1 )}', EndColorStr='#{nth( $toColor, 1 )}');
+}
+
+@mixin dtb-radial-gradient ($fromColor, $toColor ) {
+	background: $toColor; /* Fallback */
+	background: radial-gradient(ellipse farthest-corner at center, $fromColor 0%, $toColor 100%); /* W3C Markup, IE10 Release Preview */
+}
+
+
+@mixin dtb-fixed-collection {
+	// Fixed positioning feature
+	&.fixed {
+		position: fixed;
+		display: block;
+		top: 50%;
+		left: 50%;
+		margin-left: -75px;
+		border-radius: 5px;
+		background-color: white;
+
+		&.two-column {
+			margin-left: -200px;
+		}
+
+		&.three-column {
+			margin-left: -225px;
+		}
+
+		&.four-column {
+			margin-left: -300px;
+		}
+
+		&.columns {
+			// Four column
+			margin-left: -409px;
+
+			@media screen and (max-width: 1024px) {
+				margin-left: -308px;
+			}
+
+			@media screen and (max-width: 640px) {
+				margin-left: -203px;
+			}
+
+			@media screen and (max-width: 460px) {
+				margin-left: -100px;
+			}
+		}
+
+		> :last-child {
+			max-height: 100vh;
+			overflow: auto;
+		}
+	}
+
+	&.two-column > :last-child,
+	&.three-column > :last-child,
+	&.four-column > :last-child {
+		> * {
+			-webkit-column-break-inside: avoid;
+			break-inside: avoid;
+		}
+
+		// Multi-column layout feature
+		display: block !important;
+		-webkit-column-gap: 8px;
+		-moz-column-gap: 8px;
+			-ms-column-gap: 8px;
+			-o-column-gap: 8px;
+		column-gap: 8px;
+	}
+
+	&.two-column {
+		width: 400px;
+
+		> :last-child {
+			padding-bottom: 1px;
+			column-count: 2;
+		}
+	}
+
+	&.three-column {
+		width: 450px;
+
+		> :last-child {
+			padding-bottom: 1px;
+			column-count: 3;
+		}
+	}
+
+	&.four-column {
+		width: 600px;
+
+		> :last-child {
+			padding-bottom: 1px;
+			column-count: 4;
+		}
+	}
+
+	// Chrome fix - 531528
+	.dt-button {
+		border-radius: 0;
+	}
+
+	&.columns {
+		// Four column layout
+		width: auto;
+
+		> :last-child {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: flex-start;
+			align-items: center;
+			gap: 6px;
+
+			width: 818px;
+			padding-bottom: 1px;
+
+			.dt-button {
+				min-width: 200px;
+				flex: 0 1;
+				margin: 0;
+			}
+		}
+
+		&.dtb-b3,
+		&.dtb-b2,
+		&.dtb-b1 {
+			> :last-child {
+				justify-content: space-between;
+			}
+		}
+
+		&.dtb-b3 .dt-button {
+			flex: 1 1 32%;
+		}
+		&.dtb-b2 .dt-button {
+			flex: 1 1 48%;
+		}
+		&.dtb-b1 .dt-button {
+			flex: 1 1 100%;
+		}
+
+		@media screen and (max-width: 1024px) {
+			// Three column layout
+			> :last-child {
+				width: 612px;
+			}
+		}
+
+		@media screen and (max-width: 640px) {
+			// Two column layout
+			> :last-child {
+				width: 406px;
+			}
+
+			&.dtb-b3 .dt-button {
+				flex: 0 1 32%;
+			}
+		}
+
+		@media screen and (max-width: 460px) {
+			// Single column
+			> :last-child {
+				width: 200px;
+			}
+		}
+	}
+}
+
+
+@mixin dtb-processing {
+	color: rgba(0, 0, 0, 0.2);
+
+	&:after {
+		position: absolute;
+	    top: 50%;
+		left: 50%;
+		width: 16px;
+		height: 16px;
+		margin: -8px 0 0 -8px;
+		box-sizing: border-box;
+
+		display: block;
+		content: ' ';
+		border: 2px solid rgb(40,40,40);
+		border-radius: 50%;
+		border-left-color: transparent;
+		border-right-color: transparent;
+		animation: dtb-spinner 1500ms infinite linear;
+			-o-animation: dtb-spinner 1500ms infinite linear;
+			-ms-animation: dtb-spinner 1500ms infinite linear;
+			-webkit-animation: dtb-spinner 1500ms infinite linear;
+			-moz-animation: dtb-spinner 1500ms infinite linear;
+	}
+}
+
+@keyframes dtb-spinner {
+	100%{ transform: rotate(360deg); }
+}
+
+@-o-keyframes dtb-spinner {
+	100%{ -o-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@-ms-keyframes dtb-spinner {
+	100%{ -ms-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@-webkit-keyframes dtb-spinner {
+	100%{ -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@-moz-keyframes dtb-spinner {
+	100%{ -moz-transform: rotate(360deg); transform: rotate(360deg); }
+}

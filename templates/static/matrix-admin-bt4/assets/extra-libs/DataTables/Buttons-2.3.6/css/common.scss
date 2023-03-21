@@ -1,0 +1,106 @@
+
+div.dataTables_wrapper {
+	position: relative;
+}
+
+div.dt-buttons {
+	position: initial;
+
+	.dt-button {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+div.dt-button-info {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 400px;
+	margin-top: -100px;
+	margin-left: -200px;
+	background-color: white;
+	border: 2px solid #111;
+	box-shadow: 3px 4px 10px 1px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+	text-align: center;
+	z-index: 21;
+
+	h2 {
+		padding: 0.5em;
+		margin: 0;
+		font-weight: normal;
+		border-bottom: 1px solid #ddd;
+		background-color: #f3f3f3;
+	}
+
+	> div {
+		padding: 1em;
+	}
+}
+
+div.dtb-popover-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 22px;
+	height: 22px;
+	border: 1px solid #eaeaea;
+	background-color: #f9f9f9;
+	text-align: center;
+	border-radius: 3px;
+	cursor: pointer;
+	z-index: 2003;
+}
+
+button.dtb-hide-drop {
+	display: none !important;
+}
+
+div.dt-button-collection-title {
+	text-align: center;
+	padding: 0.3em 0 0.5em;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+	font-size: 0.9em;
+}
+
+div.dt-button-collection-title:empty {
+	display: none;
+}
+
+span.dt-button-spacer {
+	display: inline-block;
+	margin: 0.5em;
+	white-space: nowrap;
+
+	&.bar {
+		border-left: 1px solid rgba(0, 0, 0, 0.3);
+		vertical-align: middle;
+		padding-left: 0.5em;
+
+		&:empty {
+			height: 1em;
+			width: 1px;
+			padding-left: 0;
+		}
+	}
+}
+
+div.dt-button-collection span.dt-button-spacer {
+	width: 100%;
+	font-size: 0.9em;
+	text-align: center;
+	margin: 0.5em 0;
+
+	&:empty {
+		height: 0;
+		width: 100%;
+	}
+
+	&.bar {
+		border-left: none;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+		padding-left: 0;
+	}
+}
