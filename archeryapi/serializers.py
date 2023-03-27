@@ -46,3 +46,9 @@ class GenericScanResultsDbSerializer(serializers.Serializer):
     solution = serializers.CharField(read_only=True)
     scanner = serializers.CharField(read_only=True)
     target = serializers.CharField(read_only=True)
+
+
+class JiraLinkSerializer(serializers.Serializer):
+    vuln_id = serializers.UUIDField(read_only=True)
+    link_jira_ticket_id = serializers.CharField(max_length=255)
+    current_jira_ticket_id = serializers.CharField(max_length=255)

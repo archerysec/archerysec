@@ -28,6 +28,7 @@ from webscanners.zapscanner.views import ZapScan, ZapSetting, ZapSettingUpdate
 from webscanners.burpscanner.views import BurpSetting, BurpScanLaunch
 from webscanners.arachniscanner.views import ArachniScan, ArachniSetting, ArachniSettingUpdate
 from networkscanners.views import OpenvasLaunchScan, OpenvasDetails, OpenvasSetting
+from jiraticketing.views import LinkJiraTicket
 
 from archeryapi import views
 

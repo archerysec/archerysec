@@ -38,7 +38,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from archeryapi.models import OrgAPIKey
-from archeryapi.serializers import OrgAPIKeySerializer, GenericScanResultsDbSerializer
+from archeryapi.serializers import OrgAPIKeySerializer, GenericScanResultsDbSerializer, JiraLinkSerializer
 from compliance.models import DockleScanDb, InspecScanDb
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from projects.models import MonthDb, ProjectDb
@@ -434,7 +434,7 @@ class APIKey(APIView):
             request,
             "access-key/access-key-list.html",
             {"all_active_keys": all_active_keys,
-                "serialized_data": serialized_data},
+             "serialized_data": serialized_data},
         )
 
     def post(self, request):
@@ -539,7 +539,6 @@ class ListAllScanResults(APIView):
     permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
     def get(self, request):
-
         # Retrieve the filter parameters
         # scan_filter = request.GET.get("scan_filter", None)
 
@@ -650,101 +649,61 @@ class UpdateJiraTicket(APIView):
     permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
     def post(self, request):
+        """
+        Current user's identity endpoint.
+        """
 
-        # Retrieve the JSON object with the update
-        if request.content_type == "application/json":
-            parsed_input_data = request.data
-        else:
-            raw_input_data = request.POST.get("json_data", None)
-            if raw_input_data is None:
-                return Response({"error": "No data passed"}, status=status.HTTP_400_BAD_REQUEST)
-            parsed_input_data = json.loads(raw_input_data)
-        if len(parsed_input_data) == 0:
-            return Response({"error": "Empty structure passed"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = JiraLinkSerializer(data=request.data)
+        if serializer.is_valid():
+            vuln_id = request.data.get(
+                "vuln_id",
+            )
 
-        # Connect to Jira
-        jira_setting = jirasetting.objects.filter()
+            link_jira_ticket_id = request.data.get(
+                "link_jira_ticket_id",
+            )
 
-        jira_server = ""
-        jira_username = None
-        jira_password = None
-        jira_ser = ""
+            current_jira_ticket_id = request.data.get(
+                "current_jira_ticket_id",
+            )
+            jira_setting = jirasetting.objects.filter()
 
-        for jira in jira_setting:
-            jira_server = jira.jira_server
-            jira_username = jira.jira_username
-            jira_password = jira.jira_password
+            jira_server = ""
+            jira_username = None
+            jira_password = None
+            jira_ser = ""
 
-        if jira_username is not None:
-            jira_username = signing.loads(jira_username)
+            for jira in jira_setting:
+                jira_server = jira.jira_server
+                jira_username = jira.jira_username
+                jira_password = jira.jira_password
 
-        if jira_password is not None:
-            jira_password = signing.loads(jira_password)
+            if jira_username is not None:
+                jira_username = signing.loads(jira_username)
 
-        options = {"server": jira_server}
-        try:
-            if jira_username is not None and jira_username != "" :
-                jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), timeout=30
+            if jira_password is not None:
+                jira_password = signing.loads(jira_password)
+
+            options = {"server": jira_server}
+            try:
+                if jira_username is not None and jira_username != "" :
+                    jira_ser = JIRA(
+                        options, basic_auth=(jira_username, jira_password), timeout=30
+                    )
+                else :
+                    jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
+            except Exception as e:
+                return Response(
+                    {"message": "Jira settings not found"}, status=status.HTTP_404_NOT_FOUND
                 )
-            else :
-                jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
-        except Exception:
-            return Response({"error": "Cannot connect to JIRA"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            try:
+                jira_ser.create_issue_link(type="duplicates", inwardIssue=current_jira_ticket_id, outwardIssue=link_jira_ticket_id)
+                return Response(
+                    {"message": "Jira Linked with %s" % link_jira_ticket_id}, status=status.HTTP_200_OK
+                )
+            except Exception as e:
+                return Response(
+                    {"message": e}, status=status.HTTP_404_NOT_FOUND
+                )
 
-        # Start the database transactional process
-        try:
-            with transaction.atomic():
-                to_update = len(parsed_input_data)
-                update_count = 0
-                vulns_not_found = []
-
-                # Update the entries
-                for vuln_id, jira_tick in parsed_input_data.items():
-                    linked_issue = None
-                    if jira_tick is not None and jira_tick.strip() != "":
-                        linked_issue = jira_ser.issue(jira_tick)
-
-                    vuln_uuid = uuid.UUID(vuln_id)
-                    found = False
-
-                    matched_vuln = CloudScansResultsDb.objects.filter(vuln_id=vuln_uuid)
-                    if len(matched_vuln) == 1:
-                        matched_vuln.update(jira_ticket=linked_issue)
-                        update_count += 1
-                        found = True
-
-                    if not found:
-                        matched_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_uuid)
-                        if len(matched_vuln) == 1:
-                            matched_vuln.update(jira_ticket=linked_issue)
-                            update_count += 1
-                            found = True
-
-                    if not found:
-                        matched_vuln = NetworkScanResultsDb.objects.filter(vuln_id=vuln_uuid)
-                        if len(matched_vuln) == 1:
-                            matched_vuln.update(jira_ticket=linked_issue)
-                            update_count += 1
-                            found = True
-
-                    if not found:
-                        matched_vuln = StaticScanResultsDb.objects.filter(vuln_id=vuln_uuid)
-                        if len(matched_vuln) == 1:
-                            matched_vuln.update(jira_ticket=linked_issue)
-                            update_count += 1
-                            found = True
-
-                    # This vuln has not been found, add it to the list
-                    if not found:
-                        vulns_not_found.append(vuln_id)
-
-                if update_count != to_update:
-                    raise Exception("Too many/few rows updated, rolling back...")
-
-        except KeyError:
-            return Response({"error": "KeyError: Something went wrong when updating"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        except Exception:
-            return Response({"error": "General error"}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({"message": "Jira tickets have been updated"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

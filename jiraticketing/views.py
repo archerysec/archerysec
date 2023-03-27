@@ -361,15 +361,20 @@ class LinkJiraTicket(APIView):
 
         summary = request.POST.get("summary")
         jira_tick_id = request.POST.get("jira_tick_id")
+        current_jira_ticket_id = request.POST.get("current_jira_ticket_id")
         vuln_id = request.POST.get("vuln_id")
         scanner = request.POST.get("scanner", "Not found")
         scan_id = request.POST.get("scan_id")
+
+        if current_jira_ticket_id is None:
+            messages.warning(request, "Current Jira Ticket not Found")
 
         # If blank ticket ID, set the Jira Ticket to None in the database
         linked_issue = None
         if jira_tick_id is not None and jira_tick_id.strip() != "":
             try:
-                linked_issue = jira_ser.issue(jira_tick_id)
+                linked_issue = current_jira_ticket_id
+                jira_ser.create_issue_link(type="duplicates", inwardIssue=current_jira_ticket_id, outwardIssue=jira_tick_id)
             except Exception as e:
                 print(e)
                 messages.warning(request, "Jira Ticket not found")

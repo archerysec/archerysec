@@ -233,6 +233,7 @@
                         action="{% url 'jiraticketing:link_jira_ticket' %}">{% csrf_token %}
                     <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
                     <input name="scanner" value="cloud" type="hidden">
+                    <input name="current_jira_ticket_id" value="{{ data.jira_ticket }}" type="hidden">
                     <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
                     <input name="summary" value="{{ data.title }}" type="hidden">
                     <div class="card-body">
