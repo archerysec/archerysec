@@ -701,9 +701,9 @@ class UpdateJiraTicket(APIView):
                 return Response(
                     {"message": "Jira Linked with %s" % link_jira_ticket_id}, status=status.HTTP_200_OK
                 )
-            except Exception as e:
+            except:
                 return Response(
-                    {"message": e}, status=status.HTTP_404_NOT_FOUND
+                    {"message": "Something not correct, please check Jira tickets and Vuln id"}, status=status.HTTP_404_NOT_FOUND
                 )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
