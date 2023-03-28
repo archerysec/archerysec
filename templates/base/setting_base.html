@@ -10,8 +10,8 @@
     <meta name="author" content="">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'logo.png' %}">
     <title>ArcherySec</title>
-    <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
-    <script src="https://code.jquery.com/jquery-migrate-3.3.2.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.4.0.js"></script>
     <link href="{% static 'matrix-admin-bt4/assets/libs/toastr/build/toastr.min.css' %}" rel="stylesheet">
 
     <link href="{% static 'matrix-admin-bt4/dist/css/style.min.css' %}" rel="stylesheet">
@@ -23,7 +23,13 @@
     <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
     <link rel="stylesheet" type="text/css"
           href="{% static 'matrix-admin-bt4/assets/extra-libs/multicheck/multicheck.css' %}">
-    <link href="{% static 'matrix-admin-bt4/assets/extra-libs/DataTables/datatables.min.css' %}"
+    <link href="{% static 'matrix-admin-bt4/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4-custom.css' %}"
+          rel="stylesheet">
+    <link href="{% static 'matrix-admin-bt4/assets/extra-libs/DataTables/Buttons-2.3.6/css/buttons.bootstrap4.min.css' %}"
+          rel="stylesheet">
+    <link href="{% static 'matrix-admin-bt4/assets/extra-libs/DataTables/SearchBuilder-1.4.2/css/searchBuilder.bootstrap4.min.css' %}"
+          rel="stylesheet">
+    <link href="{% static 'matrix-admin-bt4/assets/extra-libs/DataTables/DateTime-1.4.0/css/dataTables.dateTime.min.css' %}"
           rel="stylesheet">
     <link rel="stylesheet" type="text/css"
           href="{% static 'matrix-admin-bt4/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
@@ -73,147 +79,9 @@
     /****************************************
      *       Basic Table                   *
      ****************************************/
-    $('#zero_config').DataTable();
-    $('#zero_config1').DataTable();
-    $('#zero_config2').DataTable();
-    $('#zero_config3').DataTable();
-    $('#zero_config4').DataTable();
-    $('#zero_config5').DataTable();
-    $('#vuln_details').DataTable();
-    $('#zap_scans_list').DataTable();
-    $('#zap_scans_list_false').DataTable();
-    $('#zap_scans_list_close').DataTable();
-    $('#burp_scan_list').DataTable();
-    $('#burp_scans_list').DataTable();
-    $('#burp_scans_false').DataTable();
-    $('#burp_scans_close').DataTable();
-
-    $('#acunetix_scans_list').DataTable();
-    $('#acunetix_scans_false').DataTable();
-    $('#acunetix_scans_close').DataTable();
-
-    $('#netspaker_scans_list').DataTable();
-    $('#netspaker_scans_false').DataTable();
-    $('#netspaker_scans_close').DataTable();
-
-    $('#arachni_scans_list').DataTable();
-    $('#arachni_scans_false').DataTable();
-    $('#arachni_scans_close').DataTable();
-
-    $('#webinspect_scans_list').DataTable();
-    $('#webinspect_scans_false').DataTable();
-    $('#webinspect_scans_close').DataTable();
-
-    $('#acunetix_scans_list').DataTable();
-    $('#acunetix_scans_false').DataTable();
-    $('#acunetix_scans_close').DataTable();
-
-    $('#excluded_url').DataTable();
-    $('#cookies_list').DataTable();
-    $('#excluded_url').DataTable();
-
-    $('#openvas_scan_list').DataTable();
-    $('#openvas_scan_false').DataTable();
-    $('#openvas_scan_close').DataTable();
-
-    $('#nessus_scans_list').DataTable();
-    $('#nessus_scans_false').DataTable();
-    $('#nessus_scans_close').DataTable();
-
-    $('#dependencycheck_scans_list').DataTable();
-    $('#dependencycheck_scans_false').DataTable();
-    $('#dependencycheck_scans_close').DataTable();
-
-    $('#findbugs_scans_list').DataTable();
-    $('#findbugs_scans_false').DataTable();
-    $('#findbugs_scans_close').DataTable();
-
-    $('#clair_scans_list').DataTable();
-    $('#clair_scans_false').DataTable();
-    $('#clair_scans_false').DataTable();
-
-    $('#trivy_scans_list').DataTable();
-    $('#trivy_scans_false').DataTable();
-    $('#trivy_scans_false').DataTable();
-    $('#trivy_scans_close').DataTable();
-
-    $('#npmaudit_scans_list').DataTable();
-    $('#npmaudit_scans_false').DataTable();
-    $('#npmaudit_scans_false').DataTable();
-    $('#npmaudit_scans_close').DataTable();
-
-    $('#nodejsscan_scans_list').DataTable();
-    $('#nodejsscan_scans_false').DataTable();
-    $('#nodejsscan_scans_close').DataTable();
-
-    $('#semgrepscan_scans_list').DataTable();
-    $('#semgrepscan_scans_false').DataTable();
-    $('#semgrepscan_scans_close').DataTable();
-
-    $('#openvas_scan_list').DataTable();
-    $('#openvas_scan_list').DataTable();
-    $('#openvas_scan_list').DataTable();
-    $('#openvas_scan_list').DataTable();
-
-
-    $('#tfsec_scans_list').DataTable();
-    $('#tfsec_scans_false').DataTable();
-    $('#tfsec_scans_false').DataTable();
-    $('#tfsec_scans_close').DataTable();
-
-    $('#whitesource_scans_list').DataTable();
-    $('#whitesource_scans_false').DataTable();
-    $('#whitesource_scans_close').DataTable();
-
-    $('#checkmarx_scans_list').DataTable();
-    $('#checkmarx_scans_false').DataTable();
-    $('#checkmarx_scans_close').DataTable();
-
-    $('#gitlabsast_scans_list').DataTable();
-    $('#gitlabsast_scans_false').DataTable();
-    $('#gitlabsast_scans_close').DataTable();
-
-    $('#twistlock_scans_list').DataTable();
-    $('#twistlock_scans_false').DataTable();
-    $('#twistlock_scans_close').DataTable();
-
-    $('#brakeman_scans_list').DataTable();
-    $('#brakeman_scans_false').DataTable();
-    $('#brakeman_scans_close').DataTable();
-
-    $('#gitlabcontainerscan_scans_list').DataTable();
-    $('#gitlabcontainerscan_scans_false').DataTable();
-    $('#gitlabcontainerscan_scans_close').DataTable();
-
-    $('#gitlabsca_scans_list').DataTable();
-    $('#gitlabsca_scans_false').DataTable();
-    $('#gitlabsca_scans_close').DataTable();
-
-    $('#bandit_scan_list').DataTable();
-    $('#bandit_scan_false').DataTable();
-    $('#bandit_scan_close').DataTable();
-
-    $('#netsparker_scans_list').DataTable();
-
-    $('#inspec_scans_list').DataTable();
-    $('#dockle_scans_list').DataTable();
-
-    $('#pentest_list').DataTable();
-    $('#30_Days').DataTable();
-
-    $('#scans_list').DataTable();
-    $('#scans_false').DataTable();
-    $('#scans_close').DataTable();
-
-
-    $('#nikto_scan_list').DataTable();
-    $('#sslscan_scans_list').DataTable();
-    $('#nmap_scans_list').DataTable();
-
-    $('#manual_scans_list').DataTable();
-
-    $('#scan_schedule').DataTable();
-
+    let data_table = $('#data_table').DataTable();
+    new $.fn.dataTable.SearchBuilder(data_table, {});
+    data_table.searchBuilder.container().prependTo(data_table.table().container());
 
     $(".select2").select2();
 
