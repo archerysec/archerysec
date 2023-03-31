@@ -11,6 +11,9 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jiraModal">
                     Create Jira Ticket
                 </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#jiraLinkModal">
+                    Link to Jira Ticket
+                </button>
                 {% endif %}
             </div>
         </div>
@@ -156,7 +159,7 @@
                 <form class="form-horizontal" method="POST"
                       action="{% url 'jiraticketing:submit_jira_ticket' %}">{% csrf_token %}
                     <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
-                    <input name="scanner" value="sast" type="hidden">
+                    <input name="scanner" value="cloud" type="hidden">
                     <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
                     <div class="card-body">
                         <div class="form-group row">
@@ -201,6 +204,46 @@
                             <div class="col-sm-6">
                                         <textarea name="description"
                                                   class="form-control">{{ data.description }}</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="jiraLinkModal" tabindex="-1" role="dialog"
+             aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="jiraLinkModalLabel">JIRA Ticket Linking</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="POST"
+                        action="{% url 'jiraticketing:link_jira_ticket' %}">{% csrf_token %}
+                    <input name="vuln_id" value="{{ data.vuln_id }}" type="hidden">
+                    <input name="scanner" value="cloud" type="hidden">
+                    <input name="current_jira_ticket_id" value="{{ data.jira_ticket }}" type="hidden">
+                    <input name="scan_id" value="{{ data.scan_id }}" type="hidden">
+                    <input name="summary" value="{{ data.title }}" type="hidden">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label
+                                    class="col-sm-4 col-form-label">Jira Ticket ID</label>
+                            <div class="col-sm-6">
+                                <input type="text" name="jira_tick_id"
+                                        class="form-control">
+                                <small><em>Leave the field empty to unlink from the current ticket</em></small>
                             </div>
                         </div>
                         <div class="modal-footer">

@@ -136,21 +136,21 @@ class Settings(APIView):
         all_settings_data = SettingsDb.objects.filter()
 
         # Loading ZAP Settings
-        zap_api_key = ""
-        zap_hosts = ""
-        zap_ports = ""
-        zap_enable = False
+        # zap_api_key = ""
+        # zap_hosts = ""
+        # zap_ports = ""
+        # zap_enable = False
 
         all_zap = ZapSettingsDb.objects.filter()
-        for zap in all_zap:
-            zap_api_key = zap.zap_api
-            zap_hosts = zap.zap_url
-            zap_ports = zap.zap_port
-            zap_enable = zap.enabled
+        # for zap in all_zap:
+        #   zap_api_key = zap.zap_api
+        #   zap_hosts = zap.zap_url
+        #   zap_ports = zap.zap_port
+        #   zap_enable = zap.enabled
 
-        lod_apikey = zap_api_key
-        zap_host = zap_hosts
-        zap_port = zap_ports
+        # lod_apikey = zap_api_key
+        # zap_host = zap_hosts
+        # zap_port = zap_ports
 
         # Loading Arachni Settings
         arachni_hosts = ""
@@ -206,7 +206,7 @@ class Settings(APIView):
                 zap_info = "Disabled"
                 try:
                     random_port = zap_plugin.zap_local()
-                except:
+                except Exception:
                     return render(
                         request, "setting/settings_page.html", {"zap_info": zap_info}
                     )
@@ -217,7 +217,7 @@ class Settings(APIView):
                             # Connection Test
                             zap_connect = zap_plugin.zap_connect(random_port)
                             zap_connect.spider.scan(url=target_url)
-                        except Exception as e:
+                        except Exception:
                             print("ZAP Connection Not Found, re-try after 5 sec")
                             time.sleep(5)
                             continue
@@ -230,7 +230,7 @@ class Settings(APIView):
                     SettingsDb.objects.filter(setting_id=setting_id).update(
                         setting_status=zap_info
                     )
-                except:
+                except Exception:
                     zap_info = False
                     SettingsDb.objects.filter(setting_id=setting_id).update(
                         setting_status=zap_info
@@ -240,7 +240,7 @@ class Settings(APIView):
 
             try:
                 bi = burpscanner.BurpApi(host, burp_api_key)
-            except:
+            except Exception:
                 burp_info = False
                 return burp_info
 
@@ -268,7 +268,7 @@ class Settings(APIView):
                 SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=openvas_info
                 )
-            except:
+            except Exception:
                 openvas_info = False
                 SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=openvas_info
@@ -331,15 +331,19 @@ class Settings(APIView):
                 jira_server = jira_url
                 jira_username = signing.loads(username)
                 jira_password = signing.loads(password)
-            except:
+            except Exception:
                 jira_info = False
 
             options = {"server": jira_server}
             try:
 
-                jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), timeout=5
-                )
+                if jira_username is not None and jira_username != "" :
+                    jira_ser = JIRA(
+                        options, basic_auth=(jira_username, jira_password), timeout=5
+                    )
+                else :
+                    jira_ser = JIRA(options, token_auth=jira_password, timeout=5)
+
                 jira_projects = jira_ser.projects()
                 print(len(jira_projects))
                 jira_info = True

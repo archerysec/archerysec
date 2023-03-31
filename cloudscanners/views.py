@@ -63,15 +63,16 @@ class CloudScanVulnInfo(APIView):
         for d in jira:
             jira_url = d.jira_server
 
-        all_notify = Notification.objects.unread()
-        if uu_id == None:
+        # all_notify =
+        Notification.objects.unread()
+        if uu_id is None:
             scan_id = request.GET["scan_id"]
             scan_name = request.GET["scan_name"]
             vuln_data = CloudScansResultsDb.objects.filter(scan_id=scan_id, title=scan_name)
         else:
             try:
                 vuln_data = CloudScansResultsDb.objects.filter(scan_id=uu_id)
-            except:
+            except Exception:
                 return Response(
                     {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
@@ -81,7 +82,7 @@ class CloudScanVulnInfo(APIView):
         else:
             return render(
                 request,
-                    "cloudscanners/scans/list_vuln_info.html",
+                "cloudscanners/scans/list_vuln_info.html",
                 {"vuln_data": vuln_data, "jira_url": jira_url},
             )
 
@@ -164,28 +165,29 @@ class CloudScanDetails(APIView):
         jira_projects = None
         vuln_id = request.GET["vuln_id"]
         jira_setting = jirasetting.objects.filter()
-        user = request.user
+        # user = request.user
 
         for jira in jira_setting:
             jira_server = jira.jira_server
             jira_username = jira.jira_username
             jira_password = jira.jira_password
 
-        if jira_username is None:
-            jira_username = None
-        else:
+        if jira_username is not None:
             jira_username = signing.loads(jira_username)
 
-        if jira_password is None:
-            jira_password = None
-        else:
+        if jira_password is not None:
             jira_password = signing.loads(jira_password)
 
         options = {"server": jira_server}
         try:
-            jira_ser = JIRA(
-                options, basic_auth=(jira_username, jira_password), max_retries=0
-            )
+
+            if jira_username is not None and jira_username != "" :
+                jira_ser = JIRA(
+                    options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
+                )
+            else :
+                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
+
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)

@@ -25,6 +25,9 @@ import os
 import defusedxml.ElementTree as ET
 from django.core.files.uploadedfile import UploadedFile
 from django.shortcuts import HttpResponseRedirect, render, reverse
+from django.db.models import TextField, F, Value
+from django.db.models.functions import Cast, Concat
+from django.db import transaction
 from lxml import etree
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -35,7 +38,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from archeryapi.models import OrgAPIKey
-from archeryapi.serializers import OrgAPIKeySerializer
+from archeryapi.serializers import OrgAPIKeySerializer, GenericScanResultsDbSerializer, JiraLinkSerializer
 from compliance.models import DockleScanDb, InspecScanDb
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from projects.models import MonthDb, ProjectDb
@@ -54,6 +57,10 @@ from cicd.models import CicdDb
 from cicd.serializers import GetPoliciesSerializers
 from django.utils.html import escape
 from scanners.scanner_parser import scanner_parser
+
+from jiraticketing.models import jirasetting
+from django.core import signing
+from jira import JIRA
 
 
 class CreateProject(APIView):
@@ -427,7 +434,7 @@ class APIKey(APIView):
             request,
             "access-key/access-key-list.html",
             {"all_active_keys": all_active_keys,
-                "serialized_data": serialized_data},
+             "serialized_data": serialized_data},
         )
 
     def post(self, request):
@@ -526,3 +533,177 @@ class ApiTest(APIView):
         return Response(
             {"message": "ArcherySec API working."}
         )
+
+
+class ListAllScanResults(APIView):
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
+
+    def get(self, request):
+        # Retrieve the filter parameters
+        # scan_filter = request.GET.get("scan_filter", None)
+
+        # Get scan list
+        all_cloud_data = CloudScansResultsDb.objects.annotate(
+            target=Concat('cloudAccountId', Value(' '), 'cloudType', output_field=TextField())
+        ).values(
+            'scan_id',
+            'project_id',
+            'date_time',
+            'vuln_id',
+            'false_positive',
+            'severity_color',
+            'dup_hash',
+            'vuln_duplicate',
+            'false_positive_hash',
+            'vuln_status',
+            'jira_ticket',
+            'title',
+            'severity',
+            'description',
+            'solution',
+            'scanner',
+            'target'
+        )
+
+        all_network_data = NetworkScanResultsDb.objects.annotate(
+            target=Concat(Cast('ip', output_field=TextField()), Value(':'), 'port', output_field=TextField())
+        ).values(
+            'scan_id',
+            'project_id',
+            'date_time',
+            'vuln_id',
+            'false_positive',
+            'severity_color',
+            'dup_hash',
+            'vuln_duplicate',
+            'false_positive_hash',
+            'vuln_status',
+            'jira_ticket',
+            'title',
+            'severity',
+            'description',
+            'solution',
+            'scanner',
+            'target'
+        )
+
+        all_sast_data = StaticScanResultsDb.objects.annotate(
+            target=Concat('filePath', Value("/"), 'fileName', output_field=TextField())
+        ).values(
+            'scan_id',
+            'project_id',
+            'date_time',
+            'vuln_id',
+            'false_positive',
+            'severity_color',
+            'dup_hash',
+            'vuln_duplicate',
+            'false_positive_hash',
+            'vuln_status',
+            'jira_ticket',
+            'title',
+            'severity',
+            'description',
+            'solution',
+            'scanner',
+            'target'
+        )
+
+        all_web_data = WebScanResultsDb.objects.annotate(
+            target=F('url')
+        ).values(
+            'scan_id',
+            'project_id',
+            'date_time',
+            'vuln_id',
+            'false_positive',
+            'severity_color',
+            'dup_hash',
+            'vuln_duplicate',
+            'false_positive_hash',
+            'vuln_status',
+            'jira_ticket',
+            'title',
+            'severity',
+            'description',
+            'solution',
+            'scanner',
+            'target'
+        )
+
+        # Filter resulting queries
+        # for tables in [all_cloud_data, all_web_data, all_network_data, all_sast_data]:
+        #     if scan_filter is not None:
+        #         if scan_filter == "nojira":
+        #             tables = tables.filter(jira_ticket__isnull=True)
+
+        # Tables of the world, unite !
+        all_data = all_cloud_data.union(all_sast_data, all_network_data, all_web_data)
+
+        serialized_data = GenericScanResultsDbSerializer(all_data, many=True)
+
+        return Response(serialized_data.data, status=status.HTTP_200_OK)
+
+
+class UpdateJiraTicket(APIView):
+    permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
+
+    def post(self, request):
+        """
+        Current user's identity endpoint.
+        """
+
+        serializer = JiraLinkSerializer(data=request.data)
+        if serializer.is_valid():
+            vuln_id = request.data.get(
+                "vuln_id",
+            )
+
+            link_jira_ticket_id = request.data.get(
+                "link_jira_ticket_id",
+            )
+
+            current_jira_ticket_id = request.data.get(
+                "current_jira_ticket_id",
+            )
+            jira_setting = jirasetting.objects.filter()
+
+            jira_server = ""
+            jira_username = None
+            jira_password = None
+            jira_ser = ""
+
+            for jira in jira_setting:
+                jira_server = jira.jira_server
+                jira_username = jira.jira_username
+                jira_password = jira.jira_password
+
+            if jira_username is not None:
+                jira_username = signing.loads(jira_username)
+
+            if jira_password is not None:
+                jira_password = signing.loads(jira_password)
+
+            options = {"server": jira_server}
+            try:
+                if jira_username is not None and jira_username != "" :
+                    jira_ser = JIRA(
+                        options, basic_auth=(jira_username, jira_password), timeout=30
+                    )
+                else :
+                    jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
+            except Exception as e:
+                return Response(
+                    {"message": "Jira settings not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                jira_ser.create_issue_link(type="duplicates", inwardIssue=current_jira_ticket_id, outwardIssue=link_jira_ticket_id)
+                return Response(
+                    {"message": "Jira Linked with %s" % link_jira_ticket_id}, status=status.HTTP_200_OK
+                )
+            except:
+                return Response(
+                    {"message": "Something not correct, please check Jira tickets and Vuln id"}, status=status.HTTP_404_NOT_FOUND
+                )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

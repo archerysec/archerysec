@@ -128,14 +128,14 @@
 							},
 							{
 								"key": "x-api-key",
-								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
-								"description": "",
-								"disabled": true
+								"value": "2JpWeMecx8WX4tG0vGWGgeGJgil0jGL0VU1YL6SOWbfZpHDjaZof6vEkHM2Bkr0R",
+								"description": ""
 							},
 							{
 								"key": "Authorization",
 								"value": "Bearer {{key}}",
-								"description": ""
+								"description": "",
+								"disabled": true
 							}
 						],
 						"body": {
@@ -291,6 +291,102 @@
 					"request": {
 						"url": "{{url}}/api/v1/auth/login/",
 						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token",
+					"request": {
+						"url": "{{url}}/api/v1/auth/refresh-token/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg1MDQ1MiwiaWF0IjoxNjU3NzY0MDUyLCJqdGkiOiI4YWZmMmQ4MmViODk0YzI4OGE3MGFhNDk5MDk1NzRlOCIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6Mzl9.yiaPJe-7f4El8gL7P2WrehBtp5quMVj8_OARz96HMP0\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "{{url}}/api/v1/auth/logout/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refrest-token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg3NTM2NSwiaWF0IjoxNjU3Nzg4OTY1LCJqdGkiOiJkYTg5NjY3ODhmNjY0NzRmOTU0NGZjOTlkYzAzMDQ1OSIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6NjB9.yMijvPrBkbE1EohfAD6_WFZyuT4xlr7N4W0Go8b5cr8\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token copy",
+					"request": {
+						"url": "{{url}}/api/v1/auth/user-settings/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg1MDQ1MiwiaWF0IjoxNjU3NzY0MDUyLCJqdGkiOiI4YWZmMmQ4MmViODk0YzI4OGE3MGFhNDk5MDk1NzRlOCIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6Mzl9.yiaPJe-7f4El8gL7P2WrehBtp5quMVj8_OARz96HMP0\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "api test",
+					"request": {
+						"url": "{{url}}/api/v1/",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -574,7 +670,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"url\": \"https://archerysec.com\",\n    \"project_id\": \"a0d3dfcf-e5df-4d05-a103-35363a3633ba\"\n}"
+							"raw": "{\n    \"scan_ip\": \"192.1681.1.1\",\n    \"project_id\": \"a0d3dfcf-e5df-4d05-a103-35363a3633ba\"\n}"
 						},
 						"description": ""
 					},
@@ -624,7 +720,44 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"arachni_hosts\": \"192.0.0.1\",\n    \"arachni_ports\": \"8082\",\n    \"arachni_user\": \"admin\",\n    \"arachni_pass\": \"passwd\"\n}"
+							"raw": "{\n    \"openvas_host\": \"192.168.1.100\",\n    \"openvas_port\": \"9390\",\n    \"openvas_enabled\": \"True\",\n    \"openvas_user\": \"admin\",\n    \"openvas_password\": \"admin\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Jira Ticket",
+			"description": "",
+			"item": [
+				{
+					"name": "Jira Ticket Update",
+					"request": {
+						"url": "{{url}}/api/v1/update-jira/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "x-api-key",
+								"value": "2JpWeMecx8WX4tG0vGWGgeGJgil0jGL0VU1YL6SOWbfZpHDjaZof6vEkHM2Bkr0R",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vuln_id\": \"bae1417e-9774-4b2e-a634-26e5399943ef\",\n    \"link_jira_ticket_id\": \"AR-13\",\n    \"current_jira_ticket_id\": \"AR-16\"\n}"
 						},
 						"description": ""
 					},
@@ -640,13 +773,14 @@
 				"header": [
 					{
 						"key": "x-api-key",
-						"value": "p5EPkahds6XHDXW3IdhvqVVKveRTTI-1gOLvZ3SElLBEMymSRVQq1klenNcUgNjS",
+						"value": "Kw42Pd9CC8jpuwReAkAuRVEF6O8-akSweFxX1fteOk0xNYn65EGpbaCEycTmfJtI",
 						"description": ""
 					},
 					{
 						"key": "Authorization",
 						"value": "Bearer {{key}}",
-						"description": ""
+						"description": "",
+						"disabled": true
 					}
 				],
 				"body": {
@@ -654,18 +788,18 @@
 					"formdata": [
 						{
 							"key": "filename",
-							"value": "",
 							"description": "",
-							"type": "file"
+							"type": "file",
+							"src": "prisma-report.csv"
 						},
 						{
 							"key": "project_id",
-							"value": "98516905-4db9-4a77-9f04-675ddc792158",
+							"value": "3a524d33-ec48-497d-b40b-775e9d407880",
 							"description": ""
 						},
 						{
 							"key": "scanner",
-							"value": "zap_scan",
+							"value": "trivy",
 							"description": "",
 							"type": "text"
 						},
