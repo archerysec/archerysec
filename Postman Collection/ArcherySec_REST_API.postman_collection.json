@@ -8,6 +8,343 @@
 	},
 	"item": [
 		{
+			"name": "user-profile",
+			"description": "",
+			"item": [
+				{
+					"name": "Profile",
+					"request": {
+						"url": "{{url}}/api/v1/users/profile/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Roles",
+					"request": {
+						"url": "{{url}}/api/v1/users/roles/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"anand@admin.com\",\n    \"organization\": \"ArcherySec\",\n    \"name\": \"anandaaa\",\n    \"role\": \"Admin\",\n    \"image\": \"http://ssss\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"description": "",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"url": "{{url}}/api/v1/auth/login/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token",
+					"request": {
+						"url": "{{url}}/api/v1/auth/refresh-token/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg1MDQ1MiwiaWF0IjoxNjU3NzY0MDUyLCJqdGkiOiI4YWZmMmQ4MmViODk0YzI4OGE3MGFhNDk5MDk1NzRlOCIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6Mzl9.yiaPJe-7f4El8gL7P2WrehBtp5quMVj8_OARz96HMP0\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "{{url}}/api/v1/auth/logout/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refrest-token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg3NTM2NSwiaWF0IjoxNjU3Nzg4OTY1LCJqdGkiOiJkYTg5NjY3ODhmNjY0NzRmOTU0NGZjOTlkYzAzMDQ1OSIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6NjB9.yMijvPrBkbE1EohfAD6_WFZyuT4xlr7N4W0Go8b5cr8\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token copy",
+					"request": {
+						"url": "{{url}}/api/v1/auth/user-settings/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg1MDQ1MiwiaWF0IjoxNjU3NzY0MDUyLCJqdGkiOiI4YWZmMmQ4MmViODk0YzI4OGE3MGFhNDk5MDk1NzRlOCIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6Mzl9.yiaPJe-7f4El8gL7P2WrehBtp5quMVj8_OARz96HMP0\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "api test",
+					"request": {
+						"url": "{{url}}/api/v1/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User settings",
+					"request": {
+						"url": "{{url}}/api/v1/auth/user-settings/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "List scans"
+					},
+					"response": []
+				},
+				{
+					"name": "APIKey",
+					"request": {
+						"url": "{{url}}/archerysec/api/v1/subscription/APIKey/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencode",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "disable APIkey",
+					"request": {
+						"url": "{{url}}/api/v1/subscription/disableAPIkey/92c0a9db-6825-4e38-97dd-d131350c3495/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Management",
+			"description": "",
+			"item": [
+				{
+					"name": "list users",
+					"request": {
+						"url": "{{url}}/api/v1/users/user/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User Delete",
+					"request": {
+						"url": "{{url}}/archerysec/api/v1/users/user/cc61d203-6d00-4ac1-9be1-4104624094ae/",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"url": "{{url}}/api/v1/users/user/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"testss@test.com\",\n\t\"organization\": 1,\n\t\"password\": \"test@123A\",\n\t\"role\": \"2\",\n\t\"name\": \"name\"\n\t\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "User Profile Update",
+					"request": {
+						"url": "{{url}}/api/v1/users/user/87f33537-ba62-49b3-b3bc-3bdf046f5b52/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"tessstss@test.com\",\n\t\"organization\": 1,\n\t\"password\": \"test@123A\",\n\t\"role\": \"2\",\n\t\"name\": \"nametest\",\n\t\"image\": \"https://test\",\n\t\"is_active\": true,\n    \"is_staff\": false,\n    \"password_updt_time\": null\n\t\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Web Scans",
 			"description": "",
 			"item": [
@@ -277,128 +614,6 @@
 							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
 						},
 						"description": "SAST Scan Details"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Authentication",
-			"description": "",
-			"item": [
-				{
-					"name": "login",
-					"request": {
-						"url": "{{url}}/api/v1/auth/login/",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "refresh token",
-					"request": {
-						"url": "{{url}}/api/v1/auth/refresh-token/",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{key}}",
-								"description": "",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg1MDQ1MiwiaWF0IjoxNjU3NzY0MDUyLCJqdGkiOiI4YWZmMmQ4MmViODk0YzI4OGE3MGFhNDk5MDk1NzRlOCIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6Mzl9.yiaPJe-7f4El8gL7P2WrehBtp5quMVj8_OARz96HMP0\"\n}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "Logout",
-					"request": {
-						"url": "{{url}}/api/v1/auth/logout/",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{key}}",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"refrest-token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg3NTM2NSwiaWF0IjoxNjU3Nzg4OTY1LCJqdGkiOiJkYTg5NjY3ODhmNjY0NzRmOTU0NGZjOTlkYzAzMDQ1OSIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6NjB9.yMijvPrBkbE1EohfAD6_WFZyuT4xlr7N4W0Go8b5cr8\"\n}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "refresh token copy",
-					"request": {
-						"url": "{{url}}/api/v1/auth/user-settings/",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{key}}",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"refresh\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY1Nzg1MDQ1MiwiaWF0IjoxNjU3NzY0MDUyLCJqdGkiOiI4YWZmMmQ4MmViODk0YzI4OGE3MGFhNDk5MDk1NzRlOCIsInVzZXJfaWQiOjEsIm5hbWUiOiJVc2VyIiwicm9sZSI6IkFkbWluIiwibG9naW5JZCI6Mzl9.yiaPJe-7f4El8gL7P2WrehBtp5quMVj8_OARz96HMP0\"\n}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "api test",
-					"request": {
-						"url": "{{url}}/api/v1/",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
-						},
-						"description": ""
 					},
 					"response": []
 				}

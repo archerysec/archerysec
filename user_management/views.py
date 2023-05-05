@@ -23,16 +23,96 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
+from django.shortcuts import HttpResponse, render
 from rest_framework.views import APIView
 
 from user_management import permissions
 from user_management.models import *
 from user_management.serializers import *
 
+class Users(APIView):
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAdmin,
+    )
+
+    def get(self, request, uu_id=None):
+        if uu_id == None:
+            user_profile = UserProfile.objects.all()
+            serialized_data = UserProfileSerializers(user_profile, many=True)
+        else:
+            try:
+                user_profile = UserProfile.objects.get(uu_id=uu_id)
+                serialized_data = UserProfileSerializers(user_profile, many=False)
+            except UserProfile.DoesNotExist:
+                return Response(
+                    {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+                )
+        return Response(serialized_data.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, uu_id):
+        try:
+            user_profile = UserProfile.objects.get(uu_id=uu_id)
+            content = {"message": user_profile.uu_id}
+            user_profile.delete()
+            return Response(content, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response(
+                {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+    def post(self, request):
+        serializer = UserCreatReqSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = request.data.get("email")
+        organization = request.data.get("organization")
+        password = request.data.get("password")
+        role = request.data.get("role")
+        name = request.data.get("name")
+
+        user_exist = UserProfile.objects.filter(email=email).exists()
+        if user_exist:
+            content = {"message": "User Already Exist"}
+            return Response(content, status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            user = UserProfile.objects.create_user(
+                email, name, role, organization, password
+            )
+            content = {"message": "User Successfully Created", "user_id": user.uu_id}
+            return Response(content, status=status.HTTP_200_OK)
+
+    def put(self, request, uu_id):
+        serializer = UserPutReqSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = request.data.get("email")
+        password = make_password(request.data.get("password"))
+        role = request.data.get("role")
+        name = request.data.get("name")
+        image = request.data.get("image")
+        is_active = request.data.get("is_active")
+        is_staff = request.data.get("is_staff")
+
+        user_profile = UserProfile.objects.filter(uu_id=uu_id).update(
+            email=email,
+            password=password,
+            role=role,
+            name=name,
+            image=image,
+            is_active=is_active,
+            is_staff=is_staff,
+        )
+        if user_profile > 0:
+            return Response(
+                {"message": "User Profile Updated"}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+            )
 
 class UsersList(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "users/list_users.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -51,10 +131,14 @@ class UsersList(APIView):
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
-        return Response(
-            {"serializer": serialized_data, "all_users": user_profile},
-            status=status.HTTP_200_OK,
-        )
+        if request.path[: 4] == '/api':
+            return Response(serialized_data.data)
+        else:
+            return render(
+                request,
+                "users/list_users.html",
+                {"all_users": user_profile},
+            )
 
     def post(self, request):
         try:
@@ -156,8 +240,8 @@ class UsersAdd(APIView):
 
 
 class Profile(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = "profile/profile.html"
+    # renderer_classes = [TemplateHTMLRenderer]
+    # template_name = "profile/profile.html"
 
     permission_classes = (
         IsAuthenticated,
@@ -170,8 +254,12 @@ class Profile(APIView):
         """
         id = request.user.id
         user_profile = UserProfile.objects.filter(id=id)
-        serializer = UserProfileSerializers(user_profile)
-        return Response({"serializer": serializer, "profiles": user_profile})
+        serialized_data = UserProfileSerializers(user_profile, many=False)
+        if request.path[: 4] == '/api':
+            return Response(serialized_data.data, status=status.HTTP_200_OK)
+        else:
+            return render(request, "profile/profile.html", {"profiles": user_profile})
+        # return Response({"serializer": serializer, "profiles": user_profile})
 
     def put(self, request, uu_id):
         serializer = UserProfilePutReqSerializers(data=request.data)

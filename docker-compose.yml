@@ -84,19 +84,19 @@ services:
       - archerysec
     container_name: arachniscanner
 
-  openvas:
-    image: avhost/docker-openvas
-    ports:
-      - "443:443"
-      - "9390:9390"
-      - "9392:9392"
-    expose:
-      - "9390"
-      - "9392"
-      - "443"
-    links:
-      - archerysec
-    container_name: openvas
+#  openvas:
+#    image: avhost/docker-openvas
+#    ports:
+#      - "443:443"
+#      - "9390:9390"
+#      - "9392:9392"
+#    expose:
+#      - "9390"
+#      - "9392"
+#      - "443"
+#    links:
+#      - archerysec
+#    container_name: openvas
 
   mailhog:
     image: mailhog/mailhog

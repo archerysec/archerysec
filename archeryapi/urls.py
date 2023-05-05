@@ -22,13 +22,14 @@ from webscanners.views import WebScanList, WebScanVulnInfo
 from networkscanners.views import NetworkScanList, NetworkScanVulnInfo
 from staticscanners.views import SastScanList, SastScanVulnInfo
 from projects.views import ProjectList
-from authentication.views import MyTokenObtainPairView, Logout, UserSettings
+from authentication.views import MyTokenObtainPairView, Logout, UserSettings, ForgotPassword, ResetPassword, UpdatePassword
 from rest_framework_simplejwt import views as jwt_views
 from webscanners.zapscanner.views import ZapScan, ZapSetting, ZapSettingUpdate
 from webscanners.burpscanner.views import BurpSetting, BurpScanLaunch
 from webscanners.arachniscanner.views import ArachniScan, ArachniSetting, ArachniSettingUpdate
 from networkscanners.views import OpenvasLaunchScan, OpenvasDetails, OpenvasSetting
 from jiraticketing.views import LinkJiraTicket
+from user_management.views import UserRoles, Roles, UsersList, UsersEdit, Profile, Users
 
 from archeryapi import views
 
@@ -66,6 +67,16 @@ urlpatterns = [
     path("v1/auth/refresh-token/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
     path("v1/auth/logout/", Logout.as_view()),
     path("v1/auth/user-settings/", UserSettings.as_view()),
+    path("v1/auth/forgot-pass/", ForgotPassword.as_view()),
+    path("v1/auth/reset-pass/", ResetPassword.as_view()),
+    path("v1/auth/update-pass/", UpdatePassword.as_view()),
+
+    # User management API
+    path("v1/users/user/", Users.as_view()),
+    path("v1/users/user/<str:uu_id>/", Users.as_view()),
+    path("v1/users/profile/", Profile.as_view()),
+    path("v1/users/roles/", Roles.as_view()),
+    path("v1/users/roles/<str:uu_id>/", Roles.as_view()),
 
     path("v1/uploadscan/", views.UploadScanResult.as_view()),
     path("access-key/", views.APIKey.as_view(), name="access-key"),
