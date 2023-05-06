@@ -2,7 +2,6 @@
 
 {% block body %}
 
-
     <div class="row justify-content-md-center">
         <div class="col-8">
             <div class="card">
@@ -34,42 +33,25 @@
                                             </div>
                                             <div class="form-group ">
                                                 <label>Organization</label>
-                                                <div class="dropdown bootstrap-select form-control">
-                                                    <select class="select2 form-control custom-select"
-                                                            name="organization" style="width: 100%; height:36px;">
+                                                <div class="dtsb-criteria">
+                                                    <select class="form-control dtsb-data dtsb-dropDown" name="organization" style="width: 100%; height:36px;">
                                                         <option value="" selected>---------</option>
                                                         {% for data in org %}
                                                             <option value="{{ data.pk }}">{{ data.name }}</option>{% endfor %}
                                                     </select>
-
-                                                    <div class="dropdown-menu ">
-                                                        <div class="inner show" role="listbox" id="bs-select-1"
-                                                             tabindex="-1">
-                                                            <ul class="dropdown-menu inner show"
-                                                                role="presentation"></ul>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="form-group ">
                                                 <label>Role</label>
-                                                <div class="dropdown bootstrap-select form-control">
-                                                    <select class="select2 form-control custom-select" name="role"
+                                                <div class="dtsb-criteria">
+                                                    <select class="form-control dtsb-data dtsb-dropDown" name="role"
                                                             style="width: 100%; height:36px;">
                                                         <option value="" selected>---------</option>
                                                         <option value="1">Admin</option>
                                                         <option value="2">Analyst</option>
                                                         <option value="3">Viewer</option>
                                                     </select>
-
-                                                    <div class="dropdown-menu ">
-                                                        <div class="inner show" role="listbox" id="bs-select-1"
-                                                             tabindex="-1">
-                                                            <ul class="dropdown-menu inner show"
-                                                                role="presentation"></ul>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="border-top">
