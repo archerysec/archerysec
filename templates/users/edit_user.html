@@ -30,17 +30,17 @@
                                         </div>
                                         <div class="form-group ">
                                             <label>Password</label>
-                                            <input name="password" class="form-control" type="password"
+                                            <input name="password" class="form-control" type="password" value="{{ data.password }}"
                                                    placeholder="Password">
                                         </div>
                                         <div class="form-group ">
                                             <label>Image</label>
-                                            <input name="image" class="form-control" type="text"
+                                            <input name="image" class="form-control" type="text" value="{{ data.image }}"
                                                    placeholder="Image">
                                         </div>
                                         <div class="form-group ">
                                             <label>Pass token</label>
-                                            <input name="pass_token" class="form-control" type="text"
+                                            <input name="pass_token" class="form-control" type="text" value="{{ data.pass_token }}"
                                                    placeholder="Pass token">
                                         </div>
                                         <div class="form-group ">
@@ -49,7 +49,7 @@
                                                 <select class="form-control dtsb-data dtsb-dropDown"
                                                         name="organization" style="width: 100%; height:36px;">
                                                     <optgroup label="Seleted">
-                                                        <option value="{{ user_details.organization.pk }}"
+                                                        <option value="{{ data.organization.pk }}"
                                                                 selected>{{ data.organization }}
                                                         </option>
                                                     </optgroup>
@@ -65,7 +65,7 @@
                                             <div class="dtsb-criteria">
                                                 <select class="form-control dtsb-data dtsb-dropDown" name="role"
                                                         style="width: 100%; height:36px;">
-                                                    <option value="" selected>{{ data.role }}</option>
+                                                    <option value="{{ data.role.pk }}" selected>{{ data.role }}</option>
                                                     <option value="1">Admin</option>
                                                     <option value="2">Analyst</option>
                                                     <option value="3">Viewer</option>
