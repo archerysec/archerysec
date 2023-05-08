@@ -42,7 +42,7 @@ class WebScanList(APIView):
     permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
     def get(self, request):
-        all_scans = WebScansDb.objects.all()
+        all_scans = WebScansDb.objects.filter(organization=request.user.organization)
         all_notify = Notification.objects.unread()
         if request.path[: 4] == '/api':
             serialized_data = WebScansDbSerializer(all_scans, many=True)
@@ -63,16 +63,17 @@ class WebScanVulnInfo(APIView):
         vuln_data = ''
         jira_url = None
 
-        jira = jirasetting.objects.all()
+        jira = jirasetting.objects.filter(organization=request.user.organization)
         for d in jira:
             jira_url = d.jira_server
         if uu_id is None:
             scan_id = request.GET["scan_id"]
             name = request.GET["scan_name"]
-            vuln_data = WebScanResultsDb.objects.filter(title=name, scan_id=scan_id)
+            vuln_data = WebScanResultsDb.objects.filter(title=name, scan_id=scan_id,
+                                                        organization=request.user.organization)
         else:
             try:
-                vuln_data = WebScanResultsDb.objects.filter(scan_id=uu_id)
+                vuln_data = WebScanResultsDb.objects.filter(scan_id=uu_id, organization=request.user.organization)
             except Exception:
                 return Response(
                     {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
@@ -102,13 +103,13 @@ class WebScanVulnMark(APIView):
         scan_id = request.POST.get("scan_id")
         vuln_name = request.POST.get("vuln_name")
         notes = request.POST.get("note")
-        WebScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
+        WebScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id, organization=request.user.organization).update(
             false_positive=false_positive, vuln_status=status, note=notes
         )
 
         if false_positive == "Yes":
             vuln_info = WebScanResultsDb.objects.filter(
-                scan_id=scan_id, vuln_id=vuln_id
+                scan_id=scan_id, vuln_id=vuln_id, organization=request.user.organization
             )
             for vi in vuln_info:
                 name = vi.title
@@ -119,7 +120,8 @@ class WebScanVulnMark(APIView):
                     dup_data.encode("utf-8")
                 ).hexdigest()
                 WebScanResultsDb.objects.filter(
-                    vuln_id=vuln_id, scan_id=scan_id
+                    vuln_id=vuln_id, scan_id=scan_id,
+                    organization=request.user.organization
                 ).update(
                     false_positive=false_positive,
                     vuln_status="Closed",
@@ -128,7 +130,7 @@ class WebScanVulnMark(APIView):
                 )
 
         all_vuln = WebScanResultsDb.objects.filter(
-            scan_id=scan_id, false_positive="No", vuln_status="Open"
+            scan_id=scan_id, false_positive="No", vuln_status="Open", organization=request.user.organization
         )
 
         total_high = len(all_vuln.filter(severity="High"))
@@ -137,7 +139,7 @@ class WebScanVulnMark(APIView):
         total_info = len(all_vuln.filter(severity="Informational"))
         total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low + total_info
-        WebScansDb.objects.filter(scan_id=scan_id).update(
+        WebScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -164,7 +166,7 @@ class WebScanDetails(APIView):
         jira_projects = None
         vuln_id = request.GET["vuln_id"]
 
-        jira_setting = jirasetting.objects.filter()
+        jira_setting = jirasetting.objects.filter(organization=request.user.organization)
         # user = request.user
 
         for jira in jira_setting:
@@ -192,7 +194,7 @@ class WebScanDetails(APIView):
             jira_projects = None
             # notify.send(user, recipient=user, verb="Jira settings not found")
 
-        vul_dat = WebScanResultsDb.objects.filter(vuln_id=vuln_id).order_by("vuln_id")
+        vul_dat = WebScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).order_by("vuln_id")
 
         return render(
             request,
@@ -218,9 +220,9 @@ class WebScanDelete(APIView):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = WebScansDb.objects.filter(scan_id=scan_id)
+            item = WebScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
             item.delete()
-            item_results = WebScanResultsDb.objects.filter(scan_id=scan_id)
+            item_results = WebScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
             item_results.delete()
         return HttpResponseRedirect(reverse("webscanners:list_scans"))
 
@@ -240,9 +242,9 @@ class WebScanVulnDelete(APIView):
         split_length = value_split.__len__()
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_id)
+            delete_vuln = WebScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization)
             delete_vuln.delete()
-        all_vuln = WebScanResultsDb.objects.filter(scan_id=scan_id)
+        all_vuln = WebScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
 
         total_vul = len(all_vuln)
         total_critical = len(all_vuln.filter(severity="Critical"))
@@ -258,6 +260,7 @@ class WebScanVulnDelete(APIView):
             medium_vul=total_medium,
             low_vul=total_low,
             info_vul=total_info,
+            organization=request.user.organization
         )
         return HttpResponseRedirect(
             reverse("webscanners:list_vuln") + "?scan_id=%s" % (scan_id)

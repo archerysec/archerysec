@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 from tools.models import NiktoVulnDb
 
 
-def nikto_html_parser(data, project_id, scan_id):
+def nikto_html_parser(data, project_id, scan_id, request):
     discription = "None"
     targetip = "None"
     hostname = "None"
@@ -94,7 +94,7 @@ def nikto_html_parser(data, project_id, scan_id):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = (
-            NiktoVulnDb.objects.filter(dup_hash=duplicate_hash)
+            NiktoVulnDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
             .values("dup_hash")
             .distinct()
         )
@@ -107,7 +107,7 @@ def nikto_html_parser(data, project_id, scan_id):
         else:
             duplicate_vuln = "None"
 
-        false_p = NiktoVulnDb.objects.filter(false_positive_hash=duplicate_hash)
+        false_p = NiktoVulnDb.objects.filter(false_positive_hash=duplicate_hash, organization=request.user.organization)
         fp_lenth_match = len(false_p)
 
         global false_positive
@@ -134,6 +134,7 @@ def nikto_html_parser(data, project_id, scan_id):
             dup_hash=duplicate_hash,
             vuln_duplicate=duplicate_vuln,
             vuln_status="Open",
+            organization=request.user.organization
         )
         dump_data.save()
 

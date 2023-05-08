@@ -84,6 +84,7 @@ urlpatterns = [
 
     # Project API
     path("v1/project-list/", ProjectList.as_view()),
+    path("v1/project-list/<str:uu_id>/", ProjectList.as_view()),
     path("v1/project-create/", views.CreateProject.as_view()),
 
     # Web scans API endpoints

@@ -17,6 +17,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from user_management.models import UserProfile, Organization
+from django.utils import timezone
 
 
 class ZapSettingsDb(models.Model):
@@ -27,6 +29,21 @@ class ZapSettingsDb(models.Model):
     )
     zap_port = models.IntegerField(blank=False, null=False, default=8090)
     enabled = models.BooleanField(blank=False, null=False)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='zap_settings_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='zap_settings_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class ArachniSettingsDb(models.Model):
@@ -35,6 +52,21 @@ class ArachniSettingsDb(models.Model):
     arachni_port = models.TextField(blank=True, null=True)
     arachni_user = models.TextField(blank=True, null=True)
     arachni_pass = models.TextField(blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True)
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='arachni_settings_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='arachni_settings_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class BurpSettingDb(models.Model):
@@ -42,6 +74,21 @@ class BurpSettingDb(models.Model):
     burp_url = models.TextField(blank=True, null=True)
     burp_port = models.TextField(blank=True, null=True)
     burp_api_key = models.TextField(blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='burp_settings_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='burp_settings_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class OpenvasSettingDb(models.Model):
@@ -51,6 +98,21 @@ class OpenvasSettingDb(models.Model):
     enabled = models.BooleanField(blank=False, null=False)
     user = models.TextField(blank=True, null=True)
     password = models.TextField(blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='openvas_settings_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='openvas_settings_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class NmapVulnersSettingDb(models.Model):
@@ -62,6 +124,21 @@ class NmapVulnersSettingDb(models.Model):
     online = models.BooleanField(blank=False, null=False)
     # -T4 | Set timing template (higher is faster)
     timing = models.IntegerField(blank=False, null=False, default=0)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='nmap_vulner_settings_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='nmap_vulner_settings_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class EmailDb(models.Model):
@@ -69,6 +146,21 @@ class EmailDb(models.Model):
     subject = models.TextField(blank=True, null=True)
     message = models.TextField(blank=True, null=True)
     recipient_list = models.TextField(blank=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='email_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='email_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class SettingsDb(models.Model):
@@ -76,4 +168,18 @@ class SettingsDb(models.Model):
     setting_name = models.TextField(blank=True, null=True)
     setting_scanner = models.TextField(blank=True, null=True)
     setting_status = models.BooleanField(blank=True, null=True)
-    created_time = models.DateTimeField(auto_now_add=True, blank=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='settings_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='settings_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)

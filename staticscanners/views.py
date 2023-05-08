@@ -40,7 +40,7 @@ class SastScanList(APIView):
     permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
     def get(self, request):
-        scan_list = StaticScansDb.objects.filter()
+        scan_list = StaticScansDb.objects.filter(organization=request.user.organization)
         all_notify = Notification.objects.unread()
 
         if request.path[: 4] == '/api':
@@ -59,7 +59,7 @@ class SastScanVulnInfo(APIView):
 
     def get(self, request, uu_id=None):
         jira_url = None
-        jira = jirasetting.objects.all()
+        jira = jirasetting.objects.filter(organization=request.user.organization)
         for d in jira:
             jira_url = d.jira_server
 
@@ -68,10 +68,10 @@ class SastScanVulnInfo(APIView):
         if uu_id is None:
             scan_id = request.GET["scan_id"]
             scan_name = request.GET["scan_name"]
-            vuln_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, title=scan_name)
+            vuln_data = StaticScanResultsDb.objects.filter(scan_id=scan_id, title=scan_name, organization=request.user.organization)
         else:
             try:
-                vuln_data = StaticScanResultsDb.objects.filter(scan_id=uu_id)
+                vuln_data = StaticScanResultsDb.objects.filter(scan_id=uu_id, organization=request.user.organization)
             except Exception:
                 return Response(
                     {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
@@ -100,13 +100,14 @@ class SastScanVulnMark(APIView):
         scan_id = request.POST.get("scan_id")
         vuln_name = request.POST.get("vuln_name")
         notes = request.POST.get("note")
-        StaticScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
+        StaticScanResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id, organization=request.user.organization).update(
             false_positive=false_positive, vuln_status=status, note=notes
         )
 
         if false_positive == "Yes":
             vuln_info = StaticScanResultsDb.objects.filter(
-                scan_id=scan_id, vuln_id=vuln_id
+                scan_id=scan_id, vuln_id=vuln_id,
+                organization=request.user.organization
             )
             for vi in vuln_info:
                 name = vi.title
@@ -117,7 +118,8 @@ class SastScanVulnMark(APIView):
                     dup_data.encode("utf-8")
                 ).hexdigest()
                 StaticScanResultsDb.objects.filter(
-                    vuln_id=vuln_id, scan_id=scan_id
+                    vuln_id=vuln_id, scan_id=scan_id,
+                    organization=request.user.organization
                 ).update(
                     false_positive=false_positive,
                     vuln_status="Closed",
@@ -126,7 +128,8 @@ class SastScanVulnMark(APIView):
                 )
 
         all_vuln = StaticScanResultsDb.objects.filter(
-            scan_id=scan_id, false_positive="No", vuln_status="Open"
+            scan_id=scan_id, false_positive="No", vuln_status="Open",
+            organization=request.user.organization
         )
 
         total_high = len(all_vuln.filter(severity="High"))
@@ -136,7 +139,7 @@ class SastScanVulnMark(APIView):
         total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low + total_info
 
-        StaticScansDb.objects.filter(scan_id=scan_id).update(
+        StaticScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -162,7 +165,7 @@ class SastScanDetails(APIView):
         jira_password = None
         jira_projects = None
         vuln_id = request.GET["vuln_id"]
-        jira_setting = jirasetting.objects.filter()
+        jira_setting = jirasetting.objects.filter(organization=request.user.organization)
         # user = request.user
 
         for jira in jira_setting:
@@ -190,7 +193,7 @@ class SastScanDetails(APIView):
             jira_projects = None
             # notify.send(user, recipient=user, verb="Jira settings not found")
 
-        vul_dat = StaticScanResultsDb.objects.filter(vuln_id=vuln_id).order_by(
+        vul_dat = StaticScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).order_by(
             "vuln_id"
         )
 
@@ -221,9 +224,9 @@ class SastScanDelete(APIView):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = StaticScansDb.objects.filter(scan_id=scan_id)
+            item = StaticScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
             item.delete()
-            item_results = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+            item_results = StaticScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
             item_results.delete()
         return HttpResponseRedirect(reverse("staticscanners:list_scans"))
 
@@ -245,9 +248,9 @@ class SastScanVulnDelete(APIView):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = StaticScanResultsDb.objects.filter(vuln_id=vuln_id)
+            delete_vuln = StaticScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization)
             delete_vuln.delete()
-        all_vuln = StaticScanResultsDb.objects.filter(scan_id=scan_id)
+        all_vuln = StaticScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
 
         total_vul = len(all_vuln)
         total_critical = len(all_vuln.filter(severity="Critical"))
@@ -256,7 +259,7 @@ class SastScanVulnDelete(APIView):
         total_low = len(all_vuln.filter(severity="Low"))
         total_info = len(all_vuln.filter(severity="Information"))
 
-        StaticScansDb.objects.filter(scan_id=scan_id).update(
+        StaticScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
             total_vul=total_vul,
             critical_vul=total_critical,
             high_vul=total_high,
@@ -277,7 +280,8 @@ class SastScanVulnList(APIView):
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
-        all_vuln = StaticScanResultsDb.objects.filter(scan_id=scan_id).distinct().values('title',
+        all_vuln = StaticScanResultsDb.objects.filter(scan_id=scan_id,
+                                                      organization=request.user.organization).distinct().values('title',
                                                                                          'severity',
                                                                                          'vuln_status',
                                                                                          'severity_color',

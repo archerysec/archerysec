@@ -162,18 +162,23 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                         {% if user.is_superuser %}
+
+
                             <div class="float-right">
+                                {% if user.is_superuser == True or user.role.id == 2 %}
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <a href="{% url 'report_upload:upload' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Upload XML Report"><i
                                         class="fas fa-upload"></i> Upload </a>
                             </div>
+                                {% endif %}
+                                 {% if user.is_superuser == True %}
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a href="{% url 'projects:project_create' %}" class="btn btn-primary btn-mini" data-toggle="tooltip" data-placement="top" title="Create New Project"><i
                         class="fas fa-plus-circle"></i> Add Project</a>
                                 </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
+
                             <div class="d-md-flex align-items-center">
                                 <div>
                                     <h1>Project List</h1>

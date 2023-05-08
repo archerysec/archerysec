@@ -38,6 +38,7 @@ class OrgAPIKey(models.Model):
         UserProfile, related_name="key_creator", on_delete=models.SET_NULL, null=True
     )
     is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class VerifyAPIKey(permissions.BasePermission):

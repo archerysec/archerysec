@@ -30,6 +30,7 @@ from user_management import permissions
 from user_management.models import *
 from user_management.serializers import *
 
+
 class Users(APIView):
     permission_classes = (
         IsAuthenticated,
@@ -52,7 +53,7 @@ class Users(APIView):
 
     def delete(self, request, uu_id):
         try:
-            user_profile = UserProfile.objects.get(uu_id=uu_id)
+            user_profile = UserProfile.objects.filter(uu_id=uu_id)
             content = {"message": user_profile.uu_id}
             user_profile.delete()
             return Response(content, status=status.HTTP_200_OK)
@@ -102,6 +103,7 @@ class Users(APIView):
             image=image,
             is_active=is_active,
             is_staff=is_staff,
+            organization=request.user.organization
         )
         if user_profile > 0:
             return Response(
@@ -112,8 +114,8 @@ class Users(APIView):
                 {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
             )
 
-class UsersList(APIView):
 
+class UsersList(APIView):
     permission_classes = (
         IsAuthenticated,
         permissions.IsAdmin,
@@ -121,11 +123,11 @@ class UsersList(APIView):
 
     def get(self, request, uu_id=None):
         if uu_id == None:
-            user_profile = UserProfile.objects.all()
+            user_profile = UserProfile.objects.filter()
             serialized_data = UserProfileSerializers(user_profile, many=True)
         else:
             try:
-                user_profile = UserProfile.objects.get(uu_id=uu_id)
+                user_profile = UserProfile.objects.filter(uu_id=uu_id)
                 serialized_data = UserProfileSerializers(user_profile, many=False)
             except UserProfile.DoesNotExist:
                 return Response(
@@ -143,7 +145,7 @@ class UsersList(APIView):
     def post(self, request):
         try:
             user_id = request.data.get("user_id")
-            user_profile = UserProfile.objects.get(uu_id=user_id)
+            user_profile = UserProfile.objects.filter(uu_id=user_id)
             user_profile.delete()
             messages.success(request, "User Deleted")
             return HttpResponseRedirect("/users/list_user/")
@@ -162,20 +164,21 @@ class UsersEdit(APIView):
     )
 
     def get(self, request, uu_id=None):
-        org = Organization.objects.all()
+        org = Organization.objects.filter()
         if uu_id == None:
-            user_details = UserProfile.objects.all()
+            user_details = UserProfile.objects.filter()
             serialized_data = UserPutReqSerializers(user_details, many=True)
         else:
             try:
-                user_details = UserProfile.objects.get(uu_id=uu_id)
+                print(uu_id)
+                user_details = UserProfile.objects.filter(uu_id=uu_id)
                 serialized_data = UserPutReqSerializers(user_details, many=False)
             except UserProfile.DoesNotExist:
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
         return Response(
-            {"serializer": serialized_data, "user_details": user_details, "org": org}
+            {"serializer": serialized_data, "user_details": user_details, "user_uu_id": uu_id, "org": org}
         )
 
     def post(self, request, uu_id):
@@ -188,12 +191,14 @@ class UsersEdit(APIView):
         name = request.data.get("name")
         image = request.data.get("image")
         organization = request.data.get("organization")
+        pass_token = request.data.get("pass_token")
         user_profile = UserProfile.objects.filter(uu_id=uu_id).update(
             email=email,
             password=password,
             role=role,
             name=name,
             image=image,
+            pass_token=pass_token,
             organization=organization,
         )
         if user_profile > 0:

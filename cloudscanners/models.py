@@ -17,8 +17,9 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.utils import timezone
 
-from user_management.models import UserProfile
+from user_management.models import UserProfile, Organization
 
 # Create your models here.
 
@@ -47,6 +48,21 @@ class CloudScansDb(models.Model):
     total_dup = models.TextField(blank=True, null=True)
     scanner = models.CharField(max_length=256, null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='cloud_scan_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='cloud_scan_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class CloudScansResultsDb(models.Model):
@@ -80,3 +96,18 @@ class CloudScansResultsDb(models.Model):
     scanner = models.TextField(blank=True)
     note = models.TextField(null=True, blank=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='cloud_scan_result_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='cloud_scan_result_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)

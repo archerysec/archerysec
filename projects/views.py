@@ -50,6 +50,7 @@ def project_edit(request):
 
         project_dat = ProjectDb.objects.filter(
             project_id=project_id,
+            organization=request.user.organization,
         )
 
     if request.method == "POST":
@@ -66,6 +67,7 @@ def project_edit(request):
             project_end=project_end,
             project_owner=project_owner,
             project_disc=project_disc,
+            organization=request.user.organization,
         )
         return HttpResponseRedirect(
             reverse("projects:projects") + "?proj_id=%s" % project_id
@@ -78,12 +80,12 @@ class ProjectList(APIView):
 
     def get(self, request, uu_id=None):
         if uu_id == None:
-            projects = ProjectDb.objects.all()
+            projects = ProjectDb.objects.filter(organization=request.user.organization)
             serialized_data = ProjectDataSerializers(projects, many=True)
         else:
             try:
-                projects = ProjectDb.objects.get(uu_id=uu_id)
-                serialized_data = ProjectDataSerializers(projects, many=False)
+                projects = ProjectDb.objects.filter(uu_id=uu_id, organization=request.user.organization)
+                serialized_data = ProjectDataSerializers(projects, many=True)
             except ProjectDb.DoesNotExist:
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
@@ -104,7 +106,7 @@ class ProjectDelete(APIView):
     def post(self, request):
         try:
             project_id = request.data.get("project_id")
-            projects = ProjectDb.objects.get(uu_id=project_id)
+            projects = ProjectDb.objects.filter(uu_id=project_id, organization=request.user.organization)
             projects.delete()
             return HttpResponseRedirect("/dashboard/")
         except ProjectDb.DoesNotExist:
@@ -121,7 +123,7 @@ class ProjectCreate(APIView):
 
     def get(self, request):
         org = Organization.objects.all()
-        projects = ProjectDb.objects.all()
+        projects = ProjectDb.objects.filter(organization=request.user.organization)
         serialized_data = ProjectDataSerializers(projects, many=True)
 
         return Response(
@@ -139,6 +141,7 @@ class ProjectCreate(APIView):
             project_name=name,
             project_disc=description,
             created_by=request.user,
+            organization=request.user.organization,
             total_vuln=0,
             total_critical=0,
             total_high=0,
@@ -164,7 +167,7 @@ class ProjectCreate(APIView):
             low_static=0,
         )
         project.save()
-        all_month_data_display = MonthDb.objects.filter()
+        all_month_data_display = MonthDb.objects.filter(organization=request.user.organization)
 
         if len(all_month_data_display) == 0:
             save_months_data = MonthDb(

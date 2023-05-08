@@ -55,7 +55,7 @@ class DeleteNotify(APIView):
     def get(self, request):
         notify_id = request.GET["notify_id"]
 
-        notify_del = Notification.objects.filter(id=notify_id)
+        notify_del = Notification.objects.filter(id=notify_id, organization=request.user.organization)
         notify_del.delete()
 
         return HttpResponseRedirect(reverse("dashboard:dashboard"))
@@ -67,7 +67,7 @@ class DeleteAllNotify(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        notify_del = Notification.objects.all()
+        notify_del = Notification.objects.filter()
         notify_del.delete()
 
         return HttpResponseRedirect(reverse("dashboard:dashboard"))
@@ -80,11 +80,11 @@ class Index(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        all_scans = WebScansDb.objects.filter()
+        all_scans = WebScansDb.objects.filter(organization=request.user.organization)
         all_excluded_url = excluded_db.objects.filter()
         all_cookies = cookie_db.objects.filter()
 
-        all_scans_db = ProjectDb.objects.filter()
+        all_scans_db = ProjectDb.objects.filter(organization=request.user.organization)
 
         all_notify = Notification.objects.unread()
 
@@ -161,8 +161,8 @@ class WebScanSchedule(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        all_scans_db = ProjectDb.objects.filter()
-        all_scheduled_scans = task_schedule_db.objects.filter()
+        all_scans_db = ProjectDb.objects.filter(organization=request.user.organization)
+        all_scheduled_scans = task_schedule_db.objects.filter(organization=request.user.organization)
 
         return render(
             request,
@@ -171,8 +171,8 @@ class WebScanSchedule(APIView):
         )
 
     def post(self, request):
-        all_scans_db = ProjectDb.objects.filter()
-        all_scheduled_scans = task_schedule_db.objects.filter()
+        all_scans_db = ProjectDb.objects.filter(organization=request.user.organization)
+        all_scheduled_scans = task_schedule_db.objects.filter(organization=request.user.organization)
         scan_url = request.POST.get("url")
         scan_schedule_time = request.POST.get("datetime")
         project_id = request.POST.get("project_id")

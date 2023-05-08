@@ -24,7 +24,7 @@ status = None
 controls_results_message = None
 
 
-def inspec_report_json(data, project_id, scan_id):
+def inspec_report_json(data, project_id, scan_id, request):
     """
 
     :param data:
@@ -101,29 +101,31 @@ def inspec_report_json(data, project_id, scan_id):
                             controls_results_run_time=controls_results_run_time,
                             controls_results_start_time=controls_results_start_time,
                             controls_results_message=controls_results_message,
+                            organization=request.user.organization
                         )
                         save_all.save()
 
-            all_inspec_data = InspecScanResultsDb.objects.filter(scan_id=scan_id)
+            all_inspec_data = InspecScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
 
             total_vul = len(all_inspec_data)
             inspec_failed = len(
-                all_inspec_data.filter(controls_results_status="Failed")
+                all_inspec_data.filter(controls_results_status="Failed", organization=request.user.organization)
             )
             inspec_passed = len(
-                all_inspec_data.filter(controls_results_status="Passed")
+                all_inspec_data.filter(controls_results_status="Passed", organization=request.user.organization)
             )
             inspec_skipped = len(
-                all_inspec_data.filter(controls_results_status="Skipped")
+                all_inspec_data.filter(controls_results_status="Skipped", organization=request.user.organization)
             )
-            total_duplicate = len(all_inspec_data.filter(vuln_duplicate="Yes"))
+            total_duplicate = len(all_inspec_data.filter(vuln_duplicate="Yes", organization=request.user.organization))
 
-            InspecScanDb.objects.filter(scan_id=scan_id).update(
+            InspecScanDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
                 total_vuln=total_vul,
                 inspec_failed=inspec_failed,
                 inspec_passed=inspec_passed,
                 inspec_skipped=inspec_skipped,
                 total_dup=total_duplicate,
+                organization=request.user.organization
             )
             subject = "Archery Tool Scan Status - Inspec Report Uploaded"
             message = (

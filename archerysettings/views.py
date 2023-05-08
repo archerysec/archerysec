@@ -48,15 +48,15 @@ class EmailSetting(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAdmin)
 
     def get(self, request):
-        all_email = EmailDb.objects.all()
+        all_email = EmailDb.objects.filter(organization=request.user.organization)
         return render(
             request, "setting/email_setting_form.html", {"all_email": all_email}
         )
 
     def post(self, request):
-        all_email = EmailDb.objects.filter()
+        all_email = EmailDb.objects.filter(organization=request.user.organization)
 
-        email_setting_data = SettingsDb.objects.filter(setting_scanner="Email")
+        email_setting_data = SettingsDb.objects.filter(setting_scanner="Email", organization=request.user.organization)
 
         subject = request.POST.get("email_subject")
         from_message = request.POST.get("email_message")
@@ -72,6 +72,7 @@ class EmailSetting(APIView):
             message=from_message,
             recipient_list=email_to,
             setting_id=setting_id,
+            organization=request.user.organization
         )
         save_email.save()
 
@@ -89,6 +90,7 @@ class EmailSetting(APIView):
             setting_id=setting_id,
             setting_scanner="Email",
             setting_status=setting_status,
+            organization=request.user.organization
         )
         save_setting_info.save()
         return HttpResponseRedirect(reverse("archerysettings:settings"))
@@ -103,7 +105,7 @@ class DeleteSettings(APIView):
     def post(self, request):
         setting_id = request.POST.get("setting_id")
 
-        delete_dat = SettingsDb.objects.filter(setting_id=setting_id)
+        delete_dat = SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization)
         delete_dat.delete()
         return HttpResponseRedirect(reverse("archerysettings:settings"))
 
@@ -117,7 +119,7 @@ class Settings(APIView):
     def get(self, request):
         all_notify = Notification.objects.unread()
 
-        all_settings_data = SettingsDb.objects.filter()
+        all_settings_data = SettingsDb.objects.filter(organization=request.user.organization)
 
         return render(
             request,
@@ -133,7 +135,7 @@ class Settings(APIView):
         password = None
         # Loading settings
 
-        all_settings_data = SettingsDb.objects.filter()
+        all_settings_data = SettingsDb.objects.filter(organization=request.user.organization)
 
         # Loading ZAP Settings
         # zap_api_key = ""
@@ -141,7 +143,7 @@ class Settings(APIView):
         # zap_ports = ""
         # zap_enable = False
 
-        all_zap = ZapSettingsDb.objects.filter()
+        all_zap = ZapSettingsDb.objects.filter(organization=request.user.organization)
         # for zap in all_zap:
         #   zap_api_key = zap.zap_api
         #   zap_hosts = zap.zap_url
@@ -158,7 +160,7 @@ class Settings(APIView):
         arachni_user = ""
         arachni_pass = ""
 
-        all_arachni = ArachniSettingsDb.objects.filter()
+        all_arachni = ArachniSettingsDb.objects.filter(organization=request.user.organization)
         for arachni in all_arachni:
             arachni_hosts = arachni.arachni_url
             arachni_ports = arachni.arachni_port
@@ -168,13 +170,13 @@ class Settings(APIView):
         burp_host = ""
         burp_port = ""
         burp_api_key = ""
-        all_burp_setting = BurpSettingDb.objects.all()
+        all_burp_setting = BurpSettingDb.objects.filter(organization=request.user.organization)
         for data in all_burp_setting:
             burp_host = data.burp_url
             burp_port = data.burp_port
             burp_api_key = data.burp_api_key
 
-        jira_setting = jirasetting.objects.all()
+        jira_setting = jirasetting.objects.filter(organization=request.user.organization)
 
         for jira in jira_setting:
             jira_url = jira.jira_server
@@ -198,7 +200,7 @@ class Settings(APIView):
         setting_of = request.POST.get("setting_of")
         setting_id = request.POST.get("setting_id")
         if setting_of == "zap":
-            all_zap = ZapSettingsDb.objects.filter()
+            all_zap = ZapSettingsDb.objects.filter(organization=request.user.organization)
             for zap in all_zap:
                 zap_enabled = zap.enabled
 
@@ -227,12 +229,12 @@ class Settings(APIView):
                     zap_connect = zap_plugin.zap_connect(random_port)
                     zap_connect.spider.scan(url=target_url)
                     zap_info = True
-                    SettingsDb.objects.filter(setting_id=setting_id).update(
+                    SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                         setting_status=zap_info
                     )
                 except Exception:
                     zap_info = False
-                    SettingsDb.objects.filter(setting_id=setting_id).update(
+                    SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                         setting_status=zap_info
                     )
         if setting_of == "burp":
@@ -247,12 +249,12 @@ class Settings(APIView):
             issue_list = bi.issue_definitions()
             if issue_list.data is None:
                 burp_info = False
-                SettingsDb.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                     setting_status=burp_info
                 )
             else:
                 burp_info = True
-                SettingsDb.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                     setting_status=burp_info
                 )
 
@@ -265,12 +267,12 @@ class Settings(APIView):
             try:
                 openvas.connect()
                 openvas_info = True
-                SettingsDb.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                     setting_status=openvas_info
                 )
             except Exception:
                 openvas_info = False
-                SettingsDb.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                     setting_status=openvas_info
                 )
 
@@ -280,7 +282,7 @@ class Settings(APIView):
             arachni_ports = None
             arachni_user = None
             arachni_pass = None
-            all_arachni = ArachniSettingsDb.objects.filter()
+            all_arachni = ArachniSettingsDb.objects.filter(organization=request.user.organization)
             for arachni in all_arachni:
                 arachni_hosts = arachni.arachni_url
                 arachni_ports = arachni.arachni_port
@@ -305,18 +307,18 @@ class Settings(APIView):
                     if key == "id":
                         scan_run_id = value
                 arachni_info = True
-                SettingsDb.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                     setting_status=arachni_info
                 )
             except Exception:
                 arachni_info = False
-                SettingsDb.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                     setting_status=arachni_info
                 )
 
         if setting_of == "jira":
             global jira_projects, jira_ser
-            jira_setting = jirasetting.objects.filter()
+            jira_setting = jirasetting.objects.filter(organization=request.user.organization)
 
             for jira in jira_setting:
                 jira_url = jira.jira_server
@@ -347,13 +349,13 @@ class Settings(APIView):
                 jira_projects = jira_ser.projects()
                 print(len(jira_projects))
                 jira_info = True
-                SettingsDb.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                     setting_status=jira_info
                 )
             except Exception as e:
                 print(e)
                 jira_info = False
-                SettingsDb.objects.filter(setting_id=setting_id).update(
+                SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                     setting_status=jira_info
                 )
 

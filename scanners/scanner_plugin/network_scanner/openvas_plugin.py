@@ -59,7 +59,7 @@ class OpenVAS_Plugin:
     OpenVAS plugin Class
     """
 
-    def __init__(self, scan_ip, project_id, sel_profile):
+    def __init__(self, scan_ip, project_id, sel_profile, request):
         """
 
         :param scan_ip:
@@ -70,6 +70,7 @@ class OpenVAS_Plugin:
         self.scan_ip = scan_ip
         self.project_id = project_id
         self.sel_profile = sel_profile
+        self.request = request
 
     def connect(self):
         """
@@ -78,7 +79,7 @@ class OpenVAS_Plugin:
         """
 
         global ov_host, ov_user, ov_pass, ov_port
-        all_openvas = OpenvasSettingDb.objects.filter()
+        all_openvas = OpenvasSettingDb.objects.filter(organization=self.request.user.organization)
 
         for openvas in all_openvas:
             ov_user = openvas.user
@@ -134,17 +135,17 @@ class OpenVAS_Plugin:
                     + " %"
                 )
                 status = float(scanner.get_progress(str(scan_id)))
-                NetworkScanDb.objects.filter(scan_id=scan_id).update(scan_status=status)
+                NetworkScanDb.objects.filter(scan_id=scan_id, organization=self.request.user.organization).update(scan_status=status)
                 previous = current
             time.sleep(5)
 
         status = "100"
-        NetworkScanDb.objects.filter(scan_id=scan_id).update(scan_status=status)
+        NetworkScanDb.objects.filter(scan_id=scan_id, organization=self.request.user.organization).update(scan_status=status)
 
         return status
 
 
-def vuln_an_id(scan_id, project_id):
+def vuln_an_id(scan_id, project_id, request):
     """
     The function is filtering all data from OpenVAS and dumping to Archery database.
     :param scan_id:
@@ -153,7 +154,7 @@ def vuln_an_id(scan_id, project_id):
     ov_ip = ""
     ov_user = ""
     ov_pass = ""
-    all_openvas = OpenvasSettingDb.objects.filter()
+    all_openvas = OpenvasSettingDb.objects.filter(organization=request.user.organization)
 
     scan_status = "100"
     date_time = datetime.datetime.now()
@@ -168,7 +169,7 @@ def vuln_an_id(scan_id, project_id):
 
     hosts = OpenVas_Parser.get_hosts(openvas_results)
 
-    del_old = NetworkScanDb.objects.filter(scan_id=scan_id)
+    del_old = NetworkScanDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
     del_old.delete()
 
     for host in hosts:
@@ -179,8 +180,9 @@ def vuln_an_id(scan_id, project_id):
             date_time=date_time,
             project_id=project_id,
             scan_status=scan_status,
+            organization=request.user.organization
         )
         scan_dump.save()
     OpenVas_Parser.updated_xml_parser(
-        project_id=project_id, scan_id=scan_id, root=openvas_results
+        project_id=project_id, scan_id=scan_id, root=openvas_results, request=request
     )

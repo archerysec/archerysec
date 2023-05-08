@@ -56,18 +56,18 @@ class Upload(APIView):
         return file_extension
 
     def get(self, request):
-        all_project = ProjectDb.objects.filter()
+        all_project = ProjectDb.objects.filter(organization=request.user.organization)
 
         return render(
             request, "report_upload/upload.html", {"all_project": all_project}
         )
 
     def post(self, request):
-        all_project = ProjectDb.objects.filter()
+        all_project = ProjectDb.objects.filter(organization=request.user.organization)
         project_uu_id = request.POST.get("project_id")
         project_id = (
             ProjectDb.objects.filter(
-                uu_id=project_uu_id).values("id").get()["id"]
+                uu_id=project_uu_id, organization=request.user.organization).values("id").get()["id"]
         )
         scanner = request.POST.get("scanner")
         file = request.FILES["file"]
@@ -143,6 +143,7 @@ class Upload(APIView):
                         scan_status=scan_status,
                         rescan="No",
                         scanner=db_name,
+                        organization=request.user.organization
                     )
                 elif db_type == "StaticScans":
                     returnpage = "staticscanners:list_scans"
@@ -153,6 +154,7 @@ class Upload(APIView):
                         project_id=project_id,
                         scan_status=scan_status,
                         scanner=db_name,
+                        organization=request.user.organization
                     )
                 elif db_type == "NetworkScan":
                     returnpage = "networkscanners:list_scans"
@@ -168,6 +170,7 @@ class Upload(APIView):
                                 project_id=project_id,
                                 scan_status=scan_status,
                                 scanner=db_name,
+                                organization=request.user.organization
                             )
                             scan_dump.save()
                     # Regular network scan case
@@ -180,6 +183,7 @@ class Upload(APIView):
                             project_id=project_id,
                             scan_status=scan_status,
                             scanner=db_name,
+                            organization=request.user.organization
                         )
                 elif db_type == "CloudScans":
                     returnpage = "cloudscanners:list_scans"
@@ -190,6 +194,7 @@ class Upload(APIView):
                         scan_status=scan_status,
                         rescan="No",
                         scanner=db_name,
+                        organization=request.user.organization
                     )
             # Store to database - custom types
             elif db_type == "NiktoResult":
@@ -199,6 +204,7 @@ class Upload(APIView):
                     scan_url=target,
                     scan_id=scan_id,
                     project_id=project_id,
+                    organization=request.user.organization
                 )
             elif db_type == "InspecScan":
                 returnpage = "inspec:inspec_list"
@@ -207,6 +213,7 @@ class Upload(APIView):
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
+                    organization=request.user.organization
                 )
             elif db_type == "DockleScan":
                 returnpage = "dockle:dockle_list"
@@ -215,6 +222,7 @@ class Upload(APIView):
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
+                    organization=request.user.organization
                 )
             elif db_type == "Nessus":
                 need_to_store = False
@@ -226,7 +234,7 @@ class Upload(APIView):
 
             # Call the parser
             parserFunc = parser_dict["parserFunction"]
-            parserFunc(data, project_id, scan_id)
+            parserFunc(data, project_id, scan_id, request)
 
             # Success !
             messages.success(request, "File Uploaded")
