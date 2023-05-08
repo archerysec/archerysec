@@ -59,7 +59,7 @@ class OpenVAS_Plugin:
     OpenVAS plugin Class
     """
 
-    def __init__(self, scan_ip, project_id, sel_profile):
+    def __init__(self, scan_ip, project_id, sel_profile, request):
         """
 
         :param scan_ip:
@@ -70,6 +70,7 @@ class OpenVAS_Plugin:
         self.scan_ip = scan_ip
         self.project_id = project_id
         self.sel_profile = sel_profile
+        self.request = request
 
     def connect(self):
         """
@@ -78,7 +79,7 @@ class OpenVAS_Plugin:
         """
 
         global ov_host, ov_user, ov_pass, ov_port
-        all_openvas = OpenvasSettingDb.objects.filter()
+        all_openvas = OpenvasSettingDb.objects.filter(organization=self.request.user.organization)
 
         for openvas in all_openvas:
             ov_user = openvas.user
@@ -134,7 +135,7 @@ class OpenVAS_Plugin:
                     + " %"
                 )
                 status = float(scanner.get_progress(str(scan_id)))
-                NetworkScanDb.objects.filter(scan_id=scan_id).update(scan_status=status)
+                NetworkScanDb.objects.filter(scan_id=scan_id, organization=self.request.user.organization).update(scan_status=status)
                 previous = current
             time.sleep(5)
 

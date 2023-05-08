@@ -43,7 +43,7 @@ duplicate_vuln = ""
 scan_url = ""
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(root, project_id, scan_id, request):
     """
     ZAP Proxy scanner xml report parser.
     :param root:
@@ -118,7 +118,7 @@ def xml_parser(root, project_id, scan_id):
                 title=title, severity=risk, scan_url=scan_url
             )
             match_dup = (
-                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
                 .values("dup_hash")
                 .distinct()
             )
@@ -151,12 +151,13 @@ def xml_parser(root, project_id, scan_id):
                 dup_hash=duplicate_hash,
                 vuln_duplicate=duplicate_vuln,
                 scanner="Zap",
+                organization=request.user.organization
             )
 
             data_store.save()
 
             false_p = WebScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash
+                false_positive_hash=duplicate_hash, organization=request.user.organization
             )
             fp_lenth_match = len(false_p)
 
@@ -165,10 +166,10 @@ def xml_parser(root, project_id, scan_id):
             else:
                 false_positive = "No"
 
-    zap_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No")
+    zap_all_vul = WebScanResultsDb.objects.filter(scan_id=scan_id, false_positive="No", organization=request.user.organization)
 
     duplicate_count = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes"
+        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
     )
 
     total_critical = len(zap_all_vul.filter(severity="Critical"))
@@ -189,6 +190,7 @@ def xml_parser(root, project_id, scan_id):
         info_vul=total_info,
         total_dup=total_duplicate,
         scan_url=scan_url,
+        organization=request.user.organization
     )
     if total_vul == total_duplicate:
         WebScansDb.objects.filter(scan_id=scan_id).update(
@@ -198,6 +200,7 @@ def xml_parser(root, project_id, scan_id):
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
+            organization=request.user.organization
         )
 
     trend_update()

@@ -211,7 +211,7 @@ def dashboard(request):
 
     trend_update()
 
-    all_project = ProjectDb.objects.all()
+    all_project = ProjectDb.objects.filter(organization=request.user.organization)
 
     current_year = datetime.datetime.now().year
 
@@ -228,82 +228,82 @@ def dashboard(request):
         {
             "all_project": all_project,
             "scanners": scanners,
-            "total_count_project": ProjectDb.objects.filter().aggregate(
+            "total_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_vuln")
             ),
-            "open_count_project": ProjectDb.objects.filter().aggregate(
+            "open_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_open")
             ),
-            "close_count_project": ProjectDb.objects.filter().aggregate(
+            "close_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_close")
             ),
-            "false_count_project": ProjectDb.objects.filter().aggregate(
+            "false_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_false")
             ),
-            "net_count_project": ProjectDb.objects.filter().aggregate(Sum("total_net")),
-            "web_count_project": ProjectDb.objects.filter().aggregate(Sum("total_web")),
-            "static_count_project": ProjectDb.objects.filter().aggregate(
+            "net_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(Sum("total_net")),
+            "web_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(Sum("total_web")),
+            "static_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_static")
             ),
-            "cloud_count_project": ProjectDb.objects.filter().aggregate(
+            "cloud_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_cloud")
             ),
-            "critical_count_project": ProjectDb.objects.filter().aggregate(
+            "critical_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_critical")
             ),
-            "high_count_project": ProjectDb.objects.filter().aggregate(
+            "high_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_high")
             ),
-            "medium_count_project": ProjectDb.objects.filter().aggregate(
+            "medium_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("total_medium")
             ),
-            "low_count_project": ProjectDb.objects.filter().aggregate(Sum("total_low")),
-            "critical_net_count_project": ProjectDb.objects.filter().aggregate(
+            "low_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(Sum("total_low")),
+            "critical_net_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("critical_net")
             ),
-            "critical_web_count_project": ProjectDb.objects.filter().aggregate(
+            "critical_web_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("critical_web")
             ),
-            "critical_static_count_project": ProjectDb.objects.filter().aggregate(
+            "critical_static_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("critical_static")
             ),
-            "critical_cloud_count_project": ProjectDb.objects.filter().aggregate(
+            "critical_cloud_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("critical_cloud")
             ),
-            "high_net_count_project": ProjectDb.objects.filter().aggregate(
+            "high_net_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("high_net")
             ),
-            "high_web_count_project": ProjectDb.objects.filter().aggregate(
+            "high_web_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("high_web")
             ),
-            "high_static_count_project": ProjectDb.objects.filter().aggregate(
+            "high_static_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("high_static")
             ),
-            "high_cloud_count_project": ProjectDb.objects.filter().aggregate(
+            "high_cloud_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("high_cloud")
             ),
-            "medium_net_count_project": ProjectDb.objects.filter().aggregate(
+            "medium_net_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("medium_net")
             ),
-            "medium_web_count_project": ProjectDb.objects.filter().aggregate(
+            "medium_web_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("medium_web")
             ),
-            "medium_static_count_project": ProjectDb.objects.filter().aggregate(
+            "medium_static_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("medium_static")
             ),
-            "medium_cloud_count_project": ProjectDb.objects.filter().aggregate(
+            "medium_cloud_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("medium_cloud")
             ),
-            "low_net_count_project": ProjectDb.objects.filter().aggregate(
+            "low_net_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("low_net")
             ),
-            "low_web_count_project": ProjectDb.objects.filter().aggregate(
+            "low_web_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("low_web")
             ),
-            "low_static_count_project": ProjectDb.objects.filter().aggregate(
+            "low_static_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("low_static")
             ),
-            "low_cloud_count_project": ProjectDb.objects.filter().aggregate(
+            "low_cloud_count_project": ProjectDb.objects.filter(organization=request.user.organization).aggregate(
                 Sum("low_cloud")
             ),
             "all_month_data_display": all_month_data_display,
@@ -322,7 +322,7 @@ def project_dashboard(request):
 
     scanners = "vscanners"
 
-    all_project = ProjectDb.objects.filter()
+    all_project = ProjectDb.objects.filter(organization=request.user.organization)
 
     all_notify = Notification.objects.unread()
 
@@ -339,27 +339,27 @@ def proj_data(request):
     :param request:
     :return:
     """
-    all_project = ProjectDb.objects.filter()
+    all_project = ProjectDb.objects.filter(organization=request.user.organization)
     if request.GET["uu_id"]:
         uu_id = request.GET["uu_id"]
     else:
         uu_id = ""
 
-    project_dat = ProjectDb.objects.filter(uu_id=uu_id)
-    web_scan_dat = WebScansDb.objects.filter(project__uu_id=uu_id)
-    static_scan = StaticScansDb.objects.filter(project__uu_id=uu_id)
-    cloud_scan = CloudScansDb.objects.filter(project__uu_id=uu_id)
-    network_dat = NetworkScanDb.objects.filter(project__uu_id=uu_id)
-    inspec_dat = InspecScanDb.objects.filter(project__uu_id=uu_id)
-    dockle_dat = DockleScanDb.objects.filter(project__uu_id=uu_id)
+    project_dat = ProjectDb.objects.filter(uu_id=uu_id, organization=request.user.organization)
+    web_scan_dat = WebScansDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
+    static_scan = StaticScansDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
+    cloud_scan = CloudScansDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
+    network_dat = NetworkScanDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
+    inspec_dat = InspecScanDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
+    dockle_dat = DockleScanDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
     compliance_dat = chain(inspec_dat, dockle_dat)
-    all_comp_inspec = InspecScanDb.objects.filter(project__uu_id=uu_id)
+    all_comp_inspec = InspecScanDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
 
-    all_comp_dockle = InspecScanDb.objects.filter(project__uu_id=uu_id)
+    all_comp_dockle = InspecScanDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
 
     all_compliance_seg = chain(all_comp_inspec, all_comp_dockle)
 
-    pentest = PentestScanDb.objects.filter(project__uu_id=uu_id)
+    pentest = PentestScanDb.objects.filter(project__uu_id=uu_id, organization=request.user.organization)
 
     all_notify = Notification.objects.unread()
 
@@ -453,68 +453,73 @@ def all_high_vuln(request):
             project_id = ""
         else:
             project_id = (
-                ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+                ProjectDb.objects.filter(uu_id=project_uu_id, organization=request.user.organization).values("id").get()["id"]
             )
     else:
         project_id = ""
         severity = ""
     if severity == "All":
-        web_all_high = WebScanResultsDb.objects.filter(false_positive="No")
-        sast_all_high = StaticScanResultsDb.objects.filter(false_positive="No")
-        cloud_all_high = CloudScansResultsDb.objects.filter(false_positive="No")
-        net_all_high = NetworkScanResultsDb.objects.filter(false_positive="No")
-        pentest_all_high = PentestScanResultsDb.objects.filter()
+        web_all_high = WebScanResultsDb.objects.filter(false_positive="No", organization=request.user.organization)
+        sast_all_high = StaticScanResultsDb.objects.filter(false_positive="No", organization=request.user.organization)
+        cloud_all_high = CloudScansResultsDb.objects.filter(false_positive="No", organization=request.user.organization)
+        net_all_high = NetworkScanResultsDb.objects.filter(false_positive="No", organization=request.user.organization)
+        pentest_all_high = PentestScanResultsDb.objects.filter(organization=request.user.organization)
 
     elif severity == "All_Closed":
-        web_all_high = WebScanResultsDb.objects.filter(vuln_status="Closed")
-        sast_all_high = StaticScanResultsDb.objects.filter(vuln_status="Closed")
-        cloud_all_high = CloudScansResultsDb.objects.filter(vuln_status="Closed")
-        net_all_high = NetworkScanResultsDb.objects.filter(vuln_status="Closed")
-        pentest_all_high = PentestScanResultsDb.objects.filter()
+        web_all_high = WebScanResultsDb.objects.filter(vuln_status="Closed", organization=request.user.organization)
+        sast_all_high = StaticScanResultsDb.objects.filter(vuln_status="Closed", organization=request.user.organization)
+        cloud_all_high = CloudScansResultsDb.objects.filter(vuln_status="Closed", organization=request.user.organization)
+        net_all_high = NetworkScanResultsDb.objects.filter(vuln_status="Closed", organization=request.user.organization)
+        pentest_all_high = PentestScanResultsDb.objects.filter(organization=request.user.organization)
 
     # add your scanner name here <scannername>
     elif severity == "All_False_Positive":
-        web_all_high = WebScanResultsDb.objects.filter(false_positive="Yes")
-        sast_all_high = StaticScanResultsDb.objects.filter(false_positive="Yes")
-        cloud_all_high = CloudScansResultsDb.objects.filter(false_positive="Yes")
-        net_all_high = NetworkScanResultsDb.objects.filter(false_positive="Yes")
-        pentest_all_high = PentestScanResultsDb.objects.filter()
+        web_all_high = WebScanResultsDb.objects.filter(false_positive="Yes", organization=request.user.organization)
+        sast_all_high = StaticScanResultsDb.objects.filter(false_positive="Yes", organization=request.user.organization)
+        cloud_all_high = CloudScansResultsDb.objects.filter(false_positive="Yes", organization=request.user.organization)
+        net_all_high = NetworkScanResultsDb.objects.filter(false_positive="Yes", organization=request.user.organization)
+        pentest_all_high = PentestScanResultsDb.objects.filter(organization=request.user.organization)
 
     elif severity == "Network":
-        net_all_high = NetworkScanResultsDb.objects.filter(false_positive="No")
+        net_all_high = NetworkScanResultsDb.objects.filter(false_positive="No", organization=request.user.organization)
 
     elif severity == "Web":
-        web_all_high = WebScanResultsDb.objects.filter(false_positive="No")
-        pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="web")
+        web_all_high = WebScanResultsDb.objects.filter(false_positive="No", organization=request.user.organization)
+        pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="web", organization=request.user.organization)
 
     # add your scanner name here <scannername>
     elif severity == "Static":
-        sast_all_high = StaticScanResultsDb.objects.filter(false_positive="No")
-        pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="static")
+        sast_all_high = StaticScanResultsDb.objects.filter(false_positive="No", organization=request.user.organization)
+        pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="static", organization=request.user.organization)
 
     elif severity == "Cloud":
-        cloud_all_high = CloudScansResultsDb.objects.filter(false_positive="No")
-        pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="cloud")
+        cloud_all_high = CloudScansResultsDb.objects.filter(false_positive="No", organization=request.user.organization)
+        pentest_all_high = PentestScanResultsDb.objects.filter(pentest_type="cloud", organization=request.user.organization)
 
     elif severity == "Critical":
 
         # add your scanner name here <scannername>
 
         web_all_high = WebScanResultsDb.objects.filter(
-            project_id=project_id, severity="Critical", false_positive="No"
+            project_id=project_id, severity="Critical", false_positive="No",
+            organization=request.user.organization
         )
         sast_all_high = StaticScanResultsDb.objects.filter(
-            project_id=project_id, severity="Critical", false_positive="No"
+            project_id=project_id, severity="Critical", false_positive="No",
+            organization=request.user.organization
         )
         cloud_all_high = CloudScansResultsDb.objects.filter(
-            project_id=project_id, severity="Critical", false_positive="No"
+            project_id=project_id, severity="Critical", false_positive="No",
+            organization=request.user.organization
         )
         net_all_high = NetworkScanResultsDb.objects.filter(
-            project_id=project_id, severity="Critical", false_positive="No"
+            project_id=project_id, severity="Critical", false_positive="No",
+            organization=request.user.organization
         )
 
         pentest_all_high = PentestScanResultsDb.objects.filter(
-            severity="Critical", project_id=project_id
+            severity="Critical", project_id=project_id,
+            organization=request.user.organization
         )
 
     elif severity == "High":
@@ -522,20 +527,24 @@ def all_high_vuln(request):
         # add your scanner name here <scannername>
 
         web_all_high = WebScanResultsDb.objects.filter(
-            project_id=project_id, severity="High", false_positive="No"
+            project_id=project_id, severity="High", false_positive="No", organization=request.user.organization
         )
         sast_all_high = StaticScanResultsDb.objects.filter(
-            project_id=project_id, severity="High", false_positive="No"
+            project_id=project_id, severity="High", false_positive="No",
+            organization=request.user.organization
         )
         cloud_all_high = CloudScansResultsDb.objects.filter(
-            project_id=project_id, severity="High", false_positive="No"
+            project_id=project_id, severity="High", false_positive="No",
+            organization=request.user.organization
         )
         net_all_high = NetworkScanResultsDb.objects.filter(
-            project_id=project_id, severity="High", false_positive="No"
+            project_id=project_id, severity="High", false_positive="No",
+            organization=request.user.organization
         )
 
         pentest_all_high = PentestScanResultsDb.objects.filter(
-            severity="High", project_id=project_id
+            severity="High", project_id=project_id,
+            organization=request.user.organization
         )
 
     elif severity == "Medium":
@@ -545,20 +554,25 @@ def all_high_vuln(request):
         # add your scanner name here <scannername>
 
         web_all_high = WebScanResultsDb.objects.filter(
-            project_id=project_id, severity="Medium"
+            project_id=project_id, severity="Medium",
+            organization=request.user.organization
         )
         sast_all_high = StaticScanResultsDb.objects.filter(
-            project_id=project_id, severity="Medium"
+            project_id=project_id, severity="Medium",
+            organization=request.user.organization
         )
         cloud_all_high = CloudScansResultsDb.objects.filter(
-            project_id=project_id, severity="Medium"
+            project_id=project_id, severity="Medium",
+            organization=request.user.organization
         )
         net_all_high = NetworkScanResultsDb.objects.filter(
-            project_id=project_id, severity="Medium"
+            project_id=project_id, severity="Medium",
+            organization=request.user.organization
         )
 
         pentest_all_high = PentestScanResultsDb.objects.filter(
-            severity="Medium", project_id=project_id
+            severity="Medium", project_id=project_id,
+            organization=request.user.organization
         )
 
     # All Low
@@ -566,52 +580,65 @@ def all_high_vuln(request):
         # add your scanner name here <scannername>
 
         web_all_high = WebScanResultsDb.objects.filter(
-            project_id=project_id, severity="Low"
+            project_id=project_id, severity="Low",
+            organization=request.user.organization
         )
         sast_all_high = StaticScanResultsDb.objects.filter(
-            project_id=project_id, severity="Low"
+            project_id=project_id, severity="Low",
+            organization=request.user.organization
         )
         cloud_all_high = CloudScansResultsDb.objects.filter(
-            project_id=project_id, severity="Low"
+            project_id=project_id, severity="Low",
+            organization=request.user.organization
         )
         net_all_high = NetworkScanResultsDb.objects.filter(
-            project_id=project_id, severity="Low"
+            project_id=project_id, severity="Low",
+            organization=request.user.organization
         )
 
         pentest_all_high = PentestScanResultsDb.objects.filter(
-            severity="Low", project_id=project_id
+            severity="Low", project_id=project_id,
+            organization=request.user.organization
         )
 
     elif severity == "Total":
         # add your scanner name here <scannername>
         web_all_high = WebScanResultsDb.objects.filter(
             project_id=project_id,
+            organization=request.user.organization
         )
         sast_all_high = StaticScanResultsDb.objects.filter(
             project_id=project_id,
+            organization=request.user.organization
         )
         cloud_all_high = CloudScansResultsDb.objects.filter(
             project_id=project_id,
+            organization=request.user.organization
         )
         net_all_high = NetworkScanResultsDb.objects.filter(
             project_id=project_id,
+            organization=request.user.organization
         )
 
-        pentest_all_high = PentestScanResultsDb.objects.filter(project_id=project_id)
+        pentest_all_high = PentestScanResultsDb.objects.filter(project_id=project_id, organization=request.user.organization)
 
     elif severity == "False":
         # add your scanner name here <scannername>
         web_all_high = WebScanResultsDb.objects.filter(
-            project_id=project_id, false_positive="Yes"
+            project_id=project_id, false_positive="Yes",
+            organization=request.user.organization
         )
         sast_all_high = StaticScanResultsDb.objects.filter(
-            project_id=project_id, false_positive="Yes"
+            project_id=project_id, false_positive="Yes",
+            organization=request.user.organization
         )
         cloud_all_high = CloudScansResultsDb.objects.filter(
-            project_id=project_id, false_positive="Yes"
+            project_id=project_id, false_positive="Yes",
+            organization=request.user.organization
         )
         net_all_high = NetworkScanResultsDb.objects.filter(
-            project_id=project_id, false_positive="Yes"
+            project_id=project_id, false_positive="Yes",
+            organization=request.user.organization
         )
 
         pentest_all_high = ""
@@ -619,20 +646,25 @@ def all_high_vuln(request):
     elif severity == "Close":
         # add your scanner name here <scannername>
         web_all_high = WebScanResultsDb.objects.filter(
-            project_id=project_id, vuln_status="Closed"
+            project_id=project_id, vuln_status="Closed",
+            organization=request.user.organization
         )
         sast_all_high = StaticScanResultsDb.objects.filter(
-            project_id=project_id, vuln_status="Closed"
+            project_id=project_id, vuln_status="Closed",
+            organization=request.user.organization
         )
         cloud_all_high = CloudScansResultsDb.objects.filter(
-            project_id=project_id, vuln_status="Closed"
+            project_id=project_id, vuln_status="Closed",
+            organization=request.user.organization
         )
         net_all_high = NetworkScanResultsDb.objects.filter(
-            project_id=project_id, vuln_status="Closed"
+            project_id=project_id, vuln_status="Closed",
+            organization=request.user.organization
         )
 
         pentest_all_high = PentestScanResultsDb.objects.filter(
-            project_id=project_id, vuln_status="Closed"
+            project_id=project_id, vuln_status="Closed",
+            organization=request.user.organization
         )
 
     else:

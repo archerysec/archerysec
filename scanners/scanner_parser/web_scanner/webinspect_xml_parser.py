@@ -44,7 +44,7 @@ false_positive = ""
 target = ""
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(root, project_id, scan_id, request):
     global url, Scheme, Host, Port, AttackMethod, VulnerableSession, TriggerSession, VulnerabilityID, Severity, Name, ReportSection, HighlightSelections, RawResponse, SectionText, vuln_id, severity_name, vul_col, target
     date_time = datetime.now()
     for data in root:
@@ -103,7 +103,7 @@ def xml_parser(root, project_id, scan_id):
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
             match_dup = (
-                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
                 .values("dup_hash")
                 .distinct()
             )
@@ -113,7 +113,7 @@ def xml_parser(root, project_id, scan_id):
                 duplicate_vuln = "No"
 
                 false_p = WebScanResultsDb.objects.filter(
-                    false_positive_hash=duplicate_hash
+                    false_positive_hash=duplicate_hash, organization=request.user.organization
                 )
                 fp_lenth_match = len(false_p)
 
@@ -147,6 +147,7 @@ def xml_parser(root, project_id, scan_id):
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Webinspect",
+                        organization=request.user.organization
                     )
                     dump_data.save()
 
@@ -172,15 +173,16 @@ def xml_parser(root, project_id, scan_id):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     scanner="Webinspect",
+                    organization=request.user.organization
                 )
                 dump_data.save()
 
         webinspect_all_vul = WebScanResultsDb.objects.filter(
-            scan_id=scan_id, false_positive="No"
+            scan_id=scan_id, false_positive="No", organization=request.user.organization
         )
 
         duplicate_count = WebScanResultsDb.objects.filter(
-            scan_id=scan_id, vuln_duplicate="Yes"
+            scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
         )
 
         total_critical = len(webinspect_all_vul.filter(severity="Critical"))
@@ -191,7 +193,7 @@ def xml_parser(root, project_id, scan_id):
         total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low + total_info
 
-        WebScansDb.objects.filter(scan_id=scan_id).update(
+        WebScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
             total_vul=total_vul,
             scan_url=target,
             date_time=date_time,
@@ -201,6 +203,7 @@ def xml_parser(root, project_id, scan_id):
             low_vul=total_low,
             info_vul=total_info,
             total_dup=total_duplicate,
+            organization=request.user.organization
         )
     trend_update()
 

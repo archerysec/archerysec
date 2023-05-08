@@ -402,7 +402,7 @@ class UploadScanResult(APIView):
 
         # Call the parser
         parser_func = parser_dict["parserFunction"]
-        parser_func(data, project_id, scan_id)
+        parser_func(data, project_id, scan_id, request)
 
         # Success !
         if custom_return is True:
@@ -427,7 +427,7 @@ class APIKey(APIView):
     )
 
     def get(self, request):
-        all_active_keys = OrgAPIKey.objects.filter(is_active=True)
+        all_active_keys = OrgAPIKey.objects.filter(is_active=True, organization=request.user.organization)
 
         serialized_data = OrgAPIKeySerializer(all_active_keys, many=True)
         return render(
@@ -471,7 +471,7 @@ class DisableAPIKey(APIView):
         current_org = user.organization
 
         key_object = OrgAPIKey.objects.filter(
-            org_subscription=current_org, is_active=True, uu_id=api_key_uuid
+            org_subscription=current_org, is_active=True, uu_id=api_key_uuid, organization=request.user.organization
         ).update(is_active=False)
 
         if key_object > 0:
@@ -490,12 +490,12 @@ class GetCicdPolicies(APIView):
 
     def get(self, request, uu_id=None):
         if uu_id is None:
-            get_cicd_policies = CicdDb.objects.all()
+            get_cicd_policies = CicdDb.objects.filter(organization=request.user.organization)
             serialized_data = GetPoliciesSerializers(
                 get_cicd_policies, many=True)
         else:
             try:
-                get_cicd_policies = CicdDb.objects.get(cicd_id=uu_id)
+                get_cicd_policies = CicdDb.objects.filter(cicd_id=uu_id, organization=request.user.organization)
                 serialized_data = GetPoliciesSerializers(
                     get_cicd_policies, many=False)
             except CicdDb.DoesNotExist:
@@ -521,7 +521,7 @@ class DeleteAPIKey(APIView):
         for i in range(0, split_length):
             uu_id = value_split.__getitem__(i)
 
-            item = OrgAPIKey.objects.filter(uu_id=uu_id)
+            item = OrgAPIKey.objects.filter(uu_id=uu_id, organization=request.user.organization)
             item.delete()
         return HttpResponseRedirect("/api/access-key/")
 
@@ -666,7 +666,7 @@ class UpdateJiraTicket(APIView):
             current_jira_ticket_id = request.data.get(
                 "current_jira_ticket_id",
             )
-            jira_setting = jirasetting.objects.filter()
+            jira_setting = jirasetting.objects.filter(organization=request.user.organization)
 
             jira_server = ""
             jira_username = None

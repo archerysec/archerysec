@@ -22,6 +22,7 @@ from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
 from webscanners.models import WebScanResultsDb, WebScansDb
 
+
 ScanName = None
 ScanShortName = None
 ScanStartURL = None
@@ -64,7 +65,7 @@ VulnUrl = None
 FullURL = None
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(root, project_id, scan_id, request):
     """
 
     :param root:
@@ -213,7 +214,7 @@ def xml_parser(root, project_id, scan_id):
                     ).hexdigest()
 
                     match_dup = (
-                        WebScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+                        WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
                         .values("dup_hash")
                         .distinct()
                     )
@@ -223,7 +224,8 @@ def xml_parser(root, project_id, scan_id):
                         duplicate_vuln = "No"
 
                         false_p = WebScanResultsDb.objects.filter(
-                            false_positive_hash=duplicate_hash
+                            false_positive_hash=duplicate_hash,
+                            organization=request.user.organization
                         )
                         fp_lenth_match = len(false_p)
 
@@ -251,6 +253,7 @@ def xml_parser(root, project_id, scan_id):
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
                             scanner="Acunetix",
+                            organization=request.user.organization
                         )
                         dump_data.save()
 
@@ -276,15 +279,16 @@ def xml_parser(root, project_id, scan_id):
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
                             scanner="Acunetix",
+                            organization=request.user.organization
                         )
                         dump_data.save()
 
     acunetix_all_vul = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No"
+        scan_id=scan_id, false_positive="No", organization=request.user.organization
     )
 
     duplicate_count = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes"
+        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
     )
 
     total_critical = len(acunetix_all_vul.filter(severity="Critical"))
@@ -297,7 +301,7 @@ def xml_parser(root, project_id, scan_id):
 
     # cal_total_vuln = total_high + total_medium + total_low + total_info
 
-    WebScansDb.objects.filter(scan_id=scan_id).update(
+    WebScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
         total_vul=total_vul,
         date_time=date_time,
         critical_vul=total_critical,
@@ -307,6 +311,7 @@ def xml_parser(root, project_id, scan_id):
         info_vul=total_info,
         total_dup=total_duplicate,
         scan_url=ScanStartURL,
+        organization=request.user.organization
     )
     trend_update()
     subject = "Archery Tool Scan Status - Acunetix Report Uploaded"

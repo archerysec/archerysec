@@ -36,7 +36,7 @@ References = ""
 false_positive = ""
 
 
-def prisma_cloud_report_csv(data, project_id, scan_id):
+def prisma_cloud_report_csv(data, project_id, scan_id, request):
     cloud_account_id = "na"
     vul_col = "na"
     date_time = datetime.now()
@@ -77,7 +77,7 @@ def prisma_cloud_report_csv(data, project_id, scan_id):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = CloudScansResultsDb.objects.filter(dup_hash=duplicate_hash).values(
+        match_dup = CloudScansResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
             "dup_hash"
         )
         lenth_match = len(match_dup)
@@ -86,7 +86,7 @@ def prisma_cloud_report_csv(data, project_id, scan_id):
             duplicate_vuln = "No"
 
             false_p = CloudScansResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash
+                false_positive_hash=duplicate_hash, organization=request.user.organization
             )
             fp_lenth_match = len(false_p)
 
@@ -125,6 +125,7 @@ def prisma_cloud_report_csv(data, project_id, scan_id):
                             + str(alert_status),
                 references='NA',
                 scanner="Prismacloud",
+                organization=request.user.organization
             )
             save_all.save()
 
@@ -160,6 +161,7 @@ def prisma_cloud_report_csv(data, project_id, scan_id):
                             + str(alert_status),
                 references='NA',
                 scanner="Prismacloud",
+                organization=request.user.organization
             )
             save_all.save()
     all_prismacloud_data = CloudScansResultsDb.objects.filter(
@@ -187,6 +189,7 @@ def prisma_cloud_report_csv(data, project_id, scan_id):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Prismacloud",
+        organization=request.user.organization
     )
     trend_update()
     subject = "Archery Tool Scan Status - Prisma Cloud Report Uploaded"

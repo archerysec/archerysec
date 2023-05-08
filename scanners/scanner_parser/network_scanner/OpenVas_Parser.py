@@ -40,7 +40,7 @@ banner = ""
 vuln_color = None
 
 
-def updated_xml_parser(root, project_id, scan_id):
+def updated_xml_parser(root, project_id, scan_id, request):
     """
 
     :param root:
@@ -93,7 +93,7 @@ def updated_xml_parser(root, project_id, scan_id):
         dup_data = name + host + severity + port
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
         match_dup = (
-            NetworkScanResultsDb.objects.filter(vuln_duplicate=duplicate_hash)
+            NetworkScanResultsDb.objects.filter(vuln_duplicate=duplicate_hash, organization=request.user.organization)
             .values("vuln_duplicate")
             .distinct()
         )
@@ -102,7 +102,7 @@ def updated_xml_parser(root, project_id, scan_id):
         if lenth_match == 0:
             duplicate_vuln = "No"
             false_p = NetworkScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash
+                false_positive_hash=duplicate_hash, organization=request.user.organization
             )
             fp_lenth_match = len(false_p)
             if fp_lenth_match == 1:
@@ -136,6 +136,7 @@ def updated_xml_parser(root, project_id, scan_id):
                 severity_color=vuln_color,
                 false_positive=false_positive,
                 scanner="Openvas",
+                organization=request.user.organization
             )
             save_all.save()
         else:
@@ -156,6 +157,7 @@ def updated_xml_parser(root, project_id, scan_id):
                 vuln_duplicate=duplicate_vuln,
                 severity_color=vuln_color,
                 scanner="Openvas",
+                organization=request.user.organization
             )
             all_data_save.save()
 
@@ -166,7 +168,7 @@ def updated_xml_parser(root, project_id, scan_id):
         total_low = len(openvas_vul.filter(severity="Low"))
         total_duplicate = len(openvas_vul.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low
-        NetworkScanDb.objects.filter(scan_id=scan_id).update(
+        NetworkScanDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
             total_vul=total_vul,
             critical_vul=total_critical,
             high_vul=total_high,

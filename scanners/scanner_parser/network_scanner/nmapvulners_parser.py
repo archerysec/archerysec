@@ -54,7 +54,7 @@ target = ""
 report_name = ""
 
 
-def xml_parser(root, project_id, scan_id):
+def xml_parser(root, project_id, scan_id, request):
     global agent, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, risk_factor, script_version, solution, synopsis, plugin_output, see_also, scan_ip, pluginName, pluginID, protocol, severity, svc_name, pluginFamily, port, vuln_color, total_vul, total_high, total_medium, total_low, target, report_name
 
     try:
@@ -119,7 +119,7 @@ def xml_parser(root, project_id, scan_id):
                     dup_data.encode("utf-8")
                 ).hexdigest()
                 match_dup = (
-                    NetworkScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+                    NetworkScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
                     .values("dup_hash")
                     .distinct()
                 )
@@ -130,7 +130,7 @@ def xml_parser(root, project_id, scan_id):
 
                     global false_positive
                     false_p = NetworkScanResultsDb.objects.filter(
-                        false_positive_hash=duplicate_hash
+                        false_positive_hash=duplicate_hash, organization=request.user.organization
                     )
                     fp_lenth_match = len(false_p)
                     if fp_lenth_match == 1:
@@ -157,6 +157,7 @@ def xml_parser(root, project_id, scan_id):
                         vuln_duplicate=duplicate_vuln,
                         severity_color=vuln_color,
                         scanner="Nmapvulners",
+                        organization=request.user.organization
                     )
                     all_data_save.save()
 
@@ -180,6 +181,7 @@ def xml_parser(root, project_id, scan_id):
                         vuln_duplicate=duplicate_vuln,
                         severity_color=vuln_color,
                         scanner="Nmapvulners",
+                        organization=request.user.organization
                     )
                     all_data_save.save()
 
@@ -188,10 +190,11 @@ def xml_parser(root, project_id, scan_id):
             ip=target,
             vuln_status="Open",
             vuln_duplicate="No",
+            organization=request.user.organization
         )
 
         duplicate_count = NetworkScanResultsDb.objects.filter(
-            ip=target, vuln_duplicate="Yes"
+            ip=target, vuln_duplicate="Yes", organization=request.user.organization
         )
 
         target_total_vuln = len(target_filter)
@@ -210,6 +213,7 @@ def xml_parser(root, project_id, scan_id):
             medium_vul=target_total_medium,
             low_vul=target_total_low,
             total_dup=target_total_duplicate,
+            organization=request.user.organization
         )
     except Exception:
         print("Something went wrong while updating the vulnerability count")

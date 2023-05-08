@@ -41,19 +41,21 @@ details = 'na'
 message = 'na'
 
 
-def findsecbug_report_xml(root, project_id, scan_id):
+def findsecbug_report_xml(root, project_id, scan_id, request):
     findbugs_report_parser = FindsecbugsParser(project_id=project_id,
                                                scan_id=scan_id,
-                                               root=root)
+                                               root=root,
+                                               request=request)
     findbugs_report_parser.xml_parser()
 
 
 class FindsecbugsParser(object):
 
-    def __init__(self, root, project_id, scan_id):
+    def __init__(self, root, project_id, scan_id, request):
         self.root = root
         self.project_id = project_id
         self.scan_id = scan_id
+        self.request = request
 
     def find_bug_pattern(self, type):
         Details = 'NA'
@@ -130,7 +132,7 @@ class FindsecbugsParser(object):
                         dup_data.encode("utf-8")).hexdigest()
 
                     match_dup = StaticScanResultsDb.objects.filter(
-                        dup_hash=duplicate_hash
+                        dup_hash=duplicate_hash, organization=self.request.user.organization
                     ).values("dup_hash")
                     lenth_match = len(match_dup)
 
@@ -139,7 +141,7 @@ class FindsecbugsParser(object):
                     duplicate_vuln = "No"
 
                     false_p = StaticScanResultsDb.objects.filter(
-                        false_positive_hash=duplicate_hash
+                        false_positive_hash=duplicate_hash, organization=self.request.user.organization
                     )
                     fp_lenth_match = len(false_p)
 
@@ -178,6 +180,7 @@ class FindsecbugsParser(object):
                         vuln_duplicate=duplicate_vuln,
                         false_positive=false_positive,
                         scanner="Findbugs",
+                        organization=self.request.user.organization
                     )
                     save_all.save()
 
@@ -213,6 +216,7 @@ class FindsecbugsParser(object):
                         vuln_duplicate=duplicate_vuln,
                         false_positive="Duplicate",
                         scanner="Findbugs",
+                        organization=self.request.user.organization
                     )
                     save_all.save()
 
@@ -236,11 +240,11 @@ class FindsecbugsParser(object):
             #         )
 
             all_findbugs_data = StaticScanResultsDb.objects.filter(
-                scan_id=self.scan_id, false_positive="No"
+                scan_id=self.scan_id, false_positive="No", organization=self.request.user.organization
             )
 
             duplicate_count = StaticScanResultsDb.objects.filter(
-                scan_id=self.scan_id, vuln_duplicate="Yes"
+                scan_id=self.scan_id, vuln_duplicate="Yes", organization=self.request.user.organization
             )
 
             total_vul = len(all_findbugs_data)
@@ -250,7 +254,7 @@ class FindsecbugsParser(object):
             total_low = len(all_findbugs_data.filter(severity="Low"))
             total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-            StaticScansDb.objects.filter(scan_id=self.scan_id).update(
+            StaticScansDb.objects.filter(scan_id=self.scan_id, organization=self.request.user.organization).update(
                 total_vul=total_vul,
                 date_time=date_time,
                 critical_vul=total_critical,
@@ -259,6 +263,7 @@ class FindsecbugsParser(object):
                 low_vul=total_low,
                 total_dup=total_duplicate,
                 scanner="Findbugs",
+                organization=self.request.user.organization
             )
         trend_update()
         subject = "Archery Tool Scan Status - Findbugs Report Uploaded"

@@ -15,8 +15,10 @@
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
+from user_management.models import UserProfile, Organization
 
 from django.db import models
+from django.utils import timezone
 
 
 # SSLScan Model.
@@ -27,6 +29,21 @@ class SslscanResultDb(models.Model):
     )
     scan_url = models.TextField(blank=True, null=True)
     sslscan_output = models.TextField(blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='sslscan_result_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='sslscan_result_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 # Nikto Models
@@ -39,6 +56,21 @@ class NiktoResultDb(models.Model):
     nikto_scan_output = models.TextField(blank=True, null=True)
     date_time = models.TextField(null=True, blank=True)
     nikto_status = models.TextField(null=True, blank=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='nikto_result_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='nikto_result_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class NiktoVulnDb(models.Model):
@@ -63,6 +95,21 @@ class NiktoVulnDb(models.Model):
     vuln_duplicate = models.TextField(null=True, blank=True)
     false_positive_hash = models.TextField(null=True, blank=True)
     date_time = models.TextField(null=True, blank=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='niktovuln_result_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name = 'niktovuln_result_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 # Nmap tool models
@@ -75,6 +122,21 @@ class NmapScanDb(models.Model):
     total_ports = models.TextField(blank=True, null=True)
     total_open_ports = models.TextField(blank=True, null=True)
     total_close_ports = models.TextField(blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='nmap_result_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='nmap_result_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class NmapResultDb(models.Model):
@@ -102,6 +164,21 @@ class NmapResultDb(models.Model):
     used_state = models.TextField(blank=True, null=True)
     used_portid = models.TextField(blank=True, null=True)
     used_proto = models.TextField(blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='nmap_sca_result_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='nmap_sca_result_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 # NOTE[gmedian]: just base on the previous existing table in order not to make anything non-working

@@ -41,7 +41,7 @@ def all_manual_scan(project_id, query):
     all_manual_scan = None
     if query == "total":
         all_manual_scan_scan = PentestScanDb.objects.filter(
-            project__uu_id=project_id
+            project__uu_id=project_id,
         ).aggregate(Sum("total_vul"))
 
         for key, value in all_manual_scan_scan.items():

@@ -26,7 +26,7 @@ vul_col = ""
 severity = ""
 
 
-def tfsec_report_json(data, project_id, scan_id):
+def tfsec_report_json(data, project_id, scan_id, request):
     """
 
     :param data:
@@ -63,7 +63,7 @@ def tfsec_report_json(data, project_id, scan_id):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash).values(
+        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
             "dup_hash"
         )
         lenth_match = len(match_dup)
@@ -72,7 +72,7 @@ def tfsec_report_json(data, project_id, scan_id):
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash
+                false_positive_hash=duplicate_hash, organization=request.user.organization
             )
             fp_lenth_match = len(false_p)
 
@@ -103,6 +103,7 @@ def tfsec_report_json(data, project_id, scan_id):
                 + str(end_line),
                 references=link,
                 scanner="Tfsec",
+                organization=request.user.organization
             )
             save_all.save()
 
@@ -131,15 +132,16 @@ def tfsec_report_json(data, project_id, scan_id):
                 + str(end_line),
                 references=link,
                 scanner="Tfsec",
+                organization=request.user.organization
             )
             save_all.save()
 
     all_findbugs_data = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No"
+        scan_id=scan_id, false_positive="No", organization=request.user.organization
     )
 
     duplicate_count = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes"
+        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
     )
 
     total_vul = len(all_findbugs_data)
@@ -158,6 +160,7 @@ def tfsec_report_json(data, project_id, scan_id):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Tfsec",
+        organization=request.user.organization
     )
     trend_update()
     subject = "Archery Tool Scan Status - tfsec Report Uploaded"

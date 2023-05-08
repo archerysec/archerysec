@@ -169,7 +169,7 @@ class OpenvasLaunchScan(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        all_ip = NetworkScanDb.objects.all()
+        all_ip = NetworkScanDb.objects.filter(organization=request.user.organization)
 
         return render("networkscanners/openvas_vuln_list.html", {"all_ip": all_ip})
 
@@ -192,7 +192,7 @@ class OpenvasLaunchScan(APIView):
             scan_ip = request.POST.get("ip")
             project_uu_id = request.POST.get("project_id")
         project_id = (
-            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+            ProjectDb.objects.filter(uu_id=project_uu_id, organization=request.user.organization).values("id").get()["id"]
         )
         sel_profile = request.POST.get("scan_profile")
         ip = scan_ip.replace(" ", "")
@@ -223,8 +223,8 @@ class NetworkScan(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        all_scans = NetworkScanDb.objects.filter()
-        all_proj = ProjectDb.objects.filter()
+        all_scans = NetworkScanDb.objects.filter(organization=request.user.organization)
+        all_proj = ProjectDb.objects.filter(organization=request.user.organization)
 
         all_notify = Notification.objects.unread()
 
@@ -295,7 +295,7 @@ class OpenvasDetails(APIView):
         )
 
         save_settings_data = SettingsDb(
-            setting_id=setting_id, setting_scanner="Openvas"
+            setting_id=setting_id, setting_scanner="Openvas", organization=request.user.organization
         )
         save_settings_data.save()
 
@@ -309,12 +309,12 @@ class OpenvasDetails(APIView):
         try:
             openvas.connect()
             openvas_info = True
-            SettingsDb.objects.filter(setting_id=setting_id).update(
+            SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                 setting_status=openvas_info
             )
         except Exception:
             openvas_info = False
-            SettingsDb.objects.filter(setting_id=setting_id).update(
+            SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
                 setting_status=openvas_info
             )
             if request.path[: 4] == '/api':
@@ -393,8 +393,8 @@ class NetworkScanSchedule(APIView):
     def get(self, request):
         # task_id = ""
 
-        all_scans_db = ProjectDb.objects.filter()
-        all_scheduled_scans = TaskScheduleDb.objects.filter()
+        all_scans_db = ProjectDb.objects.filter(organization=request.user.organization)
+        all_scheduled_scans = TaskScheduleDb.objects.filter(organization=request.user.organization)
         return render(
             request,
             "networkscanners/network_scan_schedule.html",
@@ -474,9 +474,9 @@ class NetworkScanScheduleDelete(APIView):
         print("split_length"), split_length
         for i in range(0, split_length):
             task_id = target_split.__getitem__(i)
-            del_task = TaskScheduleDb.objects.filter(task_id=task_id)
+            del_task = TaskScheduleDb.objects.filter(task_id=task_id, organization=request.user.organization)
             del_task.delete()
-            del_task_schedule = Task.objects.filter(id=task_id)
+            del_task_schedule = Task.objects.filter(id=task_id, organization=request.user.organization)
             del_task_schedule.delete()
 
         return HttpResponseRedirect(reverse("networkscanners:net_scan_schedule"))
@@ -558,7 +558,7 @@ class NetworkScanList(APIView):
     permission_classes = [IsAuthenticated | permissions.VerifyAPIKey]
 
     def get(self, request):
-        scan_list = NetworkScanDb.objects.filter()
+        scan_list = NetworkScanDb.objects.filter(organization=request.user.organization)
         all_notify = Notification.objects.unread()
         if request.path[: 4] == '/api':
             serialized_data = NetworkScanDbSerializer(scan_list, many=True)
@@ -576,16 +576,16 @@ class NetworkScanVulnInfo(APIView):
 
     def get(self, request, uu_id=None):
         jira_url = None
-        jira = jirasetting.objects.all()
+        jira = jirasetting.objects.filter(organization=request.user.organization)
         for d in jira:
             jira_url = d.jira_server
         if uu_id is None:
             scan_id = request.GET["scan_id"]
             ip = request.GET["ip"]
-            vuln_data = NetworkScanResultsDb.objects.filter(scan_id=scan_id, ip=ip)
+            vuln_data = NetworkScanResultsDb.objects.filter(scan_id=scan_id, ip=ip, organization=request.user.organization)
         else:
             try:
-                vuln_data = NetworkScanResultsDb.objects.filter(scan_id=uu_id)
+                vuln_data = NetworkScanResultsDb.objects.filter(scan_id=uu_id, organization=request.user.organization)
             except Exception:
                 return Response(
                     {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
@@ -616,12 +616,12 @@ class NetworkScanVulnMark(APIView):
         ip = request.POST.get("ip")
         notes = request.POST.get("note")
         NetworkScanResultsDb.objects.filter(
-            vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+            vuln_id=vuln_id, scan_id=scan_id, scanner=scanner, organization=request.user.organization
         ).update(false_positive=false_positive, vuln_status=status, note=notes)
 
         if false_positive == "Yes":
             vuln_info = NetworkScanResultsDb.objects.filter(
-                scan_id=scan_id, vuln_id=vuln_id, scanner=scanner
+                scan_id=scan_id, vuln_id=vuln_id, scanner=scanner, organization=request.user.organization
             )
             for vi in vuln_info:
                 name = vi.title
@@ -632,7 +632,7 @@ class NetworkScanVulnMark(APIView):
                     dup_data.encode("utf-8")
                 ).hexdigest()
                 NetworkScanResultsDb.objects.filter(
-                    vuln_id=vuln_id, scan_id=scan_id, scanner=scanner
+                    vuln_id=vuln_id, scan_id=scan_id, scanner=scanner, organization=request.user.organization
                 ).update(
                     false_positive=false_positive,
                     vuln_status="Closed",
@@ -641,7 +641,7 @@ class NetworkScanVulnMark(APIView):
                 )
 
         all_vuln = NetworkScanResultsDb.objects.filter(
-            scan_id=scan_id, false_positive="No", vuln_status="Open", scanner=scanner
+            scan_id=scan_id, false_positive="No", vuln_status="Open", scanner=scanner, organization=request.user.organization
         )
 
         total_high = len(all_vuln.filter(severity="High"))
@@ -651,7 +651,7 @@ class NetworkScanVulnMark(APIView):
         total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low + total_info
 
-        NetworkScanDb.objects.filter(scan_id=scan_id, scanner=scanner).update(
+        NetworkScanDb.objects.filter(scan_id=scan_id, scanner=scanner, organization=request.user.organization).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -678,7 +678,7 @@ class NetworkScanDetails(APIView):
         jira_projects = None
         vuln_id = request.GET["vuln_id"]
         scanner = request.GET["scanner"]
-        jira_setting = jirasetting.objects.filter()
+        jira_setting = jirasetting.objects.filter(organization=request.user.organization)
         # user = request.user
 
         for jira in jira_setting:
@@ -707,7 +707,7 @@ class NetworkScanDetails(APIView):
             # notify.send(user, recipient=user, verb="Jira settings not found")
 
         vul_dat = NetworkScanResultsDb.objects.filter(
-            vuln_id=vuln_id, scanner=scanner
+            vuln_id=vuln_id, scanner=scanner, organization=request.user.organization
         ).order_by("vuln_id")
 
         return render(
@@ -737,9 +737,9 @@ class NetworkScanDelete(APIView):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = NetworkScanDb.objects.filter(scan_id=scan_id)
+            item = NetworkScanDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
             item.delete()
-            item_results = NetworkScanResultsDb.objects.filter(scan_id=scan_id)
+            item_results = NetworkScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
             item_results.delete()
         return HttpResponseRedirect(reverse("networkscanners:list_scans"))
 
@@ -760,10 +760,10 @@ class NetworkScanVulnDelete(APIView):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = NetworkScanResultsDb.objects.filter(vuln_id=vuln_id)
+            delete_vuln = NetworkScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization)
             delete_vuln.delete()
         all_vuln = (
-            NetworkScanResultsDb.objects.filter(scan_id=scan_id)
+            NetworkScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
             .exclude(severity="Information")
             .exclude(severity="Log")
         )
@@ -781,6 +781,7 @@ class NetworkScanVulnDelete(APIView):
             high_vul=total_high,
             medium_vul=total_medium,
             low_vul=total_low,
+            organization=request.user.organization
             # info_vul=total_info,
         )
         return HttpResponseRedirect(reverse("networkscanners:list_scans"))

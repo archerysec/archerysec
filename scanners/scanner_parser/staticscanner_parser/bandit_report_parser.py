@@ -45,7 +45,7 @@ total_medium = ""
 total_low = ""
 
 
-def bandit_report_json(data, project_id, scan_id):
+def bandit_report_json(data, project_id, scan_id, request):
     """
 
     :param data:
@@ -142,7 +142,7 @@ def bandit_report_json(data, project_id, scan_id):
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
                 match_dup = (
-                    StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+                    StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
                     .values("dup_hash")
                     .distinct()
                 )
@@ -152,7 +152,7 @@ def bandit_report_json(data, project_id, scan_id):
                     duplicate_vuln = "No"
 
                     false_p = StaticScanResultsDb.objects.filter(
-                        false_positive_hash=duplicate_hash
+                        false_positive_hash=duplicate_hash, organization=request.user.organization
                     )
                     fp_lenth_match = len(false_p)
 
@@ -181,6 +181,7 @@ def bandit_report_json(data, project_id, scan_id):
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Bandit",
+                        organization=request.user.organization
                     )
                     save_all.save()
 
@@ -207,15 +208,16 @@ def bandit_report_json(data, project_id, scan_id):
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Bandit",
+                        organization=request.user.organization
                     )
                     save_all.save()
 
         all_bandit_data = StaticScanResultsDb.objects.filter(
-            scan_id=scan_id, false_positive="No"
+            scan_id=scan_id, false_positive="No", organization=request.user.organization
         )
 
         duplicate_count = StaticScanResultsDb.objects.filter(
-            scan_id=scan_id, vuln_duplicate="Yes"
+            scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
         )
 
         total_vul = len(all_bandit_data)
@@ -232,6 +234,7 @@ def bandit_report_json(data, project_id, scan_id):
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
+            organization=request.user.organization
         )
     trend_update()
     subject = "Archery Tool Scan Status - Bandit Report Uploaded"

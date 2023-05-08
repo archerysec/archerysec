@@ -37,7 +37,7 @@ to_mail = ""
 
 def email_notify(user, subject, message):
     global to_mail
-    all_email = EmailDb.objects.all()
+    all_email = EmailDb.objects.all(organization=user.organization)
     for email in all_email:
         to_mail = email.recipient_list
 
@@ -104,7 +104,7 @@ class burp_scans(object):
         global burp_status, data
 
         # Load setting parameters from BurpSettingDb models
-        all_burp_settings = BurpSettingDb.objects.filter()
+        all_burp_settings = BurpSettingDb.objects.filter(organization=self.user.organization)
 
         for data in all_burp_settings:
             burp_host = data.burp_url
@@ -118,6 +118,7 @@ class burp_scans(object):
             scan_url=self.scan_url,
             date_time=date_time,
             scanner="Burp",
+            organization=self.user.organization
         )
         scan_dump.save()
 
@@ -148,7 +149,7 @@ class burp_scans(object):
             scan_info_data = json.loads(json_scan_data)
             scan_status = scan_info_data["scan_metrics"]["crawl_and_audit_progress"]
             print("Scan Status:", scan_status)
-            WebScansDb.objects.filter(scan_id=self.scan_id, scanner="Burp").update(
+            WebScansDb.objects.filter(scan_id=self.scan_id, scanner="Burp", organization=self.user.organization).update(
                 scan_status=scan_status
             )
             time.sleep(5)
@@ -239,7 +240,7 @@ class burp_scans(object):
                     severity = value
 
             all_issue_definitions = burp_issue_definitions.objects.filter(
-                issue_type_id=type_index
+                issue_type_id=type_index, organization=self.user.organization
             )
             for def_data in all_issue_definitions:
                 issue_description = def_data.description
@@ -274,7 +275,7 @@ class burp_scans(object):
             duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
             match_dup = (
-                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash)
+                WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=self.user.organization)
                 .values("dup_hash")
                 .distinct()
             )
@@ -288,7 +289,7 @@ class burp_scans(object):
                 duplicate_vuln = "None"
 
             false_p = WebScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash
+                false_positive_hash=duplicate_hash, organization=self.user.organization
             )
             fp_lenth_match = len(false_p)
 
@@ -327,12 +328,13 @@ class burp_scans(object):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     scanner="Burp",
+                    organization=self.user.organization
                 )
                 data_dump.save()
             except Exception as e:
                 print(e)
         burp_all_vul = (
-            WebScanResultsDb.objects.filter(scan_id=self.scan_id)
+            WebScanResultsDb.objects.filter(scan_id=self.scan_id, organization=self.user.organization)
             .values("title", "severity")
             .distinct()
         )
@@ -343,7 +345,7 @@ class burp_scans(object):
         total_low = len(burp_all_vul.filter(severity="Low"))
         total_info = len(burp_all_vul.filter(severity="Info"))
         total_duplicate = len(burp_all_vul.filter(vuln_duplicate="Yes"))
-        WebScansDb.objects.filter(scan_id=self.scan_id, scanner="Burp").update(
+        WebScansDb.objects.filter(scan_id=self.scan_id, scanner="Burp", organization=self.user.organization).update(
             total_vul=total_vul,
             critical_vul=total_critical,
             high_vul=total_high,

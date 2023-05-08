@@ -40,10 +40,10 @@ class CicdScanList(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        all_scans = CicdDb.objects.all()
+        all_scans = CicdDb.objects.filter(organization=request.user.organization)
         all_notify = Notification.objects.unread()
 
-        all_projects = ProjectDb.objects.all()
+        all_projects = ProjectDb.objects.filter(organization=request.user.organization)
         return Response({"all_scans": all_scans, "all_projects": all_projects})
 
 
@@ -65,7 +65,7 @@ class ScannerCommand(APIView):
 
         cicd_id = request.GET.get('cicd_id', None)
 
-        access_key = OrgAPIKey.objects.all().count()
+        access_key = OrgAPIKey.objects.filter(organization=request.user.organization).count()
 
         if access_key == 0:
             user = request.user
@@ -74,7 +74,7 @@ class ScannerCommand(APIView):
                 api_key=api_key, created_by=user, name='cicd'
             )
         else:
-            access_key = OrgAPIKey.objects.all()
+            access_key = OrgAPIKey.objects.filter(organization=request.user.organization)
             for data in access_key:
                 api_key = data.api_key
 
@@ -141,7 +141,7 @@ class CreatePolicies(APIView):
         code_path = request.POST.get("code_path")
 
         project_id = (
-            ProjectDb.objects.filter(uu_id=uu_id).values("id").get()["id"]
+            ProjectDb.objects.filter(uu_id=uu_id, organization=request.user.organization).values("id").get()["id"]
         )
 
         if code_path == '':
@@ -161,7 +161,8 @@ class CreatePolicies(APIView):
             target_name=target_name,
             scanner=scanner,
             command=command,
-            target=code_path
+            target=code_path,
+            organization=request.user.organization
         )
         return HttpResponseRedirect("/cicd/")
 
@@ -177,10 +178,10 @@ class PoliciesEdit(APIView):
 
     def get(self, request, uu_id=None):
         if uu_id == None:
-            cicd_details = CicdDb.objects.all()
+            cicd_details = CicdDb.objects.filter(organization=request.user.organization)
         else:
             try:
-                cicd_details = CicdDb.objects.get(cicd_id=uu_id)
+                cicd_details = CicdDb.objects.filter(cicd_id=uu_id, organization=request.user.organization)
             except CicdDb.DoesNotExist:
                 return Response(
                     {"message": "CICD Policies Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
@@ -202,6 +203,7 @@ class PoliciesEdit(APIView):
             threshold_count=threshold_count,
             build_server=build_server,
             target_name=target_name,
+            organization=request.user.organization
         )
         return HttpResponseRedirect("/cicd/")
 
@@ -223,8 +225,8 @@ class PoliciesDelete(APIView):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = CicdDb.objects.filter(cicd_id=scan_id)
+            item = CicdDb.objects.filter(cicd_id=scan_id, organization=request.user.organization)
             item.delete()
-            item_results = CicdDb.objects.filter(cicd_id=scan_id)
+            item_results = CicdDb.objects.filter(cicd_id=scan_id, organization=request.user.organization)
             item_results.delete()
         return HttpResponseRedirect(reverse("cicd:cicd_list"))

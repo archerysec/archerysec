@@ -17,6 +17,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.utils import timezone
+from user_management.models import UserProfile, Organization
 
 from user_management.models import UserProfile
 
@@ -41,6 +43,21 @@ class InspecScanDb(models.Model):
     inspec_passed = models.IntegerField(blank=True, null=True)
     inspec_skipped = models.IntegerField(blank=True, null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='inspec_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='inspec_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class InspecScanResultsDb(models.Model):
@@ -101,6 +118,21 @@ class InspecScanResultsDb(models.Model):
     scanner = models.TextField(default="inspec", editable=False)
     username = models.CharField(max_length=256, null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='inspec_result_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='inspec_result_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class DockleScanDb(models.Model):
@@ -125,6 +157,21 @@ class DockleScanDb(models.Model):
     dockle_pass = models.IntegerField(blank=True, null=True)
     username = models.CharField(max_length=256, null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='dockle_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='dockle_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
 
 
 class DockleScanResultsDb(models.Model):
@@ -155,3 +202,18 @@ class DockleScanResultsDb(models.Model):
     level = models.TextField(blank=True, null=True)
     alerts = models.TextField(blank=True, null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
+    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='dockle_result_db_created'
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='dockle_result_db_updated'
+    )
+    is_active = models.BooleanField(default=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)

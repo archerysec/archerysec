@@ -37,7 +37,7 @@ info = None
 version = None
 
 
-def retirejs_report_json(data, project_id, scan_id):
+def retirejs_report_json(data, project_id, scan_id, request):
     """
 
     :param data:
@@ -143,6 +143,7 @@ def retirejs_report_json(data, project_id, scan_id):
             # vuln_duplicate=duplicate_vuln,
             # version=version,
             scanner="Retirejs",
+            organization=request.user.organization
         )
         save_all.save()
         trend_update()
