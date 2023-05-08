@@ -80,7 +80,7 @@ def email_sch_notify(subject, message):
         print(e)
 
 
-def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
+def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user, request):
     """
     The function Launch ZAP Scans.
     :param target_url: Target URL
@@ -90,7 +90,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     zap_enabled = False
     random_port = "8091"
 
-    all_zap = ZapSettingsDb.objects.filter()
+    all_zap = ZapSettingsDb.objects.filter(organization=request.user.organization)
     for zap in all_zap:
         zap_enabled = zap.enabled
 
@@ -123,6 +123,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         rescan_id,
         rescan,
         random_port=random_port,
+        request=request,
     )
     zap.exclude_url()
     time.sleep(3)
@@ -139,6 +140,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
             rescan=rescan,
             scan_status="0",
             scanner="Zap",
+            organization=request.user.organization
         )
 
         save_all_scan.save()
@@ -165,8 +167,9 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
         project_id=project_id,
         un_scanid=scan_id,
         target_url=target_url,
+        request=request
     )
-    all_zap_scan = WebScansDb.objects.filter(scanner="zap")
+    all_zap_scan = WebScansDb.objects.filter(scanner="zap", organization=request.user.organization)
 
     total_vuln = ""
     total_high = ""
@@ -193,7 +196,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user):
     email_sch_notify(subject=subject, message=message)
 
 
-def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
+def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, request):
     """
     The function Launch ZAP Scans.
     :param target_url: Target URL
@@ -218,7 +221,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
 
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(
-        target_url, project_id, rescan_id, rescan, random_port=random_port
+        target_url, project_id, rescan_id, rescan, random_port=random_port, request=request
     )
     zap.exclude_url()
     time.sleep(3)
@@ -235,6 +238,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
             rescan=rescan,
             scan_status="0",
             scanner="Zap",
+            organization=request.user.organization
         )
 
         save_all_scan.save()
@@ -257,8 +261,9 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id):
         project_id=project_id,
         un_scanid=scan_id,
         target_url=target_url,
+        request=request
     )
-    all_zap_scan = WebScansDb.objects.filter(scanner="zap")
+    all_zap_scan = WebScansDb.objects.filter(scanner="zap", organization=request.user.organization)
 
     total_vuln = ""
     total_high = ""
@@ -308,7 +313,7 @@ class ZapScan(APIView):
             target_url = request.POST.get("url")
             project_uu_id = request.POST.get("project_id")
         project_id = (
-            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
+            ProjectDb.objects.filter(uu_id=project_uu_id, organization=request.user.organization).values("id").get()["id"]
         )
         rescan_id = None
         rescan = "No"
@@ -321,7 +326,7 @@ class ZapScan(APIView):
             scan_id = uuid.uuid4()
             thread = threading.Thread(
                 target=launch_zap_scan,
-                args=(target, project_id, rescan_id, rescan, scan_id, user),
+                args=(target, project_id, rescan_id, rescan, scan_id, user, request),
             )
             thread.daemon = True
             thread.start()

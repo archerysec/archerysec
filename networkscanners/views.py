@@ -91,7 +91,7 @@ def email_notify(user, subject, message):
         pass
 
 
-def openvas_scanner(scan_ip, project_id, sel_profile, user):
+def openvas_scanner(scan_ip, project_id, sel_profile, user, request):
     """
     The function is launch the OpenVAS scans.
     :param scan_ip:
@@ -103,6 +103,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
         scan_ip,
         project_id,
         sel_profile,
+        request
     )
     try:
         scanner = openvas.connect()
@@ -136,6 +137,7 @@ def openvas_scanner(scan_ip, project_id, sel_profile, user):
     vuln_an_id(
         scan_id=scan_id,
         project_id=project_id,
+        request=request
     )
 
     notify.send(user, recipient=user, verb="OpenVAS Scan Completed")
@@ -205,7 +207,7 @@ class OpenvasLaunchScan(APIView):
             target = target_split.__getitem__(i)
 
             thread = threading.Thread(
-                target=openvas_scanner, args=(target, project_id, sel_profile, user)
+                target=openvas_scanner, args=(target, project_id, sel_profile, user, request)
             )
             thread.daemon = True
             thread.start()

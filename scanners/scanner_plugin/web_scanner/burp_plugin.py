@@ -37,7 +37,7 @@ to_mail = ""
 
 def email_notify(user, subject, message):
     global to_mail
-    all_email = EmailDb.objects.all(organization=user.organization)
+    all_email = EmailDb.objects.filter(organization=user.organization)
     for email in all_email:
         to_mail = email.recipient_list
 

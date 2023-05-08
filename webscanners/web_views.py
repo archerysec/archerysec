@@ -67,7 +67,7 @@ class DeleteAllNotify(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        notify_del = Notification.objects.all(organization=request.user.organization)
+        notify_del = Notification.objects.filter()
         notify_del.delete()
 
         return HttpResponseRedirect(reverse("dashboard:dashboard"))
