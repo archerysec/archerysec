@@ -15,7 +15,6 @@ ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
 RUN \
     apt update -y && apt install -y  --no-install-recommends \
     build-essential \
-    DEBIAN_FRONTEND=noninteractive \
     make \
     default-jre \
     wget \
