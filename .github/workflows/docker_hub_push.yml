@@ -23,14 +23,15 @@ jobs:
       - name: Setup
         run: |
           ./setup.sh
-      - name: Unit Tests
-        run: |
-          git submodule update --init --recursive
-          python manage.py test
         env:
           NAME: test
           EMAIL: test@test.com
           PASSWORD: test@test
+      - name: Unit Tests
+        run: |
+          git submodule update --init --recursive
+          python manage.py test
+        
 
   push_to_registry:
       name: Push Docker image to Docker Hub
