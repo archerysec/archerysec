@@ -35,14 +35,14 @@ jobs:
 
   push_to_registry:
       name: Push Docker image to Docker Hub
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-20.04
       steps:
         - name: Check out the repo
           uses: actions/checkout@v2
         - name: Set up Python
           uses: actions/setup-python@v2
           with:
-            python-version: '3.9'
+            python-version: '3.10'
         - name: Integration test
           run: |
            bash integration-test.sh || exit 1
