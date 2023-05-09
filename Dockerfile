@@ -16,7 +16,6 @@ RUN \
     apt update -y && apt install -y  --no-install-recommends \
     build-essential \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install --quiet --yes --fix-missing \
     make \
     default-jre \
     wget \
