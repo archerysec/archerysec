@@ -24,9 +24,9 @@ jobs:
         run: |
           ./setup.sh
       - name: Unit Tests
-          run: |
-            git submodule update --init --recursive
-            python manage.py test
+        run: |
+          git submodule update --init --recursive
+          python manage.py test
         env:
           NAME: test
           EMAIL: test@test.com
