@@ -13,7 +13,8 @@ ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
 
 # Update & Upgrade Ubuntu. Install packages
 RUN \
-    apt-get update && \
+    apt update -y && apt install -y  --no-install-recommends \
+    build-essential \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install --quiet --yes --fix-missing \
     make \
@@ -30,12 +31,7 @@ RUN \
     postgresql \
     python3-psycopg2 \
     postgresql-server-dev-all \
-    libpq-dev \
-    && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get autoremove --purge -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    libpq-dev
 
 # Set locales
 RUN locale-gen en_US.UTF-8
@@ -83,6 +79,20 @@ RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
 # Install requirements
 RUN . venv/bin/activate && python3 -m pip install --no-cache-dir -r requirements.txt && \
     rm -rf /home/archerysec/.cache
+
+# Cleanup
+RUN \
+    apt remove -y \
+        libssl-dev \
+        libffi-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        python3-dev \
+        wget && \
+    apt clean && \
+    apt autoclean && \
+    apt autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* > /dev/null 2>&1
 
 RUN . venv/bin/activate && python3 -m pip install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
 
