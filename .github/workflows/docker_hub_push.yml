@@ -30,7 +30,7 @@ jobs:
       - name: Unit Tests
         run: |
           git submodule update --init --recursive
-          python manage.py test
+          . venv/bin/activate && python manage.py test
         
 
   push_to_registry:
