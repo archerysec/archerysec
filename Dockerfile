@@ -15,6 +15,8 @@ ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
 RUN \
     DEBIAN_FRONTEND=noninteractive apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y  --no-install-recommends \
     build-essential \
+    sox ffmpeg libcairo2 libcairo2-dev \
+    texlive-full \
     make \
     default-jre \
     wget \
@@ -75,7 +77,9 @@ RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
     rm -rf ZAP_2.7.0
 
 # Install requirements
-RUN . venv/bin/activate && python3 -m pip install --no-cache-dir -r requirements.txt && \
+RUN . venv/bin/activate \
+    && python3 -m pip install --no-cache-dir -r requirements.txt \
+    && python3 -m pip install manimlib manimce \
     rm -rf /home/archerysec/.cache
 
 # Cleanup
