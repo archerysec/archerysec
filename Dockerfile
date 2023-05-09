@@ -13,7 +13,7 @@ ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
 
 # Update & Upgrade Ubuntu. Install packages
 RUN \
-    apt update -y && apt install -y  --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y  --no-install-recommends \
     build-essential \
     make \
     default-jre \
