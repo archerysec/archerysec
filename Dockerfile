@@ -81,6 +81,9 @@ RUN . venv/bin/activate \
     && python3.9 -m pip install --no-cache-dir -r requirements.txt \
     && python3.9 -m pip install manimlib manimce
 
+
+RUN . venv/bin/activate && python3.9 -m pip install git+https://github.com/archerysec/openvas_lib.git && python3.9 /home/archerysec/app/manage.py collectstatic --noinput
+
 # Cleanup
 RUN \
     apt remove -y \
@@ -94,8 +97,6 @@ RUN \
     apt autoclean && \
     apt autoremove -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* > /dev/null 2>&1
-
-RUN . venv/bin/activate && python3.9 -m pip install git+https://github.com/archerysec/openvas_lib.git && python3.9 /home/archerysec/app/manage.py collectstatic --noinput
 
 # Exposing port.
 EXPOSE 8000
