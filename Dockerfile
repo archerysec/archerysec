@@ -54,7 +54,7 @@ RUN mkdir /home/archerysec/app
 # Set archerysec as a work directory.
 WORKDIR /home/archerysec/app
 
-RUN virtualenv -p python3 /home/archerysec/app/venv
+RUN virtualenv -p python /home/archerysec/app/venv
 
 # Copy all file to archerysec folder.
 COPY . .
@@ -78,8 +78,8 @@ RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
 
 # Install requirements
 RUN . venv/bin/activate \
-    && python3 -m pip install --no-cache-dir -r requirements.txt \
-    && python3 -m pip install manimlib manimce
+    && python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m pip install manimlib manimce
 
 # Cleanup
 RUN \
@@ -95,7 +95,7 @@ RUN \
     apt autoremove -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* > /dev/null 2>&1
 
-RUN . venv/bin/activate && python3 -m pip install git+https://github.com/archerysec/openvas_lib.git && python3 /home/archerysec/app/manage.py collectstatic --noinput
+RUN . venv/bin/activate && python -m pip install git+https://github.com/archerysec/openvas_lib.git && python /home/archerysec/app/manage.py collectstatic --noinput
 
 # Exposing port.
 EXPOSE 8000
