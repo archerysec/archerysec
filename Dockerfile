@@ -15,6 +15,7 @@ ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
 RUN \
     DEBIAN_FRONTEND=noninteractive apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y  --no-install-recommends \
     build-essential \
+    gcc \
     sox ffmpeg libcairo2 libcairo2-dev \
     texlive-full \
     make \
@@ -26,6 +27,8 @@ RUN \
     python3.9 \
     python3-dev \
     python3-pip \
+    pkg-config \
+    libcairo2-dev \
     virtualenv \
     gunicorn \
     postgresql \
@@ -75,6 +78,8 @@ COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascan
 
 RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
     rm -rf ZAP_2.7.0
+
+RUN python3.9 -m pip install --upgrade pip
 
 # Install requirements
 RUN . venv/bin/activate \
