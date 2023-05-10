@@ -79,8 +79,7 @@ RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
 # Install requirements
 RUN . venv/bin/activate \
     && python3 -m pip install --no-cache-dir -r requirements.txt \
-    && python3 -m pip install manimlib manimce \
-    rm -rf /home/archerysec/.cache
+    && python3 -m pip install manimlib manimce
 
 # Cleanup
 RUN \
