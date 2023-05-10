@@ -9,11 +9,12 @@ LABEL \
 
 
 ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
-    DJANGO_WSGI_MODULE="archerysecurity.wsgi"
+    DJANGO_WSGI_MODULE="archerysecurity.wsgi" \
+    DEBIAN_FRONTEND=noninteractive
 
 # Update & Upgrade Ubuntu. Install packages
 RUN \
-    DEBIAN_FRONTEND=noninteractive apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y  --no-install-recommends \
+    apt update -y && apt install -y  --no-install-recommends \
     build-essential \
     gcc \
     sox ffmpeg libcairo2 libcairo2-dev \
@@ -79,15 +80,13 @@ COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascan
 RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
     rm -rf ZAP_2.7.0
 
-RUN python3.9 -m pip install --upgrade pip
-
 # Install requirements
 RUN . venv/bin/activate \
-    && python3.9 -m pip install --no-cache-dir -r requirements.txt \
-    && python3.9 -m pip install manimlib manimce
+    && pip3 install --upgrade --no-cache-dir setuptools pip && \
+    && pip3 install --quiet --no-cache-dir -r requirements.txt
 
 
-RUN . venv/bin/activate && python3.9 -m pip install git+https://github.com/archerysec/openvas_lib.git && python3.9 /home/archerysec/app/manage.py collectstatic --noinput
+RUN . venv/bin/activate && pip3 install git+https://github.com/archerysec/openvas_lib.git && python3.9 /home/archerysec/app/manage.py collectstatic --noinput
 
 # Cleanup
 RUN \
