@@ -1,5 +1,6 @@
 #Ubuntu base OS
 FROM ubuntu:20.04
+
 # Labels and Credits
 LABEL \
     name="ArcherySec" \
