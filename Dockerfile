@@ -83,7 +83,7 @@ RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
 
 # Install requirements
 RUN . venv/bin/activate \
-    && pip3 install --upgrade --no-cache-dir setuptools pip && \
+    && pip3 install --upgrade --no-cache-dir setuptools pip \
     && pip3 install --quiet --no-cache-dir -r requirements.txt
 
 
