@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("webscanners", "0016_burp_issue_definitions_vulnerability_classifications"),
     ]

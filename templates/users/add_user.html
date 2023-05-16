@@ -15,7 +15,7 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="widget-box">
-                                        <form class="form-horizontal" action="{% url 'add_user' %}"
+                                        <form class="form-horizontal" action="{% url 'users:add_user' %}"
                                               method="POST">{% csrf_token %}
                                             <div class="form-group ">
                                                 <label>Name</label>

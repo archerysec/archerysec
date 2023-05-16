@@ -14,10 +14,9 @@
 #
 # This file is part of ArcherySec Project.
 
-from rest_framework import serializers
+from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 User = get_user_model()
 
@@ -38,7 +37,16 @@ class UserSettingsSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['uu_id', 'role', 'image', 'email', 'name', 'landing_page', 'logintime']
+        fields = [
+            "uu_id",
+            "role",
+            "image",
+            "email",
+            "name",
+            "landing_page",
+            "logintime",
+        ]
+
     uu_id = serializers.UUIDField()
     email = serializers.EmailField(max_length=255)
     name = serializers.CharField(max_length=255)
@@ -49,12 +57,12 @@ class UserSettingsSerializers(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['uu_id', 'image', 'email', 'name']
+        fields = ["uu_id", "image", "email", "name"]
 
     def update(self, instance, validated_data):
-        instance.email = validated_data.get('email', instance.email)
-        instance.name = validated_data.get('name', instance.name)
-        instance.image = validated_data.get('image', instance.image)
+        instance.email = validated_data.get("email", instance.email)
+        instance.name = validated_data.get("name", instance.name)
+        instance.image = validated_data.get("image", instance.image)
         instance.save()
         return instance
 
@@ -79,18 +87,18 @@ class UpdatePasswordSerializer(serializers.Serializer):
     new_password2 = serializers.CharField(required=True)
 
     def validate_old_password(self, value):
-        user = self.context['request'].user
+        user = self.context["request"].user
         if not user.check_password(value):
-            raise serializers.ValidationError('Incorrect old password')
+            raise serializers.ValidationError("Incorrect old password")
         return value
 
     def validate(self, attrs):
-        if attrs['new_password1'] != attrs['new_password2']:
-            raise serializers.ValidationError('New passwords do not match')
+        if attrs["new_password1"] != attrs["new_password2"]:
+            raise serializers.ValidationError("New passwords do not match")
         return attrs
 
     def save(self):
-        request = self.context['request']
+        request = self.context["request"]
         form = PasswordChangeForm(request.user, self.validated_data)
         if form.is_valid():
             user = form.save()

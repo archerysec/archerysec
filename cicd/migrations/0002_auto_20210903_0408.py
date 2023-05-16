@@ -4,38 +4,45 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cicd', '0001_initial'),
+        ("cicd", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ScannerCommand',
+            name="ScannerCommand",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('scanner', models.CharField(blank=True, max_length=50)),
-                ('command', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("scanner", models.CharField(blank=True, max_length=50)),
+                ("command", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.AddField(
-            model_name='cicddb',
-            name='command',
+            model_name="cicddb",
+            name="command",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='cicddb',
-            name='scanner',
+            model_name="cicddb",
+            name="scanner",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='cicddb',
-            name='target',
+            model_name="cicddb",
+            name="target",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='cicddb',
-            name='target_name',
+            model_name="cicddb",
+            name="target_name",
             field=models.TextField(blank=True, null=True),
         ),
     ]

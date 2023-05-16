@@ -79,7 +79,9 @@ class OpenVAS_Plugin:
         """
 
         global ov_host, ov_user, ov_pass, ov_port
-        all_openvas = OpenvasSettingDb.objects.filter(organization=self.request.user.organization)
+        all_openvas = OpenvasSettingDb.objects.filter(
+            organization=self.request.user.organization
+        )
 
         for openvas in all_openvas:
             ov_user = openvas.user
@@ -135,12 +137,16 @@ class OpenVAS_Plugin:
                     + " %"
                 )
                 status = float(scanner.get_progress(str(scan_id)))
-                NetworkScanDb.objects.filter(scan_id=scan_id, organization=self.request.user.organization).update(scan_status=status)
+                NetworkScanDb.objects.filter(
+                    scan_id=scan_id, organization=self.request.user.organization
+                ).update(scan_status=status)
                 previous = current
             time.sleep(5)
 
         status = "100"
-        NetworkScanDb.objects.filter(scan_id=scan_id, organization=self.request.user.organization).update(scan_status=status)
+        NetworkScanDb.objects.filter(
+            scan_id=scan_id, organization=self.request.user.organization
+        ).update(scan_status=status)
 
         return status
 
@@ -154,7 +160,9 @@ def vuln_an_id(scan_id, project_id, request):
     ov_ip = ""
     ov_user = ""
     ov_pass = ""
-    all_openvas = OpenvasSettingDb.objects.filter(organization=request.user.organization)
+    all_openvas = OpenvasSettingDb.objects.filter(
+        organization=request.user.organization
+    )
 
     scan_status = "100"
     date_time = datetime.datetime.now()
@@ -169,7 +177,9 @@ def vuln_an_id(scan_id, project_id, request):
 
     hosts = OpenVas_Parser.get_hosts(openvas_results)
 
-    del_old = NetworkScanDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+    del_old = NetworkScanDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    )
     del_old.delete()
 
     for host in hosts:
@@ -180,7 +190,7 @@ def vuln_an_id(scan_id, project_id, request):
             date_time=date_time,
             project_id=project_id,
             scan_status=scan_status,
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         scan_dump.save()
     OpenVas_Parser.updated_xml_parser(

@@ -181,7 +181,11 @@ def burp_scan_data(root, project_id, scan_id, request):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = (
-            WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, scanner="Burp", organization=request.user.organization)
+            WebScanResultsDb.objects.filter(
+                dup_hash=duplicate_hash,
+                scanner="Burp",
+                organization=request.user.organization,
+            )
             .values("dup_hash")
             .distinct()
         )
@@ -191,7 +195,9 @@ def burp_scan_data(root, project_id, scan_id, request):
             duplicate_vuln = "No"
 
             false_p = WebScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash, scanner="Burp", organization=request.user.organization
+                false_positive_hash=duplicate_hash,
+                scanner="Burp",
+                organization=request.user.organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -223,7 +229,7 @@ def burp_scan_data(root, project_id, scan_id, request):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     scanner="Burp",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 data_dump.save()
             except Exception as e:
@@ -250,18 +256,24 @@ def burp_scan_data(root, project_id, scan_id, request):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     scanner="Burp",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 data_dump.save()
             except Exception as e:
                 print(e)
 
     burp_all_vul = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, scanner="Burp", false_positive="No", organization=request.user.organization
+        scan_id=scan_id,
+        scanner="Burp",
+        false_positive="No",
+        organization=request.user.organization,
     )
 
     duplicate_count = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, scanner="Burp", vuln_duplicate="Yes", organization=request.user.organization
+        scan_id=scan_id,
+        scanner="Burp",
+        vuln_duplicate="Yes",
+        organization=request.user.organization,
     )
 
     total_vul = len(burp_all_vul)
@@ -271,7 +283,9 @@ def burp_scan_data(root, project_id, scan_id, request):
     total_low = len(burp_all_vul.filter(severity="Low"))
     total_info = len(burp_all_vul.filter(severity="Information"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
-    WebScansDb.objects.filter(scan_id=scan_id, scanner="Burp", organization=request.user.organization).update(
+    WebScansDb.objects.filter(
+        scan_id=scan_id, scanner="Burp", organization=request.user.organization
+    ).update(
         scan_url=host,
         date_time=date_time,
         total_vul=total_vul,
@@ -281,7 +295,7 @@ def burp_scan_data(root, project_id, scan_id, request):
         low_vul=total_low,
         info_vul=total_info,
         total_dup=total_duplicate,
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     print(host)
     trend_update()
@@ -308,6 +322,6 @@ parser_header_dict = {
         "dbname": "Burp",
         "type": "XML",
         "parserFunction": burp_scan_data,
-        "icon": "/static/tools/burp.png"
+        "icon": "/static/tools/burp.png",
     }
 }

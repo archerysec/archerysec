@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0015_npmaudit_scan_db_npmaudit_scan_results_db"),
     ]

@@ -75,19 +75,16 @@ def xml_parser(root, project_id, scan_id, request):
                         else:
                             name = vuln.text
                     if vuln.tag == "description":
-
                         if vuln.text is None:
                             description = "NA"
                         else:
                             description = vuln.text
                     if vuln.tag == "remedy_guidance":
-
                         if vuln.text is None:
                             remedy_guidance = "NA"
                         else:
                             remedy_guidance = vuln.text
                     if vuln.tag == "severity":
-
                         if vuln.text is None:
                             severity = "NA"
                         else:
@@ -97,7 +94,6 @@ def xml_parser(root, project_id, scan_id, request):
                         for ref_vuln in vuln:
                             dat = ref_vuln.attrib
                             for key, values in dat.items():
-
                                 if key is None:
                                     ref_key = "NA"
                                 else:
@@ -114,7 +110,6 @@ def xml_parser(root, project_id, scan_id, request):
                                 for vec_input in vec_vuln:
                                     dat = vec_input.attrib
                                     for key, values in dat.items():
-
                                         if key is None:
                                             vector_input_key = "NA"
                                         else:
@@ -194,19 +189,16 @@ def xml_parser(root, project_id, scan_id, request):
                     for extra_data in vuln:
                         for extra_vuln in extra_data:
                             if extra_vuln.tag == "url":
-
                                 if extra_vuln.text is None:
                                     url = "NA"
                                 else:
                                     url = extra_vuln.text
                             if extra_vuln.tag == "action":
-
                                 if extra_vuln.text is None:
                                     action = "NA"
                                 else:
                                     action = extra_vuln.text
                             if extra_vuln.tag == "body":
-
                                 if extra_vuln.text is None:
                                     body = "NA"
                                 else:
@@ -227,7 +219,9 @@ def xml_parser(root, project_id, scan_id, request):
 
                 match_dup = (
                     WebScanResultsDb.objects.filter(
-                        vuln_duplicate=duplicate_hash, scanner="Arachni", organization=request.user.organization
+                        vuln_duplicate=duplicate_hash,
+                        scanner="Arachni",
+                        organization=request.user.organization,
                     )
                     .values("dup_hash")
                     .distinct()
@@ -257,7 +251,8 @@ def xml_parser(root, project_id, scan_id, request):
                     duplicate_vuln = "No"
 
                     false_p = WebScanResultsDb.objects.filter(
-                        false_positive_hash=duplicate_hash, organization=request.user.organization
+                        false_positive_hash=duplicate_hash,
+                        organization=request.user.organization,
                     )
                     fp_lenth_match = len(false_p)
 
@@ -285,7 +280,7 @@ def xml_parser(root, project_id, scan_id, request):
                         false_positive_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Arachni",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     dump_data.save()
 
@@ -308,16 +303,22 @@ def xml_parser(root, project_id, scan_id, request):
                         false_positive_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Arachni",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     dump_data.save()
 
     arachni_all_vul = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", scanner="Arachni", organization=request.user.organization
+        scan_id=scan_id,
+        false_positive="No",
+        scanner="Arachni",
+        organization=request.user.organization,
     )
 
     duplicate_count = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes", scanner="Arachni", organization=request.user.organization
+        scan_id=scan_id,
+        vuln_duplicate="Yes",
+        scanner="Arachni",
+        organization=request.user.organization,
     )
 
     total_critical = len(arachni_all_vul.filter(severity="Critical"))
@@ -333,7 +334,9 @@ def xml_parser(root, project_id, scan_id, request):
     print(total_medium)
     print(total_info)
 
-    WebScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+    WebScansDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    ).update(
         scan_url=url,
         total_vul=total_vul,
         date_time=date_time,
@@ -345,7 +348,7 @@ def xml_parser(root, project_id, scan_id, request):
         scan_status="100",
         total_dup=total_duplicate,
         scanner="Arachni",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
 
@@ -366,6 +369,6 @@ parser_header_dict = {
         "dbname": "Arachni",
         "type": "XML",
         "parserFunction": xml_parser,
-        "icon": "/static/tools/arachni.png"
+        "icon": "/static/tools/arachni.png",
     }
 }

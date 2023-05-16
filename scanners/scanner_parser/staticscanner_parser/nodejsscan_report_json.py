@@ -83,7 +83,8 @@ def nodejsscan_report_json(data, project_id, scan_id, request):
                 duplicate_vuln = "No"
 
                 false_p = StaticScanResultsDb.objects.filter(
-                    false_positive_hash=duplicate_hash, organization=request.user.organization
+                    false_positive_hash=duplicate_hash,
+                    organization=request.user.organization,
                 )
                 fp_lenth_match = len(false_p)
 
@@ -112,7 +113,7 @@ def nodejsscan_report_json(data, project_id, scan_id, request):
                     + "\n\n"
                     + str(lines),
                     scanner="Nodejsscan",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -139,7 +140,7 @@ def nodejsscan_report_json(data, project_id, scan_id, request):
                     + "\n\n"
                     + str(lines),
                     scanner="Nodejsscan",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -148,7 +149,9 @@ def nodejsscan_report_json(data, project_id, scan_id, request):
         )
 
         duplicate_count = StaticScanResultsDb.objects.filter(
-            scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+            scan_id=scan_id,
+            vuln_duplicate="Yes",
+            organization=request.user.organization,
         )
 
         total_vul = len(all_findbugs_data)
@@ -167,7 +170,7 @@ def nodejsscan_report_json(data, project_id, scan_id, request):
             low_vul=total_low,
             total_dup=total_duplicate,
             scanner="Nodejsscan",
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         trend_update()
         subject = "Archery Tool Scan Status - Nodejsscan Report Uploaded"
@@ -188,6 +191,6 @@ parser_header_dict = {
         "dbname": "Nodejsscan",
         "type": "JSON",
         "parserFunction": nodejsscan_report_json,
-        "icon": "/static/tools/nodejs.jpeg"
+        "icon": "/static/tools/nodejs.jpeg",
     }
 }

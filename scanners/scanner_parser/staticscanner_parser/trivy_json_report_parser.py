@@ -15,8 +15,8 @@
 # This file is part of ArcherySec Project.
 
 import hashlib
-import uuid
 import json
+import uuid
 from datetime import datetime
 
 from dashboard.views import trend_update
@@ -50,12 +50,12 @@ def trivy_report_json(data, project_id, scan_id, request):
     global total_vul, total_high, total_medium, total_low
     date_time = datetime.now()
     vul_col = ""
-    t_target = ''
-    t_type = ''
-    t_class = ''
-    vuln = ''
-    if data['ArtifactType'] == "container_image":
-        for vuln_data in data['Results']:
+    t_target = ""
+    t_type = ""
+    t_class = ""
+    vuln = ""
+    if data["ArtifactType"] == "container_image":
+        for vuln_data in data["Results"]:
             try:
                 vuln = vuln_data["Vulnerabilities"]
                 t_target = vuln_data["Target"]
@@ -127,12 +127,14 @@ def trivy_report_json(data, project_id, scan_id, request):
 
                 vul_id = uuid.uuid4()
 
-                dup_data = str(VulnerabilityID) + \
-                    str(Severity) + \
-                    str(PkgName) + \
-                    str(t_target) + \
-                    str(t_type) + \
-                    str(t_class)
+                dup_data = (
+                    str(VulnerabilityID)
+                    + str(Severity)
+                    + str(PkgName)
+                    + str(t_target)
+                    + str(t_type)
+                    + str(t_class)
+                )
 
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -145,7 +147,8 @@ def trivy_report_json(data, project_id, scan_id, request):
                     duplicate_vuln = "No"
 
                     false_p = StaticScanResultsDb.objects.filter(
-                        false_positive_hash=duplicate_hash, organization=request.user.organization
+                        false_positive_hash=duplicate_hash,
+                        organization=request.user.organization,
                     )
                     fp_lenth_match = len(false_p)
 
@@ -176,7 +179,9 @@ def trivy_report_json(data, project_id, scan_id, request):
                         + "\n\n"
                         + str(FixedVersion),
                         severity=Severity,
-                        solution=PkgName + ' can be fixed by upgrading version :' + FixedVersion,
+                        solution=PkgName
+                        + " can be fixed by upgrading version :"
+                        + FixedVersion,
                         references=References,
                         severity_color=vul_col,
                         vuln_status="Open",
@@ -184,7 +189,7 @@ def trivy_report_json(data, project_id, scan_id, request):
                         vuln_duplicate=duplicate_vuln,
                         false_positive=false_positive,
                         scanner="Trivy",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     save_all.save()
 
@@ -220,16 +225,20 @@ def trivy_report_json(data, project_id, scan_id, request):
                         vuln_duplicate=duplicate_vuln,
                         false_positive="Duplicate",
                         scanner="Trivy",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     save_all.save()
 
             all_findbugs_data = StaticScanResultsDb.objects.filter(
-                scan_id=scan_id, false_positive="No", organization=request.user.organization
+                scan_id=scan_id,
+                false_positive="No",
+                organization=request.user.organization,
             )
 
             duplicate_count = StaticScanResultsDb.objects.filter(
-                scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+                scan_id=scan_id,
+                vuln_duplicate="Yes",
+                organization=request.user.organization,
             )
 
             total_vul = len(all_findbugs_data)
@@ -246,34 +255,34 @@ def trivy_report_json(data, project_id, scan_id, request):
                 low_vul=total_low,
                 total_dup=total_duplicate,
                 scanner="Trivy",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
-    elif data['ArtifactType'] == "filesystem":
-        description = 'na'
-        message = 'na'
-        startline = 'na'
-        endline = 'na'
-        resource = 'na'
-        provider = 'na'
-        resolution = 'na'
-        references = 'na'
-        Severity = 'na'
-        code = 'na'
-        title = 'na'
-        mis_data = ''
-        for mis in data['Results']:
-            target = mis['Target']
+    elif data["ArtifactType"] == "filesystem":
+        description = "na"
+        message = "na"
+        startline = "na"
+        endline = "na"
+        resource = "na"
+        provider = "na"
+        resolution = "na"
+        references = "na"
+        Severity = "na"
+        code = "na"
+        title = "na"
+        mis_data = ""
+        for mis in data["Results"]:
+            target = mis["Target"]
             try:
-                mis_data = mis['Misconfigurations']
+                mis_data = mis["Misconfigurations"]
             except Exception:
                 pass
-            if mis['Class'] == 'secret':
-                title = mis['Secrets'][0]['Title']
-                Severity = mis['Secrets'][0]['Severity']
-                category = mis['Secrets'][0]['Category']
-                startline = mis['Secrets'][0]['StartLine']
-                endline = mis['Secrets'][0]['EndLine']
-                match = mis['Secrets'][0]['Match']
+            if mis["Class"] == "secret":
+                title = mis["Secrets"][0]["Title"]
+                Severity = mis["Secrets"][0]["Severity"]
+                category = mis["Secrets"][0]["Category"]
+                startline = mis["Secrets"][0]["StartLine"]
+                endline = mis["Secrets"][0]["EndLine"]
+                match = mis["Secrets"][0]["Match"]
 
                 if Severity == "CRITICAL":
                     Severity = "Critical"
@@ -297,10 +306,7 @@ def trivy_report_json(data, project_id, scan_id, request):
 
                 vul_id = uuid.uuid4()
 
-                dup_data = str(title) + \
-                    str(Severity) + \
-                    str(match) + \
-                    str(target)
+                dup_data = str(title) + str(Severity) + str(match) + str(target)
 
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
@@ -313,7 +319,8 @@ def trivy_report_json(data, project_id, scan_id, request):
                     duplicate_vuln = "No"
 
                     false_p = StaticScanResultsDb.objects.filter(
-                        false_positive_hash=duplicate_hash, organization=request.user.organization
+                        false_positive_hash=duplicate_hash,
+                        organization=request.user.organization,
                     )
                     fp_lenth_match = len(false_p)
 
@@ -334,13 +341,15 @@ def trivy_report_json(data, project_id, scan_id, request):
                         + "\n\n"
                         + str(match)
                         + "\n\n"
-                        + 'Start Line: ' + str(startline)
+                        + "Start Line: "
+                        + str(startline)
                         + "\n\n"
-                        + 'End Line: ' + str(endline)
+                        + "End Line: "
+                        + str(endline)
                         + "\n\n"
                         + str(category),
                         severity=Severity,
-                        solution='Remove secret ' + match + ' form the code',
+                        solution="Remove secret " + match + " form the code",
                         references=references,
                         severity_color=vul_col,
                         vuln_status="Open",
@@ -348,7 +357,7 @@ def trivy_report_json(data, project_id, scan_id, request):
                         vuln_duplicate=duplicate_vuln,
                         false_positive=false_positive,
                         scanner="Trivy",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     save_all.save()
 
@@ -367,9 +376,11 @@ def trivy_report_json(data, project_id, scan_id, request):
                         + "\n\n"
                         + str(match)
                         + "\n\n"
-                        + 'Start Line: ' + str(startline)
+                        + "Start Line: "
+                        + str(startline)
                         + "\n\n"
-                        + 'End Line: ' + str(endline)
+                        + "End Line: "
+                        + str(endline)
                         + "\n\n"
                         + str(category),
                         severity=Severity,
@@ -380,24 +391,24 @@ def trivy_report_json(data, project_id, scan_id, request):
                         vuln_duplicate=duplicate_vuln,
                         false_positive="Duplicate",
                         scanner="Trivy",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     save_all.save()
 
-            if mis['Class'] == 'config':
+            if mis["Class"] == "config":
                 for miscon in mis_data:
                     try:
-                        title = miscon['Title']
-                        description = miscon['Description']
-                        message = miscon['Message']
-                        resolution = miscon['Resolution']
-                        Severity = miscon['Severity']
-                        references = miscon['References']
-                        code = miscon['CauseMetadata']['Code']
-                        startline = miscon['CauseMetadata']['StartLine']
-                        endline = miscon['CauseMetadata']['EndLine']
-                        resource = miscon['CauseMetadata']['Resource']
-                        provider = miscon['CauseMetadata']['Provider']
+                        title = miscon["Title"]
+                        description = miscon["Description"]
+                        message = miscon["Message"]
+                        resolution = miscon["Resolution"]
+                        Severity = miscon["Severity"]
+                        references = miscon["References"]
+                        code = miscon["CauseMetadata"]["Code"]
+                        startline = miscon["CauseMetadata"]["StartLine"]
+                        endline = miscon["CauseMetadata"]["EndLine"]
+                        resource = miscon["CauseMetadata"]["Resource"]
+                        provider = miscon["CauseMetadata"]["Provider"]
 
                     except Exception as e:
                         print(e)
@@ -424,12 +435,11 @@ def trivy_report_json(data, project_id, scan_id, request):
 
                     vul_id = uuid.uuid4()
 
-                    dup_data = str(title) + \
-                        str(Severity) + \
-                        str(code) + \
-                        str(target)
+                    dup_data = str(title) + str(Severity) + str(code) + str(target)
 
-                    duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
+                    duplicate_hash = hashlib.sha256(
+                        dup_data.encode("utf-8")
+                    ).hexdigest()
 
                     match_dup = StaticScanResultsDb.objects.filter(
                         dup_hash=duplicate_hash, organization=request.user.organization
@@ -440,7 +450,8 @@ def trivy_report_json(data, project_id, scan_id, request):
                         duplicate_vuln = "No"
 
                         false_p = StaticScanResultsDb.objects.filter(
-                            false_positive_hash=duplicate_hash, organization=request.user.organization
+                            false_positive_hash=duplicate_hash,
+                            organization=request.user.organization,
                         )
                         fp_lenth_match = len(false_p)
 
@@ -461,9 +472,11 @@ def trivy_report_json(data, project_id, scan_id, request):
                             + "\n\n"
                             + str(message)
                             + "\n\n"
-                            + 'Start Line: ' + str(startline)
+                            + "Start Line: "
+                            + str(startline)
                             + "\n\n"
-                            + 'End Line: ' + str(endline)
+                            + "End Line: "
+                            + str(endline)
                             + "\n\n"
                             + str(resource)
                             + "\n\n"
@@ -478,7 +491,7 @@ def trivy_report_json(data, project_id, scan_id, request):
                             vuln_duplicate=duplicate_vuln,
                             false_positive=false_positive,
                             scanner="Trivy",
-                            organization=request.user.organization
+                            organization=request.user.organization,
                         )
                         save_all.save()
 
@@ -497,9 +510,11 @@ def trivy_report_json(data, project_id, scan_id, request):
                             + "\n\n"
                             + str(message)
                             + "\n\n"
-                            + 'Start Line: ' + str(startline)
+                            + "Start Line: "
+                            + str(startline)
                             + "\n\n"
-                            + 'End Line: ' + str(endline)
+                            + "End Line: "
+                            + str(endline)
                             + "\n\n"
                             + str(resource),
                             severity=Severity,
@@ -510,7 +525,7 @@ def trivy_report_json(data, project_id, scan_id, request):
                             vuln_duplicate=duplicate_vuln,
                             false_positive="Duplicate",
                             scanner="Trivy",
-                            organization=request.user.organization
+                            organization=request.user.organization,
                         )
                         save_all.save()
 
@@ -538,7 +553,7 @@ def trivy_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Trivy",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
 
     trend_update()
@@ -560,6 +575,6 @@ parser_header_dict = {
         "dbname": "Trivy",
         "type": "JSON",
         "parserFunction": trivy_report_json,
-        "icon": "/static/tools/trivy.png"
+        "icon": "/static/tools/trivy.png",
     }
 }

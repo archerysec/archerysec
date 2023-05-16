@@ -15,15 +15,22 @@
 # This file is part of ArcherySec Project.
 
 
+from datetime import datetime, timedelta
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import HttpResponse, get_object_or_404, render
+from django.urls import reverse
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
-from django.shortcuts import HttpResponse, render
 from rest_framework.views import APIView
 
 from user_management import permissions
@@ -103,7 +110,7 @@ class Users(APIView):
             image=image,
             is_active=is_active,
             is_staff=is_staff,
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         if user_profile > 0:
             return Response(
@@ -113,6 +120,98 @@ class Users(APIView):
             return Response(
                 {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
             )
+
+
+class InviteUserAPIView(APIView):
+    permission_classes = (
+        IsAuthenticated,
+        permissions.IsAdmin,
+    )
+
+    def post(self, request):
+        email = request.data.get("email")
+        role = request.data.get("role")
+        name = request.data.get("name")
+
+        # Create a new user object with a random password
+        password = UserProfile.objects.make_random_password()
+        user = UserProfile.objects.create_user(
+            email=email,
+            password=password,
+            organization=request.user.organization.id,
+            name=name,
+            role=role,
+        )
+        token = default_token_generator.make_token(user)
+        user.pass_token = token
+        user.token_time = datetime.now() + timedelta(hours=24)
+        user.save()
+        user.is_active = False
+        user.save()
+        activation_link = self.generate_activation_link(request, user)
+        print(activation_link)
+        try:
+            send_invitation_email(user.email, activation_link)
+            return Response(
+                {
+                    "message": "User invited successfully. Please check your email for activation instructions."
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except:
+            return Response(
+                {
+                    "message": "Email Configuration not found",
+                    "activation_link": activation_link,
+                }
+            )
+
+    def generate_activation_link(self, request, user):
+        uid = urlsafe_base64_encode(force_bytes(user.uu_id))
+        token = user.pass_token
+        return request.build_absolute_uri(
+            reverse("archeryapi:activate-user", kwargs={"uid": uid, "token": token})
+        )
+
+
+class UserActivateAPIView(APIView):
+    permission_classes = ()
+
+    def post(self, request, uid, token):
+        # Decode user ID from the URL
+        user_id = force_str(urlsafe_base64_decode(uid))
+
+        try:
+            # Find the user by user_id
+            user = UserProfile.objects.get(uu_id=user_id)
+
+        except UserProfile.uu_id.DoesNotExist:
+            return Response(
+                {"message": "Invalid activation link."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Verify the token and check if it has expired
+        if user.pass_token == token and user.token_time >= datetime.now():
+            # Get user data from request body
+            password = request.data.get("password")
+
+            # Activate the user and set the new password
+            user.is_active = True
+            user.pass_token = default_token_generator.make_token(user)
+            user.set_password(password)
+            user.save()
+
+            return Response(
+                {
+                    "message": "Account activated successfully. You can now login with your new password."
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {"message": "Invalid or expired activation link."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class UsersList(APIView):
@@ -133,7 +232,7 @@ class UsersList(APIView):
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             return Response(serialized_data.data)
         else:
             return render(
@@ -178,7 +277,12 @@ class UsersEdit(APIView):
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
         return Response(
-            {"serializer": serialized_data, "user_details": user_details, "user_uu_id": uu_id, "org": org}
+            {
+                "serializer": serialized_data,
+                "user_details": user_details,
+                "user_uu_id": uu_id,
+                "org": org,
+            }
         )
 
     def post(self, request, uu_id):
@@ -260,7 +364,7 @@ class Profile(APIView):
         id = request.user.id
         user_profile = UserProfile.objects.filter(id=id)
         serialized_data = UserProfileSerializers(user_profile, many=False)
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             return Response(serialized_data.data, status=status.HTTP_200_OK)
         else:
             return render(request, "profile/profile.html", {"profiles": user_profile})
@@ -405,3 +509,9 @@ class OrgEdit(APIView):
             return Response(
                 {"message": "Org Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
             )
+
+
+def send_invitation_email(email, activation_link):
+    subject = "Invitation to Activate Your Account"
+    message = f"Please click the following link to activate your account and set a new password:\n{activation_link}"
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])

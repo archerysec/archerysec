@@ -24,7 +24,7 @@ from user_management.models import Organization, UserProfile
 
 
 class OrgAPIKey(models.Model):
-    """ Class for Organization API Keys Model """
+    """Class for Organization API Keys Model"""
 
     class Meta:
         db_table = "org_apikey"

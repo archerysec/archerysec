@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0033_twistlock_scan_db_twistlock_scan_results_db"),
     ]

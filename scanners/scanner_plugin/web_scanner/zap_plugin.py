@@ -471,7 +471,7 @@ class ZAPScanner:
                     project_id=project_id,
                     scan_id=un_scanid,
                     root=root_xml_en,
-                    request=request
+                    request=request,
                 )
                 self.zap.core.delete_all_alerts()
             except Exception as e:
@@ -552,7 +552,9 @@ class ZAPScanner:
                 dup_data = name + risk + target_url
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
                 match_dup = (
-                    WebScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
+                    WebScanResultsDb.objects.filter(
+                        dup_hash=duplicate_hash, organization=request.user.organization
+                    )
                     .values("dup_hash")
                     .distinct()
                 )
@@ -579,7 +581,7 @@ class ZAPScanner:
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Zap",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     dump_data.save()
                 else:
@@ -603,12 +605,13 @@ class ZAPScanner:
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Zap",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     dump_data.save()
 
                 false_p = WebScanResultsDb.objects.filter(
-                    false_positive_hash=duplicate_hash, organization=request.user.organization
+                    false_positive_hash=duplicate_hash,
+                    organization=request.user.organization,
                 )
                 fp_lenth_match = len(false_p)
 
@@ -618,7 +621,9 @@ class ZAPScanner:
                     false_positive = "No"
 
                 vul_dat = WebScanResultsDb.objects.filter(
-                    vuln_id=vuln_id, scanner="Zap", organization=request.user.organization
+                    vuln_id=vuln_id,
+                    scanner="Zap",
+                    organization=request.user.organization,
                 )
                 full_data = []
                 for data in vul_dat:
@@ -628,16 +633,21 @@ class ZAPScanner:
                     instance = key + ": " + dd
                     full_data.append(instance)
                 removed_list_data = ",".join(full_data)
-                WebScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                    instance=full_data
-                )
+                WebScanResultsDb.objects.filter(
+                    vuln_id=vuln_id, organization=request.user.organization
+                ).update(instance=full_data)
 
             zap_all_vul = WebScanResultsDb.objects.filter(
-                scan_id=un_scanid, false_positive="No", scanner="Zap", organization=request.user.organization
+                scan_id=un_scanid,
+                false_positive="No",
+                scanner="Zap",
+                organization=request.user.organization,
             )
 
             duplicate_count = WebScanResultsDb.objects.filter(
-                scan_id=un_scanid, vuln_duplicate="Yes", organization=request.user.organization
+                scan_id=un_scanid,
+                vuln_duplicate="Yes",
+                organization=request.user.organization,
             )
 
             total_critical = len(zap_all_vul.filter(severity="Critical"))
@@ -648,7 +658,9 @@ class ZAPScanner:
             total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
             total_vul = total_high + total_medium + total_low + total_info
 
-            WebScansDb.objects.filter(scan_id=un_scanid, organization=request.user.organization).update(
+            WebScansDb.objects.filter(
+                scan_id=un_scanid, organization=request.user.organization
+            ).update(
                 total_vul=total_vul,
                 date_time=date_time,
                 critical_vul=total_critical,
@@ -658,7 +670,7 @@ class ZAPScanner:
                 info_vul=total_info,
                 total_dup=total_duplicate,
                 scan_url=target_url,
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             if total_vul == total_duplicate:
                 WebScansDb.objects.filter(scan_id=un_scanid).update(
@@ -670,7 +682,7 @@ class ZAPScanner:
                     medium_vul=total_medium,
                     low_vul=total_low,
                     total_dup=total_duplicate,
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
 
     def zap_shutdown(self):

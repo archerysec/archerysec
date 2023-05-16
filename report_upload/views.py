@@ -14,33 +14,33 @@
 #
 # This file is part of ArcherySec Project.
 
+import csv
+import io
 import json
 import os
 import uuid
-import csv
-import io
 from datetime import datetime
 
 import defusedxml.ElementTree as ET
-from lxml import etree
 from django.contrib import messages
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
+from lxml import etree
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 
+from cloudscanners.models import CloudScansDb
 from compliance.models import DockleScanDb, InspecScanDb
 from networkscanners.models import NetworkScanDb
 from projects.models import ProjectDb
+from scanners.scanner_parser import scanner_parser
 from scanners.scanner_parser.network_scanner import OpenVas_Parser
-from cloudscanners.models import CloudScansDb
 from staticscanners.models import StaticScansDb
 from tools.models import NiktoResultDb
 from user_management import permissions
 from webscanners.models import WebScansDb
-from scanners.scanner_parser import scanner_parser
 
 
 class Upload(APIView):
@@ -67,7 +67,10 @@ class Upload(APIView):
         project_uu_id = request.POST.get("project_id")
         project_id = (
             ProjectDb.objects.filter(
-                uu_id=project_uu_id, organization=request.user.organization).values("id").get()["id"]
+                uu_id=project_uu_id, organization=request.user.organization
+            )
+            .values("id")
+            .get()["id"]
         )
         scanner = request.POST.get("scanner")
         file = request.FILES["file"]
@@ -95,8 +98,9 @@ class Upload(APIView):
                 fileext = ".js"
             # Check file format
             if self.check_file_ext(str(file)) != fileext or fileext == "":
-                error_mess = parser_dict["displayName"] + \
-                    " Only " + filetype + " file support"
+                error_mess = (
+                    parser_dict["displayName"] + " Only " + filetype + " file support"
+                )
                 messages.error(request, error_mess)
                 return HttpResponseRedirect(reverse("report_upload:upload"))
 
@@ -143,7 +147,7 @@ class Upload(APIView):
                         scan_status=scan_status,
                         rescan="No",
                         scanner=db_name,
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                 elif db_type == "StaticScans":
                     returnpage = "staticscanners:list_scans"
@@ -154,7 +158,7 @@ class Upload(APIView):
                         project_id=project_id,
                         scan_status=scan_status,
                         scanner=db_name,
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                 elif db_type == "NetworkScan":
                     returnpage = "networkscanners:list_scans"
@@ -170,7 +174,7 @@ class Upload(APIView):
                                 project_id=project_id,
                                 scan_status=scan_status,
                                 scanner=db_name,
-                                organization=request.user.organization
+                                organization=request.user.organization,
                             )
                             scan_dump.save()
                     # Regular network scan case
@@ -183,7 +187,7 @@ class Upload(APIView):
                             project_id=project_id,
                             scan_status=scan_status,
                             scanner=db_name,
-                            organization=request.user.organization
+                            organization=request.user.organization,
                         )
                 elif db_type == "CloudScans":
                     returnpage = "cloudscanners:list_scans"
@@ -194,7 +198,7 @@ class Upload(APIView):
                         scan_status=scan_status,
                         rescan="No",
                         scanner=db_name,
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
             # Store to database - custom types
             elif db_type == "NiktoResult":
@@ -204,7 +208,7 @@ class Upload(APIView):
                     scan_url=target,
                     scan_id=scan_id,
                     project_id=project_id,
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
             elif db_type == "InspecScan":
                 returnpage = "inspec:inspec_list"
@@ -213,7 +217,7 @@ class Upload(APIView):
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
             elif db_type == "DockleScan":
                 returnpage = "dockle:dockle_list"
@@ -222,7 +226,7 @@ class Upload(APIView):
                     date_time=date_time,
                     project_id=project_id,
                     scan_status=scan_status,
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
             elif db_type == "Nessus":
                 need_to_store = False
@@ -244,6 +248,5 @@ class Upload(APIView):
             print(e)
             messages.error(request, "File Not Supported")
             return render(
-                request, "report_upload/upload.html", {
-                    "all_project": all_project}
+                request, "report_upload/upload.html", {"all_project": all_project}
             )

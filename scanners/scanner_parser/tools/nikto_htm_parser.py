@@ -94,7 +94,9 @@ def nikto_html_parser(data, project_id, scan_id, request):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = (
-            NiktoVulnDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
+            NiktoVulnDb.objects.filter(
+                dup_hash=duplicate_hash, organization=request.user.organization
+            )
             .values("dup_hash")
             .distinct()
         )
@@ -107,7 +109,9 @@ def nikto_html_parser(data, project_id, scan_id, request):
         else:
             duplicate_vuln = "None"
 
-        false_p = NiktoVulnDb.objects.filter(false_positive_hash=duplicate_hash, organization=request.user.organization)
+        false_p = NiktoVulnDb.objects.filter(
+            false_positive_hash=duplicate_hash, organization=request.user.organization
+        )
         fp_lenth_match = len(false_p)
 
         global false_positive
@@ -134,7 +138,7 @@ def nikto_html_parser(data, project_id, scan_id, request):
             dup_hash=duplicate_hash,
             vuln_duplicate=duplicate_vuln,
             vuln_status="Open",
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         dump_data.save()
 
@@ -144,6 +148,6 @@ parser_header_dict = {
         "displayName": "Nikto",
         "dbtype": "NiktoResult",
         "type": "XML",
-        "parserFunction": nikto_html_parser
+        "parserFunction": nikto_html_parser,
     }
 }

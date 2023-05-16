@@ -48,7 +48,6 @@ def gitlabsast_report_json(data, project_id, scan_id, request):
     vuln = data["vulnerabilities"]
 
     for vuln_data in vuln:
-
         try:
             name = vuln_data["message"]
         except Exception:
@@ -115,16 +114,17 @@ def gitlabsast_report_json(data, project_id, scan_id, request):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
-            "dup_hash"
-        )
+        match_dup = StaticScanResultsDb.objects.filter(
+            dup_hash=duplicate_hash, organization=request.user.organization
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash, organization=request.user.organization
+                false_positive_hash=duplicate_hash,
+                organization=request.user.organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -149,7 +149,7 @@ def gitlabsast_report_json(data, project_id, scan_id, request):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 scanner="Gitlabsast",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
         else:
@@ -171,12 +171,15 @@ def gitlabsast_report_json(data, project_id, scan_id, request):
                 vuln_duplicate=duplicate_vuln,
                 false_positive="Duplicate",
                 scanner="Gitlabsast",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
     all_findbugs_data = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", vuln_duplicate="No", organization=request.user.organization
+        scan_id=scan_id,
+        false_positive="No",
+        vuln_duplicate="No",
+        organization=request.user.organization,
     )
 
     duplicate_count = StaticScanResultsDb.objects.filter(
@@ -190,7 +193,9 @@ def gitlabsast_report_json(data, project_id, scan_id, request):
     total_low = len(all_findbugs_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    StaticScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+    StaticScansDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    ).update(
         date_time=date_time,
         total_vul=total_vul,
         critical_vul=total_critical,
@@ -199,7 +204,7 @@ def gitlabsast_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Gitlabsast",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - GitLab SAST Report Uploaded"
@@ -220,6 +225,6 @@ parser_header_dict = {
         "dbname": "Gitlabsast",
         "type": "JSON",
         "parserFunction": gitlabsast_report_json,
-        "icon": "/static/tools/gitlab.png"
+        "icon": "/static/tools/gitlab.png",
     }
 }

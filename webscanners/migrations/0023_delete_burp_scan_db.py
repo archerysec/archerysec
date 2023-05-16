@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("webscanners", "0022_auto_20210506_1634"),
     ]

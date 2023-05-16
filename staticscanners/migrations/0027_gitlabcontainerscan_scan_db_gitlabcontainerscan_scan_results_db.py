@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0026_semgrepscan_scan_db_semgrepscan_scan_results_db"),
     ]

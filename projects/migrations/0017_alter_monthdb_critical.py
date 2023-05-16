@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('projects', '0016_auto_20220824_0432'),
+        ("projects", "0016_auto_20220824_0432"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='monthdb',
-            name='critical',
+            model_name="monthdb",
+            name="critical",
             field=models.IntegerField(blank=True, default=0, null=True),
         ),
     ]

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("networkscanners", "0007_nessus_report_db_severity_color"),
     ]

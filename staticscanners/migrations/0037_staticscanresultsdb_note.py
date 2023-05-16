@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('staticscanners', '0036_auto_20210719_1431'),
+        ("staticscanners", "0036_auto_20210719_1431"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='staticscanresultsdb',
-            name='note',
+            model_name="staticscanresultsdb",
+            name="note",
             field=models.TextField(blank=True, null=True),
         ),
     ]

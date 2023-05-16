@@ -16,8 +16,8 @@
 #
 # This file is part of ArcherySec Project.
 
-import importlib
 import glob
+import importlib
 import os
 
 from django.template.defaulttags import register
@@ -27,8 +27,8 @@ parser_function_dict = {}
 # Import all modules in the scanner_parser folder
 module_paths = glob.glob("./scanners/scanner_parser/*/*.py", recursive=True)
 for module_path in module_paths:
-    if os.path.basename(module_path) != '__init__.py':
-        module_name = os.path.normpath(module_path).split('.py')[0].replace("/", ".")
+    if os.path.basename(module_path) != "__init__.py":
+        module_name = os.path.normpath(module_path).split(".py")[0].replace("/", ".")
         module_id = importlib.import_module(module_name)
         parser_function_dict.update(module_id.parser_header_dict)
 
@@ -65,7 +65,7 @@ for parser_code in parser_function_dict:
 # Django specific definitions
 def parser_dict(request):
     # return the value you want as a dictionnary. you may add multiple values in there.
-    return {'PARSER_DICT': icon_dict}
+    return {"PARSER_DICT": icon_dict}
 
 
 @register.filter

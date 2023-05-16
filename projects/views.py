@@ -84,14 +84,16 @@ class ProjectList(APIView):
             serialized_data = ProjectDataSerializers(projects, many=True)
         else:
             try:
-                projects = ProjectDb.objects.filter(uu_id=uu_id, organization=request.user.organization)
+                projects = ProjectDb.objects.filter(
+                    uu_id=uu_id, organization=request.user.organization
+                )
                 serialized_data = ProjectDataSerializers(projects, many=True)
             except ProjectDb.DoesNotExist:
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             return Response(serialized_data.data)
         else:
             return Response({"serializer": serialized_data, "projects": projects})
@@ -106,7 +108,9 @@ class ProjectDelete(APIView):
     def post(self, request):
         try:
             project_id = request.data.get("project_id")
-            projects = ProjectDb.objects.filter(uu_id=project_id, organization=request.user.organization)
+            projects = ProjectDb.objects.filter(
+                uu_id=project_id, organization=request.user.organization
+            )
             projects.delete()
             return HttpResponseRedirect("/dashboard/")
         except ProjectDb.DoesNotExist:
@@ -167,7 +171,9 @@ class ProjectCreate(APIView):
             low_static=0,
         )
         project.save()
-        all_month_data_display = MonthDb.objects.filter(organization=request.user.organization)
+        all_month_data_display = MonthDb.objects.filter(
+            organization=request.user.organization
+        )
 
         if len(all_month_data_display) == 0:
             save_months_data = MonthDb(

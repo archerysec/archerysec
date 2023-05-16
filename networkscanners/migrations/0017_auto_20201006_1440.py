@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("networkscanners", "0016_auto_20201006_1434"),
     ]

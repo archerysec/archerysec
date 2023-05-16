@@ -24,16 +24,17 @@ from django.urls import reverse
 from jira import JIRA
 from notifications.models import Notification
 from notifications.signals import notify
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.views import APIView
-from rest_framework import status
-
-from jiraticketing.models import jirasetting
-from cloudscanners.models import CloudScansDb, CloudScansResultsDb
-from user_management import permissions
 from rest_framework.response import Response
-from cloudscanners.serializers import CloudScanResultsDbSerializer, CloudScanDbSerializer
+from rest_framework.views import APIView
+
+from cloudscanners.models import CloudScansDb, CloudScansResultsDb
+from cloudscanners.serializers import (CloudScanDbSerializer,
+                                       CloudScanResultsDbSerializer)
+from jiraticketing.models import jirasetting
+from user_management import permissions
 
 
 class CloudScanList(APIView):
@@ -43,7 +44,7 @@ class CloudScanList(APIView):
         scan_list = CloudScansDb.objects.filter(organization=request.user.organization)
         all_notify = Notification.objects.unread()
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             serialized_data = CloudScanDbSerializer(scan_list, many=True)
             return Response(serialized_data.data)
         else:
@@ -68,16 +69,20 @@ class CloudScanVulnInfo(APIView):
         if uu_id is None:
             scan_id = request.GET["scan_id"]
             scan_name = request.GET["scan_name"]
-            vuln_data = CloudScansResultsDb.objects.filter(scan_id=scan_id, title=scan_name,
-                                                           organization=request.user.organization)
+            vuln_data = CloudScansResultsDb.objects.filter(
+                scan_id=scan_id, title=scan_name, organization=request.user.organization
+            )
         else:
             try:
-                vuln_data = CloudScansResultsDb.objects.filter(scan_id=uu_id, organization=request.user.organization)
+                vuln_data = CloudScansResultsDb.objects.filter(
+                    scan_id=uu_id, organization=request.user.organization
+                )
             except Exception:
                 return Response(
-                    {"message": "Scan Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+                    {"message": "Scan Id Doesn't Exist"},
+                    status=status.HTTP_404_NOT_FOUND,
                 )
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             serialized_data = CloudScanResultsDbSerializer(vuln_data, many=True)
             return Response(serialized_data.data)
         else:
@@ -101,10 +106,9 @@ class CloudScanVulnMark(APIView):
         scan_id = request.POST.get("scan_id")
         vuln_name = request.POST.get("vuln_name")
         notes = request.POST.get("note")
-        CloudScansResultsDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id,
-                                           organization=request.user.organization).update(
-            false_positive=false_positive, vuln_status=status, note=notes
-        )
+        CloudScansResultsDb.objects.filter(
+            vuln_id=vuln_id, scan_id=scan_id, organization=request.user.organization
+        ).update(false_positive=false_positive, vuln_status=status, note=notes)
 
         if false_positive == "Yes":
             vuln_info = CloudScansResultsDb.objects.filter(
@@ -115,22 +119,32 @@ class CloudScanVulnMark(APIView):
                 cloud_account_id = vi.cloudAccountId
                 resource_id = vi.resourceId
                 severity = vi.severity
-                dup_data = str(policy_name) + str(severity) + str(cloud_account_id) + str(resource_id)
+                dup_data = (
+                    str(policy_name)
+                    + str(severity)
+                    + str(cloud_account_id)
+                    + str(resource_id)
+                )
 
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
                 CloudScansResultsDb.objects.filter(
-                    vuln_id=vuln_id, scan_id=scan_id, organization=request.user.organization
+                    vuln_id=vuln_id,
+                    scan_id=scan_id,
+                    organization=request.user.organization,
                 ).update(
                     false_positive=false_positive,
                     vuln_status="Closed",
                     false_positive_hash=false_positive_hash,
-                    note=notes
+                    note=notes,
                 )
 
         all_vuln = CloudScansResultsDb.objects.filter(
-            scan_id=scan_id, false_positive="No", vuln_status="Open", organization=request.user.organization
+            scan_id=scan_id,
+            false_positive="No",
+            vuln_status="Open",
+            organization=request.user.organization,
         )
 
         total_high = len(all_vuln.filter(severity="High"))
@@ -140,7 +154,9 @@ class CloudScanVulnMark(APIView):
         total_dup = len(all_vuln.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low + total_info
 
-        CloudScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+        CloudScansDb.objects.filter(
+            scan_id=scan_id, organization=request.user.organization
+        ).update(
             total_vul=total_vul,
             high_vul=total_high,
             medium_vul=total_medium,
@@ -182,12 +198,17 @@ class CloudScanDetails(APIView):
 
         options = {"server": jira_server}
         try:
-
             if jira_username is not None and jira_username != "":
-                jira_ser = JIRA(options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
+                jira_ser = JIRA(
+                    options,
+                    basic_auth=(jira_username, jira_password),
+                    max_retries=0,
+                    timeout=30,
                 )
             else:
-                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
+                jira_ser = JIRA(
+                    options, token_auth=jira_password, max_retries=0, timeout=30
+                )
 
             jira_projects = jira_ser.projects()
         except Exception as e:
@@ -195,9 +216,9 @@ class CloudScanDetails(APIView):
             jira_projects = None
             # notify.send(user, recipient=user, verb="Jira settings not found")
 
-        vul_dat = CloudScansResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).order_by(
-            "vuln_id"
-        )
+        vul_dat = CloudScansResultsDb.objects.filter(
+            vuln_id=vuln_id, organization=request.user.organization
+        ).order_by("vuln_id")
 
         return render(
             request,
@@ -226,9 +247,13 @@ class CloudScanDelete(APIView):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = CloudScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+            item = CloudScansDb.objects.filter(
+                scan_id=scan_id, organization=request.user.organization
+            )
             item.delete()
-            item_results = CloudScansResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+            item_results = CloudScansResultsDb.objects.filter(
+                scan_id=scan_id, organization=request.user.organization
+            )
             item_results.delete()
         return HttpResponseRedirect(reverse("cloudscanners:list_scans"))
 
@@ -250,9 +275,13 @@ class CloudScanVulnDelete(APIView):
         # print "split_length", split_length
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
-            delete_vuln = CloudScansResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization)
+            delete_vuln = CloudScansResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            )
             delete_vuln.delete()
-        all_vuln = CloudScansResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+        all_vuln = CloudScansResultsDb.objects.filter(
+            scan_id=scan_id, organization=request.user.organization
+        )
 
         total_vul = len(all_vuln)
         total_critical = len(all_vuln.filter(severity="Critical"))
@@ -261,7 +290,9 @@ class CloudScanVulnDelete(APIView):
         total_low = len(all_vuln.filter(severity="Low"))
         total_info = len(all_vuln.filter(severity="Information"))
 
-        CloudScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+        CloudScansDb.objects.filter(
+            scan_id=scan_id, organization=request.user.organization
+        ).update(
             total_vul=total_vul,
             critical_vul=total_critical,
             high_vul=total_high,
@@ -282,15 +313,22 @@ class CloudScanVulnList(APIView):
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
-        all_vuln = CloudScansResultsDb.objects.filter(scan_id=scan_id,
-                                                      organization=request.user.organization).distinct().values('title',
-                                                                                                                'severity',
-                                                                                                                'vuln_status',
-                                                                                                                'severity_color',
-                                                                                                                'scanner',
-                                                                                                                'note',
-                                                                                                                'scan_id').exclude(
-            vuln_status='Duplicate')
+        all_vuln = (
+            CloudScansResultsDb.objects.filter(
+                scan_id=scan_id, organization=request.user.organization
+            )
+            .distinct()
+            .values(
+                "title",
+                "severity",
+                "vuln_status",
+                "severity_color",
+                "scanner",
+                "note",
+                "scan_id",
+            )
+            .exclude(vuln_status="Duplicate")
+        )
         # all_vuln = CloudScansResultsDb.objects.all()
 
         return render(

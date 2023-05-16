@@ -18,7 +18,7 @@
                     $.ajax({
                         type: 'POST',
                         <!--contentType: 'application/json; charset=utf-8',-->
-                        url: '{% url 'list_org' %}',
+                        url: '{% url 'users:list_org' %}',
                         data: {
                             org_id: json_scanid,
                             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
@@ -43,7 +43,7 @@
                 <div class="card-body">
                     <div class="float-right">
 {#                        <button type="button" class="btn btn-danger btn-mini" onclick="">Delete Selected </button>#}
-                        <a type="button" href="{% url 'add_org' %}" class="btn btn-success btn-mini">Add Organization </a>
+                        <a type="button" href="{% url 'users:add_org' %}" class="btn btn-success btn-mini">Add Organization </a>
                     </div>
 
                     <br>
@@ -79,7 +79,7 @@
                                                 </label>
                                             </form>
                                         </td>
-                                        <td><a href="{% url 'edit_org' uu_id=data.uu_id %}">{{ data.name }} </a></td>
+                                        <td><a href="{% url 'users:edit_org' uu_id=data.uu_id %}">{{ data.name }} </a></td>
                                         <td>{{ data.token_time }}</td>
 
                                     </tr>

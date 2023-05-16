@@ -21,7 +21,7 @@ from user_management.models import UserProfile
 
 
 class UserLoginHistory(models.Model):
-    """ Class for User Login History """
+    """Class for User Login History"""
 
     class Meta:
         db_table = "user_login_history"

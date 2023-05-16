@@ -18,7 +18,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils import timezone
-from user_management.models import UserProfile, Organization
+
+from user_management.models import Organization, UserProfile
 
 
 class CicdDb(models.Model):
@@ -51,18 +52,21 @@ class CicdDb(models.Model):
     medium_vul = models.IntegerField(blank=True, null=True)
     low_vul = models.IntegerField(blank=True, null=True)
     info_vul = models.IntegerField(blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='cicd_db_created'
+        related_name="cicd_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='cicd_db_updated'
+        related_name="cicd_db_updated",
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -71,18 +75,21 @@ class CicdDb(models.Model):
 class ScannerCommand(models.Model):
     scanner = models.CharField(max_length=50, blank=True)
     command = models.TextField(blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='scanner_command_db_created'
+        related_name="scanner_command_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='scanner_command_db_updated'
+        related_name="scanner_command_db_updated",
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)

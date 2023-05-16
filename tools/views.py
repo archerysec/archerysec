@@ -56,7 +56,9 @@ class SslScanList(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        all_sslscan = SslscanResultDb.objects.filter(organization=request.user.organization)
+        all_sslscan = SslscanResultDb.objects.filter(
+            organization=request.user.organization
+        )
 
         return render(request, "tools/sslscan_list.html", {"all_sslscan": all_sslscan})
 
@@ -95,7 +97,7 @@ class SslScanLaunch(APIView):
                 scan_id=scan_id,
                 project_id=project_id,
                 sslscan_output=sslscan_output,
-                organization=request.user.organization
+                organization=request.user.organization,
             )
 
             dump_scans.save()
@@ -110,7 +112,9 @@ class SslScanResult(APIView):
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
-        scan_result = SslscanResultDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+        scan_result = SslscanResultDb.objects.filter(
+            scan_id=scan_id, organization=request.user.organization
+        )
         return render(
             request, "tools/sslscan_result.html", {"scan_result": scan_result}
         )
@@ -133,7 +137,9 @@ class SslScanDelete(APIView):
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
-            del_scan = SslscanResultDb.objects.filter(scan_id=vuln_id, organization=request.user.organization)
+            del_scan = SslscanResultDb.objects.filter(
+                scan_id=vuln_id, organization=request.user.organization
+            )
             del_scan.delete()
 
         return HttpResponseRedirect(reverse("tools:sslscan"))
@@ -179,14 +185,13 @@ class NiktoScanLaunch(APIView):
                 project_id=project_id,
                 date_time=date_time,
                 nikto_status="Scan Started",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
 
             dump_scans.save()
             HttpResponseRedirect(reverse("tools:nikto"))
 
             try:
-
                 nikto_output = subprocess.check_output(
                     [
                         "nikto",
@@ -244,9 +249,9 @@ class NiktoScanLaunch(APIView):
                             scan_id,
                         )
                         notify.send(user, recipient=user, verb="Nikto Scan Completed")
-                        NiktoResultDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
-                            nikto_status="Scan Completed"
-                        )
+                        NiktoResultDb.objects.filter(
+                            scan_id=scan_id, organization=request.user.organization
+                        ).update(nikto_status="Scan Completed")
                     except Exception as e:
                         print(e)
 
@@ -264,7 +269,9 @@ class NiktoScanResult(APIView):
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
-        scan_result = NiktoResultDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+        scan_result = NiktoResultDb.objects.filter(
+            scan_id=scan_id, organization=request.user.organization
+        )
 
         return render(
             request, "tools/nikto_scan_result.html", {"scan_result": scan_result}
@@ -279,7 +286,9 @@ class NiktoResultVuln(APIView):
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
-        scan_result = NiktoVulnDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+        scan_result = NiktoVulnDb.objects.filter(
+            scan_id=scan_id, organization=request.user.organization
+        )
 
         vuln_data = NiktoVulnDb.objects.filter(
             scan_id=scan_id,
@@ -287,11 +296,17 @@ class NiktoResultVuln(APIView):
         )
 
         vuln_data_close = NiktoVulnDb.objects.filter(
-            scan_id=scan_id, false_positive="No", vuln_status="Closed",
-            organization=request.user.organization
+            scan_id=scan_id,
+            false_positive="No",
+            vuln_status="Closed",
+            organization=request.user.organization,
         )
 
-        false_data = NiktoVulnDb.objects.filter(scan_id=scan_id, false_positive="Yes", organization=request.user.organization)
+        false_data = NiktoVulnDb.objects.filter(
+            scan_id=scan_id,
+            false_positive="Yes",
+            organization=request.user.organization,
+        )
 
         return render(
             request,
@@ -310,12 +325,15 @@ class NiktoResultVuln(APIView):
         vuln_id = request.POST.get("vuln_id")
         scan_id = request.POST.get("scan_id")
         NiktoVulnDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id).update(
-            false_positive=false_positive, vuln_status=status,
-            organization=request.user.organization
+            false_positive=false_positive,
+            vuln_status=status,
+            organization=request.user.organization,
         )
 
         if false_positive == "Yes":
-            vuln_info = NiktoVulnDb.objects.filter(scan_id=scan_id, vuln_id=vuln_id, organization=request.user.organization)
+            vuln_info = NiktoVulnDb.objects.filter(
+                scan_id=scan_id, vuln_id=vuln_id, organization=request.user.organization
+            )
             for vi in vuln_info:
                 discription = vi.discription
                 hostname = vi.hostname
@@ -323,7 +341,11 @@ class NiktoResultVuln(APIView):
                 false_positive_hash = hashlib.sha256(
                     dup_data.encode("utf-8")
                 ).hexdigest()
-                NiktoVulnDb.objects.filter(vuln_id=vuln_id, scan_id=scan_id, organization=request.user.organization).update(
+                NiktoVulnDb.objects.filter(
+                    vuln_id=vuln_id,
+                    scan_id=scan_id,
+                    organization=request.user.organization,
+                ).update(
                     false_positive=false_positive,
                     vuln_status=status,
                     false_positive_hash=false_positive_hash,
@@ -370,9 +392,13 @@ class NiktoScanDelete(APIView):
         for i in range(0, split_length):
             _scan_id = value_split.__getitem__(i)
 
-            del_scan = NiktoResultDb.objects.filter(scan_id=_scan_id, organization=request.user.organization)
+            del_scan = NiktoResultDb.objects.filter(
+                scan_id=_scan_id, organization=request.user.organization
+            )
             del_scan.delete()
-            del_scan = NiktoVulnDb.objects.filter(scan_id=_scan_id, organization=request.user.organization)
+            del_scan = NiktoVulnDb.objects.filter(
+                scan_id=_scan_id, organization=request.user.organization
+            )
             del_scan.delete()
 
         return HttpResponseRedirect(reverse("tools:nikto"))
@@ -399,7 +425,9 @@ class Nmap(APIView):
     def get(self, request):
         ip_address = request.GET["ip"]
 
-        all_nmap = NmapResultDb.objects.filter(ip_address=ip_address, organization=request.user.organization)
+        all_nmap = NmapResultDb.objects.filter(
+            ip_address=ip_address, organization=request.user.organization
+        )
 
         return render(request, "tools/nmap_list.html", {"all_nmap": all_nmap})
 
@@ -451,7 +479,9 @@ class NmapResult(APIView):
 
     def get(self, request):
         scan_id = request.GET["scan_id"]
-        scan_result = NmapResultDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+        scan_result = NmapResultDb.objects.filter(
+            scan_id=scan_id, organization=request.user.organization
+        )
 
         return render(request, "tools/nmap_result.html", {"scan_result": scan_result})
 
@@ -473,9 +503,13 @@ class NmapScanDelete(APIView):
         for i in range(0, split_length):
             vuln_id = value_split.__getitem__(i)
 
-            del_scan = NmapResultDb.objects.filter(ip_address=vuln_id, organization=request.user.organization)
+            del_scan = NmapResultDb.objects.filter(
+                ip_address=vuln_id, organization=request.user.organization
+            )
             del_scan.delete()
-            del_scan = NmapScanDb.objects.filter(scan_ip=vuln_id, organization=request.user.organization)
+            del_scan = NmapScanDb.objects.filter(
+                scan_ip=vuln_id, organization=request.user.organization
+            )
             del_scan.delete()
 
         return HttpResponseRedirect(reverse("tools:nmap_scan"))

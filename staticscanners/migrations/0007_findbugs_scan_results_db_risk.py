@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0006_findbugs_scan_results_db_priority"),
     ]

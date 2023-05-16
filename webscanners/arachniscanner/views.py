@@ -31,8 +31,8 @@ from django.urls import reverse
 from notifications.signals import notify
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import PyArachniapi
 from archerysettings.models import ArachniSettingsDb, SettingsDb
@@ -40,9 +40,10 @@ from jiraticketing.models import jirasetting
 from projects.models import ProjectDb
 from scanners.scanner_parser.web_scanner import arachni_xml_parser
 from user_management import permissions
+from webscanners.arachniscanner.serializers import (ArachniScansSerializer,
+                                                    ArachniSettingsSerializer)
 from webscanners.models import WebScanResultsDb, WebScansDb
 from webscanners.resources import ArachniResource
-from webscanners.arachniscanner.serializers import ArachniScansSerializer, ArachniSettingsSerializer
 
 scan_run_id = ""
 scan_status = ""
@@ -178,14 +179,14 @@ def launch_arachni_scan(target, project_id, rescan_id, rescan, scan_id, user):
     while scan_status != "done":
         status = "0"
         if (
-                scan_sum["statistics"]["browser_cluster"]["queued_job_count"]
-                and scan_sum["statistics"]["browser_cluster"]["total_job_time"]
+            scan_sum["statistics"]["browser_cluster"]["queued_job_count"]
+            and scan_sum["statistics"]["browser_cluster"]["total_job_time"]
         ):
             status = (
-                    100
-                    - scan_sum["statistics"]["browser_cluster"]["queued_job_count"]
-                    * 100
-                    / scan_sum["statistics"]["browser_cluster"]["total_job_time"]
+                100
+                - scan_sum["statistics"]["browser_cluster"]["queued_job_count"]
+                * 100
+                / scan_sum["statistics"]["browser_cluster"]["total_job_time"]
             )
         WebScansDb.objects.filter(scan_id=scan_id, scanner="Arachni").update(
             scan_status=int(status)
@@ -224,7 +225,7 @@ class ArachniScan(APIView):
         target_url = None
 
         user = request.user
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             serializer = ArachniScansSerializer(data=request.data)
             if serializer.is_valid():
                 target_url = request.data.get(
@@ -255,10 +256,10 @@ class ArachniScan(APIView):
             thread.daemon = True
             thread.start()
 
-            if request.path[: 4] == '/api':
+            if request.path[:4] == "/api":
                 return Response({"scan_id": scan_id})
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             return Response({"scan_id": scan_id})
         else:
             return render(request, "webscanners/scans/list_scans.html")
@@ -281,12 +282,15 @@ class ArachniSetting(APIView):
             arachni_user = arachni.arachni_user
             arachni_pass = arachni.arachni_pass
 
-        if request.path[: 4] == '/api':
-            return Response({"arachni_host": arachni_hosts,
-                             "arachni_port": arachni_ports,
-                             "arachni_user": arachni_user,
-                             "arachni_pass": arachni_pass,
-                             })
+        if request.path[:4] == "/api":
+            return Response(
+                {
+                    "arachni_host": arachni_hosts,
+                    "arachni_port": arachni_ports,
+                    "arachni_user": arachni_user,
+                    "arachni_pass": arachni_pass,
+                }
+            )
         else:
             return render(
                 request,
@@ -313,7 +317,7 @@ class ArachniSettingUpdate(APIView):
         user = None
         password = None
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             serializer = ArachniSettingsSerializer(data=request.data)
             if serializer.is_valid():
                 arachnihost = request.data.get(
@@ -385,7 +389,7 @@ class ArachniSettingUpdate(APIView):
                 setting_status=arachni_info
             )
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             return Response({"message": "Arachani scanner updated!!!"})
         else:
             return HttpResponseRedirect(reverse("archerysettings:settings"))
@@ -412,18 +416,18 @@ def export(request):
         if report_type == "csv":
             response = HttpResponse(dataset.csv, content_type="text/csv")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.csv"' % "arachni_results"
+                'attachment; filename="%s.csv"' % "arachni_results"
             )
             return response
         if report_type == "json":
             response = HttpResponse(dataset.json, content_type="application/json")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.json"' % "arachni_results"
+                'attachment; filename="%s.json"' % "arachni_results"
             )
             return response
         if report_type == "yaml":
             response = HttpResponse(dataset.yaml, content_type="application/x-yaml")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.yaml"' % "arachni_results"
+                'attachment; filename="%s.yaml"' % "arachni_results"
             )
             return response

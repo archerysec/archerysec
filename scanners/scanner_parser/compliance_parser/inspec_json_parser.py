@@ -101,31 +101,48 @@ def inspec_report_json(data, project_id, scan_id, request):
                             controls_results_run_time=controls_results_run_time,
                             controls_results_start_time=controls_results_start_time,
                             controls_results_message=controls_results_message,
-                            organization=request.user.organization
+                            organization=request.user.organization,
                         )
                         save_all.save()
 
-            all_inspec_data = InspecScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+            all_inspec_data = InspecScanResultsDb.objects.filter(
+                scan_id=scan_id, organization=request.user.organization
+            )
 
             total_vul = len(all_inspec_data)
             inspec_failed = len(
-                all_inspec_data.filter(controls_results_status="Failed", organization=request.user.organization)
+                all_inspec_data.filter(
+                    controls_results_status="Failed",
+                    organization=request.user.organization,
+                )
             )
             inspec_passed = len(
-                all_inspec_data.filter(controls_results_status="Passed", organization=request.user.organization)
+                all_inspec_data.filter(
+                    controls_results_status="Passed",
+                    organization=request.user.organization,
+                )
             )
             inspec_skipped = len(
-                all_inspec_data.filter(controls_results_status="Skipped", organization=request.user.organization)
+                all_inspec_data.filter(
+                    controls_results_status="Skipped",
+                    organization=request.user.organization,
+                )
             )
-            total_duplicate = len(all_inspec_data.filter(vuln_duplicate="Yes", organization=request.user.organization))
+            total_duplicate = len(
+                all_inspec_data.filter(
+                    vuln_duplicate="Yes", organization=request.user.organization
+                )
+            )
 
-            InspecScanDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+            InspecScanDb.objects.filter(
+                scan_id=scan_id, organization=request.user.organization
+            ).update(
                 total_vuln=total_vul,
                 inspec_failed=inspec_failed,
                 inspec_passed=inspec_passed,
                 inspec_skipped=inspec_skipped,
                 total_dup=total_duplicate,
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             subject = "Archery Tool Scan Status - Inspec Report Uploaded"
             message = (
@@ -144,6 +161,6 @@ parser_header_dict = {
         "dbtype": "InspecScan",
         "type": "JSON",
         "parserFunction": inspec_report_json,
-        "icon": "/static/tools/inspec.png"
+        "icon": "/static/tools/inspec.png",
     }
 }

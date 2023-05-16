@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "archeryapi",
     "networkscanners",
     "staticscanners",
-    'cloudscanners',
+    "cloudscanners",
     "jiraticketing",
     "cicd",
     "tools",
@@ -175,7 +175,7 @@ STRONGHOLD_PUBLIC_URLS = (
     r"^/admin.*?$",  # Don't touch the admin pages
     r"^/accounts/login/$",  # Avoid redirect loop
     r"^/api.*?$",
-    r"^/o.*?$",
+    r"^/api/v1/activate/$" r"^/o.*?$",
 )
 
 LOGIN_URL = "/auth/login/"
@@ -187,7 +187,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
@@ -218,7 +218,7 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 DJANGO_NOTIFICATIONS_CONFIG = {"SOFT_DELETE": True}
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -228,7 +228,7 @@ EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 LOGGING = {
     "version": 1,

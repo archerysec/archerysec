@@ -50,9 +50,10 @@ def vuls_report_json(data, project_id, scan_id, request):
     targetHost = data["config"]["scan"]["servers"]["target"]["host"]
 
     for _, vuln_scanned in vulns.items():  # For each scanned item...
-        for _, cveContentType in vuln_scanned["cveContents"].items():  # For each content type...
+        for _, cveContentType in vuln_scanned[
+            "cveContents"
+        ].items():  # For each content type...
             for vuln_data in cveContentType:  # For all elements...
-
                 # First get all the fields common to all affected packages
                 try:
                     description = vuln_data["summary"]
@@ -93,7 +94,11 @@ def vuls_report_json(data, project_id, scan_id, request):
                 elif severity == "Low":
                     vul_col = "info"
 
-                elif severity == "Unknown" or severity == "Everything else" or severity == "None":
+                elif (
+                    severity == "Unknown"
+                    or severity == "Everything else"
+                    or severity == "None"
+                ):
                     severity = "Low"
                     vul_col = "info"
 
@@ -129,18 +134,21 @@ def vuls_report_json(data, project_id, scan_id, request):
 
                     dup_data = str(cve) + str(severity) + str(packname)
 
-                    duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
+                    duplicate_hash = hashlib.sha256(
+                        dup_data.encode("utf-8")
+                    ).hexdigest()
 
-                    match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
-                        "dup_hash"
-                    )
+                    match_dup = StaticScanResultsDb.objects.filter(
+                        dup_hash=duplicate_hash, organization=request.user.organization
+                    ).values("dup_hash")
                     lenth_match = len(match_dup)
 
                     if lenth_match == 0:
                         duplicate_vuln = "No"
 
                         false_p = StaticScanResultsDb.objects.filter(
-                            false_positive_hash=duplicate_hash, organization=request.user.organization
+                            false_positive_hash=duplicate_hash,
+                            organization=request.user.organization,
                         )
                         fp_lenth_match = len(false_p)
 
@@ -166,7 +174,7 @@ def vuls_report_json(data, project_id, scan_id, request):
                             false_positive=false_positive,
                             scanner="Vuls",
                             references=sourceRef,
-                            organization=request.user.organization
+                            organization=request.user.organization,
                         )
                         save_all.save()
                     else:
@@ -189,12 +197,15 @@ def vuls_report_json(data, project_id, scan_id, request):
                             false_positive="Duplicate",
                             scanner="Vuls",
                             references=sourceRef,
-                            organization=request.user.organization
+                            organization=request.user.organization,
                         )
                         save_all.save()
 
     all_findbugs_data = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", vuln_duplicate="No", organization=request.user.organization
+        scan_id=scan_id,
+        false_positive="No",
+        vuln_duplicate="No",
+        organization=request.user.organization,
     )
 
     duplicate_count = StaticScanResultsDb.objects.filter(
@@ -207,7 +218,9 @@ def vuls_report_json(data, project_id, scan_id, request):
     total_low = len(all_findbugs_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    StaticScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+    StaticScansDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    ).update(
         date_time=date_time,
         total_vul=total_vul,
         high_vul=total_high,
@@ -215,7 +228,7 @@ def vuls_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Vuls",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - Vuls Report Uploaded"
@@ -236,6 +249,6 @@ parser_header_dict = {
         "dbname": "Vuls",
         "type": "JSON",
         "parserFunction": vuls_report_json,
-        "icon": "/static/tools/vuls.png"
+        "icon": "/static/tools/vuls.png",
     }
 }

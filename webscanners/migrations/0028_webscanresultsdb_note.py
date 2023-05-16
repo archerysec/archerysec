@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('webscanners', '0027_web_scan_db_critical_vul'),
+        ("webscanners", "0027_web_scan_db_critical_vul"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='webscanresultsdb',
-            name='note',
+            model_name="webscanresultsdb",
+            name="note",
             field=models.TextField(blank=True, null=True),
         ),
     ]

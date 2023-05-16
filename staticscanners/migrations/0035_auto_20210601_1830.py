@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0034_brakeman_scan_db_brakeman_scan_results_db"),
     ]

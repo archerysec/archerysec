@@ -178,7 +178,10 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                             dup_data.encode("utf-8")
                         ).hexdigest()
                         match_dup = (
-                            NetworkScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
+                            NetworkScanResultsDb.objects.filter(
+                                dup_hash=duplicate_hash,
+                                organization=request.user.organization,
+                            )
                             .values("dup_hash")
                             .distinct()
                         )
@@ -189,7 +192,8 @@ def updated_nessus_parser(root, project_id, scan_id, request):
 
                             global false_positive
                             false_p = NetworkScanResultsDb.objects.filter(
-                                false_positive_hash=duplicate_hash, organization=request.user.organization
+                                false_positive_hash=duplicate_hash,
+                                organization=request.user.organization,
                             )
                             fp_lenth_match = len(false_p)
                             if fp_lenth_match == 1:
@@ -216,7 +220,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                                 vuln_duplicate=duplicate_vuln,
                                 severity_color=vuln_color,
                                 scanner="Nessus",
-                                organization=request.user.organization
+                                organization=request.user.organization,
                             )
                             all_data_save.save()
 
@@ -240,7 +244,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                                 vuln_duplicate=duplicate_vuln,
                                 severity_color=vuln_color,
                                 scanner="Nessus",
-                                organization=request.user.organization
+                                organization=request.user.organization,
                             )
                             all_data_save.save()
             except Exception:
@@ -253,20 +257,26 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                         ip=target,
                         vuln_status="Open",
                         vuln_duplicate="No",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
 
                     duplicate_count = NetworkScanResultsDb.objects.filter(
-                        ip=target, vuln_duplicate="Yes", organization=request.user.organization
+                        ip=target,
+                        vuln_duplicate="Yes",
+                        organization=request.user.organization,
                     )
 
                     target_total_vuln = len(target_filter)
-                    target_total_critical = len(target_filter.filter(severity="Critical"))
+                    target_total_critical = len(
+                        target_filter.filter(severity="Critical")
+                    )
                     target_total_high = len(target_filter.filter(severity="High"))
                     target_total_medium = len(target_filter.filter(severity="Medium"))
                     target_total_low = len(target_filter.filter(severity="Low"))
                     target_total_duplicate = len(
-                        duplicate_count.filter(vuln_duplicate="Yes", organization=request.user.organization)
+                        duplicate_count.filter(
+                            vuln_duplicate="Yes", organization=request.user.organization
+                        )
                     )
                     NetworkScanDb.objects.filter(ip=target).update(
                         date_time=date_time,
@@ -276,7 +286,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                         medium_vul=target_total_medium,
                         low_vul=target_total_low,
                         total_dup=target_total_duplicate,
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
             except Exception:
                 continue
@@ -298,6 +308,6 @@ parser_header_dict = {
         "dbtype": "Nessus",
         "type": "Nessus",
         "parserFunction": updated_nessus_parser,
-        "icon": "/static/tools/nessus.png"
+        "icon": "/static/tools/nessus.png",
     }
 }

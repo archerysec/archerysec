@@ -14,14 +14,14 @@
 #
 # This file is part of ArcherySec Project.
 
+import csv
 import hashlib
 import uuid
 from datetime import datetime
 
-from dashboard.views import trend_update
 from cloudscanners.models import CloudScansDb, CloudScansResultsDb
+from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
-import csv
 
 vul_col = ""
 Target = ""
@@ -41,13 +41,13 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
     recommendation = "na"
     vul_col = "na"
     date_time = datetime.now()
-    cloud_account_id = data['account_id']
-    cloud_account_name = data['account_id']
-    cloud_type = data['provider_name']
-    for key, value in data['services'].items():
-        findings = data['services'][key]['findings']
+    cloud_account_id = data["account_id"]
+    cloud_account_name = data["account_id"]
+    cloud_type = data["provider_name"]
+    for key, value in data["services"].items():
+        findings = data["services"][key]["findings"]
         for finding_key, finding_value in findings.items():
-            flagged = findings[finding_key]['flagged_items']
+            flagged = findings[finding_key]["flagged_items"]
             if flagged != 0:
                 vuln = findings[finding_key]
                 title = vuln["description"]
@@ -81,20 +81,26 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
 
                 vul_id = uuid.uuid4()
 
-                dup_data = str(title) + str(severity) + str(cloud_account_id) + str(resource_id)
+                dup_data = (
+                    str(title)
+                    + str(severity)
+                    + str(cloud_account_id)
+                    + str(resource_id)
+                )
 
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-                match_dup = CloudScansResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
-                    "dup_hash"
-                )
+                match_dup = CloudScansResultsDb.objects.filter(
+                    dup_hash=duplicate_hash, organization=request.user.organization
+                ).values("dup_hash")
                 lenth_match = len(match_dup)
 
                 if lenth_match == 0:
                     duplicate_vuln = "No"
 
                     false_p = CloudScansResultsDb.objects.filter(
-                        false_positive_hash=duplicate_hash, organization=request.user.organization
+                        false_positive_hash=duplicate_hash,
+                        organization=request.user.organization,
                     )
                     fp_lenth_match = len(false_p)
 
@@ -121,19 +127,19 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
                         solution=recommendation,
                         severity=severity,
                         description=str(description)
-                                    + "\n\n"
-                                    + str(path)
-                                    + "\n\n"
-                                    + str(cloud_account_name)
-                                    + "\n\n"
-                                    + str(region)
-                                    + "\n\n"
-                                    + str(created_at)
-                                    + "\n\n"
-                                    + str(compliance),
+                        + "\n\n"
+                        + str(path)
+                        + "\n\n"
+                        + str(cloud_account_name)
+                        + "\n\n"
+                        + str(region)
+                        + "\n\n"
+                        + str(created_at)
+                        + "\n\n"
+                        + str(compliance),
                         references=references,
                         scanner="scoutsuite",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     save_all.save()
 
@@ -157,19 +163,19 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
                         solution=recommendation,
                         severity=severity,
                         description=str(description)
-                                    + "\n\n"
-                                    + str(path)
-                                    + "\n\n"
-                                    + str(cloud_account_name)
-                                    + "\n\n"
-                                    + str(region)
-                                    + "\n\n"
-                                    + str(created_at)
-                                    + "\n\n"
-                                    + str(compliance),
+                        + "\n\n"
+                        + str(path)
+                        + "\n\n"
+                        + str(cloud_account_name)
+                        + "\n\n"
+                        + str(region)
+                        + "\n\n"
+                        + str(created_at)
+                        + "\n\n"
+                        + str(compliance),
                         references=references,
                         scanner="scoutsuite",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     save_all.save()
     all_scoutsuitecloud_data = CloudScansResultsDb.objects.filter(
@@ -187,7 +193,9 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
     total_low = len(all_scoutsuitecloud_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    CloudScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+    CloudScansDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    ).update(
         cloudAccountId=cloud_account_id,
         total_vul=total_vul,
         date_time=date_time,
@@ -197,7 +205,7 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="scoutsuite",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - scoutsuite Cloud Report Uploaded"
@@ -218,6 +226,6 @@ parser_header_dict = {
         "dbname": "scoutsuite",
         "type": "JS",
         "parserFunction": scoutsuite_cloud_report_js,
-        "icon": "/static/tools/scoutsuite.png"
+        "icon": "/static/tools/scoutsuite.png",
     }
 }

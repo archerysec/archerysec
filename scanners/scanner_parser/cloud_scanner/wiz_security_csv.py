@@ -14,14 +14,14 @@
 #
 # This file is part of ArcherySec Project.
 
+import csv
 import hashlib
 import uuid
 from datetime import datetime
 
-from dashboard.views import trend_update
 from cloudscanners.models import CloudScansDb, CloudScansResultsDb
+from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
-import csv
 
 vul_col = ""
 Target = ""
@@ -77,16 +77,17 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = CloudScansResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
-            "dup_hash"
-        )
+        match_dup = CloudScansResultsDb.objects.filter(
+            dup_hash=duplicate_hash, organization=request.user.organization
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
             false_p = CloudScansResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash, organization=request.user.organization
+                false_positive_hash=duplicate_hash,
+                organization=request.user.organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -113,19 +114,19 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
                 solution=recommendation,
                 severity=severity,
                 description=str(description)
-                            + "\n\n"
-                            + str(status)
-                            + "\n\n"
-                            + str(cloud_account_name)
-                            + "\n\n"
-                            + str(region)
-                            + "\n\n"
-                            + str(created_at)
-                            + "\n\n"
-                            + str(resource_original_json),
-                references='NA',
+                + "\n\n"
+                + str(status)
+                + "\n\n"
+                + str(cloud_account_name)
+                + "\n\n"
+                + str(region)
+                + "\n\n"
+                + str(created_at)
+                + "\n\n"
+                + str(resource_original_json),
+                references="NA",
                 scanner="wiz",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
@@ -149,19 +150,19 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
                 solution=recommendation,
                 severity=severity,
                 description=str(description)
-                            + "\n\n"
-                            + str(status)
-                            + "\n\n"
-                            + str(cloud_account_name)
-                            + "\n\n"
-                            + str(region)
-                            + "\n\n"
-                            + str(created_at)
-                            + "\n\n"
-                            + str(resource_original_json),
-                references='NA',
+                + "\n\n"
+                + str(status)
+                + "\n\n"
+                + str(cloud_account_name)
+                + "\n\n"
+                + str(region)
+                + "\n\n"
+                + str(created_at)
+                + "\n\n"
+                + str(resource_original_json),
+                references="NA",
                 scanner="wiz",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
     all_wizcloud_data = CloudScansResultsDb.objects.filter(
@@ -179,7 +180,9 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
     total_low = len(all_wizcloud_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    CloudScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+    CloudScansDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    ).update(
         cloudAccountId=cloud_account_id,
         total_vul=total_vul,
         date_time=date_time,
@@ -209,6 +212,6 @@ parser_header_dict = {
         "dbname": "wiz",
         "type": "CSV",
         "parserFunction": wiz_cloud_report_csv,
-        "icon": "/static/tools/wiz.png"
+        "icon": "/static/tools/wiz.png",
     }
 }

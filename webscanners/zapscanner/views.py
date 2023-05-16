@@ -32,17 +32,17 @@ from django.urls import reverse
 from notifications.signals import notify
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from selenium import webdriver
-from notifications.signals import notify
-from rest_framework.response import Response
 
 from archerysettings.models import EmailDb, SettingsDb, ZapSettingsDb
 from projects.models import ProjectDb
 from scanners.scanner_plugin.web_scanner import burp_plugin, zap_plugin
 from user_management import permissions
 from webscanners.models import WebScansDb, cookie_db, excluded_db
-from webscanners.zapscanner.serializers import ZapScansSerializer, ZapSettingsSerializer
+from webscanners.zapscanner.serializers import (ZapScansSerializer,
+                                                ZapSettingsSerializer)
 
 scans_status = None
 to_mail = ""
@@ -62,7 +62,7 @@ def email_notify(user, subject, message):
     try:
         send_mail(subject, message, email_from, recipient_list)
     except Exception as e:
-        notify.send(user, recipient=user, verb='Email Settings Not Configured')
+        notify.send(user, recipient=user, verb="Email Settings Not Configured")
 
 
 def email_sch_notify(subject, message):
@@ -140,7 +140,7 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user, re
             rescan=rescan,
             scan_status="0",
             scanner="Zap",
-            organization=request.user.organization
+            organization=request.user.organization,
         )
 
         save_all_scan.save()
@@ -167,9 +167,11 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user, re
         project_id=project_id,
         un_scanid=scan_id,
         target_url=target_url,
-        request=request
+        request=request,
     )
-    all_zap_scan = WebScansDb.objects.filter(scanner="zap", organization=request.user.organization)
+    all_zap_scan = WebScansDb.objects.filter(
+        scanner="zap", organization=request.user.organization
+    )
 
     total_vuln = ""
     total_high = ""
@@ -196,7 +198,9 @@ def launch_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, user, re
     email_sch_notify(subject=subject, message=message)
 
 
-def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, request):
+def launch_schudle_zap_scan(
+    target_url, project_id, rescan_id, rescan, scan_id, request
+):
     """
     The function Launch ZAP Scans.
     :param target_url: Target URL
@@ -221,7 +225,12 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, 
 
     # Load ZAP Plugin
     zap = zap_plugin.ZAPScanner(
-        target_url, project_id, rescan_id, rescan, random_port=random_port, request=request
+        target_url,
+        project_id,
+        rescan_id,
+        rescan,
+        random_port=random_port,
+        request=request,
     )
     zap.exclude_url()
     time.sleep(3)
@@ -238,7 +247,7 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, 
             rescan=rescan,
             scan_status="0",
             scanner="Zap",
-            organization=request.user.organization
+            organization=request.user.organization,
         )
 
         save_all_scan.save()
@@ -261,9 +270,11 @@ def launch_schudle_zap_scan(target_url, project_id, rescan_id, rescan, scan_id, 
         project_id=project_id,
         un_scanid=scan_id,
         target_url=target_url,
-        request=request
+        request=request,
     )
-    all_zap_scan = WebScansDb.objects.filter(scanner="zap", organization=request.user.organization)
+    all_zap_scan = WebScansDb.objects.filter(
+        scanner="zap", organization=request.user.organization
+    )
 
     total_vuln = ""
     total_high = ""
@@ -296,7 +307,7 @@ class ZapScan(APIView):
         target_url = None
         user = request.user
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             _url = None
             _project_id = None
 
@@ -313,7 +324,11 @@ class ZapScan(APIView):
             target_url = request.POST.get("url")
             project_uu_id = request.POST.get("project_id")
         project_id = (
-            ProjectDb.objects.filter(uu_id=project_uu_id, organization=request.user.organization).values("id").get()["id"]
+            ProjectDb.objects.filter(
+                uu_id=project_uu_id, organization=request.user.organization
+            )
+            .values("id")
+            .get()["id"]
         )
         rescan_id = None
         rescan = "No"
@@ -334,11 +349,11 @@ class ZapScan(APIView):
         if scans_status == "100":
             scans_status = "0"
         else:
-            if request.path[: 4] == '/api':
+            if request.path[:4] == "/api":
                 return Response({"scan_id": scan_id})
             return HttpResponse(status=200)
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             return Response({"scan_id": scan_id})
         else:
             return render(request, "webscanners/zapscanner/zap_scan_list.html")
@@ -365,12 +380,15 @@ class ZapSetting(APIView):
         else:
             zap_enabled = "False"
 
-        if request.path[: 4] == '/api':
-            return Response({"zap_api_key": zap_api_key,
-                             "zap_hosts": zap_hosts,
-                             "zap_ports": zap_ports,
-                             "zap_enabled": zap_enabled,
-                             })
+        if request.path[:4] == "/api":
+            return Response(
+                {
+                    "zap_api_key": zap_api_key,
+                    "zap_hosts": zap_hosts,
+                    "zap_ports": zap_ports,
+                    "zap_enabled": zap_enabled,
+                }
+            )
         else:
             return render(
                 request,
@@ -391,9 +409,9 @@ class ZapSettingUpdate(APIView):
         return render(request, "webscanners/zapscanner/zap_settings_form.html")
 
     def post(self, request):
-        zaphost = 'NA'
-        port = 'NA'
-        apikey = 'NA'
+        zaphost = "NA"
+        port = "NA"
+        apikey = "NA"
 
         all_zap = ZapSettingsDb.objects.filter()
         all_zap.delete()
@@ -406,7 +424,7 @@ class ZapSettingUpdate(APIView):
         else:
             zap_enabled = False
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             serializer = ZapSettingsSerializer(data=request.data)
             if serializer.is_valid():
                 apikey = request.data.get(
@@ -449,9 +467,9 @@ class ZapSettingUpdate(APIView):
         )
         save_data.save()
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             if zap_enabled is False:
-                return Response ({"message": "OWASP ZAP scanner updated!!!"})
+                return Response({"message": "OWASP ZAP scanner updated!!!"})
 
         zap_enabled = False
         random_port = "8091"
@@ -463,7 +481,7 @@ class ZapSettingUpdate(APIView):
             zap_enabled = zap.enabled
 
         if zap_enabled is False:
-            if request.path[: 4] == '/api':
+            if request.path[:4] == "/api":
                 return Response({"message": "OWASP ZAP Scanner Disabled"})
             zap_info = "Disabled"
             try:
@@ -494,14 +512,14 @@ class ZapSettingUpdate(APIView):
                 SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=zap_info
                 )
-                if request.path[: 4] == '/api':
+                if request.path[:4] == "/api":
                     return Response({"message": "OWASP ZAP scanner updated!!!"})
             except:
                 zap_info = False
                 SettingsDb.objects.filter(setting_id=setting_id).update(
                     setting_status=zap_info
                 )
-                if request.path[: 4] == '/api':
+                if request.path[:4] == "/api":
                     return Response({"message": "Not updated, Something Wrong !!!"})
 
         return HttpResponseRedirect(reverse("archerysettings:settings"))

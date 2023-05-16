@@ -28,7 +28,6 @@ from archerysettings.models import (ArachniSettingsDb, BurpSettingDb, EmailDb,
 
 class SaveSettings:
     def __init__(self, setting_file):
-
         self.setting_file = setting_file
 
     def nmap_vulners(self, enabled, version, online, timing):

@@ -24,7 +24,7 @@ from django.db import models
 
 def upload_to(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return 'user_{0}/{1}'.format(instance.user.uu_id, filename)
+    return "user_{0}/{1}".format(instance.user.uu_id, filename)
 
 
 class Organization(models.Model):
@@ -127,7 +127,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     role = models.ForeignKey("UserRoles", on_delete=models.SET_NULL, null=True)
     uu_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     pass_token = models.CharField(max_length=255, null=True)
-    token_time = models.DateTimeField(auto_now=True, null=True)
+    token_time = models.DateTimeField(null=True)
     password_updt_time = models.DateTimeField(auto_now=True, null=True)
 
     objects = UserProfileManager()

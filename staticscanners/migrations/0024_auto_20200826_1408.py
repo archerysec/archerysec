@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0023_checkmarx_scan_db_checkmarx_scan_results_db"),
     ]

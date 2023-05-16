@@ -32,18 +32,19 @@ from notifications.signals import notify
 from PyBurprestapi import burpscanner
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from archerysettings.models import BurpSettingDb, SettingsDb
 from jiraticketing.models import jirasetting
 from projects.models import ProjectDb
 from scanners.scanner_plugin.web_scanner import burp_plugin
 from user_management import permissions
+from webscanners.burpscanner.serializers import (BurpScansSerializer,
+                                                 BurpSettingsSerializer)
 from webscanners.models import (WebScanResultsDb, WebScansDb,
                                 burp_issue_definitions)
 from webscanners.resources import BurpResource
-from webscanners.burpscanner.serializers import BurpSettingsSerializer, BurpScansSerializer
 
 burp_url = None
 burp_port = None
@@ -71,11 +72,14 @@ class BurpSetting(APIView):
             burp_port = data.burp_port
             burp_api_key = data.burp_api_key
 
-        if request.path[: 4] == '/api':
-            return Response({"burp_url": burp_url,
-                             "burp_port": burp_port,
-                             "burp_api_key": burp_api_key,
-                             })
+        if request.path[:4] == "/api":
+            return Response(
+                {
+                    "burp_url": burp_url,
+                    "burp_port": burp_port,
+                    "burp_api_key": burp_api_key,
+                }
+            )
         else:
             return render(
                 request,
@@ -93,16 +97,16 @@ class BurpSetting(APIView):
         description = ""
         name = ""
         references = ""
-        burphost = 'na'
-        burport = 'na'
-        burpapikey = 'na'
+        burphost = "na"
+        burport = "na"
+        burpapikey = "na"
 
         vulnerability_classifications = ""
 
         user = request.user
         setting_id = uuid.uuid4()
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             serializer = BurpSettingsSerializer(data=request.data)
             if serializer.is_valid():
                 burpapikey = request.data.get(
@@ -180,10 +184,10 @@ class BurpSetting(APIView):
             )
             notify.send(user, recipient=user, verb="Burp Connection Not Found")
 
-            if request.path[: 4] == '/api':
+            if request.path[:4] == "/api":
                 return Response({"message": "Burp Connection Not Found"})
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             return Response({"message": "Burp scanner updated!!!"})
         else:
             return HttpResponseRedirect(reverse("archerysettings:settings"))
@@ -193,11 +197,11 @@ class BurpScanLaunch(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def post(self, request):
-        scan_id = ''
+        scan_id = ""
         project_uu_id = None
         target_url = None
         user = request.user
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             serializer = BurpScansSerializer(data=request.data)
             if serializer.is_valid():
                 target_url = request.data.get(
@@ -228,13 +232,13 @@ class BurpScanLaunch(APIView):
                 thread.start()
                 time.sleep(5)
 
-                if request.path[: 4] == '/api':
+                if request.path[:4] == "/api":
                     return Response({"scan_id": scan_id})
                 return HttpResponse(status=200)
             except Exception as e:
                 print(e)
 
-        if request.path[: 4] == '/api':
+        if request.path[:4] == "/api":
             return Response({"scan_id": scan_id})
         else:
             return render(request, "webscanners/scans/list_scans.html")
@@ -261,18 +265,18 @@ def export(request):
         if report_type == "csv":
             response = HttpResponse(dataset.csv, content_type="text/csv")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.csv"' % "burp_results"
+                'attachment; filename="%s.csv"' % "burp_results"
             )
             return response
         if report_type == "json":
             response = HttpResponse(dataset.json, content_type="application/json")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.json"' % "burp_results"
+                'attachment; filename="%s.json"' % "burp_results"
             )
             return response
         if report_type == "yaml":
             response = HttpResponse(dataset.yaml, content_type="application/x-yaml")
             response["Content-Disposition"] = (
-                    'attachment; filename="%s.yaml"' % "burp_results"
+                'attachment; filename="%s.yaml"' % "burp_results"
             )
             return response

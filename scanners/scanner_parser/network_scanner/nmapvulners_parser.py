@@ -58,25 +58,24 @@ def xml_parser(root, project_id, scan_id, request):
     global agent, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, risk_factor, script_version, solution, synopsis, plugin_output, see_also, scan_ip, pluginName, pluginID, protocol, severity, svc_name, pluginFamily, port, vuln_color, total_vul, total_high, total_medium, total_low, target, report_name
 
     try:
-        date_time = datetime.datetime.fromtimestamp(int(root.get('start')))
+        date_time = datetime.datetime.fromtimestamp(int(root.get("start")))
     except Exception:
         date_time = datetime.datetime.now()
 
-    target = root.find('./host/address').get('addr')
+    target = root.find("./host/address").get("addr")
 
-    for portsScanned in root.findall('./host/ports/port'):
+    for portsScanned in root.findall("./host/ports/port"):
         try:
-            port = portsScanned.get('portid')
+            port = portsScanned.get("portid")
         except Exception:
-            port = 'NA'
+            port = "NA"
         try:
-            fullDescription = portsScanned.find("./script[@id='vulners']").get('output')
+            fullDescription = portsScanned.find("./script[@id='vulners']").get("output")
         except Exception:
-            description = 'NA'
+            description = "NA"
 
         for vulnTable in portsScanned.findall("./script[@id='vulners']/table"):
-
-            serviceName = vulnTable.get('key')
+            serviceName = vulnTable.get("key")
 
             for vulnData in vulnTable.findall("./table"):
                 vuln_id = uuid.uuid4()
@@ -105,21 +104,21 @@ def xml_parser(root, project_id, scan_id, request):
                 try:
                     cveid = vulnData.find("./elem[@key='id']").text
                 except Exception:
-                    cveid = 'NA'
+                    cveid = "NA"
 
                 splitDesc = fullDescription.splitlines()
                 for lines in splitDesc:
                     if cveid in lines:
                         description = lines.strip()
 
-                title = serviceName + ' | ' + cveid
+                title = serviceName + " | " + cveid
 
                 dup_data = target + serviceName + cveid + port
-                duplicate_hash = hashlib.sha256(
-                    dup_data.encode("utf-8")
-                ).hexdigest()
+                duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
                 match_dup = (
-                    NetworkScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization)
+                    NetworkScanResultsDb.objects.filter(
+                        dup_hash=duplicate_hash, organization=request.user.organization
+                    )
                     .values("dup_hash")
                     .distinct()
                 )
@@ -130,7 +129,8 @@ def xml_parser(root, project_id, scan_id, request):
 
                     global false_positive
                     false_p = NetworkScanResultsDb.objects.filter(
-                        false_positive_hash=duplicate_hash, organization=request.user.organization
+                        false_positive_hash=duplicate_hash,
+                        organization=request.user.organization,
                     )
                     fp_lenth_match = len(false_p)
                     if fp_lenth_match == 1:
@@ -157,7 +157,7 @@ def xml_parser(root, project_id, scan_id, request):
                         vuln_duplicate=duplicate_vuln,
                         severity_color=vuln_color,
                         scanner="Nmapvulners",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     all_data_save.save()
 
@@ -181,7 +181,7 @@ def xml_parser(root, project_id, scan_id, request):
                         vuln_duplicate=duplicate_vuln,
                         severity_color=vuln_color,
                         scanner="Nmapvulners",
-                        organization=request.user.organization
+                        organization=request.user.organization,
                     )
                     all_data_save.save()
 
@@ -190,7 +190,7 @@ def xml_parser(root, project_id, scan_id, request):
             ip=target,
             vuln_status="Open",
             vuln_duplicate="No",
-            organization=request.user.organization
+            organization=request.user.organization,
         )
 
         duplicate_count = NetworkScanResultsDb.objects.filter(
@@ -202,9 +202,7 @@ def xml_parser(root, project_id, scan_id, request):
         target_total_high = len(target_filter.filter(severity="High"))
         target_total_medium = len(target_filter.filter(severity="Medium"))
         target_total_low = len(target_filter.filter(severity="Low"))
-        target_total_duplicate = len(
-            duplicate_count.filter(vuln_duplicate="Yes")
-        )
+        target_total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
         NetworkScanDb.objects.filter(ip=target).update(
             date_time=date_time,
             total_vul=target_total_vuln,
@@ -213,7 +211,7 @@ def xml_parser(root, project_id, scan_id, request):
             medium_vul=target_total_medium,
             low_vul=target_total_low,
             total_dup=target_total_duplicate,
-            organization=request.user.organization
+            organization=request.user.organization,
         )
     except Exception:
         print("Something went wrong while updating the vulnerability count")
@@ -232,7 +230,7 @@ def xml_parser(root, project_id, scan_id, request):
 
 
 def get_host(root):
-    target = root.find('./host/address').get('addr')
+    target = root.find("./host/address").get("addr")
     return target
 
 
@@ -244,6 +242,6 @@ parser_header_dict = {
         "type": "XML",
         "parserFunction": xml_parser,
         "icon": "/static/tools/nmap.png",
-        "getHostFunction": get_host
+        "getHostFunction": get_host,
     }
 }

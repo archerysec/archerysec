@@ -30,12 +30,12 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 
 from archerysettings.models import SettingsDb
+from cloudscanners.models import CloudScansResultsDb
 from jiraticketing.models import jirasetting
 from networkscanners.models import NetworkScanResultsDb
 from staticscanners.models import StaticScanResultsDb
 from user_management import permissions
 from webscanners.models import WebScanResultsDb
-from cloudscanners.models import CloudScansResultsDb
 
 
 class JiraSetting(APIView):
@@ -49,7 +49,9 @@ class JiraSetting(APIView):
         jira_username = ""
         jira_password = ""
 
-        all_jira_settings = jirasetting.objects.filter(organization=request.user.organization)
+        all_jira_settings = jirasetting.objects.filter(
+            organization=request.user.organization
+        )
         for jira in all_jira_settings:
             jira_server = jira.jira_server
             jira_username = signing.loads(jira.jira_username)
@@ -66,7 +68,9 @@ class JiraSetting(APIView):
         )
 
     def post(self, request):
-        all_jira_settings = jirasetting.objects.filter(organization=request.user.organization)
+        all_jira_settings = jirasetting.objects.filter(
+            organization=request.user.organization
+        )
         jira_server = ""
         for jira in all_jira_settings:
             jira_server = jira.jira_server
@@ -82,7 +86,7 @@ class JiraSetting(APIView):
         setting_dat = SettingsDb(
             setting_id=setting_id,
             setting_scanner="Jira",
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         setting_dat.save()
 
@@ -91,31 +95,35 @@ class JiraSetting(APIView):
             jira_server=jira_url,
             jira_username=j_username,
             jira_password=password,
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         save_data.save()
 
         options = {"server": jira_server}
         try:
-
-            if jira_username is not None and jira_username != "" :
+            if jira_username is not None and jira_username != "":
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
+                    options,
+                    basic_auth=(jira_username, jira_password),
+                    max_retries=0,
+                    timeout=30,
                 )
-            else :
-                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
+            else:
+                jira_ser = JIRA(
+                    options, token_auth=jira_password, max_retries=0, timeout=30
+                )
             jira_projects = jira_ser.projects()
             print(len(jira_projects))
             jira_info = True
-            SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
-                setting_status=jira_info
-            )
+            SettingsDb.objects.filter(
+                setting_id=setting_id, organization=request.user.organization
+            ).update(setting_status=jira_info)
         except Exception as e:
             print(e)
             jira_info = False
-            SettingsDb.objects.filter(setting_id=setting_id, organization=request.user.organization).update(
-                setting_status=jira_info
-            )
+            SettingsDb.objects.filter(
+                setting_id=setting_id, organization=request.user.organization
+            ).update(setting_status=jira_info)
 
         return HttpResponseRedirect(reverse("archerysettings:settings"))
 
@@ -127,7 +135,9 @@ class CreateJiraTicket(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        jira_setting = jirasetting.objects.filter(organization=request.user.organization)
+        jira_setting = jirasetting.objects.filter(
+            organization=request.user.organization
+        )
         user = request.user
         jira_server = ""
         jira_username = None
@@ -147,12 +157,17 @@ class CreateJiraTicket(APIView):
 
         options = {"server": jira_server}
         try:
-            if jira_username is not None and jira_username != "" :
+            if jira_username is not None and jira_username != "":
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
+                    options,
+                    basic_auth=(jira_username, jira_password),
+                    max_retries=0,
+                    timeout=30,
                 )
-            else :
-                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
+            else:
+                jira_ser = JIRA(
+                    options, token_auth=jira_password, max_retries=0, timeout=30
+                )
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)
@@ -178,7 +193,9 @@ class CreateJiraTicket(APIView):
         )
 
     def post(self, request):
-        jira_setting = jirasetting.objects.filter(organization=request.user.organization)
+        jira_setting = jirasetting.objects.filter(
+            organization=request.user.organization
+        )
         user = request.user
 
         jira_server = ""
@@ -199,11 +216,11 @@ class CreateJiraTicket(APIView):
 
         options = {"server": jira_server}
         try:
-            if jira_username is not None and jira_username != "" :
+            if jira_username is not None and jira_username != "":
                 jira_ser = JIRA(
                     options, basic_auth=(jira_username, jira_password), timeout=30
                 )
-            else :
+            else:
                 jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
             # jira_projects =
             jira_ser.projects()
@@ -227,9 +244,9 @@ class CreateJiraTicket(APIView):
         new_issue = jira_ser.create_issue(fields=issue_dict)
 
         if scanner == "web":
-            WebScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                jira_ticket=new_issue
-            )
+            WebScanResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            ).update(jira_ticket=new_issue)
             messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
             return HttpResponseRedirect(
                 reverse("webscanners:list_vuln_info")
@@ -237,9 +254,9 @@ class CreateJiraTicket(APIView):
             )
 
         elif scanner == "sast":
-            StaticScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                jira_ticket=new_issue
-            )
+            StaticScanResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            ).update(jira_ticket=new_issue)
             messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
             return HttpResponseRedirect(
                 reverse("staticscanners:list_vuln_info")
@@ -247,11 +264,13 @@ class CreateJiraTicket(APIView):
             )
 
         elif scanner == "network":
-            NetworkScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                jira_ticket=new_issue
-            )
+            NetworkScanResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            ).update(jira_ticket=new_issue)
             ip = (
-                NetworkScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization)
+                NetworkScanResultsDb.objects.filter(
+                    vuln_id=vuln_id, organization=request.user.organization
+                )
                 .values("ip")
                 .get()["ip"]
             )
@@ -262,9 +281,9 @@ class CreateJiraTicket(APIView):
                 + "?scan_id=%s&ip=%s" % (scan_id, ip)
             )
         elif scanner == "cloud":
-            CloudScansResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                jira_ticket=new_issue
-            )
+            CloudScansResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            ).update(jira_ticket=new_issue)
 
             messages.success(request, "Jira Ticket Submitted ID: %s", new_issue)
             return HttpResponseRedirect(
@@ -279,7 +298,9 @@ class LinkJiraTicket(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        jira_setting = jirasetting.objects.filter(organization=request.user.organization)
+        jira_setting = jirasetting.objects.filter(
+            organization=request.user.organization
+        )
         user = request.user
         jira_server = ""
         jira_username = None
@@ -299,12 +320,17 @@ class LinkJiraTicket(APIView):
 
         options = {"server": jira_server}
         try:
-            if jira_username is not None and jira_username != "" :
+            if jira_username is not None and jira_username != "":
                 jira_ser = JIRA(
-                    options, basic_auth=(jira_username, jira_password), max_retries=0, timeout=30
+                    options,
+                    basic_auth=(jira_username, jira_password),
+                    max_retries=0,
+                    timeout=30,
                 )
-            else :
-                jira_ser = JIRA(options, token_auth=jira_password, max_retries=0, timeout=30)
+            else:
+                jira_ser = JIRA(
+                    options, token_auth=jira_password, max_retries=0, timeout=30
+                )
             jira_projects = jira_ser.projects()
         except Exception as e:
             print(e)
@@ -330,7 +356,9 @@ class LinkJiraTicket(APIView):
         )
 
     def post(self, request):
-        jira_setting = jirasetting.objects.filter(organization=request.user.organization)
+        jira_setting = jirasetting.objects.filter(
+            organization=request.user.organization
+        )
         user = request.user
 
         jira_server = ""
@@ -355,7 +383,7 @@ class LinkJiraTicket(APIView):
                 jira_ser = JIRA(
                     options, basic_auth=(jira_username, jira_password), timeout=30
                 )
-            else :
+            else:
                 jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
         except Exception as e:
             print(e)
@@ -376,7 +404,11 @@ class LinkJiraTicket(APIView):
         if jira_tick_id is not None and jira_tick_id.strip() != "":
             try:
                 linked_issue = current_jira_ticket_id
-                jira_ser.create_issue_link(type="duplicates", inwardIssue=current_jira_ticket_id, outwardIssue=jira_tick_id)
+                jira_ser.create_issue_link(
+                    type="duplicates",
+                    inwardIssue=current_jira_ticket_id,
+                    outwardIssue=jira_tick_id,
+                )
             except Exception as e:
                 print(e)
                 messages.warning(request, "Jira Ticket not found")
@@ -392,7 +424,9 @@ class LinkJiraTicket(APIView):
                     )
                 elif scanner == "network":
                     ip = (
-                        NetworkScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization)
+                        NetworkScanResultsDb.objects.filter(
+                            vuln_id=vuln_id, organization=request.user.organization
+                        )
                         .values("ip")
                         .get()["ip"]
                     )
@@ -409,9 +443,9 @@ class LinkJiraTicket(APIView):
                     return HttpResponseRedirect(reverse("dashboard:dashboard"))
 
         if scanner == "web":
-            WebScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                jira_ticket=linked_issue
-            )
+            WebScanResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            ).update(jira_ticket=linked_issue)
             messages.success(request, "Jira Ticket Linked ID: %s" % linked_issue)
             return HttpResponseRedirect(
                 reverse("webscanners:list_vuln_info")
@@ -419,9 +453,9 @@ class LinkJiraTicket(APIView):
             )
 
         elif scanner == "sast":
-            StaticScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                jira_ticket=linked_issue
-            )
+            StaticScanResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            ).update(jira_ticket=linked_issue)
             messages.success(request, "Jira Ticket Linked ID: %s" % linked_issue)
             return HttpResponseRedirect(
                 reverse("staticscanners:list_vuln_info")
@@ -429,11 +463,13 @@ class LinkJiraTicket(APIView):
             )
 
         elif scanner == "network":
-            NetworkScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                jira_ticket=linked_issue
-            )
+            NetworkScanResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            ).update(jira_ticket=linked_issue)
             ip = (
-                NetworkScanResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization)
+                NetworkScanResultsDb.objects.filter(
+                    vuln_id=vuln_id, organization=request.user.organization
+                )
                 .values("ip")
                 .get()["ip"]
             )
@@ -445,9 +481,9 @@ class LinkJiraTicket(APIView):
             )
 
         elif scanner == "cloud":
-            CloudScansResultsDb.objects.filter(vuln_id=vuln_id, organization=request.user.organization).update(
-                jira_ticket=linked_issue
-            )
+            CloudScansResultsDb.objects.filter(
+                vuln_id=vuln_id, organization=request.user.organization
+            ).update(jira_ticket=linked_issue)
 
             messages.success(request, "Jira Ticket Linked ID: %s" % linked_issue)
             return HttpResponseRedirect(

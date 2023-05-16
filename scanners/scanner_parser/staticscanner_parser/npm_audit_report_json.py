@@ -112,16 +112,17 @@ def npmaudit_report_json(data, project_id, scan_id, request):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
-            "dup_hash"
-        )
+        match_dup = StaticScanResultsDb.objects.filter(
+            dup_hash=duplicate_hash, organization=request.user.organization
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash, organization=request.user.organization
+                false_positive_hash=duplicate_hash,
+                organization=request.user.organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -158,7 +159,7 @@ def npmaudit_report_json(data, project_id, scan_id, request):
                 references=references,
                 severity=severity,
                 scanner="Npmaudit",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
@@ -193,7 +194,7 @@ def npmaudit_report_json(data, project_id, scan_id, request):
                 references=references,
                 severity=severity,
                 scanner="Npmaudit",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
@@ -221,7 +222,7 @@ def npmaudit_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Npmaudit",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - Npmaudit Report Uploaded"
@@ -242,6 +243,6 @@ parser_header_dict = {
         "dbname": "Npmaudit",
         "type": "JSON",
         "parserFunction": npmaudit_report_json,
-        "icon": "/static/tools/npmaudit.png"
+        "icon": "/static/tools/npmaudit.png",
     }
 }

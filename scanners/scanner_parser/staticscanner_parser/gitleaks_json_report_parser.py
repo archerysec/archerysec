@@ -54,15 +54,25 @@ def gitleaks_report_json(data, project_id, scan_id, request):
             name = "Not Found"
 
         try:
-            description = issues_data["offender"] + \
-                          "<br>" + issues_data["commit"] + \
-                          "<br>" + issues_data["repo"] + \
-                          "<br>" + issues_data["rule"] + \
-                          "<br>" + issues_data["commitMessage"] + \
-                          "<br>" + issues_data["author"] + \
-                          "<br>" + issues_data["email"] + \
-                          "<br>" + issues_data["date"] + \
-                          "<br>" + issues_data["tags"]
+            description = (
+                issues_data["offender"]
+                + "<br>"
+                + issues_data["commit"]
+                + "<br>"
+                + issues_data["repo"]
+                + "<br>"
+                + issues_data["rule"]
+                + "<br>"
+                + issues_data["commitMessage"]
+                + "<br>"
+                + issues_data["author"]
+                + "<br>"
+                + issues_data["email"]
+                + "<br>"
+                + issues_data["date"]
+                + "<br>"
+                + issues_data["tags"]
+            )
 
         except Exception:
             description = "Not Found"
@@ -103,16 +113,17 @@ def gitleaks_report_json(data, project_id, scan_id, request):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
-            "dup_hash"
-        )
+        match_dup = StaticScanResultsDb.objects.filter(
+            dup_hash=duplicate_hash, organization=request.user.organization
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash, organization=request.user.organization
+                false_positive_hash=duplicate_hash,
+                organization=request.user.organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -136,7 +147,7 @@ def gitleaks_report_json(data, project_id, scan_id, request):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 scanner="gitleaks",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
@@ -158,7 +169,7 @@ def gitleaks_report_json(data, project_id, scan_id, request):
                 vuln_duplicate=duplicate_vuln,
                 false_positive="Duplicate",
                 scanner="gitleaks",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
@@ -186,15 +197,15 @@ def gitleaks_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="gitleaks",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - GitLab Dependency Report Uploaded"
     message = (
-            "Gitleaks Scanner has completed the scan "
-            "  %s <br> Total: %s <br>High: %s <br>"
-            "Medium: %s <br>Low %s"
-            % (Target, total_vul, total_high, total_medium, total_low)
+        "Gitleaks Scanner has completed the scan "
+        "  %s <br> Total: %s <br>High: %s <br>"
+        "Medium: %s <br>Low %s"
+        % (Target, total_vul, total_high, total_medium, total_low)
     )
 
     email_sch_notify(subject=subject, message=message)
@@ -207,6 +218,6 @@ parser_header_dict = {
         "dbname": "gitleaks",
         "type": "JSON",
         "parserFunction": gitleaks_report_json,
-        "icon": "/static/tools/gitleaks.png"
+        "icon": "/static/tools/gitleaks.png",
     }
 }

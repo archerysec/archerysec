@@ -18,6 +18,8 @@ from django.urls import path
 
 from user_management import views
 
+app_name = "users"
+
 urlpatterns = [
     # Your URLs...
     path("list_user/", views.UsersList.as_view(), name="list_user"),

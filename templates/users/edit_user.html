@@ -17,7 +17,7 @@
                             <div class="card">
                                 <div class="widget-box">{% for data in user_details %}
                                     <form class="form-horizontal"
-                                          action="{% url 'edit_user' uu_id=user_uu_id %}" method="POST">
+                                          action="{% url 'users:edit_user' uu_id=user_uu_id %}" method="POST">
                                         {% csrf_token %}
                                         <div class="form-group ">
                                             <label>Name</label>

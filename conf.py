@@ -1,1 +1,1 @@
-extensions = [ 'sphinxcontrib.spelling' ]
+extensions = ["sphinxcontrib.spelling"]

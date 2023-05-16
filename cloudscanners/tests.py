@@ -21,8 +21,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 
 from authentication.tests import UserCreationTest
-from projects.models import *
 from cloudscanners.models import *
+from projects.models import *
 
 logging.disable(logging.CRITICAL)
 
@@ -406,9 +406,7 @@ class CloudScanTest(TestCase):
         # get scan_id form cloud scans db
         scan_id = CloudScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
-        response = client.post(
-            "/cloudscanners/scan_delete/", data={"scan_id": scan_id}
-        )
+        response = client.post("/cloudscanners/scan_delete/", data={"scan_id": scan_id})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/cloudscanners/list_scans/")
         scan_id = CloudScansDb.objects.filter(scan_id=scan_id).values()
@@ -449,9 +447,7 @@ class CloudScanTest(TestCase):
 
         scan_id = CloudScansDb.objects.filter().values("scan_id").get()["scan_id"]
 
-        response = client.post(
-            "/cloudscanners/scan_delete/", data={"scan_id": scan_id}
-        )
+        response = client.post("/cloudscanners/scan_delete/", data={"scan_id": scan_id})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/cloudscanners/list_scans/")
         scan_id = CloudScansDb.objects.filter(scan_id=scan_id).values()
@@ -463,9 +459,7 @@ class CloudScanTest(TestCase):
             password=self.auth_test.viewer.get("password"),
         )
 
-        response = client.post(
-            "/cloudscanners/scan_delete/", data={"scan_id": scan_id}
-        )
+        response = client.post("/cloudscanners/scan_delete/", data={"scan_id": scan_id})
         self.assertEqual(response.status_code, 403)
 
     def test_cloud_scan_vuln_delete(self):

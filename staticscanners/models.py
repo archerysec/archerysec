@@ -19,7 +19,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 
-from user_management.models import UserProfile, Organization
+from user_management.models import Organization, UserProfile
 
 # Create your models here.
 
@@ -48,18 +48,21 @@ class StaticScansDb(models.Model):
     total_dup = models.TextField(blank=True, null=True)
     scanner = models.CharField(max_length=256, null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='static_scan_db_created'
+        related_name="static_scan_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
-        related_name='static_scan_db_updated',
+        related_name="static_scan_db_updated",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -94,18 +97,21 @@ class StaticScanResultsDb(models.Model):
     scanner = models.TextField(blank=True)
     note = models.TextField(null=True, blank=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='static_scan_result_db_created'
+        related_name="static_scan_result_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
-        related_name='static_scan_result_db_updated',
+        related_name="static_scan_result_db_updated",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)

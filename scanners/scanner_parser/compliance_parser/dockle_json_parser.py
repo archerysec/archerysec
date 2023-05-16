@@ -25,11 +25,7 @@ controls_results_message = None
 vuln_col = ""
 
 
-def dockle_report_json(
-    data,
-    project_id,
-    scan_id, request
-):
+def dockle_report_json(data, project_id, scan_id, request):
     """
 
     :param data:
@@ -71,7 +67,9 @@ def dockle_report_json(
         )
         save_all.save()
 
-    all_dockle_data = DockleScanResultsDb.objects.filter(scan_id=scan_id, organization=request.user.organization)
+    all_dockle_data = DockleScanResultsDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    )
 
     total_vul = len(all_dockle_data)
     dockle_failed = len(all_dockle_data.filter(level="FATAL"))
@@ -80,14 +78,16 @@ def dockle_report_json(
     dockle_info = len(all_dockle_data.filter(level="INFO"))
     total_duplicate = len(all_dockle_data.filter(level="Yes"))
 
-    DockleScanDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+    DockleScanDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    ).update(
         total_vuln=total_vul,
         dockle_fatal=dockle_failed,
         dockle_warn=dockle_warn,
         dockle_info=dockle_info,
         dockle_pass=dockle_passed,
         total_dup=total_duplicate,
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     subject = "Archery Tool Scan Status - dockle Report Uploaded"
     message = (
@@ -106,6 +106,6 @@ parser_header_dict = {
         "dbtype": "DockleScan",
         "type": "JSON",
         "parserFunction": dockle_report_json,
-        "icon": "/static/tools/dockle.png"
+        "icon": "/static/tools/dockle.png",
     }
 }

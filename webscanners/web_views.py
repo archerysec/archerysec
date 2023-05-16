@@ -55,7 +55,9 @@ class DeleteNotify(APIView):
     def get(self, request):
         notify_id = request.GET["notify_id"]
 
-        notify_del = Notification.objects.filter(id=notify_id, organization=request.user.organization)
+        notify_del = Notification.objects.filter(
+            id=notify_id, organization=request.user.organization
+        )
         notify_del.delete()
 
         return HttpResponseRedirect(reverse("dashboard:dashboard"))
@@ -162,7 +164,9 @@ class WebScanSchedule(APIView):
 
     def get(self, request):
         all_scans_db = ProjectDb.objects.filter(organization=request.user.organization)
-        all_scheduled_scans = task_schedule_db.objects.filter(organization=request.user.organization)
+        all_scheduled_scans = task_schedule_db.objects.filter(
+            organization=request.user.organization
+        )
 
         return render(
             request,
@@ -172,7 +176,9 @@ class WebScanSchedule(APIView):
 
     def post(self, request):
         all_scans_db = ProjectDb.objects.filter(organization=request.user.organization)
-        all_scheduled_scans = task_schedule_db.objects.filter(organization=request.user.organization)
+        all_scheduled_scans = task_schedule_db.objects.filter(
+            organization=request.user.organization
+        )
         scan_url = request.POST.get("url")
         scan_schedule_time = request.POST.get("datetime")
         project_id = request.POST.get("project_id")
@@ -205,7 +211,6 @@ class WebScanSchedule(APIView):
                     task_id = my_task.id
                     print("Savedddddd taskid", task_id)
                 else:
-
                     my_task = task(
                         target,
                         project_id,

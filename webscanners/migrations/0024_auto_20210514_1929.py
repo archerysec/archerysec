@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("webscanners", "0023_delete_burp_scan_db"),
     ]

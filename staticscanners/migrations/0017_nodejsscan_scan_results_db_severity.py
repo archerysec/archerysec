@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0016_nodejsscan_scan_db_nodejsscan_scan_results_db"),
     ]

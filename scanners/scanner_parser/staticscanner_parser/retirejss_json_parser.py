@@ -51,7 +51,6 @@ def retirejs_report_json(data, project_id, scan_id, request):
         files = f["file"]
 
         for components in data:
-
             component = components["results"][0]["component"]
 
         for versions in data:
@@ -143,7 +142,7 @@ def retirejs_report_json(data, project_id, scan_id, request):
             # vuln_duplicate=duplicate_vuln,
             # version=version,
             scanner="Retirejs",
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         save_all.save()
         trend_update()
@@ -155,6 +154,6 @@ parser_header_dict = {
         "dbtype": "StaticScans",
         "dbname": "Retirejs",
         "type": "JSON",
-        "parserFunction": retirejs_report_json
+        "parserFunction": retirejs_report_json,
     }
 }

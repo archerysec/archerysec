@@ -37,28 +37,28 @@ def grype_report_json(data, project_id, scan_id, request):
     """
     date_time = datetime.now()
     global vul_col, severity
-    matches = data['matches']
+    matches = data["matches"]
     for vuln in matches:
         # # for key, value in vuln.items():
         # #     print(key, value)
         # print(vuln['matchDetails'][0]['searchedBy']['package']['version'])
-        packagename = vuln['matchDetails'][0]['searchedBy']['package']['name']
-        packageversion = vuln['matchDetails'][0]['searchedBy']['package']['version']
-        package = (packagename + " " + packageversion)
+        packagename = vuln["matchDetails"][0]["searchedBy"]["package"]["name"]
+        packageversion = vuln["matchDetails"][0]["searchedBy"]["package"]["version"]
+        package = packagename + " " + packageversion
 
-        title = vuln['vulnerability']['id']
-        dataSource = vuln['vulnerability']['dataSource']
+        title = vuln["vulnerability"]["id"]
+        dataSource = vuln["vulnerability"]["dataSource"]
         # namespace =
-        vuln['vulnerability']['namespace']
-        severity = vuln['vulnerability']['severity']
-        urls = vuln['vulnerability']['urls']
+        vuln["vulnerability"]["namespace"]
+        severity = vuln["vulnerability"]["severity"]
+        urls = vuln["vulnerability"]["urls"]
         try:
-            description = vuln['vulnerability']['description']
+            description = vuln["vulnerability"]["description"]
         except Exception:
             description = "NA"
-        fix = vuln['vulnerability']['fix']['state']
-        fix_version = vuln['vulnerability']['fix']['versions']
-        advisories = vuln['vulnerability']['advisories']
+        fix = vuln["vulnerability"]["fix"]["state"]
+        fix_version = vuln["vulnerability"]["fix"]["versions"]
+        advisories = vuln["vulnerability"]["advisories"]
 
         if severity == "Critical":
             vul_col = "critical"
@@ -90,7 +90,8 @@ def grype_report_json(data, project_id, scan_id, request):
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash, organization=request.user.organization
+                false_positive_hash=duplicate_hash,
+                organization=request.user.organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -115,16 +116,16 @@ def grype_report_json(data, project_id, scan_id, request):
                 filePath=str(package),
                 solution=str(fix) + " " + str(fix_version),
                 description=str(description)
-                            + "\n\n"
-                            + str(urls)
-                            + "\n\n"
-                            + str(fix)
-                            + "\n\n"
-                            + str(advisories)
-                            + "\n\n"
-                            + str(dataSource),
+                + "\n\n"
+                + str(urls)
+                + "\n\n"
+                + str(fix)
+                + "\n\n"
+                + str(advisories)
+                + "\n\n"
+                + str(dataSource),
                 scanner="grype_scan",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
@@ -147,16 +148,16 @@ def grype_report_json(data, project_id, scan_id, request):
                 filePath=package,
                 solution=str(fix) + " " + str(fix_version),
                 description=str(description)
-                            + "\n\n"
-                            + str(urls)
-                            + "\n\n"
-                            + str(fix)
-                            + "\n\n"
-                            + str(advisories)
-                            + "\n\n"
-                            + str(dataSource),
+                + "\n\n"
+                + str(urls)
+                + "\n\n"
+                + str(fix)
+                + "\n\n"
+                + str(advisories)
+                + "\n\n"
+                + str(dataSource),
                 scanner="grype_scan",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
@@ -168,7 +169,9 @@ def grype_report_json(data, project_id, scan_id, request):
         scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
     )
 
-    total_vul = len(all_findbugs_data.filter(severity__in=['Critical', 'High', 'Medium', 'Low']))
+    total_vul = len(
+        all_findbugs_data.filter(severity__in=["Critical", "High", "Medium", "Low"])
+    )
     total_critical = len(all_findbugs_data.filter(severity="Critical"))
     total_high = len(all_findbugs_data.filter(severity="High"))
     total_medium = len(all_findbugs_data.filter(severity="Medium"))
@@ -184,7 +187,7 @@ def grype_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="grype_scan",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - grype Report Uploaded"
@@ -205,6 +208,6 @@ parser_header_dict = {
         "dbname": "grype_scan",
         "type": "JSON",
         "parserFunction": grype_report_json,
-        "icon": "/static/tools/grype.png"
+        "icon": "/static/tools/grype.png",
     }
 }

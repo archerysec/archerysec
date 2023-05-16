@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0021_whitesource_scan_db_whitesource_scan_results_db"),
     ]

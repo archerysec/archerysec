@@ -12,7 +12,6 @@ import requests
 
 class arachniAPI(object):
     def __init__(self, host, port, username_api, password_api):
-
         self.host = host
         self.port = port
         self.username_api = username_api
@@ -119,7 +118,6 @@ class arachniAPI(object):
         return self._request("PUT", "/scans/%s/pause" % id)
 
     def scan_resume(self, id):
-
         """
         :param id:
         :return:

@@ -15,7 +15,6 @@
 # This file is part of ArcherySec Project.
 
 from __future__ import unicode_literals
-from user_management.models import UserProfile, Organization
 
 import uuid
 
@@ -23,7 +22,7 @@ from django.db import models
 from django.utils import timezone
 from fernet_fields import EncryptedTextField
 
-from user_management.models import UserProfile
+from user_management.models import Organization, UserProfile
 
 
 class NetworkScanDb(models.Model):
@@ -50,18 +49,21 @@ class NetworkScanDb(models.Model):
     total_dup = models.TextField(blank=True, null=True)
     scanner = models.TextField(blank=True, null=True)
 
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='network_scan_db_created'
+        related_name="network_scan_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
-        related_name='network_scan_db_updated',
+        related_name="network_scan_db_updated",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -94,18 +96,21 @@ class NetworkScanResultsDb(models.Model):
     false_positive = models.TextField(null=True, blank=True)
     note = models.TextField(null=True, blank=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='network_scan_result_db_created'
+        related_name="network_scan_result_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
-        related_name='network_scan_result_db_updated',
+        related_name="network_scan_result_db_updated",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -123,18 +128,21 @@ class TaskScheduleDb(models.Model):
     scanner = models.TextField(blank=True, null=True)
     periodic_task = models.TextField(blank=True, null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='tasksch_scan_result_db_created'
+        related_name="tasksch_scan_result_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
-        related_name='tasksch_scan_result_db_updated',
+        related_name="tasksch_scan_result_db_updated",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)

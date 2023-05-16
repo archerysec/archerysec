@@ -4,35 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('projects', '0017_alter_monthdb_critical'),
+        ("projects", "0017_alter_monthdb_critical"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projectdb',
-            name='critical_cloud',
+            model_name="projectdb",
+            name="critical_cloud",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='projectdb',
-            name='high_cloud',
+            model_name="projectdb",
+            name="high_cloud",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='projectdb',
-            name='low_cloud',
+            model_name="projectdb",
+            name="low_cloud",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='projectdb',
-            name='medium_cloud',
+            model_name="projectdb",
+            name="medium_cloud",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='projectdb',
-            name='total_cloud',
+            model_name="projectdb",
+            name="total_cloud",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

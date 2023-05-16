@@ -99,7 +99,6 @@ def xml_parser(data, project_id, scan_id, request):
                             == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.2.xsd"
                         ):
                             for dc22 in vuln:
-
                                 if dc22.tag == "{%s}name" % pt:
                                     name = dc22.text
 
@@ -135,7 +134,6 @@ def xml_parser(data, project_id, scan_id, request):
                             == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.3.xsd"
                         ):
                             for dc22 in vuln:
-
                                 if dc22.tag == "{%s}name" % pt:
                                     name = dc22.text
 
@@ -171,7 +169,6 @@ def xml_parser(data, project_id, scan_id, request):
                             == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.4.xsd"
                         ):
                             for dc22 in vuln:
-
                                 if dc22.tag == "{%s}name" % pt:
                                     name = dc22.text
 
@@ -207,7 +204,6 @@ def xml_parser(data, project_id, scan_id, request):
                             == "https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd"
                         ):
                             for dc22 in vuln:
-
                                 if dc22.tag == "{%s}name" % pt:
                                     name = dc22.text
 
@@ -274,7 +270,8 @@ def xml_parser(data, project_id, scan_id, request):
                         ).hexdigest()
 
                         match_dup = StaticScanResultsDb.objects.filter(
-                            dup_hash=duplicate_hash, organization=request.user.organization
+                            dup_hash=duplicate_hash,
+                            organization=request.user.organization,
                         ).values("dup_hash")
                         lenth_match = len(match_dup)
 
@@ -282,7 +279,8 @@ def xml_parser(data, project_id, scan_id, request):
                             duplicate_vuln = "No"
 
                             false_p = StaticScanResultsDb.objects.filter(
-                                false_positive_hash=duplicate_hash, organization=request.user.organization
+                                false_positive_hash=duplicate_hash,
+                                organization=request.user.organization,
                             )
                             fp_lenth_match = len(false_p)
 
@@ -315,7 +313,7 @@ def xml_parser(data, project_id, scan_id, request):
                                 vuln_duplicate=duplicate_vuln,
                                 false_positive=false_positive,
                                 scanner="Dependencycheck",
-                                organization=request.user.organization
+                                organization=request.user.organization,
                             )
                             save_all.save()
 
@@ -342,7 +340,7 @@ def xml_parser(data, project_id, scan_id, request):
                                 vuln_duplicate=duplicate_vuln,
                                 false_positive="Duplicate",
                                 scanner="Dependencycheck",
-                                organization=request.user.organization
+                                organization=request.user.organization,
                             )
                             save_all.save()
 
@@ -351,7 +349,9 @@ def xml_parser(data, project_id, scan_id, request):
         )
 
         duplicate_count = StaticScanResultsDb.objects.filter(
-            scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+            scan_id=scan_id,
+            vuln_duplicate="Yes",
+            organization=request.user.organization,
         )
 
         total_vul = len(all_dependency_data)
@@ -370,7 +370,7 @@ def xml_parser(data, project_id, scan_id, request):
             low_vul=total_low,
             total_dup=total_duplicate,
             scanner="Dependencycheck",
-            organization=request.user.organization
+            organization=request.user.organization,
         )
     trend_update()
     subject = "Archery Tool Scan Status - DependencyCheck Report Uploaded"
@@ -392,6 +392,6 @@ parser_header_dict = {
         "dbname": "Dependencycheck",
         "type": "LXML",
         "parserFunction": xml_parser,
-        "icon": "/static/tools/dependencycheck.png"
+        "icon": "/static/tools/dependencycheck.png",
     }
 }

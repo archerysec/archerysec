@@ -20,14 +20,14 @@ import uuid
 
 from django.conf import settings
 from django.db import models
-from django.utils import timezone
 from django.db.models import F, Func, Sum
+from django.utils import timezone
 
-from user_management.models import UserProfile, Organization
+from user_management.models import Organization, UserProfile
 
 
 class ProjectDb(models.Model):
-    """ Class for Project model """
+    """Class for Project model"""
 
     class Meta:
         db_table = "project"
@@ -70,7 +70,10 @@ class ProjectDb(models.Model):
     low_static = models.IntegerField(blank=True, null=True)
     low_cloud = models.IntegerField(blank=True, null=True)
 
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         related_name="project_db_creator",
@@ -82,7 +85,7 @@ class ProjectDb(models.Model):
         UserProfile,
         related_name="project_db_updated",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -104,7 +107,10 @@ class ProjectScanDb(models.Model):
     )
     date_time = models.DateTimeField(null=True)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         related_name="project_scan_creator",
@@ -115,7 +121,7 @@ class ProjectScanDb(models.Model):
         UserProfile,
         related_name="project_scan_updated",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -147,7 +153,10 @@ class MonthDb(models.Model):
         "projects.ProjectDb", on_delete=models.CASCADE, null=True
     )
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         related_name="month_creator",
@@ -155,10 +164,7 @@ class MonthDb(models.Model):
         null=True,
     )
     updated_by = models.ForeignKey(
-        UserProfile,
-        related_name="month_updated",
-        on_delete=models.SET_NULL,
-        null=True
+        UserProfile, related_name="month_updated", on_delete=models.SET_NULL, null=True
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)

@@ -33,4 +33,3 @@ class GetPoliciesSerializers(serializers.Serializer):
     branch_tag = serializers.CharField(max_length=255)
     repo = serializers.CharField(max_length=255)
     target = serializers.CharField(max_length=255)
-

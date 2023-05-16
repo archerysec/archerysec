@@ -14,14 +14,14 @@
 #
 # This file is part of ArcherySec Project.
 
+import csv
 import hashlib
 import uuid
 from datetime import datetime
 
-from dashboard.views import trend_update
 from cloudscanners.models import CloudScansDb, CloudScansResultsDb
+from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
-import csv
 
 vul_col = ""
 Target = ""
@@ -73,20 +73,23 @@ def prisma_cloud_report_csv(data, project_id, scan_id, request):
 
         vul_id = uuid.uuid4()
 
-        dup_data = str(policy_name) + str(severity) + str(cloud_account_id) + str(resource_id)
+        dup_data = (
+            str(policy_name) + str(severity) + str(cloud_account_id) + str(resource_id)
+        )
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = CloudScansResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
-            "dup_hash"
-        )
+        match_dup = CloudScansResultsDb.objects.filter(
+            dup_hash=duplicate_hash, organization=request.user.organization
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
             false_p = CloudScansResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash, organization=request.user.organization
+                false_positive_hash=duplicate_hash,
+                organization=request.user.organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -113,19 +116,19 @@ def prisma_cloud_report_csv(data, project_id, scan_id, request):
                 solution=recommendation,
                 severity=severity,
                 description=str(description)
-                            + "\n\n"
-                            + str(policy_type)
-                            + "\n\n"
-                            + str(cloud_account_name)
-                            + "\n\n"
-                            + str(region)
-                            + "\n\n"
-                            + str(alert_time)
-                            + "\n\n"
-                            + str(alert_status),
-                references='NA',
+                + "\n\n"
+                + str(policy_type)
+                + "\n\n"
+                + str(cloud_account_name)
+                + "\n\n"
+                + str(region)
+                + "\n\n"
+                + str(alert_time)
+                + "\n\n"
+                + str(alert_status),
+                references="NA",
                 scanner="Prismacloud",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
@@ -149,19 +152,19 @@ def prisma_cloud_report_csv(data, project_id, scan_id, request):
                 solution=recommendation,
                 severity=severity,
                 description=str(description)
-                            + "\n\n"
-                            + str(policy_type)
-                            + "\n\n"
-                            + str(cloud_account_name)
-                            + "\n\n"
-                            + str(region)
-                            + "\n\n"
-                            + str(alert_time)
-                            + "\n\n"
-                            + str(alert_status),
-                references='NA',
+                + "\n\n"
+                + str(policy_type)
+                + "\n\n"
+                + str(cloud_account_name)
+                + "\n\n"
+                + str(region)
+                + "\n\n"
+                + str(alert_time)
+                + "\n\n"
+                + str(alert_status),
+                references="NA",
                 scanner="Prismacloud",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
     all_prismacloud_data = CloudScansResultsDb.objects.filter(
@@ -189,7 +192,7 @@ def prisma_cloud_report_csv(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Prismacloud",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - Prisma Cloud Report Uploaded"
@@ -210,6 +213,6 @@ parser_header_dict = {
         "dbname": "Prismacloud",
         "type": "CSV",
         "parserFunction": prisma_cloud_report_csv,
-        "icon": "/static/tools/prisma-cloud.png"
+        "icon": "/static/tools/prisma-cloud.png",
     }
 }

@@ -14,20 +14,23 @@
 #
 # This file is part of ArcherySec Project.
 
+import csv
 import datetime
+import io
 import json
+import os
 import secrets
 import uuid
-import csv
-import io
-import os
 
 import defusedxml.ElementTree as ET
+from django.core import signing
 from django.core.files.uploadedfile import UploadedFile
-from django.shortcuts import HttpResponseRedirect, render, reverse
-from django.db.models import TextField, F, Value
-from django.db.models.functions import Cast, Concat
 from django.db import transaction
+from django.db.models import F, TextField, Value
+from django.db.models.functions import Cast, Concat
+from django.shortcuts import HttpResponseRedirect, render, reverse
+from django.utils.html import escape
+from jira import JIRA
 from lxml import etree
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -38,29 +41,24 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from archeryapi.models import OrgAPIKey
-from archeryapi.serializers import OrgAPIKeySerializer, GenericScanResultsDbSerializer, JiraLinkSerializer
+from archeryapi.serializers import (GenericScanResultsDbSerializer,
+                                    JiraLinkSerializer, OrgAPIKeySerializer)
+from cicd.models import CicdDb
+from cicd.serializers import GetPoliciesSerializers
+from cloudscanners.models import CloudScansDb, CloudScansResultsDb
 from compliance.models import DockleScanDb, InspecScanDb
+from jiraticketing.models import jirasetting
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from projects.models import MonthDb, ProjectDb
 from projects.serializers import (ProjectCreateSerializers,
                                   ProjectDataSerializers)
-
+from scanners.scanner_parser import scanner_parser
 from scanners.scanner_parser.network_scanner import OpenVas_Parser
-
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
-from cloudscanners.models import CloudScansDb, CloudScansResultsDb
 from tools.models import NiktoResultDb
 from user_management import permissions
 from user_management.models import Organization, UserProfile
 from webscanners.models import WebScanResultsDb, WebScansDb
-from cicd.models import CicdDb
-from cicd.serializers import GetPoliciesSerializers
-from django.utils.html import escape
-from scanners.scanner_parser import scanner_parser
-
-from jiraticketing.models import jirasetting
-from django.core import signing
-from jira import JIRA
 
 
 class CreateProject(APIView):
@@ -175,8 +173,9 @@ class UploadScanResult(APIView):
 
     def sast_result_data(self, scan_id, project_uu_id, scanner):
         all_sast_data = StaticScanResultsDb.objects.filter(scan_id=scan_id)
-        total_vul = len(all_sast_data.filter(
-            severity__in=['Critical', 'High', 'Medium', 'Low']))
+        total_vul = len(
+            all_sast_data.filter(severity__in=["Critical", "High", "Medium", "Low"])
+        )
         total_critical = len(all_sast_data.filter(severity="Critical"))
         total_high = len(all_sast_data.filter(severity="High"))
         total_medium = len(all_sast_data.filter(severity="Medium"))
@@ -215,7 +214,7 @@ class UploadScanResult(APIView):
                     "total_high": escape(total_high),
                     "total_medium": escape(total_medium),
                     "total_low": escape(total_low),
-                    "total_critical": escape(total_critical)
+                    "total_critical": escape(total_critical),
                 },
             }
         )
@@ -247,8 +246,7 @@ class UploadScanResult(APIView):
         date_time = datetime.datetime.now()
         project_uu_id = request.data.get("project_id")
         project_id = (
-            ProjectDb.objects.filter(
-                uu_id=project_uu_id).values("id").get()["id"]
+            ProjectDb.objects.filter(uu_id=project_uu_id).values("id").get()["id"]
         )
         scanner = request.data.get("scanner")
         if isinstance(request.data.get("filename"), UploadedFile):
@@ -260,19 +258,23 @@ class UploadScanResult(APIView):
         scan_id = uuid.uuid4()
         scan_status = "100"
 
-        parser_dict = scanner_parser.parser_function_dict.get(scanner, "Not implemented")
+        parser_dict = scanner_parser.parser_function_dict.get(
+            scanner, "Not implemented"
+        )
         if parser_dict == "Not implemented":
             return Response(
                 {
                     "error": "Scanner is not implemented",
-                }, status=status.HTTP_400_BAD_REQUEST
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
         filetype = parser_dict.get("type", "Unknown")
         if filetype == "Unknown":
             return Response(
                 {
                     "error": "Unknown file type",
-                }, status=status.HTTP_400_BAD_REQUEST
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Put the data in memory
@@ -292,15 +294,16 @@ class UploadScanResult(APIView):
             data = [line for line in reader]
         # Custom data loader
         elif filetype == "JS":
-            file_data = file.replace('scoutsuite_results =', '').lstrip()
-            json_payload = ''.join(file_data)
+            file_data = file.replace("scoutsuite_results =", "").lstrip()
+            json_payload = "".join(file_data)
             data = json.loads(json_payload)
         # Unsupported file type case
         else:
             return Response(
                 {
                     "error": "Unsupported file type",
-                }, status=status.HTTP_400_BAD_REQUEST
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         db_type = parser_dict.get("dbtype", "Unsupported")
@@ -308,7 +311,8 @@ class UploadScanResult(APIView):
             return Response(
                 {
                     "error": "Unsupported DB type",
-                }, status=status.HTTP_400_BAD_REQUEST
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
         need_to_store = True
         custom_return = False
@@ -427,14 +431,15 @@ class APIKey(APIView):
     )
 
     def get(self, request):
-        all_active_keys = OrgAPIKey.objects.filter(is_active=True, organization=request.user.organization)
+        all_active_keys = OrgAPIKey.objects.filter(
+            is_active=True, organization=request.user.organization
+        )
 
         serialized_data = OrgAPIKeySerializer(all_active_keys, many=True)
         return render(
             request,
             "access-key/access-key-list.html",
-            {"all_active_keys": all_active_keys,
-             "serialized_data": serialized_data},
+            {"all_active_keys": all_active_keys, "serialized_data": serialized_data},
         )
 
     def post(self, request):
@@ -444,9 +449,7 @@ class APIKey(APIView):
         name = request.POST.get("name")
 
         # new_api_key =
-        OrgAPIKey.objects.create(
-            api_key=api_key, created_by=user, name=name
-        )
+        OrgAPIKey.objects.create(api_key=api_key, created_by=user, name=name)
 
         # content = {"APIKey": api_key, "id": new_api_key.uu_id}
         return HttpResponseRedirect("/api/access-key/")
@@ -471,7 +474,10 @@ class DisableAPIKey(APIView):
         current_org = user.organization
 
         key_object = OrgAPIKey.objects.filter(
-            org_subscription=current_org, is_active=True, uu_id=api_key_uuid, organization=request.user.organization
+            org_subscription=current_org,
+            is_active=True,
+            uu_id=api_key_uuid,
+            organization=request.user.organization,
         ).update(is_active=False)
 
         if key_object > 0:
@@ -490,17 +496,20 @@ class GetCicdPolicies(APIView):
 
     def get(self, request, uu_id=None):
         if uu_id is None:
-            get_cicd_policies = CicdDb.objects.filter(organization=request.user.organization)
-            serialized_data = GetPoliciesSerializers(
-                get_cicd_policies, many=True)
+            get_cicd_policies = CicdDb.objects.filter(
+                organization=request.user.organization
+            )
+            serialized_data = GetPoliciesSerializers(get_cicd_policies, many=True)
         else:
             try:
-                get_cicd_policies = CicdDb.objects.filter(cicd_id=uu_id, organization=request.user.organization)
-                serialized_data = GetPoliciesSerializers(
-                    get_cicd_policies, many=False)
+                get_cicd_policies = CicdDb.objects.filter(
+                    cicd_id=uu_id, organization=request.user.organization
+                )
+                serialized_data = GetPoliciesSerializers(get_cicd_policies, many=False)
             except CicdDb.DoesNotExist:
                 return Response(
-                    {"message": "CI/CD Id Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+                    {"message": "CI/CD Id Doesn't Exist"},
+                    status=status.HTTP_404_NOT_FOUND,
                 )
         return Response(serialized_data.data, status=status.HTTP_200_OK)
 
@@ -521,7 +530,9 @@ class DeleteAPIKey(APIView):
         for i in range(0, split_length):
             uu_id = value_split.__getitem__(i)
 
-            item = OrgAPIKey.objects.filter(uu_id=uu_id, organization=request.user.organization)
+            item = OrgAPIKey.objects.filter(
+                uu_id=uu_id, organization=request.user.organization
+            )
             item.delete()
         return HttpResponseRedirect("/api/access-key/")
 
@@ -530,9 +541,7 @@ class ApiTest(APIView):
     permission_classes = ()
 
     def get(self, request):
-        return Response(
-            {"message": "ArcherySec API working."}
-        )
+        return Response({"message": "ArcherySec API working."})
 
 
 class ListAllScanResults(APIView):
@@ -544,91 +553,96 @@ class ListAllScanResults(APIView):
 
         # Get scan list
         all_cloud_data = CloudScansResultsDb.objects.annotate(
-            target=Concat('cloudAccountId', Value(' '), 'cloudType', output_field=TextField())
+            target=Concat(
+                "cloudAccountId", Value(" "), "cloudType", output_field=TextField()
+            )
         ).values(
-            'scan_id',
-            'project_id',
-            'date_time',
-            'vuln_id',
-            'false_positive',
-            'severity_color',
-            'dup_hash',
-            'vuln_duplicate',
-            'false_positive_hash',
-            'vuln_status',
-            'jira_ticket',
-            'title',
-            'severity',
-            'description',
-            'solution',
-            'scanner',
-            'target'
+            "scan_id",
+            "project_id",
+            "date_time",
+            "vuln_id",
+            "false_positive",
+            "severity_color",
+            "dup_hash",
+            "vuln_duplicate",
+            "false_positive_hash",
+            "vuln_status",
+            "jira_ticket",
+            "title",
+            "severity",
+            "description",
+            "solution",
+            "scanner",
+            "target",
         )
 
         all_network_data = NetworkScanResultsDb.objects.annotate(
-            target=Concat(Cast('ip', output_field=TextField()), Value(':'), 'port', output_field=TextField())
+            target=Concat(
+                Cast("ip", output_field=TextField()),
+                Value(":"),
+                "port",
+                output_field=TextField(),
+            )
         ).values(
-            'scan_id',
-            'project_id',
-            'date_time',
-            'vuln_id',
-            'false_positive',
-            'severity_color',
-            'dup_hash',
-            'vuln_duplicate',
-            'false_positive_hash',
-            'vuln_status',
-            'jira_ticket',
-            'title',
-            'severity',
-            'description',
-            'solution',
-            'scanner',
-            'target'
+            "scan_id",
+            "project_id",
+            "date_time",
+            "vuln_id",
+            "false_positive",
+            "severity_color",
+            "dup_hash",
+            "vuln_duplicate",
+            "false_positive_hash",
+            "vuln_status",
+            "jira_ticket",
+            "title",
+            "severity",
+            "description",
+            "solution",
+            "scanner",
+            "target",
         )
 
         all_sast_data = StaticScanResultsDb.objects.annotate(
-            target=Concat('filePath', Value("/"), 'fileName', output_field=TextField())
+            target=Concat("filePath", Value("/"), "fileName", output_field=TextField())
         ).values(
-            'scan_id',
-            'project_id',
-            'date_time',
-            'vuln_id',
-            'false_positive',
-            'severity_color',
-            'dup_hash',
-            'vuln_duplicate',
-            'false_positive_hash',
-            'vuln_status',
-            'jira_ticket',
-            'title',
-            'severity',
-            'description',
-            'solution',
-            'scanner',
-            'target'
+            "scan_id",
+            "project_id",
+            "date_time",
+            "vuln_id",
+            "false_positive",
+            "severity_color",
+            "dup_hash",
+            "vuln_duplicate",
+            "false_positive_hash",
+            "vuln_status",
+            "jira_ticket",
+            "title",
+            "severity",
+            "description",
+            "solution",
+            "scanner",
+            "target",
         )
 
-        all_web_data = WebScanResultsDb.objects.annotate(
-            target=F('url')
-        ).values(
-            'scan_id',
-            'project_id',
-            'date_time',
-            'vuln_id',
-            'false_positive',
-            'severity_color',
-            'dup_hash',
-            'vuln_duplicate',
-            'false_positive_hash',
-            'vuln_status',
-            'jira_ticket',
-            'title',
-            'severity',
-            'description',
-            'solution',
-            'scanner',
-            'target'
+        all_web_data = WebScanResultsDb.objects.annotate(target=F("url")).values(
+            "scan_id",
+            "project_id",
+            "date_time",
+            "vuln_id",
+            "false_positive",
+            "severity_color",
+            "dup_hash",
+            "vuln_duplicate",
+            "false_positive_hash",
+            "vuln_status",
+            "jira_ticket",
+            "title",
+            "severity",
+            "description",
+            "solution",
+            "scanner",
+            "target",
         )
 
         # Filter resulting queries
@@ -666,7 +680,9 @@ class UpdateJiraTicket(APIView):
             current_jira_ticket_id = request.data.get(
                 "current_jira_ticket_id",
             )
-            jira_setting = jirasetting.objects.filter(organization=request.user.organization)
+            jira_setting = jirasetting.objects.filter(
+                organization=request.user.organization
+            )
 
             jira_server = ""
             jira_username = None
@@ -686,24 +702,33 @@ class UpdateJiraTicket(APIView):
 
             options = {"server": jira_server}
             try:
-                if jira_username is not None and jira_username != "" :
+                if jira_username is not None and jira_username != "":
                     jira_ser = JIRA(
                         options, basic_auth=(jira_username, jira_password), timeout=30
                     )
-                else :
+                else:
                     jira_ser = JIRA(options, token_auth=jira_password, timeout=30)
             except Exception as e:
                 return Response(
-                    {"message": "Jira settings not found"}, status=status.HTTP_404_NOT_FOUND
+                    {"message": "Jira settings not found"},
+                    status=status.HTTP_404_NOT_FOUND,
                 )
             try:
-                jira_ser.create_issue_link(type="duplicates", inwardIssue=current_jira_ticket_id, outwardIssue=link_jira_ticket_id)
+                jira_ser.create_issue_link(
+                    type="duplicates",
+                    inwardIssue=current_jira_ticket_id,
+                    outwardIssue=link_jira_ticket_id,
+                )
                 return Response(
-                    {"message": "Jira Linked with %s" % link_jira_ticket_id}, status=status.HTTP_200_OK
+                    {"message": "Jira Linked with %s" % link_jira_ticket_id},
+                    status=status.HTTP_200_OK,
                 )
             except:
                 return Response(
-                    {"message": "Something not correct, please check Jira tickets and Vuln id"}, status=status.HTTP_404_NOT_FOUND
+                    {
+                        "message": "Something not correct, please check Jira tickets and Vuln id"
+                    },
+                    status=status.HTTP_404_NOT_FOUND,
                 )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

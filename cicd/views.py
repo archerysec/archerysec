@@ -16,21 +16,23 @@
 
 from __future__ import unicode_literals
 
-from django.shortcuts import HttpResponse, render
+import json as simplejson
+
+from django.shortcuts import (HttpResponse, HttpResponseRedirect, render,
+                              reverse)
 from notifications.models import Notification
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from user_management import permissions
-from projects.models import ProjectDb
-import json as simplejson
+
 from archeryapi.models import OrgAPIKey
-from rest_framework import status
-from jiraticketing.models import jirasetting
-from cicd.models import CicdDb
 from archeryapi.views import APIKey
-from django.shortcuts import HttpResponseRedirect, render, reverse
+from cicd.models import CicdDb
+from jiraticketing.models import jirasetting
+from projects.models import ProjectDb
+from user_management import permissions
 
 
 class CicdScanList(APIView):
@@ -54,71 +56,150 @@ class ScannerCommand(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAnalyst)
 
     def get(self, request):
-        result_set = ''
-        api_key = ''
-        scanner = request.GET.get('scanner', None)
-        host = request.GET.get('host', None)
-        protocol = request.GET.get('protocol', None)
-        code_path = request.GET.get('code_path', None)
-        target_name = request.GET.get('target_name', None)
-        project = request.GET.get('project', None)
+        result_set = ""
+        api_key = ""
+        scanner = request.GET.get("scanner", None)
+        host = request.GET.get("host", None)
+        protocol = request.GET.get("protocol", None)
+        code_path = request.GET.get("code_path", None)
+        target_name = request.GET.get("target_name", None)
+        project = request.GET.get("project", None)
 
-        cicd_id = request.GET.get('cicd_id', None)
+        cicd_id = request.GET.get("cicd_id", None)
 
-        access_key = OrgAPIKey.objects.filter(organization=request.user.organization).count()
+        access_key = OrgAPIKey.objects.filter(
+            organization=request.user.organization
+        ).count()
 
         if access_key == 0:
             user = request.user
             api_key = APIKey().generate_api_key(user)
-            OrgAPIKey.objects.create(
-                api_key=api_key, created_by=user, name='cicd'
-            )
+            OrgAPIKey.objects.create(api_key=api_key, created_by=user, name="cicd")
         else:
-            access_key = OrgAPIKey.objects.filter(organization=request.user.organization)
+            access_key = OrgAPIKey.objects.filter(
+                organization=request.user.organization
+            )
             for data in access_key:
                 api_key = data.api_key
 
-        if scanner == 'Bandit':
-            result_set = 'archerysec-cli ' + \
-                         '-h ' + protocol + \
-                         '//' + host + ' ' + \
-                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
-                         ' ' + '--project=' + \
-                         project + ' ' + '--bandit' + ' ' + '--report_path=$(pwd)'
+        if scanner == "Bandit":
+            result_set = (
+                "archerysec-cli "
+                + "-h "
+                + protocol
+                + "//"
+                + host
+                + " "
+                + "-t"
+                + " "
+                + api_key
+                + " "
+                + "--cicd_id="
+                + str(cicd_id)
+                + " "
+                + "--project="
+                + project
+                + " "
+                + "--bandit"
+                + " "
+                + "--report_path=$(pwd)"
+            )
 
-        if scanner == 'DependencyCheck':
-            result_set = 'archerysec-cli ' + \
-                         '-h ' + protocol + \
-                         '//' + host + ' ' + \
-                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
-                         ' ' + '--project=' + \
-                         project + ' ' + '--dependency-check' + ' ' + '--report_path=$(pwd)'
+        if scanner == "DependencyCheck":
+            result_set = (
+                "archerysec-cli "
+                + "-h "
+                + protocol
+                + "//"
+                + host
+                + " "
+                + "-t"
+                + " "
+                + api_key
+                + " "
+                + "--cicd_id="
+                + str(cicd_id)
+                + " "
+                + "--project="
+                + project
+                + " "
+                + "--dependency-check"
+                + " "
+                + "--report_path=$(pwd)"
+            )
 
-        if scanner == 'owasp-base-line':
-            result_set = 'archerysec-cli ' + \
-                         '-h ' + protocol + \
-                         '//' + host + ' ' + \
-                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
-                         ' ' + '--project=' + \
-                         project + ' ' + '--zap-base-line-scan' + ' ' + '--report_path=$(pwd)'
+        if scanner == "owasp-base-line":
+            result_set = (
+                "archerysec-cli "
+                + "-h "
+                + protocol
+                + "//"
+                + host
+                + " "
+                + "-t"
+                + " "
+                + api_key
+                + " "
+                + "--cicd_id="
+                + str(cicd_id)
+                + " "
+                + "--project="
+                + project
+                + " "
+                + "--zap-base-line-scan"
+                + " "
+                + "--report_path=$(pwd)"
+            )
 
-        if scanner == 'owasp-zap-full':
-            result_set = 'archerysec-cli ' + \
-                         '-h ' + protocol + \
-                         '//' + host + ' ' + \
-                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
-                         ' ' + '--project=' + \
-                         project + ' ' + '--zap-full-scan' + ' ' + '--report_path=$(pwd)'
+        if scanner == "owasp-zap-full":
+            result_set = (
+                "archerysec-cli "
+                + "-h "
+                + protocol
+                + "//"
+                + host
+                + " "
+                + "-t"
+                + " "
+                + api_key
+                + " "
+                + "--cicd_id="
+                + str(cicd_id)
+                + " "
+                + "--project="
+                + project
+                + " "
+                + "--zap-full-scan"
+                + " "
+                + "--report_path=$(pwd)"
+            )
 
-        if scanner == 'findsecbugs':
-            result_set = 'archerysec-cli ' + \
-                         '-h ' + protocol + \
-                         '//' + host + ' ' + \
-                         '-t' + ' ' + api_key + ' ' + '--cicd_id=' + str(cicd_id) + \
-                         ' ' + '--project=' + \
-                         project + ' ' + '--findsecbugs-scan' + ' ' + '--report_path=$(pwd)'
+        if scanner == "findsecbugs":
+            result_set = (
+                "archerysec-cli "
+                + "-h "
+                + protocol
+                + "//"
+                + host
+                + " "
+                + "-t"
+                + " "
+                + api_key
+                + " "
+                + "--cicd_id="
+                + str(cicd_id)
+                + " "
+                + "--project="
+                + project
+                + " "
+                + "--findsecbugs-scan"
+                + " "
+                + "--report_path=$(pwd)"
+            )
 
-        return HttpResponse(simplejson.dumps(result_set), content_type='application/json')
+        return HttpResponse(
+            simplejson.dumps(result_set), content_type="application/json"
+        )
 
 
 class CreatePolicies(APIView):
@@ -141,14 +222,18 @@ class CreatePolicies(APIView):
         code_path = request.POST.get("code_path")
 
         project_id = (
-            ProjectDb.objects.filter(uu_id=uu_id, organization=request.user.organization).values("id").get()["id"]
+            ProjectDb.objects.filter(
+                uu_id=uu_id, organization=request.user.organization
+            )
+            .values("id")
+            .get()["id"]
         )
 
-        if code_path == '':
-            code_path = '$(pwd)'
+        if code_path == "":
+            code_path = "$(pwd)"
 
-        if target_name == '':
-            target_name = 'TARGET_NAME'
+        if target_name == "":
+            target_name = "TARGET_NAME"
 
         CicdDb.objects.create(
             cicd_id=cicd_id,
@@ -162,7 +247,7 @@ class CreatePolicies(APIView):
             scanner=scanner,
             command=command,
             target=code_path,
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         return HttpResponseRedirect("/cicd/")
 
@@ -181,14 +266,15 @@ class PoliciesEdit(APIView):
             cicd_details = CicdDb.objects.filter(organization=request.user.organization)
         else:
             try:
-                cicd_details = CicdDb.objects.filter(cicd_id=uu_id, organization=request.user.organization)
+                cicd_details = CicdDb.objects.filter(
+                    cicd_id=uu_id, organization=request.user.organization
+                )
             except CicdDb.DoesNotExist:
                 return Response(
-                    {"message": "CICD Policies Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
+                    {"message": "CICD Policies Doesn't Exist"},
+                    status=status.HTTP_404_NOT_FOUND,
                 )
-        return Response(
-            {"cicd_details": cicd_details}
-        )
+        return Response({"cicd_details": cicd_details})
 
     def post(self, request, uu_id):
         name = request.data.get("name")
@@ -203,7 +289,7 @@ class PoliciesEdit(APIView):
             threshold_count=threshold_count,
             build_server=build_server,
             target_name=target_name,
-            organization=request.user.organization
+            organization=request.user.organization,
         )
         return HttpResponseRedirect("/cicd/")
 
@@ -225,8 +311,12 @@ class PoliciesDelete(APIView):
         for i in range(0, split_length):
             scan_id = value_split.__getitem__(i)
 
-            item = CicdDb.objects.filter(cicd_id=scan_id, organization=request.user.organization)
+            item = CicdDb.objects.filter(
+                cicd_id=scan_id, organization=request.user.organization
+            )
             item.delete()
-            item_results = CicdDb.objects.filter(cicd_id=scan_id, organization=request.user.organization)
+            item_results = CicdDb.objects.filter(
+                cicd_id=scan_id, organization=request.user.organization
+            )
             item_results.delete()
         return HttpResponseRedirect(reverse("cicd:cicd_list"))

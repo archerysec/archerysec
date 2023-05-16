@@ -19,7 +19,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 
-from user_management.models import UserProfile, Organization
+from user_management.models import Organization, UserProfile
 
 
 class zap_spider_db(models.Model):
@@ -57,13 +57,13 @@ class WebScansDb(models.Model):
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='web_scan_db_created'
+        related_name="web_scan_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='web_scan_db_updated'
+        related_name="web_scan_db_updated",
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -101,18 +101,21 @@ class WebScanResultsDb(models.Model):
     false_positive_hash = models.TextField(null=True, blank=True)
     scanner = models.TextField(editable=False)
     updated_time = models.DateTimeField(auto_now=True, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
-        related_name='web_scan_result_db_created',
+        related_name="web_scan_result_db_created",
         null=True,
     )
     updated_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='web_scan_result_db_updated',
+        related_name="web_scan_result_db_updated",
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -145,18 +148,21 @@ class web_scan_db(models.Model):
     low_vul = models.IntegerField(blank=True)
     info_vuln = models.IntegerField(blank=True)
     scanner = models.TextField(blank=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='web_scans_db_created',
+        related_name="web_scans_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='web_scans_db_updated',
+        related_name="web_scans_db_updated",
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -167,18 +173,21 @@ class email_config_db(models.Model):
     email_subject = models.TextField(blank=True)
     email_message = models.TextField(blank=True)
     email_id_to = models.EmailField(blank=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='email_config_db_created',
+        related_name="email_config_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='email_config_db_updated',
+        related_name="email_config_db_updated",
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -193,18 +202,21 @@ class task_schedule_db(models.Model):
     )
     scanner = models.TextField(blank=True, null=True)
     periodic_task = models.TextField(blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
-        related_name='task_sch_db_created',
+        related_name="task_sch_db_created",
         null=True,
     )
     updated_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='task_sch_db_updated',
+        related_name="task_sch_db_updated",
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
@@ -217,18 +229,21 @@ class burp_issue_definitions(models.Model):
     reference = models.TextField(blank=True, null=True)
     vulnerability_classifications = models.TextField(blank=True, null=True)
     name = models.TextField(blank=True, null=True)
-    created_time = models.DateTimeField(auto_now=True, blank=True, )
+    created_time = models.DateTimeField(
+        auto_now=True,
+        blank=True,
+    )
     created_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='burp_issue_db_created',
+        related_name="burp_issue_db_created",
     )
     updated_by = models.ForeignKey(
         UserProfile,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='burp_issue_db_updated',
+        related_name="burp_issue_db_updated",
     )
     is_active = models.BooleanField(default=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)

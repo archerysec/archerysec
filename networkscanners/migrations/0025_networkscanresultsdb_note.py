@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('networkscanners', '0024_auto_20210719_1431'),
+        ("networkscanners", "0024_auto_20210719_1431"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='networkscanresultsdb',
-            name='note',
+            model_name="networkscanresultsdb",
+            name="note",
             field=models.TextField(blank=True, null=True),
         ),
     ]

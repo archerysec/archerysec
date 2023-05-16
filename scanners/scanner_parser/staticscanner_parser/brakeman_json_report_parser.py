@@ -137,16 +137,17 @@ def brakeman_report_json(data, project_id, scan_id, request):
 
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
-        match_dup = StaticScanResultsDb.objects.filter(dup_hash=duplicate_hash, organization=request.user.organization).values(
-            "dup_hash"
-        )
+        match_dup = StaticScanResultsDb.objects.filter(
+            dup_hash=duplicate_hash, organization=request.user.organization
+        ).values("dup_hash")
         lenth_match = len(match_dup)
 
         if lenth_match == 0:
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                false_positive_hash=duplicate_hash, organization=request.user.organization
+                false_positive_hash=duplicate_hash,
+                organization=request.user.organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -175,7 +176,7 @@ def brakeman_report_json(data, project_id, scan_id, request):
                 fileName=file,
                 references=link,
                 scanner="Brakeman_scan",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
         else:
@@ -201,12 +202,15 @@ def brakeman_report_json(data, project_id, scan_id, request):
                 fileName=file,
                 references=link,
                 scanner="Brakeman_scan",
-                organization=request.user.organization
+                organization=request.user.organization,
             )
             save_all.save()
 
     all_findbugs_data = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", vuln_duplicate="No", organization=request.user.organization
+        scan_id=scan_id,
+        false_positive="No",
+        vuln_duplicate="No",
+        organization=request.user.organization,
     )
 
     duplicate_count = StaticScanResultsDb.objects.filter(
@@ -229,7 +233,7 @@ def brakeman_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Brakeman_scan",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - brakeman Report Uploaded"
@@ -250,6 +254,6 @@ parser_header_dict = {
         "dbname": "Brakeman_scan",
         "type": "JSON",
         "parserFunction": brakeman_report_json,
-        "icon": "/static/tools/brakeman.png"
+        "icon": "/static/tools/brakeman.png",
     }
 }

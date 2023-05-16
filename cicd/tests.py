@@ -15,6 +15,7 @@
 # This file is part of ArcherySec Project.
 
 import logging
+import uuid
 
 import requests
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -22,9 +23,8 @@ from django.test import Client, TestCase
 
 from authentication.tests import UserCreationTest
 from cicd.models import *
-from webscanners.models import *
 from projects.models import *
-import uuid
+from webscanners.models import *
 
 logging.disable(logging.CRITICAL)
 
@@ -122,7 +122,7 @@ class WebScanTest(TestCase):
 
         data = {
             "name": "name",
-            "threshold": 'high',
+            "threshold": "high",
             "threshold_count": "10",
             "scm_server": "github",
             "build_server": "jenkins",

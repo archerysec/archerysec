@@ -12,12 +12,12 @@
                         class="fas fa-laptop"></i><span class="hide-menu">Connectors</span></a></li>
                 {% if user.is_superuser == True %}
                     <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                                href="{% url 'list_user' %}" aria-expanded="false"><i
+                                                href="{% url 'users:list_user' %}" aria-expanded="false"><i
                             class="ti-user m-r-5 m-l-5"></i><span class="hide-menu">Users</span></a></li>
                 {% endif %}
                 {% if user.is_superuser == True %}
                     <li class="sidebar-item"><a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                                href="{% url 'list_org' %}" aria-expanded="false"><i
+                                                href="{% url 'users:list_org' %}" aria-expanded="false"><i
                             class="fas fa-building"></i><span class="hide-menu">Organization</span></a></li>
                 {% endif %}
                 {% if user.is_superuser == True %}

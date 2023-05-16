@@ -85,6 +85,5 @@ class WebScanStatusSerializer(serializers.Serializer):
 
 
 class ZapScanStatusDataSerializers(serializers.Serializer):
-
     scan_id = serializers.UUIDField(read_only=True)
     scan_status = serializers.CharField(required=True)

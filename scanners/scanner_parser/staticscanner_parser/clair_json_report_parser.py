@@ -96,7 +96,8 @@ def clair_report_json(data, project_id, scan_id, request):
                 duplicate_vuln = "No"
 
                 false_p = StaticScanResultsDb.objects.filter(
-                    false_positive_hash=duplicate_hash, organization=request.user.organization
+                    false_positive_hash=duplicate_hash,
+                    organization=request.user.organization,
                 )
                 fp_lenth_match = len(false_p)
 
@@ -126,7 +127,7 @@ def clair_report_json(data, project_id, scan_id, request):
                     false_positive=false_positive,
                     severity_color=vul_col,
                     scanner="Clair",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -154,7 +155,7 @@ def clair_report_json(data, project_id, scan_id, request):
                     false_positive="Duplicate",
                     severity_color=vul_col,
                     scanner="Clair",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -163,7 +164,6 @@ def clair_report_json(data, project_id, scan_id, request):
         # pass
 
     try:
-
         medium = data["Vulnerabilities"]["Medium"]
         for vuln in medium:
             vul_id = uuid.uuid4()
@@ -219,11 +219,11 @@ def clair_report_json(data, project_id, scan_id, request):
             lenth_match = len(match_dup)
 
             if lenth_match == 0:
-
                 duplicate_vuln = "No"
 
                 false_p = StaticScanResultsDb.objects.filter(
-                    false_positive_hash=duplicate_hash, organization=request.user.organization
+                    false_positive_hash=duplicate_hash,
+                    organization=request.user.organization,
                 )
                 fp_lenth_match = len(false_p)
 
@@ -253,7 +253,7 @@ def clair_report_json(data, project_id, scan_id, request):
                     false_positive=false_positive,
                     severity_color=vul_col,
                     scanner="Clair",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -281,7 +281,7 @@ def clair_report_json(data, project_id, scan_id, request):
                     false_positive="Duplicate",
                     severity_color=vul_col,
                     scanner="Clair",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -349,7 +349,8 @@ def clair_report_json(data, project_id, scan_id, request):
                 duplicate_vuln = "No"
 
                 false_p = StaticScanResultsDb.objects.filter(
-                    false_positive_hash=duplicate_hash, organization=request.user.organization
+                    false_positive_hash=duplicate_hash,
+                    organization=request.user.organization,
                 )
                 fp_lenth_match = len(false_p)
 
@@ -379,7 +380,7 @@ def clair_report_json(data, project_id, scan_id, request):
                     false_positive=false_positive,
                     severity_color=vul_col,
                     scanner="Clair",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -407,7 +408,7 @@ def clair_report_json(data, project_id, scan_id, request):
                     false_positive="Duplicate",
                     severity_color=vul_col,
                     scanner="Clair",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -512,7 +513,7 @@ def clair_report_json(data, project_id, scan_id, request):
                     false_positive=false_positive,
                     severity_color=vul_col,
                     scanner="Clair",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
 
@@ -540,7 +541,7 @@ def clair_report_json(data, project_id, scan_id, request):
                     false_positive="Duplicate",
                     severity_color=vul_col,
                     scanner="Clair",
-                    organization=request.user.organization
+                    organization=request.user.organization,
                 )
                 save_all.save()
         # pass
@@ -560,7 +561,9 @@ def clair_report_json(data, project_id, scan_id, request):
     total_low = len(all_clair_data.filter(severity="Low"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
-    StaticScansDb.objects.filter(scan_id=scan_id, organization=request.user.organization).update(
+    StaticScansDb.objects.filter(
+        scan_id=scan_id, organization=request.user.organization
+    ).update(
         total_vul=total_vul,
         critical_vul=total_critical,
         high_vul=total_high,
@@ -569,7 +572,7 @@ def clair_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Clair",
-        organization=request.user.organization
+        organization=request.user.organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - Clair Report Uploaded"
@@ -589,6 +592,6 @@ parser_header_dict = {
         "dbname": "Clair",
         "type": "JSON",
         "parserFunction": clair_report_json,
-        "icon": "/static/tools/clair.svg"
+        "icon": "/static/tools/clair.svg",
     }
 }

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("staticscanners", "0031_auto_20201006_1432"),
     ]

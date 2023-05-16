@@ -98,7 +98,6 @@ def run_nmap_vulners(ip_addr="", project_id=""):
     NmapVulnersPortResultDb.objects.filter(ip_address=ip_addr).delete()
 
     for host, host_data in scan.items():
-
         parse_port("tcp", host, host_data, scan_id, project_id)
         parse_port("udp", host, host_data, scan_id, project_id)
 
