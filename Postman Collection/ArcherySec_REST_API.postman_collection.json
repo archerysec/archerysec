@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "Archery_REST_API",
-		"_postman_id": "363ae70b-b199-c52a-1512-5d5bddc95cf7",
+		"_postman_id": "84d88dcb-4b3a-c89c-2185-4538341fc18a",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -11,23 +11,6 @@
 			"name": "user-profile",
 			"description": "",
 			"item": [
-				{
-					"name": "Profile",
-					"request": {
-						"url": "{{url}}/api/v1/users/profile/",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{key}}",
-								"description": ""
-							}
-						],
-						"body": {},
-						"description": ""
-					},
-					"response": []
-				},
 				{
 					"name": "Get Roles",
 					"request": {
@@ -52,6 +35,132 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "Profile",
+					"request": {
+						"url": "{{url}}/api/v1/auth/user-settings/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
+						},
+						"description": "List scans"
+					},
+					"response": []
+				},
+				{
+					"name": "update password",
+					"request": {
+						"url": "{{url}}/api/v1/auth/update-pass/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"old_password\": \"admin@123A1\",\n    \"new_password1\": \"admin@123A2\",\n    \"new_password2\": \"admin@123A2\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"url": "{{url}}/api/v1/auth/user-settings/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uu_id\": \"358b0da8-1f37-4ca4-8ca6-76405f88f12a\",\n    \"email\": \"user@user.com\",\n    \"name\": \"user34\"\n}"
+						},
+						"description": "List scans"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload picture",
+					"request": {
+						"url": "{{url}}/api/v1/auth/upload-profile-image/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "x-api-key",
+								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "profile_picture",
+									"description": "",
+									"type": "file",
+									"src": "anand_work copy.jpg"
+								}
+							]
+						},
+						"description": "List scans"
+					},
+					"response": []
 				}
 			]
 		},
@@ -73,7 +182,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@user.com\",\n    \"password\": \"admin@123A\"\n}"
+							"raw": "{\n    \"email\": \"user3@user.com\",\n    \"password\": \"admin@123A1\"\n}"
 						},
 						"description": ""
 					},
@@ -176,37 +285,6 @@
 					"response": []
 				},
 				{
-					"name": "User settings",
-					"request": {
-						"url": "{{url}}/api/v1/auth/user-settings/",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "x-api-key",
-								"value": "owe4YhuV_4g-8kXcaC0iydVc73rjjWnqB26o26GwavfQadJtv-lyDSPtolH60qMA",
-								"description": "",
-								"disabled": true
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{key}}",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"project_name\":\"projeasdfct\", \"project_disc\":\"project_discription\"}"
-						},
-						"description": "List scans"
-					},
-					"response": []
-				},
-				{
 					"name": "APIKey",
 					"request": {
 						"url": "{{url}}/archerysec/api/v1/subscription/APIKey/",
@@ -270,7 +348,10 @@
 								"description": ""
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -287,7 +368,10 @@
 								"description": ""
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"description": ""
 					},
 					"response": []
@@ -455,7 +539,7 @@
 				{
 					"name": "Project List",
 					"request": {
-						"url": "{{url}}/api/v1/project-list/",
+						"url": "{{url}}/api/v1/project-list/ff12515f-c7dd-4419-8407-66898d9dee97/",
 						"method": "GET",
 						"header": [
 							{
@@ -466,13 +550,13 @@
 							{
 								"key": "x-api-key",
 								"value": "2JpWeMecx8WX4tG0vGWGgeGJgil0jGL0VU1YL6SOWbfZpHDjaZof6vEkHM2Bkr0R",
-								"description": ""
+								"description": "",
+								"disabled": true
 							},
 							{
 								"key": "Authorization",
 								"value": "Bearer {{key}}",
-								"description": "",
-								"disabled": true
+								"description": ""
 							}
 						],
 						"body": {
@@ -1005,7 +1089,8 @@
 							"key": "filename",
 							"description": "",
 							"type": "file",
-							"src": "prisma-report.csv"
+							"src": "prisma-report.csv",
+							"value": ""
 						},
 						{
 							"key": "project_id",
