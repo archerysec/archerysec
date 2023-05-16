@@ -425,6 +425,57 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "Invite Users",
+					"request": {
+						"url": "{{url}}/api/v1/invite-user/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"4tg5grgrgref@test.com\",\n\t\"role\": \"3\",\n\t\"name\": \"t555gtgt\"\n\t\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "UserActivate",
+					"request": {
+						"url": "{{url}}/api/v1/activate/ZWMxZDI4YzYtYmVkYy00ZDI1LWI1NzUtZDVhOWI1OTg2MzE3/boanum-1176863a86c52601fa21b96cf90cddc0/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{key}}",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"test@123\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
 				}
 			]
 		},
