@@ -22,6 +22,11 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.db import models
 
 
+def upload_to(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'user_{0}/{1}'.format(instance.user.uu_id, filename)
+
+
 class Organization(models.Model):
     """Database model for organization in system"""
 
@@ -116,7 +121,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     )
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
-    image = models.CharField(max_length=255)
+    image = models.ImageField(upload_to=upload_to, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     role = models.ForeignKey("UserRoles", on_delete=models.SET_NULL, null=True)
