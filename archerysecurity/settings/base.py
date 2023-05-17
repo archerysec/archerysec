@@ -175,7 +175,9 @@ STRONGHOLD_PUBLIC_URLS = (
     r"^/admin.*?$",  # Don't touch the admin pages
     r"^/accounts/login/$",  # Avoid redirect loop
     r"^/api.*?$",
-    r"^/api/v1/activate/$" r"^/o.*?$",
+    r"^/api/v1/activate/$",
+    r"^/api/v1/forget-user-password/$",
+    r"^/o.*?$",
 )
 
 LOGIN_URL = "/auth/login/"

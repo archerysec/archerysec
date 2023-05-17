@@ -33,7 +33,8 @@ from projects.views import ProjectList
 from staticscanners.views import SastScanList, SastScanVulnInfo
 from user_management.views import (InviteUserAPIView, Profile, Roles,
                                    UserActivateAPIView, UserRoles, Users,
-                                   UsersEdit, UsersList)
+                                   UsersEdit, UsersList, ResetUserPasswordAPIView,
+                                   UserPasswordResetAPIView)
 from webscanners.arachniscanner.views import (ArachniScan, ArachniSetting,
                                               ArachniSettingUpdate)
 from webscanners.burpscanner.views import BurpScanLaunch, BurpSetting
@@ -93,6 +94,13 @@ urlpatterns = [
         "v1/activate/<str:uid>/<str:token>/",
         UserActivateAPIView.as_view(),
         name="activate-user",
+    ),
+    # Rest Password
+    path("v1/forget-user-password/", ResetUserPasswordAPIView.as_view(), name="forget-user-password"),
+    path(
+        "v1/reset-password/<str:uid>/<str:token>/",
+        UserPasswordResetAPIView.as_view(),
+        name="reset-password",
     ),
     path("v1/uploadscan/", views.UploadScanResult.as_view()),
     path("access-key/", views.APIKey.as_view(), name="access-key"),

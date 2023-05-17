@@ -52,7 +52,7 @@ class Users(APIView):
             try:
                 user_profile = UserProfile.objects.get(uu_id=uu_id)
                 serialized_data = UserProfileSerializers(user_profile, many=False)
-            except UserProfile.DoesNotExist:
+            except UserProfile.uu_id.DoesNotExist:
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
@@ -64,7 +64,7 @@ class Users(APIView):
             content = {"message": user_profile.uu_id}
             user_profile.delete()
             return Response(content, status=status.HTTP_200_OK)
-        except UserProfile.DoesNotExist:
+        except UserProfile.uu_id.DoesNotExist:
             return Response(
                 {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -149,7 +149,6 @@ class InviteUserAPIView(APIView):
         user.is_active = False
         user.save()
         activation_link = self.generate_activation_link(request, user)
-        print(activation_link)
         try:
             send_invitation_email(user.email, activation_link)
             return Response(
@@ -171,6 +170,46 @@ class InviteUserAPIView(APIView):
         token = user.pass_token
         return request.build_absolute_uri(
             reverse("archeryapi:activate-user", kwargs={"uid": uid, "token": token})
+        )
+
+
+class ResetUserPasswordAPIView(APIView):
+    permission_classes = (
+
+    )
+
+    def post(self, request):
+        email = request.data.get("email")
+
+        user = UserProfile.objects.get(
+            email=email
+        )
+        token = default_token_generator.make_token(user)
+        user.pass_token = token
+        user.token_time = datetime.now() + timedelta(hours=24)
+        user.save()
+        activation_link = self.generate_activation_link(request, user)
+        try:
+            send_invitation_email(user.email, activation_link)
+            return Response(
+                {
+                    "message": "Reset Link will be sent if user exist. Please check your email for reset instructions."
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except:
+            return Response(
+                {
+                    "message": "Email Configuration not found",
+                    "activation_link": activation_link,
+                }
+            )
+
+    def generate_activation_link(self, request, user):
+        uid = urlsafe_base64_encode(force_bytes(user.uu_id))
+        token = user.pass_token
+        return request.build_absolute_uri(
+            reverse("archeryapi:reset-password", kwargs={"uid": uid, "token": token})
         )
 
 
@@ -214,6 +253,46 @@ class UserActivateAPIView(APIView):
         )
 
 
+class UserPasswordResetAPIView(APIView):
+    permission_classes = ()
+
+    def post(self, request, uid, token):
+        # Decode user ID from the URL
+        user_id = force_str(urlsafe_base64_decode(uid))
+
+        try:
+            # Find the user by user_id
+            user = UserProfile.objects.get(uu_id=user_id)
+
+        except UserProfile.uu_id.DoesNotExist:
+            return Response(
+                {"message": "Invalid activation link."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Verify the token and check if it has expired
+        if user.pass_token == token and user.token_time >= datetime.now():
+            # Get user data from request body
+            password = request.data.get("password")
+
+            # Activate the user and set the new password
+            user.is_active = True
+            user.pass_token = default_token_generator.make_token(user)
+            user.set_password(password)
+            user.save()
+
+            return Response(
+                {
+                    "message": "Password reset successfully. You can now login with your new password."
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {"message": "Invalid or expired activation link."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
 class UsersList(APIView):
     permission_classes = (
         IsAuthenticated,
@@ -228,7 +307,7 @@ class UsersList(APIView):
             try:
                 user_profile = UserProfile.objects.filter(uu_id=uu_id)
                 serialized_data = UserProfileSerializers(user_profile, many=False)
-            except UserProfile.DoesNotExist:
+            except UserProfile.uu_id.DoesNotExist:
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
@@ -248,7 +327,7 @@ class UsersList(APIView):
             user_profile.delete()
             messages.success(request, "User Deleted")
             return HttpResponseRedirect("/users/list_user/")
-        except UserProfile.DoesNotExist:
+        except UserProfile.uu_id.DoesNotExist:
             messages.error(request, "User Doesn't Exist")
             return HttpResponseRedirect("/users/list_user/")
 
@@ -272,7 +351,7 @@ class UsersEdit(APIView):
                 print(uu_id)
                 user_details = UserProfile.objects.filter(uu_id=uu_id)
                 serialized_data = UserPutReqSerializers(user_details, many=False)
-            except UserProfile.DoesNotExist:
+            except UserProfile.uu_id.DoesNotExist:
                 return Response(
                     {"message": "User Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND
                 )
