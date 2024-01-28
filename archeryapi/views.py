@@ -331,7 +331,7 @@ class UploadScanResult(APIView):
             elif db_type == "StaticScans":
                 return_func = self.sast_result_data
                 scan_dump = StaticScansDb(
-                    scan_url=scan_url,
+                    project_name=scan_url,
                     scan_id=scan_id,
                     project_id=project_id,
                     scan_status=scan_status,
@@ -406,7 +406,7 @@ class UploadScanResult(APIView):
 
         # Call the parser
         parser_func = parser_dict["parserFunction"]
-        parser_func(data, project_id, scan_id, request)
+        parser_func(data, project_id, scan_id)
 
         # Success !
         if custom_return is True:
