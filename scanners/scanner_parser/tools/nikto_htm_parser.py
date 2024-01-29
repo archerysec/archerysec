@@ -18,6 +18,7 @@ import hashlib
 import uuid
 
 from bs4 import BeautifulSoup
+from archeryapi.models import OrgAPIKey
 
 from tools.models import NiktoVulnDb
 
@@ -32,6 +33,13 @@ def nikto_html_parser(data, project_id, scan_id, request):
     testlinks = "None"
     osvdb = "None"
     soup = BeautifulSoup(data, "html.parser")
+
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
 
     for link in soup.find_all(class_="dataTable"):
         # print "------------------------"
@@ -95,7 +103,7 @@ def nikto_html_parser(data, project_id, scan_id, request):
 
         match_dup = (
             NiktoVulnDb.objects.filter(
-                dup_hash=duplicate_hash, organization=request.user.organization
+                dup_hash=duplicate_hash, organization=organization
             )
             .values("dup_hash")
             .distinct()
@@ -110,7 +118,7 @@ def nikto_html_parser(data, project_id, scan_id, request):
             duplicate_vuln = "None"
 
         false_p = NiktoVulnDb.objects.filter(
-            false_positive_hash=duplicate_hash, organization=request.user.organization
+            false_positive_hash=duplicate_hash, organization=organization
         )
         fp_lenth_match = len(false_p)
 
@@ -138,7 +146,7 @@ def nikto_html_parser(data, project_id, scan_id, request):
             dup_hash=duplicate_hash,
             vuln_duplicate=duplicate_vuln,
             vuln_status="Open",
-            organization=request.user.organization,
+            organization=organization,
         )
         dump_data.save()
 

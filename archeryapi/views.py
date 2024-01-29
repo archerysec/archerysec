@@ -257,7 +257,6 @@ class UploadScanResult(APIView):
         scan_url = request.data.get("scan_url")
         scan_id = uuid.uuid4()
         scan_status = "100"
-
         parser_dict = scanner_parser.parser_function_dict.get(
             scanner, "Not implemented"
         )
@@ -406,7 +405,7 @@ class UploadScanResult(APIView):
 
         # Call the parser
         parser_func = parser_dict["parserFunction"]
-        parser_func(data, project_id, scan_id)
+        parser_func(data, project_id, scan_id, request)
 
         # Success !
         if custom_return is True:

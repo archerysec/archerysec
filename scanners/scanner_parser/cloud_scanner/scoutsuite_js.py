@@ -19,6 +19,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from cloudscanners.models import CloudScansDb, CloudScansResultsDb
 from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
@@ -44,6 +45,12 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
     cloud_account_id = data["account_id"]
     cloud_account_name = data["account_id"]
     cloud_type = data["provider_name"]
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     for key, value in data["services"].items():
         findings = data["services"][key]["findings"]
         for finding_key, finding_value in findings.items():
@@ -91,7 +98,7 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
                 match_dup = CloudScansResultsDb.objects.filter(
-                    dup_hash=duplicate_hash, organization=request.user.organization
+                    dup_hash=duplicate_hash, organization=organization
                 ).values("dup_hash")
                 lenth_match = len(match_dup)
 
@@ -100,7 +107,7 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
 
                     false_p = CloudScansResultsDb.objects.filter(
                         false_positive_hash=duplicate_hash,
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     fp_lenth_match = len(false_p)
 
@@ -139,7 +146,7 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
                         + str(compliance),
                         references=references,
                         scanner="scoutsuite",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     save_all.save()
 
@@ -175,15 +182,15 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
                         + str(compliance),
                         references=references,
                         scanner="scoutsuite",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     save_all.save()
     all_scoutsuitecloud_data = CloudScansResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", organization=request.user.organization
+        scan_id=scan_id, false_positive="No", organization=organization
     )
 
     duplicate_count = CloudScansResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+        scan_id=scan_id, vuln_duplicate="Yes", organization=organization
     )
 
     total_vul = len(all_scoutsuitecloud_data)
@@ -194,7 +201,7 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     CloudScansDb.objects.filter(
-        scan_id=scan_id, organization=request.user.organization
+        scan_id=scan_id, organization=organization
     ).update(
         cloudAccountId=cloud_account_id,
         total_vul=total_vul,
@@ -205,7 +212,7 @@ def scoutsuite_cloud_report_js(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="scoutsuite",
-        organization=request.user.organization,
+        organization=organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - scoutsuite Cloud Report Uploaded"

@@ -18,6 +18,7 @@ import datetime
 import hashlib
 import uuid
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from utility.email_notify import email_sch_notify
@@ -56,7 +57,12 @@ report_name = ""
 
 def xml_parser(root, project_id, scan_id, request):
     global agent, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, risk_factor, script_version, solution, synopsis, plugin_output, see_also, scan_ip, pluginName, pluginID, protocol, severity, svc_name, pluginFamily, port, vuln_color, total_vul, total_high, total_medium, total_low, target, report_name
-
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     try:
         date_time = datetime.datetime.fromtimestamp(int(root.get("start")))
     except Exception:
@@ -117,7 +123,7 @@ def xml_parser(root, project_id, scan_id, request):
                 duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
                 match_dup = (
                     NetworkScanResultsDb.objects.filter(
-                        dup_hash=duplicate_hash, organization=request.user.organization
+                        dup_hash=duplicate_hash, organization=organization
                     )
                     .values("dup_hash")
                     .distinct()
@@ -130,7 +136,7 @@ def xml_parser(root, project_id, scan_id, request):
                     global false_positive
                     false_p = NetworkScanResultsDb.objects.filter(
                         false_positive_hash=duplicate_hash,
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     fp_lenth_match = len(false_p)
                     if fp_lenth_match == 1:
@@ -157,7 +163,7 @@ def xml_parser(root, project_id, scan_id, request):
                         vuln_duplicate=duplicate_vuln,
                         severity_color=vuln_color,
                         scanner="Nmapvulners",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     all_data_save.save()
 
@@ -181,7 +187,7 @@ def xml_parser(root, project_id, scan_id, request):
                         vuln_duplicate=duplicate_vuln,
                         severity_color=vuln_color,
                         scanner="Nmapvulners",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     all_data_save.save()
 
@@ -190,11 +196,11 @@ def xml_parser(root, project_id, scan_id, request):
             ip=target,
             vuln_status="Open",
             vuln_duplicate="No",
-            organization=request.user.organization,
+            organization=organization,
         )
 
         duplicate_count = NetworkScanResultsDb.objects.filter(
-            ip=target, vuln_duplicate="Yes", organization=request.user.organization
+            ip=target, vuln_duplicate="Yes", organization=organization
         )
 
         target_total_vuln = len(target_filter)
@@ -211,7 +217,7 @@ def xml_parser(root, project_id, scan_id, request):
             medium_vul=target_total_medium,
             low_vul=target_total_low,
             total_dup=target_total_duplicate,
-            organization=request.user.organization,
+            organization=organization,
         )
     except Exception:
         print("Something went wrong while updating the vulnerability count")

@@ -18,6 +18,7 @@ import datetime
 import hashlib
 import uuid
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from utility.email_notify import email_sch_notify
@@ -58,6 +59,13 @@ def updated_nessus_parser(root, project_id, scan_id, request):
     global agent, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, risk_factor, script_version, solution, synopsis, plugin_output, see_also, scan_ip, pluginName, pluginID, protocol, severity, svc_name, pluginFamily, port, vuln_color, total_vul, total_high, total_medium, total_low, target, report_name
 
     date_time = datetime.datetime.now()
+
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
 
     for data in root:
         if data.tag == "Report":
@@ -180,7 +188,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                         match_dup = (
                             NetworkScanResultsDb.objects.filter(
                                 dup_hash=duplicate_hash,
-                                organization=request.user.organization,
+                                organization=organization,
                             )
                             .values("dup_hash")
                             .distinct()
@@ -193,7 +201,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                             global false_positive
                             false_p = NetworkScanResultsDb.objects.filter(
                                 false_positive_hash=duplicate_hash,
-                                organization=request.user.organization,
+                                organization=organization,
                             )
                             fp_lenth_match = len(false_p)
                             if fp_lenth_match == 1:
@@ -220,7 +228,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                                 vuln_duplicate=duplicate_vuln,
                                 severity_color=vuln_color,
                                 scanner="Nessus",
-                                organization=request.user.organization,
+                                organization=organization,
                             )
                             all_data_save.save()
 
@@ -244,7 +252,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                                 vuln_duplicate=duplicate_vuln,
                                 severity_color=vuln_color,
                                 scanner="Nessus",
-                                organization=request.user.organization,
+                                organization=organization,
                             )
                             all_data_save.save()
             except Exception:
@@ -257,13 +265,13 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                         ip=target,
                         vuln_status="Open",
                         vuln_duplicate="No",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
 
                     duplicate_count = NetworkScanResultsDb.objects.filter(
                         ip=target,
                         vuln_duplicate="Yes",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
 
                     target_total_vuln = len(target_filter)
@@ -275,7 +283,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                     target_total_low = len(target_filter.filter(severity="Low"))
                     target_total_duplicate = len(
                         duplicate_count.filter(
-                            vuln_duplicate="Yes", organization=request.user.organization
+                            vuln_duplicate="Yes", organization=organization
                         )
                     )
                     NetworkScanDb.objects.filter(ip=target).update(
@@ -286,7 +294,7 @@ def updated_nessus_parser(root, project_id, scan_id, request):
                         medium_vul=target_total_medium,
                         low_vul=target_total_low,
                         total_dup=target_total_duplicate,
-                        organization=request.user.organization,
+                        organization=organization,
                     )
             except Exception:
                 continue
