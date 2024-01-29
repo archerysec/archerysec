@@ -18,6 +18,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
@@ -54,6 +55,14 @@ def bandit_report_json(data, project_id, scan_id, request):
     :return:
     """
     global vul_col, issue_severity, test_name, filename, line_number, code, issue_confidence, line_range, test_id, issue_text, more_info, total_vul, total_high, total_medium, total_low
+
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
+    
     for key, items in data.items():
         if key == "results":
             for res in items:
@@ -143,7 +152,7 @@ def bandit_report_json(data, project_id, scan_id, request):
 
                 match_dup = (
                     StaticScanResultsDb.objects.filter(
-                        dup_hash=duplicate_hash, organization=request.user.organization
+                        dup_hash=duplicate_hash, organization=organization
                     )
                     .values("dup_hash")
                     .distinct()
@@ -155,7 +164,7 @@ def bandit_report_json(data, project_id, scan_id, request):
 
                     false_p = StaticScanResultsDb.objects.filter(
                         false_positive_hash=duplicate_hash,
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     fp_lenth_match = len(false_p)
 
@@ -184,7 +193,7 @@ def bandit_report_json(data, project_id, scan_id, request):
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Bandit",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     save_all.save()
 
@@ -211,18 +220,18 @@ def bandit_report_json(data, project_id, scan_id, request):
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Bandit",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     save_all.save()
 
         all_bandit_data = StaticScanResultsDb.objects.filter(
-            scan_id=scan_id, false_positive="No", organization=request.user.organization
+            scan_id=scan_id, false_positive="No", organization=organization
         )
 
         duplicate_count = StaticScanResultsDb.objects.filter(
             scan_id=scan_id,
             vuln_duplicate="Yes",
-            organization=request.user.organization,
+            organization=organization,
         )
 
         total_vul = len(all_bandit_data)
@@ -239,7 +248,7 @@ def bandit_report_json(data, project_id, scan_id, request):
             medium_vul=total_medium,
             low_vul=total_low,
             total_dup=total_duplicate,
-            organization=request.user.organization,
+            organization=organization,
         )
     trend_update()
     subject = "Archery Tool Scan Status - Bandit Report Uploaded"
@@ -254,7 +263,7 @@ def bandit_report_json(data, project_id, scan_id, request):
 
 
 parser_header_dict = {
-    "bandit_scan": {
+    "banditscan": {
         "displayName": "Bandit Scanner",
         "dbtype": "StaticScans",
         "dbname": "Bandit",

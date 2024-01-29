@@ -21,6 +21,7 @@ from datetime import datetime
 
 from django.shortcuts import HttpResponse
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
 # from django.core.mail import send_mail
@@ -67,6 +68,12 @@ def burp_scan_data(root, project_id, scan_id, request):
     :return:
     """
     global vuln_id, burp_status, vul_col, issue_description, issue_remediation, issue_reference, issue_vulnerability_classifications, vul_col, severity, name, path, host, location, confidence, types, serialNumber, request_datas, response_datas, url
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     for issue in root:
         for data in issue:
             vuln_id = uuid.uuid4()
@@ -184,7 +191,7 @@ def burp_scan_data(root, project_id, scan_id, request):
             WebScanResultsDb.objects.filter(
                 dup_hash=duplicate_hash,
                 scanner="Burp",
-                organization=request.user.organization,
+                organization=organization,
             )
             .values("dup_hash")
             .distinct()
@@ -197,7 +204,7 @@ def burp_scan_data(root, project_id, scan_id, request):
             false_p = WebScanResultsDb.objects.filter(
                 false_positive_hash=duplicate_hash,
                 scanner="Burp",
-                organization=request.user.organization,
+                organization=organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -229,7 +236,7 @@ def burp_scan_data(root, project_id, scan_id, request):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     scanner="Burp",
-                    organization=request.user.organization,
+                    organization=organization,
                 )
                 data_dump.save()
             except Exception as e:
@@ -256,7 +263,7 @@ def burp_scan_data(root, project_id, scan_id, request):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     scanner="Burp",
-                    organization=request.user.organization,
+                    organization=organization,
                 )
                 data_dump.save()
             except Exception as e:
@@ -266,14 +273,14 @@ def burp_scan_data(root, project_id, scan_id, request):
         scan_id=scan_id,
         scanner="Burp",
         false_positive="No",
-        organization=request.user.organization,
+        organization=organization,
     )
 
     duplicate_count = WebScanResultsDb.objects.filter(
         scan_id=scan_id,
         scanner="Burp",
         vuln_duplicate="Yes",
-        organization=request.user.organization,
+        organization=organization,
     )
 
     total_vul = len(burp_all_vul)
@@ -284,7 +291,7 @@ def burp_scan_data(root, project_id, scan_id, request):
     total_info = len(burp_all_vul.filter(severity="Information"))
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
     WebScansDb.objects.filter(
-        scan_id=scan_id, scanner="Burp", organization=request.user.organization
+        scan_id=scan_id, scanner="Burp", organization=organization
     ).update(
         scan_url=host,
         date_time=date_time,
@@ -295,7 +302,7 @@ def burp_scan_data(root, project_id, scan_id, request):
         low_vul=total_low,
         info_vul=total_info,
         total_dup=total_duplicate,
-        organization=request.user.organization,
+        organization=organization,
     )
     print(host)
     trend_update()

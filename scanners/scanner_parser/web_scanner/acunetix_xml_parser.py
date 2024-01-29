@@ -18,6 +18,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
 from webscanners.models import WebScanResultsDb, WebScansDb
@@ -75,6 +76,13 @@ def xml_parser(root, project_id, scan_id, request):
     date_time = datetime.now()
     global ScanName, ScanShortName, ScanStartURL, ScanStartTime, ScanFinishTime, ScanScanTime, ScanAborted, ScanResponsive, ScanResponsive, ScanBanner, ScanOs, ScanWebServer, ScanTechnologies, ScanCrawler, ScanReportItems, VulnName, VulnModuleName, VulnDetails, VulnAffects, VulnParameter, VulnAOP_SourceFile, VulnAOP_SourceLine, VulnAOP_Additional, VulnIsFalsePositive, VulnSeverity, VulnType, VulnImpact, VulnDescription, VulnDetailedInformation, VulnRecommendation, VulnTechnicalDetails, VulnCWEList, VulnCVEList, VulnCVSS, VulnCVSS3, VulnReferences, vul_col, risk, UriName, VulnUrl, FullURL
 
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
+        
     for scan in root:
         for reports in scan:
             if reports.tag == "Name":
@@ -215,7 +223,7 @@ def xml_parser(root, project_id, scan_id, request):
                     match_dup = (
                         WebScanResultsDb.objects.filter(
                             dup_hash=duplicate_hash,
-                            organization=request.user.organization,
+                            organization=organization,
                         )
                         .values("dup_hash")
                         .distinct()
@@ -227,7 +235,7 @@ def xml_parser(root, project_id, scan_id, request):
 
                         false_p = WebScanResultsDb.objects.filter(
                             false_positive_hash=duplicate_hash,
-                            organization=request.user.organization,
+                            organization=organization,
                         )
                         fp_lenth_match = len(false_p)
 
@@ -255,7 +263,7 @@ def xml_parser(root, project_id, scan_id, request):
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
                             scanner="Acunetix",
-                            organization=request.user.organization,
+                            organization=organization,
                         )
                         dump_data.save()
 
@@ -281,16 +289,16 @@ def xml_parser(root, project_id, scan_id, request):
                             dup_hash=duplicate_hash,
                             vuln_duplicate=duplicate_vuln,
                             scanner="Acunetix",
-                            organization=request.user.organization,
+                            organization=organization,
                         )
                         dump_data.save()
 
     acunetix_all_vul = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", organization=request.user.organization
+        scan_id=scan_id, false_positive="No", organization=organization
     )
 
     duplicate_count = WebScanResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+        scan_id=scan_id, vuln_duplicate="Yes", organization=organization
     )
 
     total_critical = len(acunetix_all_vul.filter(severity="Critical"))
@@ -304,7 +312,7 @@ def xml_parser(root, project_id, scan_id, request):
     # cal_total_vuln = total_high + total_medium + total_low + total_info
 
     WebScansDb.objects.filter(
-        scan_id=scan_id, organization=request.user.organization
+        scan_id=scan_id, organization=organization
     ).update(
         total_vul=total_vul,
         date_time=date_time,
@@ -315,7 +323,7 @@ def xml_parser(root, project_id, scan_id, request):
         info_vul=total_info,
         total_dup=total_duplicate,
         scan_url=ScanStartURL,
-        organization=request.user.organization,
+        organization=organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - Acunetix Report Uploaded"

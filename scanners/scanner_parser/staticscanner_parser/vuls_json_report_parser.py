@@ -18,6 +18,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
@@ -48,6 +49,13 @@ def vuls_report_json(data, project_id, scan_id, request):
     scanner = "Vuls"
     vulns = data["scannedCves"]
     targetHost = data["config"]["scan"]["servers"]["target"]["host"]
+
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
 
     for _, vuln_scanned in vulns.items():  # For each scanned item...
         for _, cveContentType in vuln_scanned[
@@ -139,7 +147,7 @@ def vuls_report_json(data, project_id, scan_id, request):
                     ).hexdigest()
 
                     match_dup = StaticScanResultsDb.objects.filter(
-                        dup_hash=duplicate_hash, organization=request.user.organization
+                        dup_hash=duplicate_hash, organization=organization
                     ).values("dup_hash")
                     lenth_match = len(match_dup)
 
@@ -148,7 +156,7 @@ def vuls_report_json(data, project_id, scan_id, request):
 
                         false_p = StaticScanResultsDb.objects.filter(
                             false_positive_hash=duplicate_hash,
-                            organization=request.user.organization,
+                            organization=organization,
                         )
                         fp_lenth_match = len(false_p)
 
@@ -174,7 +182,7 @@ def vuls_report_json(data, project_id, scan_id, request):
                             false_positive=false_positive,
                             scanner="Vuls",
                             references=sourceRef,
-                            organization=request.user.organization,
+                            organization=organization,
                         )
                         save_all.save()
                     else:
@@ -197,7 +205,7 @@ def vuls_report_json(data, project_id, scan_id, request):
                             false_positive="Duplicate",
                             scanner="Vuls",
                             references=sourceRef,
-                            organization=request.user.organization,
+                            organization=organization,
                         )
                         save_all.save()
 
@@ -205,11 +213,11 @@ def vuls_report_json(data, project_id, scan_id, request):
         scan_id=scan_id,
         false_positive="No",
         vuln_duplicate="No",
-        organization=request.user.organization,
+        organization=organization,
     )
 
     duplicate_count = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+        scan_id=scan_id, vuln_duplicate="Yes", organization=organization
     )
 
     total_vul = len(all_findbugs_data)
@@ -219,7 +227,7 @@ def vuls_report_json(data, project_id, scan_id, request):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     StaticScansDb.objects.filter(
-        scan_id=scan_id, organization=request.user.organization
+        scan_id=scan_id, organization=organization
     ).update(
         date_time=date_time,
         total_vul=total_vul,
@@ -228,7 +236,7 @@ def vuls_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Vuls",
-        organization=request.user.organization,
+        organization=organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - Vuls Report Uploaded"

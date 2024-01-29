@@ -19,6 +19,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from cloudscanners.models import CloudScansDb, CloudScansResultsDb
 from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
@@ -40,6 +41,12 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
     cloud_account_id = "na"
     vul_col = "na"
     date_time = datetime.now()
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     for vuln in data:
         title = vuln["Title"]
         status = vuln["Status"]
@@ -78,7 +85,7 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = CloudScansResultsDb.objects.filter(
-            dup_hash=duplicate_hash, organization=request.user.organization
+            dup_hash=duplicate_hash, organization=organization
         ).values("dup_hash")
         lenth_match = len(match_dup)
 
@@ -87,7 +94,7 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
 
             false_p = CloudScansResultsDb.objects.filter(
                 false_positive_hash=duplicate_hash,
-                organization=request.user.organization,
+                organization=organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -126,7 +133,7 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
                 + str(resource_original_json),
                 references="NA",
                 scanner="wiz",
-                organization=request.user.organization,
+                organization=organization,
             )
             save_all.save()
 
@@ -162,15 +169,15 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
                 + str(resource_original_json),
                 references="NA",
                 scanner="wiz",
-                organization=request.user.organization,
+                organization=organization,
             )
             save_all.save()
     all_wizcloud_data = CloudScansResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", organization=request.user.organization
+        scan_id=scan_id, false_positive="No", organization=organization
     )
 
     duplicate_count = CloudScansResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+        scan_id=scan_id, vuln_duplicate="Yes", organization=organization
     )
 
     total_vul = len(all_wizcloud_data)
@@ -181,7 +188,7 @@ def wiz_cloud_report_csv(data, project_id, scan_id, request):
     total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
     CloudScansDb.objects.filter(
-        scan_id=scan_id, organization=request.user.organization
+        scan_id=scan_id, organization=organization
     ).update(
         cloudAccountId=cloud_account_id,
         total_vul=total_vul,

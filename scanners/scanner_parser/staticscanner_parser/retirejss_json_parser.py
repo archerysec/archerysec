@@ -19,6 +19,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 
@@ -46,6 +47,12 @@ def retirejs_report_json(data, project_id, scan_id, request):
     :return:
     """
     date_time = datetime.now()
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     global component, files, severity
     for f in data:
         files = f["file"]
@@ -142,14 +149,14 @@ def retirejs_report_json(data, project_id, scan_id, request):
             # vuln_duplicate=duplicate_vuln,
             # version=version,
             scanner="Retirejs",
-            organization=request.user.organization,
+            organization=organization,
         )
         save_all.save()
         trend_update()
 
 
 parser_header_dict = {
-    "retirejs_scan": {
+    "retirejs": {
         "displayName": "RetireJS Scanner",
         "dbtype": "StaticScans",
         "dbname": "Retirejs",

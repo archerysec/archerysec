@@ -18,6 +18,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from networkscanners.models import NetworkScanDb, NetworkScanResultsDb
 from utility.email_notify import email_sch_notify
@@ -50,6 +51,13 @@ def updated_xml_parser(root, project_id, scan_id, request):
     :return:
     """
     global host, name, severity, port, threat, creation_time, modification_time, description, family, cvss_base, cve
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
+    
     for openvas in root.findall(".//result"):
         for r in openvas:
             if r.tag == "name":
@@ -94,7 +102,7 @@ def updated_xml_parser(root, project_id, scan_id, request):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
         match_dup = (
             NetworkScanResultsDb.objects.filter(
-                vuln_duplicate=duplicate_hash, organization=request.user.organization
+                vuln_duplicate=duplicate_hash, organization=organization
             )
             .values("vuln_duplicate")
             .distinct()
@@ -105,7 +113,7 @@ def updated_xml_parser(root, project_id, scan_id, request):
             duplicate_vuln = "No"
             false_p = NetworkScanResultsDb.objects.filter(
                 false_positive_hash=duplicate_hash,
-                organization=request.user.organization,
+                organization=organization,
             )
             fp_lenth_match = len(false_p)
             if fp_lenth_match == 1:
@@ -139,7 +147,7 @@ def updated_xml_parser(root, project_id, scan_id, request):
                 severity_color=vuln_color,
                 false_positive=false_positive,
                 scanner="Openvas",
-                organization=request.user.organization,
+                organization=organization,
             )
             save_all.save()
         else:
@@ -160,7 +168,7 @@ def updated_xml_parser(root, project_id, scan_id, request):
                 vuln_duplicate=duplicate_vuln,
                 severity_color=vuln_color,
                 scanner="Openvas",
-                organization=request.user.organization,
+                organization=organization,
             )
             all_data_save.save()
 
@@ -172,7 +180,7 @@ def updated_xml_parser(root, project_id, scan_id, request):
         total_duplicate = len(openvas_vul.filter(vuln_duplicate="Yes"))
         total_vul = total_high + total_medium + total_low
         NetworkScanDb.objects.filter(
-            scan_id=scan_id, organization=request.user.organization
+            scan_id=scan_id, organization=organization
         ).update(
             total_vul=total_vul,
             critical_vul=total_critical,

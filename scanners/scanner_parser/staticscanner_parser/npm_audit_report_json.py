@@ -18,6 +18,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
@@ -34,6 +35,13 @@ def npmaudit_report_json(data, project_id, scan_id, request):
     :return:
     """
     date_time = datetime.now()
+
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     global vul_col
     for vuln in data["advisories"]:
         title = data["advisories"][vuln]["title"]
@@ -113,7 +121,7 @@ def npmaudit_report_json(data, project_id, scan_id, request):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = StaticScanResultsDb.objects.filter(
-            dup_hash=duplicate_hash, organization=request.user.organization
+            dup_hash=duplicate_hash, organization=organization
         ).values("dup_hash")
         lenth_match = len(match_dup)
 
@@ -122,7 +130,7 @@ def npmaudit_report_json(data, project_id, scan_id, request):
 
             false_p = StaticScanResultsDb.objects.filter(
                 false_positive_hash=duplicate_hash,
-                organization=request.user.organization,
+                organization=organization,
             )
             fp_lenth_match = len(false_p)
 
@@ -159,7 +167,7 @@ def npmaudit_report_json(data, project_id, scan_id, request):
                 references=references,
                 severity=severity,
                 scanner="Npmaudit",
-                organization=request.user.organization,
+                organization=organization,
             )
             save_all.save()
 
@@ -194,16 +202,16 @@ def npmaudit_report_json(data, project_id, scan_id, request):
                 references=references,
                 severity=severity,
                 scanner="Npmaudit",
-                organization=request.user.organization,
+                organization=organization,
             )
             save_all.save()
 
     all_findbugs_data = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", organization=request.user.organization
+        scan_id=scan_id, false_positive="No", organization=organization
     )
 
     duplicate_count = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+        scan_id=scan_id, vuln_duplicate="Yes", organization=organization
     )
 
     total_vul = len(all_findbugs_data)
@@ -222,7 +230,7 @@ def npmaudit_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Npmaudit",
-        organization=request.user.organization,
+        organization=organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - Npmaudit Report Uploaded"
@@ -237,7 +245,7 @@ def npmaudit_report_json(data, project_id, scan_id, request):
 
 
 parser_header_dict = {
-    "npmaudit_scan": {
+    "npmaudit": {
         "displayName": "npm-audit Scanner",
         "dbtype": "StaticScans",
         "dbname": "Npmaudit",

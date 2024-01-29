@@ -17,6 +17,7 @@
 
 import uuid
 
+from archeryapi.models import OrgAPIKey
 from compliance.models import DockleScanDb, DockleScanResultsDb
 from utility.email_notify import email_sch_notify
 
@@ -34,6 +35,13 @@ def dockle_report_json(data, project_id, scan_id, request):
     :return:
     """
     global vul_col
+
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
 
     for vuln in data["details"]:
         code = vuln["code"]
@@ -68,7 +76,7 @@ def dockle_report_json(data, project_id, scan_id, request):
         save_all.save()
 
     all_dockle_data = DockleScanResultsDb.objects.filter(
-        scan_id=scan_id, organization=request.user.organization
+        scan_id=scan_id, organization=organization
     )
 
     total_vul = len(all_dockle_data)
@@ -79,7 +87,7 @@ def dockle_report_json(data, project_id, scan_id, request):
     total_duplicate = len(all_dockle_data.filter(level="Yes"))
 
     DockleScanDb.objects.filter(
-        scan_id=scan_id, organization=request.user.organization
+        scan_id=scan_id, organization=organization
     ).update(
         total_vuln=total_vul,
         dockle_fatal=dockle_failed,
@@ -87,7 +95,7 @@ def dockle_report_json(data, project_id, scan_id, request):
         dockle_info=dockle_info,
         dockle_pass=dockle_passed,
         total_dup=total_duplicate,
-        organization=request.user.organization,
+        organization=organization,
     )
     subject = "Archery Tool Scan Status - dockle Report Uploaded"
     message = (

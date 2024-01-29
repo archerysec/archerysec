@@ -18,6 +18,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
@@ -75,6 +76,12 @@ class FindsecbugsParser(object):
         :return:
         """
         date_time = datetime.now()
+        api_key = self.request.META.get("HTTP_X_API_KEY")
+        key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+        if str(self.request.user) == 'AnonymousUser':
+            organization = key_object.organization
+        else:
+            organization = self.request.user.organization
         global name, classname, risk, ShortMessage, LongMessage, sourcepath, vul_col, ShortDescription, Details, lenth_match, duplicate_hash, vul_id, total_vul, total_high, total_medium, total_low, details, message
         for bug in self.root:
             if bug.tag == "BugInstance":
@@ -133,7 +140,7 @@ class FindsecbugsParser(object):
 
                     match_dup = StaticScanResultsDb.objects.filter(
                         dup_hash=duplicate_hash,
-                        organization=self.request.user.organization,
+                        organization=organization,
                     ).values("dup_hash")
                     lenth_match = len(match_dup)
 
@@ -143,7 +150,7 @@ class FindsecbugsParser(object):
 
                     false_p = StaticScanResultsDb.objects.filter(
                         false_positive_hash=duplicate_hash,
-                        organization=self.request.user.organization,
+                        organization=organization,
                     )
                     fp_lenth_match = len(false_p)
 
@@ -178,7 +185,7 @@ class FindsecbugsParser(object):
                         vuln_duplicate=duplicate_vuln,
                         false_positive=false_positive,
                         scanner="Findbugs",
-                        organization=self.request.user.organization,
+                        organization=organization,
                     )
                     save_all.save()
 
@@ -210,7 +217,7 @@ class FindsecbugsParser(object):
                         vuln_duplicate=duplicate_vuln,
                         false_positive="Duplicate",
                         scanner="Findbugs",
-                        organization=self.request.user.organization,
+                        organization=organization,
                     )
                     save_all.save()
 
@@ -236,13 +243,13 @@ class FindsecbugsParser(object):
             all_findbugs_data = StaticScanResultsDb.objects.filter(
                 scan_id=self.scan_id,
                 false_positive="No",
-                organization=self.request.user.organization,
+                organization=organization,
             )
 
             duplicate_count = StaticScanResultsDb.objects.filter(
                 scan_id=self.scan_id,
                 vuln_duplicate="Yes",
-                organization=self.request.user.organization,
+                organization=organization,
             )
 
             total_vul = len(all_findbugs_data)
@@ -253,7 +260,7 @@ class FindsecbugsParser(object):
             total_duplicate = len(duplicate_count.filter(vuln_duplicate="Yes"))
 
             StaticScansDb.objects.filter(
-                scan_id=self.scan_id, organization=self.request.user.organization
+                scan_id=self.scan_id, organization=organization
             ).update(
                 total_vul=total_vul,
                 date_time=date_time,
@@ -263,7 +270,7 @@ class FindsecbugsParser(object):
                 low_vul=total_low,
                 total_dup=total_duplicate,
                 scanner="Findbugs",
-                organization=self.request.user.organization,
+                organization=organization,
             )
         trend_update()
         subject = "Archery Tool Scan Status - Findbugs Report Uploaded"

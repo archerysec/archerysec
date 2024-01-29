@@ -19,7 +19,7 @@ from __future__ import print_function
 import datetime
 import hashlib
 import uuid
-
+from archeryapi.models import OrgAPIKey
 from tools.models import NmapResultDb, NmapScanDb
 
 ip_address = None
@@ -54,6 +54,13 @@ def xml_parser(root, project_id, scan_id, request):
     """
     global ip_address, port, protocol, used_state, used_portid, used_proto, state, reason, reason_ttl, version, extrainfo, name, conf, method, cpe, type_p, osfamily, vendor, osgen, accuracy
 
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
+    
     for nmap in root:
         for scaninfo in nmap:
             if scaninfo.tag == "address":
@@ -143,7 +150,7 @@ def xml_parser(root, project_id, scan_id, request):
                     used_state=used_state,
                     used_portid=used_portid,
                     used_proto=used_proto,
-                    organization=request.user.organization,
+                    organization=organization,
                 )
                 dump_data.save()
 
@@ -161,7 +168,7 @@ def xml_parser(root, project_id, scan_id, request):
 
                                     all_data = NmapResultDb.objects.filter(
                                         ip_address=ip_address,
-                                        organization=request.user.organization,
+                                        organization=organization,
                                     )
                                     # for a in all_data:
                                     #     global total_ports, ports_p
@@ -171,7 +178,7 @@ def xml_parser(root, project_id, scan_id, request):
 
                                     all_open_p = NmapResultDb.objects.filter(
                                         ip_address=ip_address,
-                                        organization=request.user.organization,
+                                        organization=organization,
                                         state="open",
                                     )
                                     # for p in all_open_p:
@@ -181,7 +188,7 @@ def xml_parser(root, project_id, scan_id, request):
 
                                     all_close_p = NmapResultDb.objects.filter(
                                         ip_address=ip_address,
-                                        organization=request.user.organization,
+                                        organization=organization,
                                         state="closed",
                                     )
                                     total_close_p = len(all_close_p)
@@ -193,7 +200,7 @@ def xml_parser(root, project_id, scan_id, request):
                                         total_ports=total_ports,
                                         total_open_ports=total_open_p,
                                         total_close_ports=total_close_p,
-                                        organization=request.user.organization,
+                                        organization=organization,
                                     )
                                     save_scan.save()
 

@@ -22,6 +22,7 @@ from datetime import datetime
 from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
 from webscanners.models import WebScanResultsDb, WebScansDb
+from archeryapi.models import OrgAPIKey
 
 url = ""
 Scheme = ""
@@ -47,6 +48,12 @@ target = ""
 def xml_parser(root, project_id, scan_id, request):
     global url, Scheme, Host, Port, AttackMethod, VulnerableSession, TriggerSession, VulnerabilityID, Severity, Name, ReportSection, HighlightSelections, RawResponse, SectionText, vuln_id, severity_name, vul_col, target
     date_time = datetime.now()
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     for data in root:
         if data.tag == "Name":
             target = data.text
@@ -104,7 +111,7 @@ def xml_parser(root, project_id, scan_id, request):
 
             match_dup = (
                 WebScanResultsDb.objects.filter(
-                    dup_hash=duplicate_hash, organization=request.user.organization
+                    dup_hash=duplicate_hash, organization=organization
                 )
                 .values("dup_hash")
                 .distinct()
@@ -116,7 +123,7 @@ def xml_parser(root, project_id, scan_id, request):
 
                 false_p = WebScanResultsDb.objects.filter(
                     false_positive_hash=duplicate_hash,
-                    organization=request.user.organization,
+                    organization=organization,
                 )
                 fp_lenth_match = len(false_p)
 
@@ -150,7 +157,7 @@ def xml_parser(root, project_id, scan_id, request):
                         dup_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Webinspect",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     dump_data.save()
 
@@ -176,18 +183,18 @@ def xml_parser(root, project_id, scan_id, request):
                     dup_hash=duplicate_hash,
                     vuln_duplicate=duplicate_vuln,
                     scanner="Webinspect",
-                    organization=request.user.organization,
+                    organization=organization,
                 )
                 dump_data.save()
 
         webinspect_all_vul = WebScanResultsDb.objects.filter(
-            scan_id=scan_id, false_positive="No", organization=request.user.organization
+            scan_id=scan_id, false_positive="No", organization=organization
         )
 
         duplicate_count = WebScanResultsDb.objects.filter(
             scan_id=scan_id,
             vuln_duplicate="Yes",
-            organization=request.user.organization,
+            organization=organization,
         )
 
         total_critical = len(webinspect_all_vul.filter(severity="Critical"))
@@ -199,7 +206,7 @@ def xml_parser(root, project_id, scan_id, request):
         total_vul = total_high + total_medium + total_low + total_info
 
         WebScansDb.objects.filter(
-            scan_id=scan_id, organization=request.user.organization
+            scan_id=scan_id, organization=organization
         ).update(
             total_vul=total_vul,
             scan_url=target,
@@ -210,7 +217,7 @@ def xml_parser(root, project_id, scan_id, request):
             low_vul=total_low,
             info_vul=total_info,
             total_dup=total_duplicate,
-            organization=request.user.organization,
+            organization=organization,
         )
     trend_update()
 
