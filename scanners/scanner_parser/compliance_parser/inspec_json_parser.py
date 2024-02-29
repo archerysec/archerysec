@@ -17,6 +17,7 @@
 
 import uuid
 
+from archeryapi.models import OrgAPIKey
 from compliance.models import InspecScanDb, InspecScanResultsDb
 from utility.email_notify import email_sch_notify
 
@@ -34,7 +35,12 @@ def inspec_report_json(data, project_id, scan_id, request):
     """
     global controls_results_message, status
     vul_col = "info"
-
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     for key, value in data.items():
         if key == "profiles":
             for profile in value:
@@ -101,48 +107,48 @@ def inspec_report_json(data, project_id, scan_id, request):
                             controls_results_run_time=controls_results_run_time,
                             controls_results_start_time=controls_results_start_time,
                             controls_results_message=controls_results_message,
-                            organization=request.user.organization,
+                            organization=organization,
                         )
                         save_all.save()
 
             all_inspec_data = InspecScanResultsDb.objects.filter(
-                scan_id=scan_id, organization=request.user.organization
+                scan_id=scan_id, organization=organization
             )
 
             total_vul = len(all_inspec_data)
             inspec_failed = len(
                 all_inspec_data.filter(
                     controls_results_status="Failed",
-                    organization=request.user.organization,
+                    organization=organization,
                 )
             )
             inspec_passed = len(
                 all_inspec_data.filter(
                     controls_results_status="Passed",
-                    organization=request.user.organization,
+                    organization=organization,
                 )
             )
             inspec_skipped = len(
                 all_inspec_data.filter(
                     controls_results_status="Skipped",
-                    organization=request.user.organization,
+                    organization=organization,
                 )
             )
             total_duplicate = len(
                 all_inspec_data.filter(
-                    vuln_duplicate="Yes", organization=request.user.organization
+                    vuln_duplicate="Yes", organization=organization
                 )
             )
 
             InspecScanDb.objects.filter(
-                scan_id=scan_id, organization=request.user.organization
+                scan_id=scan_id, organization=organization
             ).update(
                 total_vuln=total_vul,
                 inspec_failed=inspec_failed,
                 inspec_passed=inspec_passed,
                 inspec_skipped=inspec_skipped,
                 total_dup=total_duplicate,
-                organization=request.user.organization,
+                organization=organization,
             )
             subject = "Archery Tool Scan Status - Inspec Report Uploaded"
             message = (

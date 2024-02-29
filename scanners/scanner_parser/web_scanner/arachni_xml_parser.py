@@ -19,6 +19,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from utility.email_notify import email_sch_notify
 from webscanners.models import WebScanResultsDb, WebScansDb
@@ -62,7 +63,12 @@ false_positive = None
 def xml_parser(root, project_id, scan_id, request):
     date_time = datetime.now()
     global name, description, remedy_guidance, remedy_code, severity, check, digest, references, vector, remarks, page, signature, proof, trusted, platform_type, platform_name, url, action, body, vuln_id, vul_col, ref_key, ref_values, vector_input_key, vector_input_values, vector_source_key, vector_source_values, page_body_data, request_url, request_method, request_raw, response_ip, response_raw_headers
-
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
     for issue in root:
         for data in issue:
             if data.tag == "issue":
@@ -221,7 +227,7 @@ def xml_parser(root, project_id, scan_id, request):
                     WebScanResultsDb.objects.filter(
                         vuln_duplicate=duplicate_hash,
                         scanner="Arachni",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     .values("dup_hash")
                     .distinct()
@@ -252,7 +258,7 @@ def xml_parser(root, project_id, scan_id, request):
 
                     false_p = WebScanResultsDb.objects.filter(
                         false_positive_hash=duplicate_hash,
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     fp_lenth_match = len(false_p)
 
@@ -280,7 +286,7 @@ def xml_parser(root, project_id, scan_id, request):
                         false_positive_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Arachni",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     dump_data.save()
 
@@ -303,7 +309,7 @@ def xml_parser(root, project_id, scan_id, request):
                         false_positive_hash=duplicate_hash,
                         vuln_duplicate=duplicate_vuln,
                         scanner="Arachni",
-                        organization=request.user.organization,
+                        organization=organization,
                     )
                     dump_data.save()
 
@@ -311,14 +317,14 @@ def xml_parser(root, project_id, scan_id, request):
         scan_id=scan_id,
         false_positive="No",
         scanner="Arachni",
-        organization=request.user.organization,
+        organization=organization,
     )
 
     duplicate_count = WebScanResultsDb.objects.filter(
         scan_id=scan_id,
         vuln_duplicate="Yes",
         scanner="Arachni",
-        organization=request.user.organization,
+        organization=organization,
     )
 
     total_critical = len(arachni_all_vul.filter(severity="Critical"))
@@ -335,7 +341,7 @@ def xml_parser(root, project_id, scan_id, request):
     print(total_info)
 
     WebScansDb.objects.filter(
-        scan_id=scan_id, organization=request.user.organization
+        scan_id=scan_id, organization=organization
     ).update(
         scan_url=url,
         total_vul=total_vul,
@@ -348,7 +354,7 @@ def xml_parser(root, project_id, scan_id, request):
         scan_status="100",
         total_dup=total_duplicate,
         scanner="Arachni",
-        organization=request.user.organization,
+        organization=organization,
     )
     trend_update()
 

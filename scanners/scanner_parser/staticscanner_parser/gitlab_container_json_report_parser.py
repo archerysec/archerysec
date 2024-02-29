@@ -18,6 +18,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
+from archeryapi.models import OrgAPIKey
 from dashboard.views import trend_update
 from staticscanners.models import StaticScanResultsDb, StaticScansDb
 from utility.email_notify import email_sch_notify
@@ -46,6 +47,13 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, request):
     vul_col = ""
 
     vuln = data["vulnerabilities"]
+
+    api_key = request.META.get("HTTP_X_API_KEY")
+    key_object = OrgAPIKey.objects.filter(api_key=api_key).first()
+    if str(request.user) == 'AnonymousUser':
+        organization = key_object.organization
+    else:
+        organization = request.user.organization
 
     for vuln_data in vuln:
         try:
@@ -122,7 +130,7 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, request):
         duplicate_hash = hashlib.sha256(dup_data.encode("utf-8")).hexdigest()
 
         match_dup = StaticScanResultsDb.objects.filter(
-            dup_hash=duplicate_hash, organization=request.user.organization
+            dup_hash=duplicate_hash, organization=organization
         ).values("dup_hash")
         lenth_match = len(match_dup)
 
@@ -130,7 +138,7 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, request):
             duplicate_vuln = "No"
 
             false_p = StaticScanResultsDb.objects.filter(
-                organization=request.user.organization,
+                organization=organization,
                 false_positive_hash=duplicate_hash,
             )
             fp_lenth_match = len(false_p)
@@ -155,7 +163,7 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, request):
                 vuln_duplicate=duplicate_vuln,
                 false_positive=false_positive,
                 scanner="Gitlabcontainerscan",
-                organization=request.user.organization,
+                organization=organization,
             )
             save_all.save()
         else:
@@ -176,16 +184,16 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, request):
                 vuln_duplicate=duplicate_vuln,
                 false_positive="Duplicate",
                 scanner="Gitlabcontainerscan",
-                organization=request.user.organization,
+                organization=organization,
             )
             save_all.save()
 
     all_findbugs_data = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, false_positive="No", organization=request.user.organization
+        scan_id=scan_id, false_positive="No", organization=organization
     )
 
     duplicate_count = StaticScanResultsDb.objects.filter(
-        scan_id=scan_id, vuln_duplicate="Yes", organization=request.user.organization
+        scan_id=scan_id, vuln_duplicate="Yes", organization=organization
     )
 
     total_vul = len(all_findbugs_data)
@@ -203,7 +211,7 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, request):
         low_vul=total_low,
         total_dup=total_duplicate,
         scanner="Gitlabcontainerscan",
-        organization=request.user.organization,
+        organization=organization,
     )
     trend_update()
     subject = "Archery Tool Scan Status - GitLab Container Scan Report Uploaded"
@@ -218,7 +226,7 @@ def gitlabcontainerscan_report_json(data, project_id, scan_id, request):
 
 
 parser_header_dict = {
-    "gitlabcontainerscan_scan": {
+    "gitlabcontainerscan": {
         "displayName": "Gitlab Container Scanner",
         "dbtype": "StaticScans",
         "dbname": "Gitlabcontainerscan",

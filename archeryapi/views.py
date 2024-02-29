@@ -257,7 +257,6 @@ class UploadScanResult(APIView):
         scan_url = request.data.get("scan_url")
         scan_id = uuid.uuid4()
         scan_status = "100"
-
         parser_dict = scanner_parser.parser_function_dict.get(
             scanner, "Not implemented"
         )
@@ -331,7 +330,7 @@ class UploadScanResult(APIView):
             elif db_type == "StaticScans":
                 return_func = self.sast_result_data
                 scan_dump = StaticScansDb(
-                    scan_url=scan_url,
+                    project_name=scan_url,
                     scan_id=scan_id,
                     project_id=project_id,
                     scan_status=scan_status,
