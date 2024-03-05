@@ -22,7 +22,7 @@ cssselect2>=0.6.0
 defusedxml>=0.7.1
 diff-match-patch>=20200713
 dill>=0.3.5.1
-Django==3.2.15
+Django==3.2.25
 django-appconf>=1.0.5
 django-background-tasks>=1.2.5
 django-compat>=1.0.15
