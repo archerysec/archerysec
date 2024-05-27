@@ -96,6 +96,8 @@ class Upload(APIView):
                 fileext = ".nessus"
             elif filetype == "JS":
                 fileext = ".js"
+            elif filetype == "HTML":
+                fileext = ".html"
             # Check file format
             if self.check_file_ext(str(file)) != fileext or fileext == "":
                 error_mess = (
@@ -124,6 +126,8 @@ class Upload(APIView):
                 file_data = file.read().decode("utf-8")
                 reader = csv.DictReader(io.StringIO(file_data))
                 data = [line for line in reader]
+            elif filetype == "HTML":
+                data = file.read()
             # Custom data loader
             elif filetype == "JS":
                 json_payload = file.readlines()
