@@ -286,6 +286,8 @@ class UploadScanResult(APIView):
         elif filetype == "LXML":
             xml_dat = bytes(bytearray(file, encoding="utf-8"))
             data = etree.XML(xml_dat)
+        elif filetype == "HTML":
+            data = file
         elif filetype == "JSON":
             data = json.loads(file)
         elif filetype == "CSV":
