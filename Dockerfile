@@ -66,21 +66,6 @@ COPY . .
 
 RUN mkdir nikto_result
 
-RUN wget https://github.com/zaproxy/zaproxy/releases/download/2.7.0/ZAP_2.7.0_Linux.tar.gz
-
-RUN tar -xvzf ZAP_2.7.0_Linux.tar.gz
-
-RUN mkdir zap
-
-RUN cp -r ZAP_2.7.0/* /home/archerysec/app/zap
-
-COPY zap_config/policies /home/archerysec/app/zap
-
-COPY zap_config/ascanrulesBeta-beta-24.zap /home/archerysec/app/zap/plugin/ascanrulesBeta-beta-24.zap
-
-RUN rm -rf ZAP_2.7.0_Linux.tar.gz && \
-    rm -rf ZAP_2.7.0
-
 # Install requirements
 RUN . venv/bin/activate \
     && pip3 install --upgrade --no-cache-dir setuptools pip \
