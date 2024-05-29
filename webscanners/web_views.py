@@ -22,8 +22,6 @@ import uuid
 from datetime import datetime
 
 import defusedxml.ElementTree as ET
-from background_task import background
-from background_task.models import Task
 from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -102,43 +100,6 @@ class Index(APIView):
             },
         )
 
-
-@background(schedule=60)
-def task(target_url, project_id, scanner, **kwargs):
-    rescan_id = ""
-    rescan = "No"
-    target__split = target_url.split(",")
-    split_length = target__split.__len__()
-    for i in range(0, split_length):
-        target = target__split.__getitem__(i)
-        # noinspection PyInterpreter
-        if scanner == "zap_scan":
-            scan_id = uuid.uuid4()
-            thread = threading.Thread(
-                target=launch_schudle_zap_scan,
-                args=(
-                    target,
-                    project_id,
-                    rescan_id,
-                    rescan,
-                    scan_id,
-                    kwargs["username"],
-                ),
-            )
-            thread.daemon = True
-            thread.start()
-        elif scanner == "burp_scan":
-            scan_id = uuid.uuid4()
-            do_scan = burp_plugin.burp_scans(
-                project_id, target, scan_id, user=kwargs["username"]
-            )
-            thread = threading.Thread(
-                target=do_scan.scan_launch,
-            )
-            thread.daemon = True
-            thread.start()
-
-        return HttpResponse(status=200)
 
 
 class WebTaskLaunch(APIView):

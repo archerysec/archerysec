@@ -2,8 +2,6 @@
 
 export DJANGO_DEBUG=1
 
-source /home/archerysec/app/venv/bin/activate
-
 # wait for Postgres to be available
 if [ -z "$DB_HOST" ]
 then
@@ -48,6 +46,7 @@ if [ "$ARCHERY_WORKER" = "True" ]
 then
     python3 -u manage.py process_tasks -v 3 --traceback
 else
+    python3 manage.py makemigrations
     python3 manage.py migrate --noinput
     python3 manage.py initadmin
     echo 'Apply Fixtures'
@@ -61,5 +60,5 @@ else
     echo 'Role : Admin'
     echo 'Done !'
     echo "Now running application"
-    gunicorn -b 0.0.0.0:8000 archerysecurity.wsgi:application --workers=1 --threads=10 --timeout=1800
+    exec gunicorn -b 0.0.0.0:8000 archerysecurity.wsgi:application --workers=1 --threads=10 --timeout=1800
 fi

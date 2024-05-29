@@ -20,7 +20,6 @@ import uuid
 
 from django.db import models
 from django.utils import timezone
-from fernet_fields import EncryptedTextField
 
 from user_management.models import Organization, UserProfile
 

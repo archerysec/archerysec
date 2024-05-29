@@ -25,8 +25,6 @@ import time
 import uuid
 from datetime import datetime
 
-from background_task import background
-from background_task.models import Task
 from django.conf import settings
 from django.contrib import messages
 from django.core import signing
@@ -368,25 +366,6 @@ class OpenvasSetting(APIView):
                 },
             )
 
-
-@background(schedule=60)
-def task(target_ip, project_id, scanner):
-    # rescan_id = ""
-    # rescan = "No"
-    sel_profile = ""
-    ip = target_ip.replace(" ", "")
-    target__split = ip.split(",")
-    split_length = target__split.__len__()
-    for i in range(0, split_length):
-        target = target__split.__getitem__(i)
-        if scanner == "open_vas":
-            thread = threading.Thread(
-                target=openvas_scanner, args=(target, project_id, sel_profile)
-            )
-            thread.daemon = True
-            thread.start()
-
-        return HttpResponse(status=200)
 
 
 class NetworkScanSchedule(APIView):

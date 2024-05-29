@@ -29,7 +29,7 @@ urlpatterns = [
     path("nikto/", views.NiktoScanList.as_view(), name="nikto"),
     path("niktolaunch/", views.NiktoScanLaunch.as_view(), name="niktolaunch"),
     path("nikto_result/", views.NiktoScanResult.as_view(), name="nikto_result"),
-    path("nikto_scan_del/", views.NiktoScanDelete, name="nikto_scan_del"),
+    path("nikto_scan_del/", views.NiktoScanDelete.as_view(), name="nikto_scan_del"),
     path("nikto_result_vul/", views.NiktoResultVuln.as_view(), name="nikto_result_vul"),
     path("nikto_vuln_del/", views.NiktoVulnDelete.as_view(), name="nikto_vuln_del"),
     # nmap requests
