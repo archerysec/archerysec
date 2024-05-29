@@ -71,7 +71,6 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "debug_toolbar",
     "dashboard",
-    "background_task",
     "sitetree",
     "import_export",
     "compliance",
@@ -198,8 +197,6 @@ REST_FRAMEWORK = {
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # SESSION_COOKIE_AGE = 5 * 100
-
-BACKGROUND_TASK_RUN_ASYNC = True
 
 REFRESH_TIMER = 5
 

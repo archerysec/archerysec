@@ -1,24 +1,38 @@
 #!/bin/bash
+# Python3 Check
 unamestr=$(uname)
 if ! [ -x "$(command -v python3)" ]; then
-  echo '[ERROR] python3 is not installed.' >&2
-  exit 1
+    echo '[ERROR] python3 is not installed.' >&2
+    exit 1
 fi
-echo '[INSTALL] Found Python3'
 
+# Python3 Version Check
+python_version="$(python3 --version 2>&1 | awk '{print $2}')"
+py_major=$(echo "$python_version" | cut -d'.' -f1)
+py_minor=$(echo "$python_version" | cut -d'.' -f2)
+if [ "$py_major" -eq "3" ] && [ "$py_minor" -gt "9" ] && [ "$py_minor" -lt "12" ]; then
+    echo "[INSTALL] Found Python ${python_version}"
+else
+    echo "[ERROR] ArcherySec require Python 3.10 - 3.11. You have Python version ${python_version} or python3 points to Python ${python_version}."
+    exit 1
+fi
+
+# Pip Check and Upgrade
 python3 -m pip -V
 if [ $? -eq 0 ]; then
-  echo '[INSTALL] Found pip'
-  if [[ $unamestr == 'Darwin' ]]; then
-      python3 -m pip install --no-cache-dir --upgrade pip
-  else
-      python3 -m pip install --no-cache-dir --upgrade pip --user
-  fi
+    echo '[INSTALL] Found pip'
+    if [[ $unamestr == 'Darwin' ]]; then
+        python3 -m pip install --no-cache-dir --upgrade pip
+    else
+        python3 -m pip install --no-cache-dir --upgrade pip --user
+    fi
 else
-  echo '[ERROR] python3-pip not installed'
-  exit 1
+    echo '[ERROR] python3-pip not installed'
+    exit 1
 fi
 
+
+# macOS Specific Checks
 if [[ $unamestr == 'Darwin' ]]; then
     # Check if xcode is installed
     xcode-select -v
@@ -28,20 +42,15 @@ if [[ $unamestr == 'Darwin' ]]; then
         exit 1
     else
         echo '[INSTALL] Found Xcode'
-	  fi
+	  fi    
 fi
 
-echo '[INSTALL] Using python virtualenv'
-rm -rf ./venv
-python3 -m venv ./venv
-if [ $? -eq 0 ]; then
-    echo '[INSTALL] Activating virtualenv'
-    source venv/bin/activate
-    pip install --upgrade pip wheel
-else
-    echo '[ERROR] Failed to create virtualenv. Please install ArcherySec requirements mentioned in Documentation.'
-    exit 1
-fi
+
+echo '[INSTALL] Installing Requirements'
+python3 -m pip install --no-cache-dir wheel poetry==1.6.1
+python3 -m poetry install --no-root --only main --no-interaction --no-ansi
+
+
 echo "Checking Variables"
 if [ -z "$NAME" ]
 then
@@ -67,26 +76,21 @@ else
       echo "\$PASSWORD Found"
 fi
 
-echo '[INSTALL] openvas_lib from github'
-python3 -m pip install git+https://github.com/archerysec/openvas_lib.git
-echo '[INSTALL] Installing Requirements'
-pip install --no-cache-dir --use-deprecated=legacy-resolver -r requirements.txt
-echo 'Collect static files'
-python manage.py collectstatic --noinput
+
 echo '[INSTALL] Migrating Database'
-python manage.py makemigrations
-python manage.py migrate
+python3 -m poetry run python manage.py makemigrations
+python3 -m poetry run python manage.py migrate
 echo '[INSTALL] Installation Complete'
 echo '================================================================='
 echo 'User Creating'
-source venv/bin/activate
 echo 'Apply Fixtures'
-python manage.py loaddata fixtures/default_user_roles.json
-python manage.py loaddata fixtures/default_organization.json
-echo "from user_management.models import UserProfile; UserProfile.objects.create_superuser(name='${NAME}', email='${EMAIL}', password='${PASSWORD}', role=1, organization=1)" | python manage.py shell
+python3 -m poetry run python manage.py loaddata fixtures/default_user_roles.json
+python3 -m poetry run python manage.py loaddata fixtures/default_organization.json
+echo "from user_management.models import UserProfile; UserProfile.objects.create_superuser(name='${NAME}', email='${EMAIL}', password='${PASSWORD}', role=1, organization=1)" | python3 -m poetry run python manage.py shell
 echo '================================================================='
 echo 'User Created'
 echo 'User Name :' ${NAME}
 echo 'User Email': ${EMAIL}
 echo 'Role : Admin'
 echo 'Done !'
+echo '[INSTALL] Installation Complete'

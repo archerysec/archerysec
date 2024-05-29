@@ -1,5 +1,5 @@
 #Ubuntu base OS
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Labels and Credits
 LABEL \
@@ -26,7 +26,7 @@ RUN \
     curl \
     unzip \
     git \
-    python3.9 \
+    python3.11 \
     python3-dev \
     python3-pip \
     pkg-config \
@@ -36,22 +36,40 @@ RUN \
     postgresql \
     python3-psycopg2 \
     postgresql-server-dev-all \
-    libpq-dev
+    libpq-dev \
+    python-is-python3 \
+    libmagic1
 
 # Set locales
 RUN locale-gen en_US.UTF-8
-ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8' \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONFAULTHANDLER=1 \
+    POETRY_VERSION=1.6.1
 
 # Create archerysec user and group
-RUN groupadd -r archerysec && useradd -r -m -g archerysec archerysec
+RUN groupadd -g 9901 archerysec 
+RUN adduser archerysec --shell /bin/false -u 9901 --ingroup archerysec --gecos "" --disabled-password
 
-# Include init script
-ADD ./docker-files/init.sh /usr/local/bin/init.sh
+COPY poetry.lock pyproject.toml ./
+RUN python3 -m pip install --upgrade --no-cache-dir pip poetry==${POETRY_VERSION} && \
+    poetry config virtualenvs.create false && \
+    poetry install --only main --no-root --no-interaction --no-ansi
 
-RUN chmod +x /usr/local/bin/init.sh
-
-# Set user to archerysec to execute rest of commands
-USER archerysec
+# Cleanup
+RUN \
+apt remove -y \
+    libssl-dev \
+    libffi-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    python3-dev \
+    wget && \
+apt clean && \
+apt autoclean && \
+apt autoremove -y && \
+rm -rf /var/lib/apt/lists/* /tmp/* > /dev/null 2>&1
 
 # Create archerysec folder.
 RUN mkdir /home/archerysec/app
@@ -59,20 +77,15 @@ RUN mkdir /home/archerysec/app
 # Set archerysec as a work directory.
 WORKDIR /home/archerysec/app
 
-RUN virtualenv -p python3 /home/archerysec/app/venv
-
 # Copy all file to archerysec folder.
 COPY . .
 
+# Include init script
+ADD ./docker-files/init.sh /usr/local/bin/init.sh
+
+RUN chmod +x /usr/local/bin/init.sh
+
 RUN mkdir nikto_result
-
-# Install requirements
-RUN . venv/bin/activate \
-    && pip3 install --upgrade --no-cache-dir setuptools pip \
-    && pip3 install --quiet --no-cache-dir -r requirements.txt
-
-
-RUN . venv/bin/activate && pip3 install git+https://github.com/archerysec/openvas_lib.git && python3.9 /home/archerysec/app/manage.py collectstatic --noinput
 
 # Cleanup
 RUN \
@@ -90,6 +103,10 @@ RUN \
 
 # Exposing port.
 EXPOSE 8000
+
+RUN chown -R archerysec:archerysec /home/archerysec/app
+USER archerysec
+
 
 # UP & RUN application.
 CMD ["/usr/local/bin/init.sh"]
