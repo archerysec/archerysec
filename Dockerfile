@@ -17,10 +17,6 @@ ENV DJANGO_SETTINGS_MODULE="archerysecurity.settings.base" \
 RUN \
     apt update -y && apt install -y  --no-install-recommends \
     build-essential \
-    gcc \
-    sox ffmpeg libcairo2 libcairo2-dev \
-    texlive-full \
-    make \
     default-jre \
     wget \
     curl \
@@ -30,7 +26,6 @@ RUN \
     python3-dev \
     python3-pip \
     pkg-config \
-    libcairo2-dev \
     virtualenv \
     gunicorn \
     postgresql \
@@ -38,8 +33,7 @@ RUN \
     postgresql-server-dev-all \
     libpq-dev \
     python-is-python3 \
-    python3-venv \
-    libmagic1
+    python3.10-venv
 
 # Set locales
 RUN locale-gen en_US.UTF-8
