@@ -1,4 +1,4 @@
-name: ArcherySec CI/CD
+name: 'Build and Publish Release to DockerHub'
 
 on:
   push:
@@ -6,33 +6,6 @@ on:
       - master
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        os: [ubuntu-20.04, macos-latest]
-        python-version: [3.9, '3.10']
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Setup
-        run: |
-          ./setup.sh
-        env:
-          NAME: test
-          EMAIL: test@test.com
-          PASSWORD: test@test
-      - name: Unit Tests
-        run: |
-          git submodule update --init --recursive
-          . venv/bin/activate && python manage.py test
-        
-
   push_to_registry:
       name: Push Docker image to Docker Hub
       runs-on: ubuntu-latest
