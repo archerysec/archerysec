@@ -33,6 +33,7 @@ RUN \
     postgresql-server-dev-all \
     libpq-dev \
     python-is-python3 \
+    openssh-client \
     python3.10-venv
 
 # Set locales
@@ -41,17 +42,25 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8' \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONFAULTHANDLER=1 \
-    POETRY_VERSION=1.6.1
+    POETRY_VERSION=1.6.1 \
+    POETRY_VIRTUALENVS_CREATE=false
 
 # Create archerysec user and group
 RUN groupadd -g 9901 archerysec 
 RUN adduser archerysec --shell /bin/false -u 9901 --ingroup archerysec --gecos "" --disabled-password
 
-COPY poetry.lock pyproject.toml ./
-RUN python3 -m pip install --upgrade --no-cache-dir pip poetry==${POETRY_VERSION} && \
-    poetry env remove python3 \
-    poetry config virtualenvs.create false && \
-    poetry install --only main --no-root --no-interaction --no-ansi
+# Install Poetry
+RUN python3 -m pip install --upgrade --no-cache-dir pip && \
+    python3 -m pip install --no-cache-dir poetry==$POETRY_VERSION
+
+# Copy the dependency files to the container
+COPY pyproject.toml poetry.lock ./
+
+# Configure Poetry to not create virtual environments
+RUN poetry config virtualenvs.create $POETRY_VIRTUALENVS_CREATE
+
+# Install dependencies
+RUN poetry install --only main --no-root --no-interaction --no-ansi
 
 # Cleanup
 RUN \
@@ -86,10 +95,6 @@ RUN mkdir nikto_result
 # Cleanup
 RUN \
     apt remove -y \
-        libssl-dev \
-        libffi-dev \
-        libxml2-dev \
-        libxslt1-dev \
         python3-dev \
         wget && \
     apt clean && \

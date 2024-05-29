@@ -1376,7 +1376,7 @@ develop = false
 
 [package.source]
 type = "git"
-url = "git@github.com:archerysec/openvas_lib.git"
+url = "https://github.com/archerysec/openvas_lib.git"
 reference = "HEAD"
 resolved_reference = "e056f8522cf230c5e2e5b8cfffd33b0805e41894"
 

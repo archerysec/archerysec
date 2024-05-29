@@ -10,7 +10,7 @@ repository = "https://github.com/archerysec/archerysec"
 documentation = "https://docs.archerysec.com/"
 
 [tool.poetry.dependencies]
-openvas-lib = {git = "git@github.com:archerysec/openvas_lib.git"}
+openvas-lib = {git = "https://github.com/archerysec/openvas_lib.git"}
 python = "^3.10"
 django = "=4.2.9"
 djangorestframework = ">=3.13.1"
