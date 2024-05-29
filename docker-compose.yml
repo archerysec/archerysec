@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   db:
-    image: postgres:10.1-alpine
+    image: postgres:12-alpine
     volumes:
       - ./dbdata:/var/lib/postgresql/data
     environment:
@@ -59,7 +59,7 @@ services:
     container_name: archerysec-worker
 
   zaproxy:
-    image: owasp/zap2docker-stable
+    image: zaproxy/zap-stable
     command: zap.sh -daemon -host 0.0.0.0 -port 8090 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
     ports:
       - "8090:8090"
