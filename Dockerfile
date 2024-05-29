@@ -34,6 +34,7 @@ RUN \
     libpq-dev \
     python-is-python3 \
     openssh-client \
+    libmagic1 \
     python3.10-venv
 
 # Set locales
