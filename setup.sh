@@ -17,6 +17,63 @@ else
     exit 1
 fi
 
+# Function to check if a command exists
+command_exists() {
+  command -v "$1" &> /dev/null
+}
+
+# Function to check if a package is installed on Debian-based systems
+check_debian_package() {
+  dpkg -s "$1" &> /dev/null
+}
+
+# Function to check if a package is installed on Red Hat-based systems
+check_redhat_package() {
+  rpm -q "$1" &> /dev/null
+}
+
+# Function to check if a package is installed on macOS using Homebrew
+check_brew_package() {
+  brew list --versions "$1" &> /dev/null
+}
+
+# Check the OS and package manager
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  if command_exists dpkg; then
+    # Debian-based system
+    if check_debian_package libmagic1; then
+      echo "libmagic1 is installed on Debian-based system."
+    else
+      echo "libmagic1 is not installed on Debian-based system."
+      exit 1
+    fi
+  elif command_exists rpm; then
+    # Red Hat-based system
+    if check_redhat_package file; then
+      echo "file (including libmagic) is installed on Red Hat-based system."
+    else
+      echo "file (including libmagic) is not installed on Red Hat-based system."
+      exit 1
+    fi
+  else
+    echo "Unsupported Linux package manager."
+  fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  if command_exists brew; then
+    # macOS system with Homebrew
+    if check_brew_package libmagic; then
+      echo "libmagic is installed on macOS via Homebrew."
+    else
+      echo "libmagic is not installed on macOS via Homebrew."
+      exit 1
+    fi
+  else
+    echo "Homebrew is not installed on macOS."
+  fi
+else
+  echo "Unsupported operating system."
+fi
+
 # Pip Check and Upgrade
 python3 -m pip -V
 if [ $? -eq 0 ]; then
