@@ -26,7 +26,7 @@ RUN \
     curl \
     unzip \
     git \
-    python3.11 \
+    python3 \
     python3-dev \
     python3-pip \
     pkg-config \
@@ -38,6 +38,7 @@ RUN \
     postgresql-server-dev-all \
     libpq-dev \
     python-is-python3 \
+    python3-venv \
     libmagic1
 
 # Set locales
@@ -54,6 +55,7 @@ RUN adduser archerysec --shell /bin/false -u 9901 --ingroup archerysec --gecos "
 
 COPY poetry.lock pyproject.toml ./
 RUN python3 -m pip install --upgrade --no-cache-dir pip poetry==${POETRY_VERSION} && \
+    poetry env remove python3 \
     poetry config virtualenvs.create false && \
     poetry install --only main --no-root --no-interaction --no-ansi
 
