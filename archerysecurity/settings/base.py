@@ -91,6 +91,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "archerysecurity.urls"
@@ -228,6 +229,18 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+CORS_ALLOW_ALL_ORIGINS = True  # Allow requests from all origins (not recommended for production)
+CORS_ALLOW_CREDENTIALS = True  # Allow credentials (e.g., cookies) to be sent with CORS requests
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:4200',  # Add your Angular application's URL
+    # Other allowed origins...
+]
+
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']  # Allowed HTTP methods
+CORS_ALLOW_HEADERS = ['Authorization', 'Content-Type']  # Allowed request headers
+CORS_EXPOSE_HEADERS = ['Content-Disposition']  # Headers exposed to the client
 
 LOGGING = {
     "version": 1,
