@@ -248,8 +248,10 @@ class ProfilePictureUploadAPIView(APIView):
     def put(self, request, *args, **kwargs):
         if "profile_picture" not in request.data:
             raise ValidationError("Profile picture not found")
+        
         user_profile = request.user
         profile_picture = request.data.get("profile_picture")
+
         if profile_picture:
             mime_type = magic.from_buffer(profile_picture.read(), mime=True)
             allowed_types = ["image/jpeg", "image/png"]
@@ -265,10 +267,13 @@ class ProfilePictureUploadAPIView(APIView):
             )
             user_profile.image = uploaded_file
             user_profile.save()
+            # Build the image URL
+            image_url = fs.url(uploaded_file)
             return Response(
-                {"detail": "Profile picture uploaded successfully."},
+                {"detail": "Profile picture uploaded successfully", "image_url": image_url},
                 status=status.HTTP_200_OK,
             )
+
         return Response(
             {"detail": "No profile picture uploaded."},
             status=status.HTTP_400_BAD_REQUEST,
