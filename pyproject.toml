@@ -12,7 +12,7 @@ documentation = "https://docs.archerysec.com/"
 [tool.poetry.dependencies]
 openvas-lib = {git = "https://github.com/archerysec/openvas_lib.git"}
 python = "^3.10"
-django = "=4.2.9"
+django = "=4.2.14"
 djangorestframework = ">=3.13.1"
 django-stronghold = ">=0.4.0"
 django-debug-toolbar = ">=3.6.0"
