@@ -41,10 +41,10 @@ check_brew_package() {
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   if command_exists dpkg; then
     # Debian-based system
-    if check_debian_package libmagic1; then
-      echo "libmagic1 is installed on Debian-based system."
+    if check_debian_package libmagic1t64; then
+      echo "libmagic1t64 is installed on Debian-based system."
     else
-      echo "libmagic1 is not installed on Debian-based system."
+      echo "libmagic1t64 is not installed on Debian-based system."
       exit 1
     fi
   elif command_exists rpm; then
