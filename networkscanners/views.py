@@ -302,6 +302,7 @@ class OpenvasDetails(APIView):
             openvas_host,
             setting_id,
             sel_profile,
+            request
         )
         try:
             openvas.connect()

@@ -279,7 +279,7 @@ class Settings(APIView):
             scan_ip = ""
             project_id = ""
 
-            openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile)
+            openvas = OpenVAS_Plugin(scan_ip, project_id, sel_profile, request)
             try:
                 openvas.connect()
                 openvas_info = True
